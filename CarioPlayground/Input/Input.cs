@@ -114,7 +114,7 @@ namespace IMGUI
             return KeyStates[(int)key] == InputState.Down;                
         }
 
-        public static bool Refresh(RECT clientRect)
+        public static bool Refresh(int clientPosX, int clientPosY, RECT clientRect)
         {
             /*
              * Keyboard
@@ -148,14 +148,15 @@ namespace IMGUI
             lastRightButtonState = rightButtonState;
             rightButtonState = ((Native.GetAsyncKeyState((ushort)Button.Left) & (ushort)0x8000) == 1) ? InputState.Down : InputState.Up;
             //Position
-            POINT cursorPosPoint = new POINT(0, 0);
-            Native.GetCursorPos(out cursorPosPoint);
-            float screenX = cursorPosPoint.X;
-            float screenY = cursorPosPoint.Y;
-            mousePos.X = (int)screenX - clientRect.Left;
-            mousePos.Y = (int)screenY - clientRect.Bottom;
             var clientWidth = clientRect.Right - clientRect.Left;
             var clientHeight = clientRect.Bottom - clientRect.Top;
+            POINT cursorPosPoint = new POINT(0, 0);
+            Native.GetCursorPos(out cursorPosPoint);
+            
+            float screenX = cursorPosPoint.X;
+            float screenY = cursorPosPoint.Y;
+            mousePos.X = (int)screenX - clientPosX;
+            mousePos.Y = (int)screenY - clientPosY;
             if (mousePos.X < 0)
                 mousePos.X = 0;
             else if (mousePos.X > clientWidth)

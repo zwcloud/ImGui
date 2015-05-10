@@ -49,16 +49,18 @@ namespace WinFormCario
                 }
                 gui = new GUI(g);
             }
-
-            if (Input.KeyDown(Key.Escape))
-                System.Diagnostics.Debug.WriteLine("ESC pressed");
-
             var clientRect = new RECT();
             clientRect.Left = this.ClientRectangle.Left;
             clientRect.Top = this.ClientRectangle.Top;
             clientRect.Right = this.ClientRectangle.Right;
             clientRect.Bottom = this.ClientRectangle.Bottom;
-            Input.Refresh(clientRect);
+            var clientPos = this.PointToScreen(this.ClientRectangle.Location);
+            Input.Refresh(clientPos.X, clientPos.Y, clientRect);
+
+            System.Diagnostics.Debug.WriteLine("Mouse at {0},{1}", Input.MousePos.X, Input.MousePos.Y);
+
+            if (Input.KeyDown(Key.Escape))
+                System.Diagnostics.Debug.WriteLine("ESC pressed");
 
             ++frames;
             long time = Utility.Millis;
