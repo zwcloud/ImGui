@@ -4,7 +4,7 @@ namespace IMGUI
     /// <summary>
     /// Key state
     /// </summary>
-    public enum KeyState
+    public enum InputState
     {
         /// <summary>Pressing</summary>
         Up,
@@ -342,5 +342,17 @@ namespace IMGUI
         Zoom = 251,
         ChatPadGreen = 202,
         ChatPadOrange
+    }
+
+    /// <summary>
+    /// Mouse buttons
+    /// </summary>
+    public enum Button
+    {
+        /// <summary>Left button</summary>
+        Left = 0x01,
+
+        /// <summary>Right button</summary>
+        Right = 0x02,
     }
 }
