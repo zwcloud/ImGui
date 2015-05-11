@@ -11,6 +11,7 @@ namespace IMGUI
     /// </summary>
     public static class Input
     {
+        private static InputState[] LastKeyStates;
         /// <summary>
         /// Key states of all keys
         /// </summary>
@@ -127,11 +128,13 @@ namespace IMGUI
                 return false;
             }
 
+            //Record the keyboard states! TODO
+
+
             //一般按键
             for (var i = 0; i < keys.Length; ++i)
             {
-                var key = (int)keys[i];
-                KeyStates[key] = ((key & 0x80) == 1)?InputState.Down:InputState.Up;
+                KeyStates[i] = ((keys[i] & (byte)0x80) == 0x80) ? InputState.Down : InputState.Up;
             }
 
             //Toggle 按键
@@ -144,14 +147,15 @@ namespace IMGUI
              */
             //Buttons's states
             lastLeftButtonState = leftButtonState;
-            leftButtonState = ((Native.GetAsyncKeyState((ushort)Button.Left) & (ushort)0x8000) == 1) ? InputState.Down : InputState.Up;
+            leftButtonState = ((Native.GetAsyncKeyState((ushort)Button.Left) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
             lastRightButtonState = rightButtonState;
-            rightButtonState = ((Native.GetAsyncKeyState((ushort)Button.Left) & (ushort)0x8000) == 1) ? InputState.Down : InputState.Up;
+            rightButtonState = ((Native.GetAsyncKeyState((ushort)Button.Right) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
+            //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
             //Position
             var clientWidth = clientRect.Right - clientRect.Left;
             var clientHeight = clientRect.Bottom - clientRect.Top;
             POINT cursorPosPoint = new POINT(0, 0);
-            Native.GetCursorPos(out cursorPosPoint);
+            Native.GetCursorPos(out cursorPosPoint);//Position in screen
             
             float screenX = cursorPosPoint.X;
             float screenY = cursorPosPoint.Y;
@@ -165,6 +169,7 @@ namespace IMGUI
                 mousePos.Y = 0;
             else if (mousePos.Y > clientHeight)
                 mousePos.Y = clientHeight;
+            //Now mousePos is the position in the client area
 
             return true;
         }
