@@ -128,7 +128,7 @@ namespace WinFormCario
 
             //Debug.WriteLine("Mouse at {0},{1}", Input.MousePos.X, Input.MousePos.Y);
 
-            if (Input.KeyDown(Key.Escape))
+            if (Input.KeyPressed(Key.Escape))
                 System.Diagnostics.Debug.WriteLine("ESC pressed");
 
             if (Input.LeftButtonClicked)

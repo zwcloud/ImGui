@@ -58,11 +58,8 @@ namespace IMGUI
         {
             get
             {
-                if (lastLeftButtonState == InputState.Down
-                    && leftButtonState == InputState.Up)
-                    return true;
-                else
-                    return false;
+                return lastLeftButtonState == InputState.Down
+                    && leftButtonState == InputState.Up;
             }
         }
 
@@ -83,11 +80,8 @@ namespace IMGUI
         {
             get
             {
-                if (lastRightButtonState == InputState.Down
-                    && rightButtonState == InputState.Up)
-                    return true;
-                else
-                    return false;
+                return lastRightButtonState == InputState.Down
+                    && rightButtonState == InputState.Up;
             }
         }
 
@@ -103,6 +97,7 @@ namespace IMGUI
         static Input()
         {
             KeyStates = new InputState[256];
+            LastKeyStates = new InputState[256];
         }
 
         /// <summary>
@@ -115,6 +110,23 @@ namespace IMGUI
             return KeyStates[(int)key] == InputState.Down;                
         }
 
+        /// <summary>
+        /// Check if a single key is pressed
+        /// </summary>
+        /// <param name="key">the key</param>
+        /// <returns>true: pressed; false: not pressed yet</returns>
+        public static bool KeyPressed(Key key)
+        {
+            return LastKeyStates[(int)key] == InputState.Down && KeyStates[(int)key] == InputState.Up;
+        }
+
+        /// <summary>
+        /// Refresh input states
+        /// </summary>
+        /// <param name="clientPosX">x position of the client area</param>
+        /// <param name="clientPosY">y position of the client area</param>
+        /// <param name="clientRect">rect of the client area(top,left are both zero)</param>
+        /// <returns></returns>
         public static bool Refresh(int clientPosX, int clientPosY, RECT clientRect)
         {
             /*
@@ -129,7 +141,10 @@ namespace IMGUI
             }
 
             //Record the keyboard states! TODO
-
+            var tmpKeyStates = LastKeyStates;
+            LastKeyStates = KeyStates;
+            if(tmpKeyStates != null)
+                KeyStates = tmpKeyStates;
 
             //一般按键
             for (var i = 0; i < keys.Length; ++i)
