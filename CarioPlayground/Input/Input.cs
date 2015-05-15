@@ -11,14 +11,20 @@ namespace IMGUI
     /// </summary>
     public static class Input
     {
+        #region Keyboard
+        /// <summary>
+        /// Last recorded key states
+        /// </summary>
+        /// <remarks>for detecting keystates' changes</remarks>
         private static InputState[] LastKeyStates;
+
         /// <summary>
         /// Key states of all keys
         /// </summary>
         private static InputState[] KeyStates;
 
         /// <summary>
-        /// Key state of CapsLock (ReadOnly)
+        /// Key state of CapsLock (readOnly)
         /// </summary>
         public static InputState CapsLock
         {
@@ -26,7 +32,7 @@ namespace IMGUI
         }
 
         /// <summary>
-        /// Key state of ScrollLock (ReadOnly)
+        /// Key state of ScrollLock (readOnly)
         /// </summary>
         public static InputState ScrollLock
         {
@@ -34,70 +40,11 @@ namespace IMGUI
         }
 
         /// <summary>
-        /// Key state of NumLock (ReadOnly)
+        /// Key state of NumLock (readOnly)
         /// </summary>
         public static InputState NumLock
         {
             get { return KeyStates[(int)Key.NumLock]; }
-        }
-
-        static InputState lastLeftButtonState = InputState.Up;
-        static InputState leftButtonState = InputState.Up;
-        /// <summary>
-        /// Button state of left mouse button
-        /// </summary>
-        public static InputState LeftButtonState
-        {
-            get { return leftButtonState; }
-        }
-
-        /// <summary>
-        /// Check if the left mouse button is clicked
-        /// </summary>
-        public static bool LeftButtonClicked
-        {
-            get
-            {
-                return lastLeftButtonState == InputState.Down
-                    && leftButtonState == InputState.Up;
-            }
-        }
-
-        static InputState lastRightButtonState = InputState.Up;
-        static InputState rightButtonState = InputState.Up;
-        /// <summary>
-        /// Button state of the right mouse button
-        /// </summary>
-        public static InputState RightButtonState
-        {
-            get { return rightButtonState; }
-        }
-
-        /// <summary>
-        /// Check if the right mouse button is clicked
-        /// </summary>
-        public static bool RightButtonClicked
-        {
-            get
-            {
-                return lastRightButtonState == InputState.Down
-                    && rightButtonState == InputState.Up;
-            }
-        }
-
-        static Point mousePos;
-        public static Point MousePos
-        {
-            get { return mousePos; }
-        }
-
-        /// <summary>
-        /// Static constructor
-        /// </summary>
-        static Input()
-        {
-            KeyStates = new InputState[256];
-            LastKeyStates = new InputState[256];
         }
 
         /// <summary>
@@ -107,7 +54,7 @@ namespace IMGUI
         /// <returns>true: pressing; false: released</returns>
         public static bool KeyDown(Key key)
         {
-            return KeyStates[(int)key] == InputState.Down;                
+            return KeyStates[(int)key] == InputState.Down;
         }
 
         /// <summary>
@@ -119,6 +66,99 @@ namespace IMGUI
         {
             return LastKeyStates[(int)key] == InputState.Down && KeyStates[(int)key] == InputState.Up;
         }
+        #endregion
+
+        #region Mouse
+        #region Left button
+        /// <summary>
+        /// Last recorded left mouse button state
+        /// </summary>
+        /// <remarks>for detecting left mouse button state' changes</remarks>
+        static InputState lastLeftButtonState = InputState.Up;
+
+        /// <summary>
+        /// Left button state
+        /// </summary>
+        static InputState leftButtonState = InputState.Up;
+
+        /// <summary>
+        /// Button state of left mouse button(readonly)
+        /// </summary>
+        public static InputState LeftButtonState
+        {
+            get { return leftButtonState; }
+        }
+
+        /// <summary>
+        /// Check if the left mouse button is clicked(readonly)
+        /// </summary>
+        public static bool LeftButtonClicked
+        {
+            get
+            {
+                return lastLeftButtonState == InputState.Down
+                    && leftButtonState == InputState.Up;
+            }
+        }
+        #endregion
+
+        #region Right button
+        /// <summary>
+        /// Last recorded right mouse button state
+        /// </summary>
+        /// <remarks>for detecting right mouse button state' changes</remarks>
+        static InputState lastRightButtonState = InputState.Up;
+
+        /// <summary>
+        /// Right button state
+        /// </summary>
+        static InputState rightButtonState = InputState.Up;
+
+        /// <summary>
+        /// Button state of the right mouse button(readonly)
+        /// </summary>
+        public static InputState RightButtonState
+        {
+            get { return rightButtonState; }
+        }
+
+        /// <summary>
+        /// Check if the right mouse button is clicked(readonly)
+        /// </summary>
+        public static bool RightButtonClicked
+        {
+            get
+            {
+                return lastRightButtonState == InputState.Down
+                    && rightButtonState == InputState.Up;
+            }
+        }
+        #endregion
+
+        #region Position
+        /// <summary>
+        /// Mouse position
+        /// </summary>
+        static Point mousePos;
+
+        /// <summary>
+        /// Mouse position (readonly)
+        /// </summary>
+        public static Point MousePos
+        {
+            get { return mousePos; }
+        }
+        #endregion
+        #endregion
+
+        /// <summary>
+        /// Static constructor
+        /// </summary>
+        static Input()
+        {
+            KeyStates = new InputState[256];
+            LastKeyStates = new InputState[256];
+        }
 
         /// <summary>
         /// Refresh input states
@@ -127,6 +167,8 @@ namespace IMGUI
         /// <param name="clientPosY">y position of the client area</param>
         /// <param name="clientRect">rect of the client area(top,left are both zero)</param>
         /// <returns></returns>
+        /// <remarks>The input states will persist until next call of this method, 
+        /// and last input states will be recorded.</remarks>
         public static bool Refresh(int clientPosX, int clientPosY, RECT clientRect)
         {
             /*

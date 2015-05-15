@@ -49,7 +49,10 @@ namespace WinFormCario
         /// </summary>
         void OnGUI()
         {
-            buttonClicked = gui.Button(Style.Default, 20, 20, 120, 40, "button!");
+            if (gui.Button(Style.Default, 20, 20, 120, 40, "button!"))
+            {
+                Debug.WriteLine("button! clicked");
+            }
         }        
 
         /// <summary>
