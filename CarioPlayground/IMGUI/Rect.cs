@@ -11,7 +11,7 @@ namespace IMGUI
     {
         public static void gradient(Context g, Style aStyle, int aX, int aY, int aWidth, int aHeight)
         {
-            g.FillRectangle(aStyle.myIn, aX, aY, aWidth, aHeight);
+            g.FillRectangle(aStyle, aX, aY, aWidth, aHeight);
         }
 
 	    public static bool inside(Point aPoint, int anOriginX, int anOriginY, int aX, int aY, int aWidth, int aHeight)
@@ -47,18 +47,18 @@ namespace IMGUI
 	        {
 		        if(myDown)
 		        {
-			        g.FillRectangle(myStyle.myIn, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
+			        g.FillRectangle(myStyle, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
 		        }
 		        else
 		        {
-			        g.FillRectangle(myStyle.myOut, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
+			        g.FillRectangle(myStyle, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
 		        }
 	        }
 	        else
 	        {
-		        g.FillRectangle(myStyle.myOut, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
+		        g.FillRectangle(myStyle, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
 	        }
-	        g.StrokeRectangle(myStyle.myEdge, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
+	        g.StrokeRectangle(myStyle.Normal, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
         }
 
 	    public bool inside(Point aPoint, int anOriginX, int anOriginY, bool aSet)

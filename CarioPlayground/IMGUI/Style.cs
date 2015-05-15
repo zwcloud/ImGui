@@ -9,15 +9,15 @@ namespace IMGUI
 {
     public struct Style
     {
-        public Style(uint anOut, uint anIn, uint anEdge)
+        public Style(uint normal, uint hover, uint active)
 	    {
-            myOut = CarioExtension.FromArgb(anOut);
-            myIn = CarioExtension.FromArgb(anIn);
-            myEdge = CarioExtension.FromArgb(anEdge);
+            Normal = CarioExtension.FromArgb(normal);
+            Hover = CarioExtension.FromArgb(hover);
+            Active = CarioExtension.FromArgb(active);
 	    }
 
-	    public Color myOut, myIn, myEdge;
+	    public Color Normal, Hover, Active;
 
-        public static Style Default = new Style(0xFFEEEEEE, 0xFFCCCCCC, 0xFFFFFFFF);
+        public static Style Default = new Style(0xFFCCCCCC, 0xFF0000FF, 0xFF00FF00);
     }
 }

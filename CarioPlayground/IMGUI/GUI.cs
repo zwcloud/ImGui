@@ -19,7 +19,7 @@ namespace IMGUI
                        int aWidth, int aHeight,
                        string aText)
         {
-            g.FillRectangle(style.myIn, aX, aY, aWidth, aHeight);
+            g.FillRectangle(style, aX, aY, aWidth, aHeight);
             g.MoveTo(aX, aY);
             g.ShowText(aText);
             g.Stroke();

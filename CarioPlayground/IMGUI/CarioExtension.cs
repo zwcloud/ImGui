@@ -24,14 +24,22 @@ namespace IMGUI
             return result;
         }
 
-        public static void FillRectangle(this Context g, Color color, int aX, int aY, int aWidth, int aHeight)
+        public static void FillRectangle(this Context g, Style style, int aX, int aY, int aWidth, int aHeight)
         {
             PointD topLeft = new PointD(aX, aY);
             PointD topRight = new PointD(aX + aWidth, aY);
             PointD bottomRight = new PointD(aX + aWidth, aY + aHeight);
             PointD bottomLeft = new PointD(aX, aY + aHeight);
 
-            g.SetSourceColor(color);
+            g.SetSourceColor(style.Normal);
+            if (Rect.inside(Input.MousePos, aX, aY, 0, 0, aWidth, aHeight))
+            {
+                g.SetSourceColor(style.Hover);
+            }
+            if (Input.LeftButtonState == InputState.Down)
+            {
+                g.SetSourceColor(style.Active);
+            }
             g.MoveTo(topLeft);
             g.LineTo(topRight);
             g.LineTo(bottomRight);
