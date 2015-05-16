@@ -22,13 +22,21 @@ namespace IMGUI
             g.FillRectangle(style, aX, aY, aWidth, aHeight);
             g.MoveTo(aX, aY);
             g.ShowText(aText);
-            g.Stroke();
 
             return Input.LeftButtonClicked &&
                    Input.MousePos.X >= aX &&
                    Input.MousePos.Y >= aY &&
                    Input.MousePos.X < (aX + aWidth) &&
                    Input.MousePos.Y < (aY + aHeight);
+        }
+
+        public void Label(Style style, int x, int y, string text)
+        {
+            g.SelectFontFace("serif", FontSlant.Normal, FontWeight.Bold);
+            g.SetFontSize(18);
+            g.SetSourceColor(style.FontColor);
+            g.MoveTo(x, y);
+            g.ShowText(text);
         }
     }
 }

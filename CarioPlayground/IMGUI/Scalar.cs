@@ -27,8 +27,7 @@ namespace IMGUI
 
         public int get()
         {
-            //return (int)myCurrent;
-            return (int)myTarget;
+            return (int)myCurrent;
         }
 
         private float myCurrent = 0.0f, myTarget = 0.0f;

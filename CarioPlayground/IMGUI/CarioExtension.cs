@@ -24,6 +24,17 @@ namespace IMGUI
             return result;
         }
 
+
+#region Basic element rendering
+        #region rectangle
+        /// <summary>
+        /// Fill a rectangle
+        /// </summary>
+        /// <param name="style">Style of the rectangle</param>
+        /// <param name="aX">x position</param>
+        /// <param name="aY">y position</param>
+        /// <param name="aWidth">width</param>
+        /// <param name="aHeight">height</param>
         public static void FillRectangle(this Context g, Style style, int aX, int aY, int aWidth, int aHeight)
         {
             PointD topLeft = new PointD(aX, aY);
@@ -49,14 +60,22 @@ namespace IMGUI
             g.Fill();
         }
 
-        public static void StrokeRectangle(this Context g, Color color, int aX, int aY, int aWidth, int aHeight)
+        /// <summary>
+        /// Stroke a rectangle
+        /// </summary>
+        /// <param name="style">Style of the rectangle</param>
+        /// <param name="aX">x position</param>
+        /// <param name="aY">y position</param>
+        /// <param name="aWidth">width</param>
+        /// <param name="aHeight">height</param>
+        public static void StrokeRectangle(this Context g, Style style, int aX, int aY, int aWidth, int aHeight)
         {
             PointD topLeft = new PointD(aX, aY);
             PointD topRight = new PointD(aX + aWidth, aY);
             PointD bottomRight = new PointD(aX + aWidth, aY + aHeight);
             PointD bottomLeft = new PointD(aX, aY + aHeight);
 
-            g.SetSourceColor(color);
+            g.SetSourceColor(style.Normal);
             g.MoveTo(topLeft);
             g.LineTo(topRight);
             g.LineTo(bottomRight);
@@ -65,6 +84,18 @@ namespace IMGUI
             g.ClosePath();
             g.Stroke();
         }
+
+        #endregion
+        public static void DrawText(this Content g, Style style, int x, int y)
+        {
+
+        }
+        #region text
+
+
+        #endregion
+
+#endregion
 
 
     }

@@ -20,24 +20,29 @@ namespace WinFormCario
         int fps = 0;
 
         GUI gui;
-        bool buttonClicked = false;
 
         public MainForm()
         {
             InitializeComponent();
 
+            bool exit = false;
             //Set up the game architecture
-            Application.Idle += (sender, e) => 
+            Application.Idle += (sender, e) =>
             {
+                if (exit)
+                {
+                    this.Close();
+                }
                 if (gui == null)
                 {
                     Init();
                 }
                 else
                 {
-                    while (Utility.IsApplicationIdle())
+                    while (Utility.IsApplicationIdle() && exit == false)
                     {
-                        Update();
+                        System.Threading.Thread.Sleep(30);
+                        exit = Update();
                         Render();
                     }
                 }
@@ -53,7 +58,9 @@ namespace WinFormCario
             {
                 Debug.WriteLine("button! clicked");
             }
-        }        
+
+            gui.Label(Style.Default, 0, (int)(ClientRectangle.Bottom - g.FontExtents.Height), string.Format("FPS: {0}", fps));
+        }
 
         /// <summary>
         /// Called when the form is closed
@@ -118,7 +125,7 @@ namespace WinFormCario
             }
         }
 
-        new void Update()
+        new bool Update()
         {
             var clientRect = new RECT();
             clientRect.Left = this.ClientRectangle.Left;
@@ -131,12 +138,31 @@ namespace WinFormCario
 
             //Debug.WriteLine("Mouse at {0},{1}", Input.MousePos.X, Input.MousePos.Y);
 
+            //Quit when ESC is pressed
             if (Input.KeyPressed(Key.Escape))
+            {
                 System.Diagnostics.Debug.WriteLine("ESC pressed");
+                return true;
+            }
 
-            if (Input.LeftButtonClicked)
-                System.Diagnostics.Debug.WriteLine("Mouse Left Button clicked");
+#if DEBUG
+            DebugUpdate();
+#endif
 
+            return false;
+        }
+
+        void Render()
+        {
+            if (g == null || context == null) return;
+
+            OnGUI();
+
+            PaintToWindow();
+        }
+
+        void DebugUpdate()
+        {
             ++frames;
             long time = Utility.Millis;
             if (time > lastFPSlog + 1000)
@@ -145,20 +171,6 @@ namespace WinFormCario
                 frames = 0;
                 lastFPSlog = time;
             }
-        }
-
-        void Render()
-        {
-            if (g == null || context == null) return;
-
-            g.Antialias = Antialias.None;    //fastest method but low quality
-            g.LineWidth = 7;
-            g.MoveTo(10, 90);
-            g.LineTo(40, 140);
-            g.Stroke();
-
-            OnGUI();
-            PaintToWindow();
         }
 
         private void CleanUp()

@@ -166,7 +166,7 @@ namespace IMGUI
         /// <param name="clientPosX">x position of the client area</param>
         /// <param name="clientPosY">y position of the client area</param>
         /// <param name="clientRect">rect of the client area(top,left are both zero)</param>
-        /// <returns></returns>
+        /// <returns>true: successful; false: failed</returns>
         /// <remarks>The input states will persist until next call of this method, 
         /// and last input states will be recorded.</remarks>
         public static bool Refresh(int clientPosX, int clientPosY, RECT clientRect)
@@ -182,7 +182,7 @@ namespace IMGUI
                 return false;
             }
 
-            //Record the keyboard states! TODO
+            //Record the keyboard states
             var tmpKeyStates = LastKeyStates;
             LastKeyStates = KeyStates;
             if(tmpKeyStates != null)

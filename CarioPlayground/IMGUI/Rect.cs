@@ -58,7 +58,7 @@ namespace IMGUI
 	        {
 		        g.FillRectangle(myStyle, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
 	        }
-	        g.StrokeRectangle(myStyle.Normal, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
+	        g.StrokeRectangle(myStyle, X + anOriginX, Y + anOriginY, WIDTH - 1, HEIGHT - 1);
         }
 
 	    public bool inside(Point aPoint, int anOriginX, int anOriginY, bool aSet)
@@ -77,6 +77,5 @@ namespace IMGUI
 	    bool myInside = false, myDown;
         Style myStyle = Style.Default;
 	    Scalar myX = new Scalar(), myY = new Scalar(), myWidth = new Scalar(), myHeight = new Scalar();
-	    Color myColor;
     }
 }
