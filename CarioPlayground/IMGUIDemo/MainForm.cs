@@ -2,18 +2,20 @@
 using System.Windows.Forms;
 using IMGUI;
 using Win32;
-using Cairo;
 using System.Diagnostics;
+using Cairo;
+
+using Point = IMGUI.Point;
 
 namespace WinFormCario
 {
     public partial class MainForm : Form
     {
-        Context g;
-        ImageSurface BackSurface = BuildSurface(512, 512, new Color(1, 1, 1, 1));
+        Cairo.Context g;
+        Cairo.ImageSurface BackSurface = BuildSurface(512, 512, new Color(1, 1, 1, 1));
 
-        Context context;
-        Surface FrontSurface;
+        Cairo.Context context;
+        Cairo.Surface FrontSurface;
 
         long lastFPSlog = 0;
         int frames = 0;
@@ -54,12 +56,19 @@ namespace WinFormCario
         /// </summary>
         void OnGUI()
         {
-            if (gui.Button(Style.Default, 20, 20, 120, 40, "button!"))
+            g.DrawText(new Rect(0, 0, 100, 30), "sdfafsadf", new Font());
+            g.Stroke();
+
+            gui.Label(
+                new Rect(0, 40/*ClientRectangle.Bottom - g.FontExtents.Height*/, 200, g.FontExtents.Height),
+                string.Format("FPS: {0}", fps)
+                );
+
+            if (gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button!"))
             {
                 Debug.WriteLine("button! clicked");
             }
 
-            gui.Label(Style.Default, 0, (int)(ClientRectangle.Bottom - g.FontExtents.Height), string.Format("FPS: {0}", fps));
         }
 
         /// <summary>
@@ -80,12 +89,12 @@ namespace WinFormCario
         /// <param name="Height">height</param>
         /// <param name="Color">color</param>
         /// <returns>the created ImageSurface</returns>
-        static ImageSurface BuildSurface(int Width, int Height, Color Color)
+        static Cairo.ImageSurface BuildSurface(int Width, int Height, Color Color)
         {
-            Context _context = null;
-            ImageSurface _surface = new ImageSurface(Format.Argb32, Width, Height);
+            Cairo.Context _context = null;
+            Cairo.ImageSurface _surface = new Cairo.ImageSurface(Cairo.Format.Argb32, Width, Height);
 
-            _context = new Context(_surface);
+            _context = new Cairo.Context(_surface);
 
             _context.Rectangle(0, 0, Width, Height);
             _context.SetSourceColor(Color);

@@ -2,9 +2,10 @@ using System;
 
 namespace IMGUI
 {
+
+
     [Serializable]
-    //[ValueSerializer(typeof(RectValueSerializer))] // Used by MarkupWriter
-    partial struct Rect : IFormattable
+    partial struct Vector : IFormattable
     {
         //------------------------------------------------------
         //
@@ -18,90 +19,79 @@ namespace IMGUI
 
 
         /// <summary>
-        /// Compares two Rect instances for exact equality.
+        /// Compares two Vector instances for exact equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
         /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
-        /// bool - true if the two Rect instances are exactly equal, false otherwise
+        /// bool - true if the two Vector instances are exactly equal, false otherwise
         /// </returns>
-        /// <param name='rect1'>The first Rect to compare</param>
-        /// <param name='rect2'>The second Rect to compare</param>
-        public static bool operator ==(Rect rect1, Rect rect2)
+        /// <param name='vector1'>The first Vector to compare</param>
+        /// <param name='vector2'>The second Vector to compare</param>
+        public static bool operator == (Vector vector1, Vector vector2)
         {
-            return rect1.X == rect2.X &&
-                   rect1.Y == rect2.Y &&
-                   rect1.Width == rect2.Width &&
-                   rect1.Height == rect2.Height;
+            return vector1.X == vector2.X &&
+                   vector1.Y == vector2.Y;
         }
 
         /// <summary>
-        /// Compares two Rect instances for exact inequality.
+        /// Compares two Vector instances for exact inequality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
         /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
-        /// bool - true if the two Rect instances are exactly unequal, false otherwise
+        /// bool - true if the two Vector instances are exactly unequal, false otherwise
         /// </returns>
-        /// <param name='rect1'>The first Rect to compare</param>
-        /// <param name='rect2'>The second Rect to compare</param>
-        public static bool operator !=(Rect rect1, Rect rect2)
+        /// <param name='vector1'>The first Vector to compare</param>
+        /// <param name='vector2'>The second Vector to compare</param>
+        public static bool operator != (Vector vector1, Vector vector2)
         {
-            return !(rect1 == rect2);
+            return !(vector1 == vector2);
         }
         /// <summary>
-        /// Compares two Rect instances for object equality.  In this equality
+        /// Compares two Vector instances for object equality.  In this equality
         /// Double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
         /// </summary>
         /// <returns>
-        /// bool - true if the two Rect instances are exactly equal, false otherwise
+        /// bool - true if the two Vector instances are exactly equal, false otherwise
         /// </returns>
-        /// <param name='rect1'>The first Rect to compare</param>
-        /// <param name='rect2'>The second Rect to compare</param>
-        public static bool Equals(Rect rect1, Rect rect2)
+        /// <param name='vector1'>The first Vector to compare</param>
+        /// <param name='vector2'>The second Vector to compare</param>
+        public static bool Equals (Vector vector1, Vector vector2)
         {
-            if (rect1.IsEmpty)
-            {
-                return rect2.IsEmpty;
-            }
-            else
-            {
-                return rect1.X.Equals(rect2.X) &&
-                       rect1.Y.Equals(rect2.Y) &&
-                       rect1.Width.Equals(rect2.Width) &&
-                       rect1.Height.Equals(rect2.Height);
-            }
+            return vector1.X.Equals(vector2.X) &&
+                   vector1.Y.Equals(vector2.Y);
         }
 
         /// <summary>
-        /// Equals - compares this Rect with the passed in object.  In this equality
+        /// Equals - compares this Vector with the passed in object.  In this equality
         /// Double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
         /// </summary>
         /// <returns>
-        /// bool - true if the object is an instance of Rect and if it's equal to "this".
+        /// bool - true if the object is an instance of Vector and if it's equal to "this".
         /// </returns>
         /// <param name='o'>The object to compare to "this"</param>
         public override bool Equals(object o)
         {
-            if ((null == o) || !(o is Rect))
+            if ((null == o) || !(o is Vector))
             {
                 return false;
             }
 
-            Rect value = (Rect)o;
-            return Rect.Equals(this, value);
+            Vector value = (Vector)o;
+            return Vector.Equals(this,value);
         }
 
         /// <summary>
-        /// Equals - compares this Rect with the passed in object.  In this equality
+        /// Equals - compares this Vector with the passed in object.  In this equality
         /// Double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
@@ -110,41 +100,50 @@ namespace IMGUI
         /// <returns>
         /// bool - true if "value" is equal to "this".
         /// </returns>
-        /// <param name='value'>The Rect to compare to "this"</param>
-        public bool Equals(Rect value)
+        /// <param name='value'>The Vector to compare to "this"</param>
+        public bool Equals(Vector value)
         {
-            return Rect.Equals(this, value);
+            return Vector.Equals(this, value);
         }
         /// <summary>
-        /// Returns the HashCode for this Rect
+        /// Returns the HashCode for this Vector
         /// </summary>
         /// <returns>
-        /// int - the HashCode for this Rect
+        /// int - the HashCode for this Vector
         /// </returns>
         public override int GetHashCode()
         {
-            if (IsEmpty)
-            {
-                return 0;
-            }
-            else
-            {
-                // Perform field-by-field XOR of HashCodes
-                return X.GetHashCode() ^
-                       Y.GetHashCode() ^
-                       Width.GetHashCode() ^
-                       Height.GetHashCode();
-            }
+            // Perform field-by-field XOR of HashCodes
+            return X.GetHashCode() ^
+                   Y.GetHashCode();
         }
 
         /// <summary>
         /// Parse - returns an instance converted from the provided string using
         /// the culture "en-US"
-        /// <param name="source"> string with Rect data </param>
+        /// <param name="source"> string with Vector data </param>
         /// </summary>
-        public static Rect Parse(string source)
+        public static Vector Parse(string source)
         {
             throw new NotImplementedException();
+#if false
+            IFormatProvider formatProvider = System.Windows.Markup.TypeConverterHelper.InvariantEnglishUS;
+
+            TokenizerHelper th = new TokenizerHelper(source, formatProvider);
+
+            Vector value;
+
+            String firstToken = th.NextTokenRequired();
+
+            value = new Vector(
+                Convert.ToDouble(firstToken, formatProvider),
+                Convert.ToDouble(th.NextTokenRequired(), formatProvider));
+
+            // There should be no more tokens in this string.
+            th.LastTokenRequired();
+
+            return value;
+#endif
         }
 
         #endregion Public Methods
@@ -160,7 +159,39 @@ namespace IMGUI
 
         #region Public Properties
 
+        /// <summary>
+        ///     X - double.  Default value is 0.
+        /// </summary>
+        public double X
+        {
+            get
+            {
+                return _x;
+            }
 
+            set
+            {
+                _x = value;
+            }
+
+        }
+
+        /// <summary>
+        ///     Y - double.  Default value is 0.
+        /// </summary>
+        public double Y
+        {
+            get
+            {
+                return _y;
+            }
+
+            set
+            {
+                _y = value;
+            }
+
+        }
 
         #endregion Public Properties
 
@@ -259,20 +290,17 @@ namespace IMGUI
         /// </returns>
         internal string ConvertToString(string format, IFormatProvider provider)
         {
-            if (IsEmpty)
-            {
-                return "Empty";
-            }
-
-            // Helper to get the numeric list separator for a given culture.
-            char separator = ',';
+            throw new NotImplementedException();
+#if false
+    // Helper to get the numeric list separator for a given culture.
+            char separator = MS.Internal.TokenizerHelper.GetNumericListSeparator(provider);
             return String.Format(provider,
-                                 "{1:" + format + "}{0}{2:" + format + "}{0}{3:" + format + "}{0}{4:" + format + "}",
+                                 "{1:" + format + "}{0}{2:" + format + "}",
                                  separator,
                                  _x,
-                                 _y,
-                                 _width,
-                                 _height);
+                                 _y);
+#endif
+
         }
 
 
@@ -302,8 +330,6 @@ namespace IMGUI
 
         internal double _x;
         internal double _y;
-        internal double _width;
-        internal double _height;
 
 
 

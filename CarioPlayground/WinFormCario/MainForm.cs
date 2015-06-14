@@ -61,26 +61,7 @@ namespace WinFormCario
 
             BeginRender();
 
-            g.Antialias = Antialias.Subpixel;    // sets the anti-aliasing method
-            g.LineWidth = 9;          // sets the line width
-            g.SetSourceRGBA(0, 0, 0, 1);   // red, green, blue, alpha
-            g.MoveTo(10, 10);          // sets the Context's start point.
-            g.LineTo(40, 60);          // draws a "virtual" line from 5,5 to 20,30
-            g.Stroke();          //stroke the line to the surface
-
-            g.Antialias = Antialias.Gray;
-            g.LineWidth = 8;
-            g.SetSourceRGBA(0.7, 0.3, 0, 1);
-            g.LineCap = LineCap.Round;
-            g.MoveTo(10, 50);
-            g.LineTo(40, 100);
-            g.Stroke();
-
             g.Antialias = Antialias.None;    //fastest method but low quality
-            g.LineWidth = 7;
-            g.MoveTo(10, 90);
-            g.LineTo(40, 140);
-            g.Stroke();
 
             PointD p1, p2, p3, p4;
             p1 = new PointD(10, 10);
@@ -88,13 +69,65 @@ namespace WinFormCario
             p3 = new PointD(100, 100);
             p4 = new PointD(10, 100);
 
+            g.SetSourceColor(new Color(0,1,0));
             g.MoveTo(p1);
             g.LineTo(p2);
             g.LineTo(p3);
             g.LineTo(p4);
             g.LineTo(p1);
             g.ClosePath();
+            var extentsRectangle = g.StrokeExtents();
+            g.Fill();
+
+            g.SetSourceColor(new Color(0,0,0));
+            g.LineWidth = 1;
+            //Top extents
+            g.MoveTo(extentsRectangle.X, extentsRectangle.Y);
+            g.LineTo(extentsRectangle.X + extentsRectangle.Width, extentsRectangle.Y);
+            //Right extents
+            g.LineTo(extentsRectangle.X + extentsRectangle.Width, extentsRectangle.Y + extentsRectangle.Height);
+            //Bottom extents
+            g.LineTo(extentsRectangle.X, extentsRectangle.Y + extentsRectangle.Height);
+            //Left extents
+            g.LineTo(extentsRectangle.X, extentsRectangle.Y);
+            g.ClosePath();
             g.Stroke();
+            
+            g.SetSourceColor(new Color(1,0,0));
+            p1.X += 100;
+            p2.X += 100;
+            p3.X += 100;
+            p4.X += 100;
+            g.MoveTo(p1);
+            g.LineTo(p2);
+            g.LineTo(p3);
+            g.LineTo(p4);
+            g.LineTo(p1);
+            //g.ClosePath();
+            //g.Fill();
+
+            
+            var topColor = new Color(1,0,0);
+            var rightColor = new Color(0,1,0);
+            var bottomColor = new Color(0,0,1);
+            var leftColor = new Color(1,0,1);
+            p1.X += 10;
+            p1.Y += 10;
+            p2.X -= 10;
+            p2.Y += 10;
+            p3.X -= 10;
+            p3.Y -= 10;
+            p4.X += 10;
+            p4.Y -= 10;
+            g.MoveTo(p1);
+            g.LineTo(p2);
+            g.LineTo(p3);
+            g.LineTo(p4);
+            g.LineTo(p1);
+            g.ClosePath();
+            g.FillRule =  FillRule.EvenOdd;
+            g.Fill();
+
 
             g.MoveTo(new PointD(0, this.ClientSize.Height-30));
             g.SetFontSize(24.0);

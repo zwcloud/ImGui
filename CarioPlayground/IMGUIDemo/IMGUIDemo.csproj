@@ -80,10 +80,6 @@
       <Project>{a02589f7-a689-41a9-b4e0-24876b4eeeb3}</Project>
       <Name>IMGUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Input\Input.csproj">
-      <Project>{ecb0370e-5cd0-4afb-b422-3cbf441ee594}</Project>
-      <Name>Input</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Mono.Cairo\Mono.Cairo.csproj">
       <Project>{3f2d21fe-0e46-465c-a35a-4ea135bf0017}</Project>
       <Name>Mono.Cairo</Name>
@@ -92,6 +88,10 @@
       <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
       <Name>Win32</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Layout\LayoutMain.html" />
+    <Content Include="Layout\StyleMain.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

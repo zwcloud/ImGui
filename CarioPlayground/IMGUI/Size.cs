@@ -1,10 +1,12 @@
 using System;
+// These types are aliased to match the unamanaged names used in interop
 
 namespace IMGUI
 {
+
+
     [Serializable]
-    //[ValueSerializer(typeof(RectValueSerializer))] // Used by MarkupWriter
-    partial struct Rect : IFormattable
+    partial struct Size : IFormattable
     {
         //------------------------------------------------------
         //
@@ -18,90 +20,86 @@ namespace IMGUI
 
 
         /// <summary>
-        /// Compares two Rect instances for exact equality.
+        /// Compares two Size instances for exact equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
         /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
-        /// bool - true if the two Rect instances are exactly equal, false otherwise
+        /// bool - true if the two Size instances are exactly equal, false otherwise
         /// </returns>
-        /// <param name='rect1'>The first Rect to compare</param>
-        /// <param name='rect2'>The second Rect to compare</param>
-        public static bool operator ==(Rect rect1, Rect rect2)
+        /// <param name='size1'>The first Size to compare</param>
+        /// <param name='size2'>The second Size to compare</param>
+        public static bool operator == (Size size1, Size size2)
         {
-            return rect1.X == rect2.X &&
-                   rect1.Y == rect2.Y &&
-                   rect1.Width == rect2.Width &&
-                   rect1.Height == rect2.Height;
+            return size1.Width == size2.Width &&
+                   size1.Height == size2.Height;
         }
 
         /// <summary>
-        /// Compares two Rect instances for exact inequality.
+        /// Compares two Size instances for exact inequality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
         /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
-        /// bool - true if the two Rect instances are exactly unequal, false otherwise
+        /// bool - true if the two Size instances are exactly unequal, false otherwise
         /// </returns>
-        /// <param name='rect1'>The first Rect to compare</param>
-        /// <param name='rect2'>The second Rect to compare</param>
-        public static bool operator !=(Rect rect1, Rect rect2)
+        /// <param name='size1'>The first Size to compare</param>
+        /// <param name='size2'>The second Size to compare</param>
+        public static bool operator != (Size size1, Size size2)
         {
-            return !(rect1 == rect2);
+            return !(size1 == size2);
         }
         /// <summary>
-        /// Compares two Rect instances for object equality.  In this equality
+        /// Compares two Size instances for object equality.  In this equality
         /// Double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
         /// </summary>
         /// <returns>
-        /// bool - true if the two Rect instances are exactly equal, false otherwise
+        /// bool - true if the two Size instances are exactly equal, false otherwise
         /// </returns>
-        /// <param name='rect1'>The first Rect to compare</param>
-        /// <param name='rect2'>The second Rect to compare</param>
-        public static bool Equals(Rect rect1, Rect rect2)
+        /// <param name='size1'>The first Size to compare</param>
+        /// <param name='size2'>The second Size to compare</param>
+        public static bool Equals (Size size1, Size size2)
         {
-            if (rect1.IsEmpty)
+            if (size1.IsEmpty)
             {
-                return rect2.IsEmpty;
+                return size2.IsEmpty;
             }
             else
             {
-                return rect1.X.Equals(rect2.X) &&
-                       rect1.Y.Equals(rect2.Y) &&
-                       rect1.Width.Equals(rect2.Width) &&
-                       rect1.Height.Equals(rect2.Height);
+                return size1.Width.Equals(size2.Width) &&
+                       size1.Height.Equals(size2.Height);
             }
         }
 
         /// <summary>
-        /// Equals - compares this Rect with the passed in object.  In this equality
+        /// Equals - compares this Size with the passed in object.  In this equality
         /// Double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
         /// </summary>
         /// <returns>
-        /// bool - true if the object is an instance of Rect and if it's equal to "this".
+        /// bool - true if the object is an instance of Size and if it's equal to "this".
         /// </returns>
         /// <param name='o'>The object to compare to "this"</param>
         public override bool Equals(object o)
         {
-            if ((null == o) || !(o is Rect))
+            if ((null == o) || !(o is Size))
             {
                 return false;
             }
 
-            Rect value = (Rect)o;
-            return Rect.Equals(this, value);
+            Size value = (Size)o;
+            return Size.Equals(this,value);
         }
 
         /// <summary>
-        /// Equals - compares this Rect with the passed in object.  In this equality
+        /// Equals - compares this Size with the passed in object.  In this equality
         /// Double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
@@ -110,16 +108,16 @@ namespace IMGUI
         /// <returns>
         /// bool - true if "value" is equal to "this".
         /// </returns>
-        /// <param name='value'>The Rect to compare to "this"</param>
-        public bool Equals(Rect value)
+        /// <param name='value'>The Size to compare to "this"</param>
+        public bool Equals(Size value)
         {
-            return Rect.Equals(this, value);
+            return Size.Equals(this, value);
         }
         /// <summary>
-        /// Returns the HashCode for this Rect
+        /// Returns the HashCode for this Size
         /// </summary>
         /// <returns>
-        /// int - the HashCode for this Rect
+        /// int - the HashCode for this Size
         /// </returns>
         public override int GetHashCode()
         {
@@ -130,9 +128,7 @@ namespace IMGUI
             else
             {
                 // Perform field-by-field XOR of HashCodes
-                return X.GetHashCode() ^
-                       Y.GetHashCode() ^
-                       Width.GetHashCode() ^
+                return Width.GetHashCode() ^
                        Height.GetHashCode();
             }
         }
@@ -140,11 +136,39 @@ namespace IMGUI
         /// <summary>
         /// Parse - returns an instance converted from the provided string using
         /// the culture "en-US"
-        /// <param name="source"> string with Rect data </param>
+        /// <param name="source"> string with Size data </param>
         /// </summary>
-        public static Rect Parse(string source)
+        public static Size Parse(string source)
         {
             throw new NotImplementedException();
+#if false
+            IFormatProvider formatProvider = System.Windows.Markup.TypeConverterHelper.InvariantEnglishUS;
+
+            TokenizerHelper th = new TokenizerHelper(source, formatProvider);
+
+            Size value;
+
+            String firstToken = th.NextTokenRequired();
+
+            // The token will already have had whitespace trimmed so we can do a
+            // simple string compare.
+            if (firstToken == "Empty")
+            {
+                value = Empty;
+            }
+            else
+            {
+                value = new Size(
+                    Convert.ToDouble(firstToken, formatProvider),
+                    Convert.ToDouble(th.NextTokenRequired(), formatProvider));
+            }
+
+            // There should be no more tokens in this string.
+            th.LastTokenRequired();
+
+            return value;
+#endif
+
         }
 
         #endregion Public Methods
@@ -259,20 +283,22 @@ namespace IMGUI
         /// </returns>
         internal string ConvertToString(string format, IFormatProvider provider)
         {
+            throw new NotImplementedException();
+#if false
             if (IsEmpty)
             {
                 return "Empty";
             }
 
             // Helper to get the numeric list separator for a given culture.
-            char separator = ',';
+            char separator = MS.Internal.TokenizerHelper.GetNumericListSeparator(provider);
             return String.Format(provider,
-                                 "{1:" + format + "}{0}{2:" + format + "}{0}{3:" + format + "}{0}{4:" + format + "}",
+                                 "{1:" + format + "}{0}{2:" + format + "}",
                                  separator,
-                                 _x,
-                                 _y,
                                  _width,
                                  _height);
+#endif
+
         }
 
 
@@ -300,8 +326,6 @@ namespace IMGUI
         #region Internal Fields
 
 
-        internal double _x;
-        internal double _y;
         internal double _width;
         internal double _height;
 

@@ -30,8 +30,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExCSS">
+      <HintPath>..\packages\ExCSS.net40.2.0.5\lib\net45\ExCSS.dll</HintPath>
+    </Reference>
+    <Reference Include="Ivony.Core">
+      <HintPath>..\packages\Ivony.Core.1.1.1\lib\Ivony.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Ivony.Html">
+      <HintPath>..\packages\Jumony.Core.3.0.15\lib\Ivony.Html.dll</HintPath>
+    </Reference>
+    <Reference Include="Ivony.Html.Parser">
+      <HintPath>..\packages\Jumony.Core.3.0.15\lib\Ivony.Html.Parser.dll</HintPath>
+    </Reference>
+    <Reference Include="Ivony.Html.Parser.Regulars">
+      <HintPath>..\packages\Jumony.Core.3.0.15\lib\Ivony.Html.Parser.Regulars.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\packages\MathNet.Numerics.3.7.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,19 +58,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Error.cs" />
+    <Compile Include="Detalied\Point.cs" />
+    <Compile Include="Detalied\Rect.cs" />
+    <Compile Include="Detalied\Size.cs" />
+    <Compile Include="Detalied\Vector.cs" />
+    <Compile Include="Font.cs" />
+    <Compile Include="Input.cs" />
+    <Compile Include="Point.cs" />
+    <Compile Include="Rect.cs" />
+    <Compile Include="Size.cs" />
+    <Compile Include="Vector.cs" />
+    <Compile Include="Skin.cs" />
+    <Compile Include="RenderObject.Build.cs" />
+    <Compile Include="Style.Build.cs" />
+    <Compile Include="Box.cs" />
+    <Compile Include="RenderObject.cs" />
     <Compile Include="GUI.cs" />
     <Compile Include="CarioExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rect.cs" />
+    <Compile Include="Length.cs" />
+    <Compile Include="Transform.cs" />
     <Compile Include="Scalar.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Input\Input.csproj">
-      <Project>{ecb0370e-5cd0-4afb-b422-3cbf441ee594}</Project>
-      <Name>Input</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Mono.Cairo\Mono.Cairo.csproj">
       <Project>{3f2d21fe-0e46-465c-a35a-4ea135bf0017}</Project>
       <Name>Mono.Cairo</Name>
@@ -60,6 +94,10 @@
       <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
       <Name>Win32</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
