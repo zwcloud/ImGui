@@ -22,6 +22,7 @@ namespace WinFormCario
         int fps = 0;
 
         GUI gui;
+        private Color WindowBackgroundColor = new Color(0x6A/255.0, 0x6A/255.0, 0x6A/255.0);
 
         public MainForm()
         {
@@ -56,19 +57,25 @@ namespace WinFormCario
         /// </summary>
         void OnGUI()
         {
-            g.DrawText(new Rect(0, 0, 100, 30), "sdfafsadf", new Font());
-            g.Stroke();
-
             gui.Label(
-                new Rect(0, 40/*ClientRectangle.Bottom - g.FontExtents.Height*/, 200, g.FontExtents.Height),
+                new Rect(0, ClientRectangle.Bottom - g.FontExtents.Height, 200, g.FontExtents.Height),
                 string.Format("FPS: {0}", fps)
                 );
 
-            if (gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button!"))
+            if (gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 0!"))
             {
-                Debug.WriteLine("button! clicked");
+                Debug.WriteLine("button 0 clicked!");
+            }
+            
+            if (gui.Button(new Rect(new Point(20, 42), new Point(120, 62)), "button 1!"))
+            {
+                Debug.WriteLine("button 1 clicked!");
             }
 
+            if (gui.Button(new Rect(new Point(20, 64), new Point(120, 84)), "button 2!"))
+            {
+                Debug.WriteLine("button 2 clicked!");
+            }
         }
 
         /// <summary>
@@ -114,7 +121,7 @@ namespace WinFormCario
 
             // Any additional rendering here
             g.Save();
-            g.SetSourceRGBA(1, 1, 1, 1);
+            g.SetSourceColor(WindowBackgroundColor);
             g.Operator = Operator.Source;
             g.Paint();
             g.Restore();

@@ -96,22 +96,62 @@ namespace IMGUI
 
         #endregion
 
-        //Color
-        /// <summary>
-        /// Color of content background
-        /// </summary>
-        public Color BackgroundColor { get; set; }
+        #region Interaction
+
+        private StyleState _normal;
+        public StyleState Normal
+        {
+            get
+            {
+                if (this._normal == null)
+                {
+                    this._normal = new StyleState(this);
+                }
+                return this._normal;
+            }
+            internal set { _normal = value; }
+        }
+
+        private StyleState _active;
+        public StyleState Active
+        {
+            get
+            {
+                if (this._active == null)
+                {
+                    this._active = new StyleState(this);
+                }
+                return this._active;
+            }
+            internal set { _active = value; }
+        }
+
+        private StyleState _hover;
+        public StyleState Hover
+        {
+            get
+            {
+                if (this._hover == null)
+                {
+                    this._hover = new StyleState(this);
+                }
+                return this._hover;
+            }
+            internal set { _hover = value; }
+        }
+        
+        #endregion
 
         public Style()
         {
             PaddingTop = PaddingRight = PaddingBottom = PaddingLeft = Length.Zero;
             BorderTop = BorderRight = BorderBottom = BorderLeft = new Length(1, Unit.Pixel);
-            BorderTopColor =new Color(1,0,0);
-                BorderRightColor = new Color(0,1,0);
-                BorderBottomColor = new Color(0,0,1);
-                BorderLeftColor = new Color(1,1,0);
+            BorderTopColor = CairoEx.ColorBlack;
+            BorderRightColor = CairoEx.ColorBlack;
+            BorderBottomColor = CairoEx.ColorBlack;
+            BorderLeftColor = CairoEx.ColorBlack;
             MarginTop = MarginRight = MarginBottom = MarginLeft = Length.Zero;
-            BackgroundColor = CairoEx.ColorWhite;
         }
+
     }
 }

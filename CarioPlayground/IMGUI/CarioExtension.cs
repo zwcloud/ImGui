@@ -5,7 +5,7 @@ namespace IMGUI
 {
     public static class CairoEx
     {
-#region Basic element rendering
+        #region Basic element rendering
 
         /// <summary>
         /// Draw a box model
@@ -14,7 +14,7 @@ namespace IMGUI
         /// <param name="rect">the rect (of the border-box) in which to draw this box model </param>
         /// <param name="content">content of the box mode</param>
         /// <param name="style">style of the box model</param>
-        public static void DrawBoxModel(this Context g, Rect rect, Content content, Style style, Font font)
+        public static void DrawBoxModel(this Context g, Rect rect, Content content, Style style, Font font, StyleStateType type)
         {
             //Widths of border
             var bt = style.BorderTop;
@@ -63,7 +63,20 @@ namespace IMGUI
              */
 
             //Content(draw as a filled rectangle now)
-            FillRectangle(g, rect, style.BackgroundColor);
+            var backgroundColor = style.Normal.BackgroundColor;
+            switch (type)
+            {
+                case StyleStateType.Active:
+                    backgroundColor = style.Active.BackgroundColor;
+                    break;
+                case StyleStateType.Hover:
+                    backgroundColor = style.Hover.BackgroundColor;
+                    break;
+                default:
+                    backgroundColor = style.Normal.BackgroundColor;
+                    break;
+            }
+            FillRectangle(g, rect, backgroundColor);
 
             //Border
             //  Top
@@ -81,6 +94,25 @@ namespace IMGUI
 
             /*
              * TODO Show picture here
+             */
+            switch (type)
+            {
+                case StyleStateType.Active:
+                    font.Color = style.Active.FontColor;
+                    font.Weight = style.Active.FontWeight;
+                    break;
+                case StyleStateType.Hover:
+                    font.Color = style.Hover.FontColor;
+                    font.Weight = style.Hover.FontWeight;
+                    break;
+                default:
+                    font.Color = style.Normal.FontColor;
+                    font.Weight = style.Normal.FontWeight;
+                    break;
+            }
+
+            /*
+             * TODO Replace DrawText with proper method
              */
             g.DrawText(rect, content.Text, font);
         }
@@ -171,23 +203,44 @@ namespace IMGUI
         #region text
         public static void DrawText(this Context g, Rect rect, string text, Font font)
         {
-            //TODO draw text in the middle of the rect
+            //TODO draw text in the top-left of the rect
             g.SelectFontFace(font.Family, font.Slant, font.Weight);
             g.SetFontSize(font.Size);
             g.SetSourceColor(font.Color);
-            g.MoveTo(rect.BottomLeft);
+            g.MoveTo(rect.Left, rect.Y+0.5*rect.Height+0.5*font.Size);
             g.ShowText(text);
-            g.Stroke();
         }
         #endregion
 
-#endregion
+        #endregion
 
         #region Basic definitions
 
         public static readonly Color ColorBlack = new Color(0, 0, 0, 0xff);
         public static readonly Color ColorWhite = new Color(0xff, 0xff, 0xff, 0xff);
+        public static readonly Color ColorMetal = new Color();
         
         #endregion
+        
+        public static Color ColorRgb(byte r, byte g, byte b)
+        {
+            return new Color(r/255.0,g/255.0,b/255.0,1.0);
+        }
+
+        public static Color ColorArgb(byte a, byte r, byte g, byte b)
+        {
+            return new Color(r/255.0,g/255.0,b/255.0,a/255.0);
+        }
+
+        public static Color ColorArgb(uint colorValue)
+        {
+            return ColorArgb(
+                (byte) ((colorValue >> 24) & 0xff),
+                (byte) ((colorValue >> 16) & 0xff),
+                (byte) ((colorValue >> 8) & 0xff),
+                (byte) (colorValue & 0xff)
+                );
+        }
     }
+
 }

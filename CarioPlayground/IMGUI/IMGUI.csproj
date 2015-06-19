@@ -66,10 +66,12 @@
     <Compile Include="Detalied\Size.cs" />
     <Compile Include="Detalied\Vector.cs" />
     <Compile Include="Font.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="Size.cs" />
+    <Compile Include="StyleState.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Skin.cs" />
     <Compile Include="RenderObject.Build.cs" />

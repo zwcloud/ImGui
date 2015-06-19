@@ -2,6 +2,16 @@
 namespace IMGUI
 {
     /// <summary>
+    /// Type of the style state
+    /// </summary>
+    public enum StyleStateType
+    {
+        Normal,
+        Hover,
+        Active,
+    }
+
+    /// <summary>
     /// Key state
     /// </summary>
     public enum InputState
