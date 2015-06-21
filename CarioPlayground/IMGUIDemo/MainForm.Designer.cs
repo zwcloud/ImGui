@@ -1,4 +1,4 @@
-﻿namespace WinFormCario
+﻿namespace IMGUIDemo
 {
     partial class MainForm
     {

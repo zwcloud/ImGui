@@ -134,13 +134,6 @@ namespace WinFormCario
 
             {
                 g.SetSourceSurface(imageSurface, 0, 0);
-                //g.MoveTo(p1);
-                //g.LineTo(p2); //Top
-                //g.LineTo(p3); //Right
-                //g.LineTo(p4); //Bottom
-                //g.LineTo(p1); //Left
-                //g.ClosePath();
-
                 g.Paint();
             }
 
