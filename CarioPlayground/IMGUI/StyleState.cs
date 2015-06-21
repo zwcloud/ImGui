@@ -6,7 +6,7 @@ namespace IMGUI
     {
         private Style _sourceStyle;
 
-        public Image BackgroundImage { get; set; }
+        public Texture BackgroundImage { get; set; }
         public Color BackgroundColor { get; set; }
         public FontWeight FontWeight { get; set; }
         public Color FontColor { get; set; }

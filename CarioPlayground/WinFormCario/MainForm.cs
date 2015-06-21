@@ -17,6 +17,8 @@ namespace WinFormCario
         int frames = 0;
         int fps = 0;
 
+        private ImageSurface imageSurface;
+
         public MainForm()
         {
             InitializeComponent();
@@ -69,6 +71,7 @@ namespace WinFormCario
             p3 = new PointD(100, 100);
             p4 = new PointD(10, 100);
 
+#if false
             g.SetSourceColor(new Color(0,1,0));
             g.MoveTo(p1);
             g.LineTo(p2);
@@ -127,6 +130,19 @@ namespace WinFormCario
             g.ClosePath();
             g.FillRule =  FillRule.EvenOdd;
             g.Fill();
+#endif
+
+            {
+                g.SetSourceSurface(imageSurface, 0, 0);
+                //g.MoveTo(p1);
+                //g.LineTo(p2); //Top
+                //g.LineTo(p3); //Right
+                //g.LineTo(p4); //Bottom
+                //g.LineTo(p1); //Left
+                //g.ClosePath();
+
+                g.Paint();
+            }
 
 
             g.MoveTo(new PointD(0, this.ClientSize.Height-30));
@@ -165,6 +181,7 @@ namespace WinFormCario
 
         protected override void OnLoad(EventArgs e)
         {
+            imageSurface = new ImageSurface("W:/VS2013/CarioPlayground/Resources/Toggle.Off.png");
         }
 
         protected override void OnPaint(PaintEventArgs e)

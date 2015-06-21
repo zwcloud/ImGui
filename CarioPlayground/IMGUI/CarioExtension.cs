@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Cairo;
 
 namespace IMGUI
@@ -63,7 +66,7 @@ namespace IMGUI
              */
 
             //Content(draw as a filled rectangle now)
-            var backgroundColor = style.Normal.BackgroundColor;
+            Color backgroundColor;
             switch (type)
             {
                 case StyleStateType.Active:
@@ -92,9 +95,8 @@ namespace IMGUI
             FillPolygon(g,
                 new PointD[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
 
-            /*
-             * TODO Show picture here
-             */
+
+            //Check state of the style
             switch (type)
             {
                 case StyleStateType.Active:
@@ -111,13 +113,34 @@ namespace IMGUI
                     break;
             }
 
+
+            if (content.Image != null)
+            {
+                g.SetSourceSurface(content.Image._surface, (int)rect.TopLeft.X, (int)rect.TopLeft.Y );
+                g.Paint();
+            }
+
             /*
              * TODO Replace DrawText with proper method
              */
-            g.DrawText(rect, content.Text, font);
+            if (content.Text != null)
+            {
+                g.DrawText(rect, content.Text, font);
+            }
         }
 
         #region primitive draw helpers
+
+        private static void MakeRectangePath(this Context g, Rect rect)
+        {
+            g.MoveTo(rect.TopLeft);
+            g.LineTo(rect.TopRight); //Top
+            g.LineTo(rect.BottomRight); //Right
+            g.LineTo(rect.BottomLeft); //Bottom
+            g.LineTo(rect.TopLeft); //Left
+            g.ClosePath();
+        }
+
         public static void StrokeRectangle(Context g,
             Rect rect,
             Color topColor,
@@ -203,13 +226,14 @@ namespace IMGUI
         #region text
         public static void DrawText(this Context g, Rect rect, string text, Font font)
         {
-            //TODO draw text in the top-left of the rect
+            //TODO now drawing text's bottom-left corner is in the bottom-left of the rect
             g.SelectFontFace(font.Family, font.Slant, font.Weight);
             g.SetFontSize(font.Size);
             g.SetSourceColor(font.Color);
             g.MoveTo(rect.Left, rect.Y+0.5*rect.Height+0.5*font.Size);
             g.ShowText(text);
         }
+
         #endregion
 
         #endregion
@@ -220,8 +244,11 @@ namespace IMGUI
         public static readonly Color ColorWhite = new Color(0xff, 0xff, 0xff, 0xff);
         public static readonly Color ColorMetal = new Color();
         
+        
+
         #endregion
         
+        #region Color
         public static Color ColorRgb(byte r, byte g, byte b)
         {
             return new Color(r/255.0,g/255.0,b/255.0,1.0);
@@ -241,6 +268,31 @@ namespace IMGUI
                 (byte) (colorValue & 0xff)
                 );
         }
+#endregion
+
+        #region Image
+
+
+        public static ImageSurface CreateImage(this Context g, string pngFilePath)
+        {
+            ImageSurface surface;
+            try
+            {
+                surface = new ImageSurface(pngFilePath);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return surface;
+        } 
+
+        #endregion
+
+        static CairoEx()
+        {
+        }
+
     }
 
 }

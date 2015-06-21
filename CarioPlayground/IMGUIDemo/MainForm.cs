@@ -52,6 +52,12 @@ namespace WinFormCario
             };
         }
 
+        #region GUI paramters
+        
+        private bool Opened = false;
+        
+        #endregion
+
         /// <summary>
         /// GUI logic here
         /// </summary>
@@ -59,7 +65,7 @@ namespace WinFormCario
         {
             gui.Label(
                 new Rect(0, ClientRectangle.Bottom - g.FontExtents.Height, 200, g.FontExtents.Height),
-                string.Format("FPS: {0}", fps)
+                string.Format("FPS: {0} Mouse ({1:F1},{2:f1})", fps, Input.MousePos.X, Input.MousePos.Y)
                 );
 
             if (gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 0!"))
@@ -76,6 +82,11 @@ namespace WinFormCario
             {
                 Debug.WriteLine("button 2 clicked!");
             }
+
+            var oldValue_Opened = Opened;
+            Opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 108)), "Toggle 0", Opened);
+            if(Opened ^ oldValue_Opened)
+                Debug.WriteLine("Toggle 0 {0}", new object[]{Opened?"on!":"off"});
         }
 
         /// <summary>

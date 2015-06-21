@@ -145,7 +145,7 @@ namespace IMGUI
         public Style()
         {
             PaddingTop = PaddingRight = PaddingBottom = PaddingLeft = Length.Zero;
-            BorderTop = BorderRight = BorderBottom = BorderLeft = new Length(1, Unit.Pixel);
+            BorderTop = BorderRight = BorderBottom = BorderLeft = Length.Zero;;
             BorderTopColor = CairoEx.ColorBlack;
             BorderRightColor = CairoEx.ColorBlack;
             BorderBottomColor = CairoEx.ColorBlack;

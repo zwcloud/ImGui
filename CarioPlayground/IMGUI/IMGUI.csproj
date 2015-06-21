@@ -66,7 +66,7 @@
     <Compile Include="Detalied\Size.cs" />
     <Compile Include="Detalied\Vector.cs" />
     <Compile Include="Font.cs" />
-    <Compile Include="Image.cs" />
+    <Compile Include="Texture.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Rect.cs" />
@@ -76,7 +76,6 @@
     <Compile Include="Skin.cs" />
     <Compile Include="RenderObject.Build.cs" />
     <Compile Include="Style.Build.cs" />
-    <Compile Include="Box.cs" />
     <Compile Include="RenderObject.cs" />
     <Compile Include="GUI.cs" />
     <Compile Include="CarioExtension.cs" />
