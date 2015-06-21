@@ -125,7 +125,7 @@ namespace IMGUI
              */
             if (content.Text != null)
             {
-                g.DrawText(rect, content.Text, font);
+                g.DrawText(rect, content.Text, font, style.TextStyle);
             }
         }
 
@@ -224,13 +224,36 @@ namespace IMGUI
 
 
         #region text
+
         public static void DrawText(this Context g, Rect rect, string text, Font font)
         {
-            //TODO now drawing text's bottom-left corner is in the bottom-left of the rect
+            //drawing text's bottom-left corner is in the bottom-left of the rect
             g.SelectFontFace(font.Family, font.Slant, font.Weight);
             g.SetFontSize(font.Size);
             g.SetSourceColor(font.Color);
-            g.MoveTo(rect.Left, rect.Y+0.5*rect.Height+0.5*font.Size);
+            g.MoveTo(rect.Left, rect.Y + 0.5 * rect.Height + 0.5 * font.Size);
+            g.ShowText(text);
+        }
+
+        public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
+        {
+            g.SelectFontFace(font.Family, font.Slant, font.Weight);
+            g.SetFontSize(font.Size);
+            g.SetSourceColor(font.Color);
+            Point p;
+            if (textStyle.TextAlign == TextAlignment.Left)
+            {
+                //drawing text's bottom-left corner is in the bottom-left of the rect
+                p = new Point(rect.Left, rect.Y + 0.5*rect.Height + 0.5*font.Size);
+            }
+            else
+            {
+                var extents = g.TextExtents(text);
+                p = new Point(
+                    rect.X + rect.Width/2 - (extents.Width/2 + extents.XBearing),
+                    rect.Y + rect.Height/2 - (extents.Height/2 + extents.YBearing));
+            }
+            g.MoveTo(p);
             g.ShowText(text);
         }
 

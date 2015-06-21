@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 using Cairo;
@@ -35,7 +37,9 @@ namespace IMGUIDemo
         int _fps;
 
         private bool _opened;
-        
+
+        private double _result;
+
         #endregion
 
         /// <summary>
@@ -45,9 +49,10 @@ namespace IMGUIDemo
         {
             gui.Label(
                 new Rect(0, ClientRectangle.Bottom - g.FontExtents.Height, 200, g.FontExtents.Height),
-                string.Format("FPS: {0} Mouse ({1:F1},{2:f1})", _fps, Input.MousePos.X, Input.MousePos.Y)
+                string.Format("FPS: {0} Mouse ({1},{2})", _fps, Input.MousePos.X, Input.MousePos.Y)
                 );
 
+#if Test
             if (gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 0!"))
             {
                 Debug.WriteLine("button 0 clicked!");
@@ -67,6 +72,44 @@ namespace IMGUIDemo
             _opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 108)), "Toggle 0", _opened);
             if(_opened ^ oldValueOpened)
                 Debug.WriteLine("Toggle 0 {0}", new object[]{_opened?"on!":"off"});
+#else
+            gui.Label(new Rect(new Point(14, 14), new Size(190, 50)), Math.Abs(_result) < double.Epsilon ?"0":_result.ToString("F", CultureInfo.InvariantCulture));
+            
+            gui.Button(new Rect(new Point(14, 68), new Size(34, 27)), "←—");
+            gui.Button(new Rect(new Point(53, 68), new Size(34, 27)), "CE");
+            gui.Button(new Rect(new Point(92, 68), new Size(34, 27)), "C");
+            gui.Button(new Rect(new Point(131, 68), new Size(34, 27)), "±");
+            gui.Button(new Rect(new Point(170, 68), new Size(34, 27)), "√");
+            
+            gui.Button(new Rect(new Point(14, 100), new Size(34, 27)), "7");
+            gui.Button(new Rect(new Point(53, 100), new Size(34, 27)), "8");
+            gui.Button(new Rect(new Point(92, 100), new Size(34, 27)), "9");
+            gui.Button(new Rect(new Point(131,100), new Size(34, 27)), "/");
+            gui.Button(new Rect(new Point(170,100), new Size(34, 27)), "%");
+            
+            gui.Button(new Rect(new Point(14, 132), new Size(34, 27)), "4");
+            gui.Button(new Rect(new Point(53, 132), new Size(34, 27)), "5");
+            gui.Button(new Rect(new Point(92, 132), new Size(34, 27)), "6");
+            gui.Button(new Rect(new Point(131,132), new Size(34, 27)), "*");
+            gui.Button(new Rect(new Point(170,132), new Size(34, 27)), "1/x");
+            
+            gui.Button(new Rect(new Point(14, 132), new Size(34, 27)), "4");
+            gui.Button(new Rect(new Point(53, 132), new Size(34, 27)), "5");
+            gui.Button(new Rect(new Point(92, 132), new Size(34, 27)), "6");
+            gui.Button(new Rect(new Point(131,132), new Size(34, 27)), "*");
+            gui.Button(new Rect(new Point(170,132), new Size(34, 27)), "1/x");
+            
+            gui.Button(new Rect(new Point(14, 164), new Size(34, 27)), "1");
+            gui.Button(new Rect(new Point(53, 164), new Size(34, 27)), "2");
+            gui.Button(new Rect(new Point(92, 164), new Size(34, 27)), "3");
+            gui.Button(new Rect(new Point(131,164), new Size(34, 27)), "-");
+
+            gui.Button(new Rect(new Point(14,196), new Size(73, 27)), "0");
+            gui.Button(new Rect(new Point(92,196), new Size(34, 27)), ".");
+            gui.Button(new Rect(new Point(131,196), new Size(34, 27)), "+");
+            
+            gui.Button(new Rect(new Point(170,164), new Size(34, 59)), "=");
+#endif
         }
 
         /// <summary>

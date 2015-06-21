@@ -12,6 +12,16 @@ namespace IMGUI
     }
 
     /// <summary>
+    /// Type of text alignment
+    /// </summary>
+    public enum TextAlignment
+    {
+        Left,
+        Center,
+        Right
+    }
+
+    /// <summary>
     /// Key state
     /// </summary>
     public enum InputState

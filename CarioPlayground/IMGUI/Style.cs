@@ -96,6 +96,12 @@ namespace IMGUI
 
         #endregion
 
+        #region text
+
+        public TextStyle TextStyle { get; set; }
+
+        #endregion
+
         #region Interaction
 
         private StyleState _normal;
@@ -141,6 +147,7 @@ namespace IMGUI
         }
         
         #endregion
+        
 
         public Style()
         {
@@ -151,6 +158,13 @@ namespace IMGUI
             BorderBottomColor = CairoEx.ColorBlack;
             BorderLeftColor = CairoEx.ColorBlack;
             MarginTop = MarginRight = MarginBottom = MarginLeft = Length.Zero;
+
+            TextStyle = new TextStyle
+            {
+                TextAlign = TextAlignment.Left,
+                LineSpacing = 0,
+                TabSize = 4
+            };
         }
 
     }

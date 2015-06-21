@@ -66,6 +66,8 @@
     <Compile Include="Detalied\Size.cs" />
     <Compile Include="Detalied\Vector.cs" />
     <Compile Include="Font.cs" />
+    <Compile Include="GUIText.cs" />
+    <Compile Include="TextStyle.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Point.cs" />
