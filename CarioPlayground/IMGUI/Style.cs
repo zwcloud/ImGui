@@ -96,9 +96,17 @@ namespace IMGUI
 
         #endregion
 
-        #region text
+        #region Text
+
+        public Font Font { get; set; }
 
         public TextStyle TextStyle { get; set; }
+
+        #endregion
+
+        #region Background
+
+        public BackgroundStyle BackgroundStyle { get; set; }
 
         #endregion
 
@@ -159,13 +167,23 @@ namespace IMGUI
             BorderLeftColor = CairoEx.ColorBlack;
             MarginTop = MarginRight = MarginBottom = MarginLeft = Length.Zero;
 
+            Font = new Font();
+
             TextStyle = new TextStyle
             {
                 TextAlign = TextAlignment.Left,
                 LineSpacing = 0,
                 TabSize = 4
             };
+
+            BackgroundStyle = new BackgroundStyle
+            {
+                Color = CairoEx.ColorWhite,
+                Image = null,
+                Pattern = null
+            };
         }
+
 
     }
 }

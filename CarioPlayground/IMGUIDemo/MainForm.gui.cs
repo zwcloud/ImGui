@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Cairo;
@@ -38,7 +39,16 @@ namespace IMGUIDemo
 
         private bool _opened;
 
-        private double _result;
+
+        public ButtonType Last { get; set; }
+        public ButtonType Current { get; private set; }
+        public Phase Phase { get; set; }
+
+        private Calc calc = new Calc();
+
+        private bool EnteringOperand0 = true;
+        private bool EnteringOperand1 = false;
+        private bool EnteringOperator = false;
 
         #endregion
 
@@ -73,42 +83,103 @@ namespace IMGUIDemo
             if(_opened ^ oldValueOpened)
                 Debug.WriteLine("Toggle 0 {0}", new object[]{_opened?"on!":"off"});
 #else
-            gui.Label(new Rect(new Point(14, 14), new Size(190, 50)), Math.Abs(_result) < double.Epsilon ?"0":_result.ToString("F", CultureInfo.InvariantCulture));
-            
-            gui.Button(new Rect(new Point(14, 68), new Size(34, 27)), "←—");
-            gui.Button(new Rect(new Point(53, 68), new Size(34, 27)), "CE");
-            gui.Button(new Rect(new Point(92, 68), new Size(34, 27)), "C");
-            gui.Button(new Rect(new Point(131, 68), new Size(34, 27)), "±");
-            gui.Button(new Rect(new Point(170, 68), new Size(34, 27)), "√");
-            
-            gui.Button(new Rect(new Point(14, 100), new Size(34, 27)), "7");
-            gui.Button(new Rect(new Point(53, 100), new Size(34, 27)), "8");
-            gui.Button(new Rect(new Point(92, 100), new Size(34, 27)), "9");
-            gui.Button(new Rect(new Point(131,100), new Size(34, 27)), "/");
-            gui.Button(new Rect(new Point(170,100), new Size(34, 27)), "%");
-            
-            gui.Button(new Rect(new Point(14, 132), new Size(34, 27)), "4");
-            gui.Button(new Rect(new Point(53, 132), new Size(34, 27)), "5");
-            gui.Button(new Rect(new Point(92, 132), new Size(34, 27)), "6");
-            gui.Button(new Rect(new Point(131,132), new Size(34, 27)), "*");
-            gui.Button(new Rect(new Point(170,132), new Size(34, 27)), "1/x");
-            
-            gui.Button(new Rect(new Point(14, 132), new Size(34, 27)), "4");
-            gui.Button(new Rect(new Point(53, 132), new Size(34, 27)), "5");
-            gui.Button(new Rect(new Point(92, 132), new Size(34, 27)), "6");
-            gui.Button(new Rect(new Point(131,132), new Size(34, 27)), "*");
-            gui.Button(new Rect(new Point(170,132), new Size(34, 27)), "1/x");
-            
-            gui.Button(new Rect(new Point(14, 164), new Size(34, 27)), "1");
-            gui.Button(new Rect(new Point(53, 164), new Size(34, 27)), "2");
-            gui.Button(new Rect(new Point(92, 164), new Size(34, 27)), "3");
-            gui.Button(new Rect(new Point(131,164), new Size(34, 27)), "-");
+            if(Current != ButtonType.Idle)
+                Last = Current;
+            Current = ButtonType.Idle;
 
-            gui.Button(new Rect(new Point(14,196), new Size(73, 27)), "0");
-            gui.Button(new Rect(new Point(92,196), new Size(34, 27)), ".");
-            gui.Button(new Rect(new Point(131,196), new Size(34, 27)), "+");
-            
-            gui.Button(new Rect(new Point(170,164), new Size(34, 59)), "=");
+            gui.Label(new Rect(new Point(14, 14), new Size(190, 20)), calc.Expression);
+            gui.Label(new Rect(new Point(14, 33), new Size(190, 30)), calc.Result);
+
+            var backspace = gui.Button(new Rect(new Point(14, 68), new Size(34, 27)), "←—");
+            if(backspace) Current = ButtonType.Backspace;
+            var clearInput = gui.Button(new Rect(new Point(53, 68), new Size(34, 27)), "CE");
+            if (clearInput) Current = ButtonType.ClearInput;
+            var clear = gui.Button(new Rect(new Point(92, 68), new Size(34, 27)), "C");
+            if (clear) Current = ButtonType.Clear;
+            var plusMinus = gui.Button(new Rect(new Point(131, 68), new Size(34, 27)), "±");
+            if (plusMinus) Current = ButtonType.PlusMinus;
+            var sqrt = gui.Button(new Rect(new Point(170, 68), new Size(34, 27)), "√");
+            if (sqrt) Current = ButtonType.Sqrt;
+
+            bool[] number = new bool[10];
+
+            number[7] = gui.Button(new Rect(new Point(14, 100), new Size(34, 27)), "7");
+            if (number[7]) Current = ButtonType.Number7;
+            number[8] = gui.Button(new Rect(new Point(53, 100), new Size(34, 27)), "8");
+            if (number[8]) Current = ButtonType.Number8;
+            number[9] = gui.Button(new Rect(new Point(92, 100), new Size(34, 27)), "9");
+            if (number[9]) Current = ButtonType.Number9;
+            var divide = gui.Button(new Rect(new Point(131, 100), new Size(34, 27)), "/");
+            if (divide) Current = ButtonType.Divide;
+            var percent = gui.Button(new Rect(new Point(170, 100), new Size(34, 27)), "%");
+            if (percent) Current = ButtonType.Percent;
+
+            number[4] = gui.Button(new Rect(new Point(14, 132), new Size(34, 27)), "4");
+            if (number[4]) Current = ButtonType.Number4;
+            number[5] = gui.Button(new Rect(new Point(53, 132), new Size(34, 27)), "5");
+            if (number[5]) Current = ButtonType.Number5;
+            number[6] = gui.Button(new Rect(new Point(92, 132), new Size(34, 27)), "6");
+            if (number[6]) Current = ButtonType.Number6;
+            var multiply = gui.Button(new Rect(new Point(131, 132), new Size(34, 27)), "*");
+            if (multiply) Current = ButtonType.Multiply;
+            var inverse = gui.Button(new Rect(new Point(170, 132), new Size(34, 27)), "1/x");
+            if (inverse) Current = ButtonType.Inverse;
+
+            number[1] = gui.Button(new Rect(new Point(14, 164), new Size(34, 27)), "1");
+            if (number[1]) Current = ButtonType.Number1;
+            number[2] = gui.Button(new Rect(new Point(53, 164), new Size(34, 27)), "2");
+            if (number[2]) Current = ButtonType.Number2;
+            number[3] = gui.Button(new Rect(new Point(92, 164), new Size(34, 27)), "3");
+            if (number[3]) Current = ButtonType.Number3;
+            var minus = gui.Button(new Rect(new Point(131, 164), new Size(34, 27)), "-");
+            if (minus) Current = ButtonType.Minus;
+
+            number[0] = gui.Button(new Rect(new Point(14, 196), new Size(73, 27)), "0");
+            if (number[0]) Current = ButtonType.Number0;
+            var dot = gui.Button(new Rect(new Point(92, 196), new Size(34, 27)), ".");
+            if (dot) Current = ButtonType.Dot;
+            var plus = gui.Button(new Rect(new Point(131, 196), new Size(34, 27)), "+");
+            if (plus) Current = ButtonType.Plus;
+
+            var equal = gui.Button(new Rect(new Point(170, 164), new Size(34, 59)), "=");
+            if (equal) Current = ButtonType.Equal;
+
+            if (Current == ButtonType.Idle)
+                return;
+
+            if (!EnteringOperand1 && Current.IsOperator())
+            {
+                EnteringOperand0 = false;
+                calc.Op = (OpType)Current;
+                EnteringOperator = true;
+                EnteringOperand1 = true;
+            }
+
+            if (EnteringOperator && Last.IsOperator() && Current.IsNumber())
+            {
+                EnteringOperator = false;
+                EnteringOperand1 = true;
+            }
+
+            if (Current.IsNumber())
+            {
+                if(EnteringOperand0)
+                    calc.Operand0 += (int)Current;
+                else if(EnteringOperand1)
+                    calc.Operand1 += (int)Current;
+            }
+
+            if (Last.IsNumber() && Current.IsUnaryOperator())
+            {
+                calc.Op = (OpType)Current;
+                calc.DoCalc();
+                EnteringOperand0 = true;
+                EnteringOperator = false;
+                EnteringOperand1 = false;
+            }
+
+
+
 #endif
         }
 

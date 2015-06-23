@@ -137,6 +137,21 @@ namespace WinFormCario
                 g.Paint();
             }
 
+            {
+                LinearGradient gradient = new LinearGradient(0,10, 0, 100);
+                gradient.AddColorStop(0, new Color(0.87, 0.93, 0.96));
+                gradient.AddColorStop(1, new Color(0.65, 0.85, 0.96));
+                g.SetSource(gradient);
+                g.MoveTo(p1);
+                g.LineTo(p2);
+                g.LineTo(p3);
+                g.LineTo(p4);
+                g.LineTo(p1);
+                g.ClosePath();
+                g.Fill();
+
+            }
+
 
             g.MoveTo(new PointD(0, this.ClientSize.Height-30));
             g.SetFontSize(24.0);

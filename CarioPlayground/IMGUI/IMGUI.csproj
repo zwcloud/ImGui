@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundStyle.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />

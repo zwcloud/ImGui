@@ -26,7 +26,7 @@ namespace IMGUI
                 styleStateType = StyleStateType.Hover;
             else
                 styleStateType = StyleStateType.Normal;
-            g.DrawBoxModel(rect, new Content(text), Skin._current.Button, Skin._current.Font, styleStateType);
+            g.DrawBoxModel(rect, new Content(text), Skin._current.Button, styleStateType);
 
             bool clicked = Input.LeftButtonClicked && rect.Contains(Input.MousePos);
             return clicked;
@@ -44,7 +44,7 @@ namespace IMGUI
             else
                 styleStateType = StyleStateType.Normal;
 
-            g.DrawBoxModel(rect, new Content(text), Skin._current.Label, Skin._current.Font, styleStateType);
+            g.DrawBoxModel(rect, new Content(text), Skin._current.Label, styleStateType);
         }
 
         public bool Toggle(Rect rect, string text, bool value)
@@ -65,13 +65,13 @@ namespace IMGUI
             var toggleBoxRect = new Rect(rect.TopLeft, new Size(20, 20));
             g.DrawBoxModel(toggleBoxRect,
                 new Content(Texture._presets[on?"Toggle.On":"Toggle.Off"]),
-                Skin._current.Toggle, Skin._current.Font,
+                Skin._current.Toggle,
                 styleStateType);
 
             var toggleTextRect = new Rect(toggleBoxRect.TopRight, rect.BottomRight);
             g.DrawBoxModel(toggleTextRect,
                 new Content(text),
-                Skin._current.Toggle, Skin._current.Font,
+                Skin._current.Toggle,
                 styleStateType);
 
             return on;

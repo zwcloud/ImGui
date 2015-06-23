@@ -17,7 +17,7 @@ namespace IMGUI
         /// <param name="rect">the rect (of the border-box) in which to draw this box model </param>
         /// <param name="content">content of the box mode</param>
         /// <param name="style">style of the box model</param>
-        public static void DrawBoxModel(this Context g, Rect rect, Content content, Style style, Font font, StyleStateType type)
+        public static void DrawBoxModel(this Context g, Rect rect, Content content, Style style, StyleStateType type)
         {
             //Widths of border
             var bt = style.BorderTop;
@@ -100,16 +100,16 @@ namespace IMGUI
             switch (type)
             {
                 case StyleStateType.Active:
-                    font.Color = style.Active.FontColor;
-                    font.Weight = style.Active.FontWeight;
+                    style.Font.Color = style.Active.FontColor;
+                    style.Font.Weight = style.Active.FontWeight;
                     break;
                 case StyleStateType.Hover:
-                    font.Color = style.Hover.FontColor;
-                    font.Weight = style.Hover.FontWeight;
+                    style.Font.Color = style.Hover.FontColor;
+                    style.Font.Weight = style.Hover.FontWeight;
                     break;
                 default:
-                    font.Color = style.Normal.FontColor;
-                    font.Weight = style.Normal.FontWeight;
+                    style.Font.Color = style.Normal.FontColor;
+                    style.Font.Weight = style.Normal.FontWeight;
                     break;
             }
 
@@ -125,7 +125,7 @@ namespace IMGUI
              */
             if (content.Text != null)
             {
-                g.DrawText(rect, content.Text, font, style.TextStyle);
+                g.DrawText(rect, content.Text, style.Font, style.TextStyle);
             }
         }
 

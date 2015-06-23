@@ -39,6 +39,13 @@ namespace IMGUI
                 Button.Normal.BackgroundColor = CairoEx.ColorRgb(0x9F, 0x9F, 0x9F);
                 Button.Hover.BackgroundColor = CairoEx.ColorArgb(0xFFAFAFAF);
                 Button.Active.BackgroundColor = CairoEx.ColorArgb(0xFF8F8F8F);
+
+                var gradient = new LinearGradient(0, 0, 0, 1);
+                gradient.AddColorStop(0, new Color(0.87, 0.93, 0.96));
+                gradient.AddColorStop(1, new Color(0.65, 0.85, 0.96));
+                Button.Normal.BackgroundPattern = gradient;
+                Button.Hover.BackgroundPattern = gradient;
+                Button.Active.BackgroundPattern = gradient;
             }
 
             Toggle = new Style();
