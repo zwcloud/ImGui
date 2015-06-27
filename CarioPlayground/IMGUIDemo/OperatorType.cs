@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace IMGUIDemo
 {
@@ -19,31 +20,22 @@ namespace IMGUIDemo
 
     public static class OpTypeExtensions
     {
+        private static Dictionary<OpType, string> s_opTypeStrings = new Dictionary<OpType, string>
+        {
+            {OpType.None, ""},
+            {OpType.PlusMinus, "±"},
+            {OpType.Sqrt, "√"},
+            {OpType.Percent,"%"},
+            {OpType.Inverse,"-"},
+            {OpType.Divide,"/"},
+            {OpType.Multiply,"*"},
+            {OpType.Minus,"-"},
+            {OpType.Plus,"+"}
+        };
+
         public static string ToCustomString(this OpType opTypetype)
         {
-            switch (opTypetype)
-            {
-                case OpType.None:
-                    return "";
-                case OpType.PlusMinus:
-                    return "±";
-                case OpType.Sqrt:
-                    return "√";
-                case OpType.Percent:
-                    return "%";
-                case OpType.Inverse:
-                    return "-";
-                case OpType.Divide:
-                    return "/";
-                case OpType.Multiply:
-                    return "*";
-                case OpType.Minus:
-                    return "-";
-                case OpType.Plus:
-                    return "+";
-                default:
-                    throw new ArgumentOutOfRangeException("opTypetype", opTypetype, null);
-            }
+            return s_opTypeStrings[opTypetype];
         }
 
         public static bool IsUnaryOperator(this OpType enumValue)

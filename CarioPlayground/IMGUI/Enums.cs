@@ -4,7 +4,7 @@ namespace IMGUI
     /// <summary>
     /// Type of the style state
     /// </summary>
-    public enum StyleStateType
+    public enum StyleType
     {
         Normal,
         Hover,

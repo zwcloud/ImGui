@@ -109,55 +109,11 @@ namespace IMGUI
         public BackgroundStyle BackgroundStyle { get; set; }
 
         #endregion
-
-        #region Interaction
-
-        private StyleState _normal;
-        public StyleState Normal
-        {
-            get
-            {
-                if (this._normal == null)
-                {
-                    this._normal = new StyleState(this);
-                }
-                return this._normal;
-            }
-            internal set { _normal = value; }
-        }
-
-        private StyleState _active;
-        public StyleState Active
-        {
-            get
-            {
-                if (this._active == null)
-                {
-                    this._active = new StyleState(this);
-                }
-                return this._active;
-            }
-            internal set { _active = value; }
-        }
-
-        private StyleState _hover;
-        public StyleState Hover
-        {
-            get
-            {
-                if (this._hover == null)
-                {
-                    this._hover = new StyleState(this);
-                }
-                return this._hover;
-            }
-            internal set { _hover = value; }
-        }
         
-        #endregion
-        
-
-        public Style()
+        /// <summary>
+        /// Set defalut style for all kinds of box model
+        /// </summary>
+        private Style()
         {
             PaddingTop = PaddingRight = PaddingBottom = PaddingLeft = Length.Zero;
             BorderTop = BorderRight = BorderBottom = BorderLeft = Length.Zero;;
@@ -167,7 +123,14 @@ namespace IMGUI
             BorderLeftColor = CairoEx.ColorBlack;
             MarginTop = MarginRight = MarginBottom = MarginLeft = Length.Zero;
 
-            Font = new Font();
+            Font = new Font
+            {
+                Family = "Consolas",
+                Slant = FontSlant.Normal,
+                Weight = FontWeight.Normal,
+                Size = 12,
+                Color = CairoEx.ColorBlack
+            };
 
             TextStyle = new TextStyle
             {

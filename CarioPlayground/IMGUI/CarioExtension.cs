@@ -17,7 +17,7 @@ namespace IMGUI
         /// <param name="rect">the rect (of the border-box) in which to draw this box model </param>
         /// <param name="content">content of the box mode</param>
         /// <param name="style">style of the box model</param>
-        public static void DrawBoxModel(this Context g, Rect rect, Content content, Style style, StyleStateType type)
+        public static void DrawBoxModel(this Context g, Rect rect, Content content, Style style)
         {
             //Widths of border
             var bt = style.BorderTop;
@@ -66,20 +66,7 @@ namespace IMGUI
              */
 
             //Content(draw as a filled rectangle now)
-            Color backgroundColor;
-            switch (type)
-            {
-                case StyleStateType.Active:
-                    backgroundColor = style.Active.BackgroundColor;
-                    break;
-                case StyleStateType.Hover:
-                    backgroundColor = style.Hover.BackgroundColor;
-                    break;
-                default:
-                    backgroundColor = style.Normal.BackgroundColor;
-                    break;
-            }
-            FillRectangle(g, rect, backgroundColor);
+            FillRectangle(g, rect, style.BackgroundStyle.Color);
 
             //Border
             //  Top
@@ -94,24 +81,6 @@ namespace IMGUI
             //  Left
             FillPolygon(g,
                 new PointD[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
-
-
-            //Check state of the style
-            switch (type)
-            {
-                case StyleStateType.Active:
-                    style.Font.Color = style.Active.FontColor;
-                    style.Font.Weight = style.Active.FontWeight;
-                    break;
-                case StyleStateType.Hover:
-                    style.Font.Color = style.Hover.FontColor;
-                    style.Font.Weight = style.Hover.FontWeight;
-                    break;
-                default:
-                    style.Font.Color = style.Normal.FontColor;
-                    style.Font.Weight = style.Normal.FontWeight;
-                    break;
-            }
 
 
             if (content.Image != null)
