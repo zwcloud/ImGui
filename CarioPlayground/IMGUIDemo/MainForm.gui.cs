@@ -46,9 +46,6 @@ namespace IMGUIDemo
 
         private Calc calc = new Calc();
 
-        private bool EnteringOperand0 = true;
-        private bool EnteringOperand1 = false;
-        private bool EnteringOperator = false;
 
         #endregion
 
@@ -147,39 +144,86 @@ namespace IMGUIDemo
             if (Current == ButtonType.Idle)
                 return;
 
-            if (!EnteringOperand1 && Current.IsOperator())
+            if(Current == ButtonType.Clear)
             {
-                EnteringOperand0 = false;
-                calc.Op = (OpType)Current;
-                EnteringOperator = true;
-                EnteringOperand1 = true;
+                calc.Clear();
+                calc.EnteringOperand0 = true;
+                calc.EnteringOperator = false;
+                calc.EnteringOperand1 = false;
+
+                calc.ShowingResult = false;
+                return;
             }
 
-            if (EnteringOperator && Last.IsOperator() && Current.IsNumber())
+            if(Current == ButtonType.Backspace)
             {
-                EnteringOperator = false;
-                EnteringOperand1 = true;
+                calc.Backspace();
+                return;
             }
 
             if (Current.IsNumber())
             {
-                if(EnteringOperand0)
-                    calc.Operand0 += (int)Current;
-                else if(EnteringOperand1)
-                    calc.Operand1 += (int)Current;
+                if (calc.ShowingResult)
+                {
+                    calc.Clear();
+                }
+                if(calc.EnteringOperand0)
+                {
+                    if(calc.Operand0 == "0")
+                        calc.Operand0 = ((int)Current).ToString();
+                    else
+                        calc.Operand0 += (int)Current;
+                }
+                else if (calc.EnteringOperand1)
+                {
+                    if (calc.Operand1 == "0")
+                        calc.Operand1 = ((int)Current).ToString();
+                    else
+                        calc.Operand1 += (int)Current;
+                }
+
+                calc.ShowingResult = false;
             }
 
             if (Last.IsNumber() && Current.IsUnaryOperator())
             {
                 calc.Op = (OpType)Current;
                 calc.DoCalc();
-                EnteringOperand0 = true;
-                EnteringOperator = false;
-                EnteringOperand1 = false;
+                calc.EnteringOperand0 = true;
+                calc.EnteringOperator = false;
+                calc.EnteringOperand1 = false;
+
+                calc.ShowingResult = true;
             }
 
+            if (Last.IsNumber() && Current.IsBinaryOperator())
+            {
+                calc.Op = (OpType)Current;
+                calc.EnteringOperand0 = false;
+                calc.EnteringOperator = true;
+                calc.EnteringOperand1 = true;
 
+                calc.ShowingResult = false;
+            }
 
+            if(Last.IsBinaryOperator() && Current.IsNumber())
+            {
+                calc.EnteringOperand0 = false;
+                calc.EnteringOperator = false;
+                calc.EnteringOperand1 = true;
+
+                calc.ShowingResult = false;
+            }
+
+            if (calc.EnteringOperand1 && Last.IsNumber() && Current == ButtonType.Equal)
+            {
+                calc.DoCalc();
+                calc.EnteringOperand0 = false;
+                calc.EnteringOperator = false;
+                calc.EnteringOperand1 = false;
+
+                calc.ShowingResult = true;
+            }
 #endif
         }
 

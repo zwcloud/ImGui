@@ -18,6 +18,9 @@ namespace IMGUI
     {
         Left,
         Center,
+        /// <summary>
+        /// TODO
+        /// </summary>
         Right
     }
 

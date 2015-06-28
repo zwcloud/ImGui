@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net.Mime;
 using System.Runtime.InteropServices;
 using Win32;
 
@@ -170,6 +171,10 @@ namespace IMGUI
         /// and last input states will be recorded.</remarks>
         public static bool Refresh(int clientPosX, int clientPosY, RECT clientRect)
         {
+            /*
+             * TODO check if the window has focus
+             */
+
             /*
              * Keyboard
              */

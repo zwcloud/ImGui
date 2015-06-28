@@ -67,7 +67,6 @@
     <Compile Include="Detalied\Size.cs" />
     <Compile Include="Detalied\Vector.cs" />
     <Compile Include="Font.cs" />
-    <Compile Include="GUIText.cs" />
     <Compile Include="Style.Make.cs" />
     <Compile Include="StyleModifier.cs" />
     <Compile Include="TextStyle.cs" />
@@ -86,9 +85,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Length.cs" />
     <Compile Include="Transform.cs" />
-    <Compile Include="Scalar.cs" />
     <Compile Include="Style.cs" />
-    <Compile Include="Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Cairo\Mono.Cairo.csproj">

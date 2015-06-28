@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Win32;
-using Cairo;
 
 namespace IMGUI
 {

@@ -6,8 +6,17 @@ namespace IMGUIDemo
 {
     public class Calc
     {
-        private string _operand0 = String.Empty;
-        private string _operand1 = String.Empty;
+        private string _operand0 = "0";
+        private string _operand1 = "0";
+
+        /// <summary>
+        /// States
+        /// </summary>
+        internal bool EnteringOperand0 = true;
+        internal bool EnteringOperand1 = false;
+        internal bool EnteringOperator = false;
+        internal bool ShowingResult = false;
+
         public OpType Op { get; set; }
 
         public string Operand0
@@ -37,13 +46,21 @@ namespace IMGUIDemo
             get
             {
                 string value = "";
-                if (Operand0 == String.Empty)
-                    value = "";
+                if(ShowingResult)
+                {
+                    if(Op.IsUnaryOperator())
+                        value = Operand0;
+                    else
+                        value = Operand0 + Op.ToCustomString() + Operand1;
+                }
                 else
                 {
-                    value = Operand0;
-                    if (Op >= OpType.Divide)
-                        value += Op.ToCustomString();
+                    if (EnteringOperand0)
+                        value = Operand0;
+                    if (EnteringOperator)
+                        value = Operand0 + Op.ToCustomString();
+                    if (EnteringOperand1)
+                        value = Operand0 + Op.ToCustomString() + Operand1;
                 }
                 return value;
             }
@@ -55,11 +72,7 @@ namespace IMGUIDemo
         {
             get
             {
-                if (Operand0 == string.Empty || Op == OpType.None)
-                {
-                    return "0";
-                }
-                return ResultNumber.ToString();
+                return ShowingResult ? ResultNumber.ToString() : "0";
             }
         }
 
@@ -107,6 +120,38 @@ namespace IMGUIDemo
             }
 
             throw new InvalidOperationException("Can not calc!");
+        }
+
+        internal void Clear()
+        {
+            Operand0 = Operand1 = "0";
+            Op = OpType.None;
+        }
+
+        internal void Backspace()
+        {
+            if(EnteringOperand0)
+            {
+                if(Operand0 != "0")
+                {
+                    Operand0 = Operand0.Remove(Operand0.Length - 1);
+                }
+                if(Operand0.Length == 0)
+                {
+                    Operand0 = "0";
+                }
+            }
+            else if (EnteringOperand0)
+            {
+                if (Operand1 != "0")
+                {
+                    Operand1 = Operand1.Remove(Operand1.Length - 1);
+                }
+                if (Operand1.Length == 0)
+                {
+                    Operand1 = "0";
+                }
+            }
         }
     }
 }
