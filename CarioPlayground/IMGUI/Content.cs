@@ -13,6 +13,8 @@
 
         public Texture Image { get; set; }
 
+        //TODO add a Shape Content
+
         public Content()
         {
             Text = string.Empty;

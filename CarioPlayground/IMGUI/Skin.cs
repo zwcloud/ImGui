@@ -8,6 +8,7 @@ namespace IMGUI
         public Dictionary<string, Style> Button { get; private set; }
         public Dictionary<string, Style> Label { get; private set; }
         public Dictionary<string, Style> Toggle { get; private set; }
+        public Dictionary<string, Style> ComboBox { get; private set; }
 
         internal static Skin _current;
 
@@ -21,6 +22,7 @@ namespace IMGUI
             Button = new Dictionary<string, Style>(3);
             Label = new Dictionary<string, Style>(3);
             Toggle = new Dictionary<string, Style>(3);
+            ComboBox = new Dictionary<string, Style>(3);
 
             #region Label
             {
@@ -158,6 +160,81 @@ namespace IMGUI
                 Toggle["Active"] = Style.Make(Toggle["Normal"]);
             }
             #endregion
+
+            #region ComboBox
+            {
+                StyleModifier[] normalModifiers =
+                {
+                    new StyleModifier{Name = "BorderTop", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderRight", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderBottom", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderLeft", Value = new Length(1, Unit.Pixel)},
+
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
+
+                    new StyleModifier
+                    {
+                        Name = "TextStyle",
+                        Value = new TextStyle
+                        {
+                            TextAlign = TextAlignment.Center,
+                            LineSpacing = 0,
+                            TabSize = 4
+                        }
+                    },
+                    
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = CairoEx.ColorWhite,
+                            Image = null,
+                            Pattern = null
+                        }
+                    },
+                };
+                ComboBox["Normal"] = Style.Make(normalModifiers);
+
+
+                StyleModifier[] hoverModifiers =
+                {
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = CairoEx.ColorArgb(255,46,167,224),
+                            Image = null,
+                            Pattern = null
+                        }
+                    }
+                };
+                ComboBox["Hover"] = Style.Make(ComboBox["Normal"], hoverModifiers);
+
+                StyleModifier[] activeModifiers =
+                {
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = CairoEx.ColorArgb(255,3,110,184),
+                            Image = null,
+                            Pattern = null
+                        }
+                    }
+                };
+                ComboBox["Active"] = Style.Make(ComboBox["Normal"], activeModifiers);
+                ComboBox["Item"] = Style.Make(ComboBox["Normal"]);
+                ComboBox["Item:Hover"] = Style.Make(ComboBox["Normal"], hoverModifiers);
+                ComboBox["Item:Active"] = Style.Make(ComboBox["Normal"], activeModifiers);
+            }
+            #endregion
+
         }
 
 

@@ -19,7 +19,7 @@ namespace IMGUIDemo
         // ReSharper disable once InconsistentNaming
         // for short
         Context g;
-        readonly ImageSurface _backSurface = BuildSurface(512, 512, new Color(1, 1, 1, 1));
+        readonly ImageSurface _backSurface = BuildSurface(512, 1024, new Color(1, 1, 1, 1));
 
         Context _context;
         Surface _frontSurface;
@@ -44,8 +44,13 @@ namespace IMGUIDemo
         public ButtonType Current { get; private set; }
         public Phase Phase { get; set; }
 
-        private Calc calc = new Calc();
+        private readonly Calc calc = new Calc();
 
+        #endregion
+
+        #region paramters
+
+        private int selectedindex = 0;
 
         #endregion
 
@@ -59,7 +64,7 @@ namespace IMGUIDemo
                 string.Format("FPS: {0} Mouse ({1},{2})", _fps, Input.MousePos.X, Input.MousePos.Y)
                 );
 
-#if Test
+#if true
             if (gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 0!"))
             {
                 Debug.WriteLine("button 0 clicked!");
@@ -76,9 +81,12 @@ namespace IMGUIDemo
             }
 
             var oldValueOpened = _opened;
-            _opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 108)), "Toggle 0", _opened);
+            _opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 106)), "Toggle 0", _opened);
             if(_opened ^ oldValueOpened)
                 Debug.WriteLine("Toggle 0 {0}", new object[]{_opened?"on!":"off"});
+
+            selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), new[] { "item0", "item1", "item2", "item3" }, selectedindex,
+                "MyCombo");
 #else
             if(Current != ButtonType.Idle)
                 Last = Current;

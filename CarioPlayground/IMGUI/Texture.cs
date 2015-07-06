@@ -26,6 +26,7 @@ namespace IMGUI
 
         static Texture()
         {
+            //TODO Use relative path or resource file
             _presets = new Dictionary<string, Texture>
             {
                 {"Toggle.Off", new Texture( new ImageSurface("W:/VS2013/CarioPlayground/Resources/Toggle.Off.png") )},

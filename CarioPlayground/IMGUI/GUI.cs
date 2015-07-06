@@ -1,4 +1,8 @@
-﻿using Cairo;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Net;
+using Cairo;
 
 namespace IMGUI
 {
@@ -69,6 +73,11 @@ namespace IMGUI
                 Skin._current.Toggle[state]);
 
             return on;
+        }
+
+        public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
+        {
+            return ComboBox.DoControl(g, rect, text, selectedIndex, name);
         }
 
     }

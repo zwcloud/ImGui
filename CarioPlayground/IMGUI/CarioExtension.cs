@@ -66,22 +66,17 @@ namespace IMGUI
              */
 
             //Content(draw as a filled rectangle now)
-            FillRectangle(g, rect, style.BackgroundStyle.Color);
+            g.FillRectangle(rect, style.BackgroundStyle.Color);
 
             //Border
             //  Top
-            FillPolygon(g,
-                new PointD[] { ptl, btl, btr, ptr }, style.BorderTopColor);
+            g.FillPolygon(new PointD[] { ptl, btl, btr, ptr }, style.BorderTopColor);
             //  Right
-            FillPolygon(g,
-                new PointD[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
+            g.FillPolygon(new PointD[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
             //  Bottom
-            FillPolygon(g,
-                new PointD[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
+            g.FillPolygon(new PointD[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
             //  Left
-            FillPolygon(g,
-                new PointD[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
-
+            g.FillPolygon(new PointD[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
 
             if (content.Image != null)
             {
@@ -100,17 +95,7 @@ namespace IMGUI
 
         #region primitive draw helpers
 
-        private static void MakeRectangePath(this Context g, Rect rect)
-        {
-            g.MoveTo(rect.TopLeft);
-            g.LineTo(rect.TopRight); //Top
-            g.LineTo(rect.BottomRight); //Right
-            g.LineTo(rect.BottomLeft); //Bottom
-            g.LineTo(rect.TopLeft); //Left
-            g.ClosePath();
-        }
-
-        public static void StrokeRectangle(Context g,
+        public static void StrokeRectangle(this Context g,
             Rect rect,
             Color topColor,
             Color rightColor,
@@ -130,7 +115,7 @@ namespace IMGUI
             g.Stroke();
         }
         
-        private static void FillRectangle(Context g,
+        private static void FillRectangle(this Context g,
             Rect rect,
             Color color)
         {
@@ -144,7 +129,7 @@ namespace IMGUI
             g.Fill();
         }
 
-        public static void FillPolygon(Context g, PointD[] vPoint, Color color)
+        public static void FillPolygon(this Context g, PointD[] vPoint, Color color)
         {
             if (vPoint.Length <= 2)
             {
@@ -161,33 +146,21 @@ namespace IMGUI
             g.Fill();
         }
 
-        public static void FillExtentsOfRectangle(Context g,
-            Color topColor,
-            Color rightColor,
-            Color bottomColor,
-            Color leftColor,
-            PointD topLeft,
-            PointD topRight,
-            PointD bottomRight,
-            PointD bottomLeft,
-            float top,
-            float Right,
-            float bottom,
-            float Left)
+        public static void StrokePolygon(this Context g, PointD[] vPoint, Color color)
         {
-            //TODO See WinFormCario project!
-            //Top
-            
-            g.MoveTo(topLeft);
-            g.SetSourceColor(topColor);
-            g.LineTo(topRight);
-            g.LineTo(bottomRight);
-            g.LineTo(bottomLeft);
-            g.LineTo(topLeft);
-            g.ClosePath();
-            g.FillExtents();
+            if (vPoint.Length <= 2)
+            {
+                throw new ArgumentException("vPoint should contains 3 ore more points!");
+            }
 
-            g.Fill();
+            g.SetSourceColor(color);
+            g.MoveTo(vPoint[0]);
+            foreach (var t in vPoint)
+            {
+                g.LineTo(t);
+            }
+            g.ClosePath();
+            g.Stroke();
         }
 #endregion
 

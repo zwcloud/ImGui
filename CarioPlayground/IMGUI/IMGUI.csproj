@@ -60,6 +60,8 @@
   <ItemGroup>
     <Compile Include="BackgroundStyle.cs" />
     <Compile Include="Content.cs" />
+    <Compile Include="Control.cs" />
+    <Compile Include="Control\ComboBox.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Detalied\Point.cs" />

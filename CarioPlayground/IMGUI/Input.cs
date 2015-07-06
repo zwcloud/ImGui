@@ -74,12 +74,12 @@ namespace IMGUI
         /// Last recorded left mouse button state
         /// </summary>
         /// <remarks>for detecting left mouse button state' changes</remarks>
-        static InputState lastLeftButtonState = InputState.Up;
+        private static InputState lastLeftButtonState = InputState.Up;
 
         /// <summary>
         /// Left button state
         /// </summary>
-        static InputState leftButtonState = InputState.Up;
+        private static InputState leftButtonState = InputState.Up;
 
         /// <summary>
         /// Button state of left mouse button(readonly)

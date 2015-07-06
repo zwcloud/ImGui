@@ -6,7 +6,6 @@ namespace IMGUI
 {
     public partial class Style
     {
-#if false
         public static bool BuildFrom(out Style style, ExCSS.StyleRule rule)
         {
             try
@@ -28,8 +27,15 @@ namespace IMGUI
                         .Where(p => p.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
                         .Select(p => p.Term);
                     var primativeTerm = query.First() as ExCSS.PrimitiveTerm;
-                    if (primativeTerm != null)
-                        return primativeTerm.Value as ExCSS.HtmlColor ?? CairoEx.ColorBlack;
+                    if(primativeTerm != null)
+                    {
+                        var exCSSColor = primativeTerm.Value as ExCSS.HtmlColor;
+                        if(exCSSColor != null)
+                        {
+                            var result = CairoEx.ColorArgb(exCSSColor.A, exCSSColor.R, exCSSColor.G, exCSSColor.B);
+                            return result;
+                        }
+                    }
                     return CairoEx.ColorBlack;
                 };
 
@@ -66,6 +72,5 @@ namespace IMGUI
 
             return true;
         }
-#endif
     }
 }
