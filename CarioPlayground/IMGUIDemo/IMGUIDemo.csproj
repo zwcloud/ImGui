@@ -52,7 +52,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm.Gui.cs">
+    <Compile Include="MainForm.gui.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="OperatorType.cs" />
@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="calc32x32.ico" />
+    <Content Include="gnu_hornedword.png" />
     <Content Include="Layout\LayoutMain.html" />
     <Content Include="Layout\StyleMain.css" />
   </ItemGroup>

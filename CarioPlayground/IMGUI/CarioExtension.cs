@@ -80,8 +80,8 @@ namespace IMGUI
 
             if (content.Image != null)
             {
-                g.SetSourceSurface(content.Image._surface, (int)rect.TopLeft.X, (int)rect.TopLeft.Y );
-                g.Paint();
+                //TODO Draw the image at a proper position
+                g.DrawImage(rect, content.Image);
             }
 
             /*
@@ -89,6 +89,7 @@ namespace IMGUI
              */
             if (content.Text != null)
             {
+                //TODO Draw the text at a proper position
                 g.DrawText(rect, content.Text, style.Font, style.TextStyle);
             }
         }
@@ -237,8 +238,20 @@ namespace IMGUI
 
         #region Image
 
+        public static void DrawImage(this Context g, Rect rect, Texture image)
+        {
+            g.SetSourceSurface(image._surface, (int)rect.X, (int)rect.Y);
+            g.MoveTo(rect.TopLeft);
+            g.LineTo(rect.TopRight); //Top
+            g.LineTo(rect.BottomRight); //Right
+            g.LineTo(rect.BottomLeft); //Bottom
+            g.LineTo(rect.TopLeft); //Left
+            g.ClosePath();
+            //g.Clip();
+            g.Fill();
+        }
 
-        public static ImageSurface CreateImage(this Context g, string pngFilePath)
+        public static ImageSurface CreateImage(string pngFilePath)
         {
             ImageSurface surface;
             try

@@ -9,6 +9,7 @@ namespace IMGUI
         public Dictionary<string, Style> Label { get; private set; }
         public Dictionary<string, Style> Toggle { get; private set; }
         public Dictionary<string, Style> ComboBox { get; private set; }
+        public Dictionary<string, Style> Image { get; private set; }
 
         internal static Skin _current;
 
@@ -23,6 +24,7 @@ namespace IMGUI
             Label = new Dictionary<string, Style>(3);
             Toggle = new Dictionary<string, Style>(3);
             ComboBox = new Dictionary<string, Style>(3);
+            Image = new Dictionary<string, Style>(1);
 
             #region Label
             {
@@ -229,12 +231,32 @@ namespace IMGUI
                     }
                 };
                 ComboBox["Active"] = Style.Make(ComboBox["Normal"], activeModifiers);
+
                 ComboBox["Item"] = Style.Make(ComboBox["Normal"]);
-                ComboBox["Item:Hover"] = Style.Make(ComboBox["Normal"], hoverModifiers);
-                ComboBox["Item:Active"] = Style.Make(ComboBox["Normal"], activeModifiers);
+                ComboBox["Item:Hover"] = Style.Make(ComboBox["Hover"]);
+                ComboBox["Item:Active"] = Style.Make(ComboBox["Active"]);
             }
             #endregion
 
+            #region Image
+            {
+                StyleModifier[] normalModifiers =
+                {
+                    new StyleModifier {Name = "BorderTop", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier {Name = "BorderRight", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier {Name = "BorderBottom", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier {Name = "BorderLeft", Value = new Length(1, Unit.Pixel)},
+
+                    new StyleModifier {Name = "BorderTopColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier {Name = "BorderRightColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier {Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier {Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
+                };
+                Image["Normal"] = Style.Make(normalModifiers);
+            }
+
+
+            #endregion
         }
 
 

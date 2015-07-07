@@ -13,7 +13,7 @@
 
         public Texture Image { get; set; }
 
-        //TODO add a Shape Content
+        //TODO add a Shape(SVG) Content
 
         public Content()
         {

@@ -50,7 +50,10 @@ namespace IMGUIDemo
 
         #region paramters
 
+        private readonly string[] comboBoxItems = new[] { "item0", "item1", "item2", "item3" };
         private int selectedindex = 0;
+
+        private Texture image = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\gnu_hornedword.png");
 
         #endregion
 
@@ -80,13 +83,18 @@ namespace IMGUIDemo
                 Debug.WriteLine("button 2 clicked!");
             }
 
-            var oldValueOpened = _opened;
+            var oldValueOfTaggle = _opened;
             _opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 106)), "Toggle 0", _opened);
-            if(_opened ^ oldValueOpened)
+            if(_opened ^ oldValueOfTaggle)
                 Debug.WriteLine("Toggle 0 {0}", new object[]{_opened?"on!":"off"});
 
-            selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), new[] { "item0", "item1", "item2", "item3" }, selectedindex,
+            var oldValueOfComboBox = selectedindex;
+            selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
                 "MyCombo");
+            if(selectedindex != oldValueOfComboBox)
+                Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
+
+            gui.Image(new Rect(new Point(130, 20), new Point(240, 200)), image, "MyImage");
 #else
             if(Current != ButtonType.Idle)
                 Last = Current;

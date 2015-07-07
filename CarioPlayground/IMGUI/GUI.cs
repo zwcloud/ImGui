@@ -80,5 +80,9 @@ namespace IMGUI
             return ComboBox.DoControl(g, rect, text, selectedIndex, name);
         }
 
+        public void Image(Rect rect, Texture image, string name)
+        {
+            IMGUI.Image.DoControl(g, rect, image, name);
+        }
     }
 }

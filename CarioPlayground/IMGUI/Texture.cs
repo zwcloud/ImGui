@@ -19,7 +19,12 @@ namespace IMGUI
 
         internal static Dictionary<string, Texture> _presets;
 
-        public Texture(ImageSurface imageSurface)
+        public Texture(string pngFilePath)
+        {
+            _surface = new ImageSurface(pngFilePath);
+        }
+
+        private Texture(ImageSurface imageSurface)
         {
             _surface = imageSurface;
         }
@@ -27,11 +32,17 @@ namespace IMGUI
         static Texture()
         {
             //TODO Use relative path or resource file
+            //TODO Destruct these presets
             _presets = new Dictionary<string, Texture>
             {
                 {"Toggle.Off", new Texture( new ImageSurface("W:/VS2013/CarioPlayground/Resources/Toggle.Off.png") )},
                 {"Toggle.On", new Texture( new ImageSurface("W:/VS2013/CarioPlayground/Resources/Toggle.On.png") )},
             };
+        }
+
+        ~Texture()
+        {
+            _surface.Dispose();
         }
             
     }

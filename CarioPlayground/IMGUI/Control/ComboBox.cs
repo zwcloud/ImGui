@@ -65,7 +65,7 @@ namespace IMGUI
                 }
                 else if(comboBox.State == "Active")
                 {
-                    if(Input.LeftButtonState == InputState.Down)
+                    if(Input.LeftButtonClicked)
                     {
                         comboBox.State = "Normal";
                     }
@@ -118,6 +118,11 @@ namespace IMGUI
                         break;
                     }
                 }
+                
+                if (Input.LeftButtonClicked)
+                {
+                    comboBox.State = "Normal";
+                }
             }
 
             #endregion
@@ -141,13 +146,13 @@ namespace IMGUI
                 {
                     var itemRect = rect;
                     itemRect.Y += (i + 1)*rect.Height;
-                    if(i == comboBox.HoverIndex)
-                    {
-                        g.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Hover"]);
-                    }    
-                    else if( i == comboBox.ActiveIndex)
+                    if( i == comboBox.ActiveIndex)
                     {
                         g.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Active"]);
+                    }
+                    else if(i == comboBox.HoverIndex)
+                    {
+                        g.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Hover"]);
                     }
                     else
                     {
