@@ -12,7 +12,7 @@ namespace IMGUI
 {
     internal class ComboBox : Control
     {
-        public int SelectedIndex { get; private set; }
+        public int SelectedIndex { get; private set; }//TODO consider remove this property
 
         private int HoverIndex { get; set; }
 
@@ -26,11 +26,11 @@ namespace IMGUI
             Controls[Name] = this;
         }
 
-        static internal int DoControl(Context g, Rect rect, string[] texts, int selectedIndex, string name)
+        internal static int DoControl(Context g, Rect rect, string[] texts, int selectedIndex, string name)
         {
             #region Get control reference
             ComboBox comboBox;
-            if(!Controls.Keys.Contains(name))
+            if(!Controls.ContainsKey(name))
             {
                 comboBox = new ComboBox(name);
             }
@@ -94,34 +94,32 @@ namespace IMGUI
             }
             else
             {
-                for (int i = 0; i < textCount; i++)
+                if(comboBox.State == "Active")
                 {
-                    var itemRect = rect;
-                    itemRect.Y += (i + 1)*rect.Height;
-                    bool inItemRect = itemRect.Contains(Input.MousePos);
-                    if (inItemRect)
+                    for(int i = 0; i < textCount; i++)
                     {
-                        if (Input.LeftButtonState == InputState.Up)
+                        var itemRect = rect;
+                        itemRect.Y += (i + 1) * rect.Height;
+                        bool inItemRect = itemRect.Contains(Input.MousePos);
+                        if(inItemRect)
                         {
-                            comboBox.HoverIndex = i;
-                        }
-                        else if (Input.LeftButtonState == InputState.Down)
-                        {
-                            comboBox.ActiveIndex = i;
-                        }
+                            if(Input.LeftButtonState == InputState.Up)
+                            {
+                                comboBox.HoverIndex = i;
+                            }
+                            else if(Input.LeftButtonState == InputState.Down)
+                            {
+                                comboBox.ActiveIndex = i;
+                            }
 
-                        if(Input.LeftButtonClicked)
-                        {
-                            comboBox.SelectedIndex = i;
-                            comboBox.State = "Normal";
+                            if(Input.LeftButtonClicked)
+                            {
+                                comboBox.SelectedIndex = i;
+                                comboBox.State = "Normal";
+                            }
+                            break;
                         }
-                        break;
                     }
-                }
-                
-                if (Input.LeftButtonClicked)
-                {
-                    comboBox.State = "Normal";
                 }
             }
 

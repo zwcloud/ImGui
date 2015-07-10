@@ -42,5 +42,6 @@ namespace IMGUI
             Name = String.Empty;
             Params = new Dictionary<string, object>();
         }
+
     }
 }
