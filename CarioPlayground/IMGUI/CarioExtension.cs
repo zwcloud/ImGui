@@ -163,6 +163,22 @@ namespace IMGUI
             g.ClosePath();
             g.Stroke();
         }
+
+        public static void StrokeCircle(this Context g, PointD center, float radius, Color color)
+        {
+            g.NewPath();
+            g.SetSourceColor(color);
+            g.Arc(center.X, center.Y, radius, 0, 2 * Math.PI);
+            g.Stroke();
+        }
+
+        public static void FillCircle(this Context g, PointD center, float radius, Color color)
+        {
+            g.NewPath();
+            g.SetSourceColor(color);
+            g.Arc(center.X, center.Y, radius, 0, 2 * Math.PI);
+            g.Fill();
+        }
 #endregion
 
 
@@ -247,7 +263,6 @@ namespace IMGUI
             g.LineTo(rect.BottomLeft); //Bottom
             g.LineTo(rect.TopLeft); //Left
             g.ClosePath();
-            //g.Clip();
             g.Fill();
         }
 

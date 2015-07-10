@@ -84,5 +84,10 @@ namespace IMGUI
         {
             IMGUI.Image.DoControl(g, rect, image, name);
         }
+
+        public bool Radio(Rect rect, string text, string groupName, string name, bool value)
+        {
+            return IMGUI.Radio.DoControl(g, rect, text, groupName, name, value);
+        }
     }
 }

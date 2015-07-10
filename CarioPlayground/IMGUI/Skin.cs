@@ -10,6 +10,7 @@ namespace IMGUI
         public Dictionary<string, Style> Toggle { get; private set; }
         public Dictionary<string, Style> ComboBox { get; private set; }
         public Dictionary<string, Style> Image { get; private set; }
+        public Dictionary<string, Style> Radio { get; set; }
 
         internal static Skin _current;
 
@@ -25,6 +26,7 @@ namespace IMGUI
             Toggle = new Dictionary<string, Style>(3);
             ComboBox = new Dictionary<string, Style>(3);
             Image = new Dictionary<string, Style>(1);
+            Radio = new Dictionary<string, Style>(2);
 
             #region Label
             {
@@ -256,6 +258,14 @@ namespace IMGUI
             }
 
 
+            #endregion
+
+            #region Radio
+            {
+                Radio["Normal"] = Style.Make();
+                Radio["Hover"] = Style.Make();
+                Radio["Active"] = Style.Make();
+            }
             #endregion
         }
 

@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Cairo;
 
+
+//BUG Abnormal representation when drag from mainRect to outside.
+
 namespace IMGUI
 {
     internal class ComboBox : Control

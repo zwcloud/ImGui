@@ -55,6 +55,10 @@ namespace IMGUIDemo
 
         private Texture image = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\gnu_hornedword.png");
 
+        private bool radio0Selected = false;
+        private bool radio1Selected = false;
+        private bool radio2Selected = false;
+
         #endregion
 
         /// <summary>
@@ -93,8 +97,24 @@ namespace IMGUIDemo
                 "MyCombo");
             if(selectedindex != oldValueOfComboBox)
                 Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
+            
+            var oldValueOfradio0 = radio0Selected;
+            radio0Selected = gui.Radio(new Rect(new Point(20, 132), new Point(120, 152)), "RadioItem0", "G0", "Radio0", radio0Selected);
+            if(radio0Selected && radio0Selected != oldValueOfradio0)
+                Debug.WriteLine("Radio0 selected");
+
+            var oldValueOfradio1 = radio1Selected;
+            radio1Selected = gui.Radio(new Rect(new Point(20, 154), new Point(120, 174)), "RadioItem1", "G0", "Radio1", radio1Selected);
+            if(radio1Selected && radio1Selected != oldValueOfradio1)
+                Debug.WriteLine("Radio1 selected");
+
+            var oldValueOfradio2 = radio2Selected;
+            radio2Selected = gui.Radio(new Rect(new Point(20, 178), new Point(120, 198)), "RadioItem2", "G0", "Radio2", radio2Selected);
+            if(radio2Selected && radio2Selected != oldValueOfradio2)
+                Debug.WriteLine("Radio2 selected");
 
             gui.Image(new Rect(new Point(130, 20), new Point(240, 200)), image, "MyImage");
+
 #else
             if(Current != ButtonType.Idle)
                 Last = Current;

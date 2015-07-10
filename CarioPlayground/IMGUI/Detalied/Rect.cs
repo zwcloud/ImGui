@@ -385,6 +385,12 @@ namespace IMGUI
                 return new Point(Right, Bottom);
             }
         }
+
+        public Point Center
+        {
+            get { return new Point(X + 0.5 * Width, Y + 0.5 * Height); }
+        }
+
         #endregion Public Properties
 
         #region Public Methods
