@@ -171,7 +171,8 @@ namespace IMGUI
 
             debugGui.Label(
                 new Rect(0, ClientRectangle.Bottom - g.FontExtents.Height, 200, g.FontExtents.Height),
-                string.Format("FPS: {0} Mouse ({1},{2})", _fps, Input.MousePos.X, Input.MousePos.Y)
+                string.Format("FPS: {0} Mouse ({1},{2})", _fps, Input.MousePos.X, Input.MousePos.Y),
+                "DebugInfoLabel"
                 );
 
             OnGUI(gui);

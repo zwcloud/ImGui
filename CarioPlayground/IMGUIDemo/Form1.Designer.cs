@@ -36,25 +36,25 @@ namespace IMGUIDemo
         protected override void OnGUI(GUI gui)
         {
 #if true
-            if(gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 0!"))
+            if(gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 0!", "Button0"))
             {
                 Debug.WriteLine("button 0 clicked!");
             }
 
-            if(gui.Button(new Rect(new Point(20, 42), new Point(120, 62)), "button 1!"))
+            if(gui.Button(new Rect(new Point(20, 42), new Point(120, 62)), "button 1!", "Button1"))
             {
                 Debug.WriteLine("button 1 clicked!");
             }
 
-            if(gui.Button(new Rect(new Point(20, 64), new Point(120, 84)), "button 2!"))
+            if(gui.Button(new Rect(new Point(20, 64), new Point(120, 84)), "button 2!", "Button2"))
             {
                 Debug.WriteLine("button 2 clicked!");
             }
 
             var oldValueOfTaggle = _opened;
-            _opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 106)), "Toggle 0", _opened);
+            _opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 106)), "Opened?", _opened, "Toggle0");
             if(_opened ^ oldValueOfTaggle)
-                Debug.WriteLine("Toggle 0 {0}", new object[] { _opened ? "on!" : "off" });
+                Debug.WriteLine("Toggle 0 {0}", _opened ? "on!" : "off!", null);
 
             var oldValueOfComboBox = selectedindex;
             selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
@@ -63,17 +63,17 @@ namespace IMGUIDemo
                 Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
 
             var oldValueOfradio0 = radio0Selected;
-            radio0Selected = gui.Radio(new Rect(new Point(20, 132), new Point(120, 152)), "RadioItem0", "G0", "Radio0", radio0Selected);
+            radio0Selected = gui.Radio(new Rect(new Point(20, 132), new Point(120, 152)), "RadioItem0", "G0", radio0Selected, "Radio0");
             if(radio0Selected && radio0Selected != oldValueOfradio0)
                 Debug.WriteLine("Radio0 selected");
 
             var oldValueOfradio1 = radio1Selected;
-            radio1Selected = gui.Radio(new Rect(new Point(20, 154), new Point(120, 174)), "RadioItem1", "G0", "Radio1", radio1Selected);
+            radio1Selected = gui.Radio(new Rect(new Point(20, 154), new Point(120, 174)), "RadioItem1", "G0", radio1Selected, "Radio1");
             if(radio1Selected && radio1Selected != oldValueOfradio1)
                 Debug.WriteLine("Radio1 selected");
 
             var oldValueOfradio2 = radio2Selected;
-            radio2Selected = gui.Radio(new Rect(new Point(20, 178), new Point(120, 198)), "RadioItem2", "G0", "Radio2", radio2Selected);
+            radio2Selected = gui.Radio(new Rect(new Point(20, 178), new Point(120, 198)), "RadioItem2", "G0", radio2Selected, "Radio2");
             if(radio2Selected && radio2Selected != oldValueOfradio2)
                 Debug.WriteLine("Radio2 selected");
 

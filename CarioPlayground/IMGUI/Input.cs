@@ -208,9 +208,9 @@ namespace IMGUI
              */
             //Buttons's states
             lastLeftButtonState = leftButtonState;
-            leftButtonState = ((Native.GetAsyncKeyState((ushort)Button.Left) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
+            leftButtonState = ((Native.GetAsyncKeyState((ushort)MouseButton.Left) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
             lastRightButtonState = rightButtonState;
-            rightButtonState = ((Native.GetAsyncKeyState((ushort)Button.Right) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
+            rightButtonState = ((Native.GetAsyncKeyState((ushort)MouseButton.Right) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
             //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
             //Position
             var clientWidth = clientRect.Right - clientRect.Left;

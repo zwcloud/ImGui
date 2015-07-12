@@ -48,7 +48,7 @@ namespace IMGUI
             Controls[Name] = this;
         }
 
-        internal static bool DoControl(Context g, Rect rect, string text, string groupName, string name, bool value)
+        internal static bool DoControl(Context g, Rect rect, string text, string groupName, bool value, string name)
         {
             #region Get control reference
             Radio radio;

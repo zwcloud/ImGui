@@ -63,10 +63,15 @@
     <Compile Include="Application.cs" />
     <Compile Include="BackgroundStyle.cs" />
     <Compile Include="Content.cs" />
+    <Compile Include="Control\Button.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Control\Control.cs" />
     <Compile Include="Control\ComboBox.cs" />
     <Compile Include="Control\Image.cs" />
+    <Compile Include="Control\Label.cs" />
     <Compile Include="Control\Radio.cs" />
+    <Compile Include="Control\Toggle.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Detalied\Point.cs" />

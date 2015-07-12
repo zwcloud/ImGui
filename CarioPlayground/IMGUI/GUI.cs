@@ -14,65 +14,19 @@ namespace IMGUI
             g = context;
         }
 
-        public bool Button(Rect rect, string text)
+        public bool Button(Rect rect, string text, string name)
         {
-            string state;
-            bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
-            bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
-            if(active)
-                state = "Active";
-            else if (hover)
-                state = "Hover";
-            else
-                state = "Normal";
-            
-            g.DrawBoxModel(rect, new Content(text), Skin._current.Button[state]);
-
-            bool clicked = Input.LeftButtonClicked && rect.Contains(Input.MousePos);
-            return clicked;
+            return IMGUI.Button.DoControl(g, rect, text, name);
         }
 
-        public void Label(Rect rect, string text)
+        public void Label(Rect rect, string text, string name)
         {
-            string state;
-            bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
-            bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
-            if (active)
-                state = "Active";
-            else if (hover)
-                state = "Hover";
-            else
-                state = "Normal";
-
-            g.DrawBoxModel(rect, new Content(text), Skin._current.Label[state]);
+            IMGUI.Label.DoControl(g, rect, text, name);
         }
 
-        public bool Toggle(Rect rect, string text, bool value)
+        public bool Toggle(Rect rect, string text, bool value, string name)
         {
-            string state;
-            bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
-            bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
-            if (active)
-                state = "Active";
-            else if (hover)
-                state = "Hover";
-            else
-                state = "Normal";
-
-            bool changed = Input.LeftButtonClicked && rect.Contains(Input.MousePos);
-            bool on = changed ? !value : value;
-            
-            var toggleBoxRect = new Rect(rect.TopLeft, new Size(20, 20));
-            g.DrawBoxModel(toggleBoxRect,
-                new Content(Texture._presets[on?"Toggle.On":"Toggle.Off"]),
-                Skin._current.Toggle[state]);
-
-            var toggleTextRect = new Rect(toggleBoxRect.TopRight, rect.BottomRight);
-            g.DrawBoxModel(toggleTextRect,
-                new Content(text),
-                Skin._current.Toggle[state]);
-
-            return on;
+            return IMGUI.Toggle.DoControl(g, rect, text, value, name);
         }
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
@@ -85,9 +39,9 @@ namespace IMGUI
             IMGUI.Image.DoControl(g, rect, image, name);
         }
 
-        public bool Radio(Rect rect, string text, string groupName, string name, bool value)
+        public bool Radio(Rect rect, string text, string groupName, bool value, string name)
         {
-            return IMGUI.Radio.DoControl(g, rect, text, groupName, name, value);
+            return IMGUI.Radio.DoControl(g, rect, text, groupName, value, name);
         }
     }
 }

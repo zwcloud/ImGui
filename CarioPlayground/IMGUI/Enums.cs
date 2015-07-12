@@ -370,7 +370,7 @@ namespace IMGUI
     /// <summary>
     /// Mouse buttons
     /// </summary>
-    public enum Button
+    public enum MouseButton
     {
         /// <summary>Left button</summary>
         Left = 0x01,
