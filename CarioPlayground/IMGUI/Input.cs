@@ -169,7 +169,7 @@ namespace IMGUI
         /// <returns>true: successful; false: failed</returns>
         /// <remarks>The input states will persist until next call of this method, 
         /// and last input states will be recorded.</remarks>
-        public static bool Refresh(int clientPosX, int clientPosY, RECT clientRect)
+        public static bool Refresh(int clientPosX, int clientPosY, Rect clientRect)
         {
             /*
              * TODO check if the window has focus
@@ -215,7 +215,7 @@ namespace IMGUI
             //Position
             var clientWidth = clientRect.Right - clientRect.Left;
             var clientHeight = clientRect.Bottom - clientRect.Top;
-            POINT cursorPosPoint = new POINT(0, 0);
+            POINT cursorPosPoint;
             Native.GetCursorPos(out cursorPosPoint);//Position in screen
             
             float screenX = cursorPosPoint.X;
