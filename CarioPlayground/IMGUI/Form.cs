@@ -8,23 +8,19 @@ namespace IMGUI
     public abstract class Form : System.Windows.Forms.Form
     {
         #region GUI compontents
-        // ReSharper disable once InconsistentNaming
-        // for short
         public GUI debugGui;
         // ReSharper disable once InconsistentNaming
         public GUI gui { get; set; }
-
-        // ReSharper disable once InconsistentNaming
-        public Context g;
-        private Context _context;
-        internal DualSurfaceLayer MainLayer { get; set; }
-        private readonly Color _windowBackgroundColor = CairoEx.ColorRgb(0x6A, 0x6A, 0x6A);
+        
+        private readonly Color windowBackgroundColor = CairoEx.ColorRgb(0x6A, 0x6A, 0x6A);
         #endregion
 
         #region GUI paramters
-        long _lastFpSlog;
-        int _frames;
-        int _fps; 
+#if DEBUG
+        long lastFpSlog;
+        int frames;
+        int fps;
+#endif
         #endregion
 
         protected Form()
@@ -41,10 +37,8 @@ namespace IMGUI
             ResumeLayout(false);
             #endregion
 
-            MainLayer = new DualSurfaceLayer
-            {
-                BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite)
-            };
+            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite);
+            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, new Color(0,0,0,0));
 
             InitIMGUI();
         }
@@ -65,33 +59,30 @@ namespace IMGUI
         /// <returns>the created ImageSurface</returns>
         static ImageSurface BuildSurface(int Width, int Height, Color Color)
         {
-            Context context = null;
             ImageSurface surface = new ImageSurface(Format.Argb32, Width, Height);
-
-            context = new Context(surface);
-
-            context.Rectangle(0, 0, Width, Height);
-            context.SetSourceColor(Color);
-            context.Fill();
-
+            var c = new Context(surface);
+            c.Rectangle(0, 0, Width, Height);
+            c.SetSourceColor(Color);
+            c.Fill();
+            c.Dispose();
             return surface;
         }
 
         /// <summary>
         /// Paint g(the image surface) to context(the win32 window surface)
         /// </summary>
-        private void PaintToWindow()
+        private void SwapSurfaceBuffer()
         {
-            _context.Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
-            _context.SetSource(MainLayer.BackSurface);
-            _context.Fill();
+            //Draw top surface to back surface
+            Layer.BackContext.Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
+            Layer.BackContext.SetSource(Layer.TopSurface);
+            Layer.BackContext.Operator = Operator.Atop;
+            Layer.BackContext.Fill();
 
-            // Any additional rendering here
-            g.Save();
-            g.SetSourceColor(_windowBackgroundColor);
-            g.Operator = Operator.Source;
-            g.Paint();
-            g.Restore();
+            //Draw back surface to front surface (from bottom surface to top surface)
+            Layer.FrontContext.Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
+            Layer.FrontContext.SetSource(Layer.BackSurface);
+            Layer.FrontContext.Fill();
         }
         #endregion
 
@@ -105,9 +96,10 @@ namespace IMGUI
             {
                 if(exit)
                 {
+                    CleanUp();
                     Close();
                 }
-                if(debugGui == null)
+                if(gui == null)
                 {
                     Init();
                 }
@@ -125,15 +117,13 @@ namespace IMGUI
 
         private void Init()
         {
-            if(g == null)
-            {
-                g = new Context(MainLayer.BackSurface);
-                var hdc = Native.GetDC(Handle);
-                MainLayer.FrontSurface = new Win32Surface(hdc);
-                _context = new Context(MainLayer.FrontSurface);
-                debugGui = new GUI(g);
-                gui = new GUI(g);
-            }
+            Layer.BackContext = new Context(Layer.BackSurface);
+            var hdc = Native.GetDC(Handle);
+            Layer.FrontSurface = new Win32Surface(hdc);
+            Layer.FrontContext = new Context(Layer.FrontSurface);
+            Layer.TopContext  = new Context(Layer.TopSurface);
+            debugGui = new GUI(Layer.BackContext, Layer.TopContext);
+            gui = new GUI(Layer.BackContext, Layer.TopContext);
         }
 
         new bool Update()
@@ -148,8 +138,6 @@ namespace IMGUI
             var clientPos = PointToScreen(ClientRectangle.Location);
 
             Input.Refresh(clientPos.X, clientPos.Y, clientRect);
-
-            //Debug.WriteLine("Mouse at {0},{1}", Input.MousePos.X, Input.MousePos.Y);
 
             //Quit when ESC is pressed
             if(Input.KeyPressed(Key.Escape))
@@ -167,35 +155,49 @@ namespace IMGUI
 
         void Render()
         {
-            if(g == null || _context == null) return;
+            if(Layer.BackContext == null || Layer.FrontContext == null || Layer.TopContext == null)
+                return;
 
+            //Clear back surface
+            Layer.BackContext.SetSourceColor(windowBackgroundColor);
+            Layer.BackContext.Paint();
+
+            //Clear Top surface
+            Layer.TopContext.Save();
+            Layer.TopContext.SetSourceColor(new Color(0,0,0,0));
+            Layer.TopContext.Operator = Operator.Source;
+            Layer.TopContext.Paint();
+            Layer.TopContext.Restore();
+
+#if DEBUG
             debugGui.Label(
-                new Rect(0, ClientRectangle.Bottom - g.FontExtents.Height, 200, g.FontExtents.Height),
-                string.Format("FPS: {0} Mouse ({1},{2})", _fps, Input.MousePos.X, Input.MousePos.Y),
+                new Rect(0, ClientRectangle.Bottom - Layer.BackContext.FontExtents.Height, 200, Layer.BackContext.FontExtents.Height),
+                string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.MousePos.X, Input.MousePos.Y),
                 "DebugInfoLabel"
                 );
+#endif
 
             OnGUI(gui);
 
-            PaintToWindow();
+            SwapSurfaceBuffer();
         }
 
         void DebugUpdate()
         {
-            ++_frames;
+            ++frames;
             long time = Utility.Millis;
-            if(time > _lastFpSlog + 1000)
+            if(time > lastFpSlog + 1000)
             {
-                _fps = _frames;
-                _frames = 0;
-                _lastFpSlog = time;
+                fps = frames;
+                frames = 0;
+                lastFpSlog = time;
             }
         }
 
         private void CleanUp()
         {
-            if(g != null)
-                g.Dispose();
+            if(Layer.BackContext != null)
+                Layer.BackContext.Dispose();
         }
 
         #endregion

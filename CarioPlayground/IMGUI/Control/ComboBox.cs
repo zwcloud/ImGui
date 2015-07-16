@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Cairo;
 
-
+//BUG Hover state persists when move from mainRect to outside.
 //BUG Abnormal representation when drag from mainRect to outside.
 
 namespace IMGUI
@@ -22,7 +22,7 @@ namespace IMGUI
             Controls[Name] = this;
         }
 
-        internal static int DoControl(Context g, Rect rect, string[] texts, int selectedIndex, string name)
+        internal static int DoControl(Context g, Context gTop, Rect rect, string[] texts, int selectedIndex, string name)
         {
             #region Get control reference
             ComboBox comboBox;
@@ -142,15 +142,15 @@ namespace IMGUI
                     itemRect.Y += (i + 1)*rect.Height;
                     if( i == comboBox.ActiveIndex)
                     {
-                        g.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Active"]);
+                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Active"]);
                     }
                     else if(i == comboBox.HoverIndex)
                     {
-                        g.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Hover"]);
+                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Hover"]);
                     }
                     else
                     {
-                        g.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item"]);
+                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item"]);
                     }
                 }
             }

@@ -4,14 +4,18 @@ using System.Diagnostics;
 using System.Net;
 using Cairo;
 
+//BUG Input can pass through surface
+
 namespace IMGUI
 {
     public class GUI
     {
-        Context g;
-        public GUI(Context context)
+        private Context g;
+        private Context gTop;
+        public GUI(Context context, Context contextTop)
         {
             g = context;
+            gTop = contextTop;
         }
 
         public bool Button(Rect rect, string text, string name)
@@ -31,7 +35,7 @@ namespace IMGUI
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
         {
-            return ComboBox.DoControl(g, rect, text, selectedIndex, name);
+            return ComboBox.DoControl(g, gTop, rect, text, selectedIndex, name);
         }
 
         public void Image(Rect rect, Texture image, string name)

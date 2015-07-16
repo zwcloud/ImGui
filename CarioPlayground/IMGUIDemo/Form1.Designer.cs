@@ -25,7 +25,7 @@ namespace IMGUIDemo
         private readonly string[] comboBoxItems = new[] { "item0", "item1", "item2", "item3" };
         private int selectedindex = 0;
 
-        private Texture image = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\gnu_hornedword.png");
+        private Texture myImage = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\gnu_hornedword.png");
 
         private bool radio0Selected = false;
         private bool radio1Selected = false;
@@ -77,7 +77,7 @@ namespace IMGUIDemo
             if(radio2Selected && radio2Selected != oldValueOfradio2)
                 Debug.WriteLine("Radio2 selected");
 
-            gui.Image(new Rect(new Point(130, 20), new Point(240, 200)), image, "MyImage");
+            gui.Image(new Rect(new Point(130, 20), new Point(240, 200)), myImage, "MyImage");
 
 #else
             if(Current != ButtonType.Idle)

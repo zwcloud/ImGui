@@ -224,7 +224,7 @@ namespace IMGUI
 
         public static readonly Color ColorBlack = new Color(0, 0, 0, 0xff);
         public static readonly Color ColorWhite = new Color(0xff, 0xff, 0xff, 0xff);
-        public static readonly Color ColorMetal = new Color();
+        public static readonly Color ColorMetal = new Color(0xff, 192, 192, 192);
         
         
 
