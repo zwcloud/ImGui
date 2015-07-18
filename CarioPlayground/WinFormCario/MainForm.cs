@@ -167,7 +167,7 @@ namespace WinFormCario
             _context = new Context(_surface);
 
             _context.Rectangle(0, 0, Width, Height);
-            _context.SetSourceColor(Color);
+            _context.SetSourceRGBA(Color.R, Color.G, Color.B, Color.A);
             _context.Fill();
 
             return _surface;

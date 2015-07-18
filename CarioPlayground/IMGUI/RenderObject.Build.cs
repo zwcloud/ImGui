@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Ivony.Html;
+//using Ivony.Html;
 
 namespace IMGUI
 {
     public partial class RenderObject
     {
-        /// <summary>
-        /// Build RenderObjects form a HTML(layout) file and a CSS(style) file
-        /// </summary>
-        /// <param name="vRenderObject">result</param>
-        /// <param name="layoutHTML">HTML(layout) file content</param>
-        /// <param name="styleCSS">CSS(style) file content</param>
-        /// <returns>true: successful, false: failed</returns>
+#if false
+    /// <summary>
+    /// Build RenderObjects form a HTML(layout) file and a CSS(style) file
+    /// </summary>
+    /// <param name="vRenderObject">result</param>
+    /// <param name="layoutHTML">HTML(layout) file content</param>
+    /// <param name="styleCSS">CSS(style) file content</param>
+    /// <returns>true: successful, false: failed</returns>
         public static bool BuildFrom(out List<RenderObject> vRenderObject, string layoutHTML, string styleCSS)
         {
             vRenderObject = new List<RenderObject>();
@@ -55,5 +56,7 @@ namespace IMGUI
 
             return true;
         }
+
+#endif
     }
 }

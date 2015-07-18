@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using Cairo;
 
+using Weight = Pango.Weight;
+using Color = Cairo.Color;
+
 namespace IMGUI
 {
     public sealed class Skin
@@ -41,7 +44,7 @@ namespace IMGUI
                         {
                             Family = "Consolas",
                             Slant = FontSlant.Normal,
-                            Weight = FontWeight.Normal,
+                            Weight = Weight.Normal,
                             Size = 12,
                             Color = new Color(0,0,1)
                         }
@@ -124,7 +127,7 @@ namespace IMGUI
                         {
                             Family = "Consolas",
                             Slant = FontSlant.Normal,
-                            Weight = FontWeight.Bold,
+                            Weight = Weight.Bold,
                             Size = 12,
                             Color = CairoEx.ColorBlack
                         }

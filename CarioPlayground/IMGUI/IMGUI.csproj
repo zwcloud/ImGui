@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A02589F7-A689-41A9-B4E0-24876B4EEEB3}</ProjectGuid>
+    <ProjectGuid>{495935C7-70A3-40E3-93CD-1CEBBD591B99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IMGUI</RootNamespace>
     <AssemblyName>IMGUI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,94 +31,67 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExCSS">
-      <HintPath>..\packages\ExCSS.net40.2.0.5\lib\net45\ExCSS.dll</HintPath>
-    </Reference>
-    <Reference Include="Ivony.Core">
-      <HintPath>..\packages\Ivony.Core.1.1.1\lib\Ivony.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ivony.Html">
-      <HintPath>..\packages\Jumony.Core.3.0.15\lib\Ivony.Html.dll</HintPath>
-    </Reference>
-    <Reference Include="Ivony.Html.Parser">
-      <HintPath>..\packages\Jumony.Core.3.0.15\lib\Ivony.Html.Parser.dll</HintPath>
-    </Reference>
-    <Reference Include="Ivony.Html.Parser.Regulars">
-      <HintPath>..\packages\Jumony.Core.3.0.15\lib\Ivony.Html.Parser.Regulars.dll</HintPath>
-    </Reference>
-    <Reference Include="MathNet.Numerics">
-      <HintPath>..\packages\MathNet.Numerics.3.7.0\lib\net40\MathNet.Numerics.dll</HintPath>
-    </Reference>
+    <Reference Include="cairo-sharp, Version=1.10.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=x86" />
+    <Reference Include="glib-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86" />
+    <Reference Include="pango-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="BackgroundStyle.cs" />
+    <Compile Include="CarioExtension.cs" />
     <Compile Include="Content.cs" />
-    <Compile Include="Control\Button.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Control\Control.cs" />
+    <Compile Include="Control\Button.cs" />
     <Compile Include="Control\ComboBox.cs" />
+    <Compile Include="Control\Control.cs" />
     <Compile Include="Control\Image.cs" />
     <Compile Include="Control\Label.cs" />
     <Compile Include="Control\Radio.cs" />
+    <Compile Include="Control\TextBox.cs" />
     <Compile Include="Control\Toggle.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="Error.cs" />
     <Compile Include="Detalied\Point.cs" />
     <Compile Include="Detalied\Rect.cs" />
     <Compile Include="Detalied\Size.cs" />
     <Compile Include="Detalied\Vector.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Error.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="Form.cs" />
+    <Compile Include="GUI.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Layer.cs" />
+    <Compile Include="Length.cs" />
     <Compile Include="Native.cs" />
+    <Compile Include="Point.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rect.cs" />
+    <Compile Include="RenderObject.Build.cs" />
+    <Compile Include="RenderObject.cs" />
+    <Compile Include="Size.cs" />
+    <Compile Include="Skin.cs" />
+    <Compile Include="Style.Build.cs" />
+    <Compile Include="Style.cs" />
     <Compile Include="Style.Make.cs" />
     <Compile Include="StyleModifier.cs" />
     <Compile Include="TextStyle.cs" />
     <Compile Include="Texture.cs" />
-    <Compile Include="Input.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="Rect.cs" />
-    <Compile Include="Size.cs" />
+    <Compile Include="TODO.cs" />
+    <Compile Include="Transform.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Vector.cs" />
-    <Compile Include="Skin.cs" />
-    <Compile Include="RenderObject.Build.cs" />
-    <Compile Include="Style.Build.cs" />
-    <Compile Include="RenderObject.cs" />
-    <Compile Include="GUI.cs" />
-    <Compile Include="CarioExtension.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Length.cs" />
-    <Compile Include="Transform.cs" />
-    <Compile Include="Style.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mono.Cairo\Mono.Cairo.csproj">
-      <Project>{3f2d21fe-0e46-465c-a35a-4ea135bf0017}</Project>
-      <Name>Mono.Cairo</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
     <ProjectReference Include="..\Win32\Win32.csproj">
       <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
       <Name>Win32</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="TODO.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

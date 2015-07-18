@@ -43,5 +43,10 @@ namespace IMGUI
             Params = new Dictionary<string, object>();
         }
 
+        protected Control(string name)
+        {
+            Name = String.Empty;
+            Params = new Dictionary<string, object>();
+        }
     }
 }

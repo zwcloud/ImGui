@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Ivony.Html;
+//using Ivony.Html;
 
 namespace IMGUI
 {
@@ -8,6 +8,7 @@ namespace IMGUI
     /// </summary>
     public partial class RenderObject
     {
+#if false
         #region Meta
         public string Name;
         #endregion
@@ -32,6 +33,7 @@ namespace IMGUI
         /// <remarks>From the css file for style</remarks>
         public Style StyleObject;
 
+#endif
     }
 
 }

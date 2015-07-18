@@ -9,6 +9,7 @@ namespace Test
     [TestClass]
     public class IMGUITest
     {
+#if false
         [TestMethod]
         public void TestRenderObject_Build()
         {
@@ -31,5 +32,7 @@ namespace Test
             var result = Style.BuildFrom(out style, stylesheet.Rules[0] as StyleRule);
             Assert.IsTrue(result, "Style.BuildFrom Failed!");
         }
+#endif
+
     }
 }

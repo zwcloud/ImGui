@@ -6,6 +6,7 @@ namespace IMGUI
 {
     public partial class Style
     {
+#if false
         public static bool BuildFrom(out Style style, ExCSS.StyleRule rule)
         {
             try
@@ -72,5 +73,6 @@ namespace IMGUI
 
             return true;
         }
+#endif
     }
 }

@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Cairo;
+using Pango;
+using Color = Cairo.Color;
+using Context = Cairo.Context;
 
 namespace IMGUI
 {
@@ -183,20 +186,20 @@ namespace IMGUI
 
 
         #region text
-
-        public static void DrawText(this Context g, Rect rect, string text, Font font)
-        {
-            //drawing text's bottom-left corner is in the bottom-left of the rect
-            g.SelectFontFace(font.Family, font.Slant, font.Weight);
-            g.SetFontSize(font.Size);
-            g.SetSourceColor(font.Color);
-            g.MoveTo(rect.Left, rect.Y + 0.5 * rect.Height + 0.5 * font.Size);
-            g.ShowText(text);
-        }
+        //TODO replace Cairo's Toy text rendering method
+        //public static void DrawText(this Context g, Rect rect, string text, Font font)
+        //{
+        //    //drawing text's bottom-left corner is in the bottom-left of the rect
+        //    g.SelectFontFace(font.Family, font.Slant, font.Weight);
+        //    g.SetFontSize(font.Size);
+        //    g.SetSourceColor(font.Color);
+        //    g.MoveTo(rect.Left, rect.Y + 0.5 * rect.Height + 0.5 * font.Size);
+        //    g.ShowText(text);
+        //}
 
         public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
         {
-            g.SelectFontFace(font.Family, font.Slant, font.Weight);
+#if USE_TOY
             g.SetFontSize(font.Size);
             g.SetSourceColor(font.Color);
             Point p;
@@ -214,6 +217,17 @@ namespace IMGUI
             }
             g.MoveTo(p);
             g.ShowText(text);
+#else
+            Layout l = CairoHelper.CreateLayout(g);
+            l.SetText(text);
+            l.FontDescription = font.Description;
+            CairoHelper.UpdateLayout(g, l);
+
+            g.SetSourceColor(font.Color);
+            Point p = rect.TopLeft;
+            g.MoveTo(p);
+            CairoHelper.ShowLayout(g, l);
+#endif
         }
 
         #endregion
@@ -231,6 +245,12 @@ namespace IMGUI
         #endregion
         
         #region Color
+
+        public static void SetSourceColor(this Context context, Color color)
+        {
+            context.SetSourceRGBA(color.R,color.G,color.B,color.A);
+        }
+
         public static Color ColorRgb(byte r, byte g, byte b)
         {
             return new Color(r/255.0,g/255.0,b/255.0,1.0);
