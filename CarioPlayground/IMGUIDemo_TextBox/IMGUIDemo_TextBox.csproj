@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6A401FDF-4939-4623-8AE6-A3CD6E250ABD}</ProjectGuid>
+    <ProjectGuid>{E020C043-7427-4718-B336-AA8BE4B22F27}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IMGUIDemo</RootNamespace>
@@ -81,14 +81,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonType.cs" />
-    <Compile Include="Calc.cs" />
     <Compile Include="Form1.cs" />
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="OperatorType.cs" />
-    <Compile Include="Phase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -123,12 +119,6 @@
       <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
       <Name>Win32</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="calc32x32.ico" />
-    <Content Include="gnu_hornedword.png" />
-    <Content Include="Layout\LayoutMain.html" />
-    <Content Include="Layout\StyleMain.css" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

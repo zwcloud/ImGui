@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{DD39D4D9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUI", "IMGUI\IMGUI.csproj", "{495935C7-70A3-40E3-93CD-1CEBBD591B99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_TextBox", "IMGUIDemo_TextBox\IMGUIDemo_TextBox.csproj", "{E020C043-7427-4718-B336-AA8BE4B22F27}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -88,11 +90,24 @@ Global
 		{495935C7-70A3-40E3-93CD-1CEBBD591B99}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{495935C7-70A3-40E3-93CD-1CEBBD591B99}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{495935C7-70A3-40E3-93CD-1CEBBD591B99}.Release|x86.ActiveCfg = Release|Any CPU
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Debug|x86.ActiveCfg = Debug|x86
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Debug|x86.Build.0 = Debug|x86
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Release|Mixed Platforms.Build.0 = Release|x86
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Release|x86.ActiveCfg = Release|x86
+		{E020C043-7427-4718-B336-AA8BE4B22F27}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6A401FDF-4939-4623-8AE6-A3CD6E250ABD} = {DD39D4D9-52B4-47A7-86BF-ECB8D136D767}
+		{E020C043-7427-4718-B336-AA8BE4B22F27} = {DD39D4D9-52B4-47A7-86BF-ECB8D136D767}
 	EndGlobalSection
 EndGlobal

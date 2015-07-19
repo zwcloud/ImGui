@@ -22,7 +22,7 @@ namespace IMGUI
                 textBox = new TextBox(name);
             }
             else
-            {
+            { 
                 textBox = Controls[name] as TextBox;
             }
 
