@@ -122,7 +122,7 @@ namespace IMGUI
             #endregion
 
             #region Draw
-            g.DrawBoxModel(rect, new Content(texts[comboBox.SelectedIndex]), Skin._current.ComboBox[comboBox.State]);
+            g.DrawBoxModel(rect, new Content(texts[comboBox.SelectedIndex]), Skin.current.ComboBox[comboBox.State]);
             g.LineWidth = 1;
             /* TODO Draw this trangle as a content */
             var trianglePoints = new PointD[3];
@@ -142,15 +142,15 @@ namespace IMGUI
                     itemRect.Y += (i + 1)*rect.Height;
                     if( i == comboBox.ActiveIndex)
                     {
-                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Active"]);
+                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin.current.ComboBox["Item:Active"]);
                     }
                     else if(i == comboBox.HoverIndex)
                     {
-                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item:Hover"]);
+                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin.current.ComboBox["Item:Hover"]);
                     }
                     else
                     {
-                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin._current.ComboBox["Item"]);
+                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin.current.ComboBox["Item"]);
                     }
                 }
             }

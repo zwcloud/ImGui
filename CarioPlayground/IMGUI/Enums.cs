@@ -2,29 +2,6 @@
 namespace IMGUI
 {
     /// <summary>
-    /// Type of the style state
-    /// </summary>
-    public enum StyleType
-    {
-        Normal,
-        Hover,
-        Active,
-    }
-
-    /// <summary>
-    /// Type of text alignment
-    /// </summary>
-    public enum TextAlignment
-    {
-        Left,
-        Center,
-        /// <summary>
-        /// TODO
-        /// </summary>
-        Right
-    }
-
-    /// <summary>
     /// Key state
     /// </summary>
     public enum InputState

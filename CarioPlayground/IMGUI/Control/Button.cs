@@ -39,7 +39,7 @@ namespace IMGUI
             else
                 button.State = "Normal";
 
-            g.DrawBoxModel(rect, new Content(text), Skin._current.Button[button.State]);
+            g.DrawBoxModel(rect, new Content(text), Skin.current.Button[button.State]);
 
             bool clicked = Input.LeftButtonClicked && rect.Contains(Input.MousePos);
             return clicked;

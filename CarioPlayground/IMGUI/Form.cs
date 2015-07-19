@@ -8,9 +8,7 @@ namespace IMGUI
     public abstract class Form : System.Windows.Forms.Form
     {
         #region GUI compontents
-        public GUI debugGui;
-        // ReSharper disable once InconsistentNaming
-        public GUI gui { get; set; }
+        public GUI GUI { get; set; }
         
         private readonly Color windowBackgroundColor = CairoEx.ColorRgb(0x6A, 0x6A, 0x6A);
         #endregion
@@ -99,7 +97,7 @@ namespace IMGUI
                     CleanUp();
                     Close();
                 }
-                if(gui == null)
+                if(GUI == null)
                 {
                     Init();
                 }
@@ -122,8 +120,7 @@ namespace IMGUI
             Layer.FrontSurface = new Win32Surface(hdc);
             Layer.FrontContext = new Context(Layer.FrontSurface);
             Layer.TopContext  = new Context(Layer.TopSurface);
-            debugGui = new GUI(Layer.BackContext, Layer.TopContext);
-            gui = new GUI(Layer.BackContext, Layer.TopContext);
+            GUI = new GUI(Layer.BackContext, Layer.TopContext);
         }
 
         new bool Update()
@@ -170,14 +167,16 @@ namespace IMGUI
             Layer.TopContext.Restore();
 
 #if DEBUG
-            debugGui.Label(
-                new Rect(0, ClientRectangle.Bottom - Layer.BackContext.FontExtents.Height, 200, Layer.BackContext.FontExtents.Height),
+            var debugInfoheight = Skin.current.Label["Normal"].Font.Size;
+            GUI.Label(
+                //new Rect(0, ClientRectangle.Bottom - debugInfoheight, 200, debugInfoheight),
+                new Rect(0, ClientRectangle.Bottom - debugInfoheight, 200, debugInfoheight),
                 string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.MousePos.X, Input.MousePos.Y),
                 "DebugInfoLabel"
                 );
 #endif
 
-            OnGUI(gui);
+            OnGUI(GUI);
 
             SwapSurfaceBuffer();
         }

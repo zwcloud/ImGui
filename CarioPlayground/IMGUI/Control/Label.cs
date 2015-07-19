@@ -39,7 +39,7 @@ namespace IMGUI
             else
                 label.State = "Normal";
 
-            g.DrawBoxModel(rect, new Content(text), Skin._current.Label[label.State]);
+            g.DrawBoxModel(rect, new Content(text), Skin.current.Label[label.State]);
         }
 
     }

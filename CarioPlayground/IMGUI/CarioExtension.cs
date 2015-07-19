@@ -218,11 +218,13 @@ namespace IMGUI
             g.MoveTo(p);
             g.ShowText(text);
 #else
+            //TODO solve these code mess
             Layout l = CairoHelper.CreateLayout(g);
             l.SetText(text);
             l.FontDescription = font.Description;
             CairoHelper.UpdateLayout(g, l);
-
+            l.Alignment = textStyle.TextAlign;
+            l.Width = (int)(rect.Width*Pango.Scale.PangoScale);
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
             g.MoveTo(p);

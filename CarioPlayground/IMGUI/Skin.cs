@@ -2,7 +2,9 @@
 using Cairo;
 
 using Weight = Pango.Weight;
+using Slant = Pango.Style;
 using Color = Cairo.Color;
+using TextAlignment = Pango.Alignment;
 
 namespace IMGUI
 {
@@ -15,11 +17,11 @@ namespace IMGUI
         public Dictionary<string, Style> Image { get; private set; }
         public Dictionary<string, Style> Radio { get; set; }
 
-        internal static Skin _current;
+        internal static Skin current;
 
         static Skin()
         {
-            _current = new Skin();
+            current = new Skin();
         }
 
         public Skin()
@@ -43,7 +45,7 @@ namespace IMGUI
                         Name = "Font", Value = new Font
                         {
                             Family = "Consolas",
-                            Slant = FontSlant.Normal,
+                            Slant = Slant.Normal,
                             Weight = Weight.Normal,
                             Size = 12,
                             Color = new Color(0,0,1)
@@ -126,7 +128,7 @@ namespace IMGUI
                         Value = new Font
                         {
                             Family = "Consolas",
-                            Slant = FontSlant.Normal,
+                            Slant = Slant.Normal,
                             Weight = Weight.Bold,
                             Size = 12,
                             Color = CairoEx.ColorBlack

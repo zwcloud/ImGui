@@ -45,12 +45,12 @@ namespace IMGUI
             var toggleBoxRect = new Rect(rect.TopLeft, new Size(20, 20));
             g.DrawBoxModel(toggleBoxRect,
                 new Content(Texture._presets[on ? "Toggle.On" : "Toggle.Off"]),
-                Skin._current.Toggle[toggle.State]);
+                Skin.current.Toggle[toggle.State]);
 
             var toggleTextRect = new Rect(toggleBoxRect.TopRight, rect.BottomRight);
             g.DrawBoxModel(toggleTextRect,
                 new Content(text),
-                Skin._current.Toggle[toggle.State]);
+                Skin.current.Toggle[toggle.State]);
 
             return on;
         }

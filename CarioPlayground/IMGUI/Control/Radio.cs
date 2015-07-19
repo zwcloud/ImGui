@@ -13,20 +13,20 @@ namespace IMGUI
             Groups = new Dictionary<string, HashSet<string>>();
         }
 
-        private string _groupName;
+        private string groupName;
         internal string GroupName
         {
-            get { return _groupName; }
+            get { return groupName; }
             private set
             {
-                if(_groupName!=null)
+                if(groupName!=null)
                 {
-                    if(value == _groupName) return;
+                    if(value == groupName) return;
 #if DEBUG
-                    Debug.Assert(!Groups.ContainsKey(_groupName),
+                    Debug.Assert(!Groups.ContainsKey(groupName),
                         "Older group is not recorded.");
-                    var removed = Groups[_groupName].Remove(Name);
-                    Debug.Assert(removed, "This radio is not in the Group <{0}>.", _groupName);
+                    var removed = Groups[groupName].Remove(Name);
+                    Debug.Assert(removed, "This radio is not in the Group <{0}>.", groupName);
 #else
                     Groups[_groupName].Remove(Name);
 #endif
@@ -34,7 +34,7 @@ namespace IMGUI
                 if(!Groups.ContainsKey(value))
                     Groups[value] = new HashSet<string>();
                 Groups[value].Add(Name);
-                _groupName = value;
+                groupName = value;
             }
         }
 
@@ -129,7 +129,7 @@ namespace IMGUI
 
             var radioTextRect = new Rect(radioBoxRect.TopRight + new Vector(5,0),
                 rect.BottomRight);
-            g.DrawBoxModel(radioTextRect, new Content(text), Skin._current.Radio[radio.State]);
+            g.DrawBoxModel(radioTextRect, new Content(text), Skin.current.Radio[radio.State]);
             #endregion
 
 

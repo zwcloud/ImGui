@@ -8,7 +8,7 @@ namespace IMGUI
     {
         static internal void DoControl(Context g, Rect rect, Texture image, string name)
         {
-            g.DrawBoxModel(rect, new Content(image), Skin._current.Image["Normal"]);
+            g.DrawBoxModel(rect, new Content(image), Skin.current.Image["Normal"]);
         }
     }
 }

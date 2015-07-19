@@ -1,5 +1,7 @@
 ﻿using Cairo;
 using Weight = Pango.Weight;
+using Slant = Pango.Style;
+using TextAlignment = Pango.Alignment;
 
 namespace IMGUI
 {
@@ -127,7 +129,7 @@ namespace IMGUI
             Font = new Font
             {
                 Family = "Consolas",
-                Slant = FontSlant.Normal,
+                Slant = Slant.Normal,
                 Weight = Weight.Normal,
                 Size = 12,
                 Color = CairoEx.ColorBlack
