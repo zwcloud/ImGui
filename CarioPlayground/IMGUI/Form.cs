@@ -10,7 +10,7 @@ namespace IMGUI
         #region GUI compontents
         public GUI GUI { get; set; }
         
-        private readonly Color windowBackgroundColor = CairoEx.ColorRgb(0x6A, 0x6A, 0x6A);
+        private readonly Color windowBackgroundColor = CairoEx.ColorRgb(255, 255, 255);
         #endregion
 
         #region GUI paramters

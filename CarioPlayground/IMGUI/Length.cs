@@ -18,6 +18,7 @@
             this.Unit = unitType;
         }
         
+        public static Length OnePixel = new Length(1, Unit.Pixel);
         public static Length Zero = new Length(0, Unit.Pixel);
         public static Length Undefined = new Length(0xFFFF, Unit.Pixel);
 

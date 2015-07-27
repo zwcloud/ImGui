@@ -47,22 +47,23 @@ namespace IMGUI
             var ml = style.MarginLeft;
 
             //4 corner of the border-box
-            var btl = new PointD(rect.Left, rect.Top);
-            var btr = new PointD(rect.Right, rect.Top);
-            var bbr = new PointD(rect.Right, rect.Bottom);
-            var bbl = new PointD(rect.Left, rect.Bottom);
+            var btl = new Point(rect.Left, rect.Top);
+            var btr = new Point(rect.Right, rect.Top);
+            var bbr = new Point(rect.Right, rect.Bottom);
+            var bbl = new Point(rect.Left, rect.Bottom);
 
             //4 corner of the padding-box
-            var ptl = new PointD(btl.X + bl, btl.Y + bt);
-            var ptr = new PointD(btr.X - br, btr.Y + bt);
-            var pbr = new PointD(bbr.X - br, bbr.Y - bb);
-            var pbl = new PointD(bbl.X + bl, bbl.Y - bb);
+            var ptl = new Point(btl.X + bl, btl.Y + bt);
+            var ptr = new Point(btr.X - br, btr.Y + bt);
+            var pbr = new Point(bbr.X - br, bbr.Y - bb);
+            var pbl = new Point(bbl.X + bl, bbl.Y - bb);
 
             //4 corner of the content-box
-            var ctl = new PointD(ptl.X + pl, ptl.Y + pt);
-            var ctr = new PointD(ptr.X - pr, ptr.Y + pr);
-            var cbr = new PointD(pbr.X - pr, pbr.Y - pb);
-            var cbl = new PointD(pbl.X + pl, pbl.Y - pb);
+            var ctl = new Point(ptl.X + pl, ptl.Y + pt);
+            var ctr = new Point(ptr.X - pr, ptr.Y + pr);
+            var cbr = new Point(pbr.X - pr, pbr.Y - pb);
+            var cbl = new Point(pbl.X + pl, pbl.Y - pb);
+            var contentBoxRect = new Rect(ctl, cbr);
 
             /*
              * Render from inner to outer: Content, Padding, Border, Margin, Outline
@@ -84,17 +85,20 @@ namespace IMGUI
             if (content.Image != null)
             {
                 //TODO Draw the image at a proper position
-                g.DrawImage(rect, content.Image);
+                g.DrawImage(contentBoxRect, content.Image);
             }
 
-            /*
-             * TODO Replace DrawText with proper method
-             */
             if (content.Text != null)
             {
                 //TODO Draw the text at a proper position
-                g.DrawText(rect, content.Text, style.Font, style.TextStyle);
+                g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
             }
+
+            if(content.Text!=null && content.CaretIndex!=0)
+            {
+                g.DrawTextEx(contentBoxRect, content.Text, style.Font, style.TextStyle, content.CaretIndex);
+            }
+
         }
 
         #region primitive draw helpers
@@ -182,21 +186,21 @@ namespace IMGUI
             g.Arc(center.X, center.Y, radius, 0, 2 * Math.PI);
             g.Fill();
         }
+
+        internal static void DrawLine(this Context g, Point p0, Point p1, float width, Color color)
+        {
+            g.Save();
+            g.SetSourceColor(color);
+            g.LineWidth = width;
+            g.MoveTo(p0);
+            g.LineTo(p1);
+            g.Stroke();
+            g.Restore();
+        }
 #endregion
 
 
         #region text
-        //TODO replace Cairo's Toy text rendering method
-        //public static void DrawText(this Context g, Rect rect, string text, Font font)
-        //{
-        //    //drawing text's bottom-left corner is in the bottom-left of the rect
-        //    g.SelectFontFace(font.Family, font.Slant, font.Weight);
-        //    g.SetFontSize(font.Size);
-        //    g.SetSourceColor(font.Color);
-        //    g.MoveTo(rect.Left, rect.Y + 0.5 * rect.Height + 0.5 * font.Size);
-        //    g.ShowText(text);
-        //}
-
         public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
         {
 #if USE_TOY
@@ -230,6 +234,44 @@ namespace IMGUI
             g.MoveTo(p);
             CairoHelper.ShowLayout(g, l);
 #endif
+        }
+
+        public static void DrawTextEx(this Context g, Rect rect, string text, Font font, TextStyle textStyle,
+            int caretIndex)
+        {
+            //TODO solve these code mess
+            Layout l = CairoHelper.CreateLayout(g);
+            l.SetText(text);
+            l.FontDescription = font.Description;
+            CairoHelper.UpdateLayout(g, l);
+            l.Alignment = textStyle.TextAlign;
+            l.Width = (int)(rect.Width * Pango.Scale.PangoScale);
+            g.SetSourceColor(font.Color);
+            Point p = rect.TopLeft;
+            g.MoveTo(p);
+            CairoHelper.ShowLayout(g, l);
+
+            //TODO draw selection
+            //Pango.Rectangle rightStrongRect, rightRect;
+            //l.GetCursorPos(caretIndex, out rightStrongRect, out rightRect);
+            //Pango.Rectangle leftStrongRect, leftRect;
+            //l.GetCursorPos(caretIndex, out leftStrongRect, out leftRect);
+            //var r = new Cairo.Rectangle(Pango.Units.ToPixels(leftRect.X), Pango.Units.ToPixels(leftRect.Y),
+            //    Pango.Units.ToPixels(rightRect.X + rightRect.Width - leftRect.X),
+            //    Pango.Units.ToPixels(leftRect.Height));
+
+            #region Draw caret
+            //BUG caret not show up when caretIndex is 0 or the length of text
+            //TODO make caret flash
+            Pango.Rectangle strongCursorPosFromPango, weakCursorPosFromPango;
+            l.GetCursorPos(caretIndex,
+                out strongCursorPosFromPango, out weakCursorPosFromPango);
+            var caretTopPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y));
+            var caretBottomPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y + strongCursorPosFromPango.Height));
+            caretTopPoint.Offset(p.X, p.Y);
+            caretBottomPoint.Offset(p.X, p.Y);
+            g.DrawLine(caretTopPoint, caretBottomPoint, 1.0f, CairoEx.ColorBlack);
+            #endregion
         }
 
         #endregion

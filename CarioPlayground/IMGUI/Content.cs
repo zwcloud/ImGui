@@ -10,6 +10,7 @@
         private static Content s_text = new Content();
 
         public string Text { get; set; }
+        public int CaretIndex { get; set; }
 
         public Texture Image { get; set; }
 
@@ -31,6 +32,12 @@
         {
             Text = null;
             Image = image;
+        }
+
+        public Content(string text, int caretIndex, int selectIndex0 = 0, int selectIndex1=0)
+        {
+            Text = text;
+            CaretIndex = caretIndex;
         }
     }
 }

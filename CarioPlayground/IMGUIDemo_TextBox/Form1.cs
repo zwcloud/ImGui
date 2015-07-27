@@ -6,7 +6,7 @@ namespace IMGUIDemo
     {
         public Form1()
         {
-            //.
+            Text = @"Demo_TextBox";
         }
     }
 

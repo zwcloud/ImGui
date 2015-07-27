@@ -16,6 +16,7 @@ namespace IMGUI
         public Dictionary<string, Style> ComboBox { get; private set; }
         public Dictionary<string, Style> Image { get; private set; }
         public Dictionary<string, Style> Radio { get; set; }
+        public Dictionary<string, Style> TextBox { get; set; }
 
         internal static Skin current;
 
@@ -32,6 +33,7 @@ namespace IMGUI
             ComboBox = new Dictionary<string, Style>(3);
             Image = new Dictionary<string, Style>(1);
             Radio = new Dictionary<string, Style>(2);
+            TextBox = new Dictionary<string, Style>(3);
 
             #region Label
             {
@@ -272,8 +274,71 @@ namespace IMGUI
                 Radio["Active"] = Style.Make();
             }
             #endregion
+
+            #region TextBox
+            {
+                StyleModifier[] normalModifiers =
+                {
+                    new StyleModifier{Name = "BorderTop", Value = Length.OnePixel},
+                    new StyleModifier{Name = "BorderRight", Value = Length.OnePixel},
+                    new StyleModifier{Name = "BorderBottom", Value = Length.OnePixel},
+                    new StyleModifier{Name = "BorderLeft", Value = Length.OnePixel},
+
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
+                    
+                    new StyleModifier{Name="PaddingTop", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name="PaddingRight", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name="PaddingBottom", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name="PaddingLeft", Value = new Length(2, Unit.Pixel)},
+
+                    new StyleModifier
+                    {
+                        Name = "TextStyle",
+                        Value = new TextStyle
+                        {
+                            TextAlign = TextAlignment.Left,
+                            LineSpacing = 0,
+                            TabSize = 4
+                        }
+                    },
+                    
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = CairoEx.ColorWhite,
+                            Image = null,
+                            Pattern = null
+                        }
+                    },
+                };
+                TextBox["Normal"] = Style.Make(normalModifiers);
+
+                var lightBlue = CairoEx.ColorRgb(46, 167, 224);
+                StyleModifier[] hoverModifiers =
+                {
+                    new StyleModifier{Name = "BorderTopColor", Value = lightBlue},
+                    new StyleModifier{Name = "BorderRightColor", Value = lightBlue},
+                    new StyleModifier{Name = "BorderBottomColor", Value = lightBlue},
+                    new StyleModifier{Name = "BorderLeftColor", Value = lightBlue},
+                };
+                TextBox["Hover"] = Style.Make(TextBox["Normal"], hoverModifiers);
+
+                var darkBlue = CairoEx.ColorRgb(3, 110, 184);
+                StyleModifier[] activeModifiers =
+                {
+                    new StyleModifier{Name = "BorderTopColor", Value = darkBlue},
+                    new StyleModifier{Name = "BorderRightColor", Value = darkBlue},
+                    new StyleModifier{Name = "BorderBottomColor", Value = darkBlue},
+                    new StyleModifier{Name = "BorderLeftColor", Value = darkBlue},
+                };
+                TextBox["Active"] = Style.Make(TextBox["Normal"], activeModifiers);
+            }
+            #endregion
         }
-
-
     }
 }

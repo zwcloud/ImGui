@@ -30,6 +30,7 @@ namespace IMGUI
             Debug.Assert(button != null);
             #endregion
 
+            #region Logic
             bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
             bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
             if(active)
@@ -38,6 +39,7 @@ namespace IMGUI
                 button.State = "Hover";
             else
                 button.State = "Normal";
+            #endregion
 
             g.DrawBoxModel(rect, new Content(text), Skin.current.Button[button.State]);
 

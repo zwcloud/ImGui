@@ -45,7 +45,7 @@ namespace IMGUI
 
         protected Control(string name)
         {
-            Name = String.Empty;
+            Name = name;
             Params = new Dictionary<string, object>();
         }
     }
