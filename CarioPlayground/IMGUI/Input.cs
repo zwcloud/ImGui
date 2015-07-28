@@ -172,10 +172,6 @@ namespace IMGUI
         public static bool Refresh(int clientPosX, int clientPosY, Rect clientRect)
         {
             /*
-             * TODO check if the window has focus
-             */
-
-            /*
              * Keyboard
              */
             byte[] keys = new byte[256];

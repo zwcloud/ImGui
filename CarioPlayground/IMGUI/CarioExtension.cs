@@ -88,17 +88,22 @@ namespace IMGUI
                 g.DrawImage(contentBoxRect, content.Image);
             }
 
-            if (content.Text != null)
+            if(content.Text != null && content.CaretIndex >= 0 && content.CaretIndex <= content.Text.Length)
+            {
+                if(content.SelectIndex >= 0 && content.SelectIndex <= content.Text.Length)
+                {
+                    g.DrawTextEx(contentBoxRect, content.Text, style.Font, style.TextStyle, content.CaretIndex, content.SelectIndex);
+                }
+                else
+                {
+                    g.DrawTextEx(contentBoxRect, content.Text, style.Font, style.TextStyle, content.CaretIndex);
+                }
+            }
+            else if (content.Text != null)
             {
                 //TODO Draw the text at a proper position
                 g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
             }
-
-            if(content.Text!=null && content.CaretIndex!=0)
-            {
-                g.DrawTextEx(contentBoxRect, content.Text, style.Font, style.TextStyle, content.CaretIndex);
-            }
-
         }
 
         #region primitive draw helpers
@@ -237,7 +242,7 @@ namespace IMGUI
         }
 
         public static void DrawTextEx(this Context g, Rect rect, string text, Font font, TextStyle textStyle,
-            int caretIndex)
+            int caretIndex, int selectIndex=int.MaxValue)
         {
             //TODO solve these code mess
             Layout l = CairoHelper.CreateLayout(g);
@@ -252,17 +257,25 @@ namespace IMGUI
             CairoHelper.ShowLayout(g, l);
 
             //TODO draw selection
-            //Pango.Rectangle rightStrongRect, rightRect;
-            //l.GetCursorPos(caretIndex, out rightStrongRect, out rightRect);
-            //Pango.Rectangle leftStrongRect, leftRect;
-            //l.GetCursorPos(caretIndex, out leftStrongRect, out leftRect);
-            //var r = new Cairo.Rectangle(Pango.Units.ToPixels(leftRect.X), Pango.Units.ToPixels(leftRect.Y),
-            //    Pango.Units.ToPixels(rightRect.X + rightRect.Width - leftRect.X),
-            //    Pango.Units.ToPixels(leftRect.Height));
+            if(selectIndex != int.MaxValue)
+            {
+                Pango.Rectangle rightStrongRect, rightRect;
+                l.GetCursorPos(selectIndex, out rightStrongRect, out rightRect);
+
+                Pango.Rectangle leftStrongRect, leftRect;
+                l.GetCursorPos(caretIndex, out leftStrongRect, out leftRect);
+
+                var selectionRect = new Rect(
+                    new Point(Pango.Units.ToPixels(leftRect.X), Pango.Units.ToPixels(leftRect.Y)),
+                    new Point(Pango.Units.ToPixels(rightRect.X), Pango.Units.ToPixels(rightRect.Y + rightRect.Height))
+                    );
+                selectionRect.Offset(p.X, p.Y);
+                g.FillRectangle(selectionRect,
+                    CairoEx.ColorArgb(100,100,100,100));
+            }
+            
 
             #region Draw caret
-            //BUG caret not show up when caretIndex is 0 or the length of text
-            //TODO make caret flash
             Pango.Rectangle strongCursorPosFromPango, weakCursorPosFromPango;
             l.GetCursorPos(caretIndex,
                 out strongCursorPosFromPango, out weakCursorPosFromPango);
@@ -270,7 +283,10 @@ namespace IMGUI
             var caretBottomPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y + strongCursorPosFromPango.Height));
             caretTopPoint.Offset(p.X, p.Y);
             caretBottomPoint.Offset(p.X, p.Y);
-            g.DrawLine(caretTopPoint, caretBottomPoint, 1.0f, CairoEx.ColorBlack);
+            //Clean up this alpha affairs
+            var caretAlpha = (byte)(Utility.Millis % 1060 / 1060.0f * 255);
+            caretAlpha = (byte)(caretAlpha < 100 ? 0 : 255);
+            g.DrawLine(caretTopPoint, caretBottomPoint, 1.0f, CairoEx.ColorArgb(caretAlpha, 0, 0, 0));
             #endregion
         }
 
@@ -313,6 +329,31 @@ namespace IMGUI
                 (byte) ((colorValue >> 8) & 0xff),
                 (byte) (colorValue & 0xff)
                 );
+        }
+
+        public static Color ColorFromHSV(double hue, double saturation, double value)
+        {
+            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+            double f = hue / 60 - Math.Floor(hue / 60);
+
+            value = value * 255;
+            byte v = Convert.ToByte(value);
+            byte p = Convert.ToByte(value * (1 - saturation));
+            byte q = Convert.ToByte(value * (1 - f * saturation));
+            byte t = Convert.ToByte(value * (1 - (1 - f) * saturation));
+
+            if(hi == 0)
+                return CairoEx.ColorArgb(255, v, t, p);
+            if(hi == 1)
+                return CairoEx.ColorArgb(255, q, v, p);
+            if(hi == 2)
+                return CairoEx.ColorArgb(255, p, v, t);
+            if(hi == 3)
+                return CairoEx.ColorArgb(255, p, q, v);
+            if(hi == 4)
+                return CairoEx.ColorArgb(255, t, p, v);
+
+            return CairoEx.ColorArgb(255, v, p, q);
         }
 #endregion
 

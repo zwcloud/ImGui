@@ -1,20 +1,43 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using System.Windows.Forms.VisualStyles;
+﻿using System;
+using System.Diagnostics;
+using System.Windows.Forms;
 using Cairo;
 
 namespace IMGUI
 {
     internal class TextBox : Control
     {
+        private int selectIndex;
         internal string Text { get; set; }
-        internal float Scroll { get; set; }
         internal Point CaretPosition { get; set; }
         internal int CaretIndex { get; set; }
+        internal int CachedCaretIndex { get; set; }
+        internal bool Selecting { get; set; }
+
+        internal int SelectIndex
+        {
+            get { return selectIndex; }
+            set
+            {
+                if(value < 0)
+                {
+                    selectIndex = 0;
+                }
+                else if(value>Text.Length)
+                {
+                    selectIndex = Text.Length;
+                }
+                else
+                {
+                    selectIndex = value;
+                }
+            }
+        }
 
         internal TextBox(string name)
             : base(name)
         {
+            CaretIndex = 0;
             Controls[Name] = this;
         }
 
@@ -42,22 +65,17 @@ namespace IMGUI
 
             bool insideRect = rect.Contains(Input.MousePos);
 
-            if(Input.LeftButtonState == InputState.Down && insideRect)
-            {
-                textBox.State = "Active";
-            }
             if(textBox.State == "Active")
             {
-                if(Input.LeftButtonClicked && !insideRect)
-                {
-                    textBox.State = "Normal";
-                }
-
                 if(Input.KeyPressed(Key.Left))
                 {
                     if(textBox.CaretIndex > 0)
                     {
                         --textBox.CaretIndex;
+                    }
+                    if(!Input.KeyDown(Key.LeftShift))
+                    {
+                        textBox.SelectIndex = textBox.CaretIndex;
                     }
                 }
                 else if(Input.KeyPressed(Key.Right))
@@ -66,13 +84,35 @@ namespace IMGUI
                     {
                         ++textBox.CaretIndex;
                     }
+                    if(!Input.KeyDown(Key.LeftShift))
+                    {
+                        textBox.SelectIndex = textBox.CaretIndex;
+                    }
                 }
-                textBox.Scroll = 0;
+
+                if(Input.LeftButtonClicked && !insideRect)
+                {
+                    textBox.State = "Normal";
+                }
+                if(Input.KeyDown(Key.LeftShift) && !textBox.Selecting)
+                {
+                    textBox.Selecting = true;
+                    textBox.SelectIndex = textBox.CaretIndex;
+                }
+                if(!Input.KeyDown(Key.LeftShift) && textBox.Selecting)
+                {
+                    textBox.Selecting = false;
+                }
             }
             else
             {
-                bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
-                if(hover)
+                bool active = Input.LeftButtonState == InputState.Down && insideRect;
+                bool hover = Input.LeftButtonState == InputState.Up && insideRect;
+                if(active)
+                {
+                    textBox.State = "Active";
+                }
+                else if(hover)
                     textBox.State = "Hover";
                 else
                     textBox.State = "Normal";
@@ -83,7 +123,7 @@ namespace IMGUI
             var style = Skin.current.TextBox[textBox.State];
             if(textBox.State == "Active")
             {
-                g.DrawBoxModel(rect, new Content(text, textBox.CaretIndex), style);
+                g.DrawBoxModel(rect, new Content(text, textBox.CaretIndex, textBox.SelectIndex), style);
             }
             else
             {

@@ -12,7 +12,7 @@ namespace IMGUIDemo
     {
         protected override void OnGUI(GUI gui)
         {
-            gui.TextBox(new Rect(10, 10, 110, 30), "text1 啊啊", "Textbox0");
+            gui.TextBox(new Rect(10, 10, 110, 30), "text1", "Textbox0");
 
         }
     }

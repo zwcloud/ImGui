@@ -11,6 +11,7 @@
 
         public string Text { get; set; }
         public int CaretIndex { get; set; }
+        public int SelectIndex { get; set; }
 
         public Texture Image { get; set; }
 
@@ -20,24 +21,40 @@
         {
             Text = string.Empty;
             Image = null;
+            CaretIndex = int.MaxValue;
+            SelectIndex = int.MaxValue;
         }
 
         public Content(string text)
         {
             Text = text;
             Image = null;
+            CaretIndex = int.MaxValue;
+            SelectIndex = int.MaxValue;
         }
 
         public Content(Texture image)
         {
             Text = null;
             Image = image;
+            CaretIndex = int.MaxValue;
+            SelectIndex = int.MaxValue;
         }
 
-        public Content(string text, int caretIndex, int selectIndex0 = 0, int selectIndex1=0)
+        public Content(string text, int caretIndex)
         {
             Text = text;
+            Image = null;
             CaretIndex = caretIndex;
+            SelectIndex = int.MaxValue;
+        }
+
+        public Content(string text, int caretIndex, int selectIndex)
+        {
+            Text = text;
+            Image = null;
+            CaretIndex = caretIndex;
+            SelectIndex = selectIndex;
         }
     }
 }

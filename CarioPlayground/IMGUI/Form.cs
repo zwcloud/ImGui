@@ -125,6 +125,11 @@ namespace IMGUI
 
         new bool Update()
         {
+            if(!Focused)
+            {
+                return false;
+            }
+
             var clientRect = new Rect
             {
                 X = ClientRectangle.Left,
@@ -170,7 +175,7 @@ namespace IMGUI
             var debugInfoheight = Skin.current.Label["Normal"].Font.Size;
             GUI.Label(
                 //new Rect(0, ClientRectangle.Bottom - debugInfoheight, 200, debugInfoheight),
-                new Rect(0, ClientRectangle.Bottom - debugInfoheight, 200, debugInfoheight),
+                new Rect(0, ClientRectangle.Bottom - 20, 300, debugInfoheight),
                 string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.MousePos.X, Input.MousePos.Y),
                 "DebugInfoLabel"
                 );
