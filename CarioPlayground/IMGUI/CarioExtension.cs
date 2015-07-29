@@ -87,28 +87,19 @@ namespace IMGUI
                 //TODO Draw the image at a proper position
                 g.DrawImage(contentBoxRect, content.Image);
             }
-
-            if(content.Text != null && content.CaretIndex >= 0 && content.CaretIndex <= content.Text.Length)
+            if (content.Text != null)
             {
-                if(content.SelectIndex >= 0 && content.SelectIndex <= content.Text.Length)
-                {
-                    g.DrawTextEx(contentBoxRect, content.Text, style.Font, style.TextStyle, content.CaretIndex, content.SelectIndex);
-                }
-                else
-                {
-                    g.DrawTextEx(contentBoxRect, content.Text, style.Font, style.TextStyle, content.CaretIndex);
-                }
-            }
-            else if (content.Text != null)
-            {
-                //TODO Draw the text at a proper position
                 g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
+            }
+            if(content.Layout != null)
+            {
+                g.DrawText(contentBoxRect, content.Layout, style.Font);
             }
         }
 
         #region primitive draw helpers
 
-        public static void StrokeRectangle(this Context g,
+        internal static void StrokeRectangle(this Context g,
             Rect rect,
             Color topColor,
             Color rightColor,
@@ -127,8 +118,8 @@ namespace IMGUI
             g.ClosePath();
             g.Stroke();
         }
-        
-        private static void FillRectangle(this Context g,
+
+        internal static void FillRectangle(this Context g,
             Rect rect,
             Color color)
         {
@@ -142,7 +133,7 @@ namespace IMGUI
             g.Fill();
         }
 
-        public static void FillPolygon(this Context g, PointD[] vPoint, Color color)
+        internal static void FillPolygon(this Context g, PointD[] vPoint, Color color)
         {
             if (vPoint.Length <= 2)
             {
@@ -159,7 +150,7 @@ namespace IMGUI
             g.Fill();
         }
 
-        public static void StrokePolygon(this Context g, PointD[] vPoint, Color color)
+        internal static void StrokePolygon(this Context g, PointD[] vPoint, Color color)
         {
             if (vPoint.Length <= 2)
             {
@@ -176,7 +167,7 @@ namespace IMGUI
             g.Stroke();
         }
 
-        public static void StrokeCircle(this Context g, PointD center, float radius, Color color)
+        internal static void StrokeCircle(this Context g, PointD center, float radius, Color color)
         {
             g.NewPath();
             g.SetSourceColor(color);
@@ -184,7 +175,7 @@ namespace IMGUI
             g.Stroke();
         }
 
-        public static void FillCircle(this Context g, PointD center, float radius, Color color)
+        internal static void FillCircle(this Context g, PointD center, float radius, Color color)
         {
             g.NewPath();
             g.SetSourceColor(color);
@@ -208,26 +199,7 @@ namespace IMGUI
         #region text
         public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
         {
-#if USE_TOY
-            g.SetFontSize(font.Size);
-            g.SetSourceColor(font.Color);
-            Point p;
-            if (textStyle.TextAlign == TextAlignment.Left)
-            {
-                //drawing text's bottom-left corner is in the bottom-left of the rect
-                p = new Point(rect.Left, rect.Y + 0.5*rect.Height + 0.5*font.Size);
-            }
-            else
-            {
-                var extents = g.TextExtents(text);
-                p = new Point(
-                    rect.X + rect.Width/2 - (extents.Width/2 + extents.XBearing),
-                    rect.Y + rect.Height/2 - (extents.Height/2 + extents.YBearing));
-            }
-            g.MoveTo(p);
-            g.ShowText(text);
-#else
-            //TODO solve these code mess
+            //TODO move Layout to corresponding control
             Layout l = CairoHelper.CreateLayout(g);
             l.SetText(text);
             l.FontDescription = font.Description;
@@ -238,58 +210,14 @@ namespace IMGUI
             Point p = rect.TopLeft;
             g.MoveTo(p);
             CairoHelper.ShowLayout(g, l);
-#endif
         }
-
-        public static void DrawTextEx(this Context g, Rect rect, string text, Font font, TextStyle textStyle,
-            int caretIndex, int selectIndex=int.MaxValue)
+        public static void DrawText(this Context g, Rect rect, Layout layout, Font font)
         {
-            //TODO solve these code mess
-            Layout l = CairoHelper.CreateLayout(g);
-            l.SetText(text);
-            l.FontDescription = font.Description;
-            CairoHelper.UpdateLayout(g, l);
-            l.Alignment = textStyle.TextAlign;
-            l.Width = (int)(rect.Width * Pango.Scale.PangoScale);
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
             g.MoveTo(p);
-            CairoHelper.ShowLayout(g, l);
-
-            //TODO draw selection
-            if(selectIndex != int.MaxValue)
-            {
-                Pango.Rectangle rightStrongRect, rightRect;
-                l.GetCursorPos(selectIndex, out rightStrongRect, out rightRect);
-
-                Pango.Rectangle leftStrongRect, leftRect;
-                l.GetCursorPos(caretIndex, out leftStrongRect, out leftRect);
-
-                var selectionRect = new Rect(
-                    new Point(Pango.Units.ToPixels(leftRect.X), Pango.Units.ToPixels(leftRect.Y)),
-                    new Point(Pango.Units.ToPixels(rightRect.X), Pango.Units.ToPixels(rightRect.Y + rightRect.Height))
-                    );
-                selectionRect.Offset(p.X, p.Y);
-                g.FillRectangle(selectionRect,
-                    CairoEx.ColorArgb(100,100,100,100));
-            }
-            
-
-            #region Draw caret
-            Pango.Rectangle strongCursorPosFromPango, weakCursorPosFromPango;
-            l.GetCursorPos(caretIndex,
-                out strongCursorPosFromPango, out weakCursorPosFromPango);
-            var caretTopPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y));
-            var caretBottomPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y + strongCursorPosFromPango.Height));
-            caretTopPoint.Offset(p.X, p.Y);
-            caretBottomPoint.Offset(p.X, p.Y);
-            //Clean up this alpha affairs
-            var caretAlpha = (byte)(Utility.Millis % 1060 / 1060.0f * 255);
-            caretAlpha = (byte)(caretAlpha < 100 ? 0 : 255);
-            g.DrawLine(caretTopPoint, caretBottomPoint, 1.0f, CairoEx.ColorArgb(caretAlpha, 0, 0, 0));
-            #endregion
+            CairoHelper.ShowLayout(g, layout);
         }
-
         #endregion
 
         #endregion

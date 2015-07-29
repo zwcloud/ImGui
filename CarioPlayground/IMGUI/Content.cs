@@ -1,4 +1,5 @@
-﻿namespace IMGUI
+﻿using Layout = Pango.Layout;
+namespace IMGUI
 {
     public sealed class Content
     {
@@ -9,9 +10,15 @@
         public static Content None = new Content(string.Empty);
         private static Content s_text = new Content();
 
+        /// <summary>
+        /// Simple text(Single line and short--three or two word)
+        /// </summary>
         public string Text { get; set; }
-        public int CaretIndex { get; set; }
-        public int SelectIndex { get; set; }
+
+        /// <summary>
+        /// Layouted text
+        /// </summary>
+        public Layout Layout { get; set; }
 
         public Texture Image { get; set; }
 
@@ -21,40 +28,28 @@
         {
             Text = string.Empty;
             Image = null;
-            CaretIndex = int.MaxValue;
-            SelectIndex = int.MaxValue;
+            Layout = null;
         }
 
         public Content(string text)
         {
             Text = text;
             Image = null;
-            CaretIndex = int.MaxValue;
-            SelectIndex = int.MaxValue;
+            Layout = null;
         }
 
         public Content(Texture image)
         {
             Text = null;
             Image = image;
-            CaretIndex = int.MaxValue;
-            SelectIndex = int.MaxValue;
+            Layout = null;
         }
 
-        public Content(string text, int caretIndex)
+        public Content(Layout layout)
         {
-            Text = text;
+            Text = null;
             Image = null;
-            CaretIndex = caretIndex;
-            SelectIndex = int.MaxValue;
-        }
-
-        public Content(string text, int caretIndex, int selectIndex)
-        {
-            Text = text;
-            Image = null;
-            CaretIndex = caretIndex;
-            SelectIndex = selectIndex;
+            Layout = layout;
         }
     }
 }

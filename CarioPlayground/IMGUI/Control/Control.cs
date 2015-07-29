@@ -41,12 +41,14 @@ namespace IMGUI
         {
             Name = String.Empty;
             Params = new Dictionary<string, object>();
+            State = "Normal";
         }
 
         protected Control(string name)
         {
             Name = name;
             Params = new Dictionary<string, object>();
+            State = "Normal";
         }
     }
 }
