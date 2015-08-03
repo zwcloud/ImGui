@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
@@ -69,6 +71,16 @@ namespace IMGUI
         #endregion
 
         #region Mouse
+
+        /// <summary>
+        /// Double click interval time span
+        /// </summary>
+        /// <remarks>
+        /// if the interval between two mouse click is longer than this value,
+        /// the two clicking action is not considered as a double-click action.
+        /// </remarks>
+        internal const float DoubleClickIntervalTimeSpan = 0.2f;
+
         #region Left button
         /// <summary>
         /// Last recorded left mouse button state
@@ -82,6 +94,15 @@ namespace IMGUI
         private static InputState leftButtonState = InputState.Up;
 
         /// <summary>
+        /// Last recorded left mouse button state
+        /// </summary>
+        /// <remarks>for detecting left mouse button state' changes</remarks>
+        public static InputState LastLeftButtonState
+        {
+            get { return lastLeftButtonState; }
+        }
+
+        /// <summary>
         /// Button state of left mouse button(readonly)
         /// </summary>
         public static InputState LeftButtonState
@@ -89,17 +110,16 @@ namespace IMGUI
             get { return leftButtonState; }
         }
 
+        private static bool leftButtonClicked = false;
         /// <summary>
-        /// Check if the left mouse button is clicked(readonly)
+        /// Is left mouse button clicked?(readonly)
         /// </summary>
         public static bool LeftButtonClicked
         {
-            get
-            {
-                return lastLeftButtonState == InputState.Down
-                    && leftButtonState == InputState.Up;
-            }
+            get { return leftButtonClicked; }
+            private set { leftButtonClicked = value; }
         }
+
         #endregion
 
         #region Right button
@@ -139,7 +159,20 @@ namespace IMGUI
         /// <summary>
         /// Mouse position
         /// </summary>
+        static Point lastMousePos;
+
+        /// <summary>
+        /// Mouse position
+        /// </summary>
         static Point mousePos;
+
+        /// <summary>
+        /// Mouse position
+        /// </summary>
+        public static Point LastMousePos
+        {
+            get { return lastMousePos; }
+        }
 
         /// <summary>
         /// Mouse position (readonly)
@@ -148,7 +181,35 @@ namespace IMGUI
         {
             get { return mousePos; }
         }
+
+        public static bool MouseMoving
+        {
+            get { return mousePos != lastMousePos; }
+        }
+
         #endregion
+
+        #region Drag
+
+        private static bool mouseDragMousePressing;
+        private static bool mouseDragMouseUpToDown;
+        private static bool mouseDragMouseMoved;
+
+        private static IEnumerator<bool> ClickChecker
+        {
+            get { return clickChecker; }
+            set { clickChecker = value; }
+        }
+
+        public static bool MouseDraging { get; private set; }
+
+        public static IEnumerator<bool> DragChecker
+        {
+            get { return dragChecker; }
+        }
+
+        #endregion
+
         #endregion
 
         /// <summary>
@@ -209,6 +270,7 @@ namespace IMGUI
             rightButtonState = ((Native.GetAsyncKeyState((ushort)MouseButton.Right) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
             //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
             //Position
+            lastMousePos = mousePos;
             var clientWidth = clientRect.Right - clientRect.Left;
             var clientHeight = clientRect.Bottom - clientRect.Top;
             POINT cursorPosPoint;
@@ -228,9 +290,172 @@ namespace IMGUI
                 mousePos.Y = clientHeight;
             //Now mousePos is the position in the client area
 
+            ClickChecker.MoveNext();
+            LeftButtonClicked = ClickChecker.Current;
+
+            DragChecker.MoveNext();
+            MouseDraging = DragChecker.Current;
+
+#if f
+            if(LeftButtonClicked)
+            {
+                ClickChecker = CheckClick().GetEnumerator();//Reset
+            }
+            ClickChecker.MoveNext();
+            LeftButtonClicked = ClickChecker.Current;
+
+            if(LastLeftButtonState == InputState.Up && LeftButtonState == InputState.Down)
+            {
+                mouseDragMouseUpToDown = true;
+            }
+            if(mouseDragMouseUpToDown)
+            {
+                mouseDragMousePressing = LeftButtonState == InputState.Down;
+                if(MouseMoving)
+                {
+                    mouseDragMouseMoved = true;
+                }
+            }
+#endif
+
             return true;
         }
+        static IEnumerator<bool> clickChecker = ClickStateMachine.Instance.GetEnumerator();
+        class ClickStateMachine : IEnumerable<bool>
+        {
+            enum ClickState
+            {
+                One,
+                Two,
+                Three
+            }
 
+            private static ClickStateMachine instance;
+            public static ClickStateMachine Instance
+            {
+                get
+                {
+                    if(instance == null)
+                        instance = new ClickStateMachine();
+                    return instance;
+                }
+            }
+
+            private ClickState state;
+
+            public IEnumerator<bool> GetEnumerator()
+            {
+                while (true)
+                {
+                    switch(state)
+                    {
+                        case ClickState.One:
+                            if(LastLeftButtonState == InputState.Up && LeftButtonState == InputState.Down)
+                            {
+                                state = ClickState.Two;
+                            }
+                            yield return false;
+                            break;
+                        case ClickState.Two:
+                            if(MouseMoving)
+                            {
+                                state = ClickState.One;
+                                yield return false;
+                            }
+                            if(LeftButtonState == InputState.Up)
+                            {
+                                state = ClickState.One;
+                                yield return false;
+                            }
+                            state = ClickState.Three;
+                            yield return true;
+                            break;
+                        case ClickState.Three:
+                            state = ClickState.One;
+                            yield return false;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+
+        static IEnumerator<bool> dragChecker = DragStateMachine.Instance.GetEnumerator();
+        class DragStateMachine : IEnumerable<bool>
+        {
+            enum DragState
+            {
+                One,
+                Two,
+                Three
+            }
+
+            private static DragStateMachine instance;
+            public static DragStateMachine Instance
+            {
+                get
+                {
+                    if(instance == null)
+                        instance = new DragStateMachine();
+                    return instance;
+                }
+            }
+
+            private DragState state;
+
+            public IEnumerator<bool> GetEnumerator()
+            {
+                while(true)
+                {
+                    switch(state)
+                    {
+                        case DragState.One:
+                            if(LastLeftButtonState == InputState.Up && LeftButtonState == InputState.Down)
+                            {
+                                state = DragState.Two;
+                            }
+                            yield return false;
+                            break;
+                        case DragState.Two:
+                            if(LeftButtonState == InputState.Up)
+                            {
+                                yield return false;
+                            }
+                            if(!MouseMoving)
+                            {
+                                yield return false;
+                            }
+                            state = DragState.Three;
+                            yield return true;
+                            break;
+                        case DragState.Three:
+                            if(LeftButtonState == InputState.Up)
+                            {
+                                state = DragState.One;
+                                yield return false;
+                            }
+                            else
+                            {
+                                yield return true;
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
 
     }
 }

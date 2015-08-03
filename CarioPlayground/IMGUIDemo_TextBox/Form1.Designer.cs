@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using IMGUI;
 
-namespace IMGUIDemo
+namespace IMGUIDemo_TextBox
 {
     partial class Form1
     {
         protected override void OnGUI(GUI gui)
         {
-            gui.TextBox(new Rect(10, 10, 110, 30), "text1", "Textbox0");
+            gui.TextBox(new Rect(10, 10, 110, 30), "tex是t12啊5", "Textbox0");
 
         }
     }

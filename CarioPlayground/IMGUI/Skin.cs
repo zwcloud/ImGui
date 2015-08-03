@@ -335,6 +335,8 @@ namespace IMGUI
                     new StyleModifier{Name = "BorderRightColor", Value = darkBlue},
                     new StyleModifier{Name = "BorderBottomColor", Value = darkBlue},
                     new StyleModifier{Name = "BorderLeftColor", Value = darkBlue},
+
+                    new StyleModifier{Name = "Cursor", Value = Cursor.Text}
                 };
                 TextBox["Active"] = Style.Make(TextBox["Normal"], activeModifiers);
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Win32;
 
 namespace IMGUI
@@ -49,6 +50,19 @@ namespace IMGUI
             var cbr = new Point(pbr.X - pr, pbr.Y - pb);
             var contentBoxRect = new Rect(ctl, cbr);
             return contentBoxRect;
+        }
+
+        internal static System.Windows.Forms.Cursor GetFormCursor(Cursor cursor)
+        {
+            switch (cursor)
+            {
+                case Cursor.Default:
+                    return System.Windows.Forms.Cursors.Default;
+                case Cursor.Text:
+                    return System.Windows.Forms.Cursors.IBeam;
+                default:
+                    throw new ArgumentOutOfRangeException("cursor", cursor, null);
+            }
         }
     }
 }

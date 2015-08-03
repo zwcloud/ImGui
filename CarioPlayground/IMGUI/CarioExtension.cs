@@ -199,7 +199,8 @@ namespace IMGUI
         #region text
         public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
         {
-            //TODO move Layout to corresponding control
+            //BUG Must move Layout to corresponding control
+            //l makes memory leaks(probably)
             Layout l = CairoHelper.CreateLayout(g);
             l.SetText(text);
             l.FontDescription = font.Description;

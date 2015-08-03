@@ -19,6 +19,7 @@ namespace IMGUI
         int frames;
         int fps;
 #endif
+        private Cursor cursor = IMGUI.Cursor.Default;
         #endregion
 
         protected Form()
@@ -46,6 +47,21 @@ namespace IMGUI
             get { return base.Text; }
             set { base.Text = value; }
         }
+
+        public new Cursor Cursor
+        {
+            get
+            {
+                return cursor;
+            }
+            set
+            {
+                CursorChanged = true;
+                cursor = value;
+            }
+        }
+
+        public new bool CursorChanged { get; set; }
 
         #region helper for Cario
         /// <summary>
@@ -130,6 +146,12 @@ namespace IMGUI
                 return false;
             }
 
+            if(CursorChanged)
+            {
+                base.Cursor = Utility.GetFormCursor(Cursor);
+                CursorChanged = false;
+            }
+
             var clientRect = new Rect
             {
                 X = ClientRectangle.Left,
@@ -170,19 +192,15 @@ namespace IMGUI
             Layer.TopContext.Operator = Operator.Source;
             Layer.TopContext.Paint();
             Layer.TopContext.Restore();
-
 #if DEBUG
             var debugInfoheight = Skin.current.Label["Normal"].Font.Size;
             GUI.Label(
-                //new Rect(0, ClientRectangle.Bottom - debugInfoheight, 200, debugInfoheight),
                 new Rect(0, ClientRectangle.Bottom - 20, 300, debugInfoheight),
                 string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.MousePos.X, Input.MousePos.Y),
                 "DebugInfoLabel"
                 );
 #endif
-
             OnGUI(GUI);
-
             SwapSurfaceBuffer();
         }
 

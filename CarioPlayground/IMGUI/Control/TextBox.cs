@@ -22,15 +22,6 @@ namespace IMGUI
             get { return selectIndex; }
             set
             {
-                if(value < 0)
-                {
-                    selectIndex = 0;
-                }
-                else if(value>Text.Length)
-                {
-                    selectIndex = Text.Length;
-                }
-                else
                 {
                     selectIndex = value;
                 }
@@ -79,52 +70,86 @@ namespace IMGUI
 
             bool insideRect = rect.Contains(Input.MousePos);
 
-            bool usingMouse = true;
             if(textBox.State == "Active")
             {
-                if(insideRect
-                    && (Input.LeftButtonClicked || Input.LeftButtonState == InputState.Down))//Using mouse
+                if(insideRect)
                 {
-                    usingMouse = true;
+                    var activeForm = (Form)System.Windows.Forms.Form.ActiveForm;
+                    if(activeForm != null)
+                        activeForm.Cursor = Cursor.Text;
                 }
-                else//Using keyboard
+                else
                 {
-                    usingMouse = false;
-                    if(Input.KeyPressed(Key.Left))
-                    {
-                        if(textBox.CaretIndex > 0)
-                        {
-                            --textBox.CaretIndex;
-                        }
-                        if(!Input.KeyDown(Key.LeftShift))
-                        {
-                            textBox.SelectIndex = textBox.CaretIndex;
-                        }
-                    }
-                    else if(Input.KeyPressed(Key.Right))
-                    {
-                        if(textBox.CaretIndex < text.Length)
-                        {
-                            ++textBox.CaretIndex;
-                        }
-                        if(!Input.KeyDown(Key.LeftShift))
-                        {
-                            textBox.SelectIndex = textBox.CaretIndex;
-                        }
-                    }
+                    var activeForm = (Form)System.Windows.Forms.Form.ActiveForm;
+                    if(activeForm != null)
+                        activeForm.Cursor = Cursor.Default;
+                }
 
-                    if(Input.LeftButtonClicked && !insideRect)
+                //Mouse left button clicked inside
+                if(insideRect && Input.LeftButtonClicked)
+                {
+                    var style = Skin.current.TextBox[textBox.State];
+                    var contentRect = Utility.GetContentRect(rect, style);
+                    var offsetOfTextRect = contentRect.TopLeft;
+                    int caretIndex, trailing;
+                    textBox.Layout.XyToIndex(
+                        Pango.Units.FromDouble(Input.MousePos.X - offsetOfTextRect.X),
+                        Pango.Units.FromDouble(Input.MousePos.Y - offsetOfTextRect.Y),
+                        out caretIndex, out trailing);
+                    textBox.SelectIndex = textBox.CaretIndex = caretIndex + trailing;
+                }
+                else
+                {
+                    if(insideRect && Input.MouseDraging)//Mouse left button draging inside
                     {
-                        textBox.State = "Normal";
+                        var style = Skin.current.TextBox[textBox.State];
+                        var contentRect = Utility.GetContentRect(rect, style);
+                        var offsetOfTextRect = contentRect.TopLeft;
+                        int caretIndex, trailing;
+                        textBox.Layout.XyToIndex(
+                            Pango.Units.FromDouble(Input.MousePos.X - offsetOfTextRect.X),
+                            Pango.Units.FromDouble(Input.MousePos.Y - offsetOfTextRect.Y),
+                            out caretIndex, out trailing);
+                        textBox.CaretIndex = caretIndex + trailing;
                     }
-                    if(Input.KeyDown(Key.LeftShift) && !textBox.Selecting)
+                    else
                     {
-                        textBox.Selecting = true;
-                        textBox.SelectIndex = textBox.CaretIndex;
-                    }
-                    if(!Input.KeyDown(Key.LeftShift) && textBox.Selecting)
-                    {
-                        textBox.Selecting = false;
+                        if(Input.KeyPressed(Key.Left))
+                        {
+                            if(textBox.CaretIndex > 0)
+                            {
+                                --textBox.CaretIndex;
+                            }
+                            if(!Input.KeyDown(Key.LeftShift))
+                            {
+                                textBox.SelectIndex = textBox.CaretIndex;
+                            }
+                        }
+                        else if(Input.KeyPressed(Key.Right))
+                        {
+                            if(textBox.CaretIndex < text.Length)
+                            {
+                                ++textBox.CaretIndex;
+                            }
+                            if(!Input.KeyDown(Key.LeftShift))
+                            {
+                                textBox.SelectIndex = textBox.CaretIndex;
+                            }
+                        }
+
+                        if(Input.LeftButtonClicked && !insideRect)
+                        {
+                            textBox.State = "Normal";
+                        }
+                        if(Input.KeyDown(Key.LeftShift) && !textBox.Selecting)
+                        {
+                            textBox.Selecting = true;
+                            textBox.SelectIndex = textBox.CaretIndex;
+                        }
+                        if(!Input.KeyDown(Key.LeftShift) && textBox.Selecting)
+                        {
+                            textBox.Selecting = false;
+                        }
                     }
                 }
             }

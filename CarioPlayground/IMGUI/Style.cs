@@ -112,7 +112,13 @@ namespace IMGUI
         public BackgroundStyle BackgroundStyle { get; set; }
 
         #endregion
-        
+
+        #region Cursor
+
+        public Cursor Cursor { get; set; }
+
+        #endregion
+
         /// <summary>
         /// Set defalut style for all kinds of box model
         /// </summary>
@@ -148,6 +154,8 @@ namespace IMGUI
                 Image = null,
                 Pattern = null
             };
+
+            Cursor = Cursor.Default;
         }
 
 

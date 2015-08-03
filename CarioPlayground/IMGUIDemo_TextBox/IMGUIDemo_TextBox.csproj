@@ -7,8 +7,8 @@
     <ProjectGuid>{E020C043-7427-4718-B336-AA8BE4B22F27}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IMGUIDemo</RootNamespace>
-    <AssemblyName>IMGUIDemo</AssemblyName>
+    <RootNamespace>IMGUIDemo_TextBox</RootNamespace>
+    <AssemblyName>IMGUIDemo_TextBox</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>

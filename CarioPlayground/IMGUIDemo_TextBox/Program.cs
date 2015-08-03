@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using IMGUI;
 
-namespace IMGUIDemo
+namespace IMGUIDemo_TextBox
 {
     class Program
     {
