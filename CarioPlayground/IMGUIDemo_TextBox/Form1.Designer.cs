@@ -12,7 +12,7 @@ namespace IMGUIDemo_TextBox
     {
         protected override void OnGUI(GUI gui)
         {
-            gui.TextBox(new Rect(10, 10, 110, 30), "tex是t12啊5", "Textbox0");
+            gui.TextBox(new Rect(10, 10, 110, 30), "t", "Textbox0");
 
         }
     }

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Threading;
+using System.Windows.Forms;
 using Cairo;
 
 namespace IMGUI
@@ -40,6 +41,11 @@ namespace IMGUI
             Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, new Color(0,0,0,0));
 
             InitIMGUI();
+        }
+
+        protected override bool CanEnableIme
+        {
+            get { return true; }
         }
 
         public override sealed string Text
@@ -137,6 +143,21 @@ namespace IMGUI
             Layer.FrontContext = new Context(Layer.FrontSurface);
             Layer.TopContext  = new Context(Layer.TopSurface);
             GUI = new GUI(Layer.BackContext, Layer.TopContext);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            var msg = (WM)m.Msg;
+            switch (msg)
+            {
+                case WM.CHAR:
+                    char c = (char)m.WParam;
+                    if(char.IsControl(c))
+                        break;
+                    Application.ImeBuffer.Enqueue(c);
+                    break;
+            }
+            base.WndProc(ref m);
         }
 
         new bool Update()
