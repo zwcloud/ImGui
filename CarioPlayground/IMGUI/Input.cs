@@ -59,6 +59,8 @@ namespace IMGUI
             return KeyStates[(int)key] == InputState.Down;
         }
 
+        //TODO a repeat version of KeyDown
+
         /// <summary>
         /// Check if a single key is pressed
         /// </summary>

@@ -107,12 +107,13 @@ namespace IMGUI
                     }
                     else
                     {
-                        //BUG not working right: The caret won't move one char forword when right key is pressed.
+                        byte[] stringBytes = System.Text.Encoding.UTF8.GetBytes(textBox.Text);
+                        int charCountBeforeCaret = System.Text.Encoding.UTF8.GetCharCount(stringBytes, 0, textBox.CaretIndex);
                         if(Input.KeyPressed(Key.Left))
                         {
                             if(textBox.CaretIndex > 0)
                             {
-                                --textBox.CaretIndex;
+                                textBox.CaretIndex -= System.Text.Encoding.UTF8.GetByteCount(textBox.Text.Substring(charCountBeforeCaret - 1, 1));
                             }
                             if(!Input.KeyDown(Key.LeftShift))
                             {
@@ -121,9 +122,9 @@ namespace IMGUI
                         }
                         else if(Input.KeyPressed(Key.Right))
                         {
-                            if(textBox.CaretIndex < text.Length)
+                            if(textBox.CaretIndex < System.Text.Encoding.UTF8.GetByteCount(textBox.Text))
                             {
-                                ++textBox.CaretIndex;
+                                textBox.CaretIndex += System.Text.Encoding.UTF8.GetByteCount(textBox.Text.Substring(charCountBeforeCaret, 1));
                             }
                             if(!Input.KeyDown(Key.LeftShift))
                             {
