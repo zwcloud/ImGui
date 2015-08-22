@@ -17,7 +17,8 @@ namespace IMGUI
         public Dictionary<string, Style> Image { get; private set; }
         public Dictionary<string, Style> Radio { get; set; }
         public Dictionary<string, Style> TextBox { get; set; }
-
+        public Dictionary<string, Style> Slider { get; set; }
+        
         internal static Skin current;
 
         static Skin()
@@ -34,6 +35,7 @@ namespace IMGUI
             Image = new Dictionary<string, Style>(1);
             Radio = new Dictionary<string, Style>(2);
             TextBox = new Dictionary<string, Style>(3);
+            Slider = new Dictionary<string, Style>(3);
 
             #region Label
             {
@@ -339,6 +341,42 @@ namespace IMGUI
                     new StyleModifier{Name = "Cursor", Value = Cursor.Text}
                 };
                 TextBox["Active"] = Style.Make(TextBox["Normal"], activeModifiers);
+            }
+            #endregion
+
+            #region Slider
+            {
+                Slider["Normal"] = Style.Make();
+
+                StyleModifier[] hoverModifiers =
+                {
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = CairoEx.ColorArgb(0xFFAFAFAF),
+                            Image = null,
+                            Pattern = null
+                        }
+                    }
+                };
+                Slider["Hover"] = Style.Make(hoverModifiers);
+
+                StyleModifier[] activeModifiers =
+                {
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = CairoEx.ColorArgb(0xFF8F8F8F),
+                            Image = null,
+                            Pattern = null
+                        }
+                    }
+                };
+                Slider["Active"] = Style.Make(activeModifiers);
             }
             #endregion
         }

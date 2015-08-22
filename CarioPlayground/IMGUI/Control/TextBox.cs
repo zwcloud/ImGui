@@ -264,16 +264,13 @@ namespace IMGUI
                 bool active = Input.LeftButtonState == InputState.Down && insideRect;
                 bool hover = Input.LeftButtonState == InputState.Up && insideRect;
                 if(active)
-                {
                     textBox.State = "Active";
-                }
                 else if(hover)
                     textBox.State = "Hover";
                 else
                     textBox.State = "Normal";
             }
             #endregion
-
 
             #region Draw
             {

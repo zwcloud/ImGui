@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CD930E1E-48FF-4A0E-A753-CB4ACCE995BE}</ProjectGuid>
+    <ProjectGuid>{3C49A7E8-1708-4930-B741-8648848EC084}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Win32</RootNamespace>
-    <AssemblyName>Win32</AssemblyName>
+    <RootNamespace>Cairo</RootNamespace>
+    <AssemblyName>Cairo</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -17,9 +17,12 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MONO_CAIRO_DEBUG_DISPOSE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,24 +31,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -75,8 +60,61 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Native.cs" />
+    <Compile Include="Antialias.cs" />
+    <Compile Include="Cairo.cs" />
+    <Compile Include="CairoDebug.cs" />
+    <Compile Include="Color.cs" />
+    <Compile Include="Content.cs" />
+    <Compile Include="Context.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="DirectFBSurface.cs" />
+    <Compile Include="Distance.cs" />
+    <Compile Include="Extend.cs" />
+    <Compile Include="FillRule.cs" />
+    <Compile Include="Filter.cs" />
+    <Compile Include="FontExtents.cs" />
+    <Compile Include="FontFace.cs" />
+    <Compile Include="FontOptions.cs" />
+    <Compile Include="FontSlant.cs" />
+    <Compile Include="FontType.cs" />
+    <Compile Include="FontWeight.cs" />
+    <Compile Include="Format.cs" />
+    <Compile Include="GlitzSurface.cs" />
+    <Compile Include="Glyph.cs" />
+    <Compile Include="Gradient.cs" />
+    <Compile Include="HintMetrics.cs" />
+    <Compile Include="HintStyle.cs" />
+    <Compile Include="ImageSurface.cs" />
+    <Compile Include="LinearGradient.cs" />
+    <Compile Include="LineCap.cs" />
+    <Compile Include="LineJoin.cs" />
+    <Compile Include="Matrix.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Operator.cs" />
+    <Compile Include="Path.cs" />
+    <Compile Include="Pattern.cs" />
+    <Compile Include="PatternType.cs" />
+    <Compile Include="PdfSurface.cs" />
+    <Compile Include="Point.cs" />
+    <Compile Include="PointD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PSSurface.cs" />
+    <Compile Include="RadialGradient.cs" />
+    <Compile Include="Rectangle.cs" />
+    <Compile Include="Region.cs" />
+    <Compile Include="ScaledFont.cs" />
+    <Compile Include="SolidPattern.cs" />
+    <Compile Include="Status.cs" />
+    <Compile Include="SubpixelOrder.cs" />
+    <Compile Include="Surface.cs" />
+    <Compile Include="SurfacePattern.cs" />
+    <Compile Include="SurfaceType.cs" />
+    <Compile Include="SvgSurface.cs" />
+    <Compile Include="SvgVersion.cs" />
+    <Compile Include="TextExtents.cs" />
+    <Compile Include="Win32Surface.cs" />
+    <Compile Include="XcbSurface.cs" />
+    <Compile Include="XlibSurface.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
