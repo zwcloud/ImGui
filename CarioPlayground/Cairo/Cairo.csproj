@@ -20,7 +20,7 @@
     <DefineConstants>TRACE;DEBUG;MONO_CAIRO_DEBUG_DISPOSE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DocumentationFile>
     </DocumentationFile>
   </PropertyGroup>
@@ -115,6 +115,12 @@
     <Compile Include="Win32Surface.cs" />
     <Compile Include="XcbSurface.cs" />
     <Compile Include="XlibSurface.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GLib\GLib.csproj">
+      <Project>{3bf1d531-8840-4f15-8066-a9788d8c398b}</Project>
+      <Name>GLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
