@@ -23,19 +23,16 @@ namespace Pango {
 
 	public class AttrWeight : Attribute {
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_attr_weight_new (Pango.Weight weight);
 
 		public AttrWeight (Pango.Weight weight) : this (pango_attr_weight_new (weight)) {}
 
 		internal AttrWeight (IntPtr raw) : base (raw) {}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern int pangosharp_attr_int_get_value (IntPtr raw);
-
 		public Pango.Weight Weight {
 			get {
-				return (Pango.Weight)pangosharp_attr_int_get_value (Handle);
+				return (Pango.Weight) (AttrInt.New (Handle).Value);
 			}
 		}
 	}

@@ -13,6 +13,8 @@
   <attr path="/api/namespace/boxed[@cname='PangoFontDescription']/method[@name='Hash']" name="name">GetHash</attr>
   <attr path="/api/namespace/boxed[@cname='PangoFontMetrics']/method[@name='Ref']" name="deprecated">1</attr>
   <attr path="/api/namespace/boxed[@cname='PangoFontMetrics']/method[@name='Unref']" name="deprecated">1</attr>
+  <attr path="/api/namespace/boxed[@cname='PangoGlyphItem']/method[@name='ApplyAttrs']" name="hidden">1</attr>
+  <attr path="/api/namespace/boxed[@cname='PangoGlyphItem']/method[@name='Free']" name="deprecated">1</attr>
   <attr path="/api/namespace/boxed[@cname='PangoGlyphString']/field[@name='Glyphs']" name="hidden">1</attr>
   <attr path="/api/namespace/boxed[@cname='PangoGlyphString']/field[@name='LogClusters']" name="hidden">1</attr>
   <attr path="/api/namespace/boxed[@cname='PangoLayoutIter']/method[@name='Free']" name="deprecated">1</attr>
@@ -63,7 +65,6 @@
   <attr path="/api/namespace/object[@cname='PangoLayout']/method[@name='GetLines']" name="hidden">1</attr>
   <attr path="/api/namespace/object[@cname='PangoLayout']/method[@cname='pango_layout_get_lines_readonly']/return-type" name="element_type">PangoLayoutLine*</attr>
   <attr path="/api/namespace/object[@cname='PangoLayout']/method[@name='GetLinesReadonly']" name="name">GetLinesReadOnly</attr>
-  <attr path="/api/namespace/object[@cname='PangoLayout']/method[@cname='pango_layout_get_lines_readonly']" name="element_type">PangoLayoutLine*</attr>
   <attr path="/api/namespace/object[@cname='PangoLayout']/method[@name='GetLogAttrs']" name="hidden">1</attr>
   <attr path="/api/namespace/object[@cname='PangoLayout']/method[@name='GetPixelExtents']/*/*[@type='PangoRectangle*']" name="pass_as">out</attr>
   <attr path="/api/namespace/object[@cname='PangoLayout']/method[@name='GetPixelSize']/*/*[@type='int*']" name="pass_as">out</attr>
@@ -89,7 +90,6 @@
   <attr path="/api/namespace/struct[@cname='PangoCoverage']/method[@name='Ref']" name="deprecated">1</attr>
   <attr path="/api/namespace/struct[@cname='PangoCoverage']/method[@name='ToBytes']" name="hidden">1</attr>
   <attr path="/api/namespace/struct[@cname='PangoCoverage']/method[@name='Unref']" name="deprecated">1</attr>
-  <attr path="/api/namespace/struct[@cname='PangoGlyphItem']/method[@name='ApplyAttrs']" name="hidden">1</attr>
   <attr path="/api/namespace/*[@cname='PangoLayoutLine']/field" name="writeable">false</attr>
   <attr path="/api/namespace/*[@cname='PangoLayoutLine']/field[@name='Runs']" name="access">private</attr>
   <attr path="/api/namespace/*[@cname='PangoLayoutLine']/method[@name='GetExtents']/*/*[@type='PangoRectangle*']" name="pass_as">ref</attr>
@@ -99,7 +99,6 @@
   <attr path="/api/namespace/*[@cname='PangoLayoutLine']/method[@name='Unref']" name="deprecated">1</attr>
   <attr path="/api/namespace/struct[@cname='PangoScriptIter']" name="hidden">1</attr>
   <attr path="/api/namespace/struct[@cname='PangoWin32FontCache']" name="hidden">1</attr>
-  <add-node path="/api"><symbol type="manual" cname="cairo_t" name="Cairo.Context"/></add-node>
   <move-node path="/api/namespace/class[@name='Version']/method[@cname='pango_version_check']">/api/namespace/class[@name='Global']</move-node>
   <move-node path="/api/namespace/class[@name='Version']/method[@cname='pango_version_string']">/api/namespace/class[@name='Global']</move-node>
 </metadata>

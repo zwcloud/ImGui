@@ -67,12 +67,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="cairo-sharp, Version=1.10.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\GtkSharp\3.0\lib\gtk-sharp-3.0\cairo-sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="glib-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86" />
-    <Reference Include="pango-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -129,6 +123,18 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\Cairo\Cairo.csproj">
+      <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
+      <Name>Cairo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GLib\GLib.csproj">
+      <Project>{3bf1d531-8840-4f15-8066-a9788d8c398b}</Project>
+      <Name>GLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pango\Pango.csproj">
+      <Project>{04ec04f9-aa1f-494d-86a7-033db42d9eba}</Project>
+      <Name>Pango</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Win32\Win32.csproj">
       <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
       <Name>Win32</Name>

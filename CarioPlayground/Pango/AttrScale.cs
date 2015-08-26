@@ -23,19 +23,16 @@ namespace Pango {
 
 	public class AttrScale : Attribute {
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_attr_scale_new (double scale);
 
 		public AttrScale (double scale) : this (pango_attr_scale_new (scale)) {}
 
 		internal AttrScale (IntPtr raw) : base (raw) {}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern double pangosharp_attr_float_get_value (IntPtr raw);
-
 		public double Scale {
 			get {
-				return pangosharp_attr_float_get_value (Handle);
+				return AttrFloat.New (Handle).Value;
 			}
 		}
 	}

@@ -23,10 +23,10 @@ namespace Pango {
 
 	public class AttrSize : Attribute {
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_attr_size_new (int size);
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_attr_size_new_absolute (int size);
 
 		public AttrSize (int size) : this (pango_attr_size_new (size)) {}
@@ -35,21 +35,23 @@ namespace Pango {
 
 		internal AttrSize (IntPtr raw) : base (raw) {}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern int pangosharp_attr_size_get_size (IntPtr raw);
+		new struct NativeStruct {
+			Attribute.NativeStruct attr;
+			public int sz;
+			public uint absolute;
+		}
 
 		public int Size {
 			get {
-				return pangosharp_attr_size_get_size (Handle);
+				NativeStruct native = (NativeStruct) Marshal.PtrToStructure (Handle, typeof (NativeStruct));
+				return native.sz;
 			}
 		}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern bool pangosharp_attr_size_get_absolute (IntPtr raw);
-
 		public bool Absolute {
 			get {
-				return pangosharp_attr_size_get_absolute (Handle);
+				NativeStruct native = (NativeStruct) Marshal.PtrToStructure (Handle, typeof (NativeStruct));
+				return native.absolute != 0;
 			}
 		}
 	}

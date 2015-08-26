@@ -116,12 +116,6 @@
     <Compile Include="XcbSurface.cs" />
     <Compile Include="XlibSurface.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GLib\GLib.csproj">
-      <Project>{3bf1d531-8840-4f15-8066-a9788d8c398b}</Project>
-      <Name>GLib</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

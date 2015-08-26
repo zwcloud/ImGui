@@ -23,19 +23,16 @@ namespace Pango {
 
 	public class AttrGravity : Attribute {
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_attr_gravity_new (int gravity);
 
 		public AttrGravity (Gravity gravity) : this (pango_attr_gravity_new ((int) gravity)) {}
 
 		internal AttrGravity (IntPtr raw) : base (raw) {}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern int pangosharp_attr_int_get_value (IntPtr raw);
-
 		public Gravity Gravity {
 			get {
-				return (Gravity) pangosharp_attr_int_get_value (Handle);
+				return (Gravity) (AttrInt.New (Handle).Value);
 			}
 		}
 	}

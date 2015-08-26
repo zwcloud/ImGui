@@ -23,28 +23,33 @@ namespace Pango {
 
 	public class AttrShape : Attribute {
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_attr_shape_new (ref Pango.Rectangle ink_rect, ref Pango.Rectangle logical_rect);
 
 		public AttrShape (Pango.Rectangle ink_rect, Pango.Rectangle logical_rect) : this (pango_attr_shape_new (ref ink_rect, ref logical_rect)) {}
 
 		internal AttrShape (IntPtr raw) : base (raw) {}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern Pango.Rectangle pangosharp_attr_shape_get_ink_rect (IntPtr raw);
+		new struct NativeStruct {
+			Attribute.NativeStruct attr;
+			public Rectangle ink_rect;
+			public Rectangle logical_rect;
+			IntPtr data;
+			IntPtr copy_func;
+			IntPtr destroy_func;
+		}
 
 		public Pango.Rectangle InkRect {
 			get {
-				return pangosharp_attr_shape_get_ink_rect (Handle);
+				NativeStruct native = (NativeStruct) Marshal.PtrToStructure (Handle, typeof (NativeStruct));
+				return native.ink_rect;
 			}
 		}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern Pango.Rectangle pangosharp_attr_shape_get_logical_rect (IntPtr raw);
-
 		public Pango.Rectangle LogicalRect {
 			get {
-				return pangosharp_attr_shape_get_logical_rect (Handle);
+				NativeStruct native = (NativeStruct) Marshal.PtrToStructure (Handle, typeof (NativeStruct));
+				return native.logical_rect;
 			}
 		}
 	}

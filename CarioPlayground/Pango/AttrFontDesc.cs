@@ -23,23 +23,25 @@ namespace Pango {
 
 	public class AttrFontDesc : Attribute {
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_attr_font_desc_new (IntPtr font_desc);
 
-		[DllImport("libpango-1.0-0.dll", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport ("libpango-1.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr pango_font_description_copy(IntPtr raw);
 
 		public AttrFontDesc (Pango.FontDescription font_desc) : this (pango_attr_font_desc_new (pango_font_description_copy (font_desc.Handle))) {}
 
 		internal AttrFontDesc (IntPtr raw) : base (raw) {}
 
-		[DllImport("pangosharpglue-2", CallingConvention=CallingConvention.Cdecl)]
-		static extern IntPtr pangosharp_attr_font_desc_get_desc (IntPtr raw);
+		new struct NativeStruct {
+			Attribute.NativeStruct attr;
+			public IntPtr desc;
+		}
 
 		public Pango.FontDescription Desc {
 			get {
-				IntPtr raw_ret = pangosharp_attr_font_desc_get_desc (Handle);
-				return new Pango.FontDescription (raw_ret);
+				NativeStruct native = (NativeStruct) Marshal.PtrToStructure (Handle, typeof (NativeStruct));
+				return new Pango.FontDescription (native.desc);
 			}
 		}
 	}
