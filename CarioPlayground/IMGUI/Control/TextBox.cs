@@ -304,6 +304,8 @@ namespace IMGUI
 
                     //Draw the box
                     g.DrawBoxModel(rect, null, style);
+
+                    //Clip the text
                     g.MoveTo(rect.TopLeft);
                     g.LineTo(rect.TopRight);
                     g.LineTo(rect.BottomRight);
@@ -333,9 +335,6 @@ namespace IMGUI
 
                     //Draw caret
                     g.DrawLine(textBox.caretTopPoint, textBox.caretBottomPoint, 1.0f, CairoEx.ColorArgb(caretAlpha, 0, 0, 0));
-
-                    //TODO Clip the render inside the content rect
-                    //TODO Make sure the caret is visiable by showing the proper text section
                 }
                 else
                 {
