@@ -82,18 +82,21 @@ namespace IMGUI
             //  Left
             g.FillPolygon(new PointD[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
 
-            if (content.Image != null)
+            if(content != null)
             {
-                //TODO Draw the image at a proper position
-                g.DrawImage(contentBoxRect, content.Image);
-            }
-            if (content.Text != null)
-            {
-                g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
-            }
-            if(content.Layout != null)
-            {
-                g.DrawText(contentBoxRect, content.Layout, style.Font);
+                if (content.Image != null)
+                {
+                    //TODO Draw the image at a proper position
+                    g.DrawImage(contentBoxRect, content.Image);
+                }
+                if (content.Text != null)
+                {
+                    g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
+                }
+                if (content.Layout != null)
+                {
+                    g.DrawText(contentBoxRect, content.Layout, style.Font);
+                }
             }
         }
 
@@ -206,7 +209,7 @@ namespace IMGUI
             l.FontDescription = font.Description;
             CairoHelper.UpdateLayout(g, l);
             l.Alignment = textStyle.TextAlign;
-            l.Width = (int)(rect.Width*Pango.Scale.PangoScale);
+            l.Width = (int)(rect.Width * Pango.Scale.PangoScale);
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
             g.MoveTo(p);

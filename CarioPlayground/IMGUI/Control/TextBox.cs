@@ -277,25 +277,53 @@ namespace IMGUI
                 var style = Skin.current.TextBox[textBox.State];
                 if(textBox.State == "Active")
                 {
+                    //Calculate positions and sizes
                     var contentRect = Utility.GetContentRect(rect, style);
                     var offsetOfTextRect = contentRect.TopLeft;
+                    Pango.Rectangle strongCursorPosFromPango, weakCursorPosFromPango;
+                    textBox.Layout.GetCursorPos(textBox.CaretByteIndex, out strongCursorPosFromPango, out weakCursorPosFromPango);
+                    textBox.caretTopPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y));
+                    textBox.caretBottomPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y + strongCursorPosFromPango.Height));
+                    textBox.caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                    textBox.caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+
+                    //TODO Clean up this alpha mess
+                    var caretAlpha = (byte)(Utility.Millis % 1060 / 1060.0f * 255);
+                    caretAlpha = (byte)(caretAlpha < 100 ? 0 : 255);
+
+                    //Check if the caret is outside the rect. If so, move the text rect so the caret is shown.
+                    var textRect = contentRect;
+                    var caretX = textBox.caretTopPoint.X;
+                    if(caretX < textRect.X || caretX > textRect.Right)
+                    {
+                        var offsetX = -(caretX - textRect.Width - rect.X);
+                        textRect.Offset(offsetX, 0);
+                        textBox.caretTopPoint.Offset(offsetX, 0);
+                        textBox.caretBottomPoint.Offset(offsetX, 0);
+                    }
+
+                    //Draw the box
+                    g.DrawBoxModel(rect, null, style);
+                    g.MoveTo(rect.TopLeft);
+                    g.LineTo(rect.TopRight);
+                    g.LineTo(rect.BottomRight);
+                    g.LineTo(rect.BottomLeft);
+                    g.LineTo(rect.TopLeft);
+                    g.ClosePath();
+                    g.Clip();
+
                     //Draw text
-                    g.DrawBoxModel(rect, new Content(textBox.Layout), style);
+                    g.DrawText(textRect, textBox.Layout, style.Font);
 
                     //TODO weak pos from Pango not used (check if it is really useless)
 
                     //Draw selection rect
                     if(textBox.SelectByteIndex != int.MaxValue)
                     {
-                        //TODO combine rightStrongRect with strongCursorPosFromPango
                         Pango.Rectangle rightStrongRect, rightWeakRect;
                         textBox.Layout.GetCursorPos(textBox.SelectByteIndex, out rightStrongRect, out rightWeakRect);
-
-                        Pango.Rectangle leftStrongRect, leftWeakRect;
-                        textBox.Layout.GetCursorPos(textBox.CaretByteIndex, out leftStrongRect, out leftWeakRect);
-
                         var selectionRect = new Rect(
-                            new Point(Pango.Units.ToPixels(leftStrongRect.X), Pango.Units.ToPixels(leftStrongRect.Y)),
+                            new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y)),
                             new Point(Pango.Units.ToPixels(rightStrongRect.X), Pango.Units.ToPixels(rightStrongRect.Y + rightStrongRect.Height))
                             );
                         selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
@@ -304,17 +332,10 @@ namespace IMGUI
                     }
 
                     //Draw caret
-                    Pango.Rectangle strongCursorPosFromPango, weakCursorPosFromPango;
-                    textBox.Layout.GetCursorPos(textBox.CaretByteIndex,
-                        out strongCursorPosFromPango, out weakCursorPosFromPango);
-                    textBox.caretTopPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y));
-                    textBox.caretBottomPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y + strongCursorPosFromPango.Height));
-                    textBox.caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                    textBox.caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                    //TODO Clean up this alpha mess
-                    var caretAlpha = (byte)(Utility.Millis % 1060 / 1060.0f * 255);
-                    caretAlpha = (byte)(caretAlpha < 100 ? 0 : 255);
                     g.DrawLine(textBox.caretTopPoint, textBox.caretBottomPoint, 1.0f, CairoEx.ColorArgb(caretAlpha, 0, 0, 0));
+
+                    //TODO Clip the render inside the content rect
+                    //TODO Make sure the caret is visiable by showing the proper text section
                 }
                 else
                 {
