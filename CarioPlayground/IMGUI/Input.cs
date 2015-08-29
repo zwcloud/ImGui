@@ -59,8 +59,6 @@ namespace IMGUI
             return KeyStates[(int)key] == InputState.Down;
         }
 
-        //TODO a repeat version of KeyDown
-
         /// <summary>
         /// Check if a single key is pressed
         /// </summary>
@@ -69,6 +67,55 @@ namespace IMGUI
         public static bool KeyPressed(Key key)
         {
             return LastKeyStates[(int)key] == InputState.Down && KeyStates[(int)key] == InputState.Up;
+        }
+        private static long[] lastKeyPressedTime;
+        private static bool[] isRepeatingKey;
+
+        /// <summary>
+        /// check if a single key is being pressing with interval time
+        /// </summary>
+        /// <param name="key">the key</param>
+        /// <param name="isRepeat"></param>
+        /// <returns>true: pressing; false: released</returns>
+        /// <remarks>time unit is millisecond</remarks>
+        public static bool KeyPressed(Key key, bool isRepeat)
+        {
+            bool isKeydownThisMoment = KeyStates[(int)key] == InputState.Down;
+            if(isKeydownThisMoment)
+            {
+                if(lastKeyPressedTime[(int)key] == 0)
+                {
+                    lastKeyPressedTime[(int)key] = Utility.MillisFrameBegin;
+                    return true;
+                }
+
+                const float delay = 300;
+                var t = lastKeyPressedTime[(int) key];
+                if (!isRepeatingKey[(int)key])
+                {
+                    if(isRepeat && Utility.MillisFrameBegin - t > delay)
+                    {
+                        isRepeatingKey[(int)key] = true;
+                        lastKeyPressedTime[(int)key] = Utility.MillisFrameBegin;
+                        return true;
+                    }
+                }
+                else
+                {
+                    const float interval = 50;
+                    if (Utility.MillisFrameBegin - lastKeyPressedTime[(int)key] > interval)
+                    {
+                        lastKeyPressedTime[(int)key] = Utility.Millis;
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                isRepeatingKey[(int)key] = false;
+                lastKeyPressedTime[(int)key] = 0;
+            }
+            return false;
         }
         #endregion
 
@@ -221,6 +268,8 @@ namespace IMGUI
         {
             KeyStates = new InputState[256];
             LastKeyStates = new InputState[256];
+            lastKeyPressedTime = new long[256];
+            isRepeatingKey = new bool[256];
         }
 
         /// <summary>
@@ -298,31 +347,10 @@ namespace IMGUI
             DragChecker.MoveNext();
             MouseDraging = DragChecker.Current;
 
-#if f
-            if(LeftButtonClicked)
-            {
-                ClickChecker = CheckClick().GetEnumerator();//Reset
-            }
-            ClickChecker.MoveNext();
-            LeftButtonClicked = ClickChecker.Current;
-
-            if(LastLeftButtonState == InputState.Up && LeftButtonState == InputState.Down)
-            {
-                mouseDragMouseUpToDown = true;
-            }
-            if(mouseDragMouseUpToDown)
-            {
-                mouseDragMousePressing = LeftButtonState == InputState.Down;
-                if(MouseMoving)
-                {
-                    mouseDragMouseMoved = true;
-                }
-            }
-#endif
-
             return true;
         }
-        static IEnumerator<bool> clickChecker = ClickStateMachine.Instance.GetEnumerator();
+
+        private static IEnumerator<bool> clickChecker = ClickStateMachine.Instance.GetEnumerator();
         class ClickStateMachine : IEnumerable<bool>
         {
             enum ClickState
@@ -388,7 +416,7 @@ namespace IMGUI
             }
         }
 
-        static IEnumerator<bool> dragChecker = DragStateMachine.Instance.GetEnumerator();
+        private static IEnumerator<bool> dragChecker = DragStateMachine.Instance.GetEnumerator();
         class DragStateMachine : IEnumerable<bool>
         {
             enum DragState

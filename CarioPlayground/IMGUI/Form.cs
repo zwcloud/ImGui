@@ -127,6 +127,7 @@ namespace IMGUI
                 {
                     while(Utility.IsApplicationIdle() && exit == false)
                     {
+                        Utility.MillisFrameBegin = Utility.Millis;
                         Thread.Sleep(30);//Keep about 30fps
                         exit = Update();
                         Render();
@@ -190,7 +191,6 @@ namespace IMGUI
                 Debug.WriteLine("ESC pressed");
                 return true;
             }
-
 #if DEBUG
             DebugUpdate();
 #endif

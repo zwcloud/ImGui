@@ -32,8 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NativeDLLs", "NativeDLLs", 
 		E:\dll\libgobject-2.0-0.pdb = E:\dll\libgobject-2.0-0.pdb
 		E:\dll\libpango-1.0-0.dll.dll = E:\dll\libpango-1.0-0.dll.dll
 		E:\dll\libpango-1.0-0.dll.pdb = E:\dll\libpango-1.0-0.dll.pdb
-		E:\dll\pangosharpglue-2.dll = E:\dll\pangosharpglue-2.dll
-		E:\dll\pangosharpglue-2.pdb = E:\dll\pangosharpglue-2.pdb
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pango", "Pango\Pango.csproj", "{04EC04F9-AA1F-494D-86A7-033DB42D9EBA}"

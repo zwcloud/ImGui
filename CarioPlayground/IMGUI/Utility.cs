@@ -17,6 +17,12 @@ namespace IMGUI
         /// <summary>Get extra long current timestamp</summary>
         public static long Millis { get { return (long)((DateTime.UtcNow - Jan1St1970).TotalMilliseconds); } }
 
+        //TODO use this in all logic instead of Millis
+        /// <summary>
+        /// Beginning time of this frame
+        /// </summary>
+        public static long MillisFrameBegin { internal set; get; }
+
         /// <summary>
         /// Get rect of the context box
         /// </summary>

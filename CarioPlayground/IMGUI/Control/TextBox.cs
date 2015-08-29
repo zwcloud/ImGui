@@ -136,7 +136,15 @@ namespace IMGUI
                     }
                     else
                     {
-                        if(Input.KeyPressed(Key.Left))
+                        if(Input.KeyPressed(Key.Home))
+                        {
+                            textBox.CaretByteIndex = textBox.SelectByteIndex = 0;
+                        }
+                        if (Input.KeyPressed(Key.End))
+                        {
+                            textBox.CaretByteIndex = textBox.SelectByteIndex = textBox.StringBytes.Length;
+                        }
+                        if(Input.KeyPressed(Key.Left, true))
                         {
                             if(textBox.CaretByteIndex > 0)
                             {
@@ -147,7 +155,7 @@ namespace IMGUI
                                 textBox.SelectByteIndex = textBox.CaretByteIndex;
                             }
                         }
-                        else if(Input.KeyPressed(Key.Right))
+                        else if (Input.KeyPressed(Key.Right, true))
                         {
                             if(textBox.CaretByteIndex < System.Text.Encoding.UTF8.GetByteCount(textBox.Text))
                             {
@@ -204,7 +212,7 @@ namespace IMGUI
                         Application.ImeBuffer.Clear();
                     }
                     //Backspace, delete one character before the caret
-                    else if(Input.KeyPressed(Key.Back))
+                    else if(Input.KeyPressed(Key.Back, true))
                     {
                         if(textBox.CaretByteIndex != textBox.SelectByteIndex)
                         {
@@ -234,7 +242,7 @@ namespace IMGUI
                         }
                     }
                     //Delete, delete one character after the caret
-                    else if(Input.KeyPressed(Key.Delete))
+                    else if (Input.KeyPressed(Key.Delete, true))
                     {
                         if(textBox.CaretByteIndex != textBox.SelectByteIndex)
                         {
