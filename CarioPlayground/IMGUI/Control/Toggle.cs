@@ -30,8 +30,8 @@ namespace IMGUI
             Debug.Assert(toggle != null);
             #endregion
 
-            bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
-            bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && rect.Contains(Input.Mouse.MousePos);
             if(active)
                 toggle.State = "Active";
             else if(hover)
@@ -39,7 +39,7 @@ namespace IMGUI
             else
                 toggle.State = "Normal";
 
-            bool changed = Input.LeftButtonClicked && rect.Contains(Input.MousePos);
+            bool changed = Input.Mouse.LeftButtonClicked && rect.Contains(Input.Mouse.MousePos);
             bool on = changed ? !value : value;
 
             var toggleBoxRect = new Rect(rect.TopLeft, new Size(20, 20));

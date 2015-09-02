@@ -30,8 +30,8 @@ namespace IMGUI
             Debug.Assert(label != null);
             #endregion
 
-            bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
-            bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && rect.Contains(Input.Mouse.MousePos);
             if(active)
                 label.State = "Active";
             else if(hover)

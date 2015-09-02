@@ -74,19 +74,18 @@ namespace IMGUI
 
             //Border
             //  Top
-            g.FillPolygon(new PointD[] { ptl, btl, btr, ptr }, style.BorderTopColor);
+            g.FillPolygon(new Point[] { ptl, btl, btr, ptr }, style.BorderTopColor);
             //  Right
-            g.FillPolygon(new PointD[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
+            g.FillPolygon(new Point[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
             //  Bottom
-            g.FillPolygon(new PointD[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
+            g.FillPolygon(new Point[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
             //  Left
-            g.FillPolygon(new PointD[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
+            g.FillPolygon(new Point[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
 
             if(content != null)
             {
                 if (content.Image != null)
                 {
-                    //TODO Draw the image at a proper position
                     g.DrawImage(contentBoxRect, content.Image);
                 }
                 if (content.Text != null)
@@ -136,7 +135,7 @@ namespace IMGUI
             g.Fill();
         }
 
-        internal static void FillPolygon(this Context g, PointD[] vPoint, Color color)
+        internal static void FillPolygon(this Context g, Point[] vPoint, Color color)
         {
             if (vPoint.Length <= 2)
             {
@@ -153,7 +152,7 @@ namespace IMGUI
             g.Fill();
         }
 
-        internal static void StrokePolygon(this Context g, PointD[] vPoint, Color color)
+        internal static void StrokePolygon(this Context g, Point[] vPoint, Color color)
         {
             if (vPoint.Length <= 2)
             {
@@ -196,7 +195,7 @@ namespace IMGUI
             g.Stroke();
             g.Restore();
         }
-#endregion
+        #endregion
 
 
         #region text
@@ -290,17 +289,23 @@ namespace IMGUI
 #endregion
 
         #region Image
+        //TODO specfiy image fill method (fill, unscale, 9-box, etc.) and alignment
+        public static void DrawImage(this Context g, Rect destRect, Rect srcRect, Texture image)
+        {
+            float xScale = (float)destRect.Width / (float)srcRect.Width;
+            float yScale = (float)destRect.Height / (float)srcRect.Height;
+            g.Translate(destRect.X, destRect.Y);
+            g.Scale(xScale, yScale);
+            g.SetSourceSurface(image._surface, 0, 0);
+            g.Rectangle(destRect.TopLeft, destRect.Width, destRect.Height);
+            g.ClosePath();
+            g.Paint();
+            g.IdentityMatrix();
+        }
 
         public static void DrawImage(this Context g, Rect rect, Texture image)
         {
-            g.SetSourceSurface(image._surface, (int)rect.X, (int)rect.Y);
-            g.MoveTo(rect.TopLeft);
-            g.LineTo(rect.TopRight); //Top
-            g.LineTo(rect.BottomRight); //Right
-            g.LineTo(rect.BottomLeft); //Bottom
-            g.LineTo(rect.TopLeft); //Left
-            g.ClosePath();
-            g.Fill();
+            g.DrawImage(rect, new Rect(new Size(image.Width, image.Height)), image);
         }
 
         public static ImageSurface CreateImage(string pngFilePath)

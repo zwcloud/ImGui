@@ -1,11 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using Cairo;
+using Svg;
 
 namespace IMGUI
 {
     public class Texture
     {
         internal ImageSurface _surface;
+        internal byte[][] imageData;
 
         public int Width
         {
@@ -19,9 +25,61 @@ namespace IMGUI
 
         internal static Dictionary<string, Texture> _presets;
 
-        public Texture(string pngFilePath)
+        public Texture(string filePath)
         {
-            _surface = new ImageSurface(pngFilePath);
+            bool isPngFile = false;
+            bool isSvgFile = false;
+
+            //check if the file is a png or svg
+            using (var fileStream = File.Open(filePath, FileMode.Open))
+            using (var binaryReader = new BinaryReader(fileStream))
+            {
+                var headEightBytes = binaryReader.ReadBytes(8);
+                isPngFile = headEightBytes.SequenceEqual(Utility.PngHeaderEightBytes);
+            }
+            if(isPngFile)
+            {
+                _surface = new ImageSurface(filePath);
+            }
+            else
+            {
+                //check if the file is a png or svg
+                using (var fileStream = File.Open(filePath, FileMode.Open))
+                {
+                    using (var streamReader = new StreamReader(fileStream))
+                    {
+                        var firstLineText = streamReader.ReadLine();
+                        if (firstLineText != null)
+                        {
+                            isSvgFile = firstLineText.StartsWith(Utility.SvgFileFirstLineTextPrefix);
+                        }
+                    }
+                }
+
+                //TODO Implement svg rendering properly (the SVG.NET project is not stable, so improve it or write one yourself?)
+                if (isSvgFile)
+                {
+                    using (var fileStream = File.Open(filePath, FileMode.Open))
+                    {
+                        //convert svg file to png file in memory
+                        var svgDoc = SvgDocument.Open<SvgDocument>(fileStream);
+                        using (var stream = new MemoryStream())
+                        {
+                            using (var bitmap = svgDoc.Draw())
+                            {
+                                bitmap.Save("K:\\tmp\\t.png", ImageFormat.Png);
+                            }
+                            //_surface = CairoStreamReader.ImageSurfaceFromPng(stream);
+                            _surface = new ImageSurface("K:\\tmp\\t.png");
+                        }
+                    }
+                }
+            }
+
+            if(!isSvgFile && !isPngFile)
+            {
+                throw new ArgumentException("Specified file is not a png file or a svg file");
+            }
         }
 
         private Texture(ImageSurface imageSurface)

@@ -52,5 +52,10 @@ namespace IMGUI
         {
             return IMGUI.TextBox.DoControl(g, rect, text, name);
         }
+
+        public bool PolygonButton(Point[] points, string text, string name)
+        {
+            return IMGUI.PolygonButton.DoControl(g, points, text, name);
+        }
     }
 }

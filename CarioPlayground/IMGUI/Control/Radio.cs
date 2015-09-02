@@ -69,18 +69,18 @@ namespace IMGUI
             #endregion
 
             #region Logic
-            if(rect.Contains(Input.MousePos))
+            if(rect.Contains(Input.Mouse.MousePos))
             {
-                if(Input.LeftButtonState == InputState.Up)
+                if(Input.Mouse.LeftButtonState == InputState.Up)
                 {
                     radio.State = "Hover";
                 }
-                else if(Input.LeftButtonState == InputState.Down)
+                else if(Input.Mouse.LeftButtonState == InputState.Down)
                 {
                     radio.State = "Active";
                 }
 
-                if(Input.LeftButtonClicked)
+                if(Input.Mouse.LeftButtonClicked)
                 {
                     radio.Actived = true;
                 }

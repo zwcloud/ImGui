@@ -25,7 +25,7 @@ namespace IMGUIDemo
         private readonly string[] comboBoxItems = new[] { "item0", "item1", "item2", "item3" };
         private int selectedindex = 0;
 
-        private Texture myImage = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\gnu_hornedword.png");
+        private Texture myImage = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\empowered-by-gnu.svg");
 
         private bool radio0Selected = false;
         private bool radio1Selected = false;

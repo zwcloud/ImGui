@@ -50,8 +50,8 @@ namespace IMGUI
 
             Debug.Assert(!rect.IntersectsWith(extendRect));
 
-            bool inMainRect = rect.Contains(Input.MousePos);
-            bool inExtendRect = extendRect.Contains(Input.MousePos);
+            bool inMainRect = rect.Contains(Input.Mouse.MousePos);
+            bool inExtendRect = extendRect.Contains(Input.Mouse.MousePos);
 
             if(!inMainRect && !inExtendRect)
             {
@@ -61,7 +61,7 @@ namespace IMGUI
                 }
                 else if(comboBox.State == "Active")
                 {
-                    if(Input.LeftButtonClicked)
+                    if(Input.Mouse.LeftButtonClicked)
                     {
                         comboBox.State = "Normal";
                     }
@@ -75,14 +75,14 @@ namespace IMGUI
                 }
                 if(comboBox.State == "Hover")
                 {
-                    if(Input.LeftButtonClicked)
+                    if(Input.Mouse.LeftButtonClicked)
                     {
                         comboBox.State = "Active";
                     }
                 }
                 else if(comboBox.State == "Active")
                 {
-                    if(Input.LeftButtonClicked)
+                    if(Input.Mouse.LeftButtonClicked)
                     {
                         comboBox.State = "Hover";
                     }
@@ -96,19 +96,19 @@ namespace IMGUI
                     {
                         var itemRect = rect;
                         itemRect.Y += (i + 1) * rect.Height;
-                        bool inItemRect = itemRect.Contains(Input.MousePos);
+                        bool inItemRect = itemRect.Contains(Input.Mouse.MousePos);
                         if(inItemRect)
                         {
-                            if(Input.LeftButtonState == InputState.Up)
+                            if(Input.Mouse.LeftButtonState == InputState.Up)
                             {
                                 comboBox.HoverIndex = i;
                             }
-                            else if(Input.LeftButtonState == InputState.Down)
+                            else if(Input.Mouse.LeftButtonState == InputState.Down)
                             {
                                 comboBox.ActiveIndex = i;
                             }
 
-                            if(Input.LeftButtonClicked)
+                            if(Input.Mouse.LeftButtonClicked)
                             {
                                 comboBox.SelectedIndex = i;
                                 comboBox.State = "Normal";
@@ -125,7 +125,7 @@ namespace IMGUI
             g.DrawBoxModel(rect, new Content(texts[comboBox.SelectedIndex]), Skin.current.ComboBox[comboBox.State]);
             g.LineWidth = 1;
             /* TODO Draw this trangle as a content */
-            var trianglePoints = new PointD[3];
+            var trianglePoints = new Point[3];
             trianglePoints[0].X = rect.TopRight.X - 5;
             trianglePoints[0].Y = rect.TopRight.Y + 0.2 * rect.Height;
             trianglePoints[1].X = trianglePoints[0].X - 0.6 * rect.Height;

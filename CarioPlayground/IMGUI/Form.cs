@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Cairo;
 
+//TODO make project independent of Winform
 namespace IMGUI
 {
     [System.ComponentModel.DesignerCategory("")]
@@ -183,10 +184,11 @@ namespace IMGUI
             };
             var clientPos = PointToScreen(ClientRectangle.Location);
 
-            Input.Refresh(clientPos.X, clientPos.Y, clientRect);
+            Input.Mouse.Refresh(clientPos.X, clientPos.Y, clientRect);
+            Input.Keyboard.Refresh();
 
             //Quit when ESC is pressed
-            if(Input.KeyPressed(Key.Escape))
+            if(Input.Keyboard.KeyPressed(Key.Escape))
             {
                 Debug.WriteLine("ESC pressed");
                 return true;
@@ -217,7 +219,7 @@ namespace IMGUI
             var debugInfoheight = Skin.current.Label["Normal"].Font.Size;
             GUI.Label(
                 new Rect(0, ClientRectangle.Bottom - 20, 300, debugInfoheight),
-                string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.MousePos.X, Input.MousePos.Y),
+                string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.Mouse.MousePos.X, Input.Mouse.MousePos.Y),
                 "DebugInfoLabel"
                 );
 #endif

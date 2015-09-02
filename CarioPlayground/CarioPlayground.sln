@@ -38,6 +38,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pango", "Pango\Pango.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLib", "GLib\GLib.csproj", "{3BF1D531-8840-4F15-8066-A9788D8C398B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTemplate", "ProjectTemplate", "{593C5B50-52E6-436D-9BF2-93E220984E45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_HiveGirdButon", "IMGUIDemo_HiveGirdButon\IMGUIDemo_HiveGirdButon.csproj", "{54D3873E-4CF9-4099-97C8-9AF557F724A3}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -218,6 +222,26 @@ Global
 		{3BF1D531-8840-4F15-8066-A9788D8C398B}.Release|x64.ActiveCfg = Release|x86
 		{3BF1D531-8840-4F15-8066-A9788D8C398B}.Release|x86.ActiveCfg = Release|x86
 		{3BF1D531-8840-4F15-8066-A9788D8C398B}.Release|x86.Build.0 = Release|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|Win32.ActiveCfg = Debug|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|Win32.Build.0 = Debug|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|x64.ActiveCfg = Debug|x64
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|x64.Build.0 = Debug|x64
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|x86.ActiveCfg = Debug|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Debug|x86.Build.0 = Debug|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|Mixed Platforms.Build.0 = Release|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|Win32.ActiveCfg = Release|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|Win32.Build.0 = Release|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|x64.ActiveCfg = Release|x64
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|x64.Build.0 = Release|x64
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|x86.ActiveCfg = Release|x86
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -225,5 +249,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6A401FDF-4939-4623-8AE6-A3CD6E250ABD} = {DD39D4D9-52B4-47A7-86BF-ECB8D136D767}
 		{E020C043-7427-4718-B336-AA8BE4B22F27} = {DD39D4D9-52B4-47A7-86BF-ECB8D136D767}
+		{54D3873E-4CF9-4099-97C8-9AF557F724A3} = {DD39D4D9-52B4-47A7-86BF-ECB8D136D767}
 	EndGlobalSection
 EndGlobal

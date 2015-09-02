@@ -2,125 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.Mime;
 using System.Runtime.InteropServices;
 using Win32;
 
-namespace IMGUI
+//TODO decouple Input from windows => write a stand-alone and cross-platform Input library
+namespace IMGUI.Input
 {
     /// <summary>
     /// input
     /// </summary>
-    public static class Input
+    public static class Mouse
     {
-        #region Keyboard
-        /// <summary>
-        /// Last recorded key states
-        /// </summary>
-        /// <remarks>for detecting keystates' changes</remarks>
-        private static InputState[] LastKeyStates;
-
-        /// <summary>
-        /// Key states of all keys
-        /// </summary>
-        private static InputState[] KeyStates;
-
-        /// <summary>
-        /// Key state of CapsLock (readOnly)
-        /// </summary>
-        public static InputState CapsLock
-        {
-            get { return KeyStates[(int)Key.CapsLock]; }
-        }
-
-        /// <summary>
-        /// Key state of ScrollLock (readOnly)
-        /// </summary>
-        public static InputState ScrollLock
-        {
-            get { return KeyStates[(int)Key.Scroll]; }
-        }
-
-        /// <summary>
-        /// Key state of NumLock (readOnly)
-        /// </summary>
-        public static InputState NumLock
-        {
-            get { return KeyStates[(int)Key.NumLock]; }
-        }
-
-        /// <summary>
-        /// check if a single key is being pressing
-        /// </summary>
-        /// <param name="key">the key</param>
-        /// <returns>true: pressing; false: released</returns>
-        public static bool KeyDown(Key key)
-        {
-            return KeyStates[(int)key] == InputState.Down;
-        }
-
-        /// <summary>
-        /// Check if a single key is pressed
-        /// </summary>
-        /// <param name="key">the key</param>
-        /// <returns>true: pressed; false: not pressed yet</returns>
-        public static bool KeyPressed(Key key)
-        {
-            return LastKeyStates[(int)key] == InputState.Down && KeyStates[(int)key] == InputState.Up;
-        }
-        private static long[] lastKeyPressedTime;
-        private static bool[] isRepeatingKey;
-
-        /// <summary>
-        /// check if a single key is being pressing with interval time
-        /// </summary>
-        /// <param name="key">the key</param>
-        /// <param name="isRepeat"></param>
-        /// <returns>true: pressing; false: released</returns>
-        /// <remarks>time unit is millisecond</remarks>
-        public static bool KeyPressed(Key key, bool isRepeat)
-        {
-            bool isKeydownThisMoment = KeyStates[(int)key] == InputState.Down;
-            if(isKeydownThisMoment)
-            {
-                if(lastKeyPressedTime[(int)key] == 0)
-                {
-                    lastKeyPressedTime[(int)key] = Utility.MillisFrameBegin;
-                    return true;
-                }
-
-                const float delay = 300;
-                var t = lastKeyPressedTime[(int) key];
-                if (!isRepeatingKey[(int)key])
-                {
-                    if(isRepeat && Utility.MillisFrameBegin - t > delay)
-                    {
-                        isRepeatingKey[(int)key] = true;
-                        lastKeyPressedTime[(int)key] = Utility.MillisFrameBegin;
-                        return true;
-                    }
-                }
-                else
-                {
-                    const float interval = 50;
-                    if (Utility.MillisFrameBegin - lastKeyPressedTime[(int)key] > interval)
-                    {
-                        lastKeyPressedTime[(int)key] = Utility.Millis;
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-                isRepeatingKey[(int)key] = false;
-                lastKeyPressedTime[(int)key] = 0;
-            }
-            return false;
-        }
-        #endregion
-
-        #region Mouse
-
         /// <summary>
         /// Double click interval time span
         /// </summary>
@@ -259,61 +151,17 @@ namespace IMGUI
 
         #endregion
 
-        #endregion
-
         /// <summary>
-        /// Static constructor
-        /// </summary>
-        static Input()
-        {
-            KeyStates = new InputState[256];
-            LastKeyStates = new InputState[256];
-            lastKeyPressedTime = new long[256];
-            isRepeatingKey = new bool[256];
-        }
-
-        /// <summary>
-        /// Refresh input states
+        /// Refresh mouse states
         /// </summary>
         /// <param name="clientPosX">x position of the client area</param>
         /// <param name="clientPosY">y position of the client area</param>
         /// <param name="clientRect">rect of the client area(top,left are both zero)</param>
         /// <returns>true: successful; false: failed</returns>
-        /// <remarks>The input states will persist until next call of this method, 
-        /// and last input states will be recorded.</remarks>
+        /// <remarks>The mouse states will persist until next call of this method, 
+        /// and last states will be recorded.</remarks>
         public static bool Refresh(int clientPosX, int clientPosY, Rect clientRect)
         {
-            /*
-             * Keyboard
-             */
-            byte[] keys = new byte[256];
-            if (!Native.GetKeyboardState(keys))
-            {
-                int err = Marshal.GetLastWin32Error();
-                Debug.WriteLine("Error {0}: GetKeyboardState Filed", err);
-                return false;
-            }
-
-            //Record the keyboard states
-            var tmpKeyStates = LastKeyStates;
-            LastKeyStates = KeyStates;
-            if(tmpKeyStates != null)
-                KeyStates = tmpKeyStates;
-
-            //一般按键
-            for (var i = 0; i < keys.Length; ++i)
-            {
-                KeyStates[i] = ((keys[i] & (byte)0x80) == 0x80) ? InputState.Down : InputState.Up;
-            }
-
-            //Toggle 按键
-            KeyStates[(int)Key.CapsLock] = ((keys[(int)Key.CapsLock] & 0x01) == 1) ? InputState.On : InputState.Off;
-            KeyStates[(int)Key.Scroll] = ((keys[(int)Key.Scroll] & 0x01) == 1) ? InputState.On : InputState.Off;
-            KeyStates[(int)Key.NumLock] = ((keys[(int)Key.NumLock] & 0x01) == 1) ? InputState.On : InputState.Off;
-
-            /*
-             * Mouse
-             */
             //Buttons's states
             lastLeftButtonState = leftButtonState;
             leftButtonState = ((Native.GetAsyncKeyState((ushort)MouseButton.Left) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
@@ -417,6 +265,7 @@ namespace IMGUI
         }
 
         private static IEnumerator<bool> dragChecker = DragStateMachine.Instance.GetEnumerator();
+
         class DragStateMachine : IEnumerable<bool>
         {
             enum DragState
@@ -486,6 +335,5 @@ namespace IMGUI
                 return GetEnumerator();
             }
         }
-
     }
 }

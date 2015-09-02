@@ -18,6 +18,7 @@ namespace IMGUI
         public Dictionary<string, Style> Radio { get; set; }
         public Dictionary<string, Style> TextBox { get; set; }
         public Dictionary<string, Style> Slider { get; set; }
+        public Dictionary<string, Style> PolygonButton { get; set; }
         
         internal static Skin current;
 
@@ -36,6 +37,7 @@ namespace IMGUI
             Radio = new Dictionary<string, Style>(2);
             TextBox = new Dictionary<string, Style>(3);
             Slider = new Dictionary<string, Style>(3);
+            PolygonButton = new Dictionary<string, Style>(3);
 
             #region Label
             {
@@ -377,6 +379,42 @@ namespace IMGUI
                     }
                 };
                 Slider["Active"] = Style.Make(activeModifiers);
+            }
+            #endregion
+
+            #region PolygonButton
+            {
+                PolygonButton["Normal"] = Style.Make();
+
+                StyleModifier[] hoverModifiers =
+                {
+                    new StyleModifier
+                    {
+                        Name = "LineColor",
+                        Value = new Color(0,0,1)
+                    },
+                    new StyleModifier
+                    {
+                        Name = "FillColor",
+                        Value = new Color(0,0,1)
+                    }
+                };
+                PolygonButton["Hover"] = Style.Make(hoverModifiers);
+
+                StyleModifier[] activeModifiers =
+                {
+                    new StyleModifier
+                    {
+                        Name = "LineColor",
+                        Value = new Color(1,0,0)
+                    },
+                    new StyleModifier
+                    {
+                        Name = "FillColor",
+                        Value = new Color(1,0,0)
+                    }
+                };
+                PolygonButton["Active"] = Style.Make(activeModifiers);
             }
             #endregion
         }

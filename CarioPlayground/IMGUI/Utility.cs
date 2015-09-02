@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Text;
 using Win32;
 
@@ -70,5 +71,13 @@ namespace IMGUI
                     throw new ArgumentOutOfRangeException("cursor", cursor, null);
             }
         }
+
+        internal static byte[] PngHeaderEightBytes =
+        {
+            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
+        };
+
+        internal static string SvgFileFirstLineTextPrefix = "<?xml";
+
     }
 }

@@ -90,7 +90,7 @@ namespace IMGUI
 
             #region Logic
 
-            bool insideRect = rect.Contains(Input.MousePos);
+            bool insideRect = rect.Contains(Input.Mouse.MousePos);
 
             if(textBox.State == "Active")
             {
@@ -108,75 +108,75 @@ namespace IMGUI
                 }
 
                 //Mouse left button clicked inside
-                if(insideRect && Input.LeftButtonClicked)
+                if(insideRect && Input.Mouse.LeftButtonClicked)
                 {
                     var style = Skin.current.TextBox[textBox.State];
                     var contentRect = Utility.GetContentRect(rect, style);
                     var offsetOfTextRect = contentRect.TopLeft;
                     int caretIndex, trailing;
                     textBox.Layout.XyToIndex(
-                        Pango.Units.FromDouble(Input.MousePos.X - offsetOfTextRect.X),
-                        Pango.Units.FromDouble(Input.MousePos.Y - offsetOfTextRect.Y),
+                        Pango.Units.FromDouble(Input.Mouse.MousePos.X - offsetOfTextRect.X),
+                        Pango.Units.FromDouble(Input.Mouse.MousePos.Y - offsetOfTextRect.Y),
                         out caretIndex, out trailing);
                     textBox.SelectByteIndex = textBox.CaretByteIndex = caretIndex + trailing;
                 }
                 else
                 {
-                    if(insideRect && Input.MouseDraging)//Mouse left button draging inside
+                    if(insideRect && Input.Mouse.MouseDraging)//Mouse left button draging inside
                     {
                         var style = Skin.current.TextBox[textBox.State];
                         var contentRect = Utility.GetContentRect(rect, style);
                         var offsetOfTextRect = contentRect.TopLeft;
                         int caretIndex, trailing;
                         textBox.Layout.XyToIndex(
-                            Pango.Units.FromDouble(Input.MousePos.X - offsetOfTextRect.X),
-                            Pango.Units.FromDouble(Input.MousePos.Y - offsetOfTextRect.Y),
+                            Pango.Units.FromDouble(Input.Mouse.MousePos.X - offsetOfTextRect.X),
+                            Pango.Units.FromDouble(Input.Mouse.MousePos.Y - offsetOfTextRect.Y),
                             out caretIndex, out trailing);
                         textBox.CaretByteIndex = caretIndex + trailing;
                     }
                     else
                     {
-                        if(Input.KeyPressed(Key.Home))
+                        if(Input.Keyboard.KeyPressed(Key.Home))
                         {
                             textBox.CaretByteIndex = textBox.SelectByteIndex = 0;
                         }
-                        if (Input.KeyPressed(Key.End))
+                        if (Input.Keyboard.KeyPressed(Key.End))
                         {
                             textBox.CaretByteIndex = textBox.SelectByteIndex = textBox.StringBytes.Length;
                         }
-                        if(Input.KeyPressed(Key.Left, true))
+                        if(Input.Keyboard.KeyPressed(Key.Left, true))
                         {
                             if(textBox.CaretByteIndex > 0)
                             {
                                 textBox.CaretByteIndex -= System.Text.Encoding.UTF8.GetByteCount(textBox.Text.Substring(textBox.CaretIndex - 1, 1));
                             }
-                            if(!Input.KeyDown(Key.LeftShift))
+                            if(!Input.Keyboard.KeyDown(Key.LeftShift))
                             {
                                 textBox.SelectByteIndex = textBox.CaretByteIndex;
                             }
                         }
-                        else if (Input.KeyPressed(Key.Right, true))
+                        else if (Input.Keyboard.KeyPressed(Key.Right, true))
                         {
                             if(textBox.CaretByteIndex < System.Text.Encoding.UTF8.GetByteCount(textBox.Text))
                             {
                                 textBox.CaretByteIndex += System.Text.Encoding.UTF8.GetByteCount(textBox.Text.Substring(textBox.CaretIndex, 1));
                             }
-                            if(!Input.KeyDown(Key.LeftShift))
+                            if(!Input.Keyboard.KeyDown(Key.LeftShift))
                             {
                                 textBox.SelectByteIndex = textBox.CaretByteIndex;
                             }
                         }
 
-                        if(Input.LeftButtonClicked && !insideRect)
+                        if(Input.Mouse.LeftButtonClicked && !insideRect)
                         {
                             textBox.State = "Normal";
                         }
-                        if(Input.KeyDown(Key.LeftShift) && !textBox.Selecting)
+                        if(Input.Keyboard.KeyDown(Key.LeftShift) && !textBox.Selecting)
                         {
                             textBox.Selecting = true;
                             textBox.SelectByteIndex = textBox.CaretByteIndex;
                         }
-                        if(!Input.KeyDown(Key.LeftShift) && textBox.Selecting)
+                        if(!Input.Keyboard.KeyDown(Key.LeftShift) && textBox.Selecting)
                         {
                             textBox.Selecting = false;
                         }
@@ -212,7 +212,7 @@ namespace IMGUI
                         Application.ImeBuffer.Clear();
                     }
                     //Backspace, delete one character before the caret
-                    else if(Input.KeyPressed(Key.Back, true))
+                    else if(Input.Keyboard.KeyPressed(Key.Back, true))
                     {
                         if(textBox.CaretByteIndex != textBox.SelectByteIndex)
                         {
@@ -242,7 +242,7 @@ namespace IMGUI
                         }
                     }
                     //Delete, delete one character after the caret
-                    else if (Input.KeyPressed(Key.Delete, true))
+                    else if (Input.Keyboard.KeyPressed(Key.Delete, true))
                     {
                         if(textBox.CaretByteIndex != textBox.SelectByteIndex)
                         {
@@ -269,8 +269,8 @@ namespace IMGUI
             }
             else
             {
-                bool active = Input.LeftButtonState == InputState.Down && insideRect;
-                bool hover = Input.LeftButtonState == InputState.Up && insideRect;
+                bool active = Input.Mouse.LeftButtonState == InputState.Down && insideRect;
+                bool hover = Input.Mouse.LeftButtonState == InputState.Up && insideRect;
                 if(active)
                     textBox.State = "Active";
                 else if(hover)

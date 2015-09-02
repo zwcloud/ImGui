@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Cairo;
 
+//TODO complete slider
 namespace IMGUI
 {
     internal class Slider : Control
@@ -41,8 +42,8 @@ namespace IMGUI
             #endregion
 
             #region Logic
-            bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
-            bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && rect.Contains(Input.Mouse.MousePos);
             if(active)
                 slider.State = "Active";
             else if(hover)

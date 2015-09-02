@@ -31,8 +31,8 @@ namespace IMGUI
             #endregion
 
             #region Logic
-            bool active = Input.LeftButtonState == InputState.Down && rect.Contains(Input.MousePos);
-            bool hover = Input.LeftButtonState == InputState.Up && rect.Contains(Input.MousePos);
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && rect.Contains(Input.Mouse.MousePos);
             if(active)
                 button.State = "Active";
             else if(hover)
@@ -43,7 +43,7 @@ namespace IMGUI
 
             g.DrawBoxModel(rect, new Content(text), Skin.current.Button[button.State]);
 
-            bool clicked = Input.LeftButtonClicked && rect.Contains(Input.MousePos);
+            bool clicked = Input.Mouse.LeftButtonClicked && rect.Contains(Input.Mouse.MousePos);
             return clicked;
         }
     }

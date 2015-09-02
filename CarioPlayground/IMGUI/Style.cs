@@ -7,6 +7,7 @@ namespace IMGUI
 {
     public partial class Style
     {
+        #region Box model styles
         #region Padding
 
         /// <summary>
@@ -99,6 +100,13 @@ namespace IMGUI
 
         #endregion
 
+        #region Background
+
+        public BackgroundStyle BackgroundStyle { get; set; }
+
+        #endregion
+        #endregion
+
         #region Text
 
         public Font Font { get; set; }
@@ -107,16 +115,16 @@ namespace IMGUI
 
         #endregion
 
-        #region Background
-
-        public BackgroundStyle BackgroundStyle { get; set; }
-
-        #endregion
-
         #region Cursor
 
         public Cursor Cursor { get; set; }
 
+        #endregion
+
+        #region Verctor graphic styles
+        public Color LineColor { get; set; }
+        public int LineWidth { get; set; }
+        public Color FillColor { get; set; }
         #endregion
 
         /// <summary>
@@ -131,6 +139,13 @@ namespace IMGUI
             BorderBottomColor = CairoEx.ColorBlack;
             BorderLeftColor = CairoEx.ColorBlack;
             MarginTop = MarginRight = MarginBottom = MarginLeft = Length.Zero;
+
+            BackgroundStyle = new BackgroundStyle
+            {
+                Color = CairoEx.ColorWhite,
+                Image = null,
+                Pattern = null
+            };
 
             Font = new Font
             {
@@ -148,14 +163,11 @@ namespace IMGUI
                 TabSize = 4
             };
 
-            BackgroundStyle = new BackgroundStyle
-            {
-                Color = CairoEx.ColorWhite,
-                Image = null,
-                Pattern = null
-            };
-
             Cursor = Cursor.Default;
+
+            LineColor = CairoEx.ColorBlack;
+            LineWidth = 1;
+            FillColor = new Color(1,1,1);
         }
 
 
