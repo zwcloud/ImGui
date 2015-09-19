@@ -73,6 +73,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cairo">
+      <HintPath>..\Reference\Cairo.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -118,10 +121,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cairo\Cairo.csproj">
-      <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
-      <Name>Cairo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Win32\Win32.csproj">
       <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
       <Name>Win32</Name>

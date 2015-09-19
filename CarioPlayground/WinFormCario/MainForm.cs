@@ -71,66 +71,6 @@ namespace WinFormCario
             p3 = new PointD(100, 100);
             p4 = new PointD(10, 100);
 
-#if false
-            g.SetSourceColor(new Color(0,1,0));
-            g.MoveTo(p1);
-            g.LineTo(p2);
-            g.LineTo(p3);
-            g.LineTo(p4);
-            g.LineTo(p1);
-            g.ClosePath();
-            var extentsRectangle = g.StrokeExtents();
-            g.Fill();
-
-            g.SetSourceColor(new Color(0,0,0));
-            g.LineWidth = 1;
-            //Top extents
-            g.MoveTo(extentsRectangle.X, extentsRectangle.Y);
-            g.LineTo(extentsRectangle.X + extentsRectangle.Width, extentsRectangle.Y);
-            //Right extents
-            g.LineTo(extentsRectangle.X + extentsRectangle.Width, extentsRectangle.Y + extentsRectangle.Height);
-            //Bottom extents
-            g.LineTo(extentsRectangle.X, extentsRectangle.Y + extentsRectangle.Height);
-            //Left extents
-            g.LineTo(extentsRectangle.X, extentsRectangle.Y);
-            g.ClosePath();
-            g.Stroke();
-            
-            g.SetSourceColor(new Color(1,0,0));
-            p1.X += 100;
-            p2.X += 100;
-            p3.X += 100;
-            p4.X += 100;
-            g.MoveTo(p1);
-            g.LineTo(p2);
-            g.LineTo(p3);
-            g.LineTo(p4);
-            g.LineTo(p1);
-            //g.ClosePath();
-            //g.Fill();
-
-            
-            var topColor = new Color(1,0,0);
-            var rightColor = new Color(0,1,0);
-            var bottomColor = new Color(0,0,1);
-            var leftColor = new Color(1,0,1);
-            p1.X += 10;
-            p1.Y += 10;
-            p2.X -= 10;
-            p2.Y += 10;
-            p3.X -= 10;
-            p3.Y -= 10;
-            p4.X += 10;
-            p4.Y -= 10;
-            g.MoveTo(p1);
-            g.LineTo(p2);
-            g.LineTo(p3);
-            g.LineTo(p4);
-            g.LineTo(p1);
-            g.ClosePath();
-            g.FillRule =  FillRule.EvenOdd;
-            g.Fill();
-#endif
 
             {
                 g.SetSourceSurface(imageSurface, 0, 0);
@@ -149,26 +89,27 @@ namespace WinFormCario
                 g.LineTo(p1);
                 g.ClosePath();
                 g.Fill();
-
+                gradient.Dispose();
             }
 
-
             g.MoveTo(new PointD(0, this.ClientSize.Height-30));
-            g.SetFontSize(24.0);
+            g.SetFontSize(30.0f);
+            g.SetSourceColor(new Color(0,0,0));
             g.ShowText(string.Format("FPS: {0}", fps));
-            g.Stroke();
         }
 
         static ImageSurface build_Surface(int Width, int Height, Color Color)
         {
             Context _context = null;
-            ImageSurface _surface = new ImageSurface(Format.Argb32, Width, Height);
+            ImageSurface _surface = new ImageSurface(Format.Rgb24, Width, Height);
 
             _context = new Context(_surface);
 
             _context.Rectangle(0, 0, Width, Height);
             _context.SetSourceRGBA(Color.R, Color.G, Color.B, Color.A);
             _context.Fill();
+
+            _context.Dispose();
 
             return _surface;
         }
@@ -192,15 +133,12 @@ namespace WinFormCario
             imageSurface = new ImageSurface("W:/VS2013/CarioPlayground/Resources/Toggle.Off.png");
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-
-        }
-
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             if (g != null)
                 g.Dispose();
+            if( context!=null )
+                context.Dispose();
         }
 
 
