@@ -1,95 +1,48 @@
-﻿using System;
-using Cairo;
-
-using FontDescription = Pango.FontDescription;
-using Weight = Pango.Weight;
-using Slant = Pango.Style;
-using Color = Cairo.Color;
+﻿using Cairo;
 
 namespace IMGUI
 {
-    public struct Font : ICloneable
+    /// <summary>
+    /// Font face info, properties of one single character
+    /// </summary>
+    public struct Font
     {
-        private FontDescription description;
+        public string family;
 
-        public string Family
+        /// <summary>
+        /// Font family name
+        /// </summary>
+        /// <remarks>when set a null value, use "SimHei" as the fallback font family</remarks>
+        public string FontFamily
         {
-            get
-            {
-                return Description.Family;
-            }
-            set
-            {
-                Description.Family = value ?? "SimHei";
-                //Description = FontDescription.FromString(string.Format("{0} {1} {2} {3}", family, weight, slant, size));
-            }
+            get { return "SimHei"; }
+            set { family = value ?? "SimHei"; }
         }
 
-        public Slant Slant
-        {
-            get
-            {
-                return Description.Style;
-            }
-            set
-            {
-                Description.Style = value;
-                //Description = FontDescription.FromString(string.Format("{0} {1} {2} {3}", family, weight, slant, size));
-            }
-        }
+        /// <summary>
+        /// The style of a font face as normal, italic, or oblique.
+        /// </summary>
+        public FontStyle FontStyle { get; set; }
 
-        public Weight Weight
-        {
-            get
-            {
-                return Description.Weight;
-            }
-            set
-            {
-                Description.Weight = value;
-                //Description = FontDescription.FromString(string.Format("{0} {1} {2} {3}", family, weight, slant, size));
-            }
-        }
+        /// <summary>
+        /// Refers to the density of a typeface, in terms of the lightness or heaviness of the strokes.
+        /// </summary>
+        public FontWeight FontWeight { get; set; }
 
+        /// <summary>
+        /// Describes the degree to which a font has been stretched compared to the normal aspect ratio of that font.
+        /// </summary>
+        public FontStretch FontStretch { get; set; }
 
-        public int Size
-        {
-            get
-            {
-                return (int)(Description.Size / Pango.Scale.PangoScale);
-            }
-            set
-            {
-                Description.Size = (int)(value * Pango.Scale.PangoScale);
-                //Description = FontDescription.FromString(string.Format("{0} {1} {2} {3}", family, weight, slant, size));
-            }
-        }
+        /// <summary>
+        /// Size of the character
+        /// </summary>
+        public int Size { get; set; }
 
+        /// <summary>
+        /// Color of the character
+        /// </summary>
         public Color Color { get; set; }
-
-        public FontDescription Description
-        {
-            get
-            {
-                if(description == null)
-                {
-                    description = new FontDescription();
-                }
-                return description;
-            }
-            private set { description = value; }
-        }
-
-        #region ICloneable Members
-
-        public object Clone()
-        {
-            return new Font
-            {
-                Description = description.Copy()
-            };
-        }
-
-        #endregion
     }
+
 }

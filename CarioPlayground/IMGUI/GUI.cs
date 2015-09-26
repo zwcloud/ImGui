@@ -48,14 +48,15 @@ namespace IMGUI
             return IMGUI.Radio.DoControl(g, rect, text, groupName, value, name);
         }
 
-        public string TextBox(Rect rect, string text, string name)
-        {
-            return IMGUI.TextBox.DoControl(g, rect, text, name);
-        }
+        //public string TextBox(Rect rect, string text, string name)
+        //{
+        //    return IMGUI.TextBox.DoControl(g, rect, text, name);
+        //}
 
         public bool PolygonButton(Point[] points, string text, string name)
         {
             return IMGUI.PolygonButton.DoControl(g, points, text, name);
         }
+
     }
 }

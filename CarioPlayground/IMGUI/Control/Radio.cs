@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Cairo;
+using TinyIoC;
 
 namespace IMGUI
 {
     internal class Radio : Control
     {
-        internal static Dictionary<string, HashSet<string>> Groups;
+        public static Dictionary<string, HashSet<string>> Groups;
 
         static Radio()
         {
@@ -14,7 +15,7 @@ namespace IMGUI
         }
 
         private string groupName;
-        internal string GroupName
+        public string GroupName
         {
             get { return groupName; }
             private set
@@ -38,34 +39,52 @@ namespace IMGUI
             }
         }
 
-        private bool Actived { get; set; }
+        public bool Actived { get; set; }
 
-        internal Radio(string name)
+        public ITextFormat Format { get; private set; }
+        public ITextLayout Layout { get; private set; }
+
+        public Radio(string name, string text, float width, float height, string groupName)
         {
             Name = name;
             State = "Normal";
-
             Controls[Name] = this;
+
+            GroupName = groupName;
+            var font = Skin.current.Button[State].Font;
+            Format = Application.IocContainer.Resolve<ITextFormat>(
+                new NamedParameterOverloads
+                    {
+                        {"fontFamilyName", font.FontFamily},
+                        {"fontWeight", font.FontWeight},
+                        {"fontStyle", font.FontStyle},
+                        {"fontStretch", font.FontStretch},
+                        {"fontSize", (float) font.Size}
+                    });
+            Layout = Application.IocContainer.Resolve<ITextLayout>(
+                new NamedParameterOverloads
+                    {
+                        {"text", text},
+                        {"textFormat", Format},
+                        {"maxWidth", width},
+                        {"maxHeight", height}
+                    });
         }
 
-        internal static bool DoControl(Context g, Rect rect, string text, string groupName, bool value, string name)
+        public static bool DoControl(Context g, Rect rect, string text, string groupName, bool value, string name)
         {
             #region Get control reference
             Radio radio;
             if(!Controls.ContainsKey(name))
             {
-                radio = new Radio(name);
+                radio = new Radio(name, text, (float)rect.Width, (float)rect.Height, groupName);
             }
             else
             {
                 radio = Controls[name] as Radio;
+
+                Debug.Assert(radio != null);
             }
-
-            Debug.Assert(radio != null);
-            #endregion
-
-            #region Set control data
-            radio.GroupName = groupName;
             #endregion
 
             #region Logic

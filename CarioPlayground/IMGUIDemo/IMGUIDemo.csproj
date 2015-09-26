@@ -88,6 +88,13 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cairo">
+      <HintPath>..\Reference\Cairo.dll</HintPath>
+    </Reference>
+    <Reference Include="Pango, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Reference\Pango.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -134,10 +141,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cairo\Cairo.csproj">
-      <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
-      <Name>Cairo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IMGUI\IMGUI.csproj">
       <Project>{495935c7-70a3-40e3-93cd-1cebbd591b99}</Project>
       <Name>IMGUI</Name>

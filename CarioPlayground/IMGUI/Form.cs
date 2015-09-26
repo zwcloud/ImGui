@@ -1,9 +1,10 @@
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Cairo;
 
-//TODO make project independent of Winform
+//TODO make project independent of Winform(or only use Winform for creating window)
 namespace IMGUI
 {
     [System.ComponentModel.DesignerCategory("")]
@@ -11,8 +12,8 @@ namespace IMGUI
     {
         #region GUI compontents
         public GUI GUI { get; set; }
-        
-        private readonly Color windowBackgroundColor = CairoEx.ColorRgb(255, 255, 255);
+
+        private readonly Color windowBackgroundColor = CairoEx.ColorWhite;
         #endregion
 
         #region GUI paramters
@@ -30,18 +31,53 @@ namespace IMGUI
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(284, 262);
+            
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Icon = new System.Drawing.Icon(@"W:\VS2013\CarioPlayground\IMGUIDemo\calc32x32.ico");
             Name = "MainForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Calculator";
+            this.Shown += new System.EventHandler(this.Form_Shown);
             ResumeLayout(false);
             #endregion
 
-            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite);
-            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, new Color(0,0,0,0));
+            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorMetal, Format.Rgb24);
+            Layer.BackContext = new Context(Layer.BackSurface);
+            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorMetal, Format.Argb32);
+            Layer.TopContext = new Context(Layer.TopSurface);
+        }
 
-            InitIMGUI();
+        bool exit = false;
+
+        private void Form_Shown(object ob, EventArgs ea)
+        {
+            //Now, the hdc of form window can be acquired
+            var hdc = Native.GetDC(Handle);
+            Layer.FrontSurface = new Win32Surface(hdc);
+            Layer.FrontContext = new Context(Layer.FrontSurface);
+
+            //creature GUI
+            GUI = new GUI(Layer.BackContext, Layer.TopContext);
+
+            //Set up the game loop
+            System.Windows.Forms.Application.Idle += (sender, e) =>
+            {
+                if (exit)
+                {
+                    CleanUp();
+                    Close();
+                }
+                else
+                {
+                    while (Utility.IsApplicationIdle() && exit == false)
+                    {
+                        Utility.MillisFrameBegin = Utility.Millis;
+                        Thread.Sleep(30);//Keep about 30fps
+                        exit = Update();
+                        Render();
+                    }
+                }
+            };
         }
 
         protected override bool CanEnableIme
@@ -71,16 +107,18 @@ namespace IMGUI
         public new bool CursorChanged { get; set; }
 
         #region helper for Cario
+
         /// <summary>
         /// Build a ImageSurface
         /// </summary>
         /// <param name="Width">width</param>
         /// <param name="Height">height</param>
         /// <param name="Color">color</param>
+        /// <param name="format">surface format</param>
         /// <returns>the created ImageSurface</returns>
-        static ImageSurface BuildSurface(int Width, int Height, Color Color)
+        static ImageSurface BuildSurface(int Width, int Height, Color Color, Format format)
         {
-            ImageSurface surface = new ImageSurface(Format.Argb32, Width, Height);
+            ImageSurface surface = new ImageSurface(format, Width, Height);
             var c = new Context(surface);
             c.Rectangle(0, 0, Width, Height);
             c.SetSourceColor(Color);
@@ -90,62 +128,23 @@ namespace IMGUI
         }
 
         /// <summary>
-        /// Paint g(the image surface) to context(the win32 window surface)
+        /// Paint all backend surfaces to the win32 window surface
         /// </summary>
         private void SwapSurfaceBuffer()
         {
             //Draw top surface to back surface
-            Layer.BackContext.Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
-            Layer.BackContext.SetSource(Layer.TopSurface);
-            Layer.BackContext.Operator = Operator.Atop;
-            Layer.BackContext.Fill();
+            //Layer.BackContext.SetSourceSurface(Layer.TopSurface, 0, 0);
+            //Layer.BackContext.Operator = Operator.DestAtop;
+            //Layer.BackContext.Paint();
+            //Layer.BackContext.Operator = Operator.Over;
 
-            //Draw back surface to front surface (from bottom surface to top surface)
-            Layer.FrontContext.Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
-            Layer.FrontContext.SetSource(Layer.BackSurface);
-            Layer.FrontContext.Fill();
+            //Draw back surface to front surface
+            Layer.FrontContext.SetSourceSurface(Layer.BackSurface, 0, 0);
+            Layer.FrontContext.Paint();
         }
         #endregion
 
         #region application architecture
-
-        internal void InitIMGUI()
-        {
-            bool exit = false;
-            //Set up the game architecture
-            System.Windows.Forms.Application.Idle += (sender, e) =>
-            {
-                if(exit)
-                {
-                    CleanUp();
-                    Close();
-                }
-                if(GUI == null)
-                {
-                    Init();
-                }
-                else
-                {
-                    while(Utility.IsApplicationIdle() && exit == false)
-                    {
-                        Utility.MillisFrameBegin = Utility.Millis;
-                        Thread.Sleep(30);//Keep about 30fps
-                        exit = Update();
-                        Render();
-                    }
-                }
-            };
-        }
-
-        private void Init()
-        {
-            Layer.BackContext = new Context(Layer.BackSurface);
-            var hdc = Native.GetDC(Handle);
-            Layer.FrontSurface = new Win32Surface(hdc);
-            Layer.FrontContext = new Context(Layer.FrontSurface);
-            Layer.TopContext  = new Context(Layer.TopSurface);
-            GUI = new GUI(Layer.BackContext, Layer.TopContext);
-        }
 
         protected override void WndProc(ref Message m)
         {
@@ -210,11 +209,9 @@ namespace IMGUI
             Layer.BackContext.Paint();
 
             //Clear Top surface
-            Layer.TopContext.Save();
-            Layer.TopContext.SetSourceColor(new Color(0,0,0,0));
-            Layer.TopContext.Operator = Operator.Source;
+            Layer.TopContext.SetSourceColor(windowBackgroundColor);
             Layer.TopContext.Paint();
-            Layer.TopContext.Restore();
+
 #if DEBUG
             var debugInfoheight = Skin.current.Label["Normal"].Font.Size;
             GUI.Label(
@@ -243,6 +240,8 @@ namespace IMGUI
         {
             if(Layer.BackContext != null)
                 Layer.BackContext.Dispose();
+            if (Layer.TopContext != null)
+                Layer.TopContext.Dispose();
         }
 
         #endregion

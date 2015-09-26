@@ -130,10 +130,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cairo\Cairo.csproj">
-      <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
-      <Name>Cairo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IMGUI\IMGUI.csproj">
       <Project>{495935c7-70a3-40e3-93cd-1cebbd591b99}</Project>
       <Name>IMGUI</Name>

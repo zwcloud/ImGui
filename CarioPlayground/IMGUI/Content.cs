@@ -1,14 +1,10 @@
-﻿using Layout = Pango.Layout;
+﻿using Layout = IMGUI.ITextLayout;
+
 namespace IMGUI
 {
     public sealed class Content
     {
-#if false
-        private Texture _image;
-#endif
-        private string _tooltip = string.Empty;
-        public static Content None = new Content(string.Empty);
-        private static Content s_text = new Content();
+        private string tooltip = string.Empty;
 
         /// <summary>
         /// Simple text(Single line and short--three or two word)
@@ -20,11 +16,14 @@ namespace IMGUI
         /// </summary>
         public Layout Layout { get; set; }
 
+        /// <summary>
+        /// Image
+        /// </summary>
         public Texture Image { get; set; }
 
         //TODO add a Shape(SVG) Content
 
-        public Content()
+        private Content()
         {
             Text = string.Empty;
             Image = null;

@@ -12,6 +12,7 @@ namespace IMGUIProjectTemplate
     {
         protected override void OnGUI(GUI gui)
         {
+            gui.Label(new Rect(36, 36, 110, 30), "Hello World!", "Label0");
         }
     }
 

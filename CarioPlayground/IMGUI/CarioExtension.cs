@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Cairo;
-using Pango;
-using Color = Cairo.Color;
+using TinyIoC;
 using Context = Cairo.Context;
+using Layout = IMGUI.ITextLayout;
 
 namespace IMGUI
 {
@@ -86,15 +83,15 @@ namespace IMGUI
             {
                 if (content.Image != null)
                 {
-                    g.DrawImage(contentBoxRect, content.Image);
+                    //g.DrawImage(contentBoxRect, content.Image);
                 }
-                if (content.Text != null)
+                if (content.Text!=null)
                 {
                     g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
                 }
                 if (content.Layout != null)
                 {
-                    g.DrawText(contentBoxRect, content.Layout, style.Font);
+                    g.DrawText(contentBoxRect, content.Layout, style.Font, style.TextStyle);
                 }
             }
         }
@@ -199,27 +196,56 @@ namespace IMGUI
 
 
         #region text
+        /// <summary>
+        /// Draw short text
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="rect">region to draw the text</param>
+        /// <param name="text">text</param>
+        /// <param name="font">font</param>
+        /// <param name="textStyle">text styles</param>
         public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
         {
-            //BUG Must move Layout to corresponding control
-            //l makes memory leaks(probably)
-            Layout l = CairoHelper.CreateLayout(g);
-            l.SetText(text);
-            l.FontDescription = font.Description;
-            CairoHelper.UpdateLayout(g, l);
-            l.Alignment = textStyle.TextAlign;
-            l.Width = (int)(rect.Width * Pango.Scale.PangoScale);
-            g.SetSourceColor(font.Color);
-            Point p = rect.TopLeft;
-            g.MoveTo(p);
-            CairoHelper.ShowLayout(g, l);
+            using(ITextFormat textFormat = Application.IocContainer.Resolve<ITextFormat>(
+                new NamedParameterOverloads
+                {
+                    { "fontFamilyName", font.FontFamily },
+                    { "fontWeight", font.FontWeight },
+                    { "fontStyle", font.FontStyle },
+                    { "fontStretch", font.FontStretch },
+                    { "fontSize", (float)font.Size}
+                }))
+            using(
+            ITextLayout textLayout = Application.IocContainer.Resolve<ITextLayout>(
+                new NamedParameterOverloads
+                {
+                    { "text", text },
+                    { "textFormat", textFormat },
+                    { "maxWidth", (float)rect.Width },
+                    { "maxHeight", (float)rect.Height }
+                }))
+            {
+                g.SetSourceColor(font.Color);
+                Point p = rect.TopLeft;
+                g.MoveTo(p);
+                textLayout.Show(g);
+            }
         }
-        public static void DrawText(this Context g, Rect rect, Layout layout, Font font)
+
+        /// <summary>
+        /// Draw layouted text
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="rect"></param>
+        /// <param name="layout"></param>
+        /// <param name="font"></param>
+        /// <param name="textStyle"></param>
+        public static void DrawText(this Context g, Rect rect, Layout layout, Font font, TextStyle textStyle)
         {
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
             g.MoveTo(p);
-            CairoHelper.ShowLayout(g, layout);
+            layout.Show(g);
         }
         #endregion
 

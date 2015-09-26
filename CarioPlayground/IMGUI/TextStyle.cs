@@ -1,6 +1,4 @@
-﻿using TextAlignment = Pango.Alignment;
-
-namespace IMGUI
+﻿namespace IMGUI
 {
     /// <summary>
     /// Styles of texts

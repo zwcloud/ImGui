@@ -1,11 +1,6 @@
 ﻿using System.Collections.Generic;
 using Cairo;
 
-using Weight = Pango.Weight;
-using Slant = Pango.Style;
-using Color = Cairo.Color;
-using TextAlignment = Pango.Alignment;
-
 namespace IMGUI
 {
     public sealed class Skin
@@ -50,9 +45,10 @@ namespace IMGUI
                     {
                         Name = "Font", Value = new Font
                         {
-                            Family = "Consolas",
-                            Slant = Slant.Normal,
-                            Weight = Weight.Normal,
+                            FontFamily = "Consolas",
+                            FontStyle = FontStyle.Normal,
+                            FontWeight = FontWeight.Normal,
+                            FontStretch = FontStretch.Normal,
                             Size = 12,
                             Color = new Color(0,0,1)
                         }
@@ -133,9 +129,10 @@ namespace IMGUI
                         Name = "Font",
                         Value = new Font
                         {
-                            Family = "Consolas",
-                            Slant = Slant.Normal,
-                            Weight = Weight.Bold,
+                            FontFamily = "Consolas",
+                            FontStyle = FontStyle.Normal,
+                            FontWeight = FontWeight.Bold,
+                            FontStretch = FontStretch.Normal,
                             Size = 12,
                             Color = CairoEx.ColorBlack
                         }
@@ -195,7 +192,7 @@ namespace IMGUI
                         Name = "TextStyle",
                         Value = new TextStyle
                         {
-                            TextAlign = TextAlignment.Center,
+                            //TextAlign = TextAlignment.Center,
                             LineSpacing = 0,
                             TabSize = 4
                         }
@@ -303,7 +300,7 @@ namespace IMGUI
                         Name = "TextStyle",
                         Value = new TextStyle
                         {
-                            TextAlign = TextAlignment.Left,
+                            TextAlign = TextAlignment.Leading,
                             LineSpacing = 0,
                             TabSize = 4
                         }

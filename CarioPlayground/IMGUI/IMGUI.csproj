@@ -90,7 +90,6 @@
     <Compile Include="Control\Label.cs" />
     <Compile Include="Control\Radio.cs" />
     <Compile Include="Control\Slider.cs" />
-    <Compile Include="Control\TextBox.cs" />
     <Compile Include="Control\Toggle.cs" />
     <Compile Include="Control\PolygonButton.cs" />
     <Compile Include="Detalied\Point.cs" />
@@ -104,11 +103,16 @@
     <Compile Include="GUI.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="Port\ITextFormat.cs" />
+    <Compile Include="Port\ITextLayout.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Length.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Point.cs" />
+    <Compile Include="Port\TextEnums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Proxy\DWriteTextFormatProxy.cs" />
+    <Compile Include="Proxy\DWriteTextLayoutProxy.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="RenderObject.Build.cs" />
     <Compile Include="RenderObject.cs" />
@@ -120,6 +124,7 @@
     <Compile Include="StyleModifier.cs" />
     <Compile Include="TextStyle.cs" />
     <Compile Include="Texture.cs" />
+    <Compile Include="TinyIoC.cs" />
     <Compile Include="TODO.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Utility.cs" />
@@ -129,25 +134,21 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Cairo\Cairo.csproj">
+    <ProjectReference Include="..\..\ZWCloud.Cairo\Cairo\Cairo.csproj">
       <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
       <Name>Cairo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GLib\GLib.csproj">
-      <Project>{3bf1d531-8840-4f15-8066-a9788d8c398b}</Project>
-      <Name>GLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pango\Pango.csproj">
-      <Project>{04ec04f9-aa1f-494d-86a7-033db42d9eba}</Project>
-      <Name>Pango</Name>
+    <ProjectReference Include="..\..\ZWCloud.DwriteCairo\DwriteCairo\DwriteCairo.csproj">
+      <Project>{233143ad-edf8-49c4-b69d-2d1ebf58b82e}</Project>
+      <Name>DwriteCairo</Name>
     </ProjectReference>
     <ProjectReference Include="..\Win32\Win32.csproj">
       <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
       <Name>Win32</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
