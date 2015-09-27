@@ -6,8 +6,58 @@ namespace IMGUI
 {
     internal class Label : Control
     {
+        private string text;
         public ITextFormat Format { get; private set; }
         public ITextLayout Layout { get; private set; }
+
+        public string Text
+        {
+            get { return text; }
+            private set
+            {
+                if (Text == value)
+                {
+                    return;
+                }
+
+                text = value;
+                NeedRepaint = true;
+            }
+        }
+
+        public Rect Rect { get; private set; }
+
+        public override void OnUpdate()
+        {
+            var style = Skin.current.Button[State];
+            Format.Alignment = style.TextStyle.TextAlignment;
+            Layout.MaxWidth = (int) Rect.Width;
+            Layout.MaxHeight = (int)Rect.Height;
+            Layout.Text = Text;
+
+            var oldState = State;
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.MousePos);
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.MousePos);
+            if(active)
+                State = "Active";
+            else if(hover)
+                State = "Hover";
+            else
+                State = "Normal";
+            if(State != oldState)
+            {
+                NeedRepaint = true;
+            }
+            else
+            {
+                NeedRepaint = false;
+            }
+        }
+
+        public override void OnRender(Context g)
+        {
+            g.DrawBoxModel(Rect, new Content(Layout), Skin.current.Label[State]);
+        }
 
         internal Label(string name, string text, int width, int height)
         {
@@ -39,39 +89,28 @@ namespace IMGUI
         //TODO Control-less DoControl overload (without name parameter)
         internal static void DoControl(Context g, Rect rect, string text, string name)
         {
-            #region Get control reference
-            Label label;
             if(!Controls.ContainsKey(name))
             {
-                label = new Label(name, text, (int)rect.Width, (int)rect.Height);
+                var label = new Label(name, text, (int)rect.Width, (int)rect.Height);
+                label.Rect = rect;
+                label.Text = text;
+                label.OnUpdate();
+                label.OnRender(g);
             }
-            else
+            
+            var control = Controls[name] as Label;
+            Debug.Assert(control != null);
+            control.Rect = rect;
+            control.Text = text;
+
+            //The control need to be repaint
+            if (control.NeedRepaint)
             {
-                label = Controls[name] as Label;
-                Debug.Assert(label != null);
-
-                #region Set control data
-                var style = Skin.current.Button[label.State];
-                label.Format.Alignment = style.TextStyle.TextAlignment;
-                label.Layout.MaxWidth = (int)rect.Width;
-                label.Layout.MaxHeight = (int)rect.Height;
-                label.Layout.Text = text;
-                #endregion
+                control.OnRender(g);
             }
 
-            Debug.Assert(label != null);
-            #endregion
-
-            bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);
-            bool hover = Input.Mouse.LeftButtonState == InputState.Up && rect.Contains(Input.Mouse.MousePos);
-            if(active)
-                label.State = "Active";
-            else if(hover)
-                label.State = "Hover";
-            else
-                label.State = "Normal";
-
-            g.DrawBoxModel(rect, new Content(label.Layout), Skin.current.Label[label.State]);
+            //The control need to be relayout
+            //TODO
         }
 
     }

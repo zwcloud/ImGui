@@ -132,7 +132,7 @@ namespace IMGUI
         {
             if (path == null || dirty)
             {
-                if(dirty)
+                if (path !=null && dirty)
                 {
                     Path.Dispose();
                 }

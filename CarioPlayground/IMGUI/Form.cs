@@ -1,8 +1,11 @@
+#define SHOW_FPS_Label
+
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Cairo;
+
 
 //TODO make project independent of Winform(or only use Winform for creating window)
 namespace IMGUI
@@ -41,9 +44,9 @@ namespace IMGUI
             ResumeLayout(false);
             #endregion
 
-            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorMetal, Format.Rgb24);
+            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Rgb24);
             Layer.BackContext = new Context(Layer.BackSurface);
-            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorMetal, Format.Argb32);
+            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Argb32);
             Layer.TopContext = new Context(Layer.TopSurface);
         }
 
@@ -72,7 +75,7 @@ namespace IMGUI
                     while (Utility.IsApplicationIdle() && exit == false)
                     {
                         Utility.MillisFrameBegin = Utility.Millis;
-                        Thread.Sleep(30);//Keep about 30fps
+                        Thread.Sleep(20);//Keep about 30fps
                         exit = Update();
                         Render();
                     }
@@ -132,12 +135,6 @@ namespace IMGUI
         /// </summary>
         private void SwapSurfaceBuffer()
         {
-            //Draw top surface to back surface
-            //Layer.BackContext.SetSourceSurface(Layer.TopSurface, 0, 0);
-            //Layer.BackContext.Operator = Operator.DestAtop;
-            //Layer.BackContext.Paint();
-            //Layer.BackContext.Operator = Operator.Over;
-
             //Draw back surface to front surface
             Layer.BackSurface.Flush();
             Layer.FrontContext.SetSourceSurface(Layer.BackSurface, 0, 0);
@@ -196,6 +193,10 @@ namespace IMGUI
 #if DEBUG
             DebugUpdate();
 #endif
+            foreach (var control in Control.Controls.Values)
+            {
+                control.OnUpdate();
+            }
 
             return false;
         }
@@ -204,16 +205,7 @@ namespace IMGUI
         {
             if(Layer.BackContext == null || Layer.FrontContext == null || Layer.TopContext == null)
                 return;
-
-            //Clear back surface
-            Layer.BackContext.SetSourceColor(windowBackgroundColor);
-            Layer.BackContext.Paint();
-
-            //Clear Top surface
-            Layer.TopContext.SetSourceColor(windowBackgroundColor);
-            Layer.TopContext.Paint();
-
-#if DEBUG
+#if SHOW_FPS_Label
             var debugInfoheight = Skin.current.Label["Normal"].Font.Size;
             GUI.Label(
                 new Rect(0, ClientRectangle.Bottom - 20, 300, debugInfoheight),
@@ -222,6 +214,15 @@ namespace IMGUI
                 );
 #endif
             OnGUI(GUI);
+
+            foreach (var control in Control.Controls.Values)
+            {
+                if (control.NeedRepaint)
+                {
+                    control.OnRender(Layer.BackContext);
+                }
+            }
+
             SwapSurfaceBuffer();
         }
 

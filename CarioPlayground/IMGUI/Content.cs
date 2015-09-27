@@ -8,6 +8,7 @@ namespace IMGUI
 
         /// <summary>
         /// Simple text(Single line and short--three or two word)
+        /// Not used!
         /// </summary>
         public string Text { get; set; }
 

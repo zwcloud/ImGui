@@ -1,1 +1,1 @@
-﻿//TODO Implement layer mechanism
+﻿//TODO stand-alone window for tooltip, combox items, listbox items and so on

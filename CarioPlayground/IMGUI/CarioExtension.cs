@@ -85,10 +85,6 @@ namespace IMGUI
                 {
                     //g.DrawImage(contentBoxRect, content.Image);
                 }
-                if (content.Text!=null)
-                {
-                    //g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
-                }
                 if (content.Layout != null)
                 {
                     g.DrawText(contentBoxRect, content.Layout, style.Font, style.TextStyle);
@@ -196,46 +192,6 @@ namespace IMGUI
 
 
         #region text
-        /// <summary>
-        /// Draw short text
-        /// </summary>
-        /// <param name="g"></param>
-        /// <param name="rect">region to draw the text</param>
-        /// <param name="text">text</param>
-        /// <param name="font">font</param>
-        /// <param name="textStyle">text styles</param>
-        [Obsolete("Performance is too low, not used.")]
-        public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
-        {
-            using(ITextFormat textFormat = Application.IocContainer.Resolve<ITextFormat>(
-                new NamedParameterOverloads
-                {
-                    { "fontFamilyName", font.FontFamily },
-                    { "fontWeight", font.FontWeight },
-                    { "fontStyle", font.FontStyle },
-                    { "fontStretch", font.FontStretch },
-                    { "fontSize", (float)font.Size}
-                }))
-            using(
-            ITextLayout textLayout = Application.IocContainer.Resolve<ITextLayout>(
-                new NamedParameterOverloads
-                {
-                    { "text", text },
-                    { "textFormat", textFormat },
-                    { "maxWidth", (float)rect.Width },
-                    { "maxHeight", (float)rect.Height }
-                }))
-            {
-                textFormat.Alignment = textStyle.TextAlignment;
-                g.SetSourceColor(font.Color);
-                Point p = rect.TopLeft;
-                g.MoveTo(p);
-                textLayout.BuildPath(g);
-                g.AppendPath(textLayout.Path);
-                g.Fill();
-            }
-        }
-
         /// <summary>
         /// Draw layouted text
         /// </summary>

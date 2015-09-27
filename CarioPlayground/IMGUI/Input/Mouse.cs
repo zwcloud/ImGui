@@ -132,10 +132,6 @@ namespace IMGUI.Input
 
         #region Drag
 
-        private static bool mouseDragMousePressing;
-        private static bool mouseDragMouseUpToDown;
-        private static bool mouseDragMouseMoved;
-
         private static IEnumerator<bool> ClickChecker
         {
             get { return clickChecker; }

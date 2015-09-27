@@ -10,6 +10,60 @@ namespace IMGUI
         public ITextFormat Format { get; private set; }
         public ITextLayout Layout { get; private set; }
 
+        private string text;
+        public string Text
+        {
+            get { return text; }
+            private set
+            {
+                if (Text == value)
+                {
+                    return;
+                }
+
+                text = value;
+                NeedRepaint = true;
+            }
+        }
+        public Rect Rect { get; private set; }
+        public bool Result { get; private set; }
+
+        public override void OnUpdate()
+        {
+            var style = Skin.current.Button[State];
+            Format.Alignment = style.TextStyle.TextAlignment;
+            Layout.MaxWidth = (int)Rect.Width;
+            Layout.MaxHeight = (int)Rect.Height;
+            Layout.Text = Text;
+
+            var oldState = State;
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.MousePos);
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.MousePos);
+            if (active)
+                State = "Active";
+            else if (hover)
+                State = "Hover";
+            else
+                State = "Normal";
+
+            if(State != oldState)
+            {
+                NeedRepaint = true;
+            }
+            else
+            {
+                NeedRepaint = false;
+            }
+
+            bool clicked = Input.Mouse.LeftButtonClicked && Rect.Contains(Input.Mouse.MousePos);
+            Result = clicked;
+        }
+
+        public override void OnRender(Context g)
+        {
+            g.DrawBoxModel(Rect, new Content(this.Layout), Skin.current.Button[this.State]);
+        }
+
         internal Button(string name, string text, int width, int height)
         {
             Name = name;
@@ -39,43 +93,31 @@ namespace IMGUI
         //TODO Control-less DoControl overload (without name parameter)
         internal static bool DoControl(Context g, Rect rect, string text, string name)
         {
-            #region Get control reference
-            Button button;
+            //The control hasn't been created, create it.
             if(!Controls.ContainsKey(name))
             {
-                button = new Button(name, text, (int)rect.Width, (int)rect.Height);
+                var button = new Button(name, text, (int)rect.Width, (int)rect.Height);
+                button.Rect = rect;
+                button.Text = text;
+                button.OnUpdate();
+                button.OnRender(g);
             }
-            else
+
+            var control = Controls[name] as Button;
+            Debug.Assert(control != null);
+            control.Rect = rect;
+            control.Text = text;
+
+            //The control need to be repaint
+            if (control.NeedRepaint)
             {
-                button = Controls[name] as Button;
-                Debug.Assert(button != null);
-
-                #region Set control data
-                var style = Skin.current.Button[button.State];
-                button.Format.Alignment = style.TextStyle.TextAlignment;
-                button.Layout.MaxWidth = (int)rect.Width;
-                button.Layout.MaxHeight = (int)rect.Height;
-                button.Layout.Text = text;
-                #endregion
+                control.OnRender(g);
             }
-            #endregion
 
+            //The control need to be relayout
+            //TODO
 
-            #region Logic
-            bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);
-            bool hover = Input.Mouse.LeftButtonState == InputState.Up && rect.Contains(Input.Mouse.MousePos);
-            if(active)
-                button.State = "Active";
-            else if(hover)
-                button.State = "Hover";
-            else
-                button.State = "Normal";
-            #endregion
-
-            g.DrawBoxModel(rect, new Content(button.Layout), Skin.current.Button[button.State]);
-
-            bool clicked = Input.Mouse.LeftButtonClicked && rect.Contains(Input.Mouse.MousePos);
-            return clicked;
+            return control.Result;
         }
     }
 }

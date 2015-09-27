@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
 using Cairo;
+using System.Collections.Generic;
+using TinyIoC;
 
+//TODO use stand-alone window(this is also TODO) to show the items
 //BUG Hover state persists when move from mainRect to outside.
 //BUG Abnormal representation when drag from mainRect to outside.
 
@@ -8,18 +11,44 @@ namespace IMGUI
 {
     internal class ComboBox : Control
     {
+        public ITextFormat Format { get; private set; }
+        public List<ITextLayout> ItemLayouts { get; private set; }
+
         public int SelectedIndex { get; private set; }//TODO consider remove this property
 
         private int HoverIndex { get; set; }
 
         private int ActiveIndex { get; set; }
 
-        internal ComboBox(string name)
+        internal ComboBox(string name, string[] texts, int width, int height)
         {
             Name = name;
             State = "Normal";
-
             Controls[Name] = this;
+
+            var font = Skin.current.Button[State].Font;
+            Format = Application.IocContainer.Resolve<ITextFormat>(
+                new NamedParameterOverloads
+                    {
+                        {"fontFamilyName", font.FontFamily},
+                        {"fontWeight", font.FontWeight},
+                        {"fontStyle", font.FontStyle},
+                        {"fontStretch", font.FontStretch},
+                        {"fontSize", (float) font.Size}
+                    });
+            ItemLayouts = new List<ITextLayout>(texts.Length);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                var layout = Application.IocContainer.Resolve<ITextLayout>(
+                    new NamedParameterOverloads
+                    {
+                        {"text", texts[i]},
+                        {"textFormat", Format},
+                        {"maxWidth", width},
+                        {"maxHeight", height}
+                    });
+                ItemLayouts.Add(layout);
+            }
         }
 
         internal static int DoControl(Context g, Context gTop, Rect rect, string[] texts, int selectedIndex, string name)
@@ -28,14 +57,20 @@ namespace IMGUI
             ComboBox comboBox;
             if(!Controls.ContainsKey(name))
             {
-                comboBox = new ComboBox(name);
+                comboBox = new ComboBox(name, texts, (int)rect.Width, (int)rect.Height);
+                Debug.Assert(comboBox != null);
             }
             else
             {
                 comboBox = Controls[name] as ComboBox;
+                Debug.Assert(comboBox != null);
+
+                #region Set control data
+                var style = Skin.current.Button[comboBox.State];
+                comboBox.Format.Alignment = style.TextStyle.TextAlignment;
+                #endregion
             }
 
-            Debug.Assert(comboBox != null);
             #endregion
 
             #region Set control data
@@ -122,7 +157,7 @@ namespace IMGUI
             #endregion
 
             #region Draw
-            g.DrawBoxModel(rect, new Content(texts[comboBox.SelectedIndex]), Skin.current.ComboBox[comboBox.State]);
+            g.DrawBoxModel(rect, new Content(comboBox.ItemLayouts[comboBox.SelectedIndex]), Skin.current.ComboBox[comboBox.State]);
             g.LineWidth = 1;
             /* TODO Draw this trangle as a content */
             var trianglePoints = new Point[3];
@@ -139,18 +174,21 @@ namespace IMGUI
                 for(int i = 0; i < textCount; i++)
                 {
                     var itemRect = rect;
-                    itemRect.Y += (i + 1)*rect.Height;
+                    itemRect.Y += (i + 1) * rect.Height;
+                    comboBox.ItemLayouts[i].MaxWidth = (int)itemRect.Width;
+                    comboBox.ItemLayouts[i].MaxHeight = (int)itemRect.Height;
+                    comboBox.ItemLayouts[i].Text = texts[i];
                     if( i == comboBox.ActiveIndex)
                     {
-                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin.current.ComboBox["Item:Active"]);
+                        gTop.DrawBoxModel(itemRect, new Content(comboBox.ItemLayouts[i]), Skin.current.ComboBox["Item:Active"]);
                     }
                     else if(i == comboBox.HoverIndex)
                     {
-                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin.current.ComboBox["Item:Hover"]);
+                        gTop.DrawBoxModel(itemRect, new Content(comboBox.ItemLayouts[i]), Skin.current.ComboBox["Item:Hover"]);
                     }
                     else
                     {
-                        gTop.DrawBoxModel(itemRect, new Content(texts[i]), Skin.current.ComboBox["Item"]);
+                        gTop.DrawBoxModel(itemRect, new Content(comboBox.ItemLayouts[i]), Skin.current.ComboBox["Item"]);
                     }
                 }
             }

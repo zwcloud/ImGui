@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cairo;
 
 namespace IMGUI
 {
@@ -30,12 +31,18 @@ namespace IMGUI
 
         public string State { get; set; }
 
+        public bool NeedRepaint { get; set; }
+
         public Dictionary<string, object> Params { get; set; }
 
         static Control()
         {
             Controls = new Dictionary<string, Control>(8);
         }
+
+        public virtual void OnUpdate() { }
+
+        public virtual void OnRender(Context g) { }
 
         protected Control()
         {
