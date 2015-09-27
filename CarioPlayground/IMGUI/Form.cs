@@ -139,6 +139,7 @@ namespace IMGUI
             //Layer.BackContext.Operator = Operator.Over;
 
             //Draw back surface to front surface
+            Layer.BackSurface.Flush();
             Layer.FrontContext.SetSourceSurface(Layer.BackSurface, 0, 0);
             Layer.FrontContext.Paint();
         }

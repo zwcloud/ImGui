@@ -87,7 +87,7 @@ namespace IMGUI
                 }
                 if (content.Text!=null)
                 {
-                    g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
+                    //g.DrawText(contentBoxRect, content.Text, style.Font, style.TextStyle);
                 }
                 if (content.Layout != null)
                 {
@@ -204,6 +204,7 @@ namespace IMGUI
         /// <param name="text">text</param>
         /// <param name="font">font</param>
         /// <param name="textStyle">text styles</param>
+        [Obsolete("Performance is too low, not used.")]
         public static void DrawText(this Context g, Rect rect, string text, Font font, TextStyle textStyle)
         {
             using(ITextFormat textFormat = Application.IocContainer.Resolve<ITextFormat>(
@@ -225,10 +226,13 @@ namespace IMGUI
                     { "maxHeight", (float)rect.Height }
                 }))
             {
+                textFormat.Alignment = textStyle.TextAlignment;
                 g.SetSourceColor(font.Color);
                 Point p = rect.TopLeft;
                 g.MoveTo(p);
-                textLayout.Show(g);
+                textLayout.BuildPath(g);
+                g.AppendPath(textLayout.Path);
+                g.Fill();
             }
         }
 
@@ -236,16 +240,18 @@ namespace IMGUI
         /// Draw layouted text
         /// </summary>
         /// <param name="g"></param>
-        /// <param name="rect"></param>
-        /// <param name="layout"></param>
-        /// <param name="font"></param>
-        /// <param name="textStyle"></param>
+        /// <param name="rect">region of the text</param>
+        /// <param name="layout">text laout</param>
+        /// <param name="font">font</param>
+        /// <param name="textStyle">text styles</param>
         public static void DrawText(this Context g, Rect rect, Layout layout, Font font, TextStyle textStyle)
         {
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
             g.MoveTo(p);
-            layout.Show(g);
+            layout.BuildPath(g);
+            g.AppendPath(layout.Path);
+            g.Fill();
         }
         #endregion
 

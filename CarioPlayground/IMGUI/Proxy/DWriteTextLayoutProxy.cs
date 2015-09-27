@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Runtime.Caching;
+using Cairo;
 using ZWCloud.DWriteCairo;
 
 namespace IMGUI
 {
     internal class DWriteTextLayoutProxy : ITextLayout
     {
-        public ZWCloud.DWriteCairo.TextLayout layout;
+        private ZWCloud.DWriteCairo.TextLayout layout;
         private string text;
+        private Cairo.Path path;
+        private bool dirty;
+        private readonly ITextFormat textFormat;
 
-        public DWriteTextLayoutProxy(string text, ITextFormat textFormat, float maxWidth, float maxHeight)
+        public DWriteTextLayoutProxy(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
         {
+            this.textFormat = textFormat;
             layout = ZWCloud.DWriteCairo.DWriteCairo.CreateTextLayout(text, ((DWriteTextFormatProxy) textFormat).TextFormat, maxWidth, maxHeight);
         }
 
@@ -34,13 +40,29 @@ namespace IMGUI
         public int MaxWidth
         {
             get { return (int) Layout.Width; }
-            set { Layout.Width = value; }
+            set
+            {
+                if ((int)Layout.Width == value)
+                {
+                    return;
+                }
+                Layout.Width = value;
+                dirty = true;
+            }
         }
 
         public int MaxHeight
         {
             get { return (int) Layout.Height; }
-            set { Layout.Height = value; }
+            set
+            {
+                if ((int)Layout.Height == value)
+                {
+                    return;
+                }
+                Layout.Height = value;
+                dirty = true;
+            }
         }
 
         public FontWeight FontWeight
@@ -74,19 +96,48 @@ namespace IMGUI
                 {
                     throw new ArgumentNullException();
                 }
+                if(text == value)
+                {
+                    return;
+                }
+
                 text = value;
                 Layout = ZWCloud.DWriteCairo.DWriteCairo.CreateTextLayout(
                     text,
                     ((DWriteTextFormatProxy) TextFormat).TextFormat,
                     MaxWidth, MaxHeight);
+                dirty = true;
             }
         }
 
-        public ITextFormat TextFormat { get; set; }
-
-        public void Show(Cairo.Context context)
+        public ITextFormat TextFormat
         {
-            ZWCloud.DWriteCairo.DWriteCairo.ShowLayout(context, Layout);
+            get { return textFormat; }
+        }
+
+        public Path Path
+        {
+            get
+            {
+                if(path == null)
+                {
+                    throw new InvalidOperationException(
+                        "Path is not available beacuse it is not build. Call BuildPath to build it.");
+                }
+                return path;
+            }
+        }
+        
+        public void BuildPath(Cairo.Context context)
+        {
+            if (path == null || dirty)
+            {
+                if(dirty)
+                {
+                    Path.Dispose();
+                }
+                path = ZWCloud.DWriteCairo.DWriteCairo.RenderLayoutToCairoPath(context, Layout);
+            }
         }
 
         #region Implementation of IDisposable

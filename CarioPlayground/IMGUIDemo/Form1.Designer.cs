@@ -56,11 +56,11 @@ namespace IMGUIDemo
             if(_opened ^ oldValueOfTaggle)
                 Debug.WriteLine("Toggle 0 {0}", _opened ? "on!" : "off!", null);
 
-            var oldValueOfComboBox = selectedindex;
-            selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
-                "MyCombo");
-            if(selectedindex != oldValueOfComboBox)
-                Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
+            //var oldValueOfComboBox = selectedindex;
+            //selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
+            //    "MyCombo");
+            //if(selectedindex != oldValueOfComboBox)
+            //    Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
 
             var oldValueOfradio0 = radio0Selected;
             radio0Selected = gui.Radio(new Rect(new Point(20, 132), new Point(120, 152)), "RadioItem0", "G0", radio0Selected, "Radio0");

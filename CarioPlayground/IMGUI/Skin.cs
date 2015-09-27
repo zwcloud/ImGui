@@ -77,7 +77,7 @@ namespace IMGUI
                         Name = "TextStyle",
                         Value = new TextStyle
                         {
-                            TextAlign = TextAlignment.Center,
+                            TextAlignment = TextAlignment.Center,
                             LineSpacing = 0,
                             TabSize = 4
                         }
@@ -192,7 +192,7 @@ namespace IMGUI
                         Name = "TextStyle",
                         Value = new TextStyle
                         {
-                            //TextAlign = TextAlignment.Center,
+                            TextAlignment = TextAlignment.Center,
                             LineSpacing = 0,
                             TabSize = 4
                         }
@@ -300,7 +300,7 @@ namespace IMGUI
                         Name = "TextStyle",
                         Value = new TextStyle
                         {
-                            TextAlign = TextAlignment.Leading,
+                            TextAlignment = TextAlignment.Leading,
                             LineSpacing = 0,
                             TabSize = 4
                         }

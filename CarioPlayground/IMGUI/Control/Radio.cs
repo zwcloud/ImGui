@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using Cairo;
 using TinyIoC;
+using System;
+using System.Runtime.Caching;
 
 namespace IMGUI
 {
@@ -44,7 +46,7 @@ namespace IMGUI
         public ITextFormat Format { get; private set; }
         public ITextLayout Layout { get; private set; }
 
-        public Radio(string name, string text, float width, float height, string groupName)
+        public Radio(string name, string text, int width, int height, string groupName)
         {
             Name = name;
             State = "Normal";
@@ -77,13 +79,20 @@ namespace IMGUI
             Radio radio;
             if(!Controls.ContainsKey(name))
             {
-                radio = new Radio(name, text, (float)rect.Width, (float)rect.Height, groupName);
+                radio = new Radio(name, text, (int)rect.Width, (int)rect.Height, groupName);
             }
             else
             {
                 radio = Controls[name] as Radio;
-
                 Debug.Assert(radio != null);
+
+                #region Set control data
+                var style = Skin.current.Radio[radio.State];
+                radio.Format.Alignment = style.TextStyle.TextAlignment;
+                radio.Layout.MaxWidth = (int)rect.Width;
+                radio.Layout.MaxHeight = (int)rect.Height;
+                radio.Layout.Text = text;
+                #endregion
             }
             #endregion
 
@@ -148,7 +157,7 @@ namespace IMGUI
 
             var radioTextRect = new Rect(radioBoxRect.TopRight + new Vector(5,0),
                 rect.BottomRight);
-            g.DrawBoxModel(radioTextRect, new Content(text), Skin.current.Radio[radio.State]);
+            g.DrawBoxModel(radioTextRect, new Content(radio.Layout), Skin.current.Radio[radio.State]);
             #endregion
 
 

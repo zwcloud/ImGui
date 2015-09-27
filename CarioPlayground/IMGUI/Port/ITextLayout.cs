@@ -7,8 +7,9 @@ namespace IMGUI
         int MaxWidth { get; set; }
         int MaxHeight { get; set; }
         string Text { get; set; }
-        ITextFormat TextFormat { get; set; }
-        void Show(Cairo.Context context);
+        ITextFormat TextFormat { get; }
+        Cairo.Path Path { get; }
+        void BuildPath(Cairo.Context context);
     }
 
 }

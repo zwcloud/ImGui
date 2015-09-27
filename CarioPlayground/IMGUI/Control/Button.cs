@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Cairo;
 using TinyIoC;
 
@@ -9,10 +10,11 @@ namespace IMGUI
         public ITextFormat Format { get; private set; }
         public ITextLayout Layout { get; private set; }
 
-        internal Button(string name, string text, float width, float height)
+        internal Button(string name, string text, int width, int height)
         {
             Name = name;
             State = "Normal";
+            Controls[Name] = this;
 
             var font = Skin.current.Button[State].Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
@@ -32,8 +34,6 @@ namespace IMGUI
                         {"maxWidth", width},
                         {"maxHeight", height}
                     });
-
-            Controls[Name] = this;
         }
 
         //TODO Control-less DoControl overload (without name parameter)
@@ -43,15 +43,23 @@ namespace IMGUI
             Button button;
             if(!Controls.ContainsKey(name))
             {
-                button = new Button(name, text, (float)rect.Width, (float)rect.Height);
+                button = new Button(name, text, (int)rect.Width, (int)rect.Height);
             }
             else
             {
                 button = Controls[name] as Button;
-            }
+                Debug.Assert(button != null);
 
-            Debug.Assert(button != null);
+                #region Set control data
+                var style = Skin.current.Button[button.State];
+                button.Format.Alignment = style.TextStyle.TextAlignment;
+                button.Layout.MaxWidth = (int)rect.Width;
+                button.Layout.MaxHeight = (int)rect.Height;
+                button.Layout.Text = text;
+                #endregion
+            }
             #endregion
+
 
             #region Logic
             bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);

@@ -80,7 +80,7 @@ namespace IMGUI
         public static string SvgFileFirstLineTextPrefix = "<?xml";
 
 
-        //
+        //https://blez.wordpress.com/2012/09/17/determine-os-with-netmono/
         // CurrentOS Class by blez
         // Detects the current OS (Windows, Linux, MacOS)
         //

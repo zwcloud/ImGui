@@ -8,7 +8,7 @@
         /// <summary>
         /// Alignment of the text
         /// </summary>
-        public TextAlignment TextAlign { get; set; }
+        public TextAlignment TextAlignment { get; set; }
 
         /// <summary>
         /// Line spacing of the text
