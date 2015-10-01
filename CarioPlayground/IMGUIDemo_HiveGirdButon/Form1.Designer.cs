@@ -14,6 +14,8 @@ namespace IMGUIDemo_HiveGirdButon
         {
             public Point[] Points;
 
+            public Point Center;
+
             private const double sqrt3 = 1.732050807568877;
             private static Point[] unitPolygon = new Point[]
             {
@@ -32,12 +34,14 @@ namespace IMGUIDemo_HiveGirdButon
                 {
                     var polygon = new Polygon();
                     polygon.Points = unitPolygon.Clone() as Point[];
+                    polygon.Center = new Point();
                     return polygon;
                 }
             }
 
             public void Translate(double x, double y)
             {
+                Center.Offset(x, y);
                 for (int i = 0; i < Points.Length; i++)
                 {
                     Points[i].Offset(x, y);
@@ -45,6 +49,8 @@ namespace IMGUIDemo_HiveGirdButon
             }
             public void Scale(double scale)
             {
+                Center.X *= scale;
+                Center.Y *= scale;
                 for (int i = 0; i < Points.Length; i++)
                 {
                     Points[i].X *= scale;
@@ -97,13 +103,14 @@ namespace IMGUIDemo_HiveGirdButon
             return unitPolygon;
         }
 
-        private Polygon[] myPolygons = Polygon.GeneratePolygons(40, 40, 20, 5, 10);
+        private Polygon[] myPolygons = Polygon.GeneratePolygons(40, 40, 40, 5, 10);
 
         protected override void OnGUI(GUI gui)
         {
             for (int i = 0; i < myPolygons.Length; ++i)
             {
-                gui.PolygonButton(myPolygons[i].Points, "hello", "hellosixpoly");
+                gui.PolygonButton(myPolygons[i].Points, myPolygons[i].Center.ToString(),
+                    "hellosixpoly" + i);
             }
         }
     }

@@ -33,7 +33,6 @@ namespace IMGUI
             #region Form members
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(284, 262);
             
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Icon = new System.Drawing.Icon(@"W:\VS2013\CarioPlayground\IMGUIDemo\calc32x32.ico");
@@ -44,22 +43,24 @@ namespace IMGUI
             ResumeLayout(false);
             #endregion
 
-            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Rgb24);
-            Layer.BackContext = new Context(Layer.BackSurface);
-            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Argb32);
-            Layer.TopContext = new Context(Layer.TopSurface);
         }
 
         bool exit = false;
 
         private void Form_Shown(object ob, EventArgs ea)
         {
+            //build all surface
+            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Rgb24);
+            Layer.BackContext = new Context(Layer.BackSurface);
+            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Argb32);
+            Layer.TopContext = new Context(Layer.TopSurface);
+
             //Now, the hdc of form window can be acquired
             var hdc = Native.GetDC(Handle);
             Layer.FrontSurface = new Win32Surface(hdc);
             Layer.FrontContext = new Context(Layer.FrontSurface);
 
-            //creature GUI
+            //create GUI
             GUI = new GUI(Layer.BackContext, Layer.TopContext);
 
             //Set up the game loop
@@ -78,6 +79,11 @@ namespace IMGUI
                         Thread.Sleep(20);//Keep about 30fps
                         exit = Update();
                         Render();
+#if DEBUG
+                        //Show FPS and mouse position on the title
+                        Text = string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.Mouse.MousePos.X,
+                            Input.Mouse.MousePos.Y);
+#endif
                     }
                 }
             };
@@ -205,14 +211,6 @@ namespace IMGUI
         {
             if(Layer.BackContext == null || Layer.FrontContext == null || Layer.TopContext == null)
                 return;
-#if SHOW_FPS_Label
-            var debugInfoheight = Skin.current.Label["Normal"].Font.Size;
-            GUI.Label(
-                new Rect(0, ClientRectangle.Bottom - 20, 300, debugInfoheight),
-                string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.Mouse.MousePos.X, Input.Mouse.MousePos.Y),
-                "DebugInfoLabel"
-                );
-#endif
             OnGUI(GUI);
 
             foreach (var control in Control.Controls.Values)
@@ -220,6 +218,7 @@ namespace IMGUI
                 if (control.NeedRepaint)
                 {
                     control.OnRender(Layer.BackContext);
+                    control.NeedRepaint = false;
                 }
             }
 

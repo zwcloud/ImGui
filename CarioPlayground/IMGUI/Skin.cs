@@ -15,7 +15,7 @@ namespace IMGUI
         public Dictionary<string, Style> Slider { get; set; }
         public Dictionary<string, Style> PolygonButton { get; set; }
         
-        internal static Skin current;
+        public static Skin current;
 
         static Skin()
         {
@@ -133,7 +133,7 @@ namespace IMGUI
                             FontStyle = FontStyle.Normal,
                             FontWeight = FontWeight.Bold,
                             FontStretch = FontStretch.Normal,
-                            Size = 12,
+                            Size = 24,
                             Color = CairoEx.ColorBlack
                         }
                     },

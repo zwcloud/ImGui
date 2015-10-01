@@ -36,31 +36,32 @@ namespace IMGUIDemo
         protected override void OnGUI(GUI gui)
         {
 #if true
-            if(gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 0!", "Button0"))
-            {
-                Debug.WriteLine("button 0 clicked!");
-            }
-
-            if(gui.Button(new Rect(new Point(20, 42), new Point(120, 62)), "button 1!", "Button1"))
+            if(gui.Button(new Rect(new Point(20, 20), new Point(120, 40)), "button 1!", "Button1"))
             {
                 Debug.WriteLine("button 1 clicked!");
             }
 
-            if(gui.Button(new Rect(new Point(20, 64), new Point(120, 84)), "button 2!", "Button2"))
+            for (int i = 2; i < 4; i++)
             {
-                Debug.WriteLine("button 2 clicked!");
+                if (gui.Button(
+                    new Rect(new Point(20, 20 + (i - 1) * 22), new Point(120, 20 + i * 22)),
+                    "button " + i + "!", "Button" + i))
+                {
+                    Debug.WriteLine("button {0} clicked!", i);
+                }
             }
-#if f
+
             var oldValueOfTaggle = _opened;
             _opened = gui.Toggle(new Rect(new Point(20, 86), new Point(120, 106)), "Opened?", _opened, "Toggle0");
             if(_opened ^ oldValueOfTaggle)
                 Debug.WriteLine("Toggle 0 {0}", _opened ? "on!" : "off!", null);
-
+#if f
             var oldValueOfComboBox = selectedindex;
             selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
                 "MyCombo");
             if(selectedindex != oldValueOfComboBox)
                 Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
+#endif
 
             var oldValueOfradio0 = radio0Selected;
             radio0Selected = gui.Radio(new Rect(new Point(20, 132), new Point(120, 152)), "RadioItem0", "G0", radio0Selected, "Radio0");
@@ -76,9 +77,7 @@ namespace IMGUIDemo
             radio2Selected = gui.Radio(new Rect(new Point(20, 178), new Point(120, 198)), "RadioItem2", "G0", radio2Selected, "Radio2");
             if(radio2Selected && radio2Selected != oldValueOfradio2)
                 Debug.WriteLine("Radio2 selected");
-
             gui.Image(new Rect(new Point(130, 20), new Point(240, 200)), myImage, "MyImage");
-#endif
 #else
             if(Current != ButtonType.Idle)
                 Last = Current;

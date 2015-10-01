@@ -66,5 +66,19 @@ namespace IMGUI
             #endif
             return 1;
         }
+
+        #region Overrides of Control
+
+        public override void OnUpdate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnRender(Context g)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

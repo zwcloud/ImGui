@@ -31,6 +31,9 @@ namespace IMGUI
 
         public string State { get; set; }
 
+        /// <summary>
+        /// 确定需要重绘该控件时调用
+        /// </summary>
         public bool NeedRepaint { get; set; }
 
         public Dictionary<string, object> Params { get; set; }
@@ -40,9 +43,9 @@ namespace IMGUI
             Controls = new Dictionary<string, Control>(8);
         }
 
-        public virtual void OnUpdate() { }
+        public abstract void OnUpdate();
 
-        public virtual void OnRender(Context g) { }
+        public abstract void OnRender(Context g);
 
         protected Control()
         {

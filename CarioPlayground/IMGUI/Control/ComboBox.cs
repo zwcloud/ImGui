@@ -194,5 +194,19 @@ namespace IMGUI
             }
             return comboBox.SelectedIndex;
         }
+
+        #region Overrides of Control
+
+        public override void OnUpdate()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void OnRender(Context g)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
     }
 }

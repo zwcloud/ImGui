@@ -48,10 +48,6 @@ namespace IMGUI
             {
                 NeedRepaint = true;
             }
-            else
-            {
-                NeedRepaint = false;
-            }
         }
 
         public override void OnRender(Context g)
@@ -63,10 +59,11 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-
             Controls[Name] = this;
 
-            var font = Skin.current.Button[State].Font;
+            Text = text;
+
+            var font = Skin.current.Label[State].Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
                     {
@@ -76,14 +73,17 @@ namespace IMGUI
                         {"fontStretch", font.FontStretch},
                         {"fontSize", (float) font.Size}
                     });
+            var textStyle = Skin.current.Label[State].TextStyle;
+            Format.Alignment = textStyle.TextAlignment;
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                     {
-                        {"text", text},
+                        {"text", Text},
                         {"textFormat", Format},
                         {"maxWidth", width},
                         {"maxHeight", height}
                     });
+
         }
 
         //TODO Control-less DoControl overload (without name parameter)
@@ -100,14 +100,6 @@ namespace IMGUI
             
             var control = Controls[name] as Label;
             Debug.Assert(control != null);
-            control.Rect = rect;
-            control.Text = text;
-
-            //The control need to be repaint
-            if (control.NeedRepaint)
-            {
-                control.OnRender(g);
-            }
 
             //The control need to be relayout
             //TODO

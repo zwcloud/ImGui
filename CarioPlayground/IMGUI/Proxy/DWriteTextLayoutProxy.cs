@@ -16,6 +16,7 @@ namespace IMGUI
         public DWriteTextLayoutProxy(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
         {
             this.textFormat = textFormat;
+            this.text = text;
             layout = ZWCloud.DWriteCairo.DWriteCairo.CreateTextLayout(text, ((DWriteTextFormatProxy) textFormat).TextFormat, maxWidth, maxHeight);
         }
 

@@ -31,7 +31,6 @@ namespace IMGUI
         public override void OnUpdate()
         {
             var style = Skin.current.Button[State];
-            Format.Alignment = style.TextStyle.TextAlignment;
             Layout.MaxWidth = (int)Rect.Width;
             Layout.MaxHeight = (int)Rect.Height;
             Layout.Text = Text;
@@ -45,14 +44,9 @@ namespace IMGUI
                 State = "Hover";
             else
                 State = "Normal";
-
             if(State != oldState)
             {
                 NeedRepaint = true;
-            }
-            else
-            {
-                NeedRepaint = false;
             }
 
             bool clicked = Input.Mouse.LeftButtonClicked && Rect.Contains(Input.Mouse.MousePos);
@@ -70,6 +64,8 @@ namespace IMGUI
             State = "Normal";
             Controls[Name] = this;
 
+            Text = text;
+
             var font = Skin.current.Button[State].Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
@@ -80,14 +76,17 @@ namespace IMGUI
                         {"fontStretch", font.FontStretch},
                         {"fontSize", (float) font.Size}
                     });
+            var textStyle = Skin.current.Button[State].TextStyle;
+            Format.Alignment = textStyle.TextAlignment;
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                     {
-                        {"text", text},
+                        {"text", Text},
                         {"textFormat", Format},
                         {"maxWidth", width},
                         {"maxHeight", height}
                     });
+
         }
 
         //TODO Control-less DoControl overload (without name parameter)
@@ -98,24 +97,14 @@ namespace IMGUI
             {
                 var button = new Button(name, text, (int)rect.Width, (int)rect.Height);
                 button.Rect = rect;
-                button.Text = text;
                 button.OnUpdate();
                 button.OnRender(g);
             }
 
             var control = Controls[name] as Button;
             Debug.Assert(control != null);
-            control.Rect = rect;
-            control.Text = text;
 
-            //The control need to be repaint
-            if (control.NeedRepaint)
-            {
-                control.OnRender(g);
-            }
-
-            //The control need to be relayout
-            //TODO
+            //Check if the control need to be relayout
 
             return control.Result;
         }

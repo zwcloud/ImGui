@@ -130,7 +130,7 @@ namespace IMGUI
         private Style()
         {
             PaddingTop = PaddingRight = PaddingBottom = PaddingLeft = Length.Zero;
-            BorderTop = BorderRight = BorderBottom = BorderLeft = Length.Zero;;
+            BorderTop = BorderRight = BorderBottom = BorderLeft = Length.Zero;
             BorderTopColor = CairoEx.ColorBlack;
             BorderRightColor = CairoEx.ColorBlack;
             BorderBottomColor = CairoEx.ColorBlack;
@@ -156,7 +156,7 @@ namespace IMGUI
 
             TextStyle = new TextStyle
             {
-                TextAlignment = TextAlignment.Leading,
+                TextAlignment = TextAlignment.Center,
                 LineSpacing = 0,
                 TabSize = 4
             };

@@ -1,17 +1,74 @@
 ﻿using System;
 using System.Diagnostics;
 using Cairo;
+using TinyIoC;
 
 namespace IMGUI
 {
     internal class PolygonButton : Control
     {
-        internal PolygonButton(string name)
+        public Point[] Points { get; private set; }
+        private string text;
+        public string Text
+        {
+            get { return text; }
+            private set
+            {
+                if (Text == value)
+                {
+                    return;
+                }
+
+                text = value;
+                NeedRepaint = true;
+            }
+        }
+        public ITextFormat Format { get; private set; }
+        public ITextLayout Layout { get; private set; }
+
+        public Rect TextRect
+        {
+            get
+            {
+                var rect = new Rect(
+                    new Point((Points[3].X + Points[4].X) / 2, (Points[3].Y + Points[4].Y) / 2),
+                    new Point((Points[0].X + Points[1].X) / 2, (Points[0].Y + Points[1].Y) / 2)
+                    );
+                return rect;
+            }
+        }
+
+        public bool Result { get; private set; }
+
+        internal PolygonButton(string name, Point[] points, string text)
         {
             Name = name;
             State = "Normal";
-
             Controls[Name] = this;
+
+            Points = points;
+            Text = text;
+
+            var font = Skin.current.PolygonButton[State].Font;
+            Format = Application.IocContainer.Resolve<ITextFormat>(
+                new NamedParameterOverloads
+                    {
+                        {"fontFamilyName", font.FontFamily},
+                        {"fontWeight", font.FontWeight},
+                        {"fontStyle", font.FontStyle},
+                        {"fontStretch", font.FontStretch},
+                        {"fontSize", (float) font.Size}
+                    });
+            var textStyle = Skin.current.PolygonButton[State].TextStyle;
+            Format.Alignment = textStyle.TextAlignment;
+            Layout = Application.IocContainer.Resolve<ITextLayout>(
+                new NamedParameterOverloads
+                    {
+                        {"text", Text},
+                        {"textFormat", Format},
+                        {"maxWidth", (int)TextRect.Width},
+                        {"maxHeight", (int)TextRect.Height}
+                    });
         }
 
         public static bool IsPointInPolygon(Point p, Point[] polygon)
@@ -50,42 +107,58 @@ namespace IMGUI
 
         internal static bool DoControl(Context g, Point[] points, string text, string name)
         {
-            #region Get control reference
-            PolygonButton polygonButton;
             if(!Controls.ContainsKey(name))
             {
-                polygonButton = new PolygonButton(name);
+                var polygonButton = new PolygonButton(name, points, text);
+                polygonButton.Points = points;
+                polygonButton.Text = text;
+                polygonButton.OnUpdate();
+                polygonButton.OnRender(g);
             }
-            else
-            {
-                polygonButton = Controls[name] as PolygonButton;
-            }
 
-            Debug.Assert(polygonButton != null);
-            #endregion
+            var control = Controls[name] as PolygonButton;
+            Debug.Assert(control != null);
 
-            #region Logic
+            return control.Result;
+        }
 
-            bool isHit = IsPointInPolygon(Input.Mouse.MousePos, points);
+        #region Overrides of Control
+
+        public override void OnUpdate()
+        {
+            var style = Skin.current.PolygonButton[State];
+            Layout.MaxWidth = (int)TextRect.Width;
+            Layout.MaxHeight = (int)TextRect.Height;
+            Layout.Text = Text;
+
+            var oldState = State;
+            bool isHit = IsPointInPolygon(Input.Mouse.MousePos, Points);
             bool active = Input.Mouse.LeftButtonState == InputState.Down && isHit;
             bool hover = Input.Mouse.LeftButtonState == InputState.Up && isHit;
-            if(active)
-                polygonButton.State = "Active";
-            else if(hover)
-                polygonButton.State = "Hover";
+            if (active)
+                State = "Active";
+            else if (hover)
+                State = "Hover";
             else
-                polygonButton.State = "Normal";
-            #endregion
+                State = "Normal";
+            if (State != oldState)
+            {
+                NeedRepaint = true;
+            }
 
-            var style = Skin.current.PolygonButton[polygonButton.State];
-            g.StrokePolygon(points, style.LineColor);
-            g.FillPolygon(points, style.FillColor);
+            Result = Input.Mouse.LeftButtonClicked && isHit;
+        }
+
+        public override void OnRender(Context g)
+        {
+            var style = Skin.current.PolygonButton[State];
+            g.StrokePolygon(Points, style.LineColor);
+            g.FillPolygon(Points, style.FillColor);
 
             //TODO draw text at the center of this polygon
-            //g.DrawBoxModel(rect, new Content(text), Skin.current.Button[button.State]);
-
-            bool clicked = Input.Mouse.LeftButtonClicked && isHit;
-            return clicked;
+            g.DrawBoxModel(TextRect, new Content(Layout), style);
         }
+
+        #endregion
     }
 }

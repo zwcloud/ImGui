@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Cairo;
 using TinyIoC;
 using Context = Cairo.Context;
@@ -83,7 +84,7 @@ namespace IMGUI
             {
                 if (content.Image != null)
                 {
-                    //g.DrawImage(contentBoxRect, content.Image);
+                    g.DrawImage(contentBoxRect, content.Image);
                 }
                 if (content.Layout != null)
                 {
@@ -213,17 +214,13 @@ namespace IMGUI
 
         #endregion
 
-        #region Basic definitions
+        #region Color
 
+        public static readonly Color ColorClear = new Color(0, 0, 0, 0);
         public static readonly Color ColorBlack = new Color(0, 0, 0, 0xff);
         public static readonly Color ColorWhite = new Color(0xff, 0xff, 0xff, 0xff);
         public static readonly Color ColorMetal = new Color(0xff, 192, 192, 192);
-        
-        
 
-        #endregion
-        
-        #region Color
 
         public static void SetSourceColor(this Context context, Color color)
         {
