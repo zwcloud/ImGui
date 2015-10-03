@@ -175,25 +175,25 @@ namespace IMGUI
             var radioBoxRect = new Rect(Rect.TopLeft, new Size(20, 20));
             var radioBoxCenter = radioBoxRect.Center;
             g.FillRectangle(radioBoxRect, style.BackgroundStyle.Color);
-            g.StrokeCircle(radioBoxCenter, 10, CairoEx.ColorBlack);
+            g.StrokeCircle(radioBoxCenter.ToPointD(), 10, CairoEx.ColorBlack);
             if (!Actived)
             {
                 if (State == "Hover")
-                    g.FillCircle(radioBoxCenter, 5, CairoEx.ColorRgb(46, 167, 224));
+                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorRgb(46, 167, 224));
                 else if (State == "Active")
-                    g.FillCircle(radioBoxCenter, 5, CairoEx.ColorBlack);
+                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
             }
             else
             {
                 if (State == "Normal")
-                    g.FillCircle(radioBoxCenter, 5, CairoEx.ColorBlack);
+                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
                 else if (State == "Hover")
                 {
-                    g.FillCircle(radioBoxCenter, 5, CairoEx.ColorRgb(46, 167, 224));
-                    g.StrokeCircle(radioBoxCenter, 5, CairoEx.ColorBlack);
+                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorRgb(46, 167, 224));
+                    g.StrokeCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
                 }
                 else if (State == "Active")
-                    g.StrokeCircle(radioBoxCenter, 5, CairoEx.ColorBlack);
+                    g.StrokeCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
             }
 
             var radioTextRect = new Rect(radioBoxRect.TopRight + new Vector(5, 0),

@@ -15,7 +15,7 @@ namespace IMGUI
         /// <summary>
         /// Constructor which sets the initial values to the values of the parameters
         /// </summary>
-        public Rect(Point location,
+        public Rect(double x, double y,
                     Size size)
         {
             if (size.IsEmpty)
@@ -24,8 +24,8 @@ namespace IMGUI
             }
             else
             {
-                _x = location._x;
-                _y = location._y;
+                _x = x;
+                _y = y;
                 _width = size._width;
                 _height = size._height;
             }
@@ -91,6 +91,14 @@ namespace IMGUI
                 _width = size.Width;
                 _height = size.Height;
             }
+        }
+
+        public Rect(Point center, Size size)
+        {
+            _x = center.X - size.Width/2;
+            _y = center.Y - size.Height/2;
+            _width = size.Width;
+            _height = size.Height;
         }
 
 

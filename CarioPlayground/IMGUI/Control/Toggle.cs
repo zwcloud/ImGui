@@ -114,7 +114,7 @@ namespace IMGUI
 
         public override void OnRender(Context g)
         {
-            var toggleBoxRect = new Rect(Rect.TopLeft, new Size(20, 20));
+            var toggleBoxRect = new Rect(Rect.TopLeft, new Size(Rect.Size.Height, Rect.Size.Height));
             g.DrawBoxModel(toggleBoxRect,
                 new Content(Texture._presets[Result ? "Toggle.On" : "Toggle.Off"]),
                 Skin.current.Toggle[State]);

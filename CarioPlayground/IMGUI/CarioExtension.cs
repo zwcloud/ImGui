@@ -94,10 +94,10 @@ namespace IMGUI
             g.FillPolygon(new Point[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
 
             //Outline
-            //g.Rectangle(borderBoxRect.TopLeft, borderBoxRect.Width, borderBoxRect.Height);
-            //g.LineWidth = style.OutlineWidth;
-            //g.SetSourceColor(style.OutlineColor);
-            //g.Stroke();
+            g.Rectangle(borderBoxRect.TopLeft.ToPointD(), borderBoxRect.Width, borderBoxRect.Height);
+            g.LineWidth = style.OutlineWidth;
+            g.SetSourceColor(style.OutlineColor);
+            g.Stroke();
         }
 
         #region primitive draw helpers
@@ -109,15 +109,15 @@ namespace IMGUI
             Color bottomColor,
             Color leftColor)
         {
-            g.MoveTo(rect.TopLeft);
+            g.MoveTo(rect.TopLeft.ToPointD());
             g.SetSourceColor(topColor);
-            g.LineTo(rect.TopRight); //Top
+            g.LineTo(rect.TopRight.ToPointD()); //Top
             g.SetSourceColor(rightColor);
-            g.LineTo(rect.BottomRight); //Right
+            g.LineTo(rect.BottomRight.ToPointD()); //Right
             g.SetSourceColor(bottomColor);
-            g.LineTo(rect.BottomLeft); //Bottom
+            g.LineTo(rect.BottomLeft.ToPointD()); //Bottom
             g.SetSourceColor(leftColor);
-            g.LineTo(rect.TopLeft); //Left
+            g.LineTo(rect.TopLeft.ToPointD()); //Left
             g.ClosePath();
             g.Stroke();
         }
@@ -126,12 +126,12 @@ namespace IMGUI
             Rect rect,
             Color color)
         {
-            g.MoveTo(rect.TopLeft);
+            g.MoveTo(rect.TopLeft.ToPointD());
             g.SetSourceColor(color);
-            g.LineTo(rect.TopRight);
-            g.LineTo(rect.BottomRight);
-            g.LineTo(rect.BottomLeft);
-            g.LineTo(rect.TopLeft);
+            g.LineTo(rect.TopRight.ToPointD());
+            g.LineTo(rect.BottomRight.ToPointD());
+            g.LineTo(rect.BottomLeft.ToPointD());
+            g.LineTo(rect.TopLeft.ToPointD());
             g.ClosePath();
             g.Fill();
         }
@@ -144,10 +144,10 @@ namespace IMGUI
             }
 
             g.SetSourceColor(color);
-            g.MoveTo(vPoint[0]);
+            g.MoveTo(vPoint[0].ToPointD());
             foreach (var t in vPoint)
             {
-                g.LineTo(t);
+                g.LineTo(t.ToPointD());
             }
             g.ClosePath();
             g.Fill();
@@ -161,10 +161,10 @@ namespace IMGUI
             }
 
             g.SetSourceColor(color);
-            g.MoveTo(vPoint[0]);
+            g.MoveTo(vPoint[0].ToPointD());
             foreach (var t in vPoint)
             {
-                g.LineTo(t);
+                g.LineTo(t.ToPointD());
             }
             g.ClosePath();
             g.Stroke();
@@ -191,8 +191,8 @@ namespace IMGUI
             g.Save();
             g.SetSourceColor(color);
             g.LineWidth = width;
-            g.MoveTo(p0);
-            g.LineTo(p1);
+            g.MoveTo(p0.ToPointD());
+            g.LineTo(p1.ToPointD());
             g.Stroke();
             g.Restore();
         }
@@ -212,7 +212,7 @@ namespace IMGUI
         {
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
-            g.MoveTo(p);
+            g.MoveTo(p.ToPointD());
             layout.BuildPath(g);
             g.AppendPath(layout.Path);
             g.Fill();
@@ -289,10 +289,12 @@ namespace IMGUI
             g.Translate(destRect.X, destRect.Y);
             g.Scale(xScale, yScale);
             g.SetSourceSurface(image._surface, 0, 0);
-            g.Rectangle(destRect.TopLeft, destRect.Width, destRect.Height);
+            g.Rectangle(destRect.TopLeft.ToPointD(), destRect.Width, destRect.Height);
             g.ClosePath();
+            g.ClipPreserve();
             g.Paint();
             g.IdentityMatrix();
+            g.ResetClip();
         }
 
         public static void DrawImage(this Context g, Rect rect, Texture image)

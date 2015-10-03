@@ -156,16 +156,17 @@ namespace IMGUI
             return new Vector(point._x, point._y);
         }
 
-        /// <summary>
-        /// Implicit conversion to Cairo.PointD
-        /// </summary>
-        /// <param name="point"> Point - the Point to convert to a Cairo.PointD </param>
-        /// <returns>Cairo.PointD - A Cairo.PointD equal to this Point</returns>
-        public static implicit operator PointD(Point point)
-        {
-            return new PointD(point._x, point._y);
-        }
-
         #endregion Public Methods
-   }
+
+        #region Conversion Methods
+        /// <summary>
+        /// Conversion to Cairo.PointD
+        /// </summary>
+        /// <returns>Cairo.PointD - A Cairo.PointD equal to this Point</returns>
+        internal Cairo.PointD ToPointD()
+        {
+            return new PointD(_x, _y);
+        }
+        #endregion
+    }
 }

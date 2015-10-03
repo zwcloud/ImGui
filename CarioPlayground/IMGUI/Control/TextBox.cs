@@ -296,11 +296,11 @@ namespace IMGUI
                 g.DrawBoxModel(Rect, null, style);
 
                 //Clip the text
-                g.MoveTo(Rect.TopLeft);
-                g.LineTo(Rect.TopRight);
-                g.LineTo(Rect.BottomRight);
-                g.LineTo(Rect.BottomLeft);
-                g.LineTo(Rect.TopLeft);
+                g.MoveTo(Rect.TopLeft.ToPointD());
+                g.LineTo(Rect.TopRight.ToPointD());
+                g.LineTo(Rect.BottomRight.ToPointD());
+                g.LineTo(Rect.BottomLeft.ToPointD());
+                g.LineTo(Rect.TopLeft.ToPointD());
                 g.ClosePath();
                 g.Clip();
                 g.ResetClip(); 
@@ -326,7 +326,6 @@ namespace IMGUI
             }
             else
             {
-                Debug.WriteLine("{0} {1}", this.Name, this.State);
                 g.DrawBoxModel(Rect, new Content(Layout), style);
             }
         }
