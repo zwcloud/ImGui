@@ -10,8 +10,6 @@ namespace IMGUIDemo
         {
             ClientSize = new System.Drawing.Size(800, 600);
             StartPosition = FormStartPosition.CenterScreen;
-
-            Skin.current.Radio["Normal"].OutlineWidth = Length.OnePixel;
         }
     }
 

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#define ShowButton
+#define ShowToggle
+#define ShowRadio
+#define ShowImage
+
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IMGUI;
 
 namespace IMGUIDemo
@@ -25,7 +25,7 @@ namespace IMGUIDemo
         private readonly string[] comboBoxItems = new[] { "item0", "item1", "item2", "item3" };
         private int selectedindex = 0;
 
-        private Texture myImage = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\empowered-by-gnu.svg");
+        private Texture myImage = new Texture(@"W:\VS2013\CarioPlayground\IMGUIDemo\empowered-by-gnu.png");
 
         private bool radio0Selected = false;
         private bool radio1Selected = false;
@@ -36,32 +36,30 @@ namespace IMGUIDemo
         protected override void OnGUI(GUI gui)
         {
             int i = 0;
-#if true
-            ++i; Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+#if ShowButton
+            i = 0; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             if (gui.Button(new Rect(20, 20 + i * 20, 100, 20), "button " + i + "!", "Button" + i))
             {
                 Debug.WriteLine("button {0} clicked!", i);
             }
 
-            ++i; Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             if (gui.Button(new Rect(20, 20 + i * 20, 100, 20), "button " + i + "!", "Button" + i))
             {
                 Debug.WriteLine("button {0} clicked!", i);
             }
+#endif
 
+#if ShowToggle
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfTaggle = _opened;
             _opened = gui.Toggle(new Rect(20, 20 + i * 20, 100, 20), "Opened?", _opened, "Toggle0");
             if(_opened ^ oldValueOfTaggle)
                 Debug.WriteLine("Toggle 0 {0}", _opened ? "on!" : "off!", null);
-#if f
-            var oldValueOfComboBox = selectedindex;
-            selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
-                "MyCombo");
-            if(selectedindex != oldValueOfComboBox)
-                Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
 #endif
 
-            ++i; Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+#if ShowRadio
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfradio0 = radio0Selected;
             radio0Selected = gui.Radio(new Rect(20, 20 + i * 20, 100, 20), "RadioItem0", "G0", radio0Selected, "Radio0");
             if(radio0Selected && radio0Selected != oldValueOfradio0)
@@ -78,8 +76,22 @@ namespace IMGUIDemo
             radio2Selected = gui.Radio(new Rect(20, 20 + i * 20, 100, 20), "RadioItem2", "G0", radio2Selected, "Radio2");
             if(radio2Selected && radio2Selected != oldValueOfradio2)
                 Debug.WriteLine("Radio2 selected");
+#endif
+
+#if ShowImage
             gui.Image(new Rect(130, 20, 240, 200), myImage, "MyImage");
-#else
+#endif
+
+
+#if ShowComboxBox
+            var oldValueOfComboBox = selectedindex;
+            selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
+                "MyCombo");
+            if(selectedindex != oldValueOfComboBox)
+                Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
+#endif
+
+#if false
             if(Current != ButtonType.Idle)
                 Last = Current;
             Current = ButtonType.Idle;

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Cairo;
 using TinyIoC;
 
@@ -29,6 +30,13 @@ namespace IMGUI
 
         internal Toggle(string name, string displayText, int width, int height)
         {
+            //Check paramter
+            if(width < height)
+            {
+                throw new ArgumentException(
+                    string.Format("Width of the toggle must bigger than height. The current width is {0} and height is {1}", width, height));
+            }
+
             Name = name;
             State = "Normal";
             Controls[Name] = this;
@@ -63,14 +71,13 @@ namespace IMGUI
             {
                 var toggle = new Toggle(name, displayText, (int)rect.Width, (int)rect.Height);
                 Debug.Assert(toggle != null);
-                toggle.Result = value;
+                toggle.Rect = rect;
+                toggle.OnUpdate();
+                toggle.OnRender(g);
             }
 
             var control = Controls[name] as Toggle;
             Debug.Assert(control != null);
-            control.Rect = rect;
-            control.Text = displayText;
-            control.Layout.Text = control.Text;
 
             //The control need to be relayout
             //TODO
@@ -82,12 +89,6 @@ namespace IMGUI
 
         public override void OnUpdate()
         {
-            var style = Skin.current.Button[State];
-            Format.Alignment = style.TextStyle.TextAlignment;
-            Layout.MaxWidth = (int)Rect.Width;
-            Layout.MaxHeight = (int)Rect.Height;
-            Layout.Text = Text;
-
             var oldState = State;
             bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.MousePos);
             bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.MousePos);
@@ -114,10 +115,8 @@ namespace IMGUI
 
         public override void OnRender(Context g)
         {
-            var toggleBoxRect = new Rect(Rect.TopLeft, new Size(Rect.Size.Height, Rect.Size.Height));
-            g.DrawBoxModel(toggleBoxRect,
-                new Content(Texture._presets[Result ? "Toggle.On" : "Toggle.Off"]),
-                Skin.current.Toggle[State]);
+            var toggleBoxRect = new Rect(Rect.X, Rect.Y, new Size(Rect.Size.Height, Rect.Size.Height));
+            g.DrawImage(toggleBoxRect, Texture._presets[Result ? "Toggle.On" : "Toggle.Off"]);
 
             var toggleTextRect = new Rect(toggleBoxRect.TopRight, Rect.BottomRight);
             g.DrawBoxModel(toggleTextRect,

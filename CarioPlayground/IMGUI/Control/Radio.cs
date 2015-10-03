@@ -172,32 +172,34 @@ namespace IMGUI
         public override void OnRender(Context g)
         {
             var style = Skin.current.Radio[State];
-            var radioBoxRect = new Rect(Rect.TopLeft, new Size(20, 20));
+            var radioBoxRect = new Rect(Rect.X, Rect.Y, new Size(Rect.Height, Rect.Height));
             var radioBoxCenter = radioBoxRect.Center;
+            var pointRadius = (float)(radioBoxRect.Width-1) / 4;
+            var circleRadius = (float)(radioBoxRect.Width - 1) / 2;
+
             g.FillRectangle(radioBoxRect, style.BackgroundStyle.Color);
-            g.StrokeCircle(radioBoxCenter.ToPointD(), 10, CairoEx.ColorBlack);
+            g.StrokeCircle(radioBoxCenter.ToPointD(), circleRadius, CairoEx.ColorBlack);
             if (!Actived)
             {
                 if (State == "Hover")
-                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorRgb(46, 167, 224));
+                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorRgb(46, 167, 224));
                 else if (State == "Active")
-                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
+                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
             }
             else
             {
                 if (State == "Normal")
-                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
+                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
                 else if (State == "Hover")
                 {
-                    g.FillCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorRgb(46, 167, 224));
-                    g.StrokeCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
+                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorRgb(46, 167, 224));
+                    g.StrokeCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
                 }
                 else if (State == "Active")
-                    g.StrokeCircle(radioBoxCenter.ToPointD(), 5, CairoEx.ColorBlack);
+                    g.StrokeCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
             }
 
-            var radioTextRect = new Rect(radioBoxRect.TopRight + new Vector(5, 0),
-                Rect.BottomRight);
+            var radioTextRect = new Rect(radioBoxRect.TopRight, Rect.BottomRight);
             g.DrawBoxModel(radioTextRect, new Content(Layout), Skin.current.Radio[State]);
         }
 

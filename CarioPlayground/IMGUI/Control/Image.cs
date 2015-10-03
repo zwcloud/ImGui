@@ -10,11 +10,13 @@ namespace IMGUI
 
         public Rect Rect { get; private set; }
 
-        public Image(string name, Texture texture, int width, int height)
+        public Image(string name, Texture texture)
         {
             Name = name;
             State = "Normal";
             Controls[Name] = this;
+
+            Texture = texture;
         }
 
         static internal void DoControl(Context g, Rect rect, Texture texture, string name)
@@ -22,7 +24,7 @@ namespace IMGUI
             //The control hasn't been created, create it.
             if (!Controls.ContainsKey(name))
             {
-                var image = new Image(name, texture, (int)rect.Width, (int)rect.Height);
+                var image = new Image(name, texture);
                 image.Rect = rect;
                 image.OnUpdate();
                 image.OnRender(g);

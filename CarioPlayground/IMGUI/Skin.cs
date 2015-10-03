@@ -165,6 +165,14 @@ namespace IMGUI
                             Image = null,
                             Pattern = null
                         }
+                    },
+                    new StyleModifier
+                    {
+                        Name = "TextStyle",
+                        Value = new TextStyle
+                        {
+                            TextAlignment = TextAlignment.Center
+                        }
                     }
                 };
                 Toggle["Normal"] = Style.Make(normalModifiers);

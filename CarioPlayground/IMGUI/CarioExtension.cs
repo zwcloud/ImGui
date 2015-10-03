@@ -85,19 +85,34 @@ namespace IMGUI
 
             //Border
             //  Top
-            g.FillPolygon(new Point[] { ptl, btl, btr, ptr }, style.BorderTopColor);
+            if (bt != Length.Zero)
+            {
+                g.FillPolygon(new[] { ptl, btl, btr, ptr }, style.BorderTopColor);
+            }
             //  Right
-            g.FillPolygon(new Point[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
+            if (br != Length.Zero)
+            {
+                g.FillPolygon(new[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
+            }
             //  Bottom
-            g.FillPolygon(new Point[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
+            if (bb != Length.Zero)
+            {
+                g.FillPolygon(new[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
+            }
             //  Left
-            g.FillPolygon(new Point[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
+            if (bl != Length.Zero)
+            {
+                g.FillPolygon(new[] {pbl, bbl, btl, ptl}, style.BorderLeftColor);
+            }
 
             //Outline
-            g.Rectangle(borderBoxRect.TopLeft.ToPointD(), borderBoxRect.Width, borderBoxRect.Height);
-            g.LineWidth = style.OutlineWidth;
-            g.SetSourceColor(style.OutlineColor);
-            g.Stroke();
+            if(style.OutlineWidth != Length.Zero)
+            {
+                g.Rectangle(borderBoxRect.TopLeft.ToPointD(), borderBoxRect.Width, borderBoxRect.Height);
+                g.LineWidth = style.OutlineWidth;
+                g.SetSourceColor(style.OutlineColor);
+                g.Stroke();
+            }
         }
 
         #region primitive draw helpers
@@ -109,6 +124,7 @@ namespace IMGUI
             Color bottomColor,
             Color leftColor)
         {
+            g.NewPath();
             g.MoveTo(rect.TopLeft.ToPointD());
             g.SetSourceColor(topColor);
             g.LineTo(rect.TopRight.ToPointD()); //Top
@@ -126,6 +142,7 @@ namespace IMGUI
             Rect rect,
             Color color)
         {
+            g.NewPath();
             g.MoveTo(rect.TopLeft.ToPointD());
             g.SetSourceColor(color);
             g.LineTo(rect.TopRight.ToPointD());
@@ -143,6 +160,7 @@ namespace IMGUI
                 throw new ArgumentException("vPoint should contains 3 ore more points!");
             }
 
+            g.NewPath();
             g.SetSourceColor(color);
             g.MoveTo(vPoint[0].ToPointD());
             foreach (var t in vPoint)
@@ -160,6 +178,8 @@ namespace IMGUI
                 throw new ArgumentException("vPoint should contains 3 ore more points!");
             }
 
+            g.NewPath();
+            g.LineWidth = 1;
             g.SetSourceColor(color);
             g.MoveTo(vPoint[0].ToPointD());
             foreach (var t in vPoint)
@@ -173,6 +193,7 @@ namespace IMGUI
         internal static void StrokeCircle(this Context g, PointD center, float radius, Color color)
         {
             g.NewPath();
+            g.LineWidth = 1;
             g.SetSourceColor(color);
             g.Arc(center.X, center.Y, radius, 0, 2 * Math.PI);
             g.Stroke();
@@ -188,6 +209,7 @@ namespace IMGUI
 
         internal static void DrawLine(this Context g, Point p0, Point p1, float width, Color color)
         {
+            g.NewPath();
             g.Save();
             g.SetSourceColor(color);
             g.LineWidth = width;
@@ -210,6 +232,7 @@ namespace IMGUI
         /// <param name="textStyle">text styles</param>
         public static void DrawText(this Context g, Rect rect, Layout layout, Font font, TextStyle textStyle)
         {
+            g.NewPath();
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
             g.MoveTo(p.ToPointD());
@@ -286,15 +309,13 @@ namespace IMGUI
         {
             float xScale = (float)destRect.Width / (float)srcRect.Width;
             float yScale = (float)destRect.Height / (float)srcRect.Height;
+            g.Save();
             g.Translate(destRect.X, destRect.Y);
             g.Scale(xScale, yScale);
             g.SetSourceSurface(image._surface, 0, 0);
             g.Rectangle(destRect.TopLeft.ToPointD(), destRect.Width, destRect.Height);
-            g.ClosePath();
-            g.ClipPreserve();
             g.Paint();
-            g.IdentityMatrix();
-            g.ResetClip();
+            g.Restore();
         }
 
         public static void DrawImage(this Context g, Rect rect, Texture image)
