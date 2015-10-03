@@ -76,7 +76,7 @@ namespace IMGUI
                     while (Utility.IsApplicationIdle() && exit == false)
                     {
                         Utility.MillisFrameBegin = Utility.Millis;
-                        Thread.Sleep(20);//Keep about 30fps
+                        Thread.Sleep(20);//Keep about 50fps
                         exit = Update();
                         Render();
 #if DEBUG

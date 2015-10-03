@@ -97,6 +97,11 @@ namespace IMGUI
 
         #endregion
 
+        #region Outline
+        public Length OutlineWidth { get; set; }
+        public Color OutlineColor { get; set; }
+        #endregion
+
         #region Background
 
         public BackgroundStyle BackgroundStyle { get; set; }
@@ -136,6 +141,8 @@ namespace IMGUI
             BorderBottomColor = CairoEx.ColorBlack;
             BorderLeftColor = CairoEx.ColorBlack;
             MarginTop = MarginRight = MarginBottom = MarginLeft = Length.Zero;
+            OutlineWidth = Length.Zero;
+            OutlineColor = new Color(0, 0, 0, 0.5);
 
             BackgroundStyle = new BackgroundStyle
             {

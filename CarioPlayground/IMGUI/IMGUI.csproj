@@ -91,6 +91,9 @@
     <Compile Include="Control\Label.cs" />
     <Compile Include="Control\Radio.cs" />
     <Compile Include="Control\Slider.cs" />
+    <Compile Include="Control\TextBox.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Control\Toggle.cs" />
     <Compile Include="Control\PolygonButton.cs" />
     <Compile Include="Detalied\Point.cs" />

@@ -32,7 +32,7 @@ namespace IMGUI
         public string State { get; set; }
 
         /// <summary>
-        /// 确定需要重绘该控件时调用
+        /// Does this control need repaint?
         /// </summary>
         public bool NeedRepaint { get; set; }
 

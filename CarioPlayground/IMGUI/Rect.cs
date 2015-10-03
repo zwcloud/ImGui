@@ -6,17 +6,7 @@ namespace IMGUI
     //[ValueSerializer(typeof(RectValueSerializer))] // Used by MarkupWriter
     partial struct Rect : IFormattable
     {
-        //------------------------------------------------------
-        //
-        //  Public Methods
-        //
-        //------------------------------------------------------
-
         #region Public Methods
-
-
-
-
         /// <summary>
         /// Compares two Rect instances for exact equality.
         /// Note that double values can acquire error when operated upon, such that

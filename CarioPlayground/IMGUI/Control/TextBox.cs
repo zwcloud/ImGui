@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using Layout = Pango.Layout;
+using TinyIoC;
 using Context = Cairo.Context;
 
 //BUG The text will slightly move up when there are only chinese characters.
-//TODO Check if Pango.Layout is automatically released
 namespace IMGUI
 {
     internal class TextBox : Control
@@ -12,97 +11,85 @@ namespace IMGUI
         private Point caretTopPoint;
         private Point caretBottomPoint;
 
-        internal string Text { get; set; }
-        internal Layout Layout { get; set; }
-        internal Point CaretPosition { get; set; }
-        internal int CaretByteIndex { get; set; }
-        internal int SelectByteIndex { get; set; }
-        internal bool Selecting { get; set; }
+        public ITextFormat Format { get; private set; }
+        public ITextLayout Layout { get; private set; }
+        public string Text { get; set; }
+        public Rect Rect { get; private set; }
 
-        internal int CaretIndex
-        {
-            get
-            {
-                if(StringBytes.Length==0)
-                {
-                    return 0;
-                }
-                return System.Text.Encoding.UTF8.GetCharCount(StringBytes, 0,
-                    CaretByteIndex);
-            }
-        }
+        public Point CaretPosition { get; set; }
+        public bool Selecting { get; set; }
 
-        internal int SelectIndex
-        {
-            get
-            {
-                if(StringBytes.Length == 0)
-                {
-                    return 0;
-                }
-                return System.Text.Encoding.UTF8.GetCharCount(StringBytes, 0,
-                    SelectByteIndex);
-            }
-        }
+        public uint CaretIndex { get; set; }
 
-        internal byte[] StringBytes
+        public uint SelectIndex { get; set; }
+
+        public byte[] StringBytes
         {
             get { return System.Text.Encoding.UTF8.GetBytes(Text); }
         }
 
-        internal TextBox(string name, Context g)
-            : base(name)
+        public TextBox(string name, string text, int width, int height)
         {
-            CaretByteIndex = 0;
-            //Unique layout for this TextBox
-            Layout = Pango.CairoHelper.CreateLayout(g);
+            Name = name;
+            State = "Normal";
             Controls[Name] = this;
+
+            Text = text;
+
+            var font = Skin.current.TextBox[State].Font;
+            Format = Application.IocContainer.Resolve<ITextFormat>(
+                new NamedParameterOverloads
+                    {
+                        {"fontFamilyName", font.FontFamily},
+                        {"fontWeight", font.FontWeight},
+                        {"fontStyle", font.FontStyle},
+                        {"fontStretch", font.FontStretch},
+                        {"fontSize", (float) font.Size}
+                    });
+            var textStyle = Skin.current.TextBox[State].TextStyle;
+            Format.Alignment = textStyle.TextAlignment;
+            Layout = Application.IocContainer.Resolve<ITextLayout>(
+                new NamedParameterOverloads
+                    {
+                        {"text", Text},
+                        {"textFormat", Format},
+                        {"maxWidth", width},
+                        {"maxHeight", height}
+                    });
         }
 
         internal static string DoControl(Context g, Rect rect, string text, string name)
         {
-            #region Get control reference
-            TextBox textBox;
             if(!Controls.ContainsKey(name))
             {
-                textBox = new TextBox(name, g);
-                textBox.Text = text;
+                var textBox = new TextBox(name, text, (int)rect.Width, (int)rect.Height);
+                textBox.Rect = rect;
+                textBox.OnUpdate();
+                textBox.OnRender(g);
             }
-            else
+            var control = Controls[name] as TextBox;
+            Debug.Assert(control != null);
+
+            return control.Text;
+        }
+
+        public override void OnUpdate()
+        {
+            bool insideRect = Rect.Contains(Input.Mouse.MousePos);
+
+            var oldState = State;
+            if(State == "Active")
             {
-                textBox = Controls[name] as TextBox;
-            }
-
-            Debug.Assert(textBox != null);
-            #endregion
-
-            #region Set control data
-            {
-                var style = Skin.current.TextBox[textBox.State];
-                var contentRect = Utility.GetContentRect(rect, style);
-                textBox.Layout.SetText(textBox.Text);
-                textBox.Layout.FontDescription = style.Font.Description;
-                Pango.CairoHelper.UpdateLayout(g, textBox.Layout);
-                textBox.Layout.Alignment = style.TextStyle.TextAlign;
-                textBox.Layout.Width = (int)(contentRect.Width * Pango.Scale.PangoScale);
-            }
-            #endregion
-
-            #region Logic
-
-            bool insideRect = rect.Contains(Input.Mouse.MousePos);
-
-            if(textBox.State == "Active")
-            {
+                NeedRepaint = true;
                 if(insideRect)
                 {
-                    var activeForm = (Form)System.Windows.Forms.Form.ActiveForm;
+                    var activeForm = (Form) System.Windows.Forms.Form.ActiveForm;
                     if(activeForm != null)
                         activeForm.Cursor = Cursor.Text;
                 }
                 else
                 {
-                    var activeForm = (Form)System.Windows.Forms.Form.ActiveForm;
+                    var activeForm = (Form) System.Windows.Forms.Form.ActiveForm;
                     if(activeForm != null)
                         activeForm.Cursor = Cursor.Default;
                 }
@@ -110,161 +97,150 @@ namespace IMGUI
                 //Mouse left button clicked inside
                 if(insideRect && Input.Mouse.LeftButtonClicked)
                 {
-                    var style = Skin.current.TextBox[textBox.State];
-                    var contentRect = Utility.GetContentRect(rect, style);
+                    var style = Skin.current.TextBox[State];
+                    var contentRect = Utility.GetContentRect(Rect, style);
                     var offsetOfTextRect = contentRect.TopLeft;
-                    int caretIndex, trailing;
-                    textBox.Layout.XyToIndex(
-                        Pango.Units.FromDouble(Input.Mouse.MousePos.X - offsetOfTextRect.X),
-                        Pango.Units.FromDouble(Input.Mouse.MousePos.Y - offsetOfTextRect.Y),
-                        out caretIndex, out trailing);
-                    textBox.SelectByteIndex = textBox.CaretByteIndex = caretIndex + trailing;
+                    uint caretIndex;
+                    caretIndex = Layout.XyToIndex((float)(Input.Mouse.MousePos.X - offsetOfTextRect.X),
+                        (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y));
+                    SelectIndex = CaretIndex = caretIndex;
                 }
                 else
                 {
-                    if(insideRect && Input.Mouse.MouseDraging)//Mouse left button draging inside
+                    if(insideRect && Input.Mouse.MouseDraging) //Mouse left button draging inside
                     {
-                        var style = Skin.current.TextBox[textBox.State];
-                        var contentRect = Utility.GetContentRect(rect, style);
+                        var style = Skin.current.TextBox[State];
+                        var contentRect = Utility.GetContentRect(Rect, style);
                         var offsetOfTextRect = contentRect.TopLeft;
-                        int caretIndex, trailing;
-                        textBox.Layout.XyToIndex(
-                            Pango.Units.FromDouble(Input.Mouse.MousePos.X - offsetOfTextRect.X),
-                            Pango.Units.FromDouble(Input.Mouse.MousePos.Y - offsetOfTextRect.Y),
-                            out caretIndex, out trailing);
-                        textBox.CaretByteIndex = caretIndex + trailing;
+                        uint caretIndex;
+                        caretIndex = Layout.XyToIndex(
+                            (float)(Input.Mouse.MousePos.X - offsetOfTextRect.X),
+                            (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y));
+                        CaretIndex = caretIndex;
                     }
                     else
                     {
                         if(Input.Keyboard.KeyPressed(Key.Home))
                         {
-                            textBox.CaretByteIndex = textBox.SelectByteIndex = 0;
+                            CaretIndex = SelectIndex = 0;
                         }
-                        if (Input.Keyboard.KeyPressed(Key.End))
+                        if(Input.Keyboard.KeyPressed(Key.End))
                         {
-                            textBox.CaretByteIndex = textBox.SelectByteIndex = textBox.StringBytes.Length;
+                            CaretIndex = SelectIndex = (uint)Text.Length;
                         }
                         if(Input.Keyboard.KeyPressed(Key.Left, true))
                         {
-                            if(textBox.CaretByteIndex > 0)
+                            if(CaretIndex > 0)
                             {
-                                textBox.CaretByteIndex -= System.Text.Encoding.UTF8.GetByteCount(textBox.Text.Substring(textBox.CaretIndex - 1, 1));
+                                CaretIndex -= 1;
                             }
                             if(!Input.Keyboard.KeyDown(Key.LeftShift))
                             {
-                                textBox.SelectByteIndex = textBox.CaretByteIndex;
+                                SelectIndex = CaretIndex;
                             }
                         }
-                        else if (Input.Keyboard.KeyPressed(Key.Right, true))
+                        else if(Input.Keyboard.KeyPressed(Key.Right, true))
                         {
-                            if(textBox.CaretByteIndex < System.Text.Encoding.UTF8.GetByteCount(textBox.Text))
+                            if(CaretIndex < Text.Length)
                             {
-                                textBox.CaretByteIndex += System.Text.Encoding.UTF8.GetByteCount(textBox.Text.Substring(textBox.CaretIndex, 1));
+                                CaretIndex += 1;
                             }
                             if(!Input.Keyboard.KeyDown(Key.LeftShift))
                             {
-                                textBox.SelectByteIndex = textBox.CaretByteIndex;
+                                SelectIndex = CaretIndex;
                             }
                         }
 
                         if(Input.Mouse.LeftButtonClicked && !insideRect)
                         {
-                            textBox.State = "Normal";
+                            State = "Normal";
                         }
-                        if(Input.Keyboard.KeyDown(Key.LeftShift) && !textBox.Selecting)
+                        if(Input.Keyboard.KeyDown(Key.LeftShift) && !Selecting)
                         {
-                            textBox.Selecting = true;
-                            textBox.SelectByteIndex = textBox.CaretByteIndex;
+                            Selecting = true;
+                            SelectIndex = CaretIndex;
                         }
-                        if(!Input.Keyboard.KeyDown(Key.LeftShift) && textBox.Selecting)
+                        if(!Input.Keyboard.KeyDown(Key.LeftShift) && Selecting)
                         {
-                            textBox.Selecting = false;
+                            Selecting = false;
                         }
                     }
                 }
 
-                //TODO more properly approach these UTF8 and Unicode affairs
                 {
                     string textBeforeCaret;
-                    byte[] stringBytes = System.Text.Encoding.UTF8.GetBytes(textBox.Text);
 
                     //Input characters
                     if(Application.ImeBuffer.Count != 0)
                     {
                         var inputText = new string(Application.ImeBuffer.ToArray());
-                        if(textBox.CaretByteIndex != textBox.SelectByteIndex)//Replace selected text with inputText
+                        if(CaretIndex != SelectIndex) //Replace selected text with inputText
                         {
-                            var minByteIndex = Math.Min(textBox.CaretByteIndex, textBox.SelectByteIndex);
-                            var maxByteIndex = Math.Max(textBox.CaretByteIndex, textBox.SelectByteIndex);
-                            var minIndex = System.Text.Encoding.UTF8.GetCharCount(textBox.StringBytes, 0, minByteIndex);
-                            var maxIndex = System.Text.Encoding.UTF8.GetCharCount(textBox.StringBytes, 0, maxByteIndex);
+                            //TODO check whether convert int and uint back and forth is appropriate
+                            var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
+                            var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
 
-                            textBox.Text = textBox.Text.Substring(0, minIndex) + inputText + textBox.Text.Substring(maxIndex);
-                            textBox.CaretByteIndex = textBox.SelectByteIndex = minIndex;
-                            textBeforeCaret = textBox.Text.Substring(0, minIndex) + inputText;
+                            Text = Text.Substring(0, minIndex) + inputText + Text.Substring(maxIndex);
+                            CaretIndex = SelectIndex = (uint)minIndex;
+                            textBeforeCaret = Text.Substring(0, minIndex) + inputText;
                         }
-                        else//Insert inputText into caret position
+                        else //Insert inputText into caret position
                         {
-                            textBox.Text = textBox.Text.Substring(0, textBox.CaretIndex) + inputText + textBox.Text.Substring(textBox.CaretIndex);
-                            textBeforeCaret = textBox.Text.Substring(0, textBox.CaretIndex) + inputText;
+                            Text = Text.Substring(0, (int)CaretIndex) + inputText + Text.Substring((int)CaretIndex);
+                            textBeforeCaret = Text.Substring(0, (int)CaretIndex) + inputText;
                         }
-                        textBox.SelectByteIndex = textBox.CaretByteIndex = System.Text.Encoding.UTF8.GetByteCount(textBeforeCaret);
+                        SelectIndex = CaretIndex = (uint)textBeforeCaret.Length;
                         Application.ImeBuffer.Clear();
                     }
                     //Backspace, delete one character before the caret
                     else if(Input.Keyboard.KeyPressed(Key.Back, true))
                     {
-                        if(textBox.CaretByteIndex != textBox.SelectByteIndex)
+                        if(CaretIndex != SelectIndex)
                         {
-                            var minByteIndex = Math.Min(textBox.CaretByteIndex, textBox.SelectByteIndex);
-                            var maxByteIndex = Math.Max(textBox.CaretByteIndex, textBox.SelectByteIndex);
-                            var minIndex = System.Text.Encoding.UTF8.GetCharCount(textBox.StringBytes, 0, minByteIndex);
-                            var maxIndex = System.Text.Encoding.UTF8.GetCharCount(textBox.StringBytes, 0, maxByteIndex);
+                            var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
+                            var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
 
-                            textBox.Text = textBox.Text.Substring(0, minIndex) + textBox.Text.Substring(maxIndex);
-                            textBox.CaretByteIndex = textBox.SelectByteIndex = minIndex;
-                            textBeforeCaret = textBox.Text.Substring(0, minIndex);
-                            textBox.SelectByteIndex = textBox.CaretByteIndex = System.Text.Encoding.UTF8.GetByteCount(textBeforeCaret);
+                            Text = Text.Substring(0, minIndex) + Text.Substring(maxIndex);
+                            CaretIndex = SelectIndex = (uint)minIndex;
+                            textBeforeCaret = Text.Substring(0, minIndex);
+                            SelectIndex = CaretIndex = (uint)textBeforeCaret.Length;
                         }
-                        else if(textBox.CaretByteIndex > 0)
+                        else if(CaretIndex > 0)
                         {
-                            var newText = textBox.Text.Remove(textBox.CaretIndex - 1, 1);
-                            if(textBox.CaretIndex==0)
+                            var newText = Text.Remove((int)(CaretIndex - 1), 1);
+                            if(CaretIndex == 0)
                             {
                                 textBeforeCaret = "";
                             }
                             else
                             {
-                                textBeforeCaret = textBox.Text.Substring(0, textBox.CaretIndex - 1);
+                                textBeforeCaret = Text.Substring(0, (int)(CaretIndex - 1));
                             }
-                            textBox.SelectByteIndex = textBox.CaretByteIndex = System.Text.Encoding.UTF8.GetByteCount(textBeforeCaret);
-                            textBox.Text = newText;
+                            SelectIndex = CaretIndex = (uint)textBeforeCaret.Length;
+                            Text = newText;
                         }
                     }
                     //Delete, delete one character after the caret
-                    else if (Input.Keyboard.KeyPressed(Key.Delete, true))
+                    else if(Input.Keyboard.KeyPressed(Key.Delete, true))
                     {
-                        if(textBox.CaretByteIndex != textBox.SelectByteIndex)
+                        if(CaretIndex != SelectIndex)
                         {
-                            var minByteIndex = Math.Min(textBox.CaretByteIndex, textBox.SelectByteIndex);
-                            var maxByteIndex = Math.Max(textBox.CaretByteIndex, textBox.SelectByteIndex);
-                            var minIndex = System.Text.Encoding.UTF8.GetCharCount(textBox.StringBytes, 0, minByteIndex);
-                            var maxIndex = System.Text.Encoding.UTF8.GetCharCount(textBox.StringBytes, 0, maxByteIndex);
+                            var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
+                            var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
 
-                            textBox.Text = textBox.Text.Substring(0, minIndex) + textBox.Text.Substring(maxIndex);
-                            textBox.CaretByteIndex = textBox.SelectByteIndex = minIndex;
-                            textBeforeCaret = textBox.Text.Substring(0, minIndex);
-                            textBox.SelectByteIndex = textBox.CaretByteIndex = System.Text.Encoding.UTF8.GetByteCount(textBeforeCaret);
+                            Text = Text.Substring(0, minIndex) + Text.Substring(maxIndex);
+                            CaretIndex = SelectIndex = (uint)minIndex;
+                            textBeforeCaret = Text.Substring(0, minIndex);
+                            SelectIndex = CaretIndex = (uint)textBeforeCaret.Length;
                         }
-                        else if(textBox.CaretByteIndex < System.Text.Encoding.UTF8.GetByteCount(textBox.Text))
+                        else if(CaretIndex < Text.Length)
                         {
-                            textBox.Text = textBox.Text.Remove(textBox.CaretIndex, 1);
+                            Text = Text.Remove((int)CaretIndex, 1);
                         }
                     }
 
-                    //Update pango layout
-                    textBox.Layout.SetText(textBox.Text);
-                    Pango.CairoHelper.UpdateLayout(g, textBox.Layout);
+                    //Update layout text
+                    Layout.Text = Text;
                 }
             }
             else
@@ -272,86 +248,87 @@ namespace IMGUI
                 bool active = Input.Mouse.LeftButtonState == InputState.Down && insideRect;
                 bool hover = Input.Mouse.LeftButtonState == InputState.Up && insideRect;
                 if(active)
-                    textBox.State = "Active";
+                    State = "Active";
                 else if(hover)
-                    textBox.State = "Hover";
+                    State = "Hover";
                 else
-                    textBox.State = "Normal";
+                    State = "Normal";
+                if (State != oldState)
+                {
+                    NeedRepaint = true;
+                }
             }
-            #endregion
+            
+        }
 
-            #region Draw
+        public override void OnRender(Context g)
+        {
+            var style = Skin.current.TextBox[State];
+            if(State == "Active")
             {
-                var style = Skin.current.TextBox[textBox.State];
-                if(textBox.State == "Active")
+                //Calculate positions and sizes
+                var contentRect = Utility.GetContentRect(Rect, style);
+                var offsetOfTextRect = contentRect.TopLeft;
+                float pointX, pointY;
+                float caretHeight;
+                Layout.IndexToXY(CaretIndex, false, out pointX, out pointY, out caretHeight);
+                caretTopPoint = new Point(pointX, pointY);
+                caretBottomPoint = new Point(pointX, pointY + caretHeight);
+                caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+
+                //TODO Clean up this alpha mess
+                var caretAlpha = (byte) (Utility.Millis%1060/1060.0f*255);
+                caretAlpha = (byte) (caretAlpha < 100 ? 0 : 255);
+
+                //FIXME: This is not working! Check if the caret is outside the rect. If so, move the text rect so the caret is shown.
+                var textRect = contentRect;
+                var caretX = caretTopPoint.X;
+                if(caretX < textRect.X || caretX > textRect.Right)
                 {
-                    //Calculate positions and sizes
-                    var contentRect = Utility.GetContentRect(rect, style);
-                    var offsetOfTextRect = contentRect.TopLeft;
-                    Pango.Rectangle strongCursorPosFromPango, weakCursorPosFromPango;
-                    textBox.Layout.GetCursorPos(textBox.CaretByteIndex, out strongCursorPosFromPango, out weakCursorPosFromPango);
-                    textBox.caretTopPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y));
-                    textBox.caretBottomPoint = new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y + strongCursorPosFromPango.Height));
-                    textBox.caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                    textBox.caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-
-                    //TODO Clean up this alpha mess
-                    var caretAlpha = (byte)(Utility.Millis % 1060 / 1060.0f * 255);
-                    caretAlpha = (byte)(caretAlpha < 100 ? 0 : 255);
-
-                    //Check if the caret is outside the rect. If so, move the text rect so the caret is shown.
-                    var textRect = contentRect;
-                    var caretX = textBox.caretTopPoint.X;
-                    if(caretX < textRect.X || caretX > textRect.Right)
-                    {
-                        var offsetX = -(caretX - textRect.Width - rect.X);
-                        textRect.Offset(offsetX, 0);
-                        textBox.caretTopPoint.Offset(offsetX, 0);
-                        textBox.caretBottomPoint.Offset(offsetX, 0);
-                    }
-
-                    //Draw the box
-                    g.DrawBoxModel(rect, null, style);
-
-                    //Clip the text
-                    g.MoveTo(rect.TopLeft);
-                    g.LineTo(rect.TopRight);
-                    g.LineTo(rect.BottomRight);
-                    g.LineTo(rect.BottomLeft);
-                    g.LineTo(rect.TopLeft);
-                    g.ClosePath();
-                    g.Clip();
-
-                    //Draw text
-                    g.DrawText(textRect, textBox.Layout, style.Font);
-
-                    //TODO weak pos from Pango not used (check if it is really useless)
-
-                    //Draw selection rect
-                    if(textBox.SelectByteIndex != int.MaxValue)
-                    {
-                        Pango.Rectangle rightStrongRect, rightWeakRect;
-                        textBox.Layout.GetCursorPos(textBox.SelectByteIndex, out rightStrongRect, out rightWeakRect);
-                        var selectionRect = new Rect(
-                            new Point(Pango.Units.ToPixels(strongCursorPosFromPango.X), Pango.Units.ToPixels(strongCursorPosFromPango.Y)),
-                            new Point(Pango.Units.ToPixels(rightStrongRect.X), Pango.Units.ToPixels(rightStrongRect.Y + rightStrongRect.Height))
-                            );
-                        selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                        g.FillRectangle(selectionRect,
-                            CairoEx.ColorArgb(100, 100, 100, 100));
-                    }
-
-                    //Draw caret
-                    g.DrawLine(textBox.caretTopPoint, textBox.caretBottomPoint, 1.0f, CairoEx.ColorArgb(caretAlpha, 0, 0, 0));
+                    var offsetX = -(caretX - textRect.Width - Rect.X);
+                    textRect.Offset(offsetX, 0);
+                    caretTopPoint.Offset(offsetX, 0);
+                    caretBottomPoint.Offset(offsetX, 0);
                 }
-                else
+
+                //Draw the box
+                g.DrawBoxModel(Rect, null, style);
+
+                //Clip the text
+                g.MoveTo(Rect.TopLeft);
+                g.LineTo(Rect.TopRight);
+                g.LineTo(Rect.BottomRight);
+                g.LineTo(Rect.BottomLeft);
+                g.LineTo(Rect.TopLeft);
+                g.ClosePath();
+                g.Clip();
+                g.ResetClip(); 
+
+                //Draw text
+                g.DrawText(textRect, Layout, style.Font, style.TextStyle);
+
+                //Draw selection rect
+                if(SelectIndex != CaretIndex)
                 {
-                    g.DrawBoxModel(rect, new Content(textBox.Layout), style);
+                    float selectPointX, selectPointY, dummyHeight;
+                    Layout.IndexToXY(SelectIndex, false, out selectPointX, out selectPointY, out dummyHeight);
+                    var selectionRect = new Rect(
+                        new Point(pointX, pointY),
+                        new Point(selectPointX, selectPointY + caretHeight));
+                    selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                    g.FillRectangle(selectionRect,
+                        CairoEx.ColorArgb(100, 100, 100, 100));
                 }
+
+                //Draw caret
+                g.DrawLine(caretTopPoint, caretBottomPoint, 1.0f, CairoEx.ColorArgb(caretAlpha, 0, 0, 0));
             }
-            #endregion
-
-            return textBox.Text;
+            else
+            {
+                Debug.WriteLine("{0} {1}", this.Name, this.State);
+                g.DrawBoxModel(Rect, new Content(Layout), style);
+            }
         }
     }
 }

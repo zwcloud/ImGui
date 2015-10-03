@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Runtime.Caching;
-using Cairo;
-using ZWCloud.DWriteCairo;
 
 namespace IMGUI
 {
@@ -40,10 +37,10 @@ namespace IMGUI
 
         public int MaxWidth
         {
-            get { return (int) Layout.Width; }
+            get { return Layout.Width; }
             set
             {
-                if ((int)Layout.Width == value)
+                if (Layout.Width == value)
                 {
                     return;
                 }
@@ -54,10 +51,10 @@ namespace IMGUI
 
         public int MaxHeight
         {
-            get { return (int) Layout.Height; }
+            get { return Layout.Height; }
             set
             {
-                if ((int)Layout.Height == value)
+                if (Layout.Height == value)
                 {
                     return;
                 }
@@ -116,7 +113,7 @@ namespace IMGUI
             get { return textFormat; }
         }
 
-        public Path Path
+        public Cairo.Path Path
         {
             get
             {
@@ -139,6 +136,16 @@ namespace IMGUI
                 }
                 path = ZWCloud.DWriteCairo.DWriteCairo.RenderLayoutToCairoPath(context, Layout);
             }
+        }
+
+        public uint XyToIndex(float pointX, float pointY)
+        {
+            return layout.XyToIndex(pointX, pointY);
+        }
+
+        public void IndexToXY(uint textPosition, bool isTrailingHit, out float pointX, out float pointY, out float height)
+        {
+            layout.IndexToXY(textPosition, isTrailingHit, out pointX, out pointY, out height);
         }
 
         #region Implementation of IDisposable

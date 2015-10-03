@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using Cairo;
-using TinyIoC;
 using Context = Cairo.Context;
 using Layout = IMGUI.ITextLayout;
 
@@ -36,6 +34,7 @@ namespace IMGUI
              * TODO Outline is temporarily not used.
              */
 
+
             /*
              * TODO Margin is temporarily not used.
              */
@@ -49,6 +48,7 @@ namespace IMGUI
             var btr = new Point(rect.Right, rect.Top);
             var bbr = new Point(rect.Right, rect.Bottom);
             var bbl = new Point(rect.Left, rect.Bottom);
+            var borderBoxRect = new Rect(btl, bbr);
 
             //4 corner of the padding-box
             var ptl = new Point(btl.X + bl, btl.Y + bt);
@@ -67,8 +67,21 @@ namespace IMGUI
              * Render from inner to outer: Content, Padding, Border, Margin, Outline
              */
 
-            //Content(draw as a filled rectangle now)
+            //Content
+            //Content-box background(draw as a filled rectangle now)
             g.FillRectangle(rect, style.BackgroundStyle.Color);
+            //Content-box
+            if (content != null)
+            {
+                if (content.Image != null)
+                {
+                    g.DrawImage(contentBoxRect, content.Image);
+                }
+                if (content.Layout != null)
+                {
+                    g.DrawText(contentBoxRect, content.Layout, style.Font, style.TextStyle);
+                }
+            }
 
             //Border
             //  Top
@@ -80,17 +93,11 @@ namespace IMGUI
             //  Left
             g.FillPolygon(new Point[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
 
-            if(content != null)
-            {
-                if (content.Image != null)
-                {
-                    g.DrawImage(contentBoxRect, content.Image);
-                }
-                if (content.Layout != null)
-                {
-                    g.DrawText(contentBoxRect, content.Layout, style.Font, style.TextStyle);
-                }
-            }
+            //Outline
+            //g.Rectangle(borderBoxRect.TopLeft, borderBoxRect.Width, borderBoxRect.Height);
+            //g.LineWidth = style.OutlineWidth;
+            //g.SetSourceColor(style.OutlineColor);
+            //g.Stroke();
         }
 
         #region primitive draw helpers

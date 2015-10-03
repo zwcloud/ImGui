@@ -7,6 +7,8 @@ namespace IMGUI
     [Serializable]
     partial struct Vector : IFormattable
     {
+        public static readonly Vector Zero = new Vector();
+
         //------------------------------------------------------
         //
         //  Public Methods

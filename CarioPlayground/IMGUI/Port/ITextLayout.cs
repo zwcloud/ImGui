@@ -10,6 +10,10 @@ namespace IMGUI
         ITextFormat TextFormat { get; }
         Cairo.Path Path { get; }
         void BuildPath(Cairo.Context context);
+
+        uint XyToIndex(float pointX, float pointY);
+        void IndexToXY(uint textPosition, bool isTrailingHit,
+            out float pointX, out float pointY, out float height);
     }
 
 }
