@@ -101,8 +101,13 @@ namespace IMGUI
                     var contentRect = Utility.GetContentRect(Rect, style);
                     var offsetOfTextRect = contentRect.TopLeft;
                     uint caretIndex;
+                    bool isInside;
                     caretIndex = Layout.XyToIndex((float)(Input.Mouse.MousePos.X - offsetOfTextRect.X),
-                        (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y));
+                        (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y), out isInside);
+                    if (!isInside && caretIndex == Text.Length - 1)
+                    {
+                        ++caretIndex;
+                    }
                     SelectIndex = CaretIndex = caretIndex;
                 }
                 else
@@ -113,9 +118,14 @@ namespace IMGUI
                         var contentRect = Utility.GetContentRect(Rect, style);
                         var offsetOfTextRect = contentRect.TopLeft;
                         uint caretIndex;
+                        bool isInside;
                         caretIndex = Layout.XyToIndex(
                             (float)(Input.Mouse.MousePos.X - offsetOfTextRect.X),
-                            (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y));
+                            (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y), out isInside);
+                        if (!isInside && caretIndex == Text.Length-1)
+                        {
+                            ++caretIndex;
+                        }
                         CaretIndex = caretIndex;
                     }
                     else
@@ -186,8 +196,16 @@ namespace IMGUI
                         }
                         else //Insert inputText into caret position
                         {
-                            Text = Text.Substring(0, (int)CaretIndex) + inputText + Text.Substring((int)CaretIndex);
-                            textBeforeCaret = Text.Substring(0, (int)CaretIndex) + inputText;
+                            if(Text.Length == 0)
+                            {
+                                Text = inputText;
+                                textBeforeCaret = Text;
+                            }
+                            else
+                            {
+                                Text = Text.Substring(0, (int)CaretIndex) + inputText + Text.Substring((int)CaretIndex);
+                                textBeforeCaret = Text.Substring(0, (int)CaretIndex) + inputText;
+                            }
                         }
                         SelectIndex = CaretIndex = (uint)textBeforeCaret.Length;
                         Application.ImeBuffer.Clear();
@@ -328,6 +346,12 @@ namespace IMGUI
             {
                 g.DrawBoxModel(Rect, new Content(Layout), style);
             }
+        }
+
+        public override void Dispose()
+        {
+            Layout.Dispose();
+            Format.Dispose();
         }
     }
 }

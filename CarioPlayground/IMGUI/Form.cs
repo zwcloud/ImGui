@@ -237,8 +237,13 @@ namespace IMGUI
             }
         }
 
-        private void CleanUp()
+        private void CleanUp()//Cleanup only happened when ESC is pressed
         {
+            foreach (var control in Control.Controls.Values)
+            {
+                control.Dispose();
+            }
+
             if(Layer.BackContext != null)
                 Layer.BackContext.Dispose();
             if (Layer.TopContext != null)

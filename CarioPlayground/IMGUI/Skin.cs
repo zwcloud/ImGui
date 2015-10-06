@@ -258,6 +258,7 @@ namespace IMGUI
 
             #region Image
             {
+#if ImageBorder
                 StyleModifier[] normalModifiers =
                 {
                     new StyleModifier {Name = "BorderTop", Value = new Length(1, Unit.Pixel)},
@@ -271,6 +272,9 @@ namespace IMGUI
                     new StyleModifier {Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
                 };
                 Image["Normal"] = Style.Make(normalModifiers);
+#else
+                Image["Normal"] = Style.Make();
+#endif
             }
 
 

@@ -13,7 +13,7 @@ namespace IMGUI
     /// <remarks>
     /// Must implement a functional method to call by user.
     /// </remarks>
-    abstract class Control
+    abstract class Control : IDisposable
     {
         public static Dictionary<string, Control> Controls { get; set; }
 
@@ -60,5 +60,11 @@ namespace IMGUI
             Params = new Dictionary<string, object>();
             State = "Normal";
         }
+
+        #region Implementation of IDisposable
+
+        public abstract void Dispose();
+
+        #endregion
     }
 }

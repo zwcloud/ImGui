@@ -55,6 +55,12 @@ namespace IMGUI
             g.DrawBoxModel(Rect, new Content(Layout), Skin.current.Label[State]);
         }
 
+        public override void Dispose()
+        {
+            Layout.Dispose();
+            Format.Dispose();
+        }
+
         internal Label(string name, string text, int width, int height)
         {
             Name = name;

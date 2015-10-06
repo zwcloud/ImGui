@@ -159,6 +159,12 @@ namespace IMGUI
             g.DrawBoxModel(TextRect, new Content(Layout), style);
         }
 
+        public override void Dispose()
+        {
+            Layout.Dispose();
+            Format.Dispose();
+        }
+
         #endregion
     }
 }

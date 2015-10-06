@@ -124,6 +124,12 @@ namespace IMGUI
                 Skin.current.Toggle[State]);
         }
 
+        public override void Dispose()
+        {
+            Layout.Dispose();
+            Format.Dispose();
+        }
+
         #endregion
     }
 }

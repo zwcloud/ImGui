@@ -207,6 +207,15 @@ namespace IMGUI
             throw new System.NotImplementedException();
         }
 
+        public override void Dispose()
+        {
+            foreach (var itemLayout in ItemLayouts)
+            {
+                itemLayout.Dispose();
+            }
+            Format.Dispose();
+        }
+
         #endregion
     }
 }

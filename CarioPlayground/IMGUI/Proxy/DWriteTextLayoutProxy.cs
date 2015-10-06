@@ -138,9 +138,9 @@ namespace IMGUI
             }
         }
 
-        public uint XyToIndex(float pointX, float pointY)
+        public uint XyToIndex(float pointX, float pointY, out bool isInside)
         {
-            return layout.XyToIndex(pointX, pointY);
+            return layout.XyToIndex(pointX, pointY, out isInside);
         }
 
         public void IndexToXY(uint textPosition, bool isTrailingHit, out float pointX, out float pointY, out float height)

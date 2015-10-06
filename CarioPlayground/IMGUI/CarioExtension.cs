@@ -31,11 +31,6 @@ namespace IMGUI
             var pl = style.PaddingLeft;
             
             /*
-             * TODO Outline is temporarily not used.
-             */
-
-
-            /*
              * TODO Margin is temporarily not used.
              */
             var mt = style.MarginTop;

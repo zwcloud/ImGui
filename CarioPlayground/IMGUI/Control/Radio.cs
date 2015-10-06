@@ -203,6 +203,12 @@ namespace IMGUI
             g.DrawBoxModel(radioTextRect, new Content(Layout), Skin.current.Radio[State]);
         }
 
+        public override void Dispose()
+        {
+            Layout.Dispose();
+            Format.Dispose();
+        }
+
         #endregion
     }
 }

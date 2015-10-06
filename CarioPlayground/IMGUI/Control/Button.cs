@@ -55,7 +55,13 @@ namespace IMGUI
 
         public override void OnRender(Context g)
         {
-            g.DrawBoxModel(Rect, new Content(this.Layout), Skin.current.Button[this.State]);
+            g.DrawBoxModel(Rect, new Content(Layout), Skin.current.Button[State]);
+        }
+
+        public override void Dispose()
+        {
+            Layout.Dispose();
+            Format.Dispose();
         }
 
         internal Button(string name, string text, int width, int height)

@@ -42,6 +42,11 @@ namespace IMGUI
             g.DrawBoxModel(Rect, new Content(Texture), Skin.current.Image["Normal"]);
         }
 
+        public override void Dispose()
+        {
+
+        }
+
         #endregion
     }
 }
