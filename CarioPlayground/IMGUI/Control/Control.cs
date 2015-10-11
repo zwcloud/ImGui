@@ -15,15 +15,13 @@ namespace IMGUI
     /// </remarks>
     abstract class Control : IDisposable
     {
-        public static Dictionary<string, Control> Controls { get; set; }
-
         private string _name;
         public string Name
         {
             get { return _name; }
             set
             {
-                if (Controls.Keys.Contains(value))
+                if (Application.MainForm.Controls.Keys.Contains(value))
                     throw new ArgumentException("Specified Control name is already used.");
                 _name = value;
             }
@@ -37,11 +35,6 @@ namespace IMGUI
         public bool NeedRepaint { get; set; }
 
         public Dictionary<string, object> Params { get; set; }
-
-        static Control()
-        {
-            Controls = new Dictionary<string, Control>(8);
-        }
 
         public abstract void OnUpdate();
 

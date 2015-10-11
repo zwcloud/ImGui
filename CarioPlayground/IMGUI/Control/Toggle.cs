@@ -41,7 +41,7 @@ namespace IMGUI
 
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             Rect = rect;
             Text = displayText;
@@ -70,7 +70,7 @@ namespace IMGUI
 
         internal static bool DoControl(Context g, Rect rect, string displayText, bool value, string name)
         {
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 var toggle = new Toggle(name, displayText, rect);
                 Debug.Assert(toggle != null);
@@ -78,7 +78,7 @@ namespace IMGUI
                 toggle.OnRender(g);
             }
 
-            var control = Controls[name] as Toggle;
+            var control = Application.MainForm.Controls[name] as Toggle;
             Debug.Assert(control != null);
 
             //The control need to be relayout

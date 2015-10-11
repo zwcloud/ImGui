@@ -96,6 +96,9 @@
     </Compile>
     <Compile Include="Control\Toggle.cs" />
     <Compile Include="Control\PolygonButton.cs" />
+    <Compile Include="Control\ToolTips\ToolTip.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Detalied\Point.cs" />
     <Compile Include="Detalied\Rect.cs" />
     <Compile Include="Detalied\Size.cs" />
@@ -103,7 +106,9 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Font.cs" />
-    <Compile Include="Form.cs" />
+    <Compile Include="Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GUI.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />

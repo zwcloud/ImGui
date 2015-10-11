@@ -82,7 +82,7 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             Rect = rect;
             Text = text;
@@ -112,14 +112,14 @@ namespace IMGUI
 
         public static bool DoControl(Context g, Rect rect, string text, string groupName, bool value, string name)
         {
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 var radio = new Radio(name, text, rect, groupName);
                 radio.OnUpdate();
                 radio.OnRender(g);
             }
 
-            var control = Controls[name] as Radio;
+            var control = Application.MainForm.Controls[name] as Radio;
             Debug.Assert(control != null);
 
             return control.Actived;
@@ -155,7 +155,7 @@ namespace IMGUI
                 var group = Groups[groupName];
                 foreach (var radioName in group)
                 {
-                    var radio = Controls[radioName];
+                    var radio = Application.MainForm.Controls[radioName];
 #if DEBUG
                     Debug.Assert(radio is Radio);
 #endif

@@ -24,7 +24,7 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             var font = Skin.current.Button[State].Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
@@ -55,14 +55,14 @@ namespace IMGUI
         {
             #region Get control reference
             ComboBox comboBox;
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 comboBox = new ComboBox(name, texts, (int)rect.Width, (int)rect.Height);
                 Debug.Assert(comboBox != null);
             }
             else
             {
-                comboBox = Controls[name] as ComboBox;
+                comboBox = Application.MainForm.Controls[name] as ComboBox;
                 Debug.Assert(comboBox != null);
 
                 #region Set control data

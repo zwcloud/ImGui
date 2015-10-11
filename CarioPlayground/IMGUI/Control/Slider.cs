@@ -15,7 +15,7 @@ namespace IMGUI
             Name = name;
             State = "Normal";
 
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
         }
 
         //TODO Control-less DoControl overload (without name parameter)
@@ -23,14 +23,14 @@ namespace IMGUI
         {
             #region Get control reference
             Slider slider;
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 slider = new Slider(name);
                 slider.Value = value;
             }
             else
             {
-                slider = Controls[name] as Slider;
+                slider = Application.MainForm.Controls[name] as Slider;
             }
 
             Debug.Assert(slider != null);

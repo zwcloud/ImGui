@@ -39,11 +39,21 @@ namespace IMGUI
             bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.MousePos);
             bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.MousePos);
             if (active)
+            {
                 State = "Active";
+                //ToolTip.Instance.Hide();
+            }
             else if (hover)
+            {
                 State = "Hover";
+                //ToolTip.Instance.Show(Text.Substring(0, 5));
+            }
             else
+            {
                 State = "Normal";
+                //ToolTip.Instance.Hide();
+            }
+
             if(State != oldState)
             {
                 NeedRepaint = true;
@@ -68,7 +78,7 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             Rect = rect;
             Text = text;
@@ -100,14 +110,14 @@ namespace IMGUI
         internal static bool DoControl(Context g, Rect rect, string text, string name)
         {
             //The control hasn't been created, create it.
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 var button = new Button(name, text, rect);
                 button.OnUpdate();
                 button.OnRender(g);
             }
 
-            var control = Controls[name] as Button;
+            var control = Application.MainForm.Controls[name] as Button;
             Debug.Assert(control != null);
 
             //Check if the control need to be relayout

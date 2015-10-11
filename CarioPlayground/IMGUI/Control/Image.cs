@@ -14,7 +14,7 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             Texture = texture;
         }
@@ -22,7 +22,7 @@ namespace IMGUI
         static internal void DoControl(Context g, Rect rect, Texture texture, string name)
         {
             //The control hasn't been created, create it.
-            if (!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 var image = new Image(name, texture);
                 image.Rect = rect;

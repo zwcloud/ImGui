@@ -65,7 +65,7 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             Rect = rect;
             Text = text;
@@ -96,14 +96,14 @@ namespace IMGUI
         //TODO Control-less DoControl overload (without name parameter)
         internal static void DoControl(Context g, Rect rect, string text, string name)
         {
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 var label = new Label(name, text, rect);
                 label.OnUpdate();
                 label.OnRender(g);
             }
-            
-            var control = Controls[name] as Label;
+
+            var control = Application.MainForm.Controls[name] as Label;
             Debug.Assert(control != null);
 
             //The control need to be relayout

@@ -1,18 +1,25 @@
 #define SHOW_FPS_Label
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Cairo;
+using IMGUI.Input;
+using Color = Cairo.Color;
 
 
 //TODO make project independent of Winform(or only use Winform for creating window)
 namespace IMGUI
 {
-    [System.ComponentModel.DesignerCategory("")]
+    [DesignerCategory("")]
     public abstract class Form : System.Windows.Forms.Form
     {
+        internal new Dictionary<string, Control> Controls { get; set; }
+
         #region GUI compontents
         public GUI GUI { get; set; }
 
@@ -25,24 +32,23 @@ namespace IMGUI
         int frames;
         int fps;
 #endif
-        private Cursor cursor = IMGUI.Cursor.Default;
+        private Cursor cursor = Cursor.Default;
         #endregion
 
         protected Form()
         {
             #region Form members
-            AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(6F, 12F);
+            AutoScaleMode = AutoScaleMode.Font;
             
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            Icon = new System.Drawing.Icon(@"W:\VS2013\CarioPlayground\IMGUIDemo\calc32x32.ico");
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "MainForm";
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            Text = "Calculator";
-            this.Shown += new System.EventHandler(this.Form_Shown);
+            StartPosition = FormStartPosition.CenterScreen;
+            this.Shown += new EventHandler(this.Form_Shown);
             ResumeLayout(false);
             #endregion
 
+            Controls = new Dictionary<string, Control>(8);
         }
 
         bool exit = false;
@@ -81,8 +87,8 @@ namespace IMGUI
                         Render();
 #if DEBUG
                         //Show FPS and mouse position on the title
-                        Text = string.Format("FPS: {0} Mouse ({1},{2})", fps, Input.Mouse.MousePos.X,
-                            Input.Mouse.MousePos.Y);
+                        Text = String.Format("FPS: {0} Mouse ({1},{2})", fps, Mouse.MousePos.X,
+                            Mouse.MousePos.Y);
 #endif
                     }
                 }
@@ -157,7 +163,7 @@ namespace IMGUI
             {
                 case WM.CHAR:
                     char c = (char)m.WParam;
-                    if(char.IsControl(c))
+                    if(Char.IsControl(c))
                         break;
                     Application.ImeBuffer.Enqueue(c);
                     break;
@@ -187,19 +193,19 @@ namespace IMGUI
             };
             var clientPos = PointToScreen(ClientRectangle.Location);
 
-            Input.Mouse.Refresh(clientPos.X, clientPos.Y, clientRect);
-            Input.Keyboard.Refresh();
+            Mouse.Refresh(clientPos.X, clientPos.Y, clientRect);
+            Keyboard.Refresh();
 
+#if DEBUG
             //Quit when ESC is pressed
-            if(Input.Keyboard.KeyPressed(Key.Escape))
+            if(Keyboard.KeyPressed(Key.Escape))
             {
                 Debug.WriteLine("ESC pressed");
                 return true;
             }
-#if DEBUG
             DebugUpdate();
 #endif
-            foreach (var control in Control.Controls.Values)
+            foreach (var control in Controls.Values)
             {
                 control.OnUpdate();
             }
@@ -213,7 +219,7 @@ namespace IMGUI
                 return;
             OnGUI(GUI);
 
-            foreach (var control in Control.Controls.Values)
+            foreach (var control in Controls.Values)
             {
                 if (control.NeedRepaint)
                 {
@@ -239,7 +245,7 @@ namespace IMGUI
 
         private void CleanUp()//Cleanup only happened when ESC is pressed
         {
-            foreach (var control in Control.Controls.Values)
+            foreach (var control in Controls.Values)
             {
                 control.Dispose();
             }

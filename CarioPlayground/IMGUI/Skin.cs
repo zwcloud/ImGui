@@ -14,8 +14,9 @@ namespace IMGUI
         public Dictionary<string, Style> TextBox { get; set; }
         public Dictionary<string, Style> Slider { get; set; }
         public Dictionary<string, Style> PolygonButton { get; set; }
-        
-        public static Skin current;
+        public Style ToolTip { get; set; }
+
+        public static readonly Skin current;
 
         static Skin()
         {
@@ -424,6 +425,13 @@ namespace IMGUI
                     }
                 };
                 PolygonButton["Active"] = Style.Make(activeModifiers);
+            }
+            #endregion
+
+            #region ToolTip
+            {
+                ToolTip = Style.Make();
+                ToolTip.ExtraStyles.Add("FixedSize", new Size(100, 40));
             }
             #endregion
         }

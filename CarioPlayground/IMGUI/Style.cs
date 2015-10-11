@@ -1,4 +1,5 @@
-﻿using Cairo;
+﻿using System.Collections.Generic;
+using Cairo;
 
 namespace IMGUI
 {
@@ -129,6 +130,8 @@ namespace IMGUI
         public Color FillColor { get; set; }
         #endregion
 
+        public Dictionary<string, object> ExtraStyles;
+
         /// <summary>
         /// Set defalut style for all kinds of box model
         /// </summary>
@@ -173,6 +176,8 @@ namespace IMGUI
             LineColor = CairoEx.ColorBlack;
             LineWidth = 1;
             FillColor = new Color(1,1,1);
+
+            ExtraStyles = new Dictionary<string, object>();
         }
 
 

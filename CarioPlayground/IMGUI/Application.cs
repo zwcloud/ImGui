@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using TinyIoC;
 
 namespace IMGUI
@@ -25,10 +26,12 @@ namespace IMGUI
             set { imeBuffer = value; }
         }
 
+        internal static Form MainForm { get; private set; }
+
         public static void Run(Form form)
         {
             InitIocContainer();
-
+            MainForm = form;
             System.Windows.Forms.Application.Run(form);
         }
 

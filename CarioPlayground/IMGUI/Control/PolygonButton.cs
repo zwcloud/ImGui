@@ -44,7 +44,7 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             Points = points;
             Text = text;
@@ -107,14 +107,14 @@ namespace IMGUI
 
         internal static bool DoControl(Context g, Point[] points, string text, string name)
         {
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 var polygonButton = new PolygonButton(name, points, text);
                 polygonButton.OnUpdate();
                 polygonButton.OnRender(g);
             }
 
-            var control = Controls[name] as PolygonButton;
+            var control = Application.MainForm.Controls[name] as PolygonButton;
             Debug.Assert(control != null);
 
             return control.Result;

@@ -32,7 +32,7 @@ namespace IMGUI
         {
             Name = name;
             State = "Normal";
-            Controls[Name] = this;
+            Application.MainForm.Controls[Name] = this;
 
             Rect = rect;
             Text = text;
@@ -61,13 +61,13 @@ namespace IMGUI
 
         internal static string DoControl(Context g, Rect rect, string text, string name)
         {
-            if(!Controls.ContainsKey(name))
+            if (!Application.MainForm.Controls.ContainsKey(name))
             {
                 var textBox = new TextBox(name, text, rect);
                 textBox.OnUpdate();
                 textBox.OnRender(g);
             }
-            var control = Controls[name] as TextBox;
+            var control = Application.MainForm.Controls[name] as TextBox;
             Debug.Assert(control != null);
 
             return control.Text;
