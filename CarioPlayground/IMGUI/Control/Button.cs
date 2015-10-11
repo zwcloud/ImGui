@@ -64,12 +64,13 @@ namespace IMGUI
             Format.Dispose();
         }
 
-        internal Button(string name, string text, int width, int height)
+        internal Button(string name, string text, Rect rect)
         {
             Name = name;
             State = "Normal";
             Controls[Name] = this;
 
+            Rect = rect;
             Text = text;
 
             var font = Skin.current.Button[State].Font;
@@ -89,8 +90,8 @@ namespace IMGUI
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", width},
-                        {"maxHeight", height}
+                        {"maxWidth", (int)Rect.Width},
+                        {"maxHeight", (int)Rect.Height}
                     });
 
         }
@@ -101,8 +102,7 @@ namespace IMGUI
             //The control hasn't been created, create it.
             if(!Controls.ContainsKey(name))
             {
-                var button = new Button(name, text, (int)rect.Width, (int)rect.Height);
-                button.Rect = rect;
+                var button = new Button(name, text, rect);
                 button.OnUpdate();
                 button.OnRender(g);
             }

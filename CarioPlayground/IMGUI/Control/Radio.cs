@@ -78,12 +78,13 @@ namespace IMGUI
         }
 
 
-        public Radio(string name, string text, int width, int height, string groupName)
+        public Radio(string name, string text, Rect rect, string groupName)
         {
             Name = name;
             State = "Normal";
             Controls[Name] = this;
 
+            Rect = rect;
             Text = text;
 
             GroupName = groupName;
@@ -104,8 +105,8 @@ namespace IMGUI
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", width},
-                        {"maxHeight", height}
+                        {"maxWidth", (int)Rect.Width},
+                        {"maxHeight", (int)Rect.Height}
                     });
         }
 
@@ -113,8 +114,7 @@ namespace IMGUI
         {
             if(!Controls.ContainsKey(name))
             {
-                var radio = new Radio(name, text, (int)rect.Width, (int)rect.Height, groupName);
-                radio.Rect = rect;
+                var radio = new Radio(name, text, rect, groupName);
                 radio.OnUpdate();
                 radio.OnRender(g);
             }

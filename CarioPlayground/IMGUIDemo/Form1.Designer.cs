@@ -36,15 +36,19 @@ namespace IMGUIDemo
         protected override void OnGUI(GUI gui)
         {
             int i = 0;
+
+            gui.Label(new Rect(0, 0, ClientSize.Width, 40), "IMGUI Demo project", "CaptionLabel");
+
+            int firstY = 80;
 #if ShowButton
             i = 0; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
-            if (gui.Button(new Rect(20, 20 + i * 20, 100, 20), "button " + i + "!", "Button" + i))
+            if (gui.Button(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
             {
                 Debug.WriteLine("button {0} clicked!", i);
             }
 
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
-            if (gui.Button(new Rect(20, 20 + i * 20, 100, 20), "button " + i + "!", "Button" + i))
+            if (gui.Button(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
             {
                 Debug.WriteLine("button {0} clicked!", i);
             }
@@ -53,7 +57,7 @@ namespace IMGUIDemo
 #if ShowToggle
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfTaggle = _opened;
-            _opened = gui.Toggle(new Rect(20, 20 + i * 20, 100, 20), "Opened?", _opened, "Toggle0");
+            _opened = gui.Toggle(new Rect(20, firstY + i * 20, 100, 20), "Opened?", _opened, "Toggle0");
             if(_opened ^ oldValueOfTaggle)
                 Debug.WriteLine("Toggle 0 {0}", _opened ? "on!" : "off!", null);
 #endif
@@ -61,25 +65,25 @@ namespace IMGUIDemo
 #if ShowRadio
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfradio0 = radio0Selected;
-            radio0Selected = gui.Radio(new Rect(20, 20 + i * 20, 100, 20), "RadioItem0", "G0", radio0Selected, "Radio0");
+            radio0Selected = gui.Radio(new Rect(20, firstY + i * 20, 100, 20), "RadioItem0", "G0", radio0Selected, "Radio0");
             if(radio0Selected && radio0Selected != oldValueOfradio0)
                 Debug.WriteLine("Radio0 selected");
 
-            ++i; Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfradio1 = radio1Selected;
-            radio1Selected = gui.Radio(new Rect(20, 20 + i * 20, 100, 20), "RadioItem1", "G0", radio1Selected, "Radio1");
+            radio1Selected = gui.Radio(new Rect(20, firstY + i * 20, 100, 20), "RadioItem1", "G0", radio1Selected, "Radio1");
             if(radio1Selected && radio1Selected != oldValueOfradio1)
                 Debug.WriteLine("Radio1 selected");
 
-            ++i; Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfradio2 = radio2Selected;
-            radio2Selected = gui.Radio(new Rect(20, 20 + i * 20, 100, 20), "RadioItem2", "G0", radio2Selected, "Radio2");
+            radio2Selected = gui.Radio(new Rect(20, firstY + i * 20, 100, 20), "RadioItem2", "G0", radio2Selected, "Radio2");
             if(radio2Selected && radio2Selected != oldValueOfradio2)
                 Debug.WriteLine("Radio2 selected");
 #endif
 
 #if ShowImage
-            gui.Image(new Rect(130, 20, 240, 200), myImage, "MyImage");
+            gui.Image(new Rect(130, firstY, 240, 200), myImage, "MyImage");
 #endif
 
 

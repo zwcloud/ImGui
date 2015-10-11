@@ -28,19 +28,22 @@ namespace IMGUI
         public Rect Rect { get; private set; }
         public bool Result { get; private set; }
 
-        internal Toggle(string name, string displayText, int width, int height)
+        internal Toggle(string name, string displayText, Rect rect)
         {
             //Check paramter
-            if(width < height)
+            if (rect.Width < rect.Height)
             {
                 throw new ArgumentException(
-                    string.Format("Width of the toggle must bigger than height. The current width is {0} and height is {1}", width, height));
+                    string.Format(
+                        "Width of the toggle must bigger than height. The current width is {0} and height is {1}",
+                        rect.Width, rect.Height));
             }
 
             Name = name;
             State = "Normal";
             Controls[Name] = this;
 
+            Rect = rect;
             Text = displayText;
 
             var font = Skin.current.Button[State].Font;
@@ -60,8 +63,8 @@ namespace IMGUI
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", width},
-                        {"maxHeight", height}
+                        {"maxWidth", (int)Rect.Width},
+                        {"maxHeight", (int)Rect.Height}
                     });
         }
 
@@ -69,9 +72,8 @@ namespace IMGUI
         {
             if(!Controls.ContainsKey(name))
             {
-                var toggle = new Toggle(name, displayText, (int)rect.Width, (int)rect.Height);
+                var toggle = new Toggle(name, displayText, rect);
                 Debug.Assert(toggle != null);
-                toggle.Rect = rect;
                 toggle.OnUpdate();
                 toggle.OnRender(g);
             }

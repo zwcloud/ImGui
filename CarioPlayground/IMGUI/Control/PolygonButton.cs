@@ -110,8 +110,6 @@ namespace IMGUI
             if(!Controls.ContainsKey(name))
             {
                 var polygonButton = new PolygonButton(name, points, text);
-                polygonButton.Points = points;
-                polygonButton.Text = text;
                 polygonButton.OnUpdate();
                 polygonButton.OnRender(g);
             }

@@ -28,12 +28,13 @@ namespace IMGUI
             get { return System.Text.Encoding.UTF8.GetBytes(Text); }
         }
 
-        public TextBox(string name, string text, int width, int height)
+        public TextBox(string name, string text, Rect rect)
         {
             Name = name;
             State = "Normal";
             Controls[Name] = this;
 
+            Rect = rect;
             Text = text;
 
             var font = Skin.current.TextBox[State].Font;
@@ -53,8 +54,8 @@ namespace IMGUI
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", width},
-                        {"maxHeight", height}
+                        {"maxWidth", (int)Rect.Width},
+                        {"maxHeight", (int)Rect.Height}
                     });
         }
 
@@ -62,8 +63,7 @@ namespace IMGUI
         {
             if(!Controls.ContainsKey(name))
             {
-                var textBox = new TextBox(name, text, (int)rect.Width, (int)rect.Height);
-                textBox.Rect = rect;
+                var textBox = new TextBox(name, text, rect);
                 textBox.OnUpdate();
                 textBox.OnRender(g);
             }

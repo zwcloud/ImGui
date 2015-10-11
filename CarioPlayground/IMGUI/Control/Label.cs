@@ -61,12 +61,13 @@ namespace IMGUI
             Format.Dispose();
         }
 
-        internal Label(string name, string text, int width, int height)
+        internal Label(string name, string text, Rect rect)
         {
             Name = name;
             State = "Normal";
             Controls[Name] = this;
 
+            Rect = rect;
             Text = text;
 
             var font = Skin.current.Label[State].Font;
@@ -86,8 +87,8 @@ namespace IMGUI
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", width},
-                        {"maxHeight", height}
+                        {"maxWidth", (int)rect.Width},
+                        {"maxHeight", (int)rect.Height}
                     });
 
         }
@@ -97,9 +98,7 @@ namespace IMGUI
         {
             if(!Controls.ContainsKey(name))
             {
-                var label = new Label(name, text, (int)rect.Width, (int)rect.Height);
-                label.Rect = rect;
-                label.Text = text;
+                var label = new Label(name, text, rect);
                 label.OnUpdate();
                 label.OnRender(g);
             }
