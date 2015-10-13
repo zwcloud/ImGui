@@ -68,6 +68,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="sfmlnet-system-2">
+      <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
+    </Reference>
+    <Reference Include="sfmlnet-window-2">
+      <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
+    </Reference>
     <Reference Include="Svg">
       <HintPath>..\packages\Svg.2.0.0\lib\Svg.dll</HintPath>
     </Reference>
@@ -82,6 +88,7 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="BackgroundStyle.cs" />
+    <Compile Include="BasicForm.cs" />
     <Compile Include="CarioExtension.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Control\Button.cs" />
@@ -96,9 +103,7 @@
     </Compile>
     <Compile Include="Control\Toggle.cs" />
     <Compile Include="Control\PolygonButton.cs" />
-    <Compile Include="Control\ToolTips\ToolTip.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Control\ToolTips\ToolTip.cs" />
     <Compile Include="Detalied\Point.cs" />
     <Compile Include="Detalied\Rect.cs" />
     <Compile Include="Detalied\Size.cs" />
@@ -106,13 +111,13 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Font.cs" />
-    <Compile Include="Form.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
+    <Compile Include="IForm.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="IWindow.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="Port\ITextFormat.cs" />
@@ -128,6 +133,7 @@
     <Compile Include="Rect.cs" />
     <Compile Include="RenderObject.Build.cs" />
     <Compile Include="RenderObject.cs" />
+    <Compile Include="SFMLForm.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Skin.cs" />
     <Compile Include="Style.Build.cs" />
@@ -160,7 +166,6 @@
       <Name>Win32</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y "W:\VS2013\CarioPlayground\IMGUI\bin\Debug" "W:\HelloWorld\HelloWorld\HelloWorld.PcHost\bin\Debug"</PostBuildEvent>

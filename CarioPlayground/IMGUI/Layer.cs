@@ -3,15 +3,12 @@ using Cairo;
 
 namespace IMGUI
 {
-    internal static class Layer
+    internal class Layer
     {
-        internal static Context FrontContext { get; set; }
-        internal static Surface FrontSurface { get; set; }
+        internal Context FrontContext { get; set; }
+        internal Surface FrontSurface { get; set; }
 
-        internal static Context BackContext { get; set; }
-        internal static Surface BackSurface { get; set; }
-
-        internal static Context TopContext { get; set; }
-        internal static Surface TopSurface { get; set; }
+        internal Context BackContext { get; set; }
+        internal Surface BackSurface { get; set; }
     }
 }

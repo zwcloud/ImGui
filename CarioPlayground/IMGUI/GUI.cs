@@ -11,11 +11,9 @@ namespace IMGUI
     public class GUI
     {
         private Context g;
-        private Context gTop;
-        public GUI(Context context, Context contextTop)
+        public GUI(Context context)
         {
             g = context;
-            gTop = contextTop;
         }
 
         public bool Button(Rect rect, string text, string name)
@@ -35,7 +33,8 @@ namespace IMGUI
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
         {
-            return ComboBox.DoControl(g, gTop, rect, text, selectedIndex, name);
+            return ComboBox.DoControl(g, null /*FIXME ComboBox subitems should be shown in a new form*/, rect, text,
+                selectedIndex, name);
         }
 
         public void Image(Rect rect, Texture image, string name)

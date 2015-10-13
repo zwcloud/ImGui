@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Cairo;
+using SFML.Window;
 using TinyIoC;
 
 namespace IMGUI

@@ -2,9 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Cairo;
@@ -13,87 +11,28 @@ using Color = Cairo.Color;
 
 
 //TODO make project independent of Winform(or only use Winform for creating window)
+
 namespace IMGUI
 {
-    [DesignerCategory("")]
+    [System.ComponentModel.DesignerCategory("")]
     public abstract class Form : System.Windows.Forms.Form
     {
-        internal new Dictionary<string, Control> Controls { get; set; }
-
-        #region GUI compontents
-        public GUI GUI { get; set; }
-
         private readonly Color windowBackgroundColor = CairoEx.ColorWhite;
-        #endregion
-
-        #region GUI paramters
-#if DEBUG
-        long lastFpSlog;
-        int frames;
-        int fps;
-#endif
         private Cursor cursor = Cursor.Default;
-        #endregion
+        private bool exit;
+        internal Layer Layer;
 
         protected Form()
         {
-            #region Form members
-            AutoScaleDimensions = new SizeF(6F, 12F);
-            AutoScaleMode = AutoScaleMode.Font;
-            
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            Name = "MainForm";
-            StartPosition = FormStartPosition.CenterScreen;
-            this.Shown += new EventHandler(this.Form_Shown);
-            ResumeLayout(false);
-            #endregion
-
+            Layer = new Layer();
             Controls = new Dictionary<string, Control>(8);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            StartPosition = FormStartPosition.CenterScreen;
+            this.Shown += this.Form_Shown;
         }
 
-        bool exit = false;
-
-        private void Form_Shown(object ob, EventArgs ea)
-        {
-            //build all surface
-            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Rgb24);
-            Layer.BackContext = new Context(Layer.BackSurface);
-            Layer.TopSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Argb32);
-            Layer.TopContext = new Context(Layer.TopSurface);
-
-            //Now, the hdc of form window can be acquired
-            var hdc = Native.GetDC(Handle);
-            Layer.FrontSurface = new Win32Surface(hdc);
-            Layer.FrontContext = new Context(Layer.FrontSurface);
-
-            //create GUI
-            GUI = new GUI(Layer.BackContext, Layer.TopContext);
-
-            //Set up the game loop
-            System.Windows.Forms.Application.Idle += (sender, e) =>
-            {
-                if (exit)
-                {
-                    CleanUp();
-                    Close();
-                }
-                else
-                {
-                    while (Utility.IsApplicationIdle() && exit == false)
-                    {
-                        Utility.MillisFrameBegin = Utility.Millis;
-                        Thread.Sleep(20);//Keep about 50fps
-                        exit = Update();
-                        Render();
-#if DEBUG
-                        //Show FPS and mouse position on the title
-                        Text = String.Format("FPS: {0} Mouse ({1},{2})", fps, Mouse.MousePos.X,
-                            Mouse.MousePos.Y);
-#endif
-                    }
-                }
-            };
-        }
+        internal new Dictionary<string, Control> Controls { get; private set; }
+        public GUI GUI { get; set; }
 
         protected override bool CanEnableIme
         {
@@ -108,10 +47,7 @@ namespace IMGUI
 
         public new Cursor Cursor
         {
-            get
-            {
-                return cursor;
-            }
+            get { return cursor; }
             set
             {
                 CursorChanged = true;
@@ -120,6 +56,53 @@ namespace IMGUI
         }
 
         public new bool CursorChanged { get; set; }
+
+        private void Form_Shown(object ob, EventArgs ea)
+        {
+            //build all surface
+            Layer.BackSurface = BuildSurface(ClientSize.Width, ClientSize.Height, CairoEx.ColorWhite, Format.Rgb24);
+            Layer.BackContext = new Context(Layer.BackSurface);
+
+            //Now, the hdc of form window can be acquired
+            var hdc = Native.GetDC(Handle);
+            Layer.FrontSurface = new Win32Surface(hdc);
+            Layer.FrontContext = new Context(Layer.FrontSurface);
+
+            //create GUI
+            GUI = new GUI(Layer.BackContext);
+
+            //Set up the game loop
+            System.Windows.Forms.Application.Idle += (sender, e) =>
+            {
+                if(exit)
+                {
+                    CleanUp();
+                    Close();
+                }
+                else
+                {
+                    while (Utility.IsApplicationIdle() && exit == false)
+                    {
+                        Utility.MillisFrameBegin = Utility.Millis;
+                        Thread.Sleep(20); //Keep about 50fps
+                        exit = Update();
+                        Render();
+#if DEBUG
+                        //Show FPS and mouse position on the title
+                        Text = String.Format("FPS: {0} Mouse ({1},{2})", fps, Mouse.MousePos.X,
+                            Mouse.MousePos.Y);
+#endif
+                    }
+                }
+            };
+        }
+
+        protected abstract void OnGUI(GUI gui);
+#if DEBUG
+        private long lastFpSlog;
+        private int frames;
+        private int fps;
+#endif
 
         #region helper for Cario
 
@@ -131,9 +114,9 @@ namespace IMGUI
         /// <param name="Color">color</param>
         /// <param name="format">surface format</param>
         /// <returns>the created ImageSurface</returns>
-        static ImageSurface BuildSurface(int Width, int Height, Color Color, Format format)
+        private static ImageSurface BuildSurface(int Width, int Height, Color Color, Format format)
         {
-            ImageSurface surface = new ImageSurface(format, Width, Height);
+            var surface = new ImageSurface(format, Width, Height);
             var c = new Context(surface);
             c.Rectangle(0, 0, Width, Height);
             c.SetSourceColor(Color);
@@ -141,6 +124,8 @@ namespace IMGUI
             c.Dispose();
             return surface;
         }
+
+        #endregion
 
         /// <summary>
         /// Paint all backend surfaces to the win32 window surface
@@ -152,17 +137,16 @@ namespace IMGUI
             Layer.FrontContext.SetSourceSurface(Layer.BackSurface, 0, 0);
             Layer.FrontContext.Paint();
         }
-        #endregion
 
-        #region application architecture
+        #region Window loop
 
         protected override void WndProc(ref Message m)
         {
-            var msg = (WM)m.Msg;
+            var msg = (WM) m.Msg;
             switch (msg)
             {
                 case WM.CHAR:
-                    char c = (char)m.WParam;
+                    var c = (char) m.WParam;
                     if(Char.IsControl(c))
                         break;
                     Application.ImeBuffer.Enqueue(c);
@@ -171,7 +155,7 @@ namespace IMGUI
             base.WndProc(ref m);
         }
 
-        new bool Update()
+        private new bool Update()
         {
             if(!Focused)
             {
@@ -213,15 +197,15 @@ namespace IMGUI
             return false;
         }
 
-        void Render()
+        private void Render()
         {
-            if(Layer.BackContext == null || Layer.FrontContext == null || Layer.TopContext == null)
+            if(Layer.BackContext == null || Layer.FrontContext == null)
                 return;
             OnGUI(GUI);
 
             foreach (var control in Controls.Values)
             {
-                if (control.NeedRepaint)
+                if(control.NeedRepaint)
                 {
                     control.OnRender(Layer.BackContext);
                     control.NeedRepaint = false;
@@ -231,10 +215,10 @@ namespace IMGUI
             SwapSurfaceBuffer();
         }
 
-        void DebugUpdate()
+        private void DebugUpdate()
         {
             ++frames;
-            long time = Utility.Millis;
+            var time = Utility.Millis;
             if(time > lastFpSlog + 1000)
             {
                 fps = frames;
@@ -243,7 +227,7 @@ namespace IMGUI
             }
         }
 
-        private void CleanUp()//Cleanup only happened when ESC is pressed
+        private void CleanUp() //Cleanup only happened when ESC is pressed
         {
             foreach (var control in Controls.Values)
             {
@@ -252,12 +236,8 @@ namespace IMGUI
 
             if(Layer.BackContext != null)
                 Layer.BackContext.Dispose();
-            if (Layer.TopContext != null)
-                Layer.TopContext.Dispose();
         }
 
         #endregion
-
-        protected abstract void OnGUI(GUI gui);
     }
 }
