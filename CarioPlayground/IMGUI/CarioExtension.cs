@@ -338,6 +338,24 @@ namespace IMGUI
         {
         }
 
+        /// <summary>
+        /// Build a ImageSurface
+        /// </summary>
+        /// <param name="Width">width</param>
+        /// <param name="Height">height</param>
+        /// <param name="Color">color</param>
+        /// <param name="format">surface format</param>
+        /// <returns>the created ImageSurface</returns>
+        public static ImageSurface BuildSurface(int Width, int Height, Color Color, Format format)
+        {
+            var surface = new ImageSurface(format, Width, Height);
+            var c = new Context(surface);
+            c.Rectangle(0, 0, Width, Height);
+            c.SetSourceColor(Color);
+            c.Fill();
+            c.Dispose();
+            return surface;
+        }
     }
 
 }

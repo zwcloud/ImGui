@@ -2,6 +2,8 @@
 {
     public interface IWindow
     {
+
+
         #region position and size
         /// <summary>
         /// Position

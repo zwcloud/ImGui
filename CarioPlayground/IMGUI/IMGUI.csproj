@@ -122,7 +122,7 @@
     <Compile Include="MouseButton.cs" />
     <Compile Include="Port\ITextFormat.cs" />
     <Compile Include="Port\ITextLayout.cs" />
-    <Compile Include="Layer.cs" />
+    <Compile Include="RenderContext.cs" />
     <Compile Include="Length.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Point.cs" />
