@@ -10,27 +10,23 @@ namespace IMGUI
     {
         internal int Value { get; set; }
 
-        internal Slider(string name)
+        internal Slider(string name, BasicForm form) : base(name, form)
         {
-            Name = name;
-            State = "Normal";
-
-            Application.MainForm.Controls[Name] = this;
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static int DoControl(Context g, Rect rect, int value, int leftValue, int rightValue, string name)
+        internal static int DoControl(Context g, BasicForm form, Rect rect, int value, int leftValue, int rightValue, string name)
         {
             #region Get control reference
             Slider slider;
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                slider = new Slider(name);
+                slider = new Slider(name, form);
                 slider.Value = value;
             }
             else
             {
-                slider = Application.MainForm.Controls[name] as Slider;
+                slider = form.Controls[name] as Slider;
             }
 
             Debug.Assert(slider != null);

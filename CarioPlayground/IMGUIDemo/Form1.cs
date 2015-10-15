@@ -4,12 +4,12 @@ using Form = IMGUI.Form;
 
 namespace IMGUIDemo
 {
-    public partial class Form1 : Form
+    public partial class Form1 : BasicForm
     {
         public Form1()
         {
-            ClientSize = new System.Drawing.Size(800, 600);
-            StartPosition = FormStartPosition.CenterScreen;
+            Size = new Size(800, 600);
+            Position = new Point(400, 300);
         }
     }
 

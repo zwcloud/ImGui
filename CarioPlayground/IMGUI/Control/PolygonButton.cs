@@ -40,12 +40,8 @@ namespace IMGUI
 
         public bool Result { get; private set; }
 
-        internal PolygonButton(string name, Point[] points, string text)
+        internal PolygonButton(string name, BasicForm form, Point[] points, string text) : base(name, form)
         {
-            Name = name;
-            State = "Normal";
-            Application.MainForm.Controls[Name] = this;
-
             Points = points;
             Text = text;
 
@@ -105,16 +101,16 @@ namespace IMGUI
             return inside;
         }
 
-        internal static bool DoControl(Context g, Point[] points, string text, string name)
+        internal static bool DoControl(Context g, BasicForm form, Point[] points, string text, string name)
         {
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                var polygonButton = new PolygonButton(name, points, text);
+                var polygonButton = new PolygonButton(name, form, points, text);
                 polygonButton.OnUpdate();
                 polygonButton.OnRender(g);
             }
 
-            var control = Application.MainForm.Controls[name] as PolygonButton;
+            var control = form.Controls[name] as PolygonButton;
             Debug.Assert(control != null);
 
             return control.Result;

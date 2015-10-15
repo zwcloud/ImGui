@@ -28,12 +28,8 @@ namespace IMGUI
             get { return System.Text.Encoding.UTF8.GetBytes(Text); }
         }
 
-        public TextBox(string name, string text, Rect rect)
+        public TextBox(string name, BasicForm form, string text, Rect rect) : base(name, form)
         {
-            Name = name;
-            State = "Normal";
-            Application.MainForm.Controls[Name] = this;
-
             Rect = rect;
             Text = text;
 
@@ -59,15 +55,15 @@ namespace IMGUI
                     });
         }
 
-        internal static string DoControl(Context g, Rect rect, string text, string name)
+        internal static string DoControl(Context g, BasicForm form, Rect rect, string text, string name)
         {
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                var textBox = new TextBox(name, text, rect);
+                var textBox = new TextBox(name, form, text, rect);
                 textBox.OnUpdate();
                 textBox.OnRender(g);
             }
-            var control = Application.MainForm.Controls[name] as TextBox;
+            var control = form.Controls[name] as TextBox;
             Debug.Assert(control != null);
 
             return control.Text;
@@ -83,15 +79,11 @@ namespace IMGUI
                 NeedRepaint = true;
                 if(insideRect)
                 {
-                    var activeForm = (Form) System.Windows.Forms.Form.ActiveForm;
-                    if(activeForm != null)
-                        activeForm.Cursor = Cursor.Text;
+                    this.Form.Cursor = Cursor.Text;
                 }
                 else
                 {
-                    var activeForm = (Form) System.Windows.Forms.Form.ActiveForm;
-                    if(activeForm != null)
-                        activeForm.Cursor = Cursor.Default;
+                    this.Form.Cursor = Cursor.Default;
                 }
 
                 //Mouse left button clicked inside

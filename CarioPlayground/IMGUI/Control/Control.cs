@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Cairo;
 
 namespace IMGUI
@@ -15,19 +13,21 @@ namespace IMGUI
     /// </remarks>
     abstract class Control : IDisposable
     {
-        private string _name;
+        private string name;
         public string Name
         {
-            get { return _name; }
+            get { return name; }
             set
             {
-                if (Application.MainForm.Controls.Keys.Contains(value))
+                if (Form.Controls.Keys.Contains(value))
                     throw new ArgumentException("Specified Control name is already used.");
-                _name = value;
+                name = value;
             }
         }
 
         public string State { get; set; }
+
+        internal BasicForm Form { get; set; }
 
         /// <summary>
         /// Does this control need repaint?
@@ -40,18 +40,14 @@ namespace IMGUI
 
         public abstract void OnRender(Context g);
 
-        protected Control()
+        protected Control(string name, BasicForm form)
         {
-            Name = String.Empty;
-            Params = new Dictionary<string, object>();
-            State = "Normal";
-        }
-
-        protected Control(string name)
-        {
+            Form = form;
             Name = name;
             Params = new Dictionary<string, object>();
             State = "Normal";
+
+            Form.Controls[Name] = this;
         }
 
         #region Implementation of IDisposable

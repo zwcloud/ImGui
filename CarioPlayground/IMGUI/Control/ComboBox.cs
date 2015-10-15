@@ -20,12 +20,8 @@ namespace IMGUI
 
         private int ActiveIndex { get; set; }
 
-        internal ComboBox(string name, string[] texts, int width, int height)
+        internal ComboBox(string name, BasicForm form, string[] texts, int width, int height) : base(name, form)
         {
-            Name = name;
-            State = "Normal";
-            Application.MainForm.Controls[Name] = this;
-
             var font = Skin.current.Button[State].Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
@@ -51,18 +47,18 @@ namespace IMGUI
             }
         }
 
-        internal static int DoControl(Context g, Context gTop, Rect rect, string[] texts, int selectedIndex, string name)
+        internal static int DoControl(Context g, Context gTop, BasicForm form, Rect rect, string[] texts, int selectedIndex, string name)
         {
             #region Get control reference
             ComboBox comboBox;
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                comboBox = new ComboBox(name, texts, (int)rect.Width, (int)rect.Height);
+                comboBox = new ComboBox(name, form, texts, (int)rect.Width, (int)rect.Height);
                 Debug.Assert(comboBox != null);
             }
             else
             {
-                comboBox = Application.MainForm.Controls[name] as ComboBox;
+                comboBox = form.Controls[name] as ComboBox;
                 Debug.Assert(comboBox != null);
 
                 #region Set control data

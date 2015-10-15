@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using TinyIoC;
 
 namespace IMGUI
 {
-    public delegate void OnGUIDelegate(GUI gui);
-
     /// <summary>
-    /// A single window IMGUI application
+    /// Unique appliction class
     /// </summary>
-    public sealed class Application
+    /// <remarks>
+    /// Manage application-wide objects:
+    /// 1. IME(Internal)
+    /// 2. Input
+    /// 3. Ioc container(Internal)
+    /// 4. Windows(internal)
+    /// </remarks>
+    public static class Application
     {
         /// <summary>
         /// The character buffer for input from IME
         /// </summary>
         internal static Queue<char> imeBuffer = new Queue<char>();
+
+        internal static readonly TinyIoCContainer IocContainer = TinyIoCContainer.Current;
 
         /// <summary>
         /// The character buffer for input from IME
@@ -26,16 +32,7 @@ namespace IMGUI
             set { imeBuffer = value; }
         }
 
-        internal static Form MainForm { get; private set; }
-
-        public static void Run(Form form)
-        {
-            InitIocContainer();
-            MainForm = form;
-            System.Windows.Forms.Application.Run(form);
-        }
-
-        internal static TinyIoCContainer IocContainer = TinyIoCContainer.Current;
+        internal static Tree<BasicForm> Forms;
 
         private static void InitIocContainer()
         {
@@ -56,6 +53,17 @@ namespace IMGUI
                 //IocContainer.Register<PangoTextLayoutProxy>();
                 //IocContainer.Register<ITextLayout, PangoTextLayoutProxy>();
             }
+        }
+        
+        public static void Run(BasicForm form)
+        {
+            if(form == null)
+            {
+                throw new ArgumentNullException("form");
+            }
+
+            InitIocContainer();
+            System.Windows.Forms.Application.Run(form.InternalForm);
         }
     }
 }

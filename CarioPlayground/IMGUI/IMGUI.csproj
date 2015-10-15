@@ -79,6 +79,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
@@ -86,7 +87,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
     <Compile Include="BackgroundStyle.cs" />
     <Compile Include="BasicForm.cs" />
     <Compile Include="CarioExtension.cs" />
@@ -111,13 +111,10 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Font.cs" />
-    <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
-    <Compile Include="IForm.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
-    <Compile Include="IWindow.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="Port\ITextFormat.cs" />
@@ -133,7 +130,6 @@
     <Compile Include="Rect.cs" />
     <Compile Include="RenderObject.Build.cs" />
     <Compile Include="RenderObject.cs" />
-    <Compile Include="SFMLForm.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Skin.cs" />
     <Compile Include="Style.Build.cs" />
@@ -145,9 +141,12 @@
     <Compile Include="TinyIoC.cs" />
     <Compile Include="TODO.cs" />
     <Compile Include="Transform.cs" />
+    <Compile Include="Tree.cs" />
+    <Compile Include="TreeNode.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="WindowsMessage.cs" />
+    <Compile Include="Application.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

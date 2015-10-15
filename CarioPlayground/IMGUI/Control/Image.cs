@@ -10,21 +10,16 @@ namespace IMGUI
 
         public Rect Rect { get; private set; }
 
-        public Image(string name, Texture texture)
+        public Image(string name, BasicForm form, Texture texture) : base(name, form)
         {
-            Name = name;
-            State = "Normal";
-            Application.MainForm.Controls[Name] = this;
-
             Texture = texture;
         }
 
-        static internal void DoControl(Context g, Rect rect, Texture texture, string name)
+        static internal void DoControl(Context g, BasicForm form, Rect rect, Texture texture, string name)
         {
-            //The control hasn't been created, create it.
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                var image = new Image(name, texture);
+                var image = new Image(name, form, texture);
                 image.Rect = rect;
                 image.OnUpdate();
                 image.OnRender(g);

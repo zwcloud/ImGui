@@ -2,12 +2,8 @@
 
 namespace IMGUIDemo_TextBox
 {
-    public partial class Form1 : Form
+    public partial class Form1 : BasicForm
     {
-        public Form1()
-        {
-            Text = @"Demo_TextBox";
-        }
     }
 
 

@@ -75,12 +75,8 @@ namespace IMGUI
             Format.Dispose();
         }
 
-        internal Button(string name, string text, Rect rect)
+        internal Button(string name, BasicForm form, string text, Rect rect) :base(name, form)
         {
-            Name = name;
-            State = "Normal";
-            Application.MainForm.Controls[Name] = this;
-
             Rect = rect;
             Text = text;
 
@@ -108,17 +104,17 @@ namespace IMGUI
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static bool DoControl(Context g, Rect rect, string text, string name)
+        internal static bool DoControl(Context g, BasicForm form, Rect rect, string text, string name)
         {
             //The control hasn't been created, create it.
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                var button = new Button(name, text, rect);
+                var button = new Button(name, form, text, rect);
                 button.OnUpdate();
                 button.OnRender(g);
             }
 
-            var control = Application.MainForm.Controls[name] as Button;
+            var control = form.Controls[name] as Button;
             Debug.Assert(control != null);
 
             //Check if the control need to be relayout

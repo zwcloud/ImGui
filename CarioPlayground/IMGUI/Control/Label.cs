@@ -61,12 +61,8 @@ namespace IMGUI
             Format.Dispose();
         }
 
-        internal Label(string name, string text, Rect rect)
+        internal Label(string name, BasicForm form, string text, Rect rect) : base(name, form)
         {
-            Name = name;
-            State = "Normal";
-            Application.MainForm.Controls[Name] = this;
-
             Rect = rect;
             Text = text;
 
@@ -90,20 +86,19 @@ namespace IMGUI
                         {"maxWidth", (int)rect.Width},
                         {"maxHeight", (int)rect.Height}
                     });
-
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static void DoControl(Context g, Rect rect, string text, string name)
+        internal static void DoControl(Context g, BasicForm form, Rect rect, string text, string name)
         {
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                var label = new Label(name, text, rect);
+                var label = new Label(name, form, text, rect);
                 label.OnUpdate();
                 label.OnRender(g);
             }
 
-            var control = Application.MainForm.Controls[name] as Label;
+            var control = form.Controls[name] as Label;
             Debug.Assert(control != null);
 
             //The control need to be relayout

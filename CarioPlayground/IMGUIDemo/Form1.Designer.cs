@@ -37,7 +37,7 @@ namespace IMGUIDemo
         {
             int i = 0;
 
-            gui.Label(new Rect(0, 0, ClientSize.Width, 40), "IMGUI Demo project", "CaptionLabel");
+            gui.Label(new Rect(0, 0, this.Size.Width, 40), "IMGUI Demo project", "CaptionLabel");
 
             int firstY = 80;
 #if ShowButton

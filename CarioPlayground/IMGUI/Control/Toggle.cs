@@ -28,7 +28,7 @@ namespace IMGUI
         public Rect Rect { get; private set; }
         public bool Result { get; private set; }
 
-        internal Toggle(string name, string displayText, Rect rect)
+        internal Toggle(string name, BasicForm form, string displayText, Rect rect) : base(name, form)
         {
             //Check paramter
             if (rect.Width < rect.Height)
@@ -38,10 +38,6 @@ namespace IMGUI
                         "Width of the toggle must bigger than height. The current width is {0} and height is {1}",
                         rect.Width, rect.Height));
             }
-
-            Name = name;
-            State = "Normal";
-            Application.MainForm.Controls[Name] = this;
 
             Rect = rect;
             Text = displayText;
@@ -68,17 +64,17 @@ namespace IMGUI
                     });
         }
 
-        internal static bool DoControl(Context g, Rect rect, string displayText, bool value, string name)
+        internal static bool DoControl(Context g, BasicForm form, Rect rect, string displayText, bool value, string name)
         {
-            if (!Application.MainForm.Controls.ContainsKey(name))
+            if (!form.Controls.ContainsKey(name))
             {
-                var toggle = new Toggle(name, displayText, rect);
+                var toggle = new Toggle(name, form, displayText, rect);
                 Debug.Assert(toggle != null);
                 toggle.OnUpdate();
                 toggle.OnRender(g);
             }
 
-            var control = Application.MainForm.Controls[name] as Toggle;
+            var control = form.Controls[name] as Toggle;
             Debug.Assert(control != null);
 
             //The control need to be relayout
