@@ -88,7 +88,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundStyle.cs" />
-    <Compile Include="BasicForm.cs" />
+    <Compile Include="BaseForm.cs" />
+    <Compile Include="WinForm.cs" />
     <Compile Include="CarioExtension.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Control\Button.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Rect.cs" />
     <Compile Include="RenderObject.Build.cs" />
     <Compile Include="RenderObject.cs" />
+    <Compile Include="SFMLForm.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Skin.cs" />
     <Compile Include="Style.Build.cs" />

@@ -10,12 +10,12 @@ namespace IMGUI
     {
         internal int Value { get; set; }
 
-        internal Slider(string name, BasicForm form) : base(name, form)
+        internal Slider(string name, WinForm form) : base(name, form)
         {
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static int DoControl(Context g, BasicForm form, Rect rect, int value, int leftValue, int rightValue, string name)
+        internal static int DoControl(Context g, WinForm form, Rect rect, int value, int leftValue, int rightValue, string name)
         {
             #region Get control reference
             Slider slider;

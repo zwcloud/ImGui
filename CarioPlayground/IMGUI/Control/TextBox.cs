@@ -28,7 +28,8 @@ namespace IMGUI
             get { return System.Text.Encoding.UTF8.GetBytes(Text); }
         }
 
-        public TextBox(string name, BasicForm form, string text, Rect rect) : base(name, form)
+        public TextBox(string name, BaseForm form, string text, Rect rect)
+            : base(name, form)
         {
             Rect = rect;
             Text = text;
@@ -55,7 +56,7 @@ namespace IMGUI
                     });
         }
 
-        internal static string DoControl(Context g, BasicForm form, Rect rect, string text, string name)
+        internal static string DoControl(Context g, BaseForm form, Rect rect, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

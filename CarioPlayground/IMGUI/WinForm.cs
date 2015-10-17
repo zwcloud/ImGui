@@ -9,9 +9,9 @@ namespace IMGUI
     /// <summary>
     /// Basic form without any gui logic
     /// </summary>
-    public abstract class BasicForm
+    public abstract class WinForm : BaseForm
     {
-        public Point Position
+        public override Point Position
         {
             get
             {
@@ -21,7 +21,7 @@ namespace IMGUI
             set { InternalForm.Location = new System.Drawing.Point((int) value.X, (int) value.Y); }
         }
 
-        public Size Size
+        public override Size Size
         {
             get
             {
@@ -31,7 +31,7 @@ namespace IMGUI
             set { InternalForm.Size = new System.Drawing.Size((int) value.Width, (int) value.Height); }
         }
 
-        public Cursor Cursor
+        public override Cursor Cursor
         {
             set
             {
@@ -49,22 +49,31 @@ namespace IMGUI
             }
         }
 
-        public bool Visible { get { throw new NotImplementedException(); } }
-
-        public void Show()
+        public override void Open()
         {
             throw new NotImplementedException();
         }
 
-        public void Hide()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Close()
+        public override void Close()
         {
             this.InternalForm.Close();
         }
+
+        public override void Show()
+        {
+            foreach (var control in Controls.Values)
+            {
+                control.NeedRepaint = true;
+            }
+
+            this.InternalForm.Show();
+        }
+
+        public override void Hide()
+        {
+            this.InternalForm.Hide();
+        }
+
 
         /// <summary>
         /// Custom GUI Logic. This should be overrided to create custom GUI elements
@@ -91,7 +100,7 @@ namespace IMGUI
                         var c = (char)m.WParam;
                         if (Char.IsControl(c))
                             break;
-                        Application.ImeBuffer.Enqueue(c);//Should IME buffer be shared among forms
+                        Application.ImeBuffer.Enqueue(c);//Should IME buffer be shared among forms?
                         break;
                 }
                 base.WndProc(ref m);
@@ -100,19 +109,12 @@ namespace IMGUI
 
         private readonly ImeEnabledForm form;
 
-        private readonly Dictionary<string, Control> controls;
-
-        internal Dictionary<string, Control> Controls
-        {
-            get { return controls; }
-        }
-
-        protected BasicForm()
+        protected WinForm()
         {
             form = new ImeEnabledForm
             {
                 BackColor = System.Drawing.Color.White,
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable,
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.None,
                 StartPosition = System.Windows.Forms.FormStartPosition.Manual
             };
             
@@ -127,10 +129,9 @@ namespace IMGUI
                 System.Windows.Forms.Application.Idle += (o, eventArgs) =>
                 {
                     var exit = false;
-                    while (Utility.IsApplicationIdle() && exit == false)
+                    while (!form.IsDisposed && !Utility.IsMessagePending(form.Handle) && exit == false)
                     {
                         Utility.MillisFrameBegin = Utility.Millis;
-                        Thread.Sleep(20); //Keep about 50fps
                         OnBasicGUI(GUI);
                         exit = Update();
                         if (exit)

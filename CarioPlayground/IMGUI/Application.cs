@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TinyIoC;
 
 namespace IMGUI
 {
     /// <summary>
-    /// Unique appliction class
+    /// Unique application class
     /// </summary>
     /// <remarks>
     /// Manage application-wide objects:
@@ -13,6 +14,7 @@ namespace IMGUI
     /// 2. Input
     /// 3. Ioc container(Internal)
     /// 4. Windows(internal)
+    /// 5. Time
     /// </remarks>
     public static class Application
     {
@@ -32,7 +34,7 @@ namespace IMGUI
             set { imeBuffer = value; }
         }
 
-        internal static Tree<BasicForm> Forms;
+        internal static Tree<WinForm> Forms;
 
         private static void InitIocContainer()
         {
@@ -54,8 +56,26 @@ namespace IMGUI
                 //IocContainer.Register<ITextLayout, PangoTextLayoutProxy>();
             }
         }
-        
-        public static void Run(BasicForm form)
+
+        private static Stopwatch stopwatch = new Stopwatch();
+
+        /// <summary>
+        /// Time in ms since the application started.
+        /// </summary>
+        public static long Time
+        {
+            get
+            {
+                if(!stopwatch.IsRunning)
+                {
+                    throw new InvalidOperationException(
+                        "The application's time cannot be obtained because it isn't running. Call Application.Run to run it first.");
+                }
+                return stopwatch.ElapsedMilliseconds;
+            }
+        }
+
+        public static void Run(WinForm form)
         {
             if(form == null)
             {
@@ -63,7 +83,37 @@ namespace IMGUI
             }
 
             InitIocContainer();
+
+            ToolTip.Init();
+
+            stopwatch.Start();
             System.Windows.Forms.Application.Run(form.InternalForm);
+            stopwatch.Stop();
+        }
+
+        public static void Run(BaseForm baseform)
+        {
+            if (baseform == null)
+            {
+                throw new ArgumentNullException("baseform");
+            }
+
+            InitIocContainer();
+
+            ToolTip.Init();
+
+            var form = (SFMLForm)baseform;
+
+            stopwatch.Start();
+            while (form.IsOpen)
+            {
+                form.DispatchEvents();
+
+                
+
+                form.Display();
+            }
+            stopwatch.Stop();
         }
     }
 }

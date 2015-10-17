@@ -61,7 +61,7 @@ namespace IMGUI
             Format.Dispose();
         }
 
-        internal Label(string name, BasicForm form, string text, Rect rect) : base(name, form)
+        internal Label(string name, BaseForm form, string text, Rect rect) : base(name, form)
         {
             Rect = rect;
             Text = text;
@@ -89,7 +89,7 @@ namespace IMGUI
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static void DoControl(Context g, BasicForm form, Rect rect, string text, string name)
+        internal static void DoControl(Context g, BaseForm form, Rect rect, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

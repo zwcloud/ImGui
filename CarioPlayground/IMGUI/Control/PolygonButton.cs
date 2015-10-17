@@ -40,7 +40,8 @@ namespace IMGUI
 
         public bool Result { get; private set; }
 
-        internal PolygonButton(string name, BasicForm form, Point[] points, string text) : base(name, form)
+        internal PolygonButton(string name, BaseForm form, Point[] points, string text)
+            : base(name, form)
         {
             Points = points;
             Text = text;
@@ -101,7 +102,7 @@ namespace IMGUI
             return inside;
         }
 
-        internal static bool DoControl(Context g, BasicForm form, Point[] points, string text, string name)
+        internal static bool DoControl(Context g, BaseForm form, Point[] points, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

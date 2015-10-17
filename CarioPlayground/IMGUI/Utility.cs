@@ -7,10 +7,11 @@ namespace IMGUI
 {
     internal static class Utility
     {
-        public static bool IsApplicationIdle()
+        public static bool IsMessagePending(IntPtr hwnd)
         {
-            NativeMessage result;
-            return Native.PeekMessage(out result, IntPtr.Zero, 0, 0, 0) == 0;
+            NativeMessage message;
+            var result = Native.PeekMessage(out message, hwnd, 0, 0, 0);
+            return result != 0;
         }
 
         //http://stackoverflow.com/a/15051945/3427520

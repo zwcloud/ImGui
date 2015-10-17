@@ -28,7 +28,8 @@ namespace IMGUI
         public Rect Rect { get; private set; }
         public bool Result { get; private set; }
 
-        internal Toggle(string name, BasicForm form, string displayText, Rect rect) : base(name, form)
+        internal Toggle(string name, BaseForm form, string displayText, Rect rect)
+            : base(name, form)
         {
             //Check paramter
             if (rect.Width < rect.Height)
@@ -64,7 +65,7 @@ namespace IMGUI
                     });
         }
 
-        internal static bool DoControl(Context g, BasicForm form, Rect rect, string displayText, bool value, string name)
+        internal static bool DoControl(Context g, BaseForm form, Rect rect, string displayText, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

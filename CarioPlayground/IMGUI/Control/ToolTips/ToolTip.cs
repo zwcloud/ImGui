@@ -1,31 +1,82 @@
-﻿namespace IMGUI
+﻿using System;
+using System.Diagnostics;
+
+namespace IMGUI
 {
-    [System.ComponentModel.DesignerCategory("")]
-    public class ToolTip : BasicForm
+    public class ToolTip : WinForm
     {
-        private static ToolTip instance = new ToolTip();
+        private enum ToopTipState
+        {
+            Initial,
+            Hiden,
+            Shown
+        }
+
+        private ToopTipState state = ToopTipState.Initial;
+
+        private static ToolTip instance;
         public static ToolTip Instance { get { return instance; } }
 
-        static ToolTip()
+        private readonly Stopwatch stopwatch = new Stopwatch();
+
+        internal static void Init()
         {
+            instance = new ToolTip();
+        }
+
+        public ToolTip()
+        {
+            Size = new Size(200, 40);
+            Position = new Point(400, 400);
         }
 
         private string TipText { get; set; }
-        public void Show(string text)
+        private int PersistTime { get; set; }
+        private int ReshowTime { get; set; }
+
+        void DoRequest()
+        {
+            switch (state)
+            {
+                case ToopTipState.Initial:
+                    this.Show();
+                    stopwatch.Start();
+                    state = ToopTipState.Shown;
+                    break;
+                case ToopTipState.Hiden:
+                    bool isReshowTimeTimeOut = stopwatch.ElapsedMilliseconds >= ReshowTime;
+                    if(isReshowTimeTimeOut)
+                    {
+                        this.Show();
+                        stopwatch.Restart();
+                        state = ToopTipState.Shown;
+                    }
+                    break;
+                case ToopTipState.Shown:
+                    bool isTimeOut = stopwatch.ElapsedMilliseconds >= PersistTime;
+                    if(isTimeOut)
+                    {
+                        this.Hide();
+                        stopwatch.Restart();
+                        state = ToopTipState.Hiden;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void Show(string text, float time = 1.0f, float reshowTime = 0.2f)
         {
             this.TipText = text;
-            if(!this.Visible)
-            {
-                this.Show();
-            }
+            this.PersistTime = (int) (time*1000);
+            this.ReshowTime = (int) (reshowTime*1000);
+            DoRequest();
         }
 
         public new void Hide()
         {
-            if (this.Visible)
-            {
-                base.Hide();
-            }
+            base.Hide();
         }
         
         protected override void OnGUI(GUI gui)

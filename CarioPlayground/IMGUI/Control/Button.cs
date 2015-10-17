@@ -42,17 +42,15 @@ namespace IMGUI
             if (active)
             {
                 State = "Active";
-                //ToolTip.Instance.Hide();
             }
             else if (hover)
             {
                 State = "Hover";
-                //ToolTip.Instance.Show(Text.Substring(0, 5));
+                ToolTip.Instance.Show(Text.Substring(0, 5));
             }
             else
             {
                 State = "Normal";
-                //ToolTip.Instance.Hide();
             }
 
             if(State != oldState)
@@ -75,7 +73,8 @@ namespace IMGUI
             Format.Dispose();
         }
 
-        internal Button(string name, BasicForm form, string text, Rect rect) :base(name, form)
+        internal Button(string name, BaseForm form, string text, Rect rect)
+            : base(name, form)
         {
             Rect = rect;
             Text = text;
@@ -104,7 +103,7 @@ namespace IMGUI
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static bool DoControl(Context g, BasicForm form, Rect rect, string text, string name)
+        internal static bool DoControl(Context g, BaseForm form, Rect rect, string text, string name)
         {
             //The control hasn't been created, create it.
             if (!form.Controls.ContainsKey(name))

@@ -2,7 +2,7 @@
 
 namespace IMGUIDemo_TextBox
 {
-    public partial class Form1 : BasicForm
+    public partial class Form1 : WinForm
     {
     }
 

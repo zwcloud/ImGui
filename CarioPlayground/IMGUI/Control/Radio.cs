@@ -78,7 +78,8 @@ namespace IMGUI
         }
 
 
-        public Radio(string name, BasicForm form, string text, Rect rect, string groupName) : base(name, form)
+        public Radio(string name, BaseForm form, string text, Rect rect, string groupName)
+            : base(name, form)
         {
             Rect = rect;
             Text = text;
@@ -106,7 +107,7 @@ namespace IMGUI
                     });
         }
 
-        public static bool DoControl(Context g, BasicForm form, Rect rect, string text, string groupName, bool value, string name)
+        public static bool DoControl(Context g, BaseForm form, Rect rect, string text, string groupName, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

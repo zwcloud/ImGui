@@ -1,10 +1,8 @@
-﻿using System.Windows.Forms;
-using IMGUI;
-using Form = IMGUI.Form;
+﻿using IMGUI;
 
 namespace IMGUIDemo
 {
-    public partial class Form1 : BasicForm
+    public partial class Form1 : WinForm
     {
         public Form1()
         {

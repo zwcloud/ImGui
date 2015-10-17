@@ -27,7 +27,7 @@ namespace IMGUI
 
         public string State { get; set; }
 
-        internal BasicForm Form { get; set; }
+        internal BaseForm Form { get; set; }
 
         /// <summary>
         /// Does this control need repaint?
@@ -40,7 +40,7 @@ namespace IMGUI
 
         public abstract void OnRender(Context g);
 
-        protected Control(string name, BasicForm form)
+        protected Control(string name, BaseForm form)
         {
             Form = form;
             Name = name;

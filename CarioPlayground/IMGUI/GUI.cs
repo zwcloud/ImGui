@@ -12,14 +12,14 @@ namespace IMGUI
     {
         private Context g;
 
-        public GUI(Context context, BasicForm form)
+        public GUI(Context context, BaseForm form)
         {
             this.g = context;
             this.form = form;
         }
 
-        private BasicForm form;
-        private BasicForm Form { get { return form; } }
+        private BaseForm form;
+        private BaseForm Form { get { return form; } }
 
         public bool Button(Rect rect, string text, string name)
         {

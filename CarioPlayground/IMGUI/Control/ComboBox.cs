@@ -20,7 +20,8 @@ namespace IMGUI
 
         private int ActiveIndex { get; set; }
 
-        internal ComboBox(string name, BasicForm form, string[] texts, int width, int height) : base(name, form)
+        internal ComboBox(string name, BaseForm form, string[] texts, int width, int height)
+            : base(name, form)
         {
             var font = Skin.current.Button[State].Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
@@ -47,7 +48,7 @@ namespace IMGUI
             }
         }
 
-        internal static int DoControl(Context g, Context gTop, BasicForm form, Rect rect, string[] texts, int selectedIndex, string name)
+        internal static int DoControl(Context g, Context gTop, BaseForm form, Rect rect, string[] texts, int selectedIndex, string name)
         {
             #region Get control reference
             ComboBox comboBox;
