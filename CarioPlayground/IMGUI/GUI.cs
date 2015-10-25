@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Net;
-using Cairo;
-
-//BUG Input can pass through surface
+﻿using Cairo;
 
 namespace IMGUI
 {

@@ -77,10 +77,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as Toggle;
             Debug.Assert(control != null);
-
-            //The control need to be relayout
-            //TODO
-
+            
             return control.Result;
         }
 

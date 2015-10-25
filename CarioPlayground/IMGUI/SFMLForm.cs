@@ -43,7 +43,7 @@ namespace IMGUI
         {
             set
             {
-                Debug.WriteLine(/*TODO*/"SFMLForm::Cursor is mot implemented yet. Use default cursor instead.");
+                Debug.WriteLine(/*TODO implement SFMLForm::Cursor*/"SFMLForm::Cursor is mot implemented yet. Use default cursor instead.");
                 switch (value)
                 {
                     case Cursor.Default:

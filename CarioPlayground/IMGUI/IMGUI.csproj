@@ -140,7 +140,6 @@
     <Compile Include="Texture.cs" />
     <Compile Include="TinyIoC.cs" />
     <Compile Include="TODO.cs" />
-    <Compile Include="Transform.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="Utility.cs" />

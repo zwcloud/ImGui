@@ -98,6 +98,7 @@ namespace IMGUI
             window.Closed += OnClosed;
             window.KeyPressed += new EventHandler<SFML.Window.KeyEventArgs>(OnKeyPressed);
             window.Resized += new EventHandler<SFML.Window.SizeEventArgs>(OnResized);
+            window.TextEntered += new EventHandler<SFML.Window.TextEventArgs>(OnTextEntered);
             
             MyClass o = new MyClass();
             o.OnLoad();
@@ -108,7 +109,6 @@ namespace IMGUI
                 // Process events
                 window.DispatchEvents();
                 
-                //TODO copy front surface of IMGUI to texture
                 var isRepainted = form.GUILoop();
 
 #if true
@@ -117,7 +117,7 @@ namespace IMGUI
                     var surface = (form.FrontSurface as Cairo.ImageSurface);
                     if(surface != null)
                     {
-                        //TODO update entire surface is too slow, this can be improved by only updating re-rendered section or using cairo-gl
+                        //TODO update entire surface is too slow(When it happens, a CPU peak occurs.), this can be improved by only updating re-rendered section or using cairo-gl
                         o.OnUpdateTexture(surface.Width, surface.Height, surface.DataPtr);
                         o.OnRenderFrame();
                     }
@@ -132,6 +132,16 @@ namespace IMGUI
             stopwatch.Stop();
         }
 
+        private static void OnTextEntered(object sender, SFML.Window.TextEventArgs e)
+        {
+            var text = e.Unicode;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (Char.IsControl(text[i]))
+                    continue;
+                ImeBuffer.Enqueue(text[i]);
+            }
+        }
 
         /// <summary>
         /// Function called when the window is closed

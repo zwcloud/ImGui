@@ -101,11 +101,8 @@ namespace IMGUI
             var control = form.Controls[name] as Label;
             Debug.Assert(control != null);
 
-            //Update layout text
+            //Update text
             control.Text = text;
-
-            //The control need to be relayout
-            //TODO
         }
 
     }

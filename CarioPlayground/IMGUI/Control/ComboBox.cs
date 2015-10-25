@@ -156,7 +156,6 @@ namespace IMGUI
             #region Draw
             g.DrawBoxModel(rect, new Content(comboBox.ItemLayouts[comboBox.SelectedIndex]), Skin.current.ComboBox[comboBox.State]);
             g.LineWidth = 1;
-            /* TODO Draw this trangle as a content */
             var trianglePoints = new Point[3];
             trianglePoints[0].X = rect.TopRight.X - 5;
             trianglePoints[0].Y = rect.TopRight.Y + 0.2 * rect.Height;

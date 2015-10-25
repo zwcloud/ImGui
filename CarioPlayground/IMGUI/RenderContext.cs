@@ -17,7 +17,7 @@ namespace IMGUI
         /// Draw the back surface to the front surface
         /// </summary>
         /// <remarks>
-        /// The front surface's data will be used as a texture in OpenGL. TODO
+        /// The front surface's data will be used as a texture in OpenGL.
         /// </remarks>
         public void SwapSurface()
         {

@@ -77,7 +77,6 @@ namespace IMGUI
             var oldState = State;
             if(State == "Active")
             {
-                NeedRepaint = true;
                 if(insideRect)
                 {
                     this.Form.Cursor = Cursor.Text;
@@ -250,9 +249,11 @@ namespace IMGUI
                         }
                     }
 
-                    //Update layout text
-                    Layout.Text = Text;
                 }
+
+                //Update layout text
+                Layout.Text = Text;
+                NeedRepaint = true;
             }
             else
             {
