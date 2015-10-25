@@ -13,8 +13,11 @@ namespace IMGUI
         #region Constructors
 
         /// <summary>
-        /// Constructor which sets the initial values to the values of the parameters
+        /// Construct a rect by its top-left coordinate and its size(width, height)
         /// </summary>
+        /// <param name="x">top</param>
+        /// <param name="y">left</param>
+        /// <param name="size">size of the rect</param>
         public Rect(double x, double y,
                     Size size)
         {

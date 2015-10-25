@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Win32;
 
 //TODO decouple Input from windows => write a stand-alone and cross-platform Input library
 namespace IMGUI.Input
@@ -105,7 +102,7 @@ namespace IMGUI.Input
         /// <summary>
         /// Mouse position
         /// </summary>
-        static Point mousePos;
+        public static Point mousePos;
 
         /// <summary>
         /// Mouse position
@@ -150,27 +147,44 @@ namespace IMGUI.Input
         /// <summary>
         /// Refresh mouse states
         /// </summary>
-        /// <param name="clientPosX">x position of the client area</param>
-        /// <param name="clientPosY">y position of the client area</param>
-        /// <param name="clientRect">rect of the client area(top,left are both zero)</param>
+        /// <param name="form">Reference window</param>
         /// <returns>true: successful; false: failed</returns>
         /// <remarks>The mouse states will persist until next call of this method, 
         /// and last states will be recorded.</remarks>
-        public static bool Refresh(int clientPosX, int clientPosY, Rect clientRect)
+        public static bool Refresh(BaseForm form)
         {
+            //Get internal SFML window
+            var window = form.InternalForm as SFML.Window.Window;
+            if(window == null)
+            {
+                throw new InvalidCastException("Internal Form is not SFML.Window.Window");
+            }
+
             //Buttons's states
             lastLeftButtonState = leftButtonState;
-            leftButtonState = ((Native.GetAsyncKeyState((ushort)MouseButton.Left) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
+            leftButtonState = SFML.Window.Mouse.IsButtonPressed(SFML.Window.Mouse.Button.Left) ? InputState.Down : InputState.Up;
             lastRightButtonState = rightButtonState;
-            rightButtonState = ((Native.GetAsyncKeyState((ushort)MouseButton.Right) & (ushort)0x8000) == (ushort)0x8000) ? InputState.Down : InputState.Up;
+            rightButtonState = SFML.Window.Mouse.IsButtonPressed(SFML.Window.Mouse.Button.Right) ? InputState.Down : InputState.Up;
             //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
             //Position
             lastMousePos = mousePos;
+#if false
+            var clientRect = new Rect
+            {
+                X = form.Position.X,
+                Y = form.Position.Y,
+                Width = form.Size.Width,
+                Height = form.Size.Height
+            };
+            var clientPos = form.PointToScreen(form.Position);
+            var clientPosX = clientPos.X;
+            var clientPosY = clientPos.Y;
+
             var clientWidth = clientRect.Right - clientRect.Left;
             var clientHeight = clientRect.Bottom - clientRect.Top;
             POINT cursorPosPoint;
             Native.GetCursorPos(out cursorPosPoint);//Position in screen
-            
+
             float screenX = cursorPosPoint.X;
             float screenY = cursorPosPoint.Y;
             mousePos.X = (int)screenX - clientPosX;
@@ -183,6 +197,11 @@ namespace IMGUI.Input
                 mousePos.Y = 0;
             else if (mousePos.Y > clientHeight)
                 mousePos.Y = clientHeight;
+#else
+            var pos = SFML.Window.Mouse.GetPosition(window);
+            mousePos = new Point(pos.X, pos.Y);
+            window.SetTitle(string.Format("{0},{1}", pos.X, pos.Y));
+#endif
             //Now mousePos is the position in the client area
 
             ClickChecker.MoveNext();

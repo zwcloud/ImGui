@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Win32;
 
 namespace IMGUI
 {
     internal static class Utility
     {
-        public static bool IsMessagePending(IntPtr hwnd)
-        {
-            NativeMessage message;
-            var result = Native.PeekMessage(out message, hwnd, 0, 0, 0);
-            return result != 0;
-        }
-
         //http://stackoverflow.com/a/15051945/3427520
         private static readonly DateTime Jan1St1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         /// <summary>Get extra long current timestamp</summary>

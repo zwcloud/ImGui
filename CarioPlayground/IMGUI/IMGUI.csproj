@@ -68,28 +68,26 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CSharpGL">
+      <HintPath>..\Reference\CSharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="GLM">
+      <HintPath>..\Reference\GLM.dll</HintPath>
+    </Reference>
     <Reference Include="sfmlnet-system-2">
       <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
     </Reference>
     <Reference Include="sfmlnet-window-2">
       <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
     </Reference>
-    <Reference Include="Svg">
-      <HintPath>..\packages\Svg.2.0.0\lib\Svg.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundStyle.cs" />
     <Compile Include="BaseForm.cs" />
-    <Compile Include="WinForm.cs" />
     <Compile Include="CarioExtension.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Control\Button.cs" />
@@ -118,11 +116,11 @@
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="MouseButton.cs" />
+    <Compile Include="Native.cs" />
     <Compile Include="Port\ITextFormat.cs" />
     <Compile Include="Port\ITextLayout.cs" />
     <Compile Include="RenderContext.cs" />
     <Compile Include="Length.cs" />
-    <Compile Include="Native.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Port\TextEnums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -162,14 +160,17 @@
       <Project>{233143ad-edf8-49c4-b69d-2d1ebf58b82e}</Project>
       <Name>DwriteCairo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Win32\Win32.csproj">
-      <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
-      <Name>Win32</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\CheckerMap.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y "W:\VS2013\CarioPlayground\IMGUI\bin\Debug" "W:\HelloWorld\HelloWorld\HelloWorld.PcHost\bin\Debug"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

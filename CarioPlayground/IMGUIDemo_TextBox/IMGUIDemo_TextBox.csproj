@@ -134,10 +134,6 @@
       <Project>{495935c7-70a3-40e3-93cd-1cebbd591b99}</Project>
       <Name>IMGUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Win32\Win32.csproj">
-      <Project>{cd930e1e-48ff-4a0e-a753-cb4acce995be}</Project>
-      <Name>Win32</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

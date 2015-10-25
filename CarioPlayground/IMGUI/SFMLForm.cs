@@ -100,7 +100,6 @@ namespace IMGUI
             this.internalForm.SetVisible(false);
         }
 
-
         /// <summary>
         /// Custom GUI Logic. This should be overrided to create custom GUI elements
         /// </summary>
@@ -112,45 +111,52 @@ namespace IMGUI
 
         internal SFML.Window.Window internalForm;
 
+        internal override object InternalForm
+        {
+            get { return internalForm; }
+        }
+
+        internal Surface FrontSurface { get { return renderContext.FrontSurface; } }
+
         #region the GUI Loop
 
         /// <summary>
-        /// Form processor
+        /// GUI Loop
         /// </summary>
-        void FormProc()
+        /// <returns>true:need repaint / false: not repaint</returns>
+        internal bool GUILoop()
         {
-            var exit = false;
-            while (exit == false)
+            Utility.MillisFrameBegin = Utility.Millis;
+            OnBasicGUI(GUI);
+            var exit = Update();
+            if (exit)
             {
-                Utility.MillisFrameBegin = Utility.Millis;
-                OnBasicGUI(GUI);
-                exit = Update();
-                if (exit)
-                {
-                    CleanUp();
-                    Close();
-                }
-                Render();
+                CleanUp();
+                Close();
+                //TODO tell form to exit
             }
+            var isRepaint = Render();
+            return isRepaint;
         }
 
         private GUI GUI { get; set; }
         private RenderContext renderContext;
 
         /// <summary>
-        /// When render context is ready (OnRenderContextReady), call this to initialize GUI
+        /// Call this to initialize GUI
         /// </summary>
-        /// <param name="context">custom context</param>
-        private void InitGUI(object context)
+        private void InitGUI()
         {
-            var hdc = (IntPtr)context;
+            var clientWidth = (int) internalForm.Size.X;
+            var clientHeight = (int) internalForm.Size.Y;
 
             //build all surface
             renderContext = new RenderContext();
-            renderContext.BackSurface = CairoEx.BuildSurface((int)internalForm.Size.X, (int)internalForm.Size.Y,
-                CairoEx.ColorWhite, Format.Rgb24);
+            renderContext.BackSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
+                CairoEx.ColorWhite, Format.Argb32);
             renderContext.BackContext = new Context(renderContext.BackSurface);
-            renderContext.FrontSurface = new Win32Surface(hdc);
+            renderContext.FrontSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
+                CairoEx.ColorWhite, Format.Argb32);
             renderContext.FrontContext = new Context(renderContext.FrontSurface);
 
             //create GUI
@@ -172,15 +178,7 @@ namespace IMGUI
         private bool Update()
         {
             //Input
-            var clientRect = new Rect
-            {
-                X = this.Position.X,
-                Y = this.Position.Y,
-                Width = this.Size.Width,
-                Height = this.Size.Height
-            };
-            var clientPos = this.PointToScreen(this.Position);
-            Input.Mouse.Refresh((int)clientPos.X, (int)clientPos.Y, clientRect);
+            Input.Mouse.Refresh(this);
             Input.Keyboard.Refresh();
 
             //Control
@@ -192,18 +190,25 @@ namespace IMGUI
             return false;
         }
 
-        private void Render()
+        private bool Render()
         {
+            bool renderHappend = false;
             foreach (var control in Controls.Values)
             {
                 if (control.NeedRepaint)
                 {
+                    renderHappend = true;
                     control.OnRender(renderContext.BackContext);
                     control.NeedRepaint = false;
                 }
             }
 
-            renderContext.SwapSurface();
+            if(renderHappend)
+            {
+                renderContext.SwapSurface();
+            }
+
+            return renderHappend;
         }
 
         private void CleanUp() //Cleanup only happened when ESC is pressed
@@ -212,31 +217,27 @@ namespace IMGUI
                 renderContext.BackContext.Dispose();
         }
 #endregion
-
-#region Wrapper for hiding the SFML.Window.Window
-        internal bool IsOpen { get { return internalForm.IsOpen; } }
-
-        internal void DispatchEvents()
-        {
-            internalForm.DispatchEvents();
-        }
-
-        internal void Display()
-        {
-            internalForm.Display();
-        }
-#endregion
-
-        /// <summary>
-        /// Not used
-        /// </summary>
-        protected SFMLForm()
+        
+        protected SFMLForm(int width, int height)
         {
             internalForm = new SFML.Window.Window(
-                SFML.Window.VideoMode.DesktopMode,
+                new SFML.Window.VideoMode((uint)width, (uint)height),
                 "DummyWindowTitle",
-                SFML.Window.Styles.None);
+                SFML.Window.Styles.Default, new SFML.Window.ContextSettings
+                {
+                    DepthBits = 24,
+                    StencilBits = 0,
+                    AntialiasingLevel = 0,
+                    MajorVersion = 3,
+                    MinorVersion = 3
+                });
+            internalForm.SetVerticalSyncEnabled(true);
+
+            InitGUI();
+            
+            controls = new Dictionary<string, Control>();
         }
+
 
         #endregion
         

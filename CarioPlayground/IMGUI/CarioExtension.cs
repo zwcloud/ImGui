@@ -241,11 +241,14 @@ namespace IMGUI
 
         #region Color
 
-        public static readonly Color ColorClear = new Color(0, 0, 0, 0);
-        public static readonly Color ColorBlack = new Color(0, 0, 0, 0xff);
-        public static readonly Color ColorWhite = new Color(0xff, 0xff, 0xff, 0xff);
-        public static readonly Color ColorMetal = new Color(0xff, 192, 192, 192);
-
+        public static readonly Color ColorClear = ColorArgb(0, 0, 0, 0);
+        public static readonly Color ColorBlack = ColorRgb(0, 0, 0);
+        public static readonly Color ColorWhite = ColorRgb(255, 255, 255);
+        public static readonly Color ColorMetal = ColorRgb(192, 192, 192);
+        public static readonly Color ColorBlue = ColorRgb(0, 0, 255);
+        public static readonly Color ColorLightBlue = ColorRgb(46, 167, 224);
+        public static readonly Color ColorDarkBlue = ColorRgb(3, 110, 184);
+        
 
         public static void SetSourceColor(this Context context, Color color)
         {

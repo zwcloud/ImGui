@@ -2,10 +2,10 @@
 
 namespace IMGUIDemo
 {
-    public partial class Form1 : SFMLForm
+    public sealed partial class Form1 : SFMLForm
     {
-        public Form1()
-            : base(512, 512)
+        public Form1(int width, int height)
+            : base(width, height)
         {
             Position = new Point(400, 300);
         }

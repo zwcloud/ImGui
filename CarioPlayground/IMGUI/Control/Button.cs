@@ -46,7 +46,7 @@ namespace IMGUI
             else if (hover)
             {
                 State = "Hover";
-                ToolTip.Instance.Show(Text.Substring(0, 5));
+                //ToolTip.Instance.Show(Text.Substring(0, 5));
             }
             else
             {

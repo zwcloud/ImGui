@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace IMGUI
 {
-    public class ToolTip : WinForm
+    public class ToolTip : SFMLForm
     {
         private enum ToopTipState
         {
@@ -25,8 +25,8 @@ namespace IMGUI
         }
 
         public ToolTip()
+            : base(200, 40)
         {
-            Size = new Size(200, 40);
             Position = new Point(400, 400);
         }
 

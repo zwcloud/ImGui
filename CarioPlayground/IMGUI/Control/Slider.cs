@@ -10,69 +10,55 @@ namespace IMGUI
     {
         internal int Value { get; set; }
 
-        internal Slider(string name, WinForm form) : base(name, form)
+        public Rect Rect { get; private set; }
+        public int Result { get; private set; }
+
+        internal Slider(string name, BaseForm form, Rect rect, int value, int leftValue, int rightValue)
+            : base(name, form)
         {
+            Rect = rect;
+            Value = value;
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static int DoControl(Context g, WinForm form, Rect rect, int value, int leftValue, int rightValue, string name)
+        internal static int DoControl(Context g, BaseForm form, Rect rect, int value, int leftValue, int rightValue, string name)
         {
-            #region Get control reference
             Slider slider;
             if (!form.Controls.ContainsKey(name))
             {
-                slider = new Slider(name, form);
-                slider.Value = value;
+                slider = new Slider(name, form, rect, value, leftValue, rightValue);
             }
             else
             {
                 slider = form.Controls[name] as Slider;
             }
-
             Debug.Assert(slider != null);
-            #endregion
 
-            #region Set control data
-            {
-            }
-            #endregion
-
-            #region Logic
-            bool active = Input.Mouse.LeftButtonState == InputState.Down && rect.Contains(Input.Mouse.MousePos);
-            bool hover = Input.Mouse.LeftButtonState == InputState.Up && rect.Contains(Input.Mouse.MousePos);
-            if(active)
-                slider.State = "Active";
-            else if(hover)
-                slider.State = "Hover";
-            else
-                slider.State = "Normal";
-            #endregion
-
-            //TODO non-standrad style
-            //TODO Consider use SVG to draw readonly shape
-            #if  f
-            if(slider.State == "Normal")
-            {
-                g.DrawLine(new Point(rect.X, rect.Y + rect.Height / 2), new Point(rect.Right, rect.Y + rect.Height / 2), 1.0f, Skin.current.Slider["Line:Normal"].color);
-            }
-            g.DrawBoxModel(rect, new Content(text), Skin.current.Slider[slider.State]);
-
-            slider.Value = 0;
-            return clicked;
-            #endif
-            return 1;
+            return slider.Value;
         }
 
         #region Overrides of Control
 
         public override void OnUpdate()
         {
-            throw new NotImplementedException();
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.MousePos);
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.MousePos);
+            if (active)
+                State = "Active";
+            else if (hover)
+                State = "Hover";
+            else
+                State = "Normal";
         }
 
         public override void OnRender(Context g)
         {
-            throw new NotImplementedException();
+            //TODO Consider use SVG to draw readonly shape
+            if (State == "Normal")
+            {
+                g.DrawLine(new Point(Rect.X, Rect.Y + Rect.Height/2), new Point(Rect.Right, Rect.Y + Rect.Height/2),
+                    1.0f, Skin.current.Slider["Line:Normal"].LineColor);
+            }
         }
 
         public override void Dispose()

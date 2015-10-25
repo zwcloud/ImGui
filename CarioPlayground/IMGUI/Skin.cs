@@ -332,23 +332,21 @@ namespace IMGUI
                 };
                 TextBox["Normal"] = Style.Make(normalModifiers);
 
-                var lightBlue = CairoEx.ColorRgb(46, 167, 224);
                 StyleModifier[] hoverModifiers =
                 {
-                    new StyleModifier{Name = "BorderTopColor", Value = lightBlue},
-                    new StyleModifier{Name = "BorderRightColor", Value = lightBlue},
-                    new StyleModifier{Name = "BorderBottomColor", Value = lightBlue},
-                    new StyleModifier{Name = "BorderLeftColor", Value = lightBlue},
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorLightBlue},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorLightBlue},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorLightBlue},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorLightBlue},
                 };
                 TextBox["Hover"] = Style.Make(TextBox["Normal"], hoverModifiers);
 
-                var darkBlue = CairoEx.ColorRgb(3, 110, 184);
                 StyleModifier[] activeModifiers =
                 {
-                    new StyleModifier{Name = "BorderTopColor", Value = darkBlue},
-                    new StyleModifier{Name = "BorderRightColor", Value = darkBlue},
-                    new StyleModifier{Name = "BorderBottomColor", Value = darkBlue},
-                    new StyleModifier{Name = "BorderLeftColor", Value = darkBlue},
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorDarkBlue},
 
                     new StyleModifier{Name = "Cursor", Value = Cursor.Text}
                 };
@@ -389,6 +387,26 @@ namespace IMGUI
                     }
                 };
                 Slider["Active"] = Style.Make(activeModifiers);
+
+                Slider["Line:Normal"] = Style.Make(Slider["Normal"]);
+                Slider["Line:Hover"] = Style.Make(Slider["Hover"],
+                    new []
+                    {
+                        new StyleModifier
+                        {
+                            Name = "LineColor",
+                            Value = CairoEx.ColorLightBlue
+                        }
+                    });
+                Slider["Line:Active"] = Style.Make(Slider["Active"],
+                    new []
+                    {
+                        new StyleModifier
+                        {
+                            Name = "LineColor",
+                            Value = CairoEx.ColorDarkBlue
+                        }
+                    });
             }
             #endregion
 

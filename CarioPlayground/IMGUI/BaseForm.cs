@@ -18,12 +18,7 @@ namespace IMGUI
         /// Cursor of the form (not implemented)
         /// </summary>
         public abstract Cursor Cursor { set; }
-
-        internal System.Collections.Generic.Dictionary<string, Control> Controls
-        {
-            get { return controls; }
-        }
-
+        
         /// <summary>
         /// Open the form.
         /// </summary>
@@ -52,6 +47,13 @@ namespace IMGUI
         public Point PointToScreen(Point p)
         {
             return new Point(this.Position.X + p.X, this.Position.Y + p.Y);
+        }
+
+        internal abstract object InternalForm { get; }
+
+        internal System.Collections.Generic.Dictionary<string, Control> Controls
+        {
+            get { return controls; }
         }
     }
 }

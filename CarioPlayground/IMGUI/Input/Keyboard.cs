@@ -124,6 +124,7 @@ namespace IMGUI.Input
         /// <returns>true: successful; false: failed</returns>
         /// <remarks>The keyboard states will persist until next call of this method, 
         /// and last states will be recorded.</remarks>
+        /// TODO replace this with SFML keyboard event
         internal static bool Refresh()
         {
             byte[] keys = new byte[256];

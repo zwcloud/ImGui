@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Cairo;
-using Svg;
+//using Svg;
 
 namespace IMGUI
 {
@@ -56,23 +56,24 @@ namespace IMGUI
                     }
                 }
 
-                //TODO Implement svg rendering properly (the SVG.NET project is not stable, so improve it or write one yourself?)
+                //TODO Implement svg rendering (try to use nanosvg)
                 if (isSvgFile)
                 {
-                    using (var fileStream = File.Open(filePath, FileMode.Open))
-                    {
-                        //convert svg file to png file in memory
-                        var svgDoc = SvgDocument.Open<SvgDocument>(fileStream);
-                        using (var stream = new MemoryStream())
-                        {
-                            using (var bitmap = svgDoc.Draw())
-                            {
-                                bitmap.Save("K:\\tmp\\t.png", ImageFormat.Png);
-                            }
-                            //_surface = CairoStreamReader.ImageSurfaceFromPng(stream);
-                            _surface = new ImageSurface("K:\\tmp\\t.png");
-                        }
-                    }
+                    throw new NotImplementedException("SVG is not supported");
+                    //using (var fileStream = File.Open(filePath, FileMode.Open))
+                    //{
+                    //    //convert svg file to png file in memory
+                    //    var svgDoc = SvgDocument.Open<SvgDocument>(fileStream);
+                    //    using (var stream = new MemoryStream())
+                    //    {
+                    //        using (var bitmap = svgDoc.Draw())
+                    //        {
+                    //            bitmap.Save("K:\\tmp\\t.png", ImageFormat.Png);
+                    //        }
+                    //        //_surface = CairoStreamReader.ImageSurfaceFromPng(stream);
+                    //        _surface = new ImageSurface("K:\\tmp\\t.png");
+                    //    }
+                    //}
                 }
             }
 
@@ -84,6 +85,11 @@ namespace IMGUI
 
         private Texture(ImageSurface imageSurface)
         {
+            if (imageSurface == null)
+            {
+                throw new Exception("Texture creating failed");
+            }
+
             _surface = imageSurface;
         }
 
@@ -93,8 +99,8 @@ namespace IMGUI
             //TODO Destruct these presets
             _presets = new Dictionary<string, Texture>
             {
-                {"Toggle.Off", new Texture( new ImageSurface("W:/VS2013/CarioPlayground/Resources/Toggle.Off.png") )},
-                {"Toggle.On", new Texture( new ImageSurface("W:/VS2013/CarioPlayground/Resources/Toggle.On.png") )},
+                {"Toggle.Off", new Texture( new ImageSurface("W:/VS2013/IMGUI/Resources/Toggle.Off.png") )},//TODO build these resources into IMGUI assembly
+                {"Toggle.On", new Texture( new ImageSurface("W:/VS2013/IMGUI/Resources/Toggle.On.png") )},
             };
         }
 
