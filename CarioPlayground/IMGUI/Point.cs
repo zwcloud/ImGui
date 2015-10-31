@@ -2,21 +2,25 @@ using System;
 
 namespace IMGUI
 {
-
-
     [Serializable]
     public partial struct Point
     {
-        //------------------------------------------------------
-        //
-        //  Public Methods
-        //
-        //------------------------------------------------------
+        #region Internal Properties
+
+        /// <summary>
+        /// Creates a string representation of this object based on the current culture.
+        /// </summary>
+        /// <returns>
+        /// A string representation of this object.
+        /// </returns>
+        public override string ToString()
+        {
+            return string.Format("{0},{1}", (int) X, (int) Y);
+        }
+
+        #endregion Internal Properties
 
         #region Public Methods
-
-
-
 
         /// <summary>
         /// Compares two Point instances for exact equality.
@@ -29,7 +33,7 @@ namespace IMGUI
         /// </returns>
         /// <param name='point1'>The first Point to compare</param>
         /// <param name='point2'>The second Point to compare</param>
-        public static bool operator == (Point point1, Point point2)
+        public static bool operator ==(Point point1, Point point2)
         {
             return point1.X == point2.X &&
                    point1.Y == point2.Y;
@@ -46,10 +50,11 @@ namespace IMGUI
         /// </returns>
         /// <param name='point1'>The first Point to compare</param>
         /// <param name='point2'>The second Point to compare</param>
-        public static bool operator != (Point point1, Point point2)
+        public static bool operator !=(Point point1, Point point2)
         {
             return !(point1 == point2);
         }
+
         /// <summary>
         /// Compares two Point instances for object equality.  In this equality
         /// Double.NaN is equal to itself, unlike in numeric equality.
@@ -62,7 +67,7 @@ namespace IMGUI
         /// </returns>
         /// <param name='point1'>The first Point to compare</param>
         /// <param name='point2'>The second Point to compare</param>
-        public static bool Equals (Point point1, Point point2)
+        public static bool Equals(Point point1, Point point2)
         {
             return point1.X.Equals(point2.X) &&
                    point1.Y.Equals(point2.Y);
@@ -81,13 +86,13 @@ namespace IMGUI
         /// <param name='o'>The object to compare to "this"</param>
         public override bool Equals(object o)
         {
-            if ((null == o) || !(o is Point))
+            if((null == o) || !(o is Point))
             {
                 return false;
             }
 
-            Point value = (Point)o;
-            return Point.Equals(this,value);
+            var value = (Point) o;
+            return Equals(this, value);
         }
 
         /// <summary>
@@ -103,8 +108,9 @@ namespace IMGUI
         /// <param name='value'>The Point to compare to "this"</param>
         public bool Equals(Point value)
         {
-            return Point.Equals(this, value);
+            return Equals(this, value);
         }
+
         /// <summary>
         /// Returns the HashCode for this Point
         /// </summary>
@@ -130,15 +136,6 @@ namespace IMGUI
 
         #endregion Public Methods
 
-        //------------------------------------------------------
-        //
-        //  Public Properties
-        //
-        //------------------------------------------------------
-
-
-
-
         #region Public Properties
 
         /// <summary>
@@ -146,16 +143,9 @@ namespace IMGUI
         /// </summary>
         public double X
         {
-            get
-            {
-                return _x;
-            }
+            get { return _x; }
 
-            set
-            {
-                _x = value;
-            }
-
+            set { _x = value; }
         }
 
         /// <summary>
@@ -163,118 +153,34 @@ namespace IMGUI
         /// </summary>
         public double Y
         {
-            get
-            {
-                return _y;
-            }
+            get { return _y; }
 
-            set
-            {
-                _y = value;
-            }
-
+            set { _y = value; }
         }
 
         #endregion Public Properties
 
-        //------------------------------------------------------
-        //
-        //  Protected Methods
-        //
-        //------------------------------------------------------
-
         #region Protected Methods
-
-
-
-
 
         #endregion ProtectedMethods
 
-        //------------------------------------------------------
-        //
-        //  Internal Methods
-        //
-        //------------------------------------------------------
-
         #region Internal Methods
-
-
-
-
-
-
-
-
 
         #endregion Internal Methods
 
-        //------------------------------------------------------
-        //
-        //  Internal Properties
-        //
-        //------------------------------------------------------
-
-        #region Internal Properties
-
-
-        /// <summary>
-        /// Creates a string representation of this object based on the current culture.
-        /// </summary>
-        /// <returns>
-        /// A string representation of this object.
-        /// </returns>
-        public override string ToString()
-        {
-            return string.Format("{0},{1}", (int)X, (int)Y);
-        }
-
-
-        #endregion Internal Properties
-
-        //------------------------------------------------------
-        //
-        //  Dependency Properties
-        //
-        //------------------------------------------------------
-
         #region Dependency Properties
-
-
 
         #endregion Dependency Properties
 
-        //------------------------------------------------------
-        //
-        //  Internal Fields
-        //
-        //------------------------------------------------------
-
         #region Internal Fields
-
 
         internal double _x;
         internal double _y;
 
-
-
-
         #endregion Internal Fields
-
-
 
         #region Constructors
 
-        //------------------------------------------------------
-        //
-        //  Constructors
-        //
-        //------------------------------------------------------
-
-
-
-
         #endregion Constructors
-
     }
 }

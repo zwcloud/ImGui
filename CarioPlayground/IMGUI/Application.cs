@@ -17,7 +17,7 @@ namespace IMGUI
     /// 2. Input
     /// 3. Ioc container(Internal)
     /// 4. Windows(internal)
-    /// 5. Time
+    /// 5. Time(not implemented, still in Utility.cs)
     /// </remarks>
     public static class Application
     {
@@ -174,11 +174,8 @@ namespace IMGUI
 
     }
 
-
     class MyClass
     {
-        private SFML.System.Vector2i ClientSize = new SFML.System.Vector2i(800, 600);
-
         private string vertexShaderSource = @"
 #version 330 core
 in vec4 in_Position;

@@ -232,6 +232,11 @@ namespace IMGUI
                     MinorVersion = 3
                 });
             internalForm.SetVerticalSyncEnabled(true);
+#if false //[Dragable window]This is not working!
+            internalForm.MouseButtonPressed += InternalFormOnMouseButtonPressed;
+            internalForm.MouseMoved += InternalFormOnMouseMoved;
+            internalForm.MouseButtonReleased += InternalFormOnMouseButtonReleased;
+#endif
 
             InitGUI();
             
@@ -239,6 +244,38 @@ namespace IMGUI
         }
 
 
+        private Vector grabbedOffset;
+        private bool grabbedWindow;
+
+        private void InternalFormOnMouseButtonPressed(object sender, SFML.Window.MouseButtonEventArgs e)
+        {
+            SFML.Window.Window window = (SFML.Window.Window)sender;
+            if (e.Button == SFML.Window.Mouse.Button.Left)
+            {
+                var offset = new Point(window.Position.X, window.Position.Y) - Input.Mouse.MousePos;//new SFML.System.Vector2i(e.X, e.Y);// SFML.Window.Mouse.GetPosition(window);
+                grabbedOffset = new Vector(offset.X, offset.Y);
+                grabbedWindow = true;
+            }
+        }
+
+        private void InternalFormOnMouseMoved(object sender, SFML.Window.MouseMoveEventArgs e)
+        {
+            SFML.Window.Window window = (SFML.Window.Window)sender;
+            if(grabbedWindow)
+            {
+                var position = Input.Mouse.MousePos; //new SFML.System.Vector2i(e.X, e.Y);// SFML.Window.Mouse.GetPosition(window);
+                Position = new Point(position.X + grabbedOffset.X, position.Y + grabbedOffset.Y);
+            }
+        }
+
+        private void InternalFormOnMouseButtonReleased(object sender, SFML.Window.MouseButtonEventArgs e)
+        {
+            if (e.Button == SFML.Window.Mouse.Button.Left)
+            {
+                grabbedWindow = false;
+            }
+        }
+        
         #endregion
         
 

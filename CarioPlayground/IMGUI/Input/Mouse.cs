@@ -102,7 +102,7 @@ namespace IMGUI.Input
         /// <summary>
         /// Mouse position
         /// </summary>
-        public static Point mousePos;
+        static Point mousePos;
 
         /// <summary>
         /// Mouse position
@@ -168,40 +168,9 @@ namespace IMGUI.Input
             //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
             //Position
             lastMousePos = mousePos;
-#if false
-            var clientRect = new Rect
-            {
-                X = form.Position.X,
-                Y = form.Position.Y,
-                Width = form.Size.Width,
-                Height = form.Size.Height
-            };
-            var clientPos = form.PointToScreen(form.Position);
-            var clientPosX = clientPos.X;
-            var clientPosY = clientPos.Y;
-
-            var clientWidth = clientRect.Right - clientRect.Left;
-            var clientHeight = clientRect.Bottom - clientRect.Top;
-            POINT cursorPosPoint;
-            Native.GetCursorPos(out cursorPosPoint);//Position in screen
-
-            float screenX = cursorPosPoint.X;
-            float screenY = cursorPosPoint.Y;
-            mousePos.X = (int)screenX - clientPosX;
-            mousePos.Y = (int)screenY - clientPosY;
-            if (mousePos.X < 0)
-                mousePos.X = 0;
-            else if (mousePos.X > clientWidth)
-                mousePos.X = clientWidth;
-            if (mousePos.Y < 0)
-                mousePos.Y = 0;
-            else if (mousePos.Y > clientHeight)
-                mousePos.Y = clientHeight;
-#else
             var pos = SFML.Window.Mouse.GetPosition(window);
             mousePos = new Point(pos.X, pos.Y);
             window.SetTitle(string.Format("{0},{1}", pos.X, pos.Y));
-#endif
             //Now mousePos is the position in the client area
 
             ClickChecker.MoveNext();

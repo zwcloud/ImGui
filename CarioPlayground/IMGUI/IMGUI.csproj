@@ -144,7 +144,6 @@
     <Compile Include="TreeNode.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Vector.cs" />
-    <Compile Include="WindowsMessage.cs" />
     <Compile Include="Application.cs" />
   </ItemGroup>
   <ItemGroup>
