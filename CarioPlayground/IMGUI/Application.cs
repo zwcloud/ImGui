@@ -111,15 +111,16 @@ namespace IMGUI
                 form.guiRenderer.OnLoad();
             }
 
-            while (true)
+            while (mainForm.internalForm.IsOpen)
             {
+                //TODO a better method for manage newly created windows
                 for (int i = 0; i < Forms.Count; i++)
                 {
                     var form = (SFMLForm)Forms[i];
                     var window = (SFML.Window.Window) form.InternalForm;
                     
                     // Start game loop
-                    if(window.IsOpen)
+                    if(window.IsOpen && form.Visible)
                     {
                         // Process events
                         window.DispatchEvents();
@@ -308,14 +309,13 @@ void main()
             GL.GenTextures(1, textures);
             textureHandle = textures[0];
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
-            using (System.Drawing.Bitmap image = new System.Drawing.Bitmap("resources\\CheckerMap.png"))
+
             {
-                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, (int)SurfaceSize.Width, (int)SurfaceSize.Height);
-                var imageData = image.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly,
-                    System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                var textureData = Enumerable.Repeat(new byte(), 4*(int) SurfaceSize.Width*(int) SurfaceSize.Height).ToArray();
+                var handle = GCHandle.Alloc(textureData, GCHandleType.Pinned);
                 GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int)SurfaceSize.Width, (int)SurfaceSize.Height, 0, GL.GL_BGRA,
-                    GL.GL_UNSIGNED_BYTE, imageData.Scan0);
-                image.UnlockBits(imageData);
+                    GL.GL_UNSIGNED_BYTE, handle.AddrOfPinnedObject());
+                handle.Free();
             }
 
             //sampler settings

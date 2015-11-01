@@ -14,7 +14,7 @@ namespace IMGUI
         internal ToopTipState state = ToopTipState.Inactive;
 
         private readonly Stopwatch stopwatch = new Stopwatch();
-        private int persistTime = 1000;
+        private int persistTime = 3000;
         private int reshowTime = 200;
         internal bool requested = false;
         private string tipText = "(empty)";
