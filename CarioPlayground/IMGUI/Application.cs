@@ -3,6 +3,7 @@ using GLM;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using TinyIoC;
 
@@ -37,7 +38,7 @@ namespace IMGUI
             set { imeBuffer = value; }
         }
 
-        internal static Tree<BaseForm> Forms;
+        internal static List<BaseForm> Forms;
 
         private static void InitIocContainer()
         {
@@ -77,59 +78,76 @@ namespace IMGUI
                 return stopwatch.ElapsedMilliseconds;
             }
         }
-        
-        public static void Run(SFMLForm form)
+
+        public static void Run(Form mainForm)
         {
-            if(form == null)
+            if(mainForm == null)
             {
-                throw new ArgumentNullException("form");
+                throw new ArgumentNullException("mainForm");
             }
 
             InitIocContainer();
 
-            Forms = new Tree<BaseForm>(form);
+            Forms = new List<BaseForm>();
+            Forms.Add(mainForm);
+            mainForm.Name = "MainForm";
 
-            var window = form.internalForm;
-
-            // Make it the active window for OpenGL calls
-            window.SetActive();
-
-            // Setup event handlers
-            window.Closed += OnClosed;
-            window.KeyPressed += new EventHandler<SFML.Window.KeyEventArgs>(OnKeyPressed);
-            window.Resized += new EventHandler<SFML.Window.SizeEventArgs>(OnResized);
-            window.TextEntered += new EventHandler<SFML.Window.TextEventArgs>(OnTextEntered);
-            
-            MyClass o = new MyClass();
-            o.OnLoad();
-
-            // Start game loop
-            while (window.IsOpen)
+            for (int i = 0; i < Forms.Count; i++)
             {
-                // Process events
-                window.DispatchEvents();
-                
-                var isRepainted = form.GUILoop();
+                var form = (SFMLForm) Forms[i];
+                var window = (SFML.Window.Window) form.InternalForm;
 
-#if true
-                if (isRepainted)
-                {
-                    var surface = (form.FrontSurface as Cairo.ImageSurface);
-                    if(surface != null)
-                    {
-                        //TODO update entire surface is too slow(When it happens, a CPU peak occurs.), this can be improved by only updating re-rendered section or using cairo-gl
-                        o.OnUpdateTexture(surface.Width, surface.Height, surface.DataPtr);
-                        o.OnRenderFrame();
-                    }
-                }
-#endif
+                // Setup event handlers
+                window.Closed += OnClosed;
+                window.KeyPressed += new EventHandler<SFML.Window.KeyEventArgs>(OnKeyPressed);
+                window.Resized += new EventHandler<SFML.Window.SizeEventArgs>(OnResized);
+                window.TextEntered += new EventHandler<SFML.Window.TextEventArgs>(OnTextEntered);
 
-                // Display the rendered frame on screen, this method must be called on Windows or the dwm.exe will totally consume the CPU.
-                window.Display();
+                // Make it the active window for OpenGL calls
+                window.SetActive();
 
+                // Create OpenGL GUI renderer
+                form.guiRenderer = new GUIRenderer(form.Size);
+                form.guiRenderer.OnLoad();
             }
 
-            stopwatch.Stop();
+            while (true)
+            {
+                for (int i = 0; i < Forms.Count; i++)
+                {
+                    var form = (SFMLForm)Forms[i];
+                    var window = (SFML.Window.Window) form.InternalForm;
+                    
+                    // Start game loop
+                    if(window.IsOpen)
+                    {
+                        // Process events
+                        window.DispatchEvents();
+
+                        // Run GUI looper
+                        var isRepainted = form.GUILoop();
+                        if(isRepainted)
+                        {
+                            var surface = (form.FrontSurface as Cairo.ImageSurface);
+                            if(surface != null)
+                            {
+                                // Make it the active window for OpenGL calls
+                                window.SetActive();
+                                if (form.guiRenderer == null)
+                                {
+                                    form.guiRenderer = new GUIRenderer(form.Size);
+                                    form.guiRenderer.OnLoad();
+                                }
+                                //TODO update entire surface is too slow(When it happens, a CPU peak occurs.), this can be improved by only updating re-rendered section (or using cairo-gl?)
+                                form.guiRenderer.OnUpdateTexture(surface.Width, surface.Height, surface.DataPtr);
+                                form.guiRenderer.OnRenderFrame();
+                            }
+                        }
+                        // Display the rendered frame on screen
+                        window.Display();
+                    }
+                }
+            }
         }
 
         private static void OnTextEntered(object sender, SFML.Window.TextEventArgs e)
@@ -174,8 +192,10 @@ namespace IMGUI
 
     }
 
-    class MyClass
+    class GUIRenderer
     {
+        private Size SurfaceSize { get; set; }
+
         private string vertexShaderSource = @"
 #version 330 core
 in vec4 in_Position;
@@ -213,6 +233,11 @@ void main()
 		        1, 1, 0,	1,1,
 		        1, -1, 0,	1,0
             };
+
+        public GUIRenderer(Size surfaceSize)
+        {
+            SurfaceSize = surfaceSize;
+        }
 
         public void OnLoad()
         {
@@ -285,10 +310,10 @@ void main()
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
             using (System.Drawing.Bitmap image = new System.Drawing.Bitmap("resources\\CheckerMap.png"))
             {
-                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, image.Width, image.Height);
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, (int)SurfaceSize.Width, (int)SurfaceSize.Height);
                 var imageData = image.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly,
                     System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, image.Width, image.Height, 0, GL.GL_BGRA,
+                GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int)SurfaceSize.Width, (int)SurfaceSize.Height, 0, GL.GL_BGRA,
                     GL.GL_UNSIGNED_BYTE, imageData.Scan0);
                 image.UnlockBits(imageData);
             }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Cairo;
-using SFML.Window;
 using TinyIoC;
 
 namespace IMGUI
@@ -28,7 +26,7 @@ namespace IMGUI
         }
         public Rect Rect { get; private set; }
         public bool Result { get; private set; }
-
+        private ToolTip t;
         public override void OnUpdate()
         {
             var style = Skin.current.Button[State];
@@ -46,7 +44,13 @@ namespace IMGUI
             else if (hover)
             {
                 State = "Hover";
-                //ToolTip.Instance.Show(Text.Substring(0, 5));
+                if(t ==null)
+                {
+                    t = new ToolTip();
+                    Application.Forms.Add(t);
+                }
+                t.TipText = Text;
+                t.Show();
             }
             else
             {

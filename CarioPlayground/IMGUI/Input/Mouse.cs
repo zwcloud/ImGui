@@ -104,6 +104,8 @@ namespace IMGUI.Input
         /// </summary>
         static Point mousePos;
 
+        static Point mousePosInScreen;
+
         /// <summary>
         /// Mouse position
         /// </summary>
@@ -118,6 +120,11 @@ namespace IMGUI.Input
         public static Point MousePos
         {
             get { return mousePos; }
+        }
+
+        public static Point MousePosInScreen
+        {
+            get { return mousePosInScreen; }
         }
 
         public static bool MouseMoving
@@ -172,6 +179,9 @@ namespace IMGUI.Input
             mousePos = new Point(pos.X, pos.Y);
             window.SetTitle(string.Format("{0},{1}", pos.X, pos.Y));
             //Now mousePos is the position in the client area
+
+            var posInSceen = SFML.Window.Mouse.GetPosition();
+            mousePosInScreen = new Point(posInSceen.X, posInSceen.Y);
 
             ClickChecker.MoveNext();
             LeftButtonClicked = ClickChecker.Current;

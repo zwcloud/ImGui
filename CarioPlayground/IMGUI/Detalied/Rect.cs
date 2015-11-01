@@ -13,6 +13,25 @@ namespace IMGUI
         #region Constructors
 
         /// <summary>
+        /// Construct a rect by its width and height (top-left is at (0,0))
+        /// </summary>
+        /// <param name="width">rect width</param>
+        /// <param name="height">rect height</param>
+        public Rect(double width, double height)
+        {
+            if (width <=0 || height <=0)
+            {
+                this = s_empty;
+            }
+            else
+            {
+                _x = _y = 0;
+                _width = width;
+                _height = height;
+            }
+        }
+
+        /// <summary>
         /// Construct a rect by its top-left coordinate and its size(width, height)
         /// </summary>
         /// <param name="x">top</param>

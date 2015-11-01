@@ -3,85 +3,103 @@ using System.Diagnostics;
 
 namespace IMGUI
 {
-    public class ToolTip : SFMLForm
+    public sealed class ToolTip : BorderlessForm
     {
-        private enum ToopTipState
+        internal enum ToopTipState
         {
-            Initial,
-            Hiden,
-            Shown
+            Inactive,
+            Active
         }
 
-        private ToopTipState state = ToopTipState.Initial;
-
-        private static ToolTip instance;
-        public static ToolTip Instance { get { return instance; } }
+        internal ToopTipState state = ToopTipState.Inactive;
 
         private readonly Stopwatch stopwatch = new Stopwatch();
-
-        internal static void Init()
-        {
-            instance = new ToolTip();
-        }
+        private int persistTime = 1000;
+        private int reshowTime = 200;
+        internal bool requested = false;
+        private string tipText = "(empty)";
+        private System.Timers.Timer timer;
 
         public ToolTip()
-            : base(200, 40)
+            : base(100, 30)
         {
-            Position = new Point(400, 400);
+            Position = new Point(0, 0);
+            timer = new System.Timers.Timer(PersistTime);
+            timer.Elapsed += timer_Elapsed;
+            timer.Enabled = true;
         }
 
-        private string TipText { get; set; }
-        private int PersistTime { get; set; }
-        private int ReshowTime { get; set; }
+        void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            this.Hide();
+        }
 
-        void DoRequest()
+        internal string TipText
+        {
+            get { return tipText; }
+            set { tipText = value; }
+        }
+
+        internal int PersistTime
+        {
+            get { return persistTime; }
+            set { persistTime = value; }
+        }
+
+        internal int ReshowTime
+        {
+            get { return reshowTime; }
+            set { reshowTime = value; }
+        }
+
+        internal void Update()
         {
             switch (state)
             {
-                case ToopTipState.Initial:
-                    this.Show();
-                    stopwatch.Start();
-                    state = ToopTipState.Shown;
-                    break;
-                case ToopTipState.Hiden:
-                    bool isReshowTimeTimeOut = stopwatch.ElapsedMilliseconds >= ReshowTime;
-                    if(isReshowTimeTimeOut)
+                case ToopTipState.Inactive:
+                    this.Hide();
+                    //Debug.WriteLine("Hide");
+                    if (requested)
                     {
-                        this.Show();
+                        //Debug.WriteLine("requested");
                         stopwatch.Restart();
-                        state = ToopTipState.Shown;
+                        state = ToopTipState.Active;
                     }
                     break;
-                case ToopTipState.Shown:
-                    bool isTimeOut = stopwatch.ElapsedMilliseconds >= PersistTime;
-                    if(isTimeOut)
+                case ToopTipState.Active:
+                    this.Show();
+                    GUILoop();
+                    //Debug.WriteLine("Show");
+                    if (stopwatch.ElapsedMilliseconds >= PersistTime)
                     {
-                        this.Hide();
-                        stopwatch.Restart();
-                        state = ToopTipState.Hiden;
+                        stopwatch.Stop();
+                        state = ToopTipState.Inactive;
+                        //Debug.WriteLine("Timeout");
                     }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            requested = false;
         }
 
-        public void Show(string text, float time = 1.0f, float reshowTime = 0.2f)
-        {
-            this.TipText = text;
-            this.PersistTime = (int) (time*1000);
-            this.ReshowTime = (int) (reshowTime*1000);
-            DoRequest();
-        }
-
-        public new void Hide()
+        public override void Hide()
         {
             base.Hide();
+            timer.Stop();
         }
-        
+
+        public override void Show()
+        {
+            this.Position = Input.Mouse.MousePosInScreen;
+            base.Show();
+            timer.Start();
+        }
+
         protected override void OnGUI(GUI gui)
         {
-            gui.Label(new Rect(0, 0, (Size)Skin.current.ToolTip.ExtraStyles["FixedSize"]), TipText, "ToolTipLabel");
+            gui.Label(new Rect((Size)Skin.current.ToolTip.ExtraStyles["FixedSize"]), TipText, "ToolTipLabel");
         }
     }
+
 }

@@ -74,11 +74,13 @@
     <Reference Include="GLM">
       <HintPath>..\Reference\GLM.dll</HintPath>
     </Reference>
-    <Reference Include="sfmlnet-system-2">
-      <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
+    <Reference Include="sfmlnet-system-2, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\lib\SFML.Net-2.2\lib\sfmlnet-system-2.dll</HintPath>
     </Reference>
-    <Reference Include="sfmlnet-window-2">
-      <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
+    <Reference Include="sfmlnet-window-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>E:\lib\SFML.Net-2.2\lib\sfmlnet-window-2.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -88,6 +90,7 @@
   <ItemGroup>
     <Compile Include="BackgroundStyle.cs" />
     <Compile Include="BaseForm.cs" />
+    <Compile Include="BorderlessForm.cs" />
     <Compile Include="CarioExtension.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Control\Button.cs" />
@@ -110,6 +113,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Font.cs" />
+    <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />

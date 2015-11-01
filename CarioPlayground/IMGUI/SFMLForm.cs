@@ -10,6 +10,8 @@ namespace IMGUI
     /// </summary>
     public abstract class SFMLForm : BaseForm
     {
+        public string Name { get; internal set; }
+
         /// <summary>
         /// Position of the form
         /// </summary>
@@ -84,12 +86,16 @@ namespace IMGUI
         /// </summary>
         public override void Show()
         {
-            foreach (var control in Controls.Values)
+            if(!Visible)
             {
-                control.NeedRepaint = true;
-            }
+                foreach (var control in Controls.Values)
+                {
+                    control.NeedRepaint = true;
+                }
 
-            this.internalForm.SetVisible(true);
+                this.internalForm.SetVisible(true);
+                Visible = true;
+            }
         }
 
         /// <summary>
@@ -97,9 +103,15 @@ namespace IMGUI
         /// </summary>
         public override void Hide()
         {
-            this.internalForm.SetVisible(false);
+            if (Visible)
+            {
+                this.internalForm.SetVisible(false);
+                Visible = false;
+            }
         }
 
+        public bool Visible { get; private set; }
+        
         /// <summary>
         /// Custom GUI Logic. This should be overrided to create custom GUI elements
         /// </summary>
@@ -111,6 +123,8 @@ namespace IMGUI
 
         internal SFML.Window.Window internalForm;
 
+        internal GUIRenderer guiRenderer;
+        
         internal override object InternalForm
         {
             get { return internalForm; }
@@ -138,7 +152,7 @@ namespace IMGUI
             var isRepaint = Render();
             return isRepaint;
         }
-
+        
         private GUI GUI { get; set; }
         private RenderContext renderContext;
 
@@ -211,19 +225,19 @@ namespace IMGUI
             return renderHappend;
         }
 
-        private void CleanUp() //Cleanup only happened when ESC is pressed
+        private void CleanUp() //Cleanup only happens when ESC is pressed
         {
             if (renderContext.BackContext != null)
                 renderContext.BackContext.Dispose();
         }
 #endregion
         
-        protected SFMLForm(int width, int height)
+        protected SFMLForm(int width, int height, SFML.Window.Styles style = SFML.Window.Styles.Default)
         {
             internalForm = new SFML.Window.Window(
                 new SFML.Window.VideoMode((uint)width, (uint)height),
                 "DummyWindowTitle",
-                SFML.Window.Styles.Default, new SFML.Window.ContextSettings
+                style, new SFML.Window.ContextSettings
                 {
                     DepthBits = 24,
                     StencilBits = 0,
@@ -231,51 +245,13 @@ namespace IMGUI
                     MajorVersion = 3,
                     MinorVersion = 3
                 });
+            Visible = true;
             internalForm.SetVerticalSyncEnabled(true);
-#if false //[Dragable window]This is not working!
-            internalForm.MouseButtonPressed += InternalFormOnMouseButtonPressed;
-            internalForm.MouseMoved += InternalFormOnMouseMoved;
-            internalForm.MouseButtonReleased += InternalFormOnMouseButtonReleased;
-#endif
+            controls = new Dictionary<string, Control>();
 
             InitGUI();
-            
-            controls = new Dictionary<string, Control>();
         }
 
-
-        private Vector grabbedOffset;
-        private bool grabbedWindow;
-
-        private void InternalFormOnMouseButtonPressed(object sender, SFML.Window.MouseButtonEventArgs e)
-        {
-            SFML.Window.Window window = (SFML.Window.Window)sender;
-            if (e.Button == SFML.Window.Mouse.Button.Left)
-            {
-                var offset = new Point(window.Position.X, window.Position.Y) - Input.Mouse.MousePos;//new SFML.System.Vector2i(e.X, e.Y);// SFML.Window.Mouse.GetPosition(window);
-                grabbedOffset = new Vector(offset.X, offset.Y);
-                grabbedWindow = true;
-            }
-        }
-
-        private void InternalFormOnMouseMoved(object sender, SFML.Window.MouseMoveEventArgs e)
-        {
-            SFML.Window.Window window = (SFML.Window.Window)sender;
-            if(grabbedWindow)
-            {
-                var position = Input.Mouse.MousePos; //new SFML.System.Vector2i(e.X, e.Y);// SFML.Window.Mouse.GetPosition(window);
-                Position = new Point(position.X + grabbedOffset.X, position.Y + grabbedOffset.Y);
-            }
-        }
-
-        private void InternalFormOnMouseButtonReleased(object sender, SFML.Window.MouseButtonEventArgs e)
-        {
-            if (e.Button == SFML.Window.Mouse.Button.Left)
-            {
-                grabbedWindow = false;
-            }
-        }
-        
         #endregion
         
 

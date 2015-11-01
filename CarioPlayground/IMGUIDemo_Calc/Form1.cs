@@ -2,7 +2,7 @@
 
 namespace IMGUIDemo
 {
-    public sealed partial class Form1 : SFMLForm
+    public sealed partial class Form1 : Form
     {
         public Form1(int width, int height)
             : base(width, height)
