@@ -127,7 +127,7 @@ namespace IMGUI
             Layout.Text = Text;
 
             var oldState = State;
-            bool isHit = IsPointInPolygon(Input.Mouse.MousePos, Points);
+            bool isHit = IsPointInPolygon(Input.Mouse.GetMousePos(Form), Points);
             bool active = Input.Mouse.LeftButtonState == InputState.Down && isHit;
             bool hover = Input.Mouse.LeftButtonState == InputState.Up && isHit;
             if (active)

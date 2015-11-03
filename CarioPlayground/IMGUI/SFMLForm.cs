@@ -70,6 +70,7 @@ namespace IMGUI
 
             this.internalForm = new SFML.Window.Window(this.internalForm.SystemHandle, this.internalForm.Settings);
             this.internalForm.SetVisible(true);
+            this.Visible = true;
         }
 
         /// <summary>
@@ -86,7 +87,7 @@ namespace IMGUI
         /// </summary>
         public override void Show()
         {
-            if(!Visible)
+            if (!this.Visible)
             {
                 foreach (var control in Controls.Values)
                 {
@@ -94,7 +95,7 @@ namespace IMGUI
                 }
 
                 this.internalForm.SetVisible(true);
-                Visible = true;
+                this.Visible = true;
             }
         }
 
@@ -103,10 +104,10 @@ namespace IMGUI
         /// </summary>
         public override void Hide()
         {
-            if (Visible)
+            if (this.Visible)
             {
                 this.internalForm.SetVisible(false);
-                Visible = false;
+                this.Visible = false;
             }
         }
 
@@ -142,6 +143,7 @@ namespace IMGUI
         {
             Utility.MillisFrameBegin = Utility.Millis;
             OnBasicGUI(GUI);
+            var isRepaint = false;
             var exit = Update();
             if (exit)
             {
@@ -149,7 +151,10 @@ namespace IMGUI
                 Close();
                 //TODO tell form to exit
             }
-            var isRepaint = Render();
+            if (this.Visible)
+            {
+                isRepaint = Render();
+            }
             return isRepaint;
         }
         
@@ -191,10 +196,6 @@ namespace IMGUI
 
         private bool Update()
         {
-            //Input
-            Input.Mouse.Refresh(this);
-            Input.Keyboard.Refresh();
-
             //Control
             foreach (var control in Controls.Values)
             {
@@ -245,7 +246,10 @@ namespace IMGUI
                     MajorVersion = 3,
                     MinorVersion = 3
                 });
-            Visible = true;
+            //form is not show on creating
+            internalForm.SetVisible(false);
+            Visible = false;
+
             internalForm.SetVerticalSyncEnabled(true);
             controls = new Dictionary<string, Control>();
 

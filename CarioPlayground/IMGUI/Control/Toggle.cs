@@ -86,8 +86,8 @@ namespace IMGUI
         public override void OnUpdate()
         {
             var oldState = State;
-            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.MousePos);
-            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.MousePos);
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.GetMousePos(Form));
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.GetMousePos(Form));
             if(active)
             {
                 State = "Active";
@@ -105,7 +105,7 @@ namespace IMGUI
                 NeedRepaint = true;
             }
 
-            bool changed = Input.Mouse.LeftButtonClicked && Rect.Contains(Input.Mouse.MousePos);
+            bool changed = Input.Mouse.LeftButtonClicked && Rect.Contains(Input.Mouse.GetMousePos(Form));
             Result = changed ? !Result : Result;
         }
 

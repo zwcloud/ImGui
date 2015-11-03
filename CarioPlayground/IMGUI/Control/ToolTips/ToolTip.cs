@@ -23,7 +23,6 @@ namespace IMGUI
         public ToolTip()
             : base(100, 30)
         {
-            Position = new Point(0, 0);
             timer = new System.Timers.Timer(PersistTime);
             timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;
@@ -91,7 +90,7 @@ namespace IMGUI
 
         public override void Show()
         {
-            this.Position = Input.Mouse.MousePosInScreen;
+            this.Position = Input.Mouse.MousePos;
             base.Show();
             timer.Start();
         }

@@ -8,6 +8,7 @@ namespace IMGUIDemo
             : base(800, 600)
         {
             Position = new Point(400, 300);
+            this.Show();
         }
     }
 

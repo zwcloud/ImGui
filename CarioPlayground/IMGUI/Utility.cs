@@ -222,5 +222,14 @@ namespace IMGUI
             }
         }
 
+        public static Rect GetScreenRect(Rect rect, BaseForm form)
+        {
+            var windowHandle = ((SFML.Window.Window) (form.InternalForm)).SystemHandle;
+            SFML.System.Vector2i p = new SFML.System.Vector2i((int)rect.X, (int)rect.Y);
+            Native.ClientToScreen(windowHandle, ref p);
+            rect.X = p.X;
+            rect.Y = p.Y;
+            return rect;
+        }
     }
 }

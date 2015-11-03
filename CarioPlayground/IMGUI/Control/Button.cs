@@ -35,8 +35,8 @@ namespace IMGUI
             Layout.Text = Text;
 
             var oldState = State;
-            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.MousePos);
-            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.MousePos);
+            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.GetMousePos(Form));
+            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.GetMousePos(Form));
             if (active)
             {
                 State = "Active";
@@ -44,13 +44,13 @@ namespace IMGUI
             else if (hover)
             {
                 State = "Hover";
-                if(t ==null)
-                {
-                    t = new ToolTip();
-                    Application.Forms.Add(t);
-                }
-                t.TipText = Text;
-                t.Show();
+                //if(t ==null)
+                //{
+                //    t = new ToolTip();
+                //    Application.Forms.Add(t);
+                //}
+                //t.TipText = Text;
+                //t.Show();
             }
             else
             {
@@ -62,7 +62,7 @@ namespace IMGUI
                 NeedRepaint = true;
             }
 
-            bool clicked = Input.Mouse.LeftButtonClicked && Rect.Contains(Input.Mouse.MousePos);
+            bool clicked = Input.Mouse.LeftButtonClicked && Rect.Contains(Input.Mouse.GetMousePos(Form));
             Result = clicked;
         }
 

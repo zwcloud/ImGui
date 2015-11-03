@@ -113,6 +113,10 @@ namespace IMGUI
 
             while (mainForm.internalForm.IsOpen)
             {
+                //Input
+                Input.Mouse.Refresh();
+                Input.Keyboard.Refresh();
+
                 //TODO a better method for manage newly created windows
                 for (int i = 0; i < Forms.Count; i++)
                 {
@@ -120,8 +124,10 @@ namespace IMGUI
                     var window = (SFML.Window.Window) form.InternalForm;
                     
                     // Start game loop
-                    if(window.IsOpen && form.Visible)
+                    if(window.IsOpen)
                     {
+                        form.Show();
+
                         // Process events
                         window.DispatchEvents();
 

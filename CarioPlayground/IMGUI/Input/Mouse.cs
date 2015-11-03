@@ -104,27 +104,12 @@ namespace IMGUI.Input
         /// </summary>
         static Point mousePos;
 
-        static Point mousePosInScreen;
-
-        /// <summary>
-        /// Mouse position
-        /// </summary>
-        public static Point LastMousePos
-        {
-            get { return lastMousePos; }
-        }
-
         /// <summary>
         /// Mouse position (readonly)
         /// </summary>
         public static Point MousePos
         {
             get { return mousePos; }
-        }
-
-        public static Point MousePosInScreen
-        {
-            get { return mousePosInScreen; }
         }
 
         public static bool MouseMoving
@@ -154,19 +139,11 @@ namespace IMGUI.Input
         /// <summary>
         /// Refresh mouse states
         /// </summary>
-        /// <param name="form">Reference window</param>
         /// <returns>true: successful; false: failed</returns>
         /// <remarks>The mouse states will persist until next call of this method, 
         /// and last states will be recorded.</remarks>
-        public static bool Refresh(BaseForm form)
+        public static bool Refresh()
         {
-            //Get internal SFML window
-            var window = form.InternalForm as SFML.Window.Window;
-            if(window == null)
-            {
-                throw new InvalidCastException("Internal Form is not SFML.Window.Window");
-            }
-
             //Buttons's states
             lastLeftButtonState = leftButtonState;
             leftButtonState = SFML.Window.Mouse.IsButtonPressed(SFML.Window.Mouse.Button.Left) ? InputState.Down : InputState.Up;
@@ -175,13 +152,8 @@ namespace IMGUI.Input
             //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
             //Position
             lastMousePos = mousePos;
-            var pos = SFML.Window.Mouse.GetPosition(window);
+            var pos = SFML.Window.Mouse.GetPosition();
             mousePos = new Point(pos.X, pos.Y);
-            window.SetTitle(string.Format("{0},{1}", pos.X, pos.Y));
-            //Now mousePos is the position in the client area
-
-            var posInSceen = SFML.Window.Mouse.GetPosition();
-            mousePosInScreen = new Point(posInSceen.X, posInSceen.Y);
 
             ClickChecker.MoveNext();
             LeftButtonClicked = ClickChecker.Current;
@@ -190,6 +162,17 @@ namespace IMGUI.Input
             MouseDraging = DragChecker.Current;
 
             return true;
+        }
+
+        /// <summary>
+        /// Get mouse position relative to a form
+        /// </summary>
+        /// <param name="form"></param>
+        /// <returns></returns>
+        public static Point GetMousePos(BaseForm form)
+        {
+            var tmp = SFML.Window.Mouse.GetPosition((SFML.Window.Window) form.InternalForm);
+            return new Point(tmp.X, tmp.Y);
         }
 
         private static IEnumerator<bool> clickChecker = ClickStateMachine.Instance.GetEnumerator();

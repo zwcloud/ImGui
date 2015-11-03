@@ -120,6 +120,17 @@ namespace IMGUI
             state = GUIState.Normal;
         }
 
+        public void BeginVertical(int x, int y)
+        {
+            if (state != GUIState.Normal)
+            {
+                throw new System.InvalidOperationException("Layout has began!");
+            }
+            lastX = x;
+            lastY = y;
+            state = GUIState.VerticalLayout;
+        }
+
         public void BeginVertical(Rect rect)
         {
             if (rect.IsEmpty)

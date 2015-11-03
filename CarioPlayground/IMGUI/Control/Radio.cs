@@ -126,7 +126,7 @@ namespace IMGUI
         public override void OnUpdate()
         {
             var oldState = State;
-            if (Rect.Contains(Input.Mouse.MousePos))
+            if (Rect.Contains(Input.Mouse.GetMousePos(Form)))
             {
                 if (Input.Mouse.LeftButtonState == InputState.Up)
                 {

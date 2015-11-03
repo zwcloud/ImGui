@@ -72,7 +72,7 @@ namespace IMGUI
 
         public override void OnUpdate()
         {
-            bool insideRect = Rect.Contains(Input.Mouse.MousePos);
+            bool insideRect = Rect.Contains(Input.Mouse.GetMousePos(Form));
 
             var oldState = State;
             if(State == "Active")
@@ -94,8 +94,8 @@ namespace IMGUI
                     var offsetOfTextRect = contentRect.TopLeft;
                     uint caretIndex;
                     bool isInside;
-                    caretIndex = Layout.XyToIndex((float)(Input.Mouse.MousePos.X - offsetOfTextRect.X),
-                        (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y), out isInside);
+                    caretIndex = Layout.XyToIndex((float)(Input.Mouse.GetMousePos(Form).X - offsetOfTextRect.X),
+                        (float)(Input.Mouse.GetMousePos(Form).Y - offsetOfTextRect.Y), out isInside);
                     if (!isInside && caretIndex == Text.Length - 1)
                     {
                         ++caretIndex;
@@ -112,8 +112,8 @@ namespace IMGUI
                         uint caretIndex;
                         bool isInside;
                         caretIndex = Layout.XyToIndex(
-                            (float)(Input.Mouse.MousePos.X - offsetOfTextRect.X),
-                            (float)(Input.Mouse.MousePos.Y - offsetOfTextRect.Y), out isInside);
+                            (float)(Input.Mouse.GetMousePos(Form).X - offsetOfTextRect.X),
+                            (float)(Input.Mouse.GetMousePos(Form).Y - offsetOfTextRect.Y), out isInside);
                         if (!isInside && caretIndex == Text.Length-1)
                         {
                             ++caretIndex;
