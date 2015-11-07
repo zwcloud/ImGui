@@ -72,6 +72,12 @@ namespace IMGUI
             return IMGUI.PolygonButton.DoControl(g, Form, points, text, name);
         }
 
+        public bool ToggleButton(Rect rect, string text, bool value, string name)
+        {
+            rect = DoLayout(rect);
+            return IMGUI.ToggleButton.DoControl(g, Form, rect, text, value, name);
+        }
+
         private Rect DoLayout(Rect rect)
         {
             if (state == GUIState.Normal)

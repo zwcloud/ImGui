@@ -11,7 +11,37 @@ namespace IMGUI
 {
     internal class ComboBox : Control
     {
-        public int textCount { get; private set; }
+        #region State machine constants
+        static class ComboBoxState
+        {
+            public const string Normal = "Normal";
+            public const string Hovered = "Hovered";
+            public const string Active = "Active";
+            public const string ShowingItems = "ShowingItems";
+        }
+
+        static class ComboBoxCommand
+        {
+            public const string MoveIn = "MoveIn";
+            public const string MoveOut = "MoveOut";
+            public const string MouseDown = "MouseDown";
+            public const string ShowItems = "ShowItems";
+            public const string SelectItem = "SelectItem";
+        }
+
+        static readonly string[] states =
+        {
+            ComboBoxState.Normal, ComboBoxCommand.MoveIn, ComboBoxState.Hovered,
+            ComboBoxState.Hovered, ComboBoxCommand.MoveOut, ComboBoxState.Normal,
+            ComboBoxState.Hovered, ComboBoxCommand.MouseDown, ComboBoxState.Active,
+            ComboBoxState.Active, ComboBoxCommand.MouseDown, ComboBoxState.Active,
+            ComboBoxState.Active, ComboBoxCommand.ShowItems, ComboBoxState.ShowingItems,
+            ComboBoxState.ShowingItems, ComboBoxCommand.SelectItem, ComboBoxState.Normal,
+        };
+        #endregion
+
+        private StateMachine stateMachine;
+
         public string[] Texts { get; private set; }
         public BorderlessForm ItemsContainer { get; private set; }
         public Rect Rect { get; private set; }
@@ -44,6 +74,7 @@ namespace IMGUI
             Texts = texts;
             Text = texts[0];
             SelectedIndex = 0;
+            stateMachine = new StateMachine(ComboBoxState.Normal, states);
 
             var font = Skin.current.Button[State].Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
@@ -73,7 +104,7 @@ namespace IMGUI
                 Texts, i =>
                 {
                     SelectedIndex = i;
-                    this.State = "Normal";
+                    this.stateMachine.MoveNext(ComboBoxCommand.SelectItem);
                 });
         }
 
@@ -101,44 +132,46 @@ namespace IMGUI
             Layout.Text = Text;
 
             var oldState = State;
-            textCount = Texts.Length;
-            Rect extendRect = new Rect(
-                Rect.BottomLeft + new Vector(1, 1),
-                Rect.BottomRight + textCount * (new Vector(Rect.Height, Rect.Height)));
-
-            Debug.Assert(!Rect.IntersectsWith(extendRect));
-
-            bool inMainRect = Rect.Contains(Input.Mouse.GetMousePos(Form));
-            switch (State)
+            bool active = stateMachine.CurrentState == ComboBoxState.Active;
+            bool hover = stateMachine.CurrentState == ComboBoxState.Hovered;
+            if (active)
             {
-                case "Normal":
-                    if(inMainRect && Input.Mouse.LeftButtonState == InputState.Up)
-                    {
-                        State = "Hover";
-                    }
-                    break;
-                case "Hover":
-                    if (Input.Mouse.LeftButtonClicked)
-                    {
-                        var screenRect = Utility.GetScreenRect(Rect, this.Form);
-                        ItemsContainer.Position = screenRect.TopLeft;
-                        Application.Forms.Add(ItemsContainer);
-                        ItemsContainer.Show();
-                        State = "Active";
-                    }
-                    else if (!inMainRect)
-                    {
-                        State = "Normal";
-                    }
-                    break;
-                case "Active":
-                    break;
+                State = "Active";
+            }
+            else if (hover)
+            {
+                State = "Hover";
+            }
+            else
+            {
+                State = "Normal";
             }
 
             if (State != oldState)
             {
                 NeedRepaint = true;
-                Debug.WriteLine("{0} => {1}", oldState, State);
+            }
+
+            //Execute state commands
+            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            {
+                stateMachine.MoveNext(ComboBoxCommand.MoveIn);
+            }
+            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            {
+                stateMachine.MoveNext(ComboBoxCommand.MoveOut);
+            }
+            if (Input.Mouse.LeftButtonState == InputState.Down)
+            {
+                stateMachine.MoveNext(ComboBoxCommand.MouseDown);
+            }
+            if(stateMachine.CurrentState == ComboBoxState.Active)//instant transition of state
+            {
+                var screenRect = Utility.GetScreenRect(new Rect(Rect.BottomLeft.X, Rect.BottomLeft.Y, Rect.Size), this.Form);
+                ItemsContainer.Position = screenRect.TopLeft;
+                Application.Forms.Add(ItemsContainer);
+                ItemsContainer.Show();
+                stateMachine.MoveNext(ComboBoxCommand.ShowItems);
             }
 
         }
@@ -191,7 +224,6 @@ namespace IMGUI
                 itemRect.Y += (i + 1) * Rect.Height;
                 if(gui.Button(new Rect(Rect.Width, itemRect.Height), TextList[i], this.Name + "item" + i))
                 {
-                    Debug.WriteLine("Clicked");
                     if(CallBack!=null)
                     {
                         CallBack(i);

@@ -105,6 +105,7 @@
     </Compile>
     <Compile Include="Control\Toggle.cs" />
     <Compile Include="Control\PolygonButton.cs" />
+    <Compile Include="Control\ToggleButton.cs" />
     <Compile Include="Control\ToolTips\ToolTip.cs" />
     <Compile Include="Detalied\Point.cs" />
     <Compile Include="Detalied\Rect.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="SFMLForm.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Skin.cs" />
+    <Compile Include="StateMachine.cs" />
     <Compile Include="Style.Build.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="Style.Make.cs" />

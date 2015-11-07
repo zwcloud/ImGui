@@ -1,5 +1,5 @@
-﻿//#define ShowButton
-//#define ShowToggle
+﻿#define ShowButton
+#define ShowToggle
 //#define ShowRadio
 //#define ShowImage
 #define ShowComboxBox
@@ -12,7 +12,7 @@ namespace IMGUIDemo
     partial class Form1
     {
         #region paramters
-        private bool _opened;
+        private bool _opened1, _opened2;
 
         private readonly string[] comboBoxItems = new[] { "item0", "item1", "item2", "item3" };
 
@@ -22,7 +22,7 @@ namespace IMGUIDemo
         private bool radio1Selected = false;
         private bool radio2Selected = false;
 
-        private int selectedindex;
+        private int selectedindex1, selectedindex2;
 
         #endregion
 
@@ -49,10 +49,15 @@ namespace IMGUIDemo
 
 #if ShowToggle
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
-            var oldValueOfTaggle = _opened;
-            _opened = gui.Toggle(new Rect(20, firstY + i * 20, 100, 20), "Opened?", _opened, "Toggle0");
-            if(_opened ^ oldValueOfTaggle)
-                Debug.WriteLine("Toggle 0 {0}", _opened ? "on!" : "off!", null);
+            var oldValueOfTaggle1 = _opened1;
+            _opened1 = gui.Toggle(new Rect(20, firstY + i * 20, 100, 20), "Opened?", _opened1, "Toggle0");
+            if (_opened1 ^ oldValueOfTaggle1)
+                Debug.WriteLine("Toggle 0 {0}", _opened1 ? "on!" : "off!", null);
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            var oldValueOfTaggle2 = _opened2;
+            _opened2 = gui.ToggleButton(new Rect(20, firstY + i * 20, 100, 20), "Opened?", _opened1, "ToggleButton0");
+            if (_opened2 ^ oldValueOfTaggle2)
+                Debug.WriteLine("ToggleButton 0 {0}", _opened2 ? "on!" : "off!", null);
 #endif
 
 #if ShowRadio
@@ -81,11 +86,19 @@ namespace IMGUIDemo
 
 
 #if ShowComboxBox
-            var oldValueOfComboBox = selectedindex;
-            selectedindex = gui.CombolBox(new Rect(new Point(20, 108), new Point(120, 128)), comboBoxItems, selectedindex,
-                "MyCombo");
-            if(selectedindex != oldValueOfComboBox)
-                Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex, comboBoxItems[selectedindex]);
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            var oldValueOfComboBox1 = selectedindex1;
+            selectedindex1 = gui.CombolBox(new Rect(20, firstY + i * 20, 100, 20), comboBoxItems, selectedindex1,
+                "Combo1");
+            if(selectedindex1 != oldValueOfComboBox1)
+                Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex1, comboBoxItems[selectedindex1]);
+
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            var oldValueOfComboBox2 = selectedindex2;
+            selectedindex2 = gui.CombolBox(new Rect(20, firstY + i * 20, 100, 20), comboBoxItems, selectedindex2,
+                "Combo2");
+            if (selectedindex2 != oldValueOfComboBox2)
+                Debug.WriteLine("ComboBox item changed to {0}:{1}", selectedindex2, comboBoxItems[selectedindex2]);
 #endif
 
         }

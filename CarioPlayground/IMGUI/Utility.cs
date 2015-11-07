@@ -231,5 +231,15 @@ namespace IMGUI
             rect.Y = p.Y;
             return rect;
         }
+
+        public static Point ScreenToClient(Point point, BaseForm form)
+        {
+            var windowHandle = ((SFML.Window.Window)(form.InternalForm)).SystemHandle;
+            SFML.System.Vector2i tmp = new SFML.System.Vector2i((int)point.X, (int)point.Y);
+            Native.ScreenToClient(windowHandle, ref tmp);
+            point.X = tmp.X;
+            point.Y = tmp.Y;
+            return point;
+        }
     }
 }

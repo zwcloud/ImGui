@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿//#define INSPECT_STATE
+using System.Diagnostics;
 using Cairo;
 using TinyIoC;
 
@@ -6,6 +7,35 @@ namespace IMGUI
 {
     internal class Button : Control
     {
+        #region State machine define
+        static class ButtonState
+        {
+            public const string Normal = "Normal";
+            public const string Hover = "Hover";
+            public const string Active = "Active";
+        }
+
+        static class ButtonCommand
+        {
+            public const string MoveIn = "MoveIn";
+            public const string MoveOut = "MoveOut";
+            public const string MousePress = "MousePress";
+            public const string MouseRelease = "MouseRelease";
+        }
+
+        static readonly string[] states =
+        {
+            ButtonState.Normal, ButtonCommand.MoveIn, ButtonState.Hover,
+            ButtonState.Hover, ButtonCommand.MoveOut, ButtonState.Normal,
+            ButtonState.Hover, ButtonCommand.MousePress, ButtonState.Active,
+            ButtonState.Active, ButtonCommand.MoveOut, ButtonState.Normal,
+            ButtonState.Active, ButtonCommand.MouseRelease, ButtonState.Hover
+
+        };
+        #endregion
+
+        private readonly StateMachine stateMachine;
+
         public ITextFormat Format { get; private set; }
         public ITextLayout Layout { get; private set; }
 
@@ -29,14 +59,44 @@ namespace IMGUI
         private ToolTip t;
         public override void OnUpdate()
         {
-            var style = Skin.current.Button[State];
             Layout.MaxWidth = (int)Rect.Width;
             Layout.MaxHeight = (int)Rect.Height;
             Layout.Text = Text;
+            
+#if INSPECT_STATE
+            var A = stateMachine.CurrentState;
+#endif
+            //Execute state commands
+            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            {
+                stateMachine.MoveNext(ButtonCommand.MoveIn);
+            }
+            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            {
+                stateMachine.MoveNext(ButtonCommand.MoveOut);
+            }
+            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Pressed)
+            {
+                if(stateMachine.MoveNext(ButtonCommand.MousePress))
+                {
+                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
+                }
+            }
+            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Released)
+            {
+                if(stateMachine.MoveNext(ButtonCommand.MouseRelease))
+                {
+                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
+                }
+            }
+#if INSPECT_STATE
+            var B = stateMachine.CurrentState;
+            Debug.WriteLineIf(A != B, string.Format("Button{0} {1}=>{2}", Name, A, B));
+#endif
 
             var oldState = State;
-            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.GetMousePos(Form));
-            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.GetMousePos(Form));
+            bool active = stateMachine.CurrentState == ButtonState.Active;
+            bool hover = stateMachine.CurrentState == ButtonState.Hover;
             if (active)
             {
                 State = "Active";
@@ -57,12 +117,11 @@ namespace IMGUI
                 State = "Normal";
             }
 
-            if(State != oldState)
+            if (State != oldState)
             {
                 NeedRepaint = true;
             }
-
-            bool clicked = Input.Mouse.LeftButtonClicked && Rect.Contains(Input.Mouse.GetMousePos(Form));
+            bool clicked = oldState == "Active" && State == "Hover";
             Result = clicked;
         }
 
@@ -80,6 +139,7 @@ namespace IMGUI
         internal Button(string name, BaseForm form, string text, Rect rect)
             : base(name, form)
         {
+            stateMachine = new StateMachine(ButtonState.Normal, states);
             Rect = rect;
             Text = text;
 
@@ -119,8 +179,6 @@ namespace IMGUI
 
             var control = form.Controls[name] as Button;
             Debug.Assert(control != null);
-
-            //Check if the control need to be relayout
 
             return control.Result;
         }

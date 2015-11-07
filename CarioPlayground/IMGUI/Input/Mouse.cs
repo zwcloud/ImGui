@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define INSPECT_STATE
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,6 +11,34 @@ namespace IMGUI.Input
     /// </summary>
     public static class Mouse
     {
+        #region State machine define
+        internal static class MouseState
+        {
+            public const string Idle = "Idle";
+            public const string Pressed = "Pressed";
+            public const string PressFetched = "PressFetched";
+            public const string Released = "Released";
+            
+        }
+
+        internal static class MouseCommand
+        {
+            public const string MouseDown = "_MouseDown";
+            public const string MouseUp = "_MouseUp";
+            public const string Fetch = "_Fetch";
+        }
+
+        private static string[] states =
+        {
+            MouseState.Idle, MouseCommand.MouseDown, MouseState.Pressed,
+            MouseState.Pressed, MouseCommand.Fetch, MouseState.PressFetched,
+            MouseState.Pressed, MouseCommand.MouseUp, MouseState.Released,
+            MouseState.PressFetched, MouseCommand.MouseUp, MouseState.Released,
+            MouseState.Released, MouseCommand.Fetch, MouseState.Idle,
+            MouseState.Released, MouseCommand.MouseDown, MouseState.Pressed
+        };
+        #endregion
+
         /// <summary>
         /// Double click interval time span
         /// </summary>
@@ -54,7 +83,10 @@ namespace IMGUI.Input
         /// </summary>
         public static bool LeftButtonClicked
         {
-            get { return leftButtonClicked; }
+            get
+            {
+                return leftButtonClicked;
+            }
             private set { leftButtonClicked = value; }
         }
 
@@ -105,7 +137,15 @@ namespace IMGUI.Input
         static Point mousePos;
 
         /// <summary>
-        /// Mouse position (readonly)
+        /// Last mouse position in screen (readonly)
+        /// </summary>
+        public static Point LastMousePos
+        {
+            get { return lastMousePos; }
+        }
+
+        /// <summary>
+        /// Mouse position in screen (readonly)
         /// </summary>
         public static Point MousePos
         {
@@ -136,6 +176,12 @@ namespace IMGUI.Input
 
         #endregion
 
+        internal static readonly StateMachine stateMachine = new StateMachine(MouseState.Idle, states);
+
+        static Mouse()
+        {
+        }
+
         /// <summary>
         /// Refresh mouse states
         /// </summary>
@@ -155,9 +201,22 @@ namespace IMGUI.Input
             var pos = SFML.Window.Mouse.GetPosition();
             mousePos = new Point(pos.X, pos.Y);
 
-            ClickChecker.MoveNext();
-            LeftButtonClicked = ClickChecker.Current;
-
+#if INSPECT_STATE
+            var A = stateMachine.CurrentState;
+#endif
+            if (leftButtonState == InputState.Down)
+            {
+                stateMachine.MoveNext(MouseCommand.MouseDown);
+            }
+            if (leftButtonState == InputState.Up)
+            {
+                stateMachine.MoveNext(MouseCommand.MouseUp);
+            }
+#if INSPECT_STATE
+            var B = stateMachine.CurrentState;
+            System.Diagnostics.Debug.WriteLineIf(A != B, string.Format("Mouse {0}=>{1}", A, B));
+#endif
+            
             DragChecker.MoveNext();
             MouseDraging = DragChecker.Current;
 
@@ -313,4 +372,6 @@ namespace IMGUI.Input
             }
         }
     }
+
+
 }
