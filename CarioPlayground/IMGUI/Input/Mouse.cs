@@ -161,11 +161,6 @@ namespace IMGUI.Input
 
         #region Drag
 
-        private static IEnumerator<bool> ClickChecker
-        {
-            get { return clickChecker; }
-            set { clickChecker = value; }
-        }
 
         public static bool MouseDraging { get; private set; }
 
@@ -233,73 +228,7 @@ namespace IMGUI.Input
             var tmp = SFML.Window.Mouse.GetPosition((SFML.Window.Window) form.InternalForm);
             return new Point(tmp.X, tmp.Y);
         }
-
-        private static IEnumerator<bool> clickChecker = ClickStateMachine.Instance.GetEnumerator();
-        class ClickStateMachine : IEnumerable<bool>
-        {
-            enum ClickState
-            {
-                One,
-                Two,
-                Three
-            }
-
-            private static ClickStateMachine instance;
-            public static ClickStateMachine Instance
-            {
-                get
-                {
-                    if(instance == null)
-                        instance = new ClickStateMachine();
-                    return instance;
-                }
-            }
-
-            private ClickState state;
-
-            public IEnumerator<bool> GetEnumerator()
-            {
-                while (true)
-                {
-                    switch(state)
-                    {
-                        case ClickState.One:
-                            if(LastLeftButtonState == InputState.Up && LeftButtonState == InputState.Down)
-                            {
-                                state = ClickState.Two;
-                            }
-                            yield return false;
-                            break;
-                        case ClickState.Two:
-                            if(MouseMoving)
-                            {
-                                state = ClickState.One;
-                                yield return false;
-                            }
-                            if(LeftButtonState == InputState.Up)
-                            {
-                                state = ClickState.One;
-                                yield return false;
-                            }
-                            state = ClickState.Three;
-                            yield return true;
-                            break;
-                        case ClickState.Three:
-                            state = ClickState.One;
-                            yield return false;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-        }
-
+        
         private static IEnumerator<bool> dragChecker = DragStateMachine.Instance.GetEnumerator();
 
         class DragStateMachine : IEnumerable<bool>

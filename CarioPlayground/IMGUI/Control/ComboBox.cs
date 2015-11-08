@@ -24,7 +24,7 @@ namespace IMGUI
         {
             public const string MoveIn = "MoveIn";
             public const string MoveOut = "MoveOut";
-            public const string MouseDown = "MouseDown";
+            public const string MousePress = "MouseDown";
             public const string ShowItems = "ShowItems";
             public const string SelectItem = "SelectItem";
         }
@@ -33,8 +33,7 @@ namespace IMGUI
         {
             ComboBoxState.Normal, ComboBoxCommand.MoveIn, ComboBoxState.Hovered,
             ComboBoxState.Hovered, ComboBoxCommand.MoveOut, ComboBoxState.Normal,
-            ComboBoxState.Hovered, ComboBoxCommand.MouseDown, ComboBoxState.Active,
-            ComboBoxState.Active, ComboBoxCommand.MouseDown, ComboBoxState.Active,
+            ComboBoxState.Hovered, ComboBoxCommand.MousePress, ComboBoxState.Active,
             ComboBoxState.Active, ComboBoxCommand.ShowItems, ComboBoxState.ShowingItems,
             ComboBoxState.ShowingItems, ComboBoxCommand.SelectItem, ComboBoxState.Normal,
         };
@@ -153,17 +152,21 @@ namespace IMGUI
             }
 
             //Execute state commands
-            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            var containMousePosition = Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form));
+            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && containMousePosition)
             {
                 stateMachine.MoveNext(ComboBoxCommand.MoveIn);
             }
-            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !containMousePosition)
             {
                 stateMachine.MoveNext(ComboBoxCommand.MoveOut);
             }
-            if (Input.Mouse.LeftButtonState == InputState.Down)
+            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Pressed && containMousePosition && Form.Focused)
             {
-                stateMachine.MoveNext(ComboBoxCommand.MouseDown);
+                if (stateMachine.MoveNext(ComboBoxCommand.MousePress))
+                {
+                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
+                }
             }
             if(stateMachine.CurrentState == ComboBoxState.Active)//instant transition of state
             {

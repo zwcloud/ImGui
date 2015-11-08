@@ -20,6 +20,11 @@ namespace IMGUI
         public abstract Cursor Cursor { set; }
         
         /// <summary>
+        /// Is the form focused? (readonly)
+        /// </summary>
+        public abstract bool Focused { get; }
+
+        /// <summary>
         /// Open the form.
         /// </summary>
         public abstract void Open();

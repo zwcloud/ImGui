@@ -59,6 +59,14 @@ namespace IMGUI
         }
 
         /// <summary>
+        /// Is the form focused? (readonly)
+        /// </summary>
+        public override bool Focused
+        {
+            get { return internalForm.HasFocus(); }
+        }
+
+        /// <summary>
         /// Open the form.
         /// </summary>
         public override void Open()

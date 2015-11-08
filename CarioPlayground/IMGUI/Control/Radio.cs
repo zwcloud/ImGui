@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using Cairo;
 using TinyIoC;
-using System;
 
 namespace IMGUI
 {
