@@ -44,16 +44,6 @@ namespace IMGUI
         /// </summary>
         public abstract void Hide();
 
-        /// <summary>
-        /// Convert position on Form to position on Screen.
-        /// </summary>
-        /// <param name="p">position on Form</param>
-        /// <returns>corresponding position on Screen</returns>
-        public Point PointToScreen(Point p)
-        {
-            return new Point(this.Position.X + p.X, this.Position.Y + p.Y);
-        }
-
         internal abstract object InternalForm { get; }
 
         internal System.Collections.Generic.Dictionary<string, Control> Controls

@@ -1,17 +1,15 @@
 ﻿//#define INSPECT_STATE
-using System.Diagnostics;
 using Cairo;
+using System.Diagnostics;
 using TinyIoC;
-
 namespace IMGUI
 {
-    internal class Button : Control
+    class HoverButton : Control
     {
         #region State machine define
         static class ButtonState
         {
             public const string Normal = "Normal";
-            public const string Hover = "Hover";
             public const string Active = "Active";
         }
 
@@ -19,17 +17,12 @@ namespace IMGUI
         {
             public const string MoveIn = "MoveIn";
             public const string MoveOut = "MoveOut";
-            public const string MousePress = "MousePress";
-            public const string MouseRelease = "MouseRelease";
         }
 
         static readonly string[] states =
         {
-            ButtonState.Normal, ButtonCommand.MoveIn, ButtonState.Hover,
-            ButtonState.Hover, ButtonCommand.MoveOut, ButtonState.Normal,
-            ButtonState.Hover, ButtonCommand.MousePress, ButtonState.Active,
+            ButtonState.Normal, ButtonCommand.MoveIn, ButtonState.Active,
             ButtonState.Active, ButtonCommand.MoveOut, ButtonState.Normal,
-            ButtonState.Active, ButtonCommand.MouseRelease, ButtonState.Hover
         };
         #endregion
 
@@ -55,7 +48,6 @@ namespace IMGUI
         }
         public Rect Rect { get; private set; }
         public bool Result { get; private set; }
-        private ToolTip t;
         public override void OnUpdate()
         {
             Layout.MaxWidth = (int)Rect.Width;
@@ -74,20 +66,6 @@ namespace IMGUI
             {
                 stateMachine.MoveNext(ButtonCommand.MoveOut);
             }
-            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Pressed)
-            {
-                if(stateMachine.MoveNext(ButtonCommand.MousePress))
-                {
-                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
-                }
-            }
-            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Released)
-            {
-                if(stateMachine.MoveNext(ButtonCommand.MouseRelease))
-                {
-                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
-                }
-            }
 #if INSPECT_STATE
             var B = stateMachine.CurrentState;
             Debug.WriteLineIf(A != B, string.Format("Button{0} {1}=>{2}", Name, A, B));
@@ -95,21 +73,9 @@ namespace IMGUI
 
             var oldState = State;
             bool active = stateMachine.CurrentState == ButtonState.Active;
-            bool hover = stateMachine.CurrentState == ButtonState.Hover;
             if (active)
             {
                 State = "Active";
-            }
-            else if (hover)
-            {
-                State = "Hover";
-                //if(t ==null)
-                //{
-                //    t = new ToolTip();
-                //    Application.Forms.Add(t);
-                //}
-                //t.TipText = Text;
-                //t.Show();
             }
             else
             {
@@ -120,8 +86,7 @@ namespace IMGUI
             {
                 NeedRepaint = true;
             }
-            bool clicked = oldState == "Active" && State == "Hover";
-            Result = clicked;
+            Result = active;
         }
 
         public override void OnRender(Context g)
@@ -135,7 +100,7 @@ namespace IMGUI
             Format.Dispose();
         }
 
-        internal Button(string name, BaseForm form, string text, Rect rect)
+        internal HoverButton(string name, BaseForm form, string text, Rect rect)
             : base(name, form)
         {
             stateMachine = new StateMachine(ButtonState.Normal, states);
@@ -171,12 +136,12 @@ namespace IMGUI
             //The control hasn't been created, create it.
             if (!form.Controls.ContainsKey(name))
             {
-                var button = new Button(name, form, text, rect);
-                button.OnUpdate();
-                button.OnRender(g);
+                var hoverButton = new HoverButton(name, form, text, rect);
+                hoverButton.OnUpdate();
+                hoverButton.OnRender(g);
             }
 
-            var control = form.Controls[name] as Button;
+            var control = form.Controls[name] as HoverButton;
             Debug.Assert(control != null);
 
             return control.Result;

@@ -26,7 +26,11 @@ namespace IMGUI
         }
 
         System.Collections.Generic.Dictionary<StateTransition, string> transitions;
-        public string CurrentState { get; private set; }
+        /// <summary>
+        /// Current state of the state machine
+        /// </summary>
+        /// <remarks>DO NOT Set this property if you are not making a instant state transition!</remarks>
+        public string CurrentState { get; set; }
 
         public StateMachine(string initialState, string[] stateTransitions)
         {

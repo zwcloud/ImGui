@@ -7,6 +7,32 @@ namespace IMGUI
 {
     internal class Radio : Control
     {
+        #region State machine define
+        static class RadioState
+        {
+            public const string Normal = "Normal";
+            public const string Hover = "Hover";
+            public const string Active = "Active";
+        }
+
+        static class RadioCommand
+        {
+            public const string MoveIn = "MoveIn";
+            public const string MoveOut = "MoveOut";
+            public const string MousePress = "MousePress";
+            public const string MouseRelease = "MouseRelease";
+        }
+
+        static readonly string[] states =
+        {
+            RadioState.Normal, RadioCommand.MoveIn, RadioState.Hover,
+            RadioState.Hover, RadioCommand.MoveOut, RadioState.Normal,
+            RadioState.Hover, RadioCommand.MousePress, RadioState.Active,
+            RadioState.Active, RadioCommand.MoveOut, RadioState.Normal,
+            RadioState.Active, RadioCommand.MouseRelease, RadioState.Hover
+        };
+        #endregion
+
         public static Dictionary<string, HashSet<string>> Groups;
 
         static Radio()
@@ -14,6 +40,7 @@ namespace IMGUI
             Groups = new Dictionary<string, HashSet<string>>();
         }
 
+        private StateMachine stateMachine;
         private string text;
 
         public ITextFormat Format { get; private set; }
@@ -33,8 +60,8 @@ namespace IMGUI
             }
         }
         public Rect Rect { get; private set; }
-        private string groupName;
-        private bool actived;
+        protected string groupName;
+        protected bool actived;
 
         public string GroupName
         {
@@ -81,6 +108,7 @@ namespace IMGUI
         {
             Rect = rect;
             Text = text;
+            stateMachine = new StateMachine(RadioState.Normal, states);
 
             GroupName = groupName;
             var font = Skin.current.Button[State].Font;
@@ -124,36 +152,58 @@ namespace IMGUI
 
         public override void OnUpdate()
         {
-            var oldState = State;
-            if (Rect.Contains(Input.Mouse.GetMousePos(Form)))
+#if INSPECT_STATE
+            var A = stateMachine.CurrentState;
+#endif
+            //Execute state commands
+            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
             {
-                if (Input.Mouse.LeftButtonState == InputState.Up)
+                stateMachine.MoveNext(RadioCommand.MoveIn);
+            }
+            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            {
+                stateMachine.MoveNext(RadioCommand.MoveOut);
+            }
+            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Pressed)
+            {
+                if (stateMachine.MoveNext(RadioCommand.MousePress))
                 {
-                    State = "Hover";
+                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
                 }
-                else if (Input.Mouse.LeftButtonState == InputState.Down)
+            }
+            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Released)
+            {
+                if (stateMachine.MoveNext(RadioCommand.MouseRelease))
                 {
-                    State = "Active";
+                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
                 }
+            }
+#if INSPECT_STATE
+            var B = stateMachine.CurrentState;
+            Debug.WriteLineIf(A != B, string.Format("Button{0} {1}=>{2}", Name, A, B));
+#endif
 
-                if (Input.Mouse.LeftButtonClicked)
-                {
-                    Actived = true;
-                }
+            var oldState = State;
+            bool active = stateMachine.CurrentState == RadioState.Active;
+            bool hover = stateMachine.CurrentState == RadioState.Hover;
+            if (active)
+            {
+                State = "Active";
+            }
+            else if (hover)
+            {
+                State = "Hover";
             }
             else
             {
                 State = "Normal";
             }
-            if (Actived)
+            if (oldState == "Active" && State == "Hover")
             {
                 var group = Groups[groupName];
                 foreach (var radioName in group)
                 {
                     var radio = Form.Controls[radioName];
-#if DEBUG
-                    Debug.Assert(radio is Radio);
-#endif
                     ((Radio)radio).Actived = false;
                 }
                 Actived = true;

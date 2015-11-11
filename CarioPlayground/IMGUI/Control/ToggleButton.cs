@@ -3,9 +3,8 @@ namespace IMGUI
 {
     internal class ToggleButton : Toggle
     {
-
-        public ToggleButton(string name, BaseForm form, string text, Rect rect)
-            : base(name, form, text, rect)
+        public ToggleButton(string name, BaseForm form, bool value, string text, Rect rect)
+            : base(name, form, value, text, rect)
         {
 
         }
@@ -20,7 +19,7 @@ namespace IMGUI
         {
             if (!form.Controls.ContainsKey(name))
             {
-                var toggle = new ToggleButton(name, form, text, rect);
+                var toggle = new ToggleButton(name, form, value, text, rect);
                 Debug.Assert(toggle != null);
                 toggle.OnUpdate();
                 toggle.OnRender(g);

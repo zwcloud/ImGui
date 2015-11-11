@@ -159,28 +159,12 @@ namespace IMGUI
         }
 
         #endregion Public Properties
-
-        #region Protected Methods
-
-        #endregion ProtectedMethods
-
-        #region Internal Methods
-
-        #endregion Internal Methods
-
-        #region Dependency Properties
-
-        #endregion Dependency Properties
-
+        
         #region Internal Fields
 
         internal double _x;
         internal double _y;
 
         #endregion Internal Fields
-
-        #region Constructors
-
-        #endregion Constructors
     }
 }

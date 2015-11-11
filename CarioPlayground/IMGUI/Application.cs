@@ -92,7 +92,7 @@ namespace IMGUI
             Forms.Add(mainForm);
             mainForm.Name = "MainForm";
 
-            for (int i = 0; i < Forms.Count; i++)
+            for (int i = 0; i < Forms.Count; i++)//Only one form now
             {
                 var form = (SFMLForm) Forms[i];
                 var window = (SFML.Window.Window) form.InternalForm;
@@ -111,6 +111,8 @@ namespace IMGUI
                 form.guiRenderer.OnLoad();
             }
 
+            mainForm.Show();
+
             while (mainForm.internalForm.IsOpen)
             {
                 //Input
@@ -121,13 +123,18 @@ namespace IMGUI
                 for (int i = 0; i < Forms.Count; i++)
                 {
                     var form = (SFMLForm)Forms[i];
-                    var window = (SFML.Window.Window) form.InternalForm;
-                    
-                    // Start game loop
+                    var window = (SFML.Window.Window)form.InternalForm;
+
+                    bool mouseSuspended = false;
+                    if(!form.Focused)
+                    {
+                        Input.Mouse.Suspend();
+                        mouseSuspended = true;
+                    }
+
+                    // Start window loop
                     if(window.IsOpen)
                     {
-                        form.Show();
-
                         // Process events
                         window.DispatchEvents();
 
@@ -153,6 +160,12 @@ namespace IMGUI
                         // Display the rendered frame on screen
                         window.Display();
                     }
+
+                    if (mouseSuspended)
+                    {
+                        Input.Mouse.Resume();
+                    }
+
                 }
             }
         }

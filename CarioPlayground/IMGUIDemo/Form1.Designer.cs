@@ -1,6 +1,6 @@
 ﻿#define ShowButton
 #define ShowToggle
-//#define ShowRadio
+#define ShowRadio
 //#define ShowImage
 #define ShowComboxBox
 
@@ -44,6 +44,12 @@ namespace IMGUIDemo
             if (gui.Button(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
             {
                 Debug.WriteLine("button {0} clicked!", i);
+            }
+
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            if (gui.HoverButton(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
+            {
+                Debug.WriteLine("HoverButton {0} active!", i);
             }
 #endif
 

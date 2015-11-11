@@ -18,7 +18,8 @@ namespace IMGUI.Input
             public const string Pressed = "Pressed";
             public const string PressFetched = "PressFetched";
             public const string Released = "Released";
-            
+            public const string Suspended = "Suspended";
+            public const string Resumed = "_Resumed";//Instant state
         }
 
         internal static class MouseCommand
@@ -26,6 +27,8 @@ namespace IMGUI.Input
             public const string MouseDown = "_MouseDown";
             public const string MouseUp = "_MouseUp";
             public const string Fetch = "_Fetch";
+            public const string Resume = "_Resume";
+            public const string Suspend = "_Suspend";
         }
 
         private static string[] states =
@@ -35,7 +38,13 @@ namespace IMGUI.Input
             MouseState.Pressed, MouseCommand.MouseUp, MouseState.Released,
             MouseState.PressFetched, MouseCommand.MouseUp, MouseState.Released,
             MouseState.Released, MouseCommand.Fetch, MouseState.Idle,
-            MouseState.Released, MouseCommand.MouseDown, MouseState.Pressed
+            MouseState.Released, MouseCommand.MouseDown, MouseState.Pressed,
+            
+            MouseState.Idle, MouseCommand.Suspend, MouseState.Suspended,
+            MouseState.Pressed, MouseCommand.Suspend, MouseState.Suspended,
+            MouseState.PressFetched, MouseCommand.Suspend, MouseState.Suspended,
+            MouseState.Released, MouseCommand.Suspend, MouseState.Suspended,
+            MouseState.Suspended, MouseCommand.Resume, MouseState.Resumed,
         };
         #endregion
 
@@ -227,6 +236,23 @@ namespace IMGUI.Input
         {
             var tmp = SFML.Window.Mouse.GetPosition((SFML.Window.Window) form.InternalForm);
             return new Point(tmp.X, tmp.Y);
+        }
+
+        private static string suspendedState;
+        public static void Suspend()
+        {
+            suspendedState = stateMachine.CurrentState;
+            stateMachine.MoveNext(MouseCommand.Suspend);
+        }
+
+        public static void Resume()
+        {
+            if(stateMachine.MoveNext(MouseCommand.Resume))
+            {
+                System.Diagnostics.Debug.Assert(suspendedState != null);
+                stateMachine.CurrentState = suspendedState;
+                suspendedState = null;
+            }
         }
         
         private static IEnumerator<bool> dragChecker = DragStateMachine.Instance.GetEnumerator();

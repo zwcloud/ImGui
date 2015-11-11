@@ -10,11 +10,13 @@ namespace IMGUI
         private string text;
         private StateMachine stateMachine;
 
-        internal Toggle(string name, BaseForm form, string displayText, Rect rect)
+        internal Toggle(string name, BaseForm form, bool value, string displayText, Rect rect)
             : base(name, form)
         {
             Rect = rect;
             Text = displayText;
+            Result = value;
+
             stateMachine = new StateMachine(ToggleState.Normal, states);
 
             var font = Skin.current.Toggle[State].Font;
@@ -64,7 +66,7 @@ namespace IMGUI
         {
             if(!form.Controls.ContainsKey(name))
             {
-                var toggle = new Toggle(name, form, displayText, rect);
+                var toggle = new Toggle(name, form, value, displayText, rect);
                 Debug.Assert(toggle != null);
                 toggle.OnUpdate();
                 toggle.OnRender(g);

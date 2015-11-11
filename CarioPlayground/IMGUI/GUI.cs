@@ -4,6 +4,8 @@ namespace IMGUI
 {
     public class GUI
     {
+        public delegate void WindowFunction(GUI gui);
+
         private static class GUIState
         {
             public const string Normal = "Normal";
@@ -78,6 +80,24 @@ namespace IMGUI
             return IMGUI.ToggleButton.DoControl(g, Form, rect, text, value, name);
         }
 
+        public bool HoverButton(Rect rect, string text, string name)
+        {
+            rect = DoLayout(rect);
+            return IMGUI.HoverButton.DoControl(g, Form, rect, text, name);
+        }
+
+        public bool RadioButton(Rect rect, string text, string groupName, bool value, string name)
+        {
+            rect = DoLayout(rect);
+            return IMGUI.RadioButton.DoControl(g, Form, rect, text, groupName, value, name);
+        }
+
+        public void Window(Rect rect, WindowFunction func, string name)
+        {
+            rect = DoLayout(rect);
+            IMGUI.Window.DoControl(g, Form, rect, func, name);
+        }
+
         private Rect DoLayout(Rect rect)
         {
             if (state == GUIState.Normal)
@@ -100,8 +120,8 @@ namespace IMGUI
             return rect;
         }
 
-        #region Containers
-
+        #region Simple layout
+        
         public void BeginHorizontal(Rect rect)
         {
             if (rect.IsEmpty)
@@ -160,7 +180,7 @@ namespace IMGUI
             }
             state = GUIState.Normal;
         }
-
+        
         #endregion
     }
 

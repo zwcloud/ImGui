@@ -4,3 +4,4 @@
 //TODO Layout engine 30%(a simple one)
 //TODO input can affect only focused window
 //TODO use state-machine on other controls that needs it.
+//TODO study window management method
