@@ -72,6 +72,11 @@ namespace IMGUI
                     new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorArgb(0xFF7A7A7A)},
                     new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorArgb(0xFF7A7A7A)},
                     new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorArgb(0xFFB3B3B3)},
+                    
+                    new StyleModifier{Name = "PaddingTop", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingRight", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingBottom", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingLeft", Value = new Length(2, Unit.Pixel)},
 
                     new StyleModifier
                     {

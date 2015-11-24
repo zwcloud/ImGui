@@ -6,12 +6,30 @@ using System.Text;
 using System.Windows.Forms;
 using IMGUI;
 
-namespace IMGUIDemo_TextBox
+namespace IMGUIDemo_Layout
 {
     partial class Form1
     {
         protected override void OnGUI(GUI gui)
         {
+#if true
+            gui.BeginH();
+                gui.LayoutButton("Button 0", "btn0");
+                gui.LayoutButton("Button 1", "btn1");
+                gui.BeginV();
+                    gui.LayoutButton("Button 2", "btn2");
+                    gui.BeginH();
+                        gui.LayoutButton("Button 3", "btn3");
+                        gui.LayoutButton("Button 4", "btn4");
+                        gui.LayoutButton("Button 5", "btn5");
+                    gui.EndH();
+                    gui.LayoutButton("Button 6", "btn6");
+                    gui.LayoutButton("Button 7", "btn7");
+                gui.EndV();
+                gui.LayoutButton("Button 8", "btn8");
+                gui.LayoutButton("Button 9", "btn9");
+            gui.EndH();
+#else
             gui.Label(new Rect(0, 0, this.Size.Width, 40), "Demo project - Layout", "CaptionLabel");
             gui.BeginHorizontal(new Rect(this.Size.Width/2 - 200/2, 41, 200, 80));
             {
@@ -48,7 +66,7 @@ namespace IMGUIDemo_TextBox
                 gui.Button(new Rect(120, 30), "点我啊", "buttonX1");
             }
             gui.EndVertical();
-            
+#endif   
         }
     }
 

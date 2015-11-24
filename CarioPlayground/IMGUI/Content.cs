@@ -1,4 +1,4 @@
-﻿using Layout = IMGUI.ITextLayout;
+﻿using TextLayout = IMGUI.ITextLayout;
 
 namespace IMGUI
 {
@@ -8,14 +8,14 @@ namespace IMGUI
 
         /// <summary>
         /// Simple text(Single line and short--three or two word)
-        /// Not used!
+        /// Not used! TODO
         /// </summary>
         public string Text { get; set; }
 
         /// <summary>
         /// Layouted text
         /// </summary>
-        public Layout Layout { get; set; }
+        public TextLayout Layout { get; set; }
 
         /// <summary>
         /// Image
@@ -45,11 +45,26 @@ namespace IMGUI
             Layout = null;
         }
 
-        public Content(Layout layout)
+        public Content(TextLayout layout)
         {
             Text = null;
             Image = null;
             Layout = layout;
+        }
+
+        /// <summary>
+        /// Get rect of the content that it may occupy
+        /// </summary>
+        /// <returns>rect of the content</returns>
+        public Rect GetRect()
+        {
+            if(Layout!= null)
+            {
+                return Layout.Rect;
+            }
+
+            //Others' are not implemented
+            throw new System.NotImplementedException();
         }
     }
 }

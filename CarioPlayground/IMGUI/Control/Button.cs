@@ -179,6 +179,8 @@ namespace IMGUI
             var control = form.Controls[name] as Button;
             Debug.Assert(control != null);
 
+            //Debug.WriteLine(control.State);
+
             return control.Result;
         }
     }

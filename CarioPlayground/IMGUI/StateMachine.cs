@@ -42,29 +42,30 @@ namespace IMGUI
             }
         }
 
-        public string GetNext(string command)
+        public bool GetNext(string command, out string nextState)
         {
             StateTransition transition = new StateTransition(CurrentState, command);
-            string nextState;
             if(!transitions.TryGetValue(transition, out nextState))
             {
                 //throw new System.Exception("Invalid transition: " + CurrentState + " -> " + command);
-                return CurrentState;
+                nextState = CurrentState;
+                return false;
             }
-            return nextState;
+            return true;
         }
 
         /// <summary>
         /// 根据命令移动状态
         /// </summary>
         /// <param name="command"></param>
-        /// <returns>true:状态发生变化/false:状态没有变化</returns>
-        /// <remarks>仅在状态发生变化时（命令有效时，即命令导致的变化为状态图中的一条有向边时）使用Fetch命令！</remarks>
+        /// <returns>true:命令有效/false:命令无效</returns>
+        /// <remarks>仅在命令有效时（命令导致的变化为状态图中的一条有向边时）使用Fetch命令！</remarks>
         public bool MoveNext(string command)
         {
-            var oldState = CurrentState;
-            CurrentState = GetNext(command);
-            return CurrentState != oldState;
+            string newState;
+            var valid = GetNext(command, out newState);
+            CurrentState = newState;
+            return valid;
         }
     }
 }

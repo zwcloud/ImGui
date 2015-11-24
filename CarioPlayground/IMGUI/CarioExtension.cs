@@ -1,7 +1,11 @@
-﻿using System;
+﻿//#define DrawContentBox
+//#define DrawPaddingBox
+
+using System;
 using Cairo;
 using Context = Cairo.Context;
 using Layout = IMGUI.ITextLayout;
+
 
 namespace IMGUI
 {
@@ -50,6 +54,7 @@ namespace IMGUI
             var ptr = new Point(btr.X - br, btr.Y + bt);
             var pbr = new Point(bbr.X - br, bbr.Y - bb);
             var pbl = new Point(bbl.X + bl, bbl.Y - bb);
+            var paddingBoxRect = new Rect(ptl, pbr);
 
             //4 corner of the content-box
             var ctl = new Point(ptl.X + pl, ptl.Y + pt);
@@ -108,6 +113,50 @@ namespace IMGUI
                 g.SetSourceColor(style.OutlineColor);
                 g.Stroke();
             }
+
+#if DrawPaddingBox
+            g.Rectangle(paddingBoxRect.TopLeft.ToPointD(), paddingBoxRect.Width, paddingBoxRect.Height);
+            g.LineWidth = 1;
+            g.SetSourceColor(CairoEx.ColorRgb(0,100,100));
+            g.Stroke();
+#endif
+
+#if DrawContentBox
+            g.Rectangle(contentBoxRect.TopLeft.ToPointD(), contentBoxRect.Width, contentBoxRect.Height);
+            g.LineWidth = 1;
+            g.SetSourceColor(CairoEx.ColorRgb(100, 0, 100));
+            g.Stroke();
+#endif
+        }
+
+        public static Size MeasureBoxModel(Content content, Style style)
+        {
+            //Widths of border
+            var bt = style.BorderTop;
+            var br = style.BorderRight;
+            var bb = style.BorderBottom;
+            var bl = style.BorderLeft;
+
+            //Widths of padding
+            var pt = style.PaddingTop;
+            var pr = style.PaddingRight;
+            var pb = style.PaddingBottom;
+            var pl = style.PaddingLeft;
+            
+            /*
+             * TODO Margin is temporarily not used(all zero)
+             */
+            var mt = style.MarginTop;
+            var mr = style.MarginRight;
+            var mb = style.MarginBottom;
+            var ml = style.MarginLeft;
+
+            //calc box model rect
+            var boxRect = content.GetRect();
+            boxRect.Inflate(
+                br + bl + pr + pl + mr + ml,
+                bt + bb + pt + pb + mt + mb);
+            return boxRect.Size;
         }
 
         #region primitive draw helpers

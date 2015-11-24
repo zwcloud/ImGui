@@ -6,6 +6,7 @@ namespace IMGUI
     {
         int MaxWidth { get; set; }
         int MaxHeight { get; set; }
+        Rect Rect { get; }
         string Text { get; set; }
         Cairo.Path Path { get; }
         void BuildPath(Cairo.Context context);

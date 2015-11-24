@@ -137,7 +137,6 @@ namespace IMGUI
                     {
                         // Process events
                         window.DispatchEvents();
-
                         // Run GUI looper
                         var isRepainted = form.GUILoop();
                         if(isRepainted)
@@ -246,7 +245,7 @@ void main()
 
         private uint attributePos, attributeTexCoord;
 
-        private float[] vertexData = new float[]
+        private readonly float[] vertexData = new float[]
             {
 		        -1, -1, 0,	0,0,
 		        -1, 1, 0,	0,1,
@@ -357,9 +356,9 @@ void main()
         public void OnRenderFrame()
         {
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
+            
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
-
+            
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
 
             GL.DrawArrays(GL.GL_TRIANGLE_FAN, 0, 6);

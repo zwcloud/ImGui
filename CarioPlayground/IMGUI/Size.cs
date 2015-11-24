@@ -283,22 +283,18 @@ namespace IMGUI
         /// </returns>
         internal string ConvertToString(string format, IFormatProvider provider)
         {
-            throw new NotImplementedException();
-#if false
             if (IsEmpty)
             {
                 return "Empty";
             }
 
             // Helper to get the numeric list separator for a given culture.
-            char separator = MS.Internal.TokenizerHelper.GetNumericListSeparator(provider);
+            char separator = ',';
             return String.Format(provider,
                                  "{1:" + format + "}{0}{2:" + format + "}",
                                  separator,
                                  _width,
                                  _height);
-#endif
-
         }
 
 

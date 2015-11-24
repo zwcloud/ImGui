@@ -46,6 +46,7 @@ namespace IMGUI
             Name = name;
             Params = new Dictionary<string, object>();
             State = "Normal";
+            NeedRepaint = true;
 
             Form.Controls[Name] = this;
         }

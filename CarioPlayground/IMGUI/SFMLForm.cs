@@ -258,7 +258,7 @@ namespace IMGUI
             internalForm.SetVisible(false);
             Visible = false;
 
-            internalForm.SetVerticalSyncEnabled(true);
+            internalForm.SetVerticalSyncEnabled(false);
             controls = new Dictionary<string, Control>();
 
             InitGUI();

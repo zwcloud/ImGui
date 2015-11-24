@@ -9,6 +9,7 @@ namespace IMGUI
         private Cairo.Path path;
         private bool dirty;
         private readonly ITextFormat textFormat;
+        private Rect rect;
 
         public DWriteTextLayoutProxy(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
         {
@@ -37,29 +38,39 @@ namespace IMGUI
 
         public int MaxWidth
         {
-            get { return Layout.Width; }
+            get { return Layout.MaxWidth; }
             set
             {
-                if (Layout.Width == value)
+                if (Layout.MaxWidth == value)
                 {
                     return;
                 }
-                Layout.Width = value;
+                Layout.MaxWidth = value;
                 dirty = true;
             }
         }
 
         public int MaxHeight
         {
-            get { return Layout.Height; }
+            get { return Layout.MaxHeight; }
             set
             {
-                if (Layout.Height == value)
+                if (Layout.MaxHeight == value)
                 {
                     return;
                 }
-                Layout.Height = value;
+                Layout.MaxHeight = value;
                 dirty = true;
+            }
+        }
+
+        public Rect Rect
+        {
+            get
+            {
+                float left, top, width, height;
+                Layout.GetRect(out left, out top, out width, out height);
+                return new Rect(left, top, width, height);
             }
         }
 

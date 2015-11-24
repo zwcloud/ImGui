@@ -1,8 +1,8 @@
 ﻿#define ShowButton
-#define ShowToggle
-#define ShowRadio
+//#define ShowToggle
+//#define ShowRadio
 //#define ShowImage
-#define ShowComboxBox
+//#define ShowComboxBox
 
 using System.Diagnostics;
 using IMGUI;
@@ -40,17 +40,17 @@ namespace IMGUIDemo
                 Debug.WriteLine("button {0} clicked!", i);
             }
 
-            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
-            if (gui.Button(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
-            {
-                Debug.WriteLine("button {0} clicked!", i);
-            }
-
-            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
-            if (gui.HoverButton(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
-            {
-                Debug.WriteLine("HoverButton {0} active!", i);
-            }
+            //++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            //if (gui.Button(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
+            //{
+            //    Debug.WriteLine("button {0} clicked!", i);
+            //}
+            //
+            //++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            //if (gui.HoverButton(new Rect(20, firstY + i * 20, 100, 20), "button " + i + "!", "Button" + i))
+            //{
+            //    Debug.WriteLine("HoverButton {0} active!", i);
+            //}
 #endif
 
 #if ShowToggle
