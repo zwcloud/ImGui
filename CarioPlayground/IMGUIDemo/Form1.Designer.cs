@@ -1,7 +1,7 @@
-﻿#define ShowButton
-//#define ShowToggle
+﻿//#define ShowButton
+#define ShowToggle
 //#define ShowRadio
-//#define ShowImage
+#define ShowImage
 //#define ShowComboxBox
 
 using System.Diagnostics;
@@ -57,8 +57,11 @@ namespace IMGUIDemo
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfTaggle1 = _opened1;
             _opened1 = gui.Toggle(new Rect(20, firstY + i * 20, 100, 20), "Opened?", _opened1, "Toggle0");
-            if (_opened1 ^ oldValueOfTaggle1)
+            if(_opened1 ^ oldValueOfTaggle1)
+            {
                 Debug.WriteLine("Toggle 0 {0}", _opened1 ? "on!" : "off!", null);
+
+            }
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfTaggle2 = _opened2;
             _opened2 = gui.ToggleButton(new Rect(20, firstY + i * 20, 100, 20), "Opened?", _opened1, "ToggleButton0");

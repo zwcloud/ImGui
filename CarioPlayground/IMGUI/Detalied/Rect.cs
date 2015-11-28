@@ -141,6 +141,12 @@ namespace IMGUI
             }
         }
 
+        /// <summary>
+        /// Big - a static property which provides a Big rectangle.  X and Y are zero
+        /// and Width and Height are 9999.
+        /// </summary>
+        public static Rect Big { get { return s_big; } }
+
         #endregion Statics
 
         #region Public Properties
@@ -158,6 +164,20 @@ namespace IMGUI
                 Debug.Assert((!(_width < 0) && !(_height < 0)) || (this == Empty));
 
                 return _width < 0;
+            }
+        }
+
+        /// <summary>
+        /// IsBig - this returns true if this rect is the Big rectangle.
+        /// </summary>
+        public bool IsBig
+        {
+            get
+            {
+                // The funny width and height tests are to handle NaNs
+                Debug.Assert((!(_width < 0) && !(_height < 0)));
+
+                return Big.Contains(this);
             }
         }
 
@@ -819,11 +839,23 @@ namespace IMGUI
             return rect;
         }
 
+        static private Rect CreateVeryBigRect()
+        {
+            Rect rect = new Rect();
+            rect._x = 0;
+            rect._y = 0;
+            rect._width = 9999;
+            rect._height = 9999;
+            return rect;
+        }
+
         #endregion Private Methods
 
         #region Private Fields
 
         private readonly static Rect s_empty = CreateEmptyRect();
+
+        private static readonly Rect s_big = CreateVeryBigRect();
 
         #endregion Private Fields
     }

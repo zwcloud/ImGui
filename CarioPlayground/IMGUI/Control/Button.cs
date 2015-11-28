@@ -163,6 +163,11 @@ namespace IMGUI
                         {"maxHeight", (int)Rect.Height}
                     });
 
+            if (rect.IsBig)
+            {
+                var boxSize = CairoEx.MeasureBoxModel(new Content(Layout), Skin.current.Button["Normal"]);
+                Rect = form.GUILayout.AddRect(new Rect(boxSize));
+            }
         }
 
         //TODO Control-less DoControl overload (without name parameter)

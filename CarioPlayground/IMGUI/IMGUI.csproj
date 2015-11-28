@@ -119,6 +119,7 @@
     <Compile Include="Font.cs" />
     <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
+    <Compile Include="GUILayoutUtility.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />

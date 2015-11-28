@@ -7,6 +7,8 @@ namespace IMGUI
     {
         public delegate void WindowFunction(GUI gui);
 
+        //TODO statemachine of GUI class
+
         private static class GUIState
         {
             public const string Normal = "Normal";
@@ -16,7 +18,6 @@ namespace IMGUI
 
         private readonly Context g;
         private readonly BaseForm form;
-        private readonly GUILayout layout;
 
         private string state = GUIState.Normal;
         private int lastX;
@@ -26,7 +27,6 @@ namespace IMGUI
         {
             this.g = context;
             this.form = form;
-            this.layout = new GUILayout();
         }
 
         public bool Button(Rect rect, string text, string name)
@@ -124,55 +124,29 @@ namespace IMGUI
         }
 
         #region Layout-featured controls
-        public bool LayoutButton(string text, string name)
+        public bool Button(string text, string name)
         {
-            var font = Skin.current.Button["Normal"].Font;
-            var tmpFormat = Application.IocContainer.Resolve<ITextFormat>(
-                new NamedParameterOverloads
-                    {
-                        {"fontFamilyName", font.FontFamily},
-                        {"fontWeight", font.FontWeight},
-                        {"fontStyle", font.FontStyle},
-                        {"fontStretch", font.FontStretch},
-                        {"fontSize", (float) font.Size}
-                    });
-            var textStyle = Skin.current.Button["Normal"].TextStyle;
-            tmpFormat.Alignment = textStyle.TextAlignment;
-            var tmpLayout = Application.IocContainer.Resolve<ITextLayout>(
-                new NamedParameterOverloads
-                    {
-                        {"text", text},
-                        {"textFormat", tmpFormat},
-                        {"maxWidth", 1024},
-                        {"maxHeight", 1024}
-                    });
-            var boxSize = CairoEx.MeasureBoxModel(new Content(tmpLayout), Skin.current.Button["Normal"]);
-            //System.Diagnostics.Debug.WriteLine("<{0}> {1}", name, boxSize);
-            tmpFormat.Dispose();
-            tmpLayout.Dispose();
-            var rect = layout.AddRect(new Rect(boxSize));
-            return IMGUI.Button.DoControl(g, form, rect, text, name);
+            return IMGUI.Button.DoControl(g, form, Rect.Big, text, name);
         }
-
         #endregion
         public void BeginH()
         {
-            layout.BeginGroup(GUILayout.LayoutMode.Horizontal);
+            form.GUILayout.BeginGroup(GUILayout.LayoutMode.Horizontal);
         }
 
         public void EndH()
         {
-            layout.EndGroup(GUILayout.LayoutMode.Horizontal);
+            form.GUILayout.EndGroup(GUILayout.LayoutMode.Horizontal);
         }
 
         public void BeginV()
         {
-            layout.BeginGroup(GUILayout.LayoutMode.Vertical);
+            form.GUILayout.BeginGroup(GUILayout.LayoutMode.Vertical);
         }
 
         public void EndV()
         {
-            layout.EndGroup(GUILayout.LayoutMode.Vertical);
+            form.GUILayout.EndGroup(GUILayout.LayoutMode.Vertical);
         }
 
 

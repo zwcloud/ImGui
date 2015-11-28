@@ -3,6 +3,7 @@ namespace IMGUI
     public abstract class BaseForm
     {
         internal System.Collections.Generic.Dictionary<string, Control> controls;
+        internal GUILayout guiLayout;
 
         /// <summary>
         /// Position of the form
@@ -50,5 +51,7 @@ namespace IMGUI
         {
             get { return controls; }
         }
+
+        internal GUILayout GUILayout { get { return guiLayout; }}
     }
 }

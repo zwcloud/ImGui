@@ -43,6 +43,7 @@ namespace IMGUI
         
         public void BeginGroup(LayoutMode mode)
         {
+            System.Diagnostics.Debug.WriteLine("BeginGroup {0}", mode, null);
             if(stateMachine.MoveNext(GUILayoutCommand.BeginGroup))
             {
                 pointStack.Push(currentPoint);
@@ -60,6 +61,7 @@ namespace IMGUI
 
         public void EndGroup(LayoutMode mode)
         {
+            System.Diagnostics.Debug.WriteLine("EndGroup {0}", mode, null);
             if (currentMode != mode)
             {
                 throw new System.InvalidOperationException();

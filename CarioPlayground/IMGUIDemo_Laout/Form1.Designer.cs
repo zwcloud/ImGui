@@ -14,20 +14,20 @@ namespace IMGUIDemo_Layout
         {
 #if true
             gui.BeginH();
-                gui.LayoutButton("Button 0", "btn0");
-                gui.LayoutButton("Button 1", "btn1");
+                gui.Button("Button 0", "btn0");
+                gui.Button("Button 1", "btn1");
                 gui.BeginV();
-                    gui.LayoutButton("Button 2", "btn2");
+                    gui.Button("Button 2", "btn2");
                     gui.BeginH();
-                        gui.LayoutButton("Button 3", "btn3");
-                        gui.LayoutButton("Button 4", "btn4");
-                        gui.LayoutButton("Button 5", "btn5");
+                        gui.Button("Button 3", "btn3");
+                        gui.Button("Button 4", "btn4");
+                        gui.Button("Button 5", "btn5");
                     gui.EndH();
-                    gui.LayoutButton("Button 6", "btn6");
-                    gui.LayoutButton("Button 7", "btn7");
+                    gui.Button("Button 6", "btn6");
+                    gui.Button("Button 7", "btn7");
                 gui.EndV();
-                gui.LayoutButton("Button 8", "btn8");
-                gui.LayoutButton("Button 9", "btn9");
+                gui.Button("Button 8", "btn8");
+                gui.Button("Button 9", "btn9");
             gui.EndH();
 #else
             gui.Label(new Rect(0, 0, this.Size.Width, 40), "Demo project - Layout", "CaptionLabel");
