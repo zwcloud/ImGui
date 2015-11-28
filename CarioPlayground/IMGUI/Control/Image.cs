@@ -1,4 +1,5 @@
 ﻿using Cairo;
+using System.Diagnostics;
 
 namespace IMGUI
 {
@@ -23,6 +24,10 @@ namespace IMGUI
                 image.OnUpdate();
                 image.OnRender(g);
             }
+
+            var control = form.Controls[name] as Image;
+            Debug.Assert(control != null);
+            control.Active = true;
         }
 
         #region Overrides of Control
@@ -38,7 +43,12 @@ namespace IMGUI
 
         public override void Dispose()
         {
+            
+        }
 
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
         }
 
         #endregion

@@ -62,6 +62,10 @@ namespace IMGUI
         {
         }
 
+        public override void OnClear(Context g)
+        {
+        }
+
         #endregion
 
         //TODO Control-less DoControl overload (without name parameter)
@@ -77,6 +81,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as Window;
             Debug.Assert(control != null);
+            control.Active = true;
 
             control.innerForm.Actived = true;
         }

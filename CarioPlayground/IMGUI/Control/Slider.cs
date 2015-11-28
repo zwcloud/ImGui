@@ -33,6 +33,7 @@ namespace IMGUI
                 slider = form.Controls[name] as Slider;
             }
             Debug.Assert(slider != null);
+            slider.Active = true;
 
             return slider.Value;
         }
@@ -64,6 +65,11 @@ namespace IMGUI
         public override void Dispose()
         {
             throw new NotImplementedException();
+        }
+
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
         }
 
         #endregion

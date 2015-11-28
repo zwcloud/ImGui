@@ -100,6 +100,11 @@ namespace IMGUI
             Format.Dispose();
         }
 
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
+        }
+
         internal HoverButton(string name, BaseForm form, string text, Rect rect)
             : base(name, form)
         {
@@ -143,6 +148,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as HoverButton;
             Debug.Assert(control != null);
+            control.Active = true;
 
             return control.Result;
         }

@@ -27,6 +27,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as ToggleButton;
             Debug.Assert(control != null);
+            control.Active = true;
 
             return control.Result;
         }

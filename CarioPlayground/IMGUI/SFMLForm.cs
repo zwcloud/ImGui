@@ -163,6 +163,8 @@ namespace IMGUI
             {
                 isRepaint = Render();
             }
+
+
             return isRepaint;
         }
         
@@ -202,13 +204,31 @@ namespace IMGUI
             OnGUI(gui);
         }
 
+        private readonly List<string> removeList = new List<string>();
+
         private bool Update()
         {
-            //Control
             foreach (var control in Controls.Values)
             {
-                control.OnUpdate();
+                if(control.Active)
+                {
+                    control.OnUpdate();
+                    control.Active = false;
+                }
+                else
+                {
+                    control.Dispose();
+                    removeList.Add(control.Name);
+                    control.OnClear(renderContext.BackContext);
+                }
             }
+
+            foreach (var controlName in removeList)
+            {
+                bool result = Controls.Remove(controlName);
+                Debug.WriteLineIf(!result, "Remove failed");
+            }
+            removeList.Clear();
 
             return false;
         }

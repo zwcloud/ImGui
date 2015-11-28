@@ -144,6 +144,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as Radio;
             Debug.Assert(control != null);
+            control.Active = true;
 
             return control.Actived;
         }
@@ -252,6 +253,11 @@ namespace IMGUI
         {
             Layout.Dispose();
             Format.Dispose();
+        }
+        
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
         }
 
         #endregion

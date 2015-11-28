@@ -51,7 +51,7 @@ namespace IMGUI
         {
             get { return controls; }
         }
-
+        
         internal GUILayout GUILayout { get { return guiLayout; }}
     }
 }

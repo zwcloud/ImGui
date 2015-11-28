@@ -29,6 +29,8 @@ namespace IMGUI
 
         internal BaseForm Form { get; set; }
 
+        public bool Active { get; set; }
+
         /// <summary>
         /// Does this control need repaint?
         /// </summary>
@@ -46,6 +48,7 @@ namespace IMGUI
             Name = name;
             Params = new Dictionary<string, object>();
             State = "Normal";
+            Active = false;
             NeedRepaint = true;
 
             Form.Controls[Name] = this;
@@ -55,6 +58,9 @@ namespace IMGUI
 
         public abstract void Dispose();
 
+        public abstract void OnClear(Context g);
+
         #endregion
+
     }
 }

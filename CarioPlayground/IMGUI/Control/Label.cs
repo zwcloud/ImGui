@@ -61,6 +61,11 @@ namespace IMGUI
             Format.Dispose();
         }
 
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
+        }
+
         internal Label(string name, BaseForm form, string text, Rect rect) : base(name, form)
         {
             Rect = rect;
@@ -100,6 +105,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as Label;
             Debug.Assert(control != null);
+            control.Active = true;
 
             //Update text
             control.Text = text;

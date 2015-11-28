@@ -113,6 +113,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as PolygonButton;
             Debug.Assert(control != null);
+            control.Active = true;
 
             return control.Result;
         }
@@ -158,6 +159,11 @@ namespace IMGUI
         {
             Layout.Dispose();
             Format.Dispose();
+        }
+
+        public override void OnClear(Context g)
+        {
+            g.FillPolygon(Points, CairoEx.ColorWhite);//TODO effective?
         }
 
         #endregion

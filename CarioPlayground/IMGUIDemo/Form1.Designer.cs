@@ -1,8 +1,8 @@
-﻿//#define ShowButton
+﻿#define ShowButton
 #define ShowToggle
-//#define ShowRadio
+#define ShowRadio
 #define ShowImage
-//#define ShowComboxBox
+#define ShowComboxBox
 
 using System.Diagnostics;
 using IMGUI;
@@ -60,7 +60,13 @@ namespace IMGUIDemo
             if(_opened1 ^ oldValueOfTaggle1)
             {
                 Debug.WriteLine("Toggle 0 {0}", _opened1 ? "on!" : "off!", null);
+            }
+            if(_opened1)
+            {
 
+#if ShowImage
+                gui.Image(new Rect(130, firstY, 240, 200), myImage, "MyImage");
+#endif
             }
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
             var oldValueOfTaggle2 = _opened2;
@@ -89,9 +95,6 @@ namespace IMGUIDemo
                 Debug.WriteLine("Radio2 selected");
 #endif
 
-#if ShowImage
-            gui.Image(new Rect(130, firstY, 240, 200), myImage, "MyImage");
-#endif
 
 
 #if ShowComboxBox

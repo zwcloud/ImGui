@@ -119,7 +119,8 @@ namespace IMGUI
             }
             var control = form.Controls[name] as ComboBox;
             Debug.Assert(control != null);
-            
+            control.Active = true;
+
             return control.SelectedIndex;
         }
 
@@ -198,6 +199,12 @@ namespace IMGUI
             Layout.Dispose();
             Format.Dispose();
         }
+        
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
+        }
+
 
         #endregion
     }

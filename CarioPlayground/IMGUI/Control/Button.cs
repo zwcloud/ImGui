@@ -135,6 +135,11 @@ namespace IMGUI
             Format.Dispose();
         }
 
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
+        }
+
         internal Button(string name, BaseForm form, string text, Rect rect)
             : base(name, form)
         {
@@ -163,11 +168,11 @@ namespace IMGUI
                         {"maxHeight", (int)Rect.Height}
                     });
 
-            if (rect.IsBig)
-            {
-                var boxSize = CairoEx.MeasureBoxModel(new Content(Layout), Skin.current.Button["Normal"]);
-                Rect = form.GUILayout.AddRect(new Rect(boxSize));
-            }
+            //if (rect.IsBig)
+            //{
+            //    var boxSize = CairoEx.MeasureBoxModel(new Content(Layout), Skin.current.Button["Normal"]);
+            //    Rect = form.GUILayout.AddRect(new Rect(boxSize));
+            //}
         }
 
         //TODO Control-less DoControl overload (without name parameter)
@@ -183,8 +188,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as Button;
             Debug.Assert(control != null);
-
-            //Debug.WriteLine(control.State);
+            control.Active = true;
 
             return control.Result;
         }

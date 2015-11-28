@@ -74,6 +74,7 @@ namespace IMGUI
 
             var control = form.Controls[name] as Toggle;
             Debug.Assert(control != null);
+            control.Active = true;
 
             return control.Result;
         }
@@ -172,6 +173,11 @@ namespace IMGUI
         {
             Layout.Dispose();
             Format.Dispose();
+        }
+
+        public override void OnClear(Context g)
+        {
+            g.FillRectangle(Rect, CairoEx.ColorWhite);
         }
 
         #endregion
