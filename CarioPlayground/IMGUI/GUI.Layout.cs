@@ -1,21 +1,21 @@
 namespace IMGUI
 {
-    internal class GUILayout
+    public partial class GUI
     {
-        public enum LayoutMode
+        enum LayoutMode
         {
             Horizontal,
             Vertical,
         }
         #region State machine define
-        static class GUILayoutState
+        static class GUIState
         {
             public const string Initial = "Initial";
             public const string GroupBegun = "GroupBegun";
             public const string Intermidiate = "Intermidiate";
         }
 
-        static class GUILayoutCommand
+        static class GUICommand
         {
             public const string BeginGroup = "BeginGroup";
             public const string EndGroup = "EndGroup";
@@ -24,15 +24,15 @@ namespace IMGUI
 
         static readonly string[] states =
         {
-            GUILayoutState.Initial, GUILayoutCommand.BeginGroup, GUILayoutState.GroupBegun,
-            GUILayoutState.GroupBegun, GUILayoutCommand.AddRect, GUILayoutState.Intermidiate,
-            GUILayoutState.Intermidiate, GUILayoutCommand.AddRect, GUILayoutState.Intermidiate,
-            GUILayoutState.Intermidiate, GUILayoutCommand.EndGroup, GUILayoutState.Intermidiate,
-            GUILayoutState.Intermidiate, GUILayoutCommand.BeginGroup, GUILayoutState.GroupBegun,
+            GUIState.Initial, GUICommand.BeginGroup, GUIState.GroupBegun,
+            GUIState.GroupBegun, GUICommand.AddRect, GUIState.Intermidiate,
+            GUIState.Intermidiate, GUICommand.AddRect, GUIState.Intermidiate,
+            GUIState.Intermidiate, GUICommand.EndGroup, GUIState.Intermidiate,
+            GUIState.Intermidiate, GUICommand.BeginGroup, GUIState.GroupBegun,
         };
         #endregion
 
-        private readonly StateMachine stateMachine = new StateMachine(GUILayoutState.Initial, states);
+        private readonly StateMachine stateMachine = new StateMachine(GUIState.Initial, states);
         private LayoutMode currentMode;
         private Point currentPoint;
         private Size currentSize;
@@ -40,11 +40,13 @@ namespace IMGUI
         private readonly System.Collections.Generic.Stack<Point> pointStack = new System.Collections.Generic.Stack<Point>(8);
         private readonly System.Collections.Generic.Stack<LayoutMode> modeStack = new System.Collections.Generic.Stack<LayoutMode>(8);
         private readonly System.Collections.Generic.Stack<Size> sizeStack = new System.Collections.Generic.Stack<Size>(8);
-        
-        public void BeginGroup(LayoutMode mode)
+
+        private bool Layouting { get; set; }
+
+        void BeginGroup(LayoutMode mode)
         {
-            System.Diagnostics.Debug.WriteLine("BeginGroup {0}", mode, null);
-            if(stateMachine.MoveNext(GUILayoutCommand.BeginGroup))
+            //System.Diagnostics.Debug.WriteLine("BeginGroup {0}", mode, null);
+            if(stateMachine.MoveNext(GUICommand.BeginGroup))
             {
                 pointStack.Push(currentPoint);
                 modeStack.Push(currentMode);
@@ -52,6 +54,7 @@ namespace IMGUI
 
                 currentMode = mode;
                 currentSize = new Size();
+                Layouting = true;
             }
             else
             {
@@ -59,36 +62,40 @@ namespace IMGUI
             }
         }
 
-        public void EndGroup(LayoutMode mode)
+        void EndGroup(LayoutMode mode)
         {
-            System.Diagnostics.Debug.WriteLine("EndGroup {0}", mode, null);
-            if (currentMode != mode)
+            //System.Diagnostics.Debug.WriteLine("EndGroup {0}", mode, null);
+            if(currentMode != mode)
             {
                 throw new System.InvalidOperationException();
             }
 
-            if(stateMachine.MoveNext(GUILayoutCommand.EndGroup))
+            if(stateMachine.MoveNext(GUICommand.EndGroup))
             {
                 var oldPoint = pointStack.Pop();
                 var oldMode = modeStack.Pop();
                 var oldSize = sizeStack.Pop();
-                
-                if (oldMode == LayoutMode.Horizontal && currentMode == LayoutMode.Vertical)
+
+                if(oldMode == LayoutMode.Horizontal && currentMode == LayoutMode.Vertical)
                 {
                     currentPoint = new Point(oldPoint.X + currentSize.Width, oldPoint.Y);
                 }
-                else if (oldMode == LayoutMode.Vertical && currentMode == LayoutMode.Horizontal)
+                else if(oldMode == LayoutMode.Vertical && currentMode == LayoutMode.Horizontal)
                 {
                     currentPoint = new Point(oldPoint.X, oldPoint.Y + currentSize.Height);
                 }
 
                 currentMode = oldMode;
+                if(pointStack.Count == 0)
+                {
+                    Layouting = false;
+                }
             }
         }
 
-        public Rect AddRect(Rect rect)
+        Rect AddRect(Rect rect)
         {
-            if(stateMachine.MoveNext(GUILayoutCommand.AddRect))
+            if(stateMachine.MoveNext(GUICommand.AddRect))
             {
                 rect.Location = currentPoint;
                 switch (currentMode)
@@ -112,6 +119,15 @@ namespace IMGUI
                     default:
                         throw new System.ArgumentOutOfRangeException();
                 }
+            }
+            return rect;
+        }
+
+        Rect DoLayout(Rect rect)
+        {
+            if (Layouting)
+            {
+                rect = AddRect(rect);
             }
             return rect;
         }

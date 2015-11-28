@@ -280,7 +280,6 @@ namespace IMGUI
 
             internalForm.SetVerticalSyncEnabled(false);
             controls = new Dictionary<string, Control>();
-            guiLayout = new GUILayout();
 
             InitGUI();
         }

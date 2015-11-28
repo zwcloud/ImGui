@@ -14,21 +14,22 @@ namespace IMGUIDemo_Layout
         {
 #if true
             gui.BeginH();
-                gui.Button("Button 0", "btn0");
-                gui.Button("Button 1", "btn1");
+                gui.Button(new Rect(65, 30), "Button 0", "btn0");
+                gui.Button(new Rect(65, 30), "Button 1", "btn1");
                 gui.BeginV();
-                    gui.Button("Button 2", "btn2");
+                    gui.Button(new Rect(65, 30), "Button 2", "btn2");
                     gui.BeginH();
-                        gui.Button("Button 3", "btn3");
-                        gui.Button("Button 4", "btn4");
-                        gui.Button("Button 5", "btn5");
+                        gui.Button(new Rect(65, 30), "Button 3", "btn3");
+                        gui.Button(new Rect(65, 30), "Button 4", "btn4");
+                        gui.Button(new Rect(65, 30), "Button 5", "btn5");
                     gui.EndH();
-                    gui.Button("Button 6", "btn6");
-                    gui.Button("Button 7", "btn7");
+                    gui.Button(new Rect(70, 30), "Button 6", "btn6");
+                    gui.Button(new Rect(65, 30), "Button 7", "btn7");
                 gui.EndV();
-                gui.Button("Button 8", "btn8");
-                gui.Button("Button 9", "btn9");
+                gui.Button(new Rect(65, 30), "Button 8", "btn8");
+                gui.Button(new Rect(65, 30), "Button 9", "btn9");
             gui.EndH();
+            gui.Button(new Rect(100, 250, 180, 23), "I'm not a layouted button.", "btnx");
 #else
             gui.Label(new Rect(0, 0, this.Size.Width, 40), "Demo project - Layout", "CaptionLabel");
             gui.BeginHorizontal(new Rect(this.Size.Width/2 - 200/2, 41, 200, 80));
@@ -66,7 +67,7 @@ namespace IMGUIDemo_Layout
                 gui.Button(new Rect(120, 30), "点我啊", "buttonX1");
             }
             gui.EndVertical();
-#endif   
+#endif
         }
     }
 

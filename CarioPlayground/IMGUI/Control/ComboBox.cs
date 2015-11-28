@@ -227,7 +227,7 @@ namespace IMGUI
 
         protected override void OnGUI(GUI gui)
         {
-            gui.BeginVertical(Rect);
+            gui.BeginV();
             for (int i = 0; i < TextList.Count; i++)
             {
                 var itemRect = Rect;
@@ -242,7 +242,7 @@ namespace IMGUI
                     Application.Forms.Remove(this);
                 }
             }
-            gui.EndVertical();
+            gui.EndV();
         }
     }
 }

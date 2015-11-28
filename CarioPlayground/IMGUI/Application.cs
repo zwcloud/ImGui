@@ -166,6 +166,7 @@ namespace IMGUI
                     }
 
                 }
+                System.Threading.Thread.Sleep(10);//TODO Without this, High CPU rate occurs, why?
             }
         }
 

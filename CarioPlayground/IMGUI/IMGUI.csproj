@@ -119,12 +119,11 @@
     <Compile Include="Font.cs" />
     <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
-    <Compile Include="GUILayoutUtility.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Key.cs" />
-    <Compile Include="Layout\GUILayout.cs" />
+    <Compile Include="GUI.Layout.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Port\ITextFormat.cs" />

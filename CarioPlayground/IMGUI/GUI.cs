@@ -3,26 +3,13 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    public class GUI
+    public partial class GUI
     {
         public delegate void WindowFunction(GUI gui);
 
-        //TODO statemachine of GUI class
-
-        private static class GUIState
-        {
-            public const string Normal = "Normal";
-            public const string HorizontalLayout = "HorizontalLayout";
-            public const string VerticalLayout = "VerticalLayout";
-        }
-
         private readonly Context g;
         private readonly BaseForm form;
-
-        private string state = GUIState.Normal;
-        private int lastX;
-        private int lastY;
-
+        
         public GUI(Context context, BaseForm form)
         {
             this.g = context;
@@ -101,117 +88,27 @@ namespace IMGUI
             IMGUI.Window.DoControl(g, form, rect, func, name);
         }
 
-        private Rect DoLayout(Rect rect)
-        {
-            if (state == GUIState.Normal)
-            {
-                lastX = 0;
-                lastY = 0;
-            }
-            else if (state == GUIState.HorizontalLayout)
-            {
-                rect.Offset(lastX, 0);
-                lastX += (int) rect.Width;
-                rect.Y = lastY;
-            }
-            else if (state == GUIState.VerticalLayout)
-            {
-                rect.Offset(0, lastY);
-                rect.X = lastX;
-                lastY += (int) rect.Height;
-            }
-            return rect;
-        }
-
-        #region Layout-featured controls
-        public bool Button(string text, string name)
-        {
-            return IMGUI.Button.DoControl(g, form, Rect.Big, text, name);
-        }
-        #endregion
         public void BeginH()
         {
-            form.GUILayout.BeginGroup(GUILayout.LayoutMode.Horizontal);
+            BeginGroup(LayoutMode.Horizontal);
         }
 
         public void EndH()
         {
-            form.GUILayout.EndGroup(GUILayout.LayoutMode.Horizontal);
+            EndGroup(LayoutMode.Horizontal);
         }
 
         public void BeginV()
         {
-            form.GUILayout.BeginGroup(GUILayout.LayoutMode.Vertical);
+            BeginGroup(LayoutMode.Vertical);
         }
 
         public void EndV()
         {
-            form.GUILayout.EndGroup(GUILayout.LayoutMode.Vertical);
+            EndGroup(LayoutMode.Vertical);
         }
 
 
-        #region Simple layout
-        
-        public void BeginHorizontal(Rect rect)
-        {
-            if (rect.IsEmpty)
-            {
-                throw new System.ArgumentOutOfRangeException("rect", "rect is empty");
-            }
-            if (state != GUIState.Normal)
-            {
-                throw new System.InvalidOperationException("Layout has began!");
-            }
-            lastX = (int) rect.X;
-            lastY = (int) rect.Y;
-            state = GUIState.HorizontalLayout;
-        }
-
-        public void EndHorizontal()
-        {
-            if(state != GUIState.HorizontalLayout)
-            {
-                throw new System.InvalidOperationException("BeginHorizontal hasn't been called!");
-            }
-            state = GUIState.Normal;
-        }
-
-        public void BeginVertical(int x, int y)
-        {
-            if (state != GUIState.Normal)
-            {
-                throw new System.InvalidOperationException("Layout has began!");
-            }
-            lastX = x;
-            lastY = y;
-            state = GUIState.VerticalLayout;
-        }
-
-        public void BeginVertical(Rect rect)
-        {
-            if (rect.IsEmpty)
-            {
-                throw new System.ArgumentOutOfRangeException("rect", "rect is empty");
-            }
-            if (state != GUIState.Normal)
-            {
-                throw new System.InvalidOperationException("Layout has began!");
-            }
-            lastX = (int)rect.X;
-            lastY = (int)rect.Y;
-            state = GUIState.VerticalLayout;
-        }
-
-        public void EndVertical()
-        {
-            if (state != GUIState.VerticalLayout)
-            {
-                throw new System.InvalidOperationException("BeginVertical hasn't been called!");
-            }
-            state = GUIState.Normal;
-        }
-        
-        #endregion
     }
 
 }
