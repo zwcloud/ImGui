@@ -5,3 +5,4 @@
 //TODO input can affect only focused window
 //TODO use state-machine on other controls that needs it.
 //TODO check why CPU rate is very high when don't sleep.
+//TODO add container control like border/stackpanel/grid...

@@ -4,7 +4,7 @@
     public abstract class BorderlessForm : SFMLForm
     {
         protected BorderlessForm(int width, int height)
-            : base(width, height, SFML.Window.Styles.None)
+            : base(width, height)
         {
         }
     }

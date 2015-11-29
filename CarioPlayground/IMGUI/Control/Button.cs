@@ -55,7 +55,7 @@ namespace IMGUI
         }
         public Rect Rect { get; private set; }
         public bool Result { get; private set; }
-        private ToolTip t;
+        //private ToolTip t;
         public override void OnUpdate()
         {
             Layout.MaxWidth = (int)Rect.Width;
@@ -182,8 +182,8 @@ namespace IMGUI
             if (!form.Controls.ContainsKey(name))
             {
                 var button = new Button(name, form, text, rect);
-                button.OnUpdate();
-                button.OnRender(g);
+                //button.OnUpdate();
+                //button.OnRender(g);
             }
 
             var control = form.Controls[name] as Button;

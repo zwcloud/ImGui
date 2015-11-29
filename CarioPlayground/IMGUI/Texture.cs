@@ -11,7 +11,6 @@ namespace IMGUI
     public class Texture
     {
         internal ImageSurface _surface;
-        internal byte[][] imageData;
 
         public int Width
         {

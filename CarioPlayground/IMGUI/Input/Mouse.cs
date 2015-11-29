@@ -161,6 +161,9 @@ namespace IMGUI.Input
             get { return mousePos; }
         }
 
+        /// <summary>
+        /// Is mouse's position changed compared to last frame
+        /// </summary>
         public static bool MouseMoving
         {
             get { return mousePos != lastMousePos; }

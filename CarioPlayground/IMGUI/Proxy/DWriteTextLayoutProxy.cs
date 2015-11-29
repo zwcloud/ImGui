@@ -9,7 +9,6 @@ namespace IMGUI
         private Cairo.Path path;
         private bool dirty;
         private readonly ITextFormat textFormat;
-        private Rect rect;
 
         public DWriteTextLayoutProxy(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
         {

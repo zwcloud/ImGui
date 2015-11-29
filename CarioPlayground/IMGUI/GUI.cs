@@ -16,6 +16,7 @@ namespace IMGUI
             this.form = form;
         }
 
+        //TODO auto-size button and other controls
         public bool Button(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
@@ -84,7 +85,7 @@ namespace IMGUI
 
         public void Window(Rect rect, WindowFunction func, string name)
         {
-            rect = DoLayout(rect);
+            //rect = DoLayout(rect);
             IMGUI.Window.DoControl(g, form, rect, func, name);
         }
 

@@ -12,22 +12,24 @@ namespace IMGUIDemo_Menu
     {
         protected override void OnGUI(GUI gui)
         {
-            gui.Label(new Rect(0, 0, this.Size.Width, 20), "Demo project - Menu", "caption");
+            gui.BeginV();
+                gui.Label(new Rect(this.Size.Width, 20), "Demo project - Menu", "caption");
 
-            //TODO implement radio-like button to implement menu
-            gui.BeginHorizontal(new Rect(0,20, Size.Width, 30));
-            {
-                if (gui.RadioButton(new Rect(60, 26), "文件", "MainMenu", false, "MenuItem0"))
+                //TODO implement radio-like button to implement menu
+                gui.BeginH();
                 {
-                    gui.Window(new Rect(100, 120), DoWindow, "FileMenu");
+                    if (gui.RadioButton(new Rect(60, 26), "文件", "MainMenu", false, "MenuItem0"))
+                    {
+                        gui.Window(new Rect(100, 120), DoWindow, "FileMenu");
+                    }
+                    gui.RadioButton(new Rect(60, 26), "编辑", "MainMenu", false, "MenuItem1");
+                    gui.RadioButton(new Rect(60, 26), "视图", "MainMenu", false, "MenuItem2");
+                    gui.RadioButton(new Rect(60, 26), "调试", "MainMenu", false, "MenuItem3");
+                    gui.RadioButton(new Rect(60, 26), "团队", "MainMenu", false, "MenuItem4");
+                    gui.RadioButton(new Rect(60, 26), "工具", "MainMenu", false, "MenuItem5");
                 }
-                gui.RadioButton(new Rect(60, 26), "编辑", "MainMenu", false, "MenuItem1");
-                gui.RadioButton(new Rect(60, 26), "视图", "MainMenu", false, "MenuItem2");
-                gui.RadioButton(new Rect(60, 26), "调试", "MainMenu", false, "MenuItem3");
-                gui.RadioButton(new Rect(60, 26), "团队", "MainMenu", false, "MenuItem4");
-                gui.RadioButton(new Rect(60, 26), "工具", "MainMenu", false, "MenuItem5");
-            }
-            gui.EndHorizontal();
+                gui.EndH();
+            gui.EndV();
 
             //if (ImGui::BeginMenuBar())
             //{
@@ -61,14 +63,14 @@ namespace IMGUIDemo_Menu
 
         private void DoWindow(GUI gui)
         {
-            gui.BeginVertical(new Rect(100, 120));
+            gui.BeginV();
             {
                 gui.ToggleButton(new Rect(60, 26), "新建", false,"File.New");
-                //gui.ToggleButton(new Rect(60, 26), "打开", true, "File.Open");
-                //gui.ToggleButton(new Rect(60, 26), "关闭", false, "File.Close");
-                //gui.ToggleButton(new Rect(60, 26), "退出", false, "File.Quit");
+                gui.ToggleButton(new Rect(60, 26), "打开", true, "File.Open");
+                gui.ToggleButton(new Rect(60, 26), "关闭", false, "File.Close");
+                gui.ToggleButton(new Rect(60, 26), "退出", false, "File.Quit");
             }
-            gui.EndVertical();
+            gui.EndV();
         }
     }
 

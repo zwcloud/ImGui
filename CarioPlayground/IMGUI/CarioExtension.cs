@@ -297,6 +297,8 @@ namespace IMGUI
         public static readonly Color ColorBlue = ColorRgb(0, 0, 255);
         public static readonly Color ColorLightBlue = ColorRgb(46, 167, 224);
         public static readonly Color ColorDarkBlue = ColorRgb(3, 110, 184);
+        public static readonly Color ColorPink = ColorRgb(255, 192, 203);
+
         
 
         public static void SetSourceColor(this Context context, Color color)

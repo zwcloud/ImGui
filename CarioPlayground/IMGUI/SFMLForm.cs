@@ -45,7 +45,8 @@ namespace IMGUI
         {
             set
             {
-                Debug.WriteLine(/*TODO implement SFMLForm::Cursor*/"SFMLForm::Cursor is mot implemented yet. Use default cursor instead.");
+                //TODO implement SFMLForm::Cursor
+                //Debug.WriteLine("SFMLForm::Cursor is mot implemented yet. Use default cursor instead.");
                 switch (value)
                 {
                     case Cursor.Default:
@@ -65,22 +66,7 @@ namespace IMGUI
         {
             get { return internalForm.HasFocus(); }
         }
-
-        /// <summary>
-        /// Open the form.
-        /// </summary>
-        public override void Open()
-        {
-            if(this.internalForm == null)
-            {
-                throw new InvalidOperationException("This form hasn't been created yet.");
-            }
-
-            this.internalForm = new SFML.Window.Window(this.internalForm.SystemHandle, this.internalForm.Settings);
-            this.internalForm.SetVisible(true);
-            this.Visible = true;
-        }
-
+        
         /// <summary>
         /// Close the form and distroy it.
         /// </summary>
@@ -119,8 +105,11 @@ namespace IMGUI
             }
         }
 
+        /// <summary>
+        /// Is this form visible?
+        /// </summary>
         public bool Visible { get; private set; }
-        
+
         /// <summary>
         /// Custom GUI Logic. This should be overrided to create custom GUI elements
         /// </summary>
@@ -150,6 +139,7 @@ namespace IMGUI
         internal bool GUILoop()
         {
             Utility.MillisFrameBegin = Utility.Millis;
+
             OnBasicGUI(GUI);
             var isRepaint = false;
             var exit = Update();
@@ -159,11 +149,11 @@ namespace IMGUI
                 Close();
                 //TODO tell form to exit
             }
+
             if (this.Visible)
             {
                 isRepaint = Render();
             }
-
 
             return isRepaint;
         }
@@ -194,13 +184,6 @@ namespace IMGUI
 
         protected void OnBasicGUI(GUI gui)
         {
-            #region essential GUI logic
-
-            //Draw essential form controls: title(maybe), menu, close button and so on.
-            //TODO
-
-            #endregion
-
             OnGUI(gui);
         }
 
@@ -261,12 +244,12 @@ namespace IMGUI
         }
 #endregion
         
-        protected SFMLForm(int width, int height, SFML.Window.Styles style = SFML.Window.Styles.Default)
+        protected SFMLForm(int width, int height)
         {
             internalForm = new SFML.Window.Window(
                 new SFML.Window.VideoMode((uint)width, (uint)height),
                 "DummyWindowTitle",
-                style, new SFML.Window.ContextSettings
+                SFML.Window.Styles.None, new SFML.Window.ContextSettings
                 {
                     DepthBits = 24,
                     StencilBits = 0,

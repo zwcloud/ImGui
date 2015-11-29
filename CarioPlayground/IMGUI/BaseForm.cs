@@ -25,11 +25,6 @@ namespace IMGUI
         public abstract bool Focused { get; }
 
         /// <summary>
-        /// Open the form.
-        /// </summary>
-        public abstract void Open();
-
-        /// <summary>
         /// Close the form and distroy it.
         /// </summary>
         public abstract void Close();
