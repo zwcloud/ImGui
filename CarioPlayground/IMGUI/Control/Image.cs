@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace IMGUI
 {
-    internal class Image : Control
+    internal class Image : Control, IRect
     {
         public Texture Texture { get; private set; }
 

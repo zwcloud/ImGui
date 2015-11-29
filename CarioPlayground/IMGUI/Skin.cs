@@ -63,15 +63,15 @@ namespace IMGUI
             {
                 StyleModifier[] normalModifiers =
                 {
-                    new StyleModifier{Name = "BorderTop", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderRight", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderBottom", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderLeft", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderTop", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderRight", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderBottom", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderLeft", Value = new Length(2, Unit.Pixel)},
 
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(225,225,225)},
                     
                     new StyleModifier{Name = "PaddingTop", Value = new Length(2, Unit.Pixel)},
                     new StyleModifier{Name = "PaddingRight", Value = new Length(2, Unit.Pixel)},
@@ -94,7 +94,7 @@ namespace IMGUI
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorArgb(0xFF999999),
+                            Color = CairoEx.ColorRgb(193,193,193),
                             Image = null,
                             Pattern = null
                         }
@@ -110,25 +110,19 @@ namespace IMGUI
                 
                 StyleModifier[] hoverModifiers =
                 {
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = CairoEx.ColorArgb(0xFFAFAFAF),
-                            Image = null,
-                            Pattern = null
-                        }
-                    }
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(115,115,115)},
                 };
                 Button["Hover"] = Style.Make(Button["Normal"], hoverModifiers);
                 
                 StyleModifier[] activeModifiers =
                 {
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorArgb(0xFFB3B3B3)},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorArgb(0xFF7A7A7A)},
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorArgb(0xFF7A7A7A)},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorArgb(0xFFB3B3B3)},
+                    new StyleModifier{Name = "BorderBottomColor",   Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderLeftColor",     Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderTopColor",      Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderRightColor",    Value = CairoEx.ColorDarkBlue},
 
                     new StyleModifier
                     {
@@ -148,7 +142,7 @@ namespace IMGUI
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorArgb(0xFF8F8F8F),
+                            Color = CairoEx.ColorLightBlue,
                             Image = null,
                             Pattern = null
                         }

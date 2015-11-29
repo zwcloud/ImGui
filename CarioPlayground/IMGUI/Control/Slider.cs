@@ -6,7 +6,7 @@ using Cairo;
 //TODO complete slider
 namespace IMGUI
 {
-    internal class Slider : Control
+    internal class Slider : Control, IRect
     {
         internal int Value { get; set; }
 

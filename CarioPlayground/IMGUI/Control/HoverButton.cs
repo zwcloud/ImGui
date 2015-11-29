@@ -4,7 +4,7 @@ using System.Diagnostics;
 using TinyIoC;
 namespace IMGUI
 {
-    class HoverButton : Control
+    class HoverButton : Control, IRect
     {
         #region State machine define
         static class ButtonState

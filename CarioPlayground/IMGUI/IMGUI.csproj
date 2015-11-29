@@ -98,6 +98,7 @@
     <Compile Include="Control\Control.cs" />
     <Compile Include="Control\HoverButton.cs" />
     <Compile Include="Control\Image.cs" />
+    <Compile Include="Control\IRect.cs" />
     <Compile Include="Control\Label.cs" />
     <Compile Include="Control\Radio.cs" />
     <Compile Include="Control\RadioButton.cs" />

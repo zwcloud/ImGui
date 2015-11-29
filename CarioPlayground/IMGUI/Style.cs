@@ -143,7 +143,7 @@ namespace IMGUI
             BorderRightColor = CairoEx.ColorBlack;
             BorderBottomColor = CairoEx.ColorBlack;
             BorderLeftColor = CairoEx.ColorBlack;
-            MarginTop = MarginRight = MarginBottom = MarginLeft = Length.Zero;
+            MarginTop = MarginRight = MarginBottom = MarginLeft = Length.OnePixel;
             OutlineWidth = Length.Zero;
             OutlineColor = new Color(0, 0, 0, 0.5);
 

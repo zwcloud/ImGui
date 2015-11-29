@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace IMGUI
 {
-    class Window : Control
+    class Window : Control, IRect
     {
         sealed class ImmediateForm : BorderlessForm
         {
@@ -39,12 +39,16 @@ namespace IMGUI
 
         private readonly ImmediateForm innerForm;
 
+        public Rect Rect { get; private set; }
+
         public Window(string name, BaseForm form, Rect rect, GUI.WindowFunction func)
             : base(name, form)
         {
+            Rect = rect;
+
             var tmp = Utility.ClientToScreen(new Point(), form);//offset the window's position relative to parent window 
-            rect.Offset(tmp.X, tmp.Y);
-            innerForm = new ImmediateForm(rect, func);
+            Rect = Rect.Offset(this.Rect, tmp.X, tmp.Y);
+            innerForm = new ImmediateForm(Rect, func);
             Application.Forms.Add(innerForm);
         }
 
@@ -75,8 +79,6 @@ namespace IMGUI
             {
                 var window = new Window(name, form, rect, func);
                 Debug.Assert(window != null);
-                window.OnUpdate();
-                window.OnRender(g);
             }
 
             var control = form.Controls[name] as Window;

@@ -85,10 +85,10 @@ namespace IMGUI
 
         public void Window(Rect rect, WindowFunction func, string name)
         {
-            //rect = DoLayout(rect);
             IMGUI.Window.DoControl(g, form, rect, func, name);
         }
 
+        #region layout methods
         public void BeginH()
         {
             BeginGroup(LayoutMode.Horizontal);
@@ -108,8 +108,27 @@ namespace IMGUI
         {
             EndGroup(LayoutMode.Vertical);
         }
+        #endregion
 
+        #region control methods
 
+        public Rect GetControlRect(string name)
+        {
+            Control control;
+            if(form.Controls.TryGetValue(name, out control))
+            {
+                if(control is IRect)
+                {
+                    return ((IRect) control).Rect;
+                }
+                throw new System.InvalidOperationException(
+                    string.Format("Can not get the rect of control <{0}> because it is not a rectangle control.",
+                        name));
+            }
+            throw new System.InvalidOperationException(string.Format("Can not find control <{0}>", name));
+        }
+
+        #endregion
     }
 
 }

@@ -5,7 +5,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Button : Control
+    internal class Button : Control, IRect
     {
         #region State machine define
         static class ButtonState
@@ -168,6 +168,7 @@ namespace IMGUI
                         {"maxHeight", (int)Rect.Height}
                     });
 
+            //Auto-size rect of the button
             //if (rect.IsBig)
             //{
             //    var boxSize = CairoEx.MeasureBoxModel(new Content(Layout), Skin.current.Button["Normal"]);
@@ -182,8 +183,6 @@ namespace IMGUI
             if (!form.Controls.ContainsKey(name))
             {
                 var button = new Button(name, form, text, rect);
-                //button.OnUpdate();
-                //button.OnRender(g);
             }
 
             var control = form.Controls[name] as Button;

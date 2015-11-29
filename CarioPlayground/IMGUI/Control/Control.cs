@@ -32,11 +32,9 @@ namespace IMGUI
         public bool Active { get; set; }
 
         /// <summary>
-        /// Does this control need repaint?
+        /// Does this control need repaint? TODO expand this into render tree
         /// </summary>
         public bool NeedRepaint { get; set; }
-
-        public Dictionary<string, object> Params { get; set; }
 
         public abstract void OnUpdate();
 
@@ -46,7 +44,6 @@ namespace IMGUI
         {
             Form = form;
             Name = name;
-            Params = new Dictionary<string, object>();
             State = "Normal";
             Active = false;
             NeedRepaint = true;

@@ -5,10 +5,26 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class PolygonButton : Control
+    internal class PolygonButton : Control, IRect
     {
-        public Point[] Points { get; private set; }
+        public Point[] Points
+        {
+            get { return points; }
+            set
+            {
+                points = value;
+                Rect = new Rect();
+                for (int i = 0; i < Points.Length; i++)
+                {
+                    this.Rect.Union(Points[i]);
+                }
+            }
+        }
+
         private string text;
+        private Point[] points;
+        public Rect Rect { get; private set; }
+
         public string Text
         {
             get { return text; }
@@ -43,7 +59,7 @@ namespace IMGUI
         internal PolygonButton(string name, BaseForm form, Point[] points, string text)
             : base(name, form)
         {
-            Points = points;
+            this.points = points;
             Text = text;
 
             var font = Skin.current.PolygonButton[State].Font;

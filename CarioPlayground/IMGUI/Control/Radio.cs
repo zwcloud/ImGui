@@ -5,7 +5,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Radio : Control
+    internal class Radio : Control, IRect
     {
         #region State machine define
         static class RadioState

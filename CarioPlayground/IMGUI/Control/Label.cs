@@ -4,7 +4,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Label : Control
+    internal class Label : Control, IRect
     {
         private string text;
         public ITextFormat Format { get; private set; }

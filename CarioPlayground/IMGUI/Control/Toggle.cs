@@ -5,7 +5,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Toggle : Control
+    internal class Toggle : Control, IRect
     {
         private string text;
         private StateMachine stateMachine;

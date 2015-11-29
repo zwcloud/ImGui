@@ -33,9 +33,9 @@ namespace IMGUI
             var pr = style.PaddingRight;
             var pb = style.PaddingBottom;
             var pl = style.PaddingLeft;
-            
+
             /*
-             * TODO Margin is temporarily not used.
+             * TODO Margin is temporarily not used. Margin should be used in layouting rects.
              */
             var mt = style.MarginTop;
             var mr = style.MarginRight;

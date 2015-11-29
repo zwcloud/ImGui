@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using IMGUI;
+
+//TODO 1. Auto-size menu window
+//TODO 2. Select window item by hovering on it
+//TODO 3. Open or close main menu window by click on main menu items
+//TODO 4. Sub-menu
 
 namespace IMGUIDemo_Menu
 {
@@ -18,15 +22,20 @@ namespace IMGUIDemo_Menu
                 //TODO implement radio-like button to implement menu
                 gui.BeginH();
                 {
-                    if (gui.RadioButton(new Rect(60, 26), "文件", "MainMenu", false, "MenuItem0"))
+                    if (gui.RadioButton(new Rect(80, 26), "文件", "MainMenu", false, "MenuItem0"))
                     {
-                        gui.Window(new Rect(100, 120), DoWindow, "FileMenu");
+                        var rect = gui.GetControlRect("MenuItem0");
+                        gui.Window(new Rect(rect.Left, rect.Bottom, 100, 120), MenuFileWindowFunc, "Menu.File");
                     }
-                    gui.RadioButton(new Rect(60, 26), "编辑", "MainMenu", false, "MenuItem1");
-                    gui.RadioButton(new Rect(60, 26), "视图", "MainMenu", false, "MenuItem2");
-                    gui.RadioButton(new Rect(60, 26), "调试", "MainMenu", false, "MenuItem3");
-                    gui.RadioButton(new Rect(60, 26), "团队", "MainMenu", false, "MenuItem4");
-                    gui.RadioButton(new Rect(60, 26), "工具", "MainMenu", false, "MenuItem5");
+                    if (gui.RadioButton(new Rect(80, 26), "编辑", "MainMenu", false, "MenuItem1"))
+                    {
+                        var rect = gui.GetControlRect("MenuItem1");
+                        gui.Window(new Rect(rect.Left, rect.Bottom, 100, 140), MenuEditWindowFunc, "Menu.Edit");
+                    }
+                    gui.RadioButton(new Rect(80, 26), "视图", "MainMenu", false, "MenuItem2");
+                    gui.RadioButton(new Rect(80, 26), "调试", "MainMenu", false, "MenuItem3");
+                    gui.RadioButton(new Rect(80, 26), "团队", "MainMenu", false, "MenuItem4");
+                    gui.RadioButton(new Rect(80, 26), "工具", "MainMenu", false, "MenuItem5");
                 }
                 gui.EndH();
             gui.EndV();
@@ -61,14 +70,27 @@ namespace IMGUIDemo_Menu
             //}
         }
 
-        private void DoWindow(GUI gui)
+        private void MenuFileWindowFunc(GUI gui)
         {
             gui.BeginV();
             {
-                gui.ToggleButton(new Rect(60, 26), "新建", false,"File.New");
-                gui.ToggleButton(new Rect(60, 26), "打开", true, "File.Open");
-                gui.ToggleButton(new Rect(60, 26), "关闭", false, "File.Close");
-                gui.ToggleButton(new Rect(60, 26), "退出", false, "File.Quit");
+                gui.Button(new Rect(100, 26), "新建", "File.New");
+                gui.Button(new Rect(100, 26), "打开", "File.Open");
+                gui.Button(new Rect(100, 26), "关闭", "File.Close");
+                gui.Button(new Rect(100, 26), "退出", "File.Quit");
+            }
+            gui.EndV();
+        }
+
+        private void MenuEditWindowFunc(GUI gui)
+        {
+            gui.BeginV();
+            {
+                gui.Button(new Rect(100, 26), "撤销", "Edit.Undo");
+                gui.Button(new Rect(100, 26), "重做", "Edit.Redo");
+                gui.Button(new Rect(100, 26), "剪切", "Edit.Cut");
+                gui.Button(new Rect(100, 26), "复制", "Edit.Copy");
+                gui.Button(new Rect(100, 26), "粘贴", "Edit.Paste");
             }
             gui.EndV();
         }
