@@ -3,11 +3,9 @@ using System.Diagnostics;
 
 namespace IMGUI
 {
-    internal class Image : Control, IRect
+    internal class Image : Control
     {
         public Texture Texture { get; private set; }
-
-        public Rect Rect { get; private set; }
 
         public Image(string name, BaseForm form, Texture texture)
             : base(name, form)

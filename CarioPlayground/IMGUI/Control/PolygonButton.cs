@@ -5,7 +5,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class PolygonButton : Control, IRect
+    internal class PolygonButton : Control
     {
         public Point[] Points
         {
@@ -23,7 +23,6 @@ namespace IMGUI
 
         private string text;
         private Point[] points;
-        public Rect Rect { get; private set; }
 
         public string Text
         {

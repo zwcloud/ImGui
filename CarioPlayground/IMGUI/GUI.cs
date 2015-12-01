@@ -5,7 +5,7 @@ namespace IMGUI
 {
     public partial class GUI
     {
-        public delegate void WindowFunction(GUI gui);
+        public delegate bool WindowFunction(GUI gui);
 
         private readonly Context g;
         private readonly BaseForm form;
@@ -88,6 +88,7 @@ namespace IMGUI
             IMGUI.Window.DoControl(g, form, rect, func, name);
         }
 
+
         #region layout methods
         public void BeginH()
         {
@@ -117,13 +118,7 @@ namespace IMGUI
             Control control;
             if(form.Controls.TryGetValue(name, out control))
             {
-                if(control is IRect)
-                {
-                    return ((IRect) control).Rect;
-                }
-                throw new System.InvalidOperationException(
-                    string.Format("Can not get the rect of control <{0}> because it is not a rectangle control.",
-                        name));
+                return control.Rect;
             }
             throw new System.InvalidOperationException(string.Format("Can not find control <{0}>", name));
         }

@@ -6,7 +6,7 @@ using Context = Cairo.Context;
 //BUG The text will slightly move up when there are only chinese characters.
 namespace IMGUI
 {
-    internal class TextBox : Control, IRect
+    internal class TextBox : Control
     {
         private Point caretTopPoint;
         private Point caretBottomPoint;
@@ -14,7 +14,6 @@ namespace IMGUI
         public ITextFormat Format { get; private set; }
         public ITextLayout Layout { get; private set; }
         public string Text { get; set; }
-        public Rect Rect { get; private set; }
 
         public Point CaretPosition { get; set; }
         public bool Selecting { get; set; }

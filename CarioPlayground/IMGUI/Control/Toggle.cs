@@ -5,7 +5,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Toggle : Control, IRect
+    internal class Toggle : Control
     {
         private string text;
         private StateMachine stateMachine;
@@ -59,7 +59,6 @@ namespace IMGUI
             }
         }
 
-        public Rect Rect { get; private set; }
         public bool Result { get; private set; }
 
         internal static bool DoControl(Context g, BaseForm form, Rect rect, string displayText, bool value, string name)

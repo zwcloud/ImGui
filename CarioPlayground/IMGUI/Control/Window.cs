@@ -1,25 +1,56 @@
 ﻿using Cairo;
+using System;
 using System.Diagnostics;
 
 namespace IMGUI
 {
-    class Window : Control, IRect
+    class Window : Control
     {
         sealed class ImmediateForm : BorderlessForm
         {
             private GUI.WindowFunction Func { get; set; }
 
             public bool Actived { private get; set; }
-            public ImmediateForm(Rect rect, GUI.WindowFunction func)
+            public ImmediateForm(Rect rect, GUI.WindowFunction func, BaseForm parentForm)
                 : base((int)rect.Width, (int)rect.Height)
             {
-                Position = rect.TopLeft;//NOTE Consider move this to constructor of SFMLForm
+                var handle = internalForm.SystemHandle;
+                var parentHandle = ((SFML.Window.Window) (parentForm.InternalForm)).SystemHandle;
+
+                //TODO Move these to Form(SFMLForm) and try to abstract these for multiple platform
+                //Remove WS_POPUP style and add WS_CHILD style
+                const uint WS_POPUP = 0x80000000;
+                const uint WS_CHILD = 0x40000000;
+                const int GWL_STYLE = -16;
+                const int GWL_EXSTYLE = -20;
+                const long WS_EX_TOOLWINDOW = 0x00000080L;
+                var handleRef = new System.Runtime.InteropServices.HandleRef(this, handle);
+                System.IntPtr exStyle = Native.GetWindowLong(handleRef, (int) Native.GWL.GWL_EXSTYLE);
+                var error = Native.GetLastError();
+                //style = (style & ~(WS_POPUP)) | WS_CHILD;
+                if (IntPtr.Size == 4)
+                {
+                    exStyle = new IntPtr(exStyle.ToInt32() | WS_EX_TOOLWINDOW);
+                }
+                else
+                {
+                    exStyle = new IntPtr(exStyle.ToInt64() | ((long)WS_EX_TOOLWINDOW));
+                }
+                Native.SetWindowLongPtr(handleRef, (int)Native.GWL.GWL_EXSTYLE, exStyle);
+                error = Native.GetLastError();
 
                 Func = func;
+                Position = rect.TopLeft;//NOTE Consider move this to constructor of SFMLForm
             }
 
             protected override void OnGUI(GUI gui)
             {
+                if (ForceHide)
+                {
+                    this.Hide();
+                    return;
+                }
+
                 if(Actived)
                 {
                     this.Show();
@@ -30,17 +61,22 @@ namespace IMGUI
                     this.Hide();
                     return;
                 }
+
                 if(Func!= null)
                 {
-                    Func(gui);
+                    if(Func(gui))
+                    {
+                        Actived = false;
+                        ForceHide = true;
+                    }
                 }
             }
+
+            public bool ForceHide { get; set; }
         }
 
         private readonly ImmediateForm innerForm;
-
-        public Rect Rect { get; private set; }
-
+        
         public Window(string name, BaseForm form, Rect rect, GUI.WindowFunction func)
             : base(name, form)
         {
@@ -48,7 +84,7 @@ namespace IMGUI
 
             var tmp = Utility.ClientToScreen(new Point(), form);//offset the window's position relative to parent window 
             Rect = Rect.Offset(this.Rect, tmp.X, tmp.Y);
-            innerForm = new ImmediateForm(Rect, func);
+            innerForm = new ImmediateForm(Rect, func, form);
             Application.Forms.Add(innerForm);
         }
 

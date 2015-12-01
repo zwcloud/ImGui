@@ -5,7 +5,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Button : Control, IRect
+    internal class Button : Control
     {
         #region State machine define
         static class ButtonState
@@ -53,9 +53,8 @@ namespace IMGUI
                 NeedRepaint = true;
             }
         }
-        public Rect Rect { get; private set; }
         public bool Result { get; private set; }
-        //private ToolTip t;
+
         public override void OnUpdate()
         {
             Layout.MaxWidth = (int)Rect.Width;
@@ -103,13 +102,6 @@ namespace IMGUI
             else if (hover)
             {
                 State = "Hover";
-                //if(t ==null)
-                //{
-                //    t = new ToolTip();
-                //    Application.Forms.Add(t);
-                //}
-                //t.TipText = Text;
-                //t.Show();
             }
             else
             {

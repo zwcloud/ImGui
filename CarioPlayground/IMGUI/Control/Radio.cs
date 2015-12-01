@@ -5,7 +5,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Radio : Control, IRect
+    internal class Radio : Control
     {
         #region State machine define
         static class RadioState
@@ -59,7 +59,6 @@ namespace IMGUI
                 NeedRepaint = true;
             }
         }
-        public Rect Rect { get; private set; }
         protected string groupName;
         protected bool actived;
 

@@ -4,7 +4,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class Label : Control, IRect
+    internal class Label : Control
     {
         private string text;
         public ITextFormat Format { get; private set; }
@@ -25,7 +25,6 @@ namespace IMGUI
             }
         }
 
-        public Rect Rect { get; private set; }
 
         public override void OnUpdate()
         {

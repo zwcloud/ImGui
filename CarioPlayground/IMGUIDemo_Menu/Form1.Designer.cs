@@ -22,20 +22,20 @@ namespace IMGUIDemo_Menu
                 //TODO implement radio-like button to implement menu
                 gui.BeginH();
                 {
-                    if (gui.RadioButton(new Rect(80, 26), "文件", "MainMenu", false, "MenuItem0"))
+                    if (gui.ToggleButton(new Rect(80, 26), "文件", false, "MenuItem0"))
                     {
                         var rect = gui.GetControlRect("MenuItem0");
                         gui.Window(new Rect(rect.Left, rect.Bottom, 100, 120), MenuFileWindowFunc, "Menu.File");
                     }
-                    if (gui.RadioButton(new Rect(80, 26), "编辑", "MainMenu", false, "MenuItem1"))
+                    if (gui.ToggleButton(new Rect(80, 26), "编辑", false, "MenuItem1"))
                     {
                         var rect = gui.GetControlRect("MenuItem1");
                         gui.Window(new Rect(rect.Left, rect.Bottom, 100, 140), MenuEditWindowFunc, "Menu.Edit");
                     }
-                    gui.RadioButton(new Rect(80, 26), "视图", "MainMenu", false, "MenuItem2");
-                    gui.RadioButton(new Rect(80, 26), "调试", "MainMenu", false, "MenuItem3");
-                    gui.RadioButton(new Rect(80, 26), "团队", "MainMenu", false, "MenuItem4");
-                    gui.RadioButton(new Rect(80, 26), "工具", "MainMenu", false, "MenuItem5");
+                    gui.ToggleButton(new Rect(80, 26), "视图", false, "MenuItem2");
+                    gui.ToggleButton(new Rect(80, 26), "调试", false, "MenuItem3");
+                    gui.ToggleButton(new Rect(80, 26), "团队", false, "MenuItem4");
+                    gui.ToggleButton(new Rect(80, 26), "工具", false, "MenuItem5");
                 }
                 gui.EndH();
             gui.EndV();
@@ -70,29 +70,40 @@ namespace IMGUIDemo_Menu
             //}
         }
 
-        private void MenuFileWindowFunc(GUI gui)
+        private bool MenuFileWindowFunc(GUI gui)
         {
+            bool clicked1 = false;
+            bool clicked2 = false;
+            bool clicked3 = false;
+            bool clicked4 = false;
             gui.BeginV();
             {
-                gui.Button(new Rect(100, 26), "新建", "File.New");
-                gui.Button(new Rect(100, 26), "打开", "File.Open");
-                gui.Button(new Rect(100, 26), "关闭", "File.Close");
-                gui.Button(new Rect(100, 26), "退出", "File.Quit");
+                clicked1 = gui.Button(new Rect(100, 26), "新建", "File.New");
+                clicked2 = gui.Button(new Rect(100, 26), "打开", "File.Open");
+                clicked3 = gui.Button(new Rect(100, 26), "关闭", "File.Close");
+                clicked4 = gui.Button(new Rect(100, 26), "退出", "File.Quit");
             }
             gui.EndV();
+            return clicked1 || clicked2 || clicked3 || clicked4;
         }
 
-        private void MenuEditWindowFunc(GUI gui)
+        private bool MenuEditWindowFunc(GUI gui)
         {
+            bool clicked1 = false;
+            bool clicked2 = false;
+            bool clicked3 = false;
+            bool clicked4 = false;
+            bool clicked5 = false;
             gui.BeginV();
             {
-                gui.Button(new Rect(100, 26), "撤销", "Edit.Undo");
-                gui.Button(new Rect(100, 26), "重做", "Edit.Redo");
-                gui.Button(new Rect(100, 26), "剪切", "Edit.Cut");
-                gui.Button(new Rect(100, 26), "复制", "Edit.Copy");
-                gui.Button(new Rect(100, 26), "粘贴", "Edit.Paste");
+                clicked1 = gui.Button(new Rect(100, 26), "撤销", "Edit.Undo");
+                clicked2 = gui.Button(new Rect(100, 26), "重做", "Edit.Redo");
+                clicked3 = gui.Button(new Rect(100, 26), "剪切", "Edit.Cut");
+                clicked4 = gui.Button(new Rect(100, 26), "复制", "Edit.Copy");
+                clicked5 = gui.Button(new Rect(100, 26), "粘贴", "Edit.Paste");
             }
             gui.EndV();
+            return clicked1 || clicked2 || clicked3 || clicked4 || clicked5;
         }
     }
 

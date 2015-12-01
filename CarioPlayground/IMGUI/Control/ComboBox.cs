@@ -9,7 +9,7 @@ using TinyIoC;
 
 namespace IMGUI
 {
-    internal class ComboBox : Control, IRect
+    internal class ComboBox : Control
     {
         #region State machine constants
         static class ComboBoxState
@@ -43,7 +43,6 @@ namespace IMGUI
 
         public string[] Texts { get; private set; }
         public BorderlessForm ItemsContainer { get; private set; }
-        public Rect Rect { get; private set; }
 
         private string text;
         public string Text

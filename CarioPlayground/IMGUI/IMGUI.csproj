@@ -86,6 +86,8 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundStyle.cs" />
@@ -98,8 +100,9 @@
     <Compile Include="Control\Control.cs" />
     <Compile Include="Control\HoverButton.cs" />
     <Compile Include="Control\Image.cs" />
-    <Compile Include="Control\IRect.cs" />
     <Compile Include="Control\Label.cs" />
+    <Compile Include="Control\Menu\Menu.cs" />
+    <Compile Include="Control\Menu\MenuItem.cs" />
     <Compile Include="Control\Radio.cs" />
     <Compile Include="Control\RadioButton.cs" />
     <Compile Include="Control\Slider.cs" />
@@ -151,6 +154,7 @@
     <Compile Include="Texture.cs" />
     <Compile Include="TinyIoC.cs" />
     <Compile Include="TODO.cs" />
+    <Compile Include="Tree2.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Application.cs" />

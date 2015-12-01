@@ -6,11 +6,10 @@ using Cairo;
 //TODO complete slider
 namespace IMGUI
 {
-    internal class Slider : Control, IRect
+    internal class Slider : Control
     {
         internal int Value { get; set; }
 
-        public Rect Rect { get; private set; }
         public int Result { get; private set; }
 
         internal Slider(string name, BaseForm form, Rect rect, int value, int leftValue, int rightValue)

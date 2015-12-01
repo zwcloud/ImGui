@@ -9,36 +9,11 @@ namespace IMGUI
     /// Base class of all controls
     /// </summary>
     /// <remarks>
-    /// Must implement a functional method to call by user.
+    /// Every control must implement a DoControl method to call by GUI.
     /// </remarks>
-    abstract class Control : IDisposable
+    internal abstract class Control : IDisposable
     {
         private string name;
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (Form.Controls.Keys.Contains(value))
-                    throw new ArgumentException("Specified Control name is already used.");
-                name = value;
-            }
-        }
-
-        public string State { get; set; }
-
-        internal BaseForm Form { get; set; }
-
-        public bool Active { get; set; }
-
-        /// <summary>
-        /// Does this control need repaint? TODO expand this into render tree
-        /// </summary>
-        public bool NeedRepaint { get; set; }
-
-        public abstract void OnUpdate();
-
-        public abstract void OnRender(Context g);
 
         protected Control(string name, BaseForm form)
         {
@@ -51,13 +26,30 @@ namespace IMGUI
             Form.Controls[Name] = this;
         }
 
-        #region Implementation of IDisposable
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if(Form.Controls.Keys.Contains(value))
+                    throw new ArgumentException("Specified Control name is already used.");
+                name = value;
+            }
+        }
+
+        public string State { get; set; }
+        internal BaseForm Form { get; set; }
+        public bool Active { get; set; }
+        public Rect Rect { get; protected set; }
+
+        /// <summary>
+        /// Does this control need repaint? TODO expand this into render tree
+        /// </summary>
+        public bool NeedRepaint { get; set; }
 
         public abstract void Dispose();
-
+        public abstract void OnUpdate();
+        public abstract void OnRender(Context g);
         public abstract void OnClear(Context g);
-
-        #endregion
-
     }
 }

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using TinyIoC;
 namespace IMGUI
 {
-    class HoverButton : Control, IRect
+    class HoverButton : Control
     {
         #region State machine define
         static class ButtonState
@@ -46,7 +46,6 @@ namespace IMGUI
                 NeedRepaint = true;
             }
         }
-        public Rect Rect { get; private set; }
         public bool Result { get; private set; }
         public override void OnUpdate()
         {

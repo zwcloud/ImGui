@@ -1,0 +1,6 @@
+﻿namespace IMGUI
+{
+    class MenuItem
+    {
+    }
+}

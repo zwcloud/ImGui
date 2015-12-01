@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+//TODO extract interface of window functions
+
 namespace IMGUI
 {
     /// <summary>
@@ -263,7 +265,6 @@ namespace IMGUI
 
             internalForm.SetVerticalSyncEnabled(false);
             controls = new Dictionary<string, Control>();
-
             InitGUI();
         }
 
