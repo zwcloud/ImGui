@@ -1,8 +1,16 @@
 namespace IMGUI
 {
-    public abstract class BaseForm
+    public abstract class BaseForm : IWindow
     {
         internal System.Collections.Generic.Dictionary<string, Control> controls;
+        internal abstract object InternalForm { get; }
+
+        internal System.Collections.Generic.Dictionary<string, Control> Controls
+        {
+            get { return controls; }
+        }
+
+        #region Implementation of IWindow
 
         /// <summary>
         /// Position of the form
@@ -18,7 +26,7 @@ namespace IMGUI
         /// Cursor of the form (not implemented)
         /// </summary>
         public abstract Cursor Cursor { set; }
-        
+
         /// <summary>
         /// Is the form focused? (readonly)
         /// </summary>
@@ -39,11 +47,6 @@ namespace IMGUI
         /// </summary>
         public abstract void Hide();
 
-        internal abstract object InternalForm { get; }
-
-        internal System.Collections.Generic.Dictionary<string, Control> Controls
-        {
-            get { return controls; }
-        }
+        #endregion
     }
 }

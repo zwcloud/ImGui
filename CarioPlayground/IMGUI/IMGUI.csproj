@@ -100,6 +100,8 @@
     <Compile Include="Control\Control.cs" />
     <Compile Include="Control\HoverButton.cs" />
     <Compile Include="Control\Image.cs" />
+    <Compile Include="Control\IRenderable.cs" />
+    <Compile Include="Control\IUpdatable.cs" />
     <Compile Include="Control\Label.cs" />
     <Compile Include="Control\Menu\Menu.cs" />
     <Compile Include="Control\Menu\MenuItem.cs" />
@@ -126,6 +128,7 @@
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="IWindow.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="GUI.Layout.cs" />
     <Compile Include="MouseButton.cs" />
@@ -140,8 +143,6 @@
     <Compile Include="Proxy\DWriteTextFormatProxy.cs" />
     <Compile Include="Proxy\DWriteTextLayoutProxy.cs" />
     <Compile Include="Rect.cs" />
-    <Compile Include="RenderObject.Build.cs" />
-    <Compile Include="RenderObject.cs" />
     <Compile Include="SFMLForm.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Skin.cs" />

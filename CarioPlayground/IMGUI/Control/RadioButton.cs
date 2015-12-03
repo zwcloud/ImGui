@@ -15,14 +15,12 @@ namespace IMGUI
                 Actived ? Skin.current.Button["Active"] : Skin.current.Button["Normal"]);
         }
 
-        public static new bool DoControl(Context g, BaseForm form, Rect rect, string text, string groupName, bool value, string name)
+        public static new bool DoControl(BaseForm form, Rect rect, string text, string groupName, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var radioButton = new RadioButton(name, form, text, rect, groupName);
                 Debug.Assert(radioButton != null);
-                radioButton.OnUpdate();
-                radioButton.OnRender(g);
             }
 
             var control = form.Controls[name] as RadioButton;

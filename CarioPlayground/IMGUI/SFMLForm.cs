@@ -263,7 +263,7 @@ namespace IMGUI
             internalForm.SetVisible(false);
             Visible = false;
 
-            internalForm.SetVerticalSyncEnabled(false);
+            internalForm.SetVerticalSyncEnabled(true);
             controls = new Dictionary<string, Control>();
             InitGUI();
         }

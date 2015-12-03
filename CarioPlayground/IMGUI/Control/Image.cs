@@ -13,14 +13,12 @@ namespace IMGUI
             Texture = texture;
         }
 
-        static internal void DoControl(Context g, BaseForm form, Rect rect, Texture texture, string name)
+        static internal void DoControl(BaseForm form, Rect rect, Texture texture, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var image = new Image(name, form, texture);
                 image.Rect = rect;
-                image.OnUpdate();
-                image.OnRender(g);
             }
 
             var control = form.Controls[name] as Image;

@@ -117,13 +117,11 @@ namespace IMGUI
             return inside;
         }
 
-        internal static bool DoControl(Context g, BaseForm form, Point[] points, string text, string name)
+        internal static bool DoControl(BaseForm form, Point[] points, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var polygonButton = new PolygonButton(name, form, points, text);
-                polygonButton.OnUpdate();
-                polygonButton.OnRender(g);
             }
 
             var control = form.Controls[name] as PolygonButton;

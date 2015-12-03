@@ -20,7 +20,7 @@ namespace IMGUI
         public bool Button(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.Button.DoControl(g, form, rect, text, name);
+            return IMGUI.Button.DoControl(form, rect, text, name);
         }
 
         public void Label(Rect rect, string text, string name)
@@ -38,56 +38,60 @@ namespace IMGUI
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
         {
             rect = DoLayout(rect);
-            return ComboBox.DoControl(g, null /*FIXME ComboBox subitems should be shown in a new form*/, form, rect, text,
-                selectedIndex, name);
+            return ComboBox.DoControl(form, rect, text, selectedIndex, name);
         }
 
         public void Image(Rect rect, Texture image, string name)
         {
             rect = DoLayout(rect);
-            IMGUI.Image.DoControl(g, form, rect, image, name);
+            IMGUI.Image.DoControl(form, rect, image, name);
         }
 
         public bool Radio(Rect rect, string text, string groupName, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.Radio.DoControl(g, form, rect, text, groupName, value, name);
+            return IMGUI.Radio.DoControl(form, rect, text, groupName, value, name);
         }
 
         public string TextBox(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.TextBox.DoControl(g, form, rect, text, name);
+            return IMGUI.TextBox.DoControl(form, rect, text, name);
         }
 
         public bool PolygonButton(Point[] points, string text, string name)
         {
-            return IMGUI.PolygonButton.DoControl(g, form, points, text, name);
+            return IMGUI.PolygonButton.DoControl(form, points, text, name);
         }
 
         public bool ToggleButton(Rect rect, string text, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.ToggleButton.DoControl(g, form, rect, text, value, name);
+            return IMGUI.ToggleButton.DoControl(form, rect, text, value, name);
         }
 
         public bool HoverButton(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.HoverButton.DoControl(g, form, rect, text, name);
+            return IMGUI.HoverButton.DoControl(form, rect, text, name);
         }
 
         public bool RadioButton(Rect rect, string text, string groupName, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.RadioButton.DoControl(g, form, rect, text, groupName, value, name);
+            return IMGUI.RadioButton.DoControl(form, rect, text, groupName, value, name);
         }
 
         public void Window(Rect rect, WindowFunction func, string name)
         {
-            IMGUI.Window.DoControl(g, form, rect, func, name);
+            IMGUI.Window.DoControl(form, rect, func, name);
         }
 
+        public bool MenuItem(Rect rect, string text, string name)
+        {
+            rect = DoLayout(rect);
+            return IMGUI.MenuItem.DoControl(rect, text, name);
+        }
 
         #region layout methods
         public void BeginH()

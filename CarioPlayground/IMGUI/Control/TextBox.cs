@@ -55,13 +55,11 @@ namespace IMGUI
                     });
         }
 
-        internal static string DoControl(Context g, BaseForm form, Rect rect, string text, string name)
+        internal static string DoControl(BaseForm form, Rect rect, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var textBox = new TextBox(name, form, text, rect);
-                textBox.OnUpdate();
-                textBox.OnRender(g);
             }
             var control = form.Controls[name] as TextBox;
             Debug.Assert(control != null);

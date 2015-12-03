@@ -109,12 +109,11 @@ namespace IMGUI
         #endregion
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static void DoControl(Context g, BaseForm form, Rect rect, GUI.WindowFunction func, string name)
+        internal static void DoControl(BaseForm form, Rect rect, GUI.WindowFunction func, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var window = new Window(name, form, rect, func);
-                Debug.Assert(window != null);
             }
 
             var control = form.Controls[name] as Window;

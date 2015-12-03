@@ -39,7 +39,7 @@ namespace IMGUI
         };
         #endregion
 
-        private StateMachine stateMachine;
+        private readonly StateMachine stateMachine;
 
         public string[] Texts { get; private set; }
         public BorderlessForm ItemsContainer { get; private set; }
@@ -106,15 +106,12 @@ namespace IMGUI
                 });
         }
 
-        internal static int DoControl(Context g, Context gTop, BaseForm form, Rect rect, string[] texts, int selectedIndex, string name)
+        internal static int DoControl(BaseForm form, Rect rect, string[] texts, int selectedIndex, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var comboBox = new ComboBox(name, form, texts, rect);
                 comboBox.SelectedIndex = selectedIndex;
-
-                comboBox.OnUpdate();
-                comboBox.OnRender(g);
             }
             var control = form.Controls[name] as ComboBox;
             Debug.Assert(control != null);
@@ -181,7 +178,8 @@ namespace IMGUI
 
         public override void OnRender(Context g)
         {
-            g.DrawBoxModel(Rect, new Content(Layout), Skin.current.ComboBox[State]);
+            var style = Skin.current.ComboBox[State];
+            g.DrawBoxModel(Rect, new Content(Layout), style);
             g.LineWidth = 1;
             var trianglePoints = new Point[3];
             trianglePoints[0].X = Rect.TopRight.X - 5;
@@ -190,7 +188,7 @@ namespace IMGUI
             trianglePoints[1].Y = trianglePoints[0].Y;
             trianglePoints[2].X = trianglePoints[0].X - 0.3 * Rect.Height;
             trianglePoints[2].Y = trianglePoints[0].Y + 0.6 * Rect.Height;
-            g.StrokePolygon(trianglePoints, CairoEx.ColorBlack);
+            g.StrokePolygon(trianglePoints, style.LineColor);
         }
 
         public override void Dispose()
@@ -211,16 +209,16 @@ namespace IMGUI
     internal sealed class ComboxBoxItemsForm : BorderlessForm
     {
         private Rect Rect { get; set; }
-        private List<string> TextList;
+        private readonly List<string> TextList;
         private System.Action<int> CallBack { get; set; }
 
-        public ComboxBoxItemsForm(Rect rect, string[] text, System.Action<int> callBack)
-            : base((int)rect.Width, (int)rect.Height * text.Length)
+        public ComboxBoxItemsForm(Rect rect, string[] texts, System.Action<int> callBack)
+            : base((int)rect.Width, (int)rect.Height * texts.Length)
         {
             Position = rect.TopLeft;
             rect.X = rect.Y = 0;
             Rect = rect;
-            TextList = new List<string>(text);
+            TextList = new List<string>(texts);
             CallBack = callBack;
         }
 

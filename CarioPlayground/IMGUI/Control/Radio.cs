@@ -132,13 +132,11 @@ namespace IMGUI
                     });
         }
 
-        public static bool DoControl(Context g, BaseForm form, Rect rect, string text, string groupName, bool value, string name)
+        public static bool DoControl(BaseForm form, Rect rect, string text, string groupName, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var radio = new Radio(name, form, text, rect, groupName);
-                radio.OnUpdate();
-                radio.OnRender(g);
             }
 
             var control = form.Controls[name] as Radio;
@@ -219,31 +217,20 @@ namespace IMGUI
             var style = Skin.current.Radio[State];
             var radioBoxRect = new Rect(Rect.X, Rect.Y, new Size(Rect.Height, Rect.Height));
             var radioBoxCenter = radioBoxRect.Center;
-            var pointRadius = (float)(radioBoxRect.Width-1) / 4;
-            var circleRadius = (float)(radioBoxRect.Width - 1) / 2;
-
+            var tmp = (float) (radioBoxRect.Width - 1)/12;
+            var pointRadius = tmp*3;
+            var circleRadius = tmp*5;
             g.FillRectangle(radioBoxRect, style.BackgroundStyle.Color);
-            g.StrokeCircle(radioBoxCenter.ToPointD(), circleRadius, CairoEx.ColorBlack);
-            if (!Actived)
+            if (Actived)
             {
-                if (State == "Hover")
-                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorRgb(46, 167, 224));
-                else if (State == "Active")
-                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
+                g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
+                g.StrokeCircle(radioBoxCenter.ToPointD(), circleRadius,
+                    (Color)style.ExtraStyles["CircleColor.Selected"]);
             }
             else
             {
-                if (State == "Normal")
-                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
-                else if (State == "Hover")
-                {
-                    g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorRgb(46, 167, 224));
-                    g.StrokeCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
-                }
-                else if (State == "Active")
-                    g.StrokeCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
+                g.StrokeCircle(radioBoxCenter.ToPointD(), circleRadius, CairoEx.ColorBlack);
             }
-
             var radioTextRect = new Rect(radioBoxRect.TopRight, Rect.BottomRight);
             g.DrawBoxModel(radioTextRect, new Content(Layout), Skin.current.Radio[State]);
         }

@@ -3,24 +3,28 @@ namespace IMGUI
 {
     public class Menu
     {
+
+
+
         private ITree<MenuItem> menuTree = NodeTree<MenuItem>.NewTree();
         private INode<MenuItem> topItem;
         private INode<MenuItem> currentItem;
 
-        public Menu()
+        public Menu(string name, BaseForm form, string text, Rect rect)
         {
-            topItem = menuTree.AddChild(new MenuItem());
+            //topItem = menuTree.AddChild(MenuItem.Dummy);
         }
 
-        void BeginGroup(string text)
+        void BeginGroup(string name, BaseForm form, string text, Rect rect)
         {
             if(currentItem == null)
             {
-                currentItem = topItem.AddChild(new MenuItem());
+                currentItem = topItem.AddChild(new MenuItem(name, form, text, rect));
+                //create window for this menu
             }
             else
             {
-                currentItem = currentItem.AddChild(new MenuItem());
+                currentItem = currentItem.AddChild(new MenuItem(name, form, text, rect));
             }
         }
 
@@ -29,7 +33,7 @@ namespace IMGUI
             currentItem = currentItem.Parent;
         }
 
-        void AddItem(string text)
+        void AddItem(string name, BaseForm form, string text, Rect rect)
         {
             if (currentItem == null)
             {
@@ -37,7 +41,7 @@ namespace IMGUI
             }
             else
             {
-                currentItem.AddChild(new MenuItem());
+                currentItem.AddChild(new MenuItem(name, form, text, rect));
             }
         }
     }

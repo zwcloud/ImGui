@@ -39,23 +39,7 @@ namespace IMGUI
             {
                 Label["Normal"] = Style.Make();
                 Label["Hover"] = Style.Make();
-
-                var activeModifiers = new[]
-                {
-                    new StyleModifier
-                    {
-                        Name = "Font", Value = new Font
-                        {
-                            FontFamily = "Consolas",
-                            FontStyle = FontStyle.Normal,
-                            FontWeight = FontWeight.Normal,
-                            FontStretch = FontStretch.Normal,
-                            Size = 12,
-                            Color = new Color(0,0,1)
-                        }
-                    }
-                };
-                Label["Active"] = Style.Make(activeModifiers);
+                Label["Active"] = Style.Make();
             }
             #endregion
 
@@ -185,15 +169,20 @@ namespace IMGUI
             {
                 StyleModifier[] normalModifiers =
                 {
-                    new StyleModifier{Name = "BorderTop", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderRight", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderBottom", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderLeft", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderTop", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderRight", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderBottom", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderLeft", Value = new Length(2, Unit.Pixel)},
 
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    
+                    new StyleModifier{Name = "PaddingTop", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingRight", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingBottom", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingLeft", Value = new Length(2, Unit.Pixel)},
 
                     new StyleModifier
                     {
@@ -211,26 +200,32 @@ namespace IMGUI
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorWhite,
+                            Color = CairoEx.ColorRgb(193,193,193),
                             Image = null,
                             Pattern = null
                         }
                     },
+
+                    new StyleModifier
+                    {
+                        Name = "LineColor",
+                        Value = CairoEx.ColorRgb(225,225,225)
+                    }
                 };
                 ComboBox["Normal"] = Style.Make(normalModifiers);
 
 
                 StyleModifier[] hoverModifiers =
                 {
+                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(115,115,115)},
+
                     new StyleModifier
                     {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = CairoEx.ColorArgb(255,46,167,224),
-                            Image = null,
-                            Pattern = null
-                        }
+                        Name = "LineColor",
+                        Value = CairoEx.ColorRgb(115,115,115)
                     }
                 };
                 ComboBox["Hover"] = Style.Make(ComboBox["Normal"], hoverModifiers);
@@ -242,17 +237,13 @@ namespace IMGUI
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorArgb(255,3,110,184),
+                            Color = CairoEx.ColorLightBlue,
                             Image = null,
                             Pattern = null
                         }
-                    }
+                    },
                 };
                 ComboBox["Active"] = Style.Make(ComboBox["Normal"], activeModifiers);
-
-                ComboBox["Item"] = Style.Make(ComboBox["Normal"]);
-                ComboBox["Item:Hover"] = Style.Make(ComboBox["Hover"]);
-                ComboBox["Item:Active"] = Style.Make(ComboBox["Active"]);
             }
             #endregion
 
@@ -283,8 +274,12 @@ namespace IMGUI
             #region Radio
             {
                 Radio["Normal"] = Style.Make();
+                //TODO build ExtraStyles into modifier
+                Radio["Normal"].ExtraStyles["CircleColor.Selected"] = CairoEx.ColorDarkBlue;
+
                 Radio["Hover"] = Style.Make();
                 Radio["Active"] = Style.Make();
+
             }
             #endregion
 

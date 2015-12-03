@@ -11,7 +11,7 @@ namespace IMGUI
     /// <remarks>
     /// Every control must implement a DoControl method to call by GUI.
     /// </remarks>
-    internal abstract class Control : IDisposable
+    internal abstract class Control : IDisposable, IUpdatable, IRenderable
     {
         private string name;
 
@@ -46,10 +46,9 @@ namespace IMGUI
         /// Does this control need repaint? TODO expand this into render tree
         /// </summary>
         public bool NeedRepaint { get; set; }
-
         public abstract void Dispose();
-        public abstract void OnUpdate();
         public abstract void OnRender(Context g);
         public abstract void OnClear(Context g);
+        public abstract void OnUpdate();
     }
 }

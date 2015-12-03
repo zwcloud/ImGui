@@ -135,14 +135,12 @@ namespace IMGUI
         }
 
         //TODO Control-less DoControl overload (without name parameter)
-        internal static bool DoControl(Context g, BaseForm form, Rect rect, string text, string name)
+        internal static bool DoControl(BaseForm form, Rect rect, string text, string name)
         {
             //The control hasn't been created, create it.
             if (!form.Controls.ContainsKey(name))
             {
                 var hoverButton = new HoverButton(name, form, text, rect);
-                hoverButton.OnUpdate();
-                hoverButton.OnRender(g);
             }
 
             var control = form.Controls[name] as HoverButton;

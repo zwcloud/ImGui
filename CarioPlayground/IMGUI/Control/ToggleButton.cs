@@ -15,14 +15,11 @@ namespace IMGUI
                 Result ? Skin.current.Button["Active"] : Skin.current.Button["Normal"]);
         }
 
-        public static new bool DoControl(Cairo.Context g, BaseForm form, Rect rect, string text, bool value, string name)
+        public static new bool DoControl(BaseForm form, Rect rect, string text, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var toggle = new ToggleButton(name, form, value, text, rect);
-                Debug.Assert(toggle != null);
-                toggle.OnUpdate();
-                toggle.OnRender(g);
             }
 
             var control = form.Controls[name] as ToggleButton;
