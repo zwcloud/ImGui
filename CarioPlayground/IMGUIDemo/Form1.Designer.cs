@@ -1,6 +1,7 @@
 ﻿#define ShowButton
 #define ShowToggle
 #define ShowRadio
+#define ShowSlider
 #define ShowImage
 #define ShowComboxBox
 
@@ -23,6 +24,7 @@ namespace IMGUIDemo
         private bool radio2Selected = false;
 
         private int selectedindex1, selectedindex2;
+        private float valueOfSlider0;
 
         #endregion
 
@@ -95,7 +97,13 @@ namespace IMGUIDemo
                 Debug.WriteLine("Radio2 selected");
 #endif
 
-
+#if ShowSlider
+            ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);
+            var oldValueOfSlider0 = valueOfSlider0;
+            valueOfSlider0 = gui.Slider(new Rect(20, firstY + i * 20, 100, 20), "Slider0", 0f, -100f, 100f, "Slider0");
+            if (valueOfSlider0 != oldValueOfSlider0)
+                Debug.WriteLine("Value of slider0 changed to {0}", valueOfSlider0);
+#endif
 
 #if ShowComboxBox
             ++i; //Debug.WriteLine("at ({0},{1})", 20, 20 + i * 20);

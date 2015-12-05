@@ -223,13 +223,13 @@ namespace IMGUI
             g.FillRectangle(radioBoxRect, style.BackgroundStyle.Color);
             if (Actived)
             {
-                g.FillCircle(radioBoxCenter.ToPointD(), pointRadius, CairoEx.ColorBlack);
-                g.StrokeCircle(radioBoxCenter.ToPointD(), circleRadius,
+                g.FillCircle(radioBoxCenter, pointRadius, CairoEx.ColorBlack);
+                g.StrokeCircle(radioBoxCenter, circleRadius,
                     (Color)style.ExtraStyles["CircleColor.Selected"]);
             }
             else
             {
-                g.StrokeCircle(radioBoxCenter.ToPointD(), circleRadius, CairoEx.ColorBlack);
+                g.StrokeCircle(radioBoxCenter, circleRadius, CairoEx.ColorBlack);
             }
             var radioTextRect = new Rect(radioBoxRect.TopRight, Rect.BottomRight);
             g.DrawBoxModel(radioTextRect, new Content(Layout), Skin.current.Radio[State]);

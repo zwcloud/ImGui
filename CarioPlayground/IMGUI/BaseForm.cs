@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 namespace IMGUI
 {
     public abstract class BaseForm : IWindow
     {
-        internal System.Collections.Generic.Dictionary<string, Control> controls;
+        internal Dictionary<string, Control> controls;
         internal abstract object InternalForm { get; }
+
 
         internal System.Collections.Generic.Dictionary<string, Control> Controls
         {

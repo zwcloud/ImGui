@@ -265,7 +265,7 @@ namespace IMGUI
             g.Stroke();
         }
 
-        internal static void StrokeCircle(this Context g, PointD center, float radius, Color color)
+        internal static void StrokeCircle(this Context g, Point center, float radius, Color color)
         {
             g.NewPath();
             g.LineWidth = 1;
@@ -274,7 +274,7 @@ namespace IMGUI
             g.Stroke();
         }
 
-        internal static void FillCircle(this Context g, PointD center, float radius, Color color)
+        internal static void FillCircle(this Context g, Point center, float radius, Color color)
         {
             g.NewPath();
             g.SetSourceColor(color);

@@ -8,19 +8,20 @@ namespace IMGUI
 {
     internal class Slider : Control
     {
-        internal int Value { get; set; }
+        public float Value { get; private set; }
+        public float MinValue { get; private set; }
+        public float MaxValue { get; private set; }
 
-        public int Result { get; private set; }
-
-        internal Slider(string name, BaseForm form, Rect rect, int value, int leftValue, int rightValue)
+        public Slider(string name, BaseForm form, Rect rect, float value, float leftValue, float rightValue)
             : base(name, form)
         {
             Rect = rect;
             Value = value;
+            MinValue = leftValue;
+            MaxValue = rightValue;
         }
 
-        //TODO Control-less DoControl overload (without name parameter)
-        internal static int DoControl(Context g, BaseForm form, Rect rect, int value, int leftValue, int rightValue, string name)
+        internal static float DoControl(BaseForm form, Rect rect, float value, float leftValue, float rightValue, string name)
         {
             Slider slider;
             if (!form.Controls.ContainsKey(name))
@@ -43,19 +44,28 @@ namespace IMGUI
         {
             bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.GetMousePos(Form));
             bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.GetMousePos(Form));
-            if (active)
+            if(active)
+            {
                 State = "Active";
-            else if (hover)
+            }
+            else if(hover)
+            {
                 State = "Hover";
+            }
             else
+            {
                 State = "Normal";
+            }
         }
 
         public override void OnRender(Context g)
         {
-            //TODO Consider use SVG to draw readonly shape
+            var leftPoint = new Point(Rect.X, Rect.Y + Rect.Height/2);
+            var rightPoint = new Point(Rect.Right, Rect.Y + Rect.Height/2);
+            var currentPoint = leftPoint + new Vector((Value - MinValue)/(MaxValue - MinValue)*Rect.Width, 0);
             if (State == "Normal")
             {
+                g.FillCircle(currentPoint, 5.0f, CairoEx.ColorDarkBlue);
                 g.DrawLine(new Point(Rect.X, Rect.Y + Rect.Height/2), new Point(Rect.Right, Rect.Y + Rect.Height/2),
                     1.0f, Skin.current.Slider["Line:Normal"].LineColor);
             }
@@ -63,7 +73,6 @@ namespace IMGUI
 
         public override void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnClear(Context g)

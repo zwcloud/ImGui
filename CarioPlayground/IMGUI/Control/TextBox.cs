@@ -71,6 +71,14 @@ namespace IMGUI
         public override void OnUpdate()
         {
             bool insideRect = Rect.Contains(Input.Mouse.GetMousePos(Form));
+            bool LButtonPressed = false;
+
+            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Pressed)
+            {
+                LButtonPressed = true;
+                Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
+            }
+
 
             var oldState = State;
             if(State == "Active")
@@ -85,7 +93,7 @@ namespace IMGUI
                 }
 
                 //Mouse left button clicked inside
-                if(insideRect && Input.Mouse.LeftButtonClicked)
+                if(insideRect && LButtonPressed)
                 {
                     var style = Skin.current.TextBox[State];
                     var contentRect = Utility.GetContentRect(Rect, style);
@@ -151,7 +159,7 @@ namespace IMGUI
                             }
                         }
 
-                        if(Input.Mouse.LeftButtonClicked && !insideRect)
+                        if(LButtonPressed)
                         {
                             State = "Normal";
                         }

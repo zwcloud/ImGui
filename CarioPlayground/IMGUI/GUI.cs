@@ -53,6 +53,12 @@ namespace IMGUI
             return IMGUI.Radio.DoControl(form, rect, text, groupName, value, name);
         }
 
+        public float Slider(Rect rect, string text, float value, float leftValue, float rightValue, string name)
+        {
+            rect = DoLayout(rect);
+            return IMGUI.Slider.DoControl(form, rect, value, leftValue, rightValue, name);
+        }
+
         public string TextBox(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
