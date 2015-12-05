@@ -32,7 +32,7 @@ namespace IMGUI
         public bool Toggle(Rect rect, string text, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.Toggle.DoControl(g, form, rect, text, value, name);
+            return IMGUI.Toggle.DoControl(form, rect, text, value, name);
         }
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)

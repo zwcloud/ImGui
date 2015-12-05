@@ -160,6 +160,8 @@ namespace IMGUI
                     }
                 };
                 Toggle["Normal"] = Style.Make(normalModifiers);
+                Toggle["Normal"].ExtraStyles["TickColor"] = CairoEx.ColorWhite;
+                Toggle["Normal"].ExtraStyles["FillColor"] = CairoEx.ColorDarkBlue;
                 Toggle["Hover"] = Style.Make(Toggle["Normal"]);
                 Toggle["Active"] = Style.Make(Toggle["Normal"]);
             }

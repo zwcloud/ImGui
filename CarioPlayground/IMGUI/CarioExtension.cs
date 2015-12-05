@@ -182,6 +182,21 @@ namespace IMGUI
             g.Stroke();
         }
 
+        internal static void StrokeRectangle(this Context g,
+            Rect rect,
+            Color color)
+        {
+            g.NewPath();
+            g.MoveTo(rect.TopLeft.ToPointD());
+            g.SetSourceColor(color);
+            g.LineTo(rect.TopRight.ToPointD()); //Top
+            g.LineTo(rect.BottomRight.ToPointD()); //Right
+            g.LineTo(rect.BottomLeft.ToPointD()); //Bottom
+            g.LineTo(rect.TopLeft.ToPointD()); //Left
+            g.ClosePath();
+            g.Stroke();
+        }
+
         internal static void FillRectangle(this Context g,
             Rect rect,
             Color color)
@@ -215,6 +230,23 @@ namespace IMGUI
             g.Fill();
         }
 
+        internal static void StrokeLineStrip(this Context g, Point[] vPoint, Color color)
+        {
+            if (vPoint.Length <= 2)
+            {
+                throw new ArgumentException("vPoint should contains 3 ore more points!");
+            }
+
+            g.NewPath();
+            g.SetSourceColor(color);
+            g.MoveTo(vPoint[0].ToPointD());
+            foreach (var t in vPoint)
+            {
+                g.LineTo(t.ToPointD());
+            }
+            g.Stroke();
+        }
+
         internal static void StrokePolygon(this Context g, Point[] vPoint, Color color)
         {
             if (vPoint.Length <= 2)
@@ -223,7 +255,6 @@ namespace IMGUI
             }
 
             g.NewPath();
-            g.LineWidth = 1;
             g.SetSourceColor(color);
             g.MoveTo(vPoint[0].ToPointD());
             foreach (var t in vPoint)

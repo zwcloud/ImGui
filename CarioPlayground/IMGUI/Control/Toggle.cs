@@ -61,14 +61,12 @@ namespace IMGUI
 
         public bool Result { get; private set; }
 
-        internal static bool DoControl(Context g, BaseForm form, Rect rect, string displayText, bool value, string name)
+        internal static bool DoControl(BaseForm form, Rect rect, string displayText, bool value, string name)
         {
             if(!form.Controls.ContainsKey(name))
             {
                 var toggle = new Toggle(name, form, value, displayText, rect);
                 Debug.Assert(toggle != null);
-                toggle.OnUpdate();
-                toggle.OnRender(g);
             }
 
             var control = form.Controls[name] as Toggle;
@@ -159,13 +157,34 @@ namespace IMGUI
 
         public override void OnRender(Context g)
         {
+            var style = Skin.current.Toggle[State];
             var toggleBoxRect = new Rect(Rect.X, Rect.Y, new Size(Rect.Size.Height, Rect.Size.Height));
-            g.DrawImage(toggleBoxRect, Texture._presets[Result ? "Toggle.On" : "Toggle.Off"]);
+            if(Result)
+            {
+                g.FillRectangle(toggleBoxRect, (Color)style.ExtraStyles["FillColor"]);
+                var d = toggleBoxRect.Height;
+                Point[] tickPoints = new[]
+                {
+                    new Point(0.125f*d, 0.5f*d),
+                    new Point(0.333f*d,0.75f*d),
+                    new Point(0.875f*d,0.25f*d),
+                };
+                tickPoints[0].Offset(toggleBoxRect.X, toggleBoxRect.Y);
+                tickPoints[1].Offset(toggleBoxRect.X, toggleBoxRect.Y);
+                tickPoints[2].Offset(toggleBoxRect.X, toggleBoxRect.Y);
+                g.Save();
+                g.LineWidth = 2;
+                g.StrokeLineStrip(tickPoints, (Color)style.ExtraStyles["TickColor"]);
+                g.Restore();
+            }
+            else
+            {
+                g.FillRectangle(toggleBoxRect, CairoEx.ColorWhite);
+                g.StrokeRectangle(toggleBoxRect, CairoEx.ColorBlack);
+            }
 
             var toggleTextRect = new Rect(toggleBoxRect.TopRight, Rect.BottomRight);
-            g.DrawBoxModel(toggleTextRect,
-                new Content(Layout),
-                Skin.current.Toggle[State]);
+            g.DrawBoxModel(toggleTextRect, new Content(Layout), style);
         }
 
         public override void Dispose()
