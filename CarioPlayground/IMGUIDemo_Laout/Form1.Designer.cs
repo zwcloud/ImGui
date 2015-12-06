@@ -16,7 +16,8 @@ namespace IMGUIDemo_Layout
             var h = this.Size.Height;
             gui.BeginV();
             {
-                gui.Label(new Rect(0, 0, w, h * 0.1), "Cloud Editor", "ApplicationTitleLabel");
+                gui.TitleBar(new Rect(0, 0, w, h*0.08), null, "Cloud Editor", "ApplicationTitle");
+                gui.Label(new Rect(0, 0, w, h * 0.02), "", "dummyLabel");//TODO add Control: space.
                 gui.BeginH();
                 {
                     gui.Button(new Rect(w * 0.1, h * 0.1), "dummy0", "dummy0");

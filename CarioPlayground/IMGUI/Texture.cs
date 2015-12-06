@@ -8,7 +8,7 @@ using Cairo;
 
 namespace IMGUI
 {
-    public class Texture
+    public partial class Texture
     {
         internal ImageSurface _surface;
 
@@ -82,6 +82,30 @@ namespace IMGUI
             }
         }
 
+        public Texture(byte[] data)
+        {
+            bool isPngFile = false;
+            bool isSvgFile = false;
+
+            //check if the file is a png or svgdata
+            byte[] headEightBytes = new byte[8];
+            Array.Copy(data, headEightBytes, 8);
+            isPngFile = headEightBytes.SequenceEqual(Utility.PngHeaderEightBytes);
+            if (isPngFile)
+            {
+                _surface = new ImageSurface(data);
+            }
+            else
+            {
+                throw new NotImplementedException("SVG is not supported");
+            }
+
+            if (!isSvgFile && !isPngFile)
+            {
+                throw new ArgumentException("Specified file is not a png file or a svg file");
+            }
+        }
+
         private Texture(ImageSurface imageSurface)
         {
             if (imageSurface == null)
@@ -91,18 +115,7 @@ namespace IMGUI
 
             _surface = imageSurface;
         }
-
-        static Texture()
-        {
-            //TODO Use relative path or resource file
-            //TODO Destruct these presets
-            _presets = new Dictionary<string, Texture>
-            {
-                //{"Toggle.Off", new Texture( new ImageSurface("W:/VS2013/IMGUI/Resources/Toggle.Off.png") )},//TODO build these resources into IMGUI assembly
-                //{"Toggle.On", new Texture( new ImageSurface("W:/VS2013/IMGUI/Resources/Toggle.On.png") )},
-            };
-        }
-
+        
         ~Texture()
         {
             _surface.Dispose();

@@ -385,24 +385,8 @@ namespace IMGUI
                 Slider["Active"] = Style.Make(activeModifiers);
 
                 Slider["Line:Normal"] = Style.Make(Slider["Normal"]);
-                Slider["Line:Hover"] = Style.Make(Slider["Hover"],
-                    new []
-                    {
-                        new StyleModifier
-                        {
-                            Name = "LineColor",
-                            Value = CairoEx.ColorLightBlue
-                        }
-                    });
-                Slider["Line:Active"] = Style.Make(Slider["Active"],
-                    new []
-                    {
-                        new StyleModifier
-                        {
-                            Name = "LineColor",
-                            Value = CairoEx.ColorDarkBlue
-                        }
-                    });
+                Slider["Normal"].ExtraStyles["Line:Unused"] = CairoEx.ColorBlack;
+                Slider["Normal"].ExtraStyles["Line:Used"] = CairoEx.ColorDarkBlue;
             }
             #endregion
 

@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace IMGUI
 {
     /// <summary>
-    /// The SFML Form (not used)
+    /// The SFML Form
     /// </summary>
     public abstract class SFMLForm : BaseForm
     {

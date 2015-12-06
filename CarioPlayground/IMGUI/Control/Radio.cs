@@ -40,7 +40,7 @@ namespace IMGUI
             Groups = new Dictionary<string, HashSet<string>>();
         }
 
-        private StateMachine stateMachine;
+        private readonly StateMachine stateMachine;
         private string text;
 
         public ITextFormat Format { get; private set; }

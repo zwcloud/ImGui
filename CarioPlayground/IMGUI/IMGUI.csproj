@@ -112,6 +112,7 @@
     <Compile Include="Control\TextBox.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Control\TitleBar.cs" />
     <Compile Include="Control\Toggle.cs" />
     <Compile Include="Control\PolygonButton.cs" />
     <Compile Include="Control\ToggleButton.cs" />
@@ -126,12 +127,15 @@
     <Compile Include="Font.cs" />
     <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
+    <Compile Include="GUIRenderer.cs" />
+    <Compile Include="IDragableWindow.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="IWindow.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="GUI.Layout.cs" />
+    <Compile Include="MathEx.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Port\ITextFormat.cs" />
@@ -153,6 +157,7 @@
     <Compile Include="Style.Make.cs" />
     <Compile Include="StyleModifier.cs" />
     <Compile Include="TextStyle.cs" />
+    <Compile Include="Texture.Presets.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TinyIoC.cs" />
     <Compile Include="TODO.cs" />
@@ -179,6 +184,7 @@
     <Content Include="Resources\CheckerMap.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\DefaultIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

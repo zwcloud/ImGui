@@ -26,6 +26,7 @@ namespace IMGUI
         {
             GUIState.Initial, GUICommand.BeginGroup, GUIState.GroupBegun,
             GUIState.GroupBegun, GUICommand.AddRect, GUIState.Intermidiate,
+            GUIState.GroupBegun, GUICommand.BeginGroup, GUIState.GroupBegun,
             GUIState.Intermidiate, GUICommand.AddRect, GUIState.Intermidiate,
             GUIState.Intermidiate, GUICommand.EndGroup, GUIState.Intermidiate,
             GUIState.Intermidiate, GUICommand.BeginGroup, GUIState.GroupBegun,

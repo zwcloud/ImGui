@@ -6,7 +6,6 @@ namespace IMGUI
         internal Dictionary<string, Control> controls;
         internal abstract object InternalForm { get; }
 
-
         internal System.Collections.Generic.Dictionary<string, Control> Controls
         {
             get { return controls; }

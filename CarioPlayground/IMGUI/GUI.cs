@@ -88,6 +88,11 @@ namespace IMGUI
             return IMGUI.RadioButton.DoControl(form, rect, text, groupName, value, name);
         }
 
+        public void TitleBar(Rect rect, Texture iconTexture, string caption, string name)
+        {
+            IMGUI.TitleBar.DoControl(this, rect, iconTexture, caption, form, name);
+        }
+
         public void Window(Rect rect, WindowFunction func, string name)
         {
             IMGUI.Window.DoControl(form, rect, func, name);
