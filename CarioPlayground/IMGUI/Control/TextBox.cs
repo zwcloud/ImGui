@@ -33,7 +33,8 @@ namespace IMGUI
             Rect = rect;
             Text = text;
 
-            var font = Skin.current.TextBox[State].Font;
+            var style = Skin.current.TextBox[State];
+            var font = style.Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
                     {
@@ -43,15 +44,16 @@ namespace IMGUI
                         {"fontStretch", font.FontStretch},
                         {"fontSize", (float) font.Size}
                     });
-            var textStyle = Skin.current.TextBox[State].TextStyle;
+            var textStyle = style.TextStyle;
             Format.Alignment = textStyle.TextAlignment;
+            var contentRect = Utility.GetContentRect(Rect, style);
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", (int)Rect.Width},
-                        {"maxHeight", (int)Rect.Height}
+                        {"maxWidth", (int)contentRect.Width},
+                        {"maxHeight", (int)contentRect.Height}
                     });
         }
 

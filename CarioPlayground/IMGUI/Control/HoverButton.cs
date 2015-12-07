@@ -49,10 +49,6 @@ namespace IMGUI
         public bool Result { get; private set; }
         public override void OnUpdate()
         {
-            Layout.MaxWidth = (int)Rect.Width;
-            Layout.MaxHeight = (int)Rect.Height;
-            Layout.Text = Text;
-            
 #if INSPECT_STATE
             var A = stateMachine.CurrentState;
 #endif
@@ -111,7 +107,8 @@ namespace IMGUI
             Rect = rect;
             Text = text;
 
-            var font = Skin.current.Button[State].Font;
+            var style = Skin.current.Button[State];
+            var font = style.Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
                     {
@@ -121,17 +118,17 @@ namespace IMGUI
                         {"fontStretch", font.FontStretch},
                         {"fontSize", (float) font.Size}
                     });
-            var textStyle = Skin.current.Button[State].TextStyle;
+            var textStyle = style.TextStyle;
             Format.Alignment = textStyle.TextAlignment;
+            var contentRect = Utility.GetContentRect(Rect, style);
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", (int)Rect.Width},
-                        {"maxHeight", (int)Rect.Height}
+                        {"maxWidth", (int)contentRect.Width},
+                        {"maxHeight", (int)contentRect.Height}
                     });
-
         }
 
         //TODO Control-less DoControl overload (without name parameter)

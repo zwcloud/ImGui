@@ -8,7 +8,7 @@ namespace IMGUI
     internal class Toggle : Control
     {
         private string text;
-        private StateMachine stateMachine;
+        private readonly StateMachine stateMachine;
 
         internal Toggle(string name, BaseForm form, bool value, string displayText, Rect rect)
             : base(name, form)
@@ -19,7 +19,8 @@ namespace IMGUI
 
             stateMachine = new StateMachine(ToggleState.Normal, states);
 
-            var font = Skin.current.Toggle[State].Font;
+            var style = Skin.current.Toggle[State];
+            var font = style.Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
                 {
@@ -29,15 +30,16 @@ namespace IMGUI
                     {"fontStretch", font.FontStretch},
                     {"fontSize", (float) font.Size}
                 });
-            var textStyle = Skin.current.Toggle[State].TextStyle;
+            var textStyle = style.TextStyle;
             Format.Alignment = textStyle.TextAlignment;
+            var contentRect = Utility.GetContentRect(Rect, style);
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                 {
                     {"text", Text},
                     {"textFormat", Format},
-                    {"maxWidth", (int) Rect.Width},
-                    {"maxHeight", (int) Rect.Height}
+                    {"maxWidth", (int) contentRect.Width},
+                    {"maxHeight", (int) contentRect.Height}
                 });
         }
 

@@ -6,3 +6,4 @@
 //TODO add common dialog like msgbox
 //TODO Extend textbox: passwordbox, auto-complete, x mark for clear input, ...
 //TODO Implement state machine for textbox to fix it
+//TODO release opengl shader/program object

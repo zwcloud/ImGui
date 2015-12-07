@@ -107,10 +107,11 @@ namespace IMGUI
         {
             Rect = rect;
             Text = text;
+            GroupName = groupName;
             stateMachine = new StateMachine(RadioState.Normal, states);
 
-            GroupName = groupName;
-            var font = Skin.current.Button[State].Font;
+            var style = Skin.current.Button[State];
+            var font = style.Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
                     {
@@ -120,15 +121,15 @@ namespace IMGUI
                         {"fontStretch", font.FontStretch},
                         {"fontSize", (float) font.Size}
                     });
-            var style = Skin.current.Radio[State];
             Format.Alignment = style.TextStyle.TextAlignment;
+            var contentRect = Utility.GetContentRect(Rect, style);
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", (int)Rect.Width},
-                        {"maxHeight", (int)Rect.Height}
+                        {"maxWidth", (int)contentRect.Width},
+                        {"maxHeight", (int)contentRect.Height}
                     });
         }
 

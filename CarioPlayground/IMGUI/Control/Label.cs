@@ -28,12 +28,6 @@ namespace IMGUI
 
         public override void OnUpdate()
         {
-            var style = Skin.current.Button[State];
-            Format.Alignment = style.TextStyle.TextAlignment;
-            Layout.MaxWidth = (int) Rect.Width;
-            Layout.MaxHeight = (int)Rect.Height;
-            Layout.Text = Text;
-
             var oldState = State;
             bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.GetMousePos(Form));
             bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.GetMousePos(Form));
@@ -70,7 +64,8 @@ namespace IMGUI
             Rect = rect;
             Text = text;
 
-            var font = Skin.current.Label[State].Font;
+            var style = Skin.current.Label[State];
+            var font = style.Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
                     {
@@ -80,15 +75,17 @@ namespace IMGUI
                         {"fontStretch", font.FontStretch},
                         {"fontSize", (float) font.Size}
                     });
-            var textStyle = Skin.current.Label[State].TextStyle;
+
+            var textStyle = style.TextStyle;
+            var contentRect = Utility.GetContentRect(Rect, style);
             Format.Alignment = textStyle.TextAlignment;
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", (int)rect.Width},
-                        {"maxHeight", (int)rect.Height}
+                        {"maxWidth", (int)contentRect.Width},
+                        {"maxHeight", (int)contentRect.Height}
                     });
         }
 

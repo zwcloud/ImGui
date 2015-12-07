@@ -74,7 +74,8 @@ namespace IMGUI
             SelectedIndex = 0;
             stateMachine = new StateMachine(ComboBoxState.Normal, states);
 
-            var font = Skin.current.Button[State].Font;
+            var style = Skin.current.Button[State];
+            var font = style.Font;
             Format = Application.IocContainer.Resolve<ITextFormat>(
                 new NamedParameterOverloads
                     {
@@ -84,18 +85,18 @@ namespace IMGUI
                         {"fontStretch", font.FontStretch},
                         {"fontSize", (float) font.Size}
                     });
-            var textStyle = Skin.current.Button[State].TextStyle;
+            var textStyle = style.TextStyle;
             Format.Alignment = textStyle.TextAlignment;
+            var contentRect = Utility.GetContentRect(Rect, style);
             Layout = Application.IocContainer.Resolve<ITextLayout>(
                 new NamedParameterOverloads
                     {
                         {"text", Text},
                         {"textFormat", Format},
-                        {"maxWidth", (int)Rect.Width},
-                        {"maxHeight", (int)Rect.Height}
+                        {"maxWidth", (int)contentRect.Width},
+                        {"maxHeight", (int)contentRect.Height}
                     });
-
-
+            
             var screenRect = Utility.GetScreenRect(Rect, this.Form);
             ItemsContainer = new ComboxBoxItemsForm(
                 screenRect,

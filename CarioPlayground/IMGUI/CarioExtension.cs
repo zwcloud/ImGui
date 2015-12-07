@@ -6,7 +6,6 @@ using Cairo;
 using Context = Cairo.Context;
 using Layout = IMGUI.ITextLayout;
 
-
 namespace IMGUI
 {
     public static class CairoEx

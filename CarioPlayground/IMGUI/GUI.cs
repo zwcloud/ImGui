@@ -16,6 +16,11 @@ namespace IMGUI
             this.form = form;
         }
 
+        public void Space(Rect rect)
+        {
+            DoLayout(rect);
+        }
+
         //TODO auto-size button and other controls
         public bool Button(Rect rect, string text, string name)
         {

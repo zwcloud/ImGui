@@ -82,8 +82,13 @@ void main()
             //System.Diagnostics.Debug.WriteLine(GL.GetProgramInfoLog(shaderProgramHandle));
             CSharpGL.GL.UseProgram(shaderProgramHandle);
 
+            //Release unused shader object
+            CSharpGL.GL.DeleteShader(vertexShaderHandle);
+            CSharpGL.GL.DeleteShader(fragmentShaderHandle);
+
             attributePos = (uint)CSharpGL.GL.GetAttribLocation(shaderProgramHandle, "in_Position");
             attributeTexCoord = (uint)CSharpGL.GL.GetAttribLocation(shaderProgramHandle, "in_TexCoord");
+
         }
 
         private void CreateVBOs()
