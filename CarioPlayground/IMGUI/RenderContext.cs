@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Cairo;
+﻿using Cairo;
 
 namespace IMGUI
 {

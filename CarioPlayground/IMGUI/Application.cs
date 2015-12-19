@@ -14,7 +14,7 @@ namespace IMGUI
     /// 2. Input
     /// 3. Ioc container(Internal)
     /// 4. Windows(internal)
-    /// 5. Time(not implemented, still in Utility.cs)
+    /// 5. Time(internal, not implemented, still in Utility.cs)
     /// </remarks>
     public static class Application
     {
@@ -62,7 +62,7 @@ namespace IMGUI
         /// <summary>
         /// Time in ms since the application started.
         /// </summary>
-        public static long Time
+        internal static long Time
         {
             get
             {
@@ -77,6 +77,7 @@ namespace IMGUI
 
         public static void Run(Form mainForm)
         {
+            stopwatch.Start();
             if(mainForm == null)
             {
                 throw new ArgumentNullException("mainForm");
@@ -84,10 +85,10 @@ namespace IMGUI
 
             InitIocContainer();
 
+            //Initialize forms
             Forms = new List<BaseForm>();
             Forms.Add(mainForm);
             mainForm.Name = "MainForm";
-
             for (int i = 0; i < Forms.Count; i++)//Only one form now
             {
                 var form = (SFMLForm) Forms[i];
@@ -95,9 +96,10 @@ namespace IMGUI
 
                 // Setup event handlers
                 window.Closed += OnClosed;
-                window.KeyPressed += new EventHandler<SFML.Window.KeyEventArgs>(OnKeyPressed);
-                window.Resized += new EventHandler<SFML.Window.SizeEventArgs>(OnResized);
-                window.TextEntered += new EventHandler<SFML.Window.TextEventArgs>(OnTextEntered);
+                window.KeyPressed += OnKeyPressed;
+                window.KeyReleased += OnKeyReleased;
+                window.Resized += OnResized;
+                window.TextEntered += OnTextEntered;
 
                 // Make it the active window for OpenGL calls
                 window.SetActive();
@@ -112,8 +114,7 @@ namespace IMGUI
             while (mainForm.internalForm.IsOpen)
             {
                 //Input
-                Input.Mouse.Refresh();
-                Input.Keyboard.Refresh();
+                Input.Mouse.Refresh();//TODO remove this
 
                 //TODO a better method for manage newly created windows
                 for (int i = 0; i < Forms.Count; i++)
@@ -164,6 +165,7 @@ namespace IMGUI
                 }
                 System.Threading.Thread.Sleep(10);//TODO Without this, High CPU rate occurs, why?
             }
+            stopwatch.Stop();
         }
 
         private static void OnTextEntered(object sender, SFML.Window.TextEventArgs e)
@@ -191,11 +193,17 @@ namespace IMGUI
         /// </summary>
         static void OnKeyPressed(object sender, SFML.Window.KeyEventArgs e)
         {
-            SFML.Window.Window window = (SFML.Window.Window)sender;
-            if(e.Code == SFML.Window.Keyboard.Key.Escape)
-            {
-                window.Close();
-            }
+            Input.Keyboard.lastKeyStates[(int) e.Code] = Input.Keyboard.keyStates[(int) e.Code];
+            Input.Keyboard.keyStates[(int) e.Code] = InputState.Down;
+        }
+
+        /// <summary>
+        /// Function called when a key is released
+        /// </summary>
+        static void OnKeyReleased(object sender, SFML.Window.KeyEventArgs e)
+        {
+            Input.Keyboard.lastKeyStates[(int)e.Code] = Input.Keyboard.keyStates[(int)e.Code];
+            Input.Keyboard.keyStates[(int)e.Code] = InputState.Up;
         }
 
         /// <summary>

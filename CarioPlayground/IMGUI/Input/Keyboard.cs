@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Key = SFML.Window.Keyboard.Key;
 
 namespace IMGUI.Input
 {
@@ -7,47 +8,23 @@ namespace IMGUI.Input
     {
         static Keyboard()
         {
-            keyStates = new InputState[256];
-            lastKeyStates = new InputState[256];
-            lastKeyPressedTime = new long[256];
-            isRepeatingKey = new bool[256];
+            keyStates = new InputState[(int)Key.KeyCount];
+            lastKeyStates = new InputState[(int)Key.KeyCount];
+            lastKeyPressedTime = new long[(int)Key.KeyCount];
+            isRepeatingKey = new bool[(int)Key.KeyCount];
         }
 
         /// <summary>
         /// Last recorded key states
         /// </summary>
         /// <remarks>for detecting keystates' changes</remarks>
-        private static InputState[] lastKeyStates;
+        internal static InputState[] lastKeyStates;
 
         /// <summary>
         /// Key states of all keys
         /// </summary>
-        private static InputState[] keyStates;
-
-        /// <summary>
-        /// Key state of CapsLock (readOnly)
-        /// </summary>
-        public static InputState CapsLock
-        {
-            get { return keyStates[(int)Key.CapsLock]; }
-        }
-
-        /// <summary>
-        /// Key state of ScrollLock (readOnly)
-        /// </summary>
-        public static InputState ScrollLock
-        {
-            get { return keyStates[(int)Key.Scroll]; }
-        }
-
-        /// <summary>
-        /// Key state of NumLock (readOnly)
-        /// </summary>
-        public static InputState NumLock
-        {
-            get { return keyStates[(int)Key.NumLock]; }
-        }
-
+        internal static InputState[] keyStates;
+        
         /// <summary>
         /// check if a single key is being pressing
         /// </summary>
@@ -85,7 +62,7 @@ namespace IMGUI.Input
             {
                 if (lastKeyPressedTime[(int)key] == 0)
                 {
-                    lastKeyPressedTime[(int)key] = Utility.MillisFrameBegin;
+                    lastKeyPressedTime[(int)key] = Application.Time;
                     return true;
                 }
 
@@ -93,19 +70,19 @@ namespace IMGUI.Input
                 var t = lastKeyPressedTime[(int)key];
                 if (!isRepeatingKey[(int)key])
                 {
-                    if (isRepeat && Utility.MillisFrameBegin - t > delay)
+                    if (isRepeat && Application.Time - t > delay)
                     {
                         isRepeatingKey[(int)key] = true;
-                        lastKeyPressedTime[(int)key] = Utility.MillisFrameBegin;
+                        lastKeyPressedTime[(int)key] = Application.Time;
                         return true;
                     }
                 }
                 else
                 {
                     const float interval = 50;
-                    if (Utility.MillisFrameBegin - lastKeyPressedTime[(int)key] > interval)
+                    if (Application.Time - lastKeyPressedTime[(int)key] > interval)
                     {
-                        lastKeyPressedTime[(int)key] = Utility.Millis;
+                        lastKeyPressedTime[(int) key] = Application.Time;
                         return true;
                     }
                 }
@@ -116,42 +93,6 @@ namespace IMGUI.Input
                 lastKeyPressedTime[(int)key] = 0;
             }
             return false;
-        }
-
-        /// <summary>
-        /// Refresh keyboard states
-        /// </summary>
-        /// <returns>true: successful; false: failed</returns>
-        /// <remarks>The keyboard states will persist until next call of this method, 
-        /// and last states will be recorded.</remarks>
-        /// TODO replace this with SFML keyboard event
-        internal static bool Refresh()
-        {
-            byte[] keys = new byte[256];
-            if (!Native.GetKeyboardState(keys))
-            {
-                int err = Marshal.GetLastWin32Error();
-                Debug.WriteLine("Error {0}: GetKeyboardState Filed", err);
-                return false;
-            }
-
-            //Record the keyboard states
-            var tmpKeyStates = lastKeyStates;
-            lastKeyStates = keyStates;
-            if (tmpKeyStates != null)
-                keyStates = tmpKeyStates;
-
-            //一般按键
-            for (var i = 0; i < keys.Length; ++i)
-            {
-                keyStates[i] = ((keys[i] & (byte)0x80) == 0x80) ? InputState.Down : InputState.Up;
-            }
-
-            //Toggle 按键
-            keyStates[(int)Key.CapsLock] = ((keys[(int)Key.CapsLock] & 0x01) == 1) ? InputState.On : InputState.Off;
-            keyStates[(int)Key.Scroll] = ((keys[(int)Key.Scroll] & 0x01) == 1) ? InputState.On : InputState.Off;
-            keyStates[(int)Key.NumLock] = ((keys[(int)Key.NumLock] & 0x01) == 1) ? InputState.On : InputState.Off;
-            return true;
         }
     }
 }

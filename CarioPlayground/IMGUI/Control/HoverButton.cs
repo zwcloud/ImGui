@@ -131,7 +131,6 @@ namespace IMGUI
                     });
         }
 
-        //TODO Control-less DoControl overload (without name parameter)
         internal static bool DoControl(BaseForm form, Rect rect, string text, string name)
         {
             //The control hasn't been created, create it.

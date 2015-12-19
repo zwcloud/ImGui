@@ -3,7 +3,6 @@ using Cairo;
 using System.Collections.Generic;
 using TinyIoC;
 
-//TODO use stand-alone window to show the items
 //BUG Hover state persists when move from mainRect to outside.
 //BUG Abnormal representation when drag from mainRect to outside.
 

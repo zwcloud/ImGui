@@ -27,9 +27,6 @@
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        /// <remarks>
-        /// TODO: percent value should refer to a value
-        /// </remarks>
         public static implicit operator float(Length length)
         {
             return length.Value;
@@ -40,5 +37,6 @@
     {
         Pixel,
         Percent,
+        //TODO: percent value should refer to a value. This will be implemented after using render tree.
     }
 }

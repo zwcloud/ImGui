@@ -89,7 +89,6 @@ namespace IMGUI
                     });
         }
 
-        //TODO Control-less DoControl overload (without name parameter)
         internal static void DoControl(Context g, BaseForm form, Rect rect, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace IMGUI
 {
@@ -10,13 +9,9 @@ namespace IMGUI
         {
             //TODO Use relative path or resource file
             //TODO Destruct these presets
-            var bytes = Convert.FromBase64String(DefaultAppIcon_PNG_Base64_string);
-            File.WriteAllBytes("D:\\111.png", bytes);
             _presets = new Dictionary<string, Texture>
             {
                 {"DefaultAppIcon", new Texture(Convert.FromBase64String(DefaultAppIcon_PNG_Base64_string))}
-                //{"Toggle.Off", new Texture( new ImageSurface("W:/VS2013/IMGUI/Resources/Toggle.Off.png") )},//TODO build these resources into IMGUI assembly
-                //{"Toggle.On", new Texture( new ImageSurface("W:/VS2013/IMGUI/Resources/Toggle.On.png") )},
             };
         }
 

@@ -140,8 +140,6 @@ namespace IMGUI
         /// <returns>true:need repaint / false: not repaint</returns>
         internal bool GUILoop()
         {
-            Utility.MillisFrameBegin = Utility.Millis;
-
             OnBasicGUI(GUI);
             var isRepaint = false;
             var exit = Update();

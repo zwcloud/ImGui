@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using TinyIoC;
 using Context = Cairo.Context;
+using Key = SFML.Window.Keyboard.Key;
 
 //BUG The text will slightly move up when there are only chinese characters.
 namespace IMGUI
@@ -144,7 +145,7 @@ namespace IMGUI
                             {
                                 CaretIndex -= 1;
                             }
-                            if(!Input.Keyboard.KeyDown(Key.LeftShift))
+                            if(!Input.Keyboard.KeyDown(Key.LShift))
                             {
                                 SelectIndex = CaretIndex;
                             }
@@ -155,7 +156,7 @@ namespace IMGUI
                             {
                                 CaretIndex += 1;
                             }
-                            if(!Input.Keyboard.KeyDown(Key.LeftShift))
+                            if(!Input.Keyboard.KeyDown(Key.LShift))
                             {
                                 SelectIndex = CaretIndex;
                             }
@@ -165,12 +166,12 @@ namespace IMGUI
                         {
                             State = "Normal";
                         }
-                        if(Input.Keyboard.KeyDown(Key.LeftShift) && !Selecting)
+                        if(Input.Keyboard.KeyDown(Key.LShift) && !Selecting)
                         {
                             Selecting = true;
                             SelectIndex = CaretIndex;
                         }
-                        if(!Input.Keyboard.KeyDown(Key.LeftShift) && Selecting)
+                        if(!Input.Keyboard.KeyDown(Key.LShift) && Selecting)
                         {
                             Selecting = false;
                         }
@@ -211,7 +212,7 @@ namespace IMGUI
                         Application.ImeBuffer.Clear();
                     }
                     //Backspace, delete one character before the caret
-                    else if(Input.Keyboard.KeyPressed(Key.Back, true))
+                    else if(Input.Keyboard.KeyPressed(Key.BackSpace, true))
                     {
                         if(CaretIndex != SelectIndex)
                         {
@@ -298,7 +299,7 @@ namespace IMGUI
                 caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
 
                 //TODO Clean up this alpha mess
-                var caretAlpha = (byte) (Utility.Millis%1060/1060.0f*255);
+                var caretAlpha = (byte) (Application.Time%1060/1060.0f*255);
                 caretAlpha = (byte) (caretAlpha < 100 ? 0 : 255);
 
                 //FIXME: This is not working! Check if the caret is outside the rect. If so, move the text rect so the caret is shown.

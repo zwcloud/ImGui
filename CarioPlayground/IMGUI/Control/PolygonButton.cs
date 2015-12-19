@@ -176,7 +176,7 @@ namespace IMGUI
 
         public override void OnClear(Context g)
         {
-            g.FillPolygon(Points, CairoEx.ColorWhite);//TODO effective?
+            g.FillPolygon(Points, CairoEx.ColorWhite);
         }
 
         #endregion

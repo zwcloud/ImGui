@@ -131,7 +131,6 @@
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="IWindow.cs" />
-    <Compile Include="Key.cs" />
     <Compile Include="GUI.Layout.cs" />
     <Compile Include="MathEx.cs" />
     <Compile Include="MouseButton.cs" />

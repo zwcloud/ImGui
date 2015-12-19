@@ -6,17 +6,6 @@ namespace IMGUI
 {
     internal static class Utility
     {
-        //http://stackoverflow.com/a/15051945/3427520
-        private static readonly DateTime Jan1St1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        /// <summary>Get extra long current timestamp</summary>
-        public static long Millis { get { return (long)((DateTime.UtcNow - Jan1St1970).TotalMilliseconds); } }
-
-        //TODO use this in all logic instead of Millis
-        /// <summary>
-        /// Beginning time of this frame
-        /// </summary>
-        public static long MillisFrameBegin { internal set; get; }
-
         /// <summary>
         /// Get rect of the context box
         /// </summary>
@@ -58,8 +47,7 @@ namespace IMGUI
         };
 
         public static string SvgFileFirstLineTextPrefix = "<?xml";
-
-
+        
         //https://blez.wordpress.com/2012/09/17/determine-os-with-netmono/
         // CurrentOS Class by blez
         // Detects the current OS (Windows, Linux, MacOS)
