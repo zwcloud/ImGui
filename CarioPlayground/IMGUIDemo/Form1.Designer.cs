@@ -8,7 +8,7 @@
 using System.Diagnostics;
 using ImGui;
 
-namespace IMGUIDemo
+namespace ImGuiDemo
 {
     partial class Form1
     {

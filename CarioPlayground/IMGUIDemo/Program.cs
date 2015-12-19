@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using ImGui;
 
-namespace IMGUIDemo
+namespace ImGuiDemo
 {
     class Program
     {

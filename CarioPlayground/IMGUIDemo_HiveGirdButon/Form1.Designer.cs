@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using ImGui;
 
-namespace IMGUIDemo_HiveGirdButon
+namespace ImGuiDemo_HiveGirdButon
 {
     partial class Form1
     {

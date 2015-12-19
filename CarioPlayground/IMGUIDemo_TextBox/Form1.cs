@@ -1,6 +1,6 @@
 ﻿using ImGui;
 
-namespace IMGUIDemo_TextBox
+namespace ImGuiDemo_TextBox
 {
     public partial class Form1 : Form
     {

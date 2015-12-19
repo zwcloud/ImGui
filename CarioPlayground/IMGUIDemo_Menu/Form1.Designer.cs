@@ -10,7 +10,7 @@ using ImGui;
 //TODO 3. Open or close main menu window by click on main menu items
 //TODO 4. Sub-menu
 
-namespace IMGUIDemo_Menu
+namespace ImGuiDemo_Menu
 {
     partial class Form1
     {

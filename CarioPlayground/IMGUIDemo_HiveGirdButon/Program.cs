@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using ImGui;
 
-namespace IMGUIDemo_HiveGirdButon
+namespace ImGuiDemo_HiveGirdButon
 {
     class Program
     {

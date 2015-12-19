@@ -108,9 +108,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IMGUI\IMGUI.csproj">
+    <ProjectReference Include="..\IMGUI\ImGui.csproj">
       <Project>{495935c7-70a3-40e3-93cd-1cebbd591b99}</Project>
-      <Name>IMGUI</Name>
+      <Name>ImGui</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

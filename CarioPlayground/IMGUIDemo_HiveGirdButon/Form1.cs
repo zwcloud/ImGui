@@ -1,6 +1,6 @@
 ﻿using ImGui;
 
-namespace IMGUIDemo_HiveGirdButon
+namespace ImGuiDemo_HiveGirdButon
 {
     public partial class Form1 : Form
     {

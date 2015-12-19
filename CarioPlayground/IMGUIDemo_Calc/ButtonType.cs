@@ -1,4 +1,4 @@
-﻿namespace IMGUIDemo
+﻿namespace ImGuiDemo
 {
     public enum ButtonType
     {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo", "IMGUIDemo\IMGUIDemo.csproj", "{6A401FDF-4939-4623-8AE6-A3CD6E250ABD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo", "IMGUIDemo\ImGuiDemo.csproj", "{6A401FDF-4939-4623-8AE6-A3CD6E250ABD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{495935C7-70A3-40E3-93CD-1CEBBD591B99} = {495935C7-70A3-40E3-93CD-1CEBBD591B99}
 	EndProjectSection
@@ -12,25 +12,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{DD39D4D9-52B4-47A7-86BF-ECB8D136D767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUI", "IMGUI\IMGUI.csproj", "{495935C7-70A3-40E3-93CD-1CEBBD591B99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGui", "IMGUI\ImGui.csproj", "{495935C7-70A3-40E3-93CD-1CEBBD591B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_TextBox", "IMGUIDemo_TextBox\IMGUIDemo_TextBox.csproj", "{E020C043-7427-4718-B336-AA8BE4B22F27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_TextBox", "IMGUIDemo_TextBox\ImGuiDemo_TextBox.csproj", "{E020C043-7427-4718-B336-AA8BE4B22F27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTemplate", "ProjectTemplate", "{593C5B50-52E6-436D-9BF2-93E220984E45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_HiveGirdButon", "IMGUIDemo_HiveGirdButon\IMGUIDemo_HiveGirdButon.csproj", "{54D3873E-4CF9-4099-97C8-9AF557F724A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_HiveGirdButon", "IMGUIDemo_HiveGirdButon\ImGuiDemo_HiveGirdButon.csproj", "{54D3873E-4CF9-4099-97C8-9AF557F724A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIProjectTemplate", "IMGUIProjectTemplate\IMGUIProjectTemplate.csproj", "{1FF35342-ABC9-4AE1-8D80-ACA74022A87D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiProjectTemplate", "IMGUIProjectTemplate\ImGuiProjectTemplate.csproj", "{1FF35342-ABC9-4AE1-8D80-ACA74022A87D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwriteCairo", "..\ZWCloud.DwriteCairo\DwriteCairo\DwriteCairo.csproj", "{233143AD-EDF8-49C4-B69D-2D1EBF58B82E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cairo", "..\ZWCloud.Cairo\Cairo\Cairo.csproj", "{3C49A7E8-1708-4930-B741-8648848EC084}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_Calc", "IMGUIDemo_Calc\IMGUIDemo_Calc.csproj", "{E3F245DB-8EF6-4CC8-8BF8-9DFFAA2FA7BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_Calc", "IMGUIDemo_Calc\ImGuiDemo_Calc.csproj", "{E3F245DB-8EF6-4CC8-8BF8-9DFFAA2FA7BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_Layout", "IMGUIDemo_Laout\IMGUIDemo_Layout.csproj", "{9D6694C5-DA35-4834-9C56-511A73E91520}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_Layout", "IMGUIDemo_Laout\ImGuiDemo_Layout.csproj", "{9D6694C5-DA35-4834-9C56-511A73E91520}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_Menu", "IMGUIDemo_Menu\IMGUIDemo_Menu.csproj", "{F6757CA8-3AA4-4C74-A94B-A80265BC9BC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_Menu", "IMGUIDemo_Menu\ImGuiDemo_Menu.csproj", "{F6757CA8-3AA4-4C74-A94B-A80265BC9BC3}"
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IMGUIDemo_Layout.Properties {
+namespace ImGuiIDemo_Layout.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

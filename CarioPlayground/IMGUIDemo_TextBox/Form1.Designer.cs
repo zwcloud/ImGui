@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using ImGui;
 
-namespace IMGUIDemo_TextBox
+namespace ImGuiDemo_TextBox
 {
     partial class Form1
     {

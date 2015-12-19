@@ -7,8 +7,8 @@
     <ProjectGuid>{54D3873E-4CF9-4099-97C8-9AF557F724A3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IMGUIDemo_HiveGirdButon</RootNamespace>
-    <AssemblyName>IMGUIDemo_HiveGirdButon</AssemblyName>
+    <RootNamespace>ImGuiDemo_HiveGirdButon</RootNamespace>
+    <AssemblyName>ImGuiDemo_HiveGirdButon</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -130,9 +130,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IMGUI\IMGUI.csproj">
+    <ProjectReference Include="..\IMGUI\ImGui.csproj">
       <Project>{495935c7-70a3-40e3-93cd-1cebbd591b99}</Project>
-      <Name>IMGUI</Name>
+      <Name>ImGui</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using System;
 using ImGui;
 
-namespace IMGUIProjectTemplate
+namespace ImGuiProjectTemplate
 {
     class Program
     {

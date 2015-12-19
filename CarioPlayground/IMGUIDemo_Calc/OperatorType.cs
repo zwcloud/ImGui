@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IMGUIDemo
+namespace ImGuiDemo
 {
     public enum OpType
     {

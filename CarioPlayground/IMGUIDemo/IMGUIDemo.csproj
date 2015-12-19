@@ -7,8 +7,8 @@
     <ProjectGuid>{6A401FDF-4939-4623-8AE6-A3CD6E250ABD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IMGUIDemo</RootNamespace>
-    <AssemblyName>IMGUIDemo</AssemblyName>
+    <RootNamespace>ImGuiDemo</RootNamespace>
+    <AssemblyName>ImGuiDemo</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -125,9 +125,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IMGUI\IMGUI.csproj">
+    <ProjectReference Include="..\IMGUI\ImGui.csproj">
       <Project>{495935c7-70a3-40e3-93cd-1cebbd591b99}</Project>
-      <Name>IMGUI</Name>
+      <Name>ImGui</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

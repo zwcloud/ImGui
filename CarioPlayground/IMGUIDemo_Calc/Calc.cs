@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace IMGUIDemo
+namespace ImGuiDemo
 {
     public class Calc
     {

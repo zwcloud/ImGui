@@ -1,7 +1,7 @@
 ﻿using System;
 using ImGui;
 
-namespace IMGUIDemo_Menu
+namespace ImGuiDemo_Menu
 {
     class Program
     {
