@@ -1,6 +1,6 @@
 ﻿using Cairo;
 
-namespace IMGUI
+namespace ImGui
 {
     internal class RenderContext
     {

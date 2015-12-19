@@ -5,7 +5,7 @@ using Context = Cairo.Context;
 using Key = SFML.Window.Keyboard.Key;
 
 //BUG The text will slightly move up when there are only chinese characters.
-namespace IMGUI
+namespace ImGui
 {
     internal class TextBox : Control
     {

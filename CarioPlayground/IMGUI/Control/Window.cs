@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace IMGUI
+namespace ImGui
 {
     class Window : Control
     {

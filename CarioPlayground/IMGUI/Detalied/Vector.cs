@@ -1,4 +1,4 @@
-namespace IMGUI
+namespace ImGui
 {
     /// <summary>
     /// Vector - A value type which defined a vector in terms of X and Y

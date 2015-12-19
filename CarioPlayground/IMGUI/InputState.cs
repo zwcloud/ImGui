@@ -1,4 +1,4 @@
-﻿namespace IMGUI
+﻿namespace ImGui
 {
     /// <summary>
     /// Key state

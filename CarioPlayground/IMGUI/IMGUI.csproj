@@ -7,8 +7,8 @@
     <ProjectGuid>{495935C7-70A3-40E3-93CD-1CEBBD591B99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IMGUI</RootNamespace>
-    <AssemblyName>IMGUI</AssemblyName>
+    <RootNamespace>ImGui</RootNamespace>
+    <AssemblyName>ImGui</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

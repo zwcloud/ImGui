@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IMGUI
+namespace ImGui
 {
     internal class DWriteTextLayoutProxy : ITextLayout
     {

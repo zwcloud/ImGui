@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Cairo;
 
-namespace IMGUI
+namespace ImGui
 {
     public partial class Style
     {

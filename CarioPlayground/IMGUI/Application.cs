@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TinyIoC;
 
-namespace IMGUI
+namespace ImGui
 {
     /// <summary>
     /// Unique application class

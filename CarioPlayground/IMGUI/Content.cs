@@ -1,6 +1,6 @@
-﻿using TextLayout = IMGUI.ITextLayout;
+﻿using TextLayout = ImGui.ITextLayout;
 
-namespace IMGUI
+namespace ImGui
 {
     public sealed class Content
     {
@@ -15,7 +15,7 @@ namespace IMGUI
         /// <summary>
         /// Layouted text
         /// </summary>
-        public TextLayout Layout { get; set; }
+        public ITextLayout Layout { get; set; }
 
         /// <summary>
         /// Image
@@ -45,7 +45,7 @@ namespace IMGUI
             Layout = null;
         }
 
-        public Content(TextLayout layout)
+        public Content(ITextLayout layout)
         {
             Text = null;
             Image = null;

@@ -6,7 +6,7 @@ using TinyIoC;
 //BUG Hover state persists when move from mainRect to outside.
 //BUG Abnormal representation when drag from mainRect to outside.
 
-namespace IMGUI
+namespace ImGui
 {
     internal class ComboBox : Control
     {

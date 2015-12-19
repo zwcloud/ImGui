@@ -1,7 +1,7 @@
 ﻿using Cairo;
 using TinyIoC;
 
-namespace IMGUI
+namespace ImGui
 {
     public partial class GUI
     {
@@ -25,19 +25,19 @@ namespace IMGUI
         public bool Button(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.Button.DoControl(form, rect, text, name);
+            return ImGui.Button.DoControl(form, rect, text, name);
         }
 
         public void Label(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            IMGUI.Label.DoControl(g, form, rect, text, name);
+            ImGui.Label.DoControl(g, form, rect, text, name);
         }
 
         public bool Toggle(Rect rect, string text, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.Toggle.DoControl(form, rect, text, value, name);
+            return ImGui.Toggle.DoControl(form, rect, text, value, name);
         }
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
@@ -49,64 +49,64 @@ namespace IMGUI
         public void Image(Rect rect, Texture image, string name)
         {
             rect = DoLayout(rect);
-            IMGUI.Image.DoControl(form, rect, image, name);
+            ImGui.Image.DoControl(form, rect, image, name);
         }
 
         public bool Radio(Rect rect, string text, string groupName, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.Radio.DoControl(form, rect, text, groupName, value, name);
+            return ImGui.Radio.DoControl(form, rect, text, groupName, value, name);
         }
 
         public float Slider(Rect rect, string text, float value, float leftValue, float rightValue, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.Slider.DoControl(form, rect, value, leftValue, rightValue, name);
+            return ImGui.Slider.DoControl(form, rect, value, leftValue, rightValue, name);
         }
 
         public string TextBox(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.TextBox.DoControl(form, rect, text, name);
+            return ImGui.TextBox.DoControl(form, rect, text, name);
         }
 
         public bool PolygonButton(Point[] points, string text, string name)
         {
-            return IMGUI.PolygonButton.DoControl(form, points, text, name);
+            return ImGui.PolygonButton.DoControl(form, points, text, name);
         }
 
         public bool ToggleButton(Rect rect, string text, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.ToggleButton.DoControl(form, rect, text, value, name);
+            return ImGui.ToggleButton.DoControl(form, rect, text, value, name);
         }
 
         public bool HoverButton(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.HoverButton.DoControl(form, rect, text, name);
+            return ImGui.HoverButton.DoControl(form, rect, text, name);
         }
 
         public bool RadioButton(Rect rect, string text, string groupName, bool value, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.RadioButton.DoControl(form, rect, text, groupName, value, name);
+            return ImGui.RadioButton.DoControl(form, rect, text, groupName, value, name);
         }
 
         public void TitleBar(Rect rect, Texture iconTexture, string caption, string name)
         {
-            IMGUI.TitleBar.DoControl(this, rect, iconTexture, caption, form, name);
+            ImGui.TitleBar.DoControl(this, rect, iconTexture, caption, form, name);
         }
 
         public void Window(Rect rect, WindowFunction func, string name)
         {
-            IMGUI.Window.DoControl(form, rect, func, name);
+            ImGui.Window.DoControl(form, rect, func, name);
         }
 
         public bool MenuItem(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return IMGUI.MenuItem.DoControl(rect, text, name);
+            return ImGui.MenuItem.DoControl(rect, text, name);
         }
 
         #region layout methods

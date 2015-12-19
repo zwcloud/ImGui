@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 //TODO extract interface of window functions
 
-namespace IMGUI
+namespace ImGui
 {
     /// <summary>
     /// The SFML Form

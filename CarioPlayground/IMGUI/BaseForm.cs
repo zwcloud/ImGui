@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-namespace IMGUI
+namespace ImGui
 {
     public abstract class BaseForm : IWindow
     {

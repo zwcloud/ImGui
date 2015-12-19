@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExCSS;
-using IMGUI;
+using ImGui;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test

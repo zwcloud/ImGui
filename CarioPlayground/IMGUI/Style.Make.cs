@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace IMGUI
+namespace ImGui
 {
     public partial class Style
     {

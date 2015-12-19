@@ -2,7 +2,7 @@
 using Cairo;
 using TinyIoC;
 
-namespace IMGUI
+namespace ImGui
 {
     internal class Label : Control
     {

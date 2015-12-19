@@ -97,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IMGUI\IMGUI.csproj">
-      <Project>{a02589f7-a689-41a9-b4e0-24876b4eeeb3}</Project>
+      <Project>{495935C7-70A3-40E3-93CD-1CEBBD591B99}</Project>
       <Name>IMGUI</Name>
     </ProjectReference>
   </ItemGroup>

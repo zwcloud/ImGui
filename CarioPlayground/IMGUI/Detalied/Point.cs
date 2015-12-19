@@ -1,7 +1,7 @@
 using System;
 using Cairo;
 
-namespace IMGUI
+namespace ImGui
 {
     /// <summary>
     /// Point - Defaults to 0,0

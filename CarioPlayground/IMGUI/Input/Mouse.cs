@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 //TODO decouple Input from windows => write a stand-alone and cross-platform Input library
-namespace IMGUI.Input
+namespace ImGui.Input
 {
     /// <summary>
     /// input

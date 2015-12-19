@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace IMGUI
+namespace ImGui
 {
     /// <summary>
     /// Rect - The primitive which represents a rectangle.  Rects are stored as

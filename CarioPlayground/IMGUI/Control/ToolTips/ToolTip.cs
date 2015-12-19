@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace IMGUI
+namespace ImGui
 {
     public sealed class ToolTip : BorderlessForm
     {

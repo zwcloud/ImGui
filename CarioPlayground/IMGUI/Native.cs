@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace IMGUI
+namespace ImGui
 {
     public static class Native
     {

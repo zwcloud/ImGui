@@ -5,7 +5,7 @@ using System.Linq;
 using Cairo;
 //using Svg;
 
-namespace IMGUI
+namespace ImGui
 {
     public partial class Texture
     {

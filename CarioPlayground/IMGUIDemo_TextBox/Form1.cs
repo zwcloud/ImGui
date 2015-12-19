@@ -1,4 +1,4 @@
-﻿using IMGUI;
+﻿using ImGui;
 
 namespace IMGUIDemo_TextBox
 {

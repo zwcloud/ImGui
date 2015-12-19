@@ -1,7 +1,7 @@
 ﻿using Cairo;
 using System.Diagnostics;
 
-namespace IMGUI
+namespace ImGui
 {
     internal class Image : Control
     {

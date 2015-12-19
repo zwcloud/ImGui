@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using IMGUI;
+using ImGui;
 
 //TODO 1. Auto-size menu window
 //TODO 2. Select window item by hovering on it

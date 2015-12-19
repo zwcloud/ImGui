@@ -1,4 +1,4 @@
-﻿namespace IMGUI
+﻿namespace ImGui
 {
     internal class MenuItem : Button
     {

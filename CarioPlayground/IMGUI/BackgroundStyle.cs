@@ -1,7 +1,7 @@
 ﻿using System;
 using Cairo;
 
-namespace IMGUI
+namespace ImGui
 {
     public struct BackgroundStyle
     {

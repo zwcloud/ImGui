@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Key = SFML.Window.Keyboard.Key;
 
-namespace IMGUI.Input
+namespace ImGui.Input
 {
     public class Keyboard
     {

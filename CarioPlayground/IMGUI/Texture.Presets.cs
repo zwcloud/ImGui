@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IMGUI
+namespace ImGui
 {
     public partial class Texture
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace IMGUI
+namespace ImGui
 {
     [Serializable]
     //[ValueSerializer(typeof(RectValueSerializer))] // Used by MarkupWriter

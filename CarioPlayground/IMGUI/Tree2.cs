@@ -37,7 +37,7 @@ using System.Security.Permissions;
 [assembly: SuppressMessage( "Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible", Scope = "member", Target = "Common.NodeTree`1.XmlAdapterTag" )]
 [assembly: SuppressMessage( "Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Scope = "member", Target = "Common.NodeTree`1+NodeXmlSerializationAdapter.Children" )]
 
-namespace IMGUI
+namespace ImGui
 {
 
 	//-----------------------------------------------------------------------------

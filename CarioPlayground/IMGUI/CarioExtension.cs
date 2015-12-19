@@ -4,9 +4,9 @@
 using System;
 using Cairo;
 using Context = Cairo.Context;
-using Layout = IMGUI.ITextLayout;
+using Layout = ImGui.ITextLayout;
 
-namespace IMGUI
+namespace ImGui
 {
     public static class CairoEx
     {
@@ -304,7 +304,7 @@ namespace IMGUI
         /// <param name="layout">text laout</param>
         /// <param name="font">font</param>
         /// <param name="textStyle">text styles</param>
-        public static void DrawText(this Context g, Rect rect, Layout layout, Font font, TextStyle textStyle)
+        public static void DrawText(this Context g, Rect rect, ITextLayout layout, Font font, TextStyle textStyle)
         {
             g.NewPath();
             g.SetSourceColor(font.Color);

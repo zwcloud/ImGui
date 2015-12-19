@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace IMGUI
+namespace ImGui
 {
     internal static class Utility
     {

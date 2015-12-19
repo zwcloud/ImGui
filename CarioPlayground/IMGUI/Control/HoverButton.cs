@@ -2,7 +2,7 @@
 using Cairo;
 using System.Diagnostics;
 using TinyIoC;
-namespace IMGUI
+namespace ImGui
 {
     class HoverButton : Control
     {

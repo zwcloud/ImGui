@@ -1,7 +1,7 @@
 using System;
 // These types are aliased to match the unamanaged names used in interop
 
-namespace IMGUI
+namespace ImGui
 {
 
 

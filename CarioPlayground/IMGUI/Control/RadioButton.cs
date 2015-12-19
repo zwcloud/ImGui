@@ -1,6 +1,6 @@
 ﻿using Cairo;
 using System.Diagnostics;
-namespace IMGUI
+namespace ImGui
 {
     class RadioButton : Radio
     {

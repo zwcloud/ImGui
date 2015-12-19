@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cairo;
 
-namespace IMGUI
+namespace ImGui
 {
     /// <summary>
     /// Base class of all controls

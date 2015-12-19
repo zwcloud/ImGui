@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using IMGUI;
+using ImGui;
 
 namespace IMGUIDemo
 {

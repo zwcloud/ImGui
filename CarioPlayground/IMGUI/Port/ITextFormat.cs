@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IMGUI
+namespace ImGui
 {
     public interface ITextFormat : IDisposable
     {

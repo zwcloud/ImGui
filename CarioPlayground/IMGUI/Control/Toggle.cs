@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Cairo;
 using TinyIoC;
 
-namespace IMGUI
+namespace ImGui
 {
     internal class Toggle : Control
     {

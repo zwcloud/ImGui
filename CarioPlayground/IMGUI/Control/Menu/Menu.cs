@@ -1,5 +1,5 @@
 ﻿
-namespace IMGUI
+namespace ImGui
 {
     public class Menu
     {
