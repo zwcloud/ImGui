@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Cairo;
-using TinyIoC;
 
 namespace ImGui
 {
@@ -62,25 +61,19 @@ namespace ImGui
             Text = text;
 
             var font = Skin.current.PolygonButton[State].Font;
-            Format = Application.IocContainer.Resolve<ITextFormat>(
-                new NamedParameterOverloads
-                    {
-                        {"fontFamilyName", font.FontFamily},
-                        {"fontWeight", font.FontWeight},
-                        {"fontStyle", font.FontStyle},
-                        {"fontStretch", font.FontStretch},
-                        {"fontSize", (float) font.Size}
-                    });
+            Format = Application._map.CreateTextFormat(
+                font.FontFamily,
+                font.FontWeight,
+                font.FontStyle,
+                font.FontStretch,
+                font.Size);
+
             var textStyle = Skin.current.PolygonButton[State].TextStyle;
             Format.Alignment = textStyle.TextAlignment;
-            Layout = Application.IocContainer.Resolve<ITextLayout>(
-                new NamedParameterOverloads
-                    {
-                        {"text", Text},
-                        {"textFormat", Format},
-                        {"maxWidth", (int)TextRect.Width},
-                        {"maxHeight", (int)TextRect.Height}
-                    });
+            Layout = Application._map.CreateTextLayout(
+                Text, Format,
+                (int)TextRect.Width,
+                (int)TextRect.Height);
         }
 
         public static bool IsPointInPolygon(Point p, Point[] polygon)

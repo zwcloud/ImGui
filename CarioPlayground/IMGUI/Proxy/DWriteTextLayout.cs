@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    internal class DWriteTextLayoutProxy : ITextLayout
+    internal class DWriteTextLayout : ITextLayout
     {
         private ZWCloud.DWriteCairo.TextLayout layout;
         private string text;
@@ -10,11 +10,11 @@ namespace ImGui
         private bool dirty;
         private readonly ITextFormat textFormat;
 
-        public DWriteTextLayoutProxy(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
+        public DWriteTextLayout(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
         {
             this.textFormat = textFormat;
             this.text = text;
-            layout = ZWCloud.DWriteCairo.DWriteCairo.CreateTextLayout(text, ((DWriteTextFormatProxy) textFormat).TextFormat, maxWidth, maxHeight);
+            layout = ZWCloud.DWriteCairo.DWriteCairo.CreateTextLayout(text, ((DWriteTextFormat) textFormat).TextFormat, maxWidth, maxHeight);
         }
 
         private ZWCloud.DWriteCairo.TextLayout Layout
@@ -112,7 +112,7 @@ namespace ImGui
                 text = value;
                 Layout = ZWCloud.DWriteCairo.DWriteCairo.CreateTextLayout(
                     text,
-                    ((DWriteTextFormatProxy) TextFormat).TextFormat,
+                    ((DWriteTextFormat) TextFormat).TextFormat,
                     MaxWidth, MaxHeight);
                 dirty = true;
             }

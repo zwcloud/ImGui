@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    internal class DWriteTextFormatProxy : ITextFormat
+    internal class DWriteTextFormat : ITextFormat
     {
         public readonly ZWCloud.DWriteCairo.TextFormat textFormat;
 
@@ -11,7 +11,7 @@ namespace ImGui
             get { return textFormat; }
         }
 
-        public DWriteTextFormatProxy(
+        public DWriteTextFormat(
             string fontFamilyName,
             FontWeight fontWeight, FontStyle fontStyle, FontStretch fontStretch,
             float fontSize)

@@ -1,7 +1,7 @@
 ﻿//#define INSPECT_STATE
 using Cairo;
 using System.Diagnostics;
-using TinyIoC;
+
 namespace ImGui
 {
     class HoverButton : Control
@@ -109,26 +109,20 @@ namespace ImGui
 
             var style = Skin.current.Button[State];
             var font = style.Font;
-            Format = Application.IocContainer.Resolve<ITextFormat>(
-                new NamedParameterOverloads
-                    {
-                        {"fontFamilyName", font.FontFamily},
-                        {"fontWeight", font.FontWeight},
-                        {"fontStyle", font.FontStyle},
-                        {"fontStretch", font.FontStretch},
-                        {"fontSize", (float) font.Size}
-                    });
+            Format = Application._map.CreateTextFormat(
+                font.FontFamily,
+                font.FontWeight,
+                font.FontStyle,
+                font.FontStretch,
+                font.Size);
+
             var textStyle = style.TextStyle;
             Format.Alignment = textStyle.TextAlignment;
             var contentRect = Utility.GetContentRect(Rect, style);
-            Layout = Application.IocContainer.Resolve<ITextLayout>(
-                new NamedParameterOverloads
-                    {
-                        {"text", Text},
-                        {"textFormat", Format},
-                        {"maxWidth", (int)contentRect.Width},
-                        {"maxHeight", (int)contentRect.Height}
-                    });
+            Layout = Application._map.CreateTextLayout(
+                Text, Format,
+                (int) contentRect.Width,
+                (int) contentRect.Height);
         }
 
         internal static bool DoControl(BaseForm form, Rect rect, string text, string name)

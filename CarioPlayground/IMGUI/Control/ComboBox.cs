@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Cairo;
 using System.Collections.Generic;
-using TinyIoC;
 
 //BUG Hover state persists when move from mainRect to outside.
 //BUG Abnormal representation when drag from mainRect to outside.
@@ -75,26 +74,20 @@ namespace ImGui
 
             var style = Skin.current.Button[State];
             var font = style.Font;
-            Format = Application.IocContainer.Resolve<ITextFormat>(
-                new NamedParameterOverloads
-                    {
-                        {"fontFamilyName", font.FontFamily},
-                        {"fontWeight", font.FontWeight},
-                        {"fontStyle", font.FontStyle},
-                        {"fontStretch", font.FontStretch},
-                        {"fontSize", (float) font.Size}
-                    });
+            Format = Application._map.CreateTextFormat(
+                font.FontFamily,
+                font.FontWeight,
+                font.FontStyle,
+                font.FontStretch,
+                font.Size);
+
             var textStyle = style.TextStyle;
             Format.Alignment = textStyle.TextAlignment;
             var contentRect = Utility.GetContentRect(Rect, style);
-            Layout = Application.IocContainer.Resolve<ITextLayout>(
-                new NamedParameterOverloads
-                    {
-                        {"text", Text},
-                        {"textFormat", Format},
-                        {"maxWidth", (int)contentRect.Width},
-                        {"maxHeight", (int)contentRect.Height}
-                    });
+            Layout = Application._map.CreateTextLayout(
+                Text, Format,
+                (int)contentRect.Width,
+                (int)contentRect.Height);
             
             var screenRect = Utility.GetScreenRect(Rect, this.Form);
             ItemsContainer = new ComboxBoxItemsForm(

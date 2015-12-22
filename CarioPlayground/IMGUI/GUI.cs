@@ -1,5 +1,4 @@
 ﻿using Cairo;
-using TinyIoC;
 
 namespace ImGui
 {

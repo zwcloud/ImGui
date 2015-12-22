@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Cairo;
-using TinyIoC;
 
 namespace ImGui
 {
@@ -112,25 +111,19 @@ namespace ImGui
 
             var style = Skin.current.Button[State];
             var font = style.Font;
-            Format = Application.IocContainer.Resolve<ITextFormat>(
-                new NamedParameterOverloads
-                    {
-                        {"fontFamilyName", font.FontFamily},
-                        {"fontWeight", font.FontWeight},
-                        {"fontStyle", font.FontStyle},
-                        {"fontStretch", font.FontStretch},
-                        {"fontSize", (float) font.Size}
-                    });
+            Format = Application._map.CreateTextFormat(
+                font.FontFamily,
+                font.FontWeight,
+                font.FontStyle,
+                font.FontStretch,
+                font.Size);
+
             Format.Alignment = style.TextStyle.TextAlignment;
             var contentRect = Utility.GetContentRect(Rect, style);
-            Layout = Application.IocContainer.Resolve<ITextLayout>(
-                new NamedParameterOverloads
-                    {
-                        {"text", Text},
-                        {"textFormat", Format},
-                        {"maxWidth", (int)contentRect.Width},
-                        {"maxHeight", (int)contentRect.Height}
-                    });
+            Layout = Application._map.CreateTextLayout(
+                Text, Format,
+                (int)contentRect.Width,
+                (int)contentRect.Height);
         }
 
         public static bool DoControl(BaseForm form, Rect rect, string text, string groupName, bool value, string name)

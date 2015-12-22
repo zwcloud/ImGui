@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TinyIoC;
 
 namespace ImGui
 {
@@ -23,8 +22,6 @@ namespace ImGui
         /// </summary>
         internal static Queue<char> imeBuffer = new Queue<char>();
 
-        internal static readonly TinyIoCContainer IocContainer = TinyIoCContainer.Current;
-
         /// <summary>
         /// The character buffer for input from IME
         /// </summary>
@@ -36,24 +33,18 @@ namespace ImGui
 
         internal static List<BaseForm> Forms;
 
+        internal static Map _map;
+
         private static void InitIocContainer()
         {
-            if(Utility.CurrentOS.IsWindows)
+            if (Utility.CurrentOS.IsWindows)
             {
-                IocContainer.Register<DWriteTextFormatProxy>();
-                IocContainer.Register<ITextFormat, DWriteTextFormatProxy>().AsMultiInstance();
-
-                IocContainer.Register<DWriteTextLayoutProxy>();
-                IocContainer.Register<ITextLayout, DWriteTextLayoutProxy>().AsMultiInstance();
+                _map = MapWindows.MapFactory();
             }
             else if(Utility.CurrentOS.IsLinux)
             {
                 throw new NotImplementedException();
-                //IocContainer.Register<PangoTextFormatProxy>();
-                //IocContainer.Register<ITextFormat, PangoTextFormatProxy>();
-                //
-                //IocContainer.Register<PangoTextLayoutProxy>();
-                //IocContainer.Register<ITextLayout, PangoTextLayoutProxy>();
+                //_map = MapLinux.MapFactory();
             }
         }
 
