@@ -4,7 +4,6 @@
 using System;
 using Cairo;
 using Context = Cairo.Context;
-using Layout = ImGui.ITextLayout;
 
 namespace ImGui
 {
@@ -76,9 +75,9 @@ namespace ImGui
                 {
                     g.DrawImage(contentBoxRect, content.Image);
                 }
-                if (content.Layout != null)
+                if (content.TextContext != null)
                 {
-                    g.DrawText(contentBoxRect, content.Layout, style.Font, style.TextStyle);
+                    g.DrawText(contentBoxRect, content.TextContext, style.Font, style.TextStyle);
                 }
             }
 
@@ -296,22 +295,23 @@ namespace ImGui
 
 
         #region text
+        
         /// <summary>
         /// Draw layouted text
         /// </summary>
         /// <param name="g"></param>
         /// <param name="rect">region of the text</param>
-        /// <param name="layout">text laout</param>
+        /// <param name="textContext">text laout</param>
         /// <param name="font">font</param>
         /// <param name="textStyle">text styles</param>
-        public static void DrawText(this Context g, Rect rect, ITextLayout layout, Font font, TextStyle textStyle)
+        public static void DrawText(this Context g, Rect rect, ITextContext textContext, Font font, TextStyle textStyle)
         {
             g.NewPath();
             g.SetSourceColor(font.Color);
             Point p = rect.TopLeft;
             g.MoveTo(p.ToPointD());
-            layout.BuildPath(g);
-            g.AppendPath(layout.Path);
+            textContext.BuildPath(g);
+            g.AppendPath(textContext.Path);
             g.Fill();
         }
         #endregion

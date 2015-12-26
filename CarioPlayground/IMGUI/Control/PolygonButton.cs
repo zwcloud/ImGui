@@ -37,8 +37,7 @@ namespace ImGui
                 NeedRepaint = true;
             }
         }
-        public ITextFormat Format { get; private set; }
-        public ITextLayout Layout { get; private set; }
+        public ITextContext TextContext { get; private set; }
 
         public Rect TextRect
         {
@@ -61,19 +60,14 @@ namespace ImGui
             Text = text;
 
             var font = Skin.current.PolygonButton[State].Font;
-            Format = Application._map.CreateTextFormat(
-                font.FontFamily,
-                font.FontWeight,
-                font.FontStyle,
-                font.FontStretch,
-                font.Size);
-
             var textStyle = Skin.current.PolygonButton[State].TextStyle;
-            Format.Alignment = textStyle.TextAlignment;
-            Layout = Application._map.CreateTextLayout(
-                Text, Format,
-                (int)TextRect.Width,
-                (int)TextRect.Height);
+            var contentRect = TextRect;
+
+            TextContext = Application._map.CreateTextContext(
+                Text, font.FontFamily, font.Size,
+                font.FontStretch, font.FontStyle, font.FontWeight,
+                (int)contentRect.Width, (int)contentRect.Height,
+                textStyle.TextAlignment);
         }
 
         public static bool IsPointInPolygon(Point p, Point[] polygon)
@@ -129,9 +123,9 @@ namespace ImGui
         public override void OnUpdate()
         {
             var style = Skin.current.PolygonButton[State];
-            Layout.MaxWidth = (int)TextRect.Width;
-            Layout.MaxHeight = (int)TextRect.Height;
-            Layout.Text = Text;
+            TextContext.MaxWidth = (int)TextRect.Width;
+            TextContext.MaxHeight = (int)TextRect.Height;
+            TextContext.Text = Text;
 
             var oldState = State;
             bool isHit = IsPointInPolygon(Input.Mouse.GetMousePos(Form), Points);
@@ -157,14 +151,12 @@ namespace ImGui
             g.StrokePolygon(Points, style.LineColor);
             g.FillPolygon(Points, style.FillColor);
 
-            //TODO draw text at the center of this polygon
-            g.DrawBoxModel(TextRect, new Content(Layout), style);
+            g.DrawBoxModel(TextRect, new Content(TextContext), style);
         }
 
         public override void Dispose()
         {
-            Layout.Dispose();
-            Format.Dispose();
+            TextContext.Dispose();
         }
 
         public override void OnClear(Context g)

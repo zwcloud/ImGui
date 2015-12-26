@@ -11,8 +11,7 @@ namespace ImGui
         private Point caretTopPoint;
         private Point caretBottomPoint;
 
-        public ITextFormat Format { get; private set; }
-        public ITextLayout Layout { get; private set; }
+        public ITextContext TextContext { get; private set; }
         public string Text { get; set; }
 
         public Point CaretPosition { get; set; }
@@ -35,20 +34,14 @@ namespace ImGui
 
             var style = Skin.current.TextBox[State];
             var font = style.Font;
-            Format = Application._map.CreateTextFormat(
-                font.FontFamily,
-                font.FontWeight,
-                font.FontStyle,
-                font.FontStretch,
-                font.Size);
-
             var textStyle = style.TextStyle;
-            Format.Alignment = textStyle.TextAlignment;
             var contentRect = Utility.GetContentRect(Rect, style);
-            Layout = Application._map.CreateTextLayout(
-                Text, Format,
-                (int)contentRect.Width,
-                (int)contentRect.Height);
+
+            TextContext = Application._map.CreateTextContext(
+                Text, font.FontFamily, font.Size,
+                font.FontStretch, font.FontStyle, font.FontWeight,
+                (int)contentRect.Width, (int)contentRect.Height,
+                textStyle.TextAlignment);
         }
 
         internal static string DoControl(BaseForm form, Rect rect, string text, string name)
@@ -96,7 +89,7 @@ namespace ImGui
                     var offsetOfTextRect = contentRect.TopLeft;
                     uint caretIndex;
                     bool isInside;
-                    caretIndex = Layout.XyToIndex((float)(Input.Mouse.GetMousePos(Form).X - offsetOfTextRect.X),
+                    caretIndex = TextContext.XyToIndex((float)(Input.Mouse.GetMousePos(Form).X - offsetOfTextRect.X),
                         (float)(Input.Mouse.GetMousePos(Form).Y - offsetOfTextRect.Y), out isInside);
                     if (!isInside && caretIndex == Text.Length - 1)
                     {
@@ -113,7 +106,7 @@ namespace ImGui
                         var offsetOfTextRect = contentRect.TopLeft;
                         uint caretIndex;
                         bool isInside;
-                        caretIndex = Layout.XyToIndex(
+                        caretIndex = TextContext.XyToIndex(
                             (float)(Input.Mouse.GetMousePos(Form).X - offsetOfTextRect.X),
                             (float)(Input.Mouse.GetMousePos(Form).Y - offsetOfTextRect.Y), out isInside);
                         if (!isInside && caretIndex == Text.Length-1)
@@ -254,7 +247,7 @@ namespace ImGui
                 }
 
                 //Update layout text
-                Layout.Text = Text;
+                TextContext.Text = Text;
                 NeedRepaint = true;
             }
             else
@@ -285,7 +278,7 @@ namespace ImGui
                 var offsetOfTextRect = contentRect.TopLeft;
                 float pointX, pointY;
                 float caretHeight;
-                Layout.IndexToXY(CaretIndex, false, out pointX, out pointY, out caretHeight);
+                TextContext.IndexToXY(CaretIndex, false, out pointX, out pointY, out caretHeight);
                 caretTopPoint = new Point(pointX, pointY);
                 caretBottomPoint = new Point(pointX, pointY + caretHeight);
                 caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
@@ -320,13 +313,13 @@ namespace ImGui
                 g.ResetClip(); 
 
                 //Draw text
-                g.DrawText(textRect, Layout, style.Font, style.TextStyle);
+                g.DrawText(textRect, TextContext, style.Font, style.TextStyle);
 
                 //Draw selection rect
                 if(SelectIndex != CaretIndex)
                 {
                     float selectPointX, selectPointY, dummyHeight;
-                    Layout.IndexToXY(SelectIndex, false, out selectPointX, out selectPointY, out dummyHeight);
+                    TextContext.IndexToXY(SelectIndex, false, out selectPointX, out selectPointY, out dummyHeight);
                     var selectionRect = new Rect(
                         new Point(pointX, pointY),
                         new Point(selectPointX, selectPointY + caretHeight));
@@ -340,14 +333,13 @@ namespace ImGui
             }
             else
             {
-                g.DrawBoxModel(Rect, new Content(Layout), style);
+                g.DrawBoxModel(Rect, new Content(TextContext), style);
             }
         }
 
         public override void Dispose()
         {
-            Layout.Dispose();
-            Format.Dispose();
+            TextContext.Dispose();
         }
 
         public override void OnClear(Context g)

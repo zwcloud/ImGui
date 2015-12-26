@@ -1,6 +1,4 @@
-﻿using TextLayout = ImGui.ITextLayout;
-
-namespace ImGui
+﻿namespace ImGui
 {
     public sealed class Content
     {
@@ -13,43 +11,41 @@ namespace ImGui
         public string Text { get; set; }
 
         /// <summary>
-        /// Layouted text
+        /// text
         /// </summary>
-        public ITextLayout Layout { get; set; }
+        public ITextContext TextContext { get; set; }
 
         /// <summary>
         /// Image
         /// </summary>
         public Texture Image { get; set; }
-
-        //TODO add a Shape(SVG) Content
-
+        
         private Content()
         {
             Text = string.Empty;
             Image = null;
-            Layout = null;
+            TextContext = null;
         }
 
         public Content(string text)
         {
             Text = text;
             Image = null;
-            Layout = null;
+            TextContext = null;
         }
 
         public Content(Texture image)
         {
             Text = null;
             Image = image;
-            Layout = null;
+            TextContext = null;
         }
 
-        public Content(ITextLayout layout)
+        public Content(ITextContext textContext)
         {
             Text = null;
             Image = null;
-            Layout = layout;
+            TextContext = textContext;
         }
 
         /// <summary>
@@ -58,9 +54,9 @@ namespace ImGui
         /// <returns>rect of the content</returns>
         public Rect GetRect()
         {
-            if(Layout!= null)
+            if (TextContext != null)
             {
-                return Layout.Rect;
+                return TextContext.Rect;
             }
 
             //Others' are not implemented

@@ -20,24 +20,17 @@ namespace ImGui
 
             var style = Skin.current.Toggle[State];
             var font = style.Font;
-            Format = Application._map.CreateTextFormat(
-                font.FontFamily,
-                font.FontWeight,
-                font.FontStyle,
-                font.FontStretch,
-                font.Size);
-
             var textStyle = style.TextStyle;
-            Format.Alignment = textStyle.TextAlignment;
             var contentRect = Utility.GetContentRect(Rect, style);
-            Layout = Application._map.CreateTextLayout(
-                Text, Format,
-                (int)contentRect.Width,
-                (int)contentRect.Height);
+
+            TextContext = Application._map.CreateTextContext(
+                Text, font.FontFamily, font.Size,
+                font.FontStretch, font.FontStyle, font.FontWeight,
+                (int)contentRect.Width, (int)contentRect.Height,
+                textStyle.TextAlignment);
         }
 
-        public ITextFormat Format { get; private set; }
-        public ITextLayout Layout { get; private set; }
+        public ITextContext TextContext { get; private set; }
 
         public string Text
         {
@@ -179,13 +172,12 @@ namespace ImGui
             }
 
             var toggleTextRect = new Rect(toggleBoxRect.TopRight, Rect.BottomRight);
-            g.DrawBoxModel(toggleTextRect, new Content(Layout), style);
+            g.DrawBoxModel(toggleTextRect, new Content(TextContext), style);
         }
 
         public override void Dispose()
         {
-            Layout.Dispose();
-            Format.Dispose();
+            TextContext.Dispose();
         }
 
         public override void OnClear(Context g)

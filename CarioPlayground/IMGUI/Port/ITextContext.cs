@@ -1,9 +1,10 @@
-﻿using System;
-
-namespace ImGui
+﻿namespace ImGui
 {
-    public interface ITextLayout : IDisposable
+    public interface ITextContext : System.IDisposable
     {
+        int FontSize { get; }
+        TextAlignment Alignment { get; set; }
+
         int MaxWidth { get; set; }
         int MaxHeight { get; set; }
         Rect Rect { get; }
@@ -15,5 +16,4 @@ namespace ImGui
         void IndexToXY(uint textPosition, bool isTrailingHit,
             out float pointX, out float pointY, out float height);
     }
-
 }

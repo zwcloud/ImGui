@@ -28,8 +28,7 @@ namespace ImGui
 
         private readonly StateMachine stateMachine;
 
-        public ITextFormat Format { get; private set; }
-        public ITextLayout Layout { get; private set; }
+        public ITextContext TextContext { get; private set; }
 
         private string text;
         public string Text
@@ -86,13 +85,12 @@ namespace ImGui
 
         public override void OnRender(Context g)
         {
-            g.DrawBoxModel(Rect, new Content(Layout), Skin.current.Button[State]);
+            g.DrawBoxModel(Rect, new Content(TextContext), Skin.current.Button[State]);
         }
 
         public override void Dispose()
         {
-            Layout.Dispose();
-            Format.Dispose();
+            TextContext.Dispose();
         }
 
         public override void OnClear(Context g)
@@ -109,20 +107,14 @@ namespace ImGui
 
             var style = Skin.current.Button[State];
             var font = style.Font;
-            Format = Application._map.CreateTextFormat(
-                font.FontFamily,
-                font.FontWeight,
-                font.FontStyle,
-                font.FontStretch,
-                font.Size);
-
             var textStyle = style.TextStyle;
-            Format.Alignment = textStyle.TextAlignment;
             var contentRect = Utility.GetContentRect(Rect, style);
-            Layout = Application._map.CreateTextLayout(
-                Text, Format,
-                (int) contentRect.Width,
-                (int) contentRect.Height);
+
+            TextContext = Application._map.CreateTextContext(
+                Text, font.FontFamily, font.Size,
+                font.FontStretch, font.FontStyle, font.FontWeight,
+                (int)contentRect.Width, (int)contentRect.Height,
+                textStyle.TextAlignment);
         }
 
         internal static bool DoControl(BaseForm form, Rect rect, string text, string name)

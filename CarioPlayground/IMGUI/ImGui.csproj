@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RegisterForComInterop>false</RegisterForComInterop>
@@ -137,15 +137,14 @@
     <Compile Include="MathEx.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="Native.cs" />
-    <Compile Include="Port\ITextFormat.cs" />
-    <Compile Include="Port\ITextLayout.cs" />
+    <Compile Include="Port\ITextContext.cs" />
+    <Compile Include="Proxy\PangoTextContext.cs" />
     <Compile Include="RenderContext.cs" />
     <Compile Include="Length.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Port\TextEnums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Proxy\DWriteTextFormat.cs" />
-    <Compile Include="Proxy\DWriteTextLayout.cs" />
+    <Compile Include="Proxy\DWriteTextContext.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="SFMLForm.cs" />
     <Compile Include="Size.cs" />
@@ -168,6 +167,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PangoSharp\GLib\GLib.csproj">
+      <Project>{3bf1d531-8840-4f15-8066-a9788d8c398b}</Project>
+      <Name>GLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PangoSharp\Pango\Pango.csproj">
+      <Project>{04ec04f9-aa1f-494d-86a7-033db42d9eba}</Project>
+      <Name>Pango</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ZWCloud.Cairo\Cairo\Cairo.csproj">
       <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
       <Name>Cairo</Name>

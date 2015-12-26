@@ -9,11 +9,10 @@ namespace ImGui
     /// </summary>
     /// <remarks>
     /// Manage application-wide objects:
-    /// 1. IME(Internal)
-    /// 2. Input
-    /// 3. Ioc container(Internal)
-    /// 4. Windows(internal)
-    /// 5. Time(internal, not implemented, still in Utility.cs)
+    /// * IME(Internal)
+    /// * Input
+    /// * Windows(internal)
+    /// * Time(internal)
     /// </remarks>
     public static class Application
     {
@@ -35,7 +34,7 @@ namespace ImGui
 
         internal static Map _map;
 
-        private static void InitIocContainer()
+        private static void InitSysDependencies()
         {
             if (Utility.CurrentOS.IsWindows)
             {
@@ -43,8 +42,7 @@ namespace ImGui
             }
             else if(Utility.CurrentOS.IsLinux)
             {
-                throw new NotImplementedException();
-                //_map = MapLinux.MapFactory();
+                _map = MapLinux.MapFactory();
             }
         }
 
@@ -74,7 +72,7 @@ namespace ImGui
                 throw new ArgumentNullException("mainForm");
             }
 
-            InitIocContainer();
+            InitSysDependencies();
 
             //Initialize forms
             Forms = new List<BaseForm>();
@@ -184,6 +182,11 @@ namespace ImGui
         /// </summary>
         static void OnKeyPressed(object sender, SFML.Window.KeyEventArgs e)
         {
+            if(e.Code == SFML.Window.Keyboard.Key.Unknown)
+            {
+                return;
+            }
+
             Input.Keyboard.lastKeyStates[(int) e.Code] = Input.Keyboard.keyStates[(int) e.Code];
             Input.Keyboard.keyStates[(int) e.Code] = InputState.Down;
         }
@@ -193,6 +196,10 @@ namespace ImGui
         /// </summary>
         static void OnKeyReleased(object sender, SFML.Window.KeyEventArgs e)
         {
+            if (e.Code == SFML.Window.Keyboard.Key.Unknown)
+            {
+                return;
+            }
             Input.Keyboard.lastKeyStates[(int)e.Code] = Input.Keyboard.keyStates[(int)e.Code];
             Input.Keyboard.keyStates[(int)e.Code] = InputState.Up;
         }

@@ -1,68 +1,62 @@
 ﻿using System;
 namespace ImGui
 {
-    public delegate ITextFormat CTextFormat(
-        string fontFamilyName,
-        FontWeight fontWeight, FontStyle fontStyle, FontStretch fontStretch,
-        float fontSize);
-
-    public delegate ITextLayout CTextLayout(string text, ITextFormat textFormat, int maxWidth, int maxHeight);
+    public delegate ITextContext CTextContext(
+        string text, string fontFamily, int fontSize,
+        FontStretch stretch, FontStyle style, FontWeight weight,
+        int maxWidth, int maxHeight,
+        TextAlignment alignment);
 
     public abstract class Map
     {
-        public CTextFormat CreateTextFormat;
-        public CTextLayout CreateTextLayout;
+        public CTextContext CreateTextContext;
     }
     
-#if WINDOWS
     public class MapWindows : Map
     {
         public static Map MapFactory()
         {
             return new MapWindows
             {
-                CreateTextFormat = CTextFormat,
-                CreateTextLayout = CTextLayout,
+                CreateTextContext = CTextContext
             };
         }
 
-        private static ITextFormat CTextFormat(
-            string fontFamilyName,
-            FontWeight fontWeight, FontStyle fontStyle, FontStretch fontStretch,
-            float fontSize)
+        private static ITextContext CTextContext(
+            string text, string fontFamily, int fontSize,
+            FontStretch stretch, FontStyle style, FontWeight weight,
+            int maxWidth, int maxHeight,
+            TextAlignment alignment)
         {
-            return new DWriteTextFormat(fontFamilyName, fontWeight, fontStyle, fontStretch, fontSize);
+            return new DWriteTextContext(
+                text, fontFamily, fontSize,
+                stretch, style, weight,
+                maxWidth, maxHeight, alignment);
         }
 
-        private static ITextLayout CTextLayout(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
-        {
-            return new DWriteTextLayout(text, textFormat, maxWidth, maxHeight);
-        }
     }
-#elif LINUX
+
     public class MapLinux : Map
     {
         public static Map MapFactory()
         {
             return new MapLinux
             {
-                CreateTextFormat = CTextFormat,
-                CreateTextLayout = CTextLayout,
+                CreateTextContext = CTextContext,
             };
         }
 
-        private static ITextFormat CTextFormat(
-            string fontFamilyName,
-            FontWeight fontWeight, FontStyle fontStyle, FontStretch fontStretch,
-            float fontSize)
+        private static ITextContext CTextContext(
+            string text, string fontFamily, int fontSize,
+            FontStretch stretch, FontStyle style, FontWeight weight,
+            int maxWidth, int maxHeight,
+            TextAlignment alignment)
         {
-            return new PangoTextFormat(fontFamilyName, fontWeight, fontStyle, fontStretch, fontSize);
-        }
-
-        private static ITextLayout CTextLayout(string text, ITextFormat textFormat, int maxWidth, int maxHeight)
-        {
-            return new PangoTextLayout(text, textFormat, maxWidth, maxHeight);
+            return new PangoTextContext(
+                text, fontFamily, fontSize,
+                stretch, style, weight,
+                maxWidth, maxHeight,
+                alignment);
         }
     }
-#endif
 }

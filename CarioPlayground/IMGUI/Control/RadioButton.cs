@@ -11,7 +11,7 @@ namespace ImGui
 
         public override void OnRender(Context g)
         {
-            g.DrawBoxModel(Rect, new Content(Layout),
+            g.DrawBoxModel(Rect, new Content(TextContext),
                 Actived ? Skin.current.Button["Active"] : Skin.current.Button["Normal"]);
         }
 
