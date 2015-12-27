@@ -16,8 +16,8 @@ namespace ImGuiDemo
         private bool _opened1, _opened2;
 
         private readonly string[] comboBoxItems = new[] { "item0", "item1", "item2", "item3" };
-
-        private Texture myImage = new Texture(@"W:\VS2013\IMGUI\IMGUIDemo\empowered-by-gnu.png");
+        
+        private Texture myImage = new Texture(System.AppDomain.CurrentDomain.BaseDirectory + "gnu_hornedword.png");
 
         private bool radio0Selected = false;
         private bool radio1Selected = false;
