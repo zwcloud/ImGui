@@ -199,31 +199,68 @@ namespace ImGui
 
         public static Rect GetScreenRect(Rect rect, BaseForm form)
         {
-            var windowHandle = ((SFML.Window.Window) (form.InternalForm)).SystemHandle;
-            SFML.System.Vector2i p = new SFML.System.Vector2i((int)rect.X, (int)rect.Y);
-            Native.ClientToScreen(windowHandle, ref p);
-            rect.X = p.X;
-            rect.Y = p.Y;
+            var sfmlWindow =  ((SFML.Window.Window) (form.InternalForm));
+            var posInWindow = new SFML.System.Vector2i((int)rect.X, (int)rect.Y);
+            var posInScreen = posInWindow;
+            if (Utility.CurrentOS.IsWindows)
+            {
+                var windowHandle = sfmlWindow.SystemHandle;
+                Native.Win32.ClientToScreen(windowHandle, ref posInScreen);
+            }
+            else
+            {
+                posInScreen = sfmlWindow.Position + posInWindow;
+            }
+            rect.X = posInScreen.X;
+            rect.Y = posInScreen.Y;
             return rect;
         }
 
         public static Point ScreenToClient(Point point, BaseForm form)
         {
-            var windowHandle = ((SFML.Window.Window)(form.InternalForm)).SystemHandle;
-            SFML.System.Vector2i tmp = new SFML.System.Vector2i((int)point.X, (int)point.Y);
-            Native.ScreenToClient(windowHandle, ref tmp);
-            point.X = tmp.X;
-            point.Y = tmp.Y;
+            var sfmlWindow = ((SFML.Window.Window)(form.InternalForm));
+            var posInScreen = new SFML.System.Vector2i((int)point.X, (int)point.Y);
+            var posInClient = posInScreen;
+            if (Utility.CurrentOS.IsWindows)
+            {
+                var windowHandle = sfmlWindow.SystemHandle;
+                Native.Win32.ScreenToClient(windowHandle, ref posInClient);
+            }
+            else if (Utility.CurrentOS.IsLinux)
+            {
+                posInClient = posInScreen - sfmlWindow.Position;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            point.X = posInClient.X;
+            point.Y = posInClient.Y;
             return point;
         }
 
         public static Point ClientToScreen(Point point, BaseForm form)
         {
-            var windowHandle = ((SFML.Window.Window)(form.InternalForm)).SystemHandle;
-            SFML.System.Vector2i tmp = new SFML.System.Vector2i((int)point.X, (int)point.Y);
-            Native.ClientToScreen(windowHandle, ref tmp);
-            point.X = tmp.X;
-            point.Y = tmp.Y;
+            var sfmlWindow = ((SFML.Window.Window)(form.InternalForm));
+            var posInClient = new SFML.System.Vector2i((int)point.X, (int)point.Y);
+            var posInScreen = posInClient;
+            if (Utility.CurrentOS.IsWindows)
+            {
+                var windowHandle = sfmlWindow.SystemHandle;
+                Native.Win32.ClientToScreen(windowHandle, ref posInScreen);
+            }
+            else if (Utility.CurrentOS.IsLinux)
+            {
+                posInScreen = sfmlWindow.Position + posInClient;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            point.X = posInScreen.X;
+            point.Y = posInScreen.Y;
             return point;
         }
 

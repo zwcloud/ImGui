@@ -1,10 +1,13 @@
+using System.Runtime.CompilerServices;
+using CSharpGL;
+
 namespace ImGui
 {
     class GUIRenderer
     {
         private Size SurfaceSize { get; set; }
 
-        private string vertexShaderSource = @"
+        private string vertexShaderSource330 = @"
 #version 330 core
 in vec4 in_Position;
 in vec2 in_TexCoord;
@@ -15,7 +18,7 @@ void main()
 	TexCoord = in_TexCoord;
 }";
 
-        private string fragmentShaderSource = @"
+		private string fragmentShaderSource330 = @"
 #version 330 core
 uniform sampler2D mysampler;
 in vec2 TexCoord;
@@ -26,12 +29,28 @@ void main()
 	out_Color = texture2D(mysampler,vec2(st.s, 1- st.t));
 }";
 
-        private uint vertexShaderHandle,
-            fragmentShaderHandle,
-            shaderProgramHandle,
-            positionVboHandle,
-            textureHandle;
+		private string vertexShaderSource120 = @"
+#version 120
+attribute vec4 in_Position;
+attribute vec2 in_TexCoord0;
+varying vec2 out_TexCoord;
+void main()
+{
+    gl_Position = in_Position;
+    out_TexCoord  = in_TexCoord0;
+}";
 
+		private string fragmentShaderSource120 = @"
+#version 120
+uniform sampler2D mysampler;
+varying vec2 out_TexCoord;
+void main()
+{
+	vec2 st = out_TexCoord.st;
+	gl_FragColor = texture2D(mysampler,vec2(st.s, 1- st.t));
+}";
+
+        private uint positionVboHandle, textureHandle;
         private uint attributePos, attributeTexCoord;
 
         private readonly float[] vertexData = new float[]
@@ -41,6 +60,9 @@ void main()
             1, 1, 0,	1,1,
             1, -1, 0,	1,0
         };
+
+        private CSharpGL.Objects.Shaders.ShaderProgram program;
+        private System.Collections.Generic.Dictionary<uint, string> attributeMap;
 
         public GUIRenderer(Size surfaceSize)
         {
@@ -54,88 +76,92 @@ void main()
             CreateTexture();
 
             // Other state
-            CSharpGL.GL.Enable(CSharpGL.GL.GL_DEPTH_TEST);
-            CSharpGL.GL.ClearColor(0, 0, 0.9f, 1);
+            GL.Enable(GL.GL_DEPTH_TEST);
+            GL.ClearColor(0, 0, 0.9f, 1);
         }
 
         private void CreateShaders()
         {
-            vertexShaderHandle = CSharpGL.GL.CreateShader(CSharpGL.GL.GL_VERTEX_SHADER);
-            fragmentShaderHandle = CSharpGL.GL.CreateShader(CSharpGL.GL.GL_FRAGMENT_SHADER);
+			string vertexShaderSource, fragmentShaderSource;
+			if (Utility.CurrentOS.IsWindows)
+			{
+				vertexShaderSource = vertexShaderSource330;
+				fragmentShaderSource = fragmentShaderSource330;
+			}
+			else
+			{
+				vertexShaderSource = vertexShaderSource120;
+				fragmentShaderSource = fragmentShaderSource120;
+			}
 
-            CSharpGL.GL.ShaderSource(vertexShaderHandle, vertexShaderSource);
-            CSharpGL.GL.ShaderSource(fragmentShaderHandle, fragmentShaderSource);
+            program = new CSharpGL.Objects.Shaders.ShaderProgram();
+            attributePos = 0;
+            attributeTexCoord = 1;
+            attributeMap = new System.Collections.Generic.Dictionary<uint, string>
+            {
+                {0, "in_Position"},
+                {1, "in_TexCoord0"}
+            };
+            program.Create(vertexShaderSource, fragmentShaderSource, attributeMap);
+            program.Bind();
 
-            CSharpGL.GL.CompileShader(vertexShaderHandle);
-            CSharpGL.GL.CompileShader(fragmentShaderHandle);
+            //NOTE Need to release unused shader object, wait for implementation
 
-            //System.Diagnostics.Debug.WriteLine(GL.GetShaderInfoLog(vertexShaderHandle));
-            //System.Diagnostics.Debug.WriteLine(GL.GetShaderInfoLog(fragmentShaderHandle));
-
-            // Create program
-            shaderProgramHandle = CSharpGL.GL.CreateProgram();
-
-            CSharpGL.GL.AttachShader(shaderProgramHandle, vertexShaderHandle);
-            CSharpGL.GL.AttachShader(shaderProgramHandle, fragmentShaderHandle);
-
-            CSharpGL.GL.LinkProgram(shaderProgramHandle);
-            //System.Diagnostics.Debug.WriteLine(GL.GetProgramInfoLog(shaderProgramHandle));
-            CSharpGL.GL.UseProgram(shaderProgramHandle);
-
-            //Release unused shader object
-            CSharpGL.GL.DeleteShader(vertexShaderHandle);
-            CSharpGL.GL.DeleteShader(fragmentShaderHandle);
-
-            attributePos = (uint)CSharpGL.GL.GetAttribLocation(shaderProgramHandle, "in_Position");
-            attributeTexCoord = (uint)CSharpGL.GL.GetAttribLocation(shaderProgramHandle, "in_TexCoord");
-
+			CheckEroor();
         }
 
         private void CreateVBOs()
         {
-            {
-                uint[] buffers = { 0 };
-                CSharpGL.GL.GenBuffers(1, buffers);
-                positionVboHandle = buffers[0];
-                CSharpGL.GL.BindBuffer(CSharpGL.BufferTarget.ArrayBuffer, positionVboHandle);
+            uint[] buffers = {0};
+            GL.GenBuffers(1, buffers);
+            positionVboHandle = buffers[0];
+            GL.BindBuffer(BufferTarget.ArrayBuffer, positionVboHandle);
 
-                var dataHandle = System.Runtime.InteropServices.GCHandle.Alloc(vertexData, System.Runtime.InteropServices.GCHandleType.Pinned);
-                CSharpGL.GL.BufferData(CSharpGL.GL.GL_ARRAY_BUFFER, vertexData.Length * System.Runtime.InteropServices.Marshal.SizeOf(typeof(GLM.vec3)), dataHandle.AddrOfPinnedObject(), CSharpGL.GL.GL_STATIC_DRAW);
-                dataHandle.Free();
-            }
+            var dataHandle = System.Runtime.InteropServices.GCHandle.Alloc(vertexData,
+                System.Runtime.InteropServices.GCHandleType.Pinned);
+            GL.BufferData(GL.GL_ARRAY_BUFFER,
+                vertexData.Length*System.Runtime.InteropServices.Marshal.SizeOf(typeof (GLM.vec3)),
+                dataHandle.AddrOfPinnedObject(), GL.GL_STATIC_DRAW);
+            dataHandle.Free();
 
-            CSharpGL.GL.VertexAttribPointer(attributePos, 3, CSharpGL.GL.GL_FLOAT, false, 5 * System.Runtime.InteropServices.Marshal.SizeOf(typeof(float)), System.IntPtr.Zero);
-            CSharpGL.GL.VertexAttribPointer(attributeTexCoord, 2, CSharpGL.GL.GL_FLOAT, false, 5 * System.Runtime.InteropServices.Marshal.SizeOf(typeof(float)),
-                new System.IntPtr(3 * System.Runtime.InteropServices.Marshal.SizeOf(typeof(float))));
+            GL.VertexAttribPointer(attributePos, 3, GL.GL_FLOAT, false,
+                5*System.Runtime.InteropServices.Marshal.SizeOf(typeof (float)), System.IntPtr.Zero);
+            GL.VertexAttribPointer(attributeTexCoord, 2, GL.GL_FLOAT, false,
+                5*System.Runtime.InteropServices.Marshal.SizeOf(typeof (float)),
+                new System.IntPtr(3*System.Runtime.InteropServices.Marshal.SizeOf(typeof (float))));
 
-            CSharpGL.GL.EnableVertexAttribArray(attributePos);
-            CSharpGL.GL.EnableVertexAttribArray(attributeTexCoord);
+            GL.EnableVertexAttribArray(attributePos);
+            GL.EnableVertexAttribArray(attributeTexCoord);
+
+            CheckEroor();
         }
 
         private void CreateTexture()
         {
-            CSharpGL.GL.ActiveTexture(CSharpGL.GL.GL_TEXTURE0);
-            CSharpGL.GL.Enable(CSharpGL.GL.GL_TEXTURE_2D);
+            GL.ActiveTexture(GL.GL_TEXTURE0);
+            GL.Enable(GL.GL_TEXTURE_2D);
 
             uint[] textures = { 0 };
-            CSharpGL.GL.GenTextures(1, textures);
+            GL.GenTextures(1, textures);
             textureHandle = textures[0];
-            CSharpGL.GL.BindTexture(CSharpGL.GL.GL_TEXTURE_2D, textureHandle);
+            GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
 
             {
                 var textureData = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Repeat(new byte(), 4 * (int)SurfaceSize.Width * (int)SurfaceSize.Height));
                 var handle = System.Runtime.InteropServices.GCHandle.Alloc(textureData, System.Runtime.InteropServices.GCHandleType.Pinned);
-                CSharpGL.GL.TexImage2D(CSharpGL.GL.GL_TEXTURE_2D, 0, CSharpGL.GL.GL_RGBA, (int)SurfaceSize.Width, (int)SurfaceSize.Height, 0, CSharpGL.GL.GL_BGRA,
-                    CSharpGL.GL.GL_UNSIGNED_BYTE, handle.AddrOfPinnedObject());
+                GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int)SurfaceSize.Width, (int)SurfaceSize.Height, 0, GL.GL_BGRA,
+                    GL.GL_UNSIGNED_BYTE, handle.AddrOfPinnedObject());
                 handle.Free();
             }
 
             //sampler settings
-            CSharpGL.GL.TexParameteri(CSharpGL.GL.GL_TEXTURE_2D, CSharpGL.GL.GL_TEXTURE_WRAP_S, (int)CSharpGL.GL.GL_CLAMP);
-            CSharpGL.GL.TexParameteri(CSharpGL.GL.GL_TEXTURE_2D, CSharpGL.GL.GL_TEXTURE_WRAP_T, (int)CSharpGL.GL.GL_CLAMP);
-            CSharpGL.GL.TexParameteri(CSharpGL.GL.GL_TEXTURE_2D, CSharpGL.GL.GL_TEXTURE_MAG_FILTER, (int)CSharpGL.GL.GL_LINEAR);
-            CSharpGL.GL.TexParameteri(CSharpGL.GL.GL_TEXTURE_2D, CSharpGL.GL.GL_TEXTURE_MIN_FILTER, (int)CSharpGL.GL.GL_LINEAR);
-        }
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
+        	
+			CheckEroor();
+		}
 
         public void OnUpdateFrame(long time)
         {
@@ -143,19 +169,37 @@ void main()
 
         public void OnUpdateTexture(int width, int height, System.IntPtr data)
         {
-            CSharpGL.GL.BindTexture(CSharpGL.GL.GL_TEXTURE_2D, textureHandle);
-            CSharpGL.GL.TexSubImage2D(CSharpGL.GL.GL_TEXTURE_2D, 0, 0, 0, width, height, CSharpGL.GL.GL_BGRA, CSharpGL.GL.GL_UNSIGNED_BYTE, data);
+            GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
+			CheckEroor();
+
+            GL.TexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, width, height, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, data);
+			CheckEroor();
         }
 
         public void OnRenderFrame()
         {
-            CSharpGL.GL.Clear(CSharpGL.GL.GL_COLOR_BUFFER_BIT | CSharpGL.GL.GL_DEPTH_BUFFER_BIT);
+            GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
             
-            CSharpGL.GL.BindBuffer(CSharpGL.GL.GL_ARRAY_BUFFER, positionVboHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
             
-            CSharpGL.GL.BindTexture(CSharpGL.GL.GL_TEXTURE_2D, textureHandle);
+            GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
 
-            CSharpGL.GL.DrawArrays(CSharpGL.GL.GL_TRIANGLE_FAN, 0, 6);
+            GL.DrawArrays(GL.GL_TRIANGLE_FAN, 0, 6);
+
+			CheckEroor();
         }
+
+		private void CheckEroor(
+			[CallerFilePath] string fileName = null,
+			[CallerLineNumber] int lineNumber = 0,
+			[CallerMemberName] string memberName = null)
+		{
+			var error = GL.GetError();
+			if (error != GL.GL_NO_ERROR)
+			{
+				System.Diagnostics.Debug.WriteLine("{0}({1}) in {2}: glError: 0x{3:X}",
+					fileName, lineNumber, memberName, error);
+			}
+		}
     }
 }

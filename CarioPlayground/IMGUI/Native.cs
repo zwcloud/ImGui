@@ -5,11 +5,20 @@ namespace ImGui
 {
     public static class Native
     {
-        [DllImport("user32.dll")]
-        public static extern bool ClientToScreen(IntPtr hWnd, ref SFML.System.Vector2i lpPoint);
+        public class Win32
+        {
+            [DllImport("user32.dll")]
+            public static extern bool ClientToScreen(IntPtr hWnd, ref SFML.System.Vector2i lpPoint);
 
-        [DllImport("user32.dll")]
-        public static extern bool ScreenToClient(IntPtr hWnd, ref SFML.System.Vector2i lpPoint);
+            [DllImport("user32.dll")]
+            public static extern bool ScreenToClient(IntPtr hWnd, ref SFML.System.Vector2i lpPoint);
+        }
+
+        public class Linux
+        {
+        }
+
+        //---Below is to be removed!---
 
         // This helper static method is required because the 32-bit version of user32.dll does not contain this API
         // (on any versions of Windows), so linking the method will fail at run-time. The bridge dispatches the request

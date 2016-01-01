@@ -254,8 +254,8 @@ namespace ImGui
                     DepthBits = 24,
                     StencilBits = 0,
                     AntialiasingLevel = 0,
-                    MajorVersion = 3,
-                    MinorVersion = 3
+                    MajorVersion = 2,
+                    MinorVersion = 1
                 });
             //form is not show on creating
             internalForm.SetVisible(false);
