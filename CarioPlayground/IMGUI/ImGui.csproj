@@ -84,24 +84,24 @@
     <Reference Include="GLM">
       <HintPath>..\Reference\GLM.dll</HintPath>
     </Reference>
-    <Reference Include="sfmlnet-system-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
-    </Reference>
-    <Reference Include="sfmlnet-window-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Serialization" />
     <Reference Include="System.Xml" />
+    <Reference Include="sfmlnet-system-2">
+      <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
+    </Reference>
+    <Reference Include="sfmlnet-window-2">
+      <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundStyle.cs" />
     <Compile Include="BaseForm.cs" />
     <Compile Include="BorderlessForm.cs" />
-    <Compile Include="CarioExtension.cs" />
+    <Compile Include="CarioExtension.cs">
+      <DeployService-Deploy>True</DeployService-Deploy>
+    </Compile>
     <Compile Include="Content.cs" />
     <Compile Include="Control\Button.cs" />
     <Compile Include="Control\ComboBox.cs" />
@@ -177,8 +177,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="sfmlnet-system-2.dll.config" />
-    <None Include="sfmlnet-window-2.dll.config" />
+    <None Include="sfmlnet-system-2.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="sfmlnet-window-2.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\PangoSharp\GLib\GLib.csproj">

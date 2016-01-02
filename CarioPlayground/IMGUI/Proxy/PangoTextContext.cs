@@ -5,11 +5,11 @@ namespace ImGui
     public class PangoTextContext : ITextContext
     {
         private readonly Pango.FontDescription desc;
+        private readonly Cairo.Context g;
         private readonly Pango.Layout layout;
+        private readonly Cairo.Surface surface; //dummy
         private bool dirty;
         private string text;
-        private Cairo.Context g;
-        private readonly Cairo.Surface surface;//dummy
 
         public PangoTextContext(string text, string fontFamily, int fontSize,
             FontStretch stretch, FontStyle style, FontWeight weight,
@@ -20,8 +20,9 @@ namespace ImGui
             g = new Cairo.Context(surface);
             layout = Pango.CairoHelper.CreateLayout(g);
             layout.SetText(text);
-            layout.Width = maxWidth;
-            layout.Height = maxHeight;
+            this.MaxWidth = maxWidth;
+            this.MaxHeight = maxHeight;
+			Pango.CairoHelper.UpdateLayout(g, layout);
 
             desc = new Pango.FontDescription();
             desc.Family = fontFamily;
@@ -34,24 +35,26 @@ namespace ImGui
 
         public int MaxWidth
         {
-            get { return layout.Width; }
+            get { return (int) (layout.Width/Pango.Scale.PangoScale); }
             set
             {
+                value = (int) (value*Pango.Scale.PangoScale);
                 if (layout.Width == value)
                 {
                     return;
                 }
                 layout.Width = value;
-
+                dirty = true;
             }
         }
 
         public int MaxHeight
         {
-            get { return layout.Height; }
+            get { return (int) (layout.Height/Pango.Scale.PangoScale); }
             set
             {
-                if(layout.Width == value)
+                value = (int) (value*Pango.Scale.PangoScale);
+                if (layout.Height == value)
                 {
                     return;
                 }
@@ -67,8 +70,11 @@ namespace ImGui
                 Pango.Rectangle inkRectangle, logicRectangle;
                 layout.GetExtents(out inkRectangle, out logicRectangle);
                 //TODO which one?
-                var rect = new Rect(logicRectangle.X, logicRectangle.Y,
-                    logicRectangle.Width, logicRectangle.Height);
+                var x = logicRectangle.X/Pango.Scale.PangoScale;
+                var y = logicRectangle.Y/Pango.Scale.PangoScale;
+                var width = logicRectangle.Width/Pango.Scale.PangoScale;
+                var height = logicRectangle.Height/Pango.Scale.PangoScale;
+                var rect = new Rect(x, y, width, height);
                 return rect;
             }
         }
@@ -119,11 +125,10 @@ namespace ImGui
         public uint XyToIndex(float pointX, float pointY, out bool isInside)
         {
             int index, trailing;
-            layout.XyToIndex(
-                Pango.Units.FromDouble(pointX),
-                Pango.Units.FromDouble(pointY),
+			isInside = layout.XyToIndex(
+				(int)(pointX * Pango.Scale.PangoScale),
+                (int)(pointY * Pango.Scale.PangoScale),
                 out index, out trailing);
-            isInside = Rect.Contains(pointX, pointY); //TODO check
             return (uint) index;
         }
 
@@ -132,15 +137,15 @@ namespace ImGui
         {
             Pango.Rectangle strongRect, weakRect;
             layout.GetCursorPos((int) textPosition, out strongRect, out weakRect);
-            pointX = weakRect.X;
-            pointY = weakRect.Y;
-            height = weakRect.Height;
+			pointX = (int)(weakRect.X/Pango.Scale.PangoScale);
+			pointY = (int)(weakRect.Y/Pango.Scale.PangoScale);
+			height = (int)(weakRect.Height/Pango.Scale.PangoScale);
         }
 
         public int FontSize
         {
-            get { return (int) (desc.Size*Pango.Scale.PangoScale); }
-            set { desc.Size = (int) (value/Pango.Scale.PangoScale); }
+            get { return (int) (desc.Size/Pango.Scale.PangoScale); }
+            set { desc.Size = (int) (value*Pango.Scale.PangoScale); }
         }
 
         public TextAlignment Alignment
@@ -162,7 +167,7 @@ namespace ImGui
         #endregion
     }
 
-    internal static partial class PangoEx
+    internal static class PangoEx
     {
         public static Pango.Weight ToPango(this FontWeight weight)
         {
@@ -191,7 +196,7 @@ namespace ImGui
                 case FontWeight.ExtraBlack:
                     return Pango.Weight.Ultraheavy;
                 default:
-                    throw new System.ArgumentOutOfRangeException("weight", weight, null);
+                    throw new ArgumentOutOfRangeException("weight", weight, null);
             }
         }
 
@@ -206,7 +211,7 @@ namespace ImGui
                 case FontStyle.Italic:
                     return Pango.Style.Italic;
                 default:
-                    throw new System.ArgumentOutOfRangeException("style", style, null);
+                    throw new ArgumentOutOfRangeException("style", style, null);
             }
         }
 
@@ -235,7 +240,7 @@ namespace ImGui
                 case FontStretch.UltraExpanded:
                     return Pango.Stretch.UltraExpanded;
                 default:
-                    throw new System.ArgumentOutOfRangeException("stretch", stretch, null);
+                    throw new ArgumentOutOfRangeException("stretch", stretch, null);
             }
         }
 
@@ -250,9 +255,9 @@ namespace ImGui
                 case TextAlignment.Center:
                     return Pango.Alignment.Center;
                 case TextAlignment.Justified:
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException();
                 default:
-                    throw new System.ArgumentOutOfRangeException("alignment", alignment, null);
+                    throw new ArgumentOutOfRangeException("alignment", alignment, null);
             }
         }
 
@@ -267,10 +272,8 @@ namespace ImGui
                 case Pango.Alignment.Center:
                     return TextAlignment.Center;
                 default:
-                    throw new System.ArgumentOutOfRangeException("alignment", alignment, null);
+                    throw new ArgumentOutOfRangeException("alignment", alignment, null);
             }
         }
-
     }
-
 }

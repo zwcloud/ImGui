@@ -105,8 +105,6 @@ void main()
             program.Create(vertexShaderSource, fragmentShaderSource, attributeMap);
             program.Bind();
 
-            //NOTE Need to release unused shader object, wait for implementation
-
 			CheckEroor();
         }
 
