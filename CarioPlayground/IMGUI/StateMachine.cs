@@ -25,7 +25,7 @@ namespace ImGui
             }
         }
 
-        System.Collections.Generic.Dictionary<StateTransition, string> transitions;
+        readonly System.Collections.Generic.Dictionary<StateTransition, string> transitions;
         /// <summary>
         /// Current state of the state machine
         /// </summary>

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    internal static class Utility
+    static class Utility
     {
         /// <summary>
         /// Get rect of the context box
@@ -207,9 +207,13 @@ namespace ImGui
                 var windowHandle = sfmlWindow.SystemHandle;
                 Native.Win32.ClientToScreen(windowHandle, ref posInScreen);
             }
-            else
+            else if (Utility.CurrentOS.IsLinux)
             {
                 posInScreen = sfmlWindow.Position + posInWindow;
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
             rect.X = posInScreen.X;
             rect.Y = posInScreen.Y;

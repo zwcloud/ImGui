@@ -20,9 +20,9 @@ namespace ImGui
             g = new Cairo.Context(surface);
             layout = Pango.CairoHelper.CreateLayout(g);
             layout.SetText(text);
+            layout.Wrap = Pango.WrapMode.Word;
             this.MaxWidth = maxWidth;
             this.MaxHeight = maxHeight;
-			Pango.CairoHelper.UpdateLayout(g, layout);
 
             desc = new Pango.FontDescription();
             desc.Family = fontFamily;

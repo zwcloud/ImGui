@@ -159,6 +159,7 @@
     <Compile Include="Size.cs" />
     <Compile Include="Skin.cs" />
     <Compile Include="StateMachine.cs" />
+    <Compile Include="StateMachineEx.cs" />
     <Compile Include="Style.Build.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="Style.Make.cs" />

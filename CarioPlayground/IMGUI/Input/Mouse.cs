@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-//TODO decouple Input from windows => write a stand-alone and cross-platform Input library
 namespace ImGui.Input
 {
     /// <summary>
@@ -197,6 +196,8 @@ namespace ImGui.Input
         /// and last states will be recorded.</remarks>
         public static bool Refresh()
         {
+            Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);//Fetch unused state
+
             //Buttons's states
             lastLeftButtonState = leftButtonState;
             leftButtonState = SFML.Window.Mouse.IsButtonPressed(SFML.Window.Mouse.Button.Left) ? InputState.Down : InputState.Up;

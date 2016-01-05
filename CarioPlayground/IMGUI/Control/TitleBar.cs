@@ -15,7 +15,10 @@
             {
                 gui.Image(rectIcon, iconTexture ?? Texture._presets["DefaultAppIcon"], name + "_Icon");
                 gui.Label(rectCaption, caption, name + "_Caption");
-                gui.Button(rectCloseButton, "×", name + "_CloseButton");
+                if(gui.Button(rectCloseButton, "×", name + "_CloseButton"))
+                {
+                    //TODO quit application
+                }
             }
             gui.EndH();
         }
