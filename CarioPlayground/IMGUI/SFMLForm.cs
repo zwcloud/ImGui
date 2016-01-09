@@ -140,6 +140,16 @@ namespace ImGui
             get { return renderContext.FrontSurface; }
         }
 
+        internal ImageSurface DebugSurface
+        {
+            get { return renderContext.DebugSurface; }
+        }
+
+        internal Context DebugContext
+        {
+            get { return renderContext.DebugContext; }
+        }
+
         #region the GUI Loop
 
         internal struct GUILoopResult
@@ -167,6 +177,7 @@ namespace ImGui
             if(this.Visible)
             {
                 isRepainted = Render();
+                isRepainted = isRepainted || Clear();
             }
             return new GUILoopResult(needExit, isRepainted);
         }
@@ -191,6 +202,10 @@ namespace ImGui
                 CairoEx.ColorWhite, Format.Argb32);
             renderContext.FrontContext = new Context(renderContext.FrontSurface);
 
+            renderContext.DebugSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
+                CairoEx.ColorClear, Format.Argb32);
+            renderContext.DebugContext = new Context(renderContext.DebugSurface);
+
             //create GUI
             GUI = new GUI(renderContext.BackContext, this);
         }
@@ -200,6 +215,12 @@ namespace ImGui
 
         private bool Update()
         {
+            foreach (var controlName in removeList)
+            {
+                var result = Controls.Remove(controlName);
+                Debug.WriteLineIf(!result, "Remove failed");
+            }
+            removeList.Clear();
             foreach (var control in Controls.Values)
             {
                 if(control.Active)
@@ -209,19 +230,9 @@ namespace ImGui
                 }
                 else
                 {
-                    control.Dispose();
                     removeList.Add(control.Name);
-                    control.OnClear(renderContext.BackContext);
                 }
             }
-
-            foreach (var controlName in removeList)
-            {
-                var result = Controls.Remove(controlName);
-                Debug.WriteLineIf(!result, "Remove failed");
-            }
-            removeList.Clear();
-
             return false;
         }
 
@@ -246,6 +257,22 @@ namespace ImGui
             return renderHappend;
         }
 
+        private bool Clear()
+        {
+            bool cleared = removeList.Count != 0;
+            foreach (var controlName in removeList)
+            {
+                var control = Controls[controlName];
+                control.OnClear(renderContext.BackContext);
+                control.Dispose();
+            }
+            if(cleared)
+            {
+                renderContext.SwapSurface();
+            }
+            return cleared;
+        }
+
         #endregion
 
         protected SFMLForm(int width, int height)
@@ -255,7 +282,7 @@ namespace ImGui
                 "DummyWindowTitle",
                 SFML.Window.Styles.None, new SFML.Window.ContextSettings
                 {
-                    DepthBits = 24,
+                    DepthBits = 0,
                     StencilBits = 0,
                     AntialiasingLevel = 0,
                     MajorVersion = 2,

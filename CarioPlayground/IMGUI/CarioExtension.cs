@@ -380,6 +380,17 @@ namespace ImGui
 
             return CairoEx.ColorArgb(255, v, p, q);
         }
+
+        public static Color AlphaBlend(Color backgroundColor, Color foregroundColor)
+        {
+            double k = foregroundColor.A;
+            Color outputColor = new Color(
+                foregroundColor.R*k + backgroundColor.R*(1.0 - k),
+                foregroundColor.G*k + backgroundColor.G*(1.0 - k),
+                foregroundColor.B*k + backgroundColor.B*(1.0 - k)
+                );
+            return outputColor;
+        }
 #endregion
 
         #region Image

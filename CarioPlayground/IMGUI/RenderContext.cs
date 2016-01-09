@@ -11,6 +11,9 @@ namespace ImGui
         public Context BackContext { get; set; }
         public ImageSurface BackSurface { get; set; }
 
+        public Context DebugContext { get; set; }
+        public ImageSurface DebugSurface { get; set; }
+
         /// <summary>
         /// Draw the back surface to the front surface
         /// </summary>
@@ -30,6 +33,7 @@ namespace ImGui
             FrontSurface.Dispose();
             BackContext.Dispose();
             BackSurface.Dispose();
+            DebugSurface.Dispose();
         }
     }
 }

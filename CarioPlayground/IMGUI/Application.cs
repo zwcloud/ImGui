@@ -63,6 +63,9 @@ namespace ImGui
             }
         }
 
+        static Rect dirtyRect = Rect.Empty;
+        static Rect lastDirtyRect = Rect.Empty;
+
         public static void Run(Form mainForm)
         {
             //Check paramter
@@ -120,8 +123,8 @@ namespace ImGui
                     }
                     if(guiLoopResult.isRepainted)
                     {
+                        dirtyRect = Rect.Empty;
                         //update re-rendered section //TODO consider using cairo-gl?
-                        var dirtyRect = Rect.Empty;
                         foreach (var control in form.Controls.Values)
                         {
                             foreach (var rect in control.RenderRects)
@@ -132,28 +135,30 @@ namespace ImGui
                         }
                         if(!dirtyRect.IsEmpty)
                         {
-                            //Render dirty rect
-                            //using (Cairo.Context c = new Cairo.Context(form.FrontSurface))
-                            //{
-                            //    c.FillRectangle(dirtyRect, CairoEx.ColorArgb(100, 200, 242, 200));
-                            //}
-                            //Get data of pixels in dirty rect
-                            var x = (int) dirtyRect.X;
-                            var w = (int) dirtyRect.Width;
-                            var h = (int) dirtyRect.Height;
-                            var data = new byte[4*w*h];
-                            var surfaceData = form.FrontSurface.Data;
-                            var surfaceWidth = form.FrontSurface.Width;
-                            var offset = 0;
-                            for (var y = (int) dirtyRect.Y; y < dirtyRect.Bottom; y++)
-                            {
-                                Array.Copy(surfaceData, 4*(surfaceWidth*y + x), data, offset, 4*w);
-                                offset += 4*w;
-                            }
                             // Make it the active window for OpenGL calls
                             window.SetActive();
-                            form.guiRenderer.OnUpdateTexture(dirtyRect,
-                                System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
+
+                            //Clear last dirty rect
+                            if(lastDirtyRect!=Rect.Empty)
+                            {
+                                var data = GetDirtyData(lastDirtyRect, form.DebugSurface);
+                                form.guiRenderer.OnUpdateTexture(lastDirtyRect,
+                                    System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
+                            }
+
+                            lastDirtyRect = dirtyRect;
+
+                            //Get data of pixels in dirty rect
+                            {
+                                //Save orginal surface
+                                form.DebugContext.SetSourceSurface(form.FrontSurface, 0, 0);
+                                form.DebugContext.Paint();
+
+                                //Update repainted section
+                                var data = GetDirtyData(dirtyRect, form.FrontSurface, CairoEx.ColorArgb(100, 200, 240, 200));
+                                form.guiRenderer.OnUpdateTexture(dirtyRect,
+                                    System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
+                            }
                             form.guiRenderer.OnRenderFrame();
                         }
                     }
@@ -183,6 +188,43 @@ namespace ImGui
             }
 
             stopwatch.Stop();
+        }
+
+        private static byte[] GetDirtyData(Rect dirtyRect, Cairo.ImageSurface surface)
+        {
+            return GetDirtyData(dirtyRect, surface, CairoEx.ColorClear);
+        }
+        private static byte[] GetDirtyData(Rect dirtyRect, Cairo.ImageSurface surface, Cairo.Color blendColor)
+        {
+            var x = (int) dirtyRect.X;
+            var w = (int) dirtyRect.Width;
+            var h = (int) dirtyRect.Height;
+            var data = new byte[4*w*h];
+            var surfaceData = surface.Data;
+            var surfaceWidth = surface.Width;
+            var offset = 0;
+            for (var y = (int)dirtyRect.Y; y < dirtyRect.Bottom; y++)
+            {
+                Array.Copy(surfaceData, 4 * (surfaceWidth * y + x), data, offset, 4 * w);
+                offset += 4 * w;
+            }
+            if (blendColor != CairoEx.ColorClear)
+            {
+                for (int i = 0; i < data.Length; i+=4)
+                {
+                    Cairo.Color c = CairoEx.ColorArgb(
+                        data[i + 3],
+                        data[i + 2],
+                        data[i + 1],
+                        data[i]);
+                    c = CairoEx.AlphaBlend(c, blendColor);
+                    data[i+3] = (byte)(c.A * 255);
+                    data[i+2] = (byte)(c.R * 255);
+                    data[i+1] = (byte)(c.G * 255);
+                    data[i] = (byte)(c.B * 255);
+                }
+            }
+            return data;
         }
 
         #region Window events

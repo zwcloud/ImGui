@@ -130,7 +130,7 @@ void main()
 
             GL.EnableVertexAttribArray(attributePos);
             GL.EnableVertexAttribArray(attributeTexCoord);
-
+            
             CheckEroor();
         }
 
@@ -139,36 +139,32 @@ void main()
             GL.ActiveTexture(GL.GL_TEXTURE0);
             GL.Enable(GL.GL_TEXTURE_2D);
 
-            uint[] textures = { 0 };
+            uint[] textures = {0};
             GL.GenTextures(1, textures);
             textureHandle = textures[0];
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
-
-            {
-                var textureData = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Repeat((byte)255, 4 * (int)SurfaceSize.Width * (int)SurfaceSize.Height));
-                var handle = System.Runtime.InteropServices.GCHandle.Alloc(textureData, System.Runtime.InteropServices.GCHandleType.Pinned);
-                GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int)SurfaceSize.Width, (int)SurfaceSize.Height, 0, GL.GL_BGRA,
-                    GL.GL_UNSIGNED_BYTE, handle.AddrOfPinnedObject());
-                handle.Free();
-            }
+            var textureData =
+                System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Repeat((byte) 255,
+                    4*(int) SurfaceSize.Width*(int) SurfaceSize.Height));
+            var handle = System.Runtime.InteropServices.GCHandle.Alloc(textureData,
+                System.Runtime.InteropServices.GCHandleType.Pinned);
+            GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int) SurfaceSize.Width, (int) SurfaceSize.Height, 0,
+                GL.GL_BGRA,
+                GL.GL_UNSIGNED_BYTE, handle.AddrOfPinnedObject());
+            handle.Free();
 
             //sampler settings
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
-        	
-			CheckEroor();
-		}
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int) GL.GL_CLAMP);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int) GL.GL_CLAMP);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int) GL.GL_LINEAR);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int) GL.GL_LINEAR);
 
-        public void OnUpdateFrame(long time)
-        {
+            CheckEroor();
         }
 
         public void OnUpdateTexture(Rect rect, System.IntPtr data)
         {
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
-			CheckEroor();
 
             GL.TexSubImage2D(GL.GL_TEXTURE_2D, 0, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, data);
 			CheckEroor();
