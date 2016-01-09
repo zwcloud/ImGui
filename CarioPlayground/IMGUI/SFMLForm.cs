@@ -24,7 +24,7 @@ namespace ImGui
                 var l = internalForm.Position;
                 return new Point(l.X, l.Y);
             }
-            set { internalForm.Position = new SFML.System.Vector2i((int)value.X, (int)value.Y); }
+            set { internalForm.Position = new SFML.System.Vector2i((int) value.X, (int) value.Y); }
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace ImGui
                 var s = internalForm.Size;
                 return new Size(s.X, s.Y);
             }
-            set { internalForm.Size = new SFML.System.Vector2u((uint)value.Width, (uint)value.Height); }
+            set { internalForm.Size = new SFML.System.Vector2u((uint) value.Width, (uint) value.Height); }
         }
 
         /// <summary>
@@ -68,12 +68,22 @@ namespace ImGui
         {
             get { return internalForm.HasFocus(); }
         }
-        
+
+        /// <summary>
+        /// Is this form visible?
+        /// </summary>
+        public bool Visible { get; private set; }
+
+        public override bool Closed { get { return closed; } }
+
         /// <summary>
         /// Close the form and distroy it.
         /// </summary>
         public override void Close()
         {
+            this.closed = true;
+            this.Visible = false;
+            this.renderContext.Dispose();
             this.internalForm.Close();
             this.internalForm.Dispose();
         }
@@ -83,7 +93,7 @@ namespace ImGui
         /// </summary>
         public override void Show()
         {
-            if (!this.Visible)
+            if(!this.Visible)
             {
                 foreach (var control in Controls.Values)
                 {
@@ -100,17 +110,17 @@ namespace ImGui
         /// </summary>
         public override void Hide()
         {
-            if (this.Visible)
+            if(this.Visible)
             {
                 this.internalForm.SetVisible(false);
                 this.Visible = false;
             }
         }
 
-        /// <summary>
-        /// Is this form visible?
-        /// </summary>
-        public bool Visible { get; private set; }
+        internal override object InternalForm
+        {
+            get { return internalForm; }
+        }
 
         /// <summary>
         /// Custom GUI Logic. This should be overrided to create custom GUI elements
@@ -124,40 +134,43 @@ namespace ImGui
         internal SFML.Window.Window internalForm;
 
         internal GUIRenderer guiRenderer;
-        
-        internal override object InternalForm
+
+        internal ImageSurface FrontSurface
         {
-            get { return internalForm; }
+            get { return renderContext.FrontSurface; }
         }
 
-        internal Surface FrontSurface { get { return renderContext.FrontSurface; } }
-
         #region the GUI Loop
+
+        internal struct GUILoopResult
+        {
+            public readonly bool needExit;
+            public readonly bool isRepainted;
+
+            public GUILoopResult(bool needExit, bool isRepainted)
+            {
+                this.isRepainted = isRepainted;
+                this.needExit = needExit;
+            }
+        }
 
         /// <summary>
         /// GUI Loop
         /// </summary>
         /// <returns>true:need repaint / false: not repaint</returns>
-        internal bool GUILoop()
+        internal GUILoopResult GUILoop()
         {
-            OnBasicGUI(GUI);
-            var isRepaint = false;
-            var exit = Update();
-            if (exit)
-            {
-                CleanUp();
-                Close();
-                //TODO tell form to exit
-            }
+            OnGUI(GUI);
 
-            if (this.Visible)
+            bool needExit, isRepainted = false;
+            needExit = Update();
+            if(this.Visible)
             {
-                isRepaint = Render();
+                isRepainted = Render();
             }
-
-            return isRepaint;
+            return new GUILoopResult(needExit, isRepainted);
         }
-        
+
         private GUI GUI { get; set; }
         private RenderContext renderContext;
 
@@ -181,13 +194,9 @@ namespace ImGui
             //create GUI
             GUI = new GUI(renderContext.BackContext, this);
         }
-
-        protected void OnBasicGUI(GUI gui)
-        {
-            OnGUI(gui);
-        }
-
+        
         private readonly List<string> removeList = new List<string>();
+        private bool closed = false;
 
         private bool Update()
         {
@@ -208,7 +217,7 @@ namespace ImGui
 
             foreach (var controlName in removeList)
             {
-                bool result = Controls.Remove(controlName);
+                var result = Controls.Remove(controlName);
                 Debug.WriteLineIf(!result, "Remove failed");
             }
             removeList.Clear();
@@ -218,10 +227,10 @@ namespace ImGui
 
         private bool Render()
         {
-            bool renderHappend = false;
+            var renderHappend = false;
             foreach (var control in Controls.Values)
             {
-                if (control.NeedRepaint)
+                if(control.NeedRepaint)
                 {
                     renderHappend = true;
                     control.OnRender(renderContext.BackContext);
@@ -237,17 +246,12 @@ namespace ImGui
             return renderHappend;
         }
 
-        private void CleanUp() //Cleanup only happens when ESC is pressed
-        {
-            if (renderContext.BackContext != null)
-                renderContext.BackContext.Dispose();
-        }
-#endregion
-        
+        #endregion
+
         protected SFMLForm(int width, int height)
         {
             internalForm = new SFML.Window.Window(
-                new SFML.Window.VideoMode((uint)width, (uint)height),
+                new SFML.Window.VideoMode((uint) width, (uint) height),
                 "DummyWindowTitle",
                 SFML.Window.Styles.None, new SFML.Window.ContextSettings
                 {
@@ -257,17 +261,19 @@ namespace ImGui
                     MajorVersion = 2,
                     MinorVersion = 1
                 });
-            //form is not show on creating
-            internalForm.SetVisible(false);
-            Visible = false;
-
+            internalForm.SetVisible(false);//form is not show on creating
             internalForm.SetVerticalSyncEnabled(true);
+
+            var size = this.internalForm.Size;
+            guiRenderer = new GUIRenderer(new Size(size.X, size.Y));
+            this.internalForm.SetActive(true);
+            guiRenderer.OnLoad();
+
+            Visible = false;
             controls = new Dictionary<string, Control>();
             InitGUI();
         }
 
         #endregion
-        
-
     }
 }

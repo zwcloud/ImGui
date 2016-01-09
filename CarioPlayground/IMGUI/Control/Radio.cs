@@ -221,6 +221,7 @@ namespace ImGui
             }
             var radioTextRect = new Rect(radioBoxRect.TopRight, Rect.BottomRight);
             g.DrawBoxModel(radioTextRect, new Content(TextContext), Skin.current.Radio[State]);
+            this.RenderRects.Add(Rect);
         }
 
         public override void Dispose()
@@ -230,7 +231,8 @@ namespace ImGui
         
         public override void OnClear(Context g)
         {
-            g.FillRectangle(Rect, CairoEx.ColorWhite);
+            g.FillRectangle(Rect, CairoEx.ColorWhite); ;
+            this.RenderRects.Add(Rect);
         }
 
         #endregion

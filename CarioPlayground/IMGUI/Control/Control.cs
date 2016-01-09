@@ -24,6 +24,7 @@ namespace ImGui
             NeedRepaint = true;
 
             Form.Controls[Name] = this;
+            RenderRects = new List<Rect>();
         }
 
         public string Name
@@ -43,12 +44,14 @@ namespace ImGui
         public Rect Rect { get; protected set; }
 
         /// <summary>
-        /// Does this control need repaint? TODO expand this into render tree
+        /// Does this control need repaint? TODO expand this into render section
         /// </summary>
         public bool NeedRepaint { get; set; }
         public abstract void Dispose();
         public abstract void OnRender(Context g);
         public abstract void OnClear(Context g);
         public abstract void OnUpdate();
+
+        public List<Rect> RenderRects { get; private set; }
     }
 }

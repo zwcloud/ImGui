@@ -34,6 +34,11 @@ namespace ImGui
         public abstract bool Focused { get; }
 
         /// <summary>
+        /// Is the form closed? (readonly)
+        /// </summary>
+        public abstract bool Closed { get; }
+
+        /// <summary>
         /// Close the form and distroy it.
         /// </summary>
         public abstract void Close();

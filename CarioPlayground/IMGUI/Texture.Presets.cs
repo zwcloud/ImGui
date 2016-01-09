@@ -11,9 +11,84 @@ namespace ImGui
             //TODO Destruct these presets
             _presets = new Dictionary<string, Texture>
             {
-                {"DefaultAppIcon", new Texture(Convert.FromBase64String(DefaultAppIcon_PNG_Base64_string))}
+                {"DefaultAppIcon", new Texture(Convert.FromBase64String(DefaultAppIcon_PNG_Base64_string))},
+
+                {"MinNormal", new Texture(Convert.FromBase64String(MinNormal_PNG_Base64_string))},
+                {"MaxNormal", new Texture(Convert.FromBase64String(MaxNormal_PNG_Base64_string))},
+                {"CloseNormal", new Texture(Convert.FromBase64String(CloseNormal_PNG_Base64_string))},
+                
+                {"MinHover", new Texture(Convert.FromBase64String(MinHover_PNG_Base64_string))},
+                {"MaxHover", new Texture(Convert.FromBase64String(MaxHover_PNG_Base64_string))},
+                {"CloseHover", new Texture(Convert.FromBase64String(CloseHover_PNG_Base64_string))},
+
+                {"MinActive", new Texture(Convert.FromBase64String(MinActive_PNG_Base64_string))},
+                {"MaxActive", new Texture(Convert.FromBase64String(MaxActive_PNG_Base64_string))},
+                {"CloseActive", new Texture(Convert.FromBase64String(CloseActive_PNG_Base64_string))},
             };
         }
+
+        private const string MinNormal_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAACAAAAAZCAIAAADfbbvGAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAADhJREFUeNpi/P//PwMtAeOoBaMWjFowasGoBXSx4O" +
+            "zZs1jFjY2NibGAiYHGYDSSRy0YtYCBASDAAMGbStN13R+cAAAAAElFTkSuQmCC";
+
+        private const string MaxNormal_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAZCAIAAACpVwlNAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAAEJJREFUeNpi/P//PwNtABMDzcCo0cPCaBb80mfPns" +
+            "Uja2xsPNICBI+v8YfVaOIbOSmEYErABRhHq4JRo4eh0QABBgCASg6Ybnt6HAAAAABJRU5" +
+            "ErkJggg==";
+
+        private const string CloseNormal_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAAB0AAAAZCAIAAABCYLJOAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAAI5JREFUeNrslFEOwBAQRLuuwv0vhLPopJOI+GAVfz" +
+            "sfDVLP2E7XlTtyzx0Z17gL3JyzcnGBy/0dhdOU0n+u9x5/TkupZ4QQxlzhzrFrviMieGI" +
+            "8haq+G1zLJ9I10LU80O+xnNU6dLXe4pICp6gGKgA0xgdyxrsD2sYA9LnrcXuOMSoXO81z" +
+            "Zn3HuPt6BRgAuJf1KiinelMAAAAASUVORK5CYII=";
+
+        private const string MinHover_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAACAAAAAZCAIAAADfbbvGAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAAVhJREFUeNqMlmu2hCAMgwcOS3VZrlGX4DxwaudL6r" +
+            "388CDQkjZpte37/viO4zhaaw837BYW7Ws/PgNmekFYxm64myt5PZv09hnZKZCGfT6TweI" +
+            "8gjgjmHdkRGowJ/EEcHU9V84Iso1eo76QB83q9PaOQMHqNe07sIsDGtBFsiXW0g7C7rN0" +
+            "RVBFit0gDJSowK4IblSMFXgEDZWQRqDDBKlA6q1fOzqQWiY1h5rM0DoOdAgg3xfkQyo3P" +
+            "CklHXhtBNoSbF+ybA+9toKZubkhNu+y0Gw71CqJxaotZoENDRlCej2XZVGAr8m6rmoFlE" +
+            "OTDvFkeWgR3DTH83XbNqRVm+t/JF+ld0A8VovabQDIxjono0KKyoJSrWZshnv1YULXrWJ" +
+            "CSWod9Nza8oYtqMCo+dFb57GhTVEFY3Oo1W6/E/3Pvmh/HQKgrbWfQtMfkKrobEAV26Go" +
+            "pwADAPsc4vPCRAXRAAAAAElFTkSuQmCC";
+
+        private const string MaxHover_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAZCAIAAACpVwlNAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAAUhJREFUeNqcVUEOwyAMGxFPbT9V9Y99QtcpleXZgV" +
+            "XjUAFNwHGc0I7jeNk4z7O19nowYCku1zJ4gfkf52IH844f5eWTi9MyvzkRTCE3S1B8HAb" +
+            "/ctTY7/nPkaYRn85mgkb2b9R+JzuwD+Y/s5IGnckt7UYpBddpw3zmsnsGGN26rjDwK7dt" +
+            "K5nMEEOCnQiLbaCNMg03IaUeJDReQryCxvnpHALbwXnf97LwlmURdQv2ELDCO1eXhMxhA" +
+            "S+fFnKKJJMrTdQpVwrqm5CyuXiJ+lkicCa6UMion4zyJpB5Ga6NslhG/WDSFLtIR9R2zV" +
+            "MJZViSVXb/7F9PgVs7G6OuO3k0Cq6ZH1nO+6Ls6FPgnURAeYGU7l+oAbAsIpY2lzvrRBy" +
+            "7VOpIJGUQc9LDAxl197J/Yd+9Qugfadwx+usl7MXc/6EwyiS/BRgAzhCfVgqBdEkAAAAA" +
+            "SUVORK5CYII=";
+
+        private const string CloseHover_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAAB0AAAAZCAIAAABCYLJOAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAAGxJREFUeNpifODszEADwMRAGzBq7nA1V37PHiIFST" +
+            "AXoh/NFKyCpJn70MUFzYFwBlwKK2AkJr9hOg2/ocTGG5opBA0d6HSGNd6ols6A3seMRor" +
+            "SGXKYEmk0UekMa7xRIZ2Nljuj5g5ScwECDAAu8S6QYEKBVAAAAABJRU5ErkJggg==";
+
+        private const string MinActive_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAACAAAAAZCAIAAADfbbvGAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAADtJREFUeNpi9Fv2ioGWgImBxmDUglELRi0YtWBEWM" +
+            "BCjKKNkaJYxf2Xvx4iPiDGpaOpaNSCIWwBQIABANpwBvUtrXzMAAAAAElFTkSuQmCC";
+
+        private const string MaxActive_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAZCAIAAACpVwlNAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAAERJREFUeNpi9Fv2ioE2gImBZmDU6GFhNAt+6Y2Ron" +
+            "hk/Ze/HmkBgsfX+MNqNPGNnBRCMCWQaTT+/DYajaNGD1KjAQIMAEECCxhCbZ/XAAAAAEl" +
+            "FTkSuQmCC";
+
+        private const string CloseActive_PNG_Base64_string =
+            "iVBORw0KGgoAAAANSUhEUgAAAB0AAAAZCAIAAABCYLJOAAAAGXRFWHRTb2Z0d2FyZQBBZ" +
+            "G9iZSBJbWFnZVJlYWR5ccllPAAAAGxJREFUeNpinGlry0ADwMRAGzBq7nA1N+3QISIFST" +
+            "AXoh/NFKyCpJk7y84OzYFwBlwKK2AkJr9hOg2/ocTGG5opBA0d6HSGNd6ols6A3seMRor" +
+            "SGXKYEmk0UekMa7xRIZ2Nljuj5g5ScwECDADhhi49ZVPlsQAAAABJRU5ErkJggg==";
 
         private const string DefaultAppIcon_PNG_Base64_string =
 "iVBORw0KGgoAAAANSUhEUgAAA7kAAAM6CAYAAABEg4S2AAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRF"+

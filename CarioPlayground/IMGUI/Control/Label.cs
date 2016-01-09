@@ -45,6 +45,7 @@ namespace ImGui
         public override void OnRender(Context g)
         {
             g.DrawBoxModel(Rect, new Content(TextContext), Skin.current.Label[State]);
+            this.RenderRects.Add(Rect);
         }
 
         public override void Dispose()
@@ -55,6 +56,7 @@ namespace ImGui
         public override void OnClear(Context g)
         {
             g.FillRectangle(Rect, CairoEx.ColorWhite);
+            this.RenderRects.Add(Rect);
         }
 
         internal Label(string name, BaseForm form, string text, Rect rect) : base(name, form)

@@ -152,6 +152,13 @@ namespace ImGui
             g.FillPolygon(Points, style.FillColor);
 
             g.DrawBoxModel(TextRect, new Content(TextContext), style);
+
+            var rect = Rect;
+            foreach (var point in Points)
+            {
+                rect.Union(point);
+            }
+            this.RenderRects.Add(rect);
         }
 
         public override void Dispose()
@@ -162,6 +169,13 @@ namespace ImGui
         public override void OnClear(Context g)
         {
             g.FillPolygon(Points, CairoEx.ColorWhite);
+
+            var rect = Rect;
+            foreach (var point in Points)
+            {
+                rect.Union(point);
+            }
+            this.RenderRects.Add(rect);
         }
 
         #endregion

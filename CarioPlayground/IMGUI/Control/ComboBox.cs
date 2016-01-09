@@ -175,6 +175,8 @@ namespace ImGui
             trianglePoints[2].X = trianglePoints[0].X - 0.3 * Rect.Height;
             trianglePoints[2].Y = trianglePoints[0].Y + 0.6 * Rect.Height;
             g.StrokePolygon(trianglePoints, style.LineColor);
+
+            this.RenderRects.Add(Rect);
         }
 
         public override void Dispose()
@@ -185,6 +187,8 @@ namespace ImGui
         public override void OnClear(Context g)
         {
             g.FillRectangle(Rect, CairoEx.ColorWhite);
+
+            this.RenderRects.Add(Rect);
         }
 
 

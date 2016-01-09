@@ -13,6 +13,7 @@ namespace ImGui
         {
             g.DrawBoxModel(Rect, new Content(TextContext),
                 Result ? Skin.current.Button["Active"] : Skin.current.Button["Normal"]);
+            this.RenderRects.Add(Rect);
         }
 
         public static new bool DoControl(BaseForm form, Rect rect, string text, bool value, string name)

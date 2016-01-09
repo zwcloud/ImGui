@@ -12,7 +12,8 @@ namespace ImGui
         public override void OnRender(Context g)
         {
             g.DrawBoxModel(Rect, new Content(TextContext),
-                Actived ? Skin.current.Button["Active"] : Skin.current.Button["Normal"]);
+                Actived ? Skin.current.Button["Active"] : Skin.current.Button["Normal"]); ;
+            this.RenderRects.Add(Rect);
         }
 
         public static new bool DoControl(BaseForm form, Rect rect, string text, string groupName, bool value, string name)

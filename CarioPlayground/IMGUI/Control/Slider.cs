@@ -168,6 +168,8 @@ namespace ImGui
             g.ClosePath();
             g.SetSourceColor(CairoEx.ColorDarkBlue);
             g.Fill();
+
+            this.RenderRects.Add(Rect);
         }
 
         public override void Dispose()
@@ -177,6 +179,7 @@ namespace ImGui
         public override void OnClear(Context g)
         {
             g.FillRectangle(Rect, CairoEx.ColorWhite);
+            this.RenderRects.Add(Rect);
         }
 
         #endregion

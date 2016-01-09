@@ -1,17 +1,16 @@
 ﻿using Cairo;
+using System;
 
 namespace ImGui
 {
-    internal class RenderContext
+    internal class RenderContext : IDisposable
     {
         public Context FrontContext { get; set; }
-        public Surface FrontSurface { get; set; }
+        public ImageSurface FrontSurface { get; set; }
 
         public Context BackContext { get; set; }
-        public Surface BackSurface { get; set; }
+        public ImageSurface BackSurface { get; set; }
 
-        public bool IsReady { get { return this.BackContext != null && this.FrontContext != null; } }
-        
         /// <summary>
         /// Draw the back surface to the front surface
         /// </summary>
@@ -23,6 +22,14 @@ namespace ImGui
             this.BackSurface.Flush();
             this.FrontContext.SetSourceSurface(this.BackSurface, 0, 0);
             this.FrontContext.Paint();
+        }
+
+        public void Dispose()
+        {
+            FrontContext.Dispose();
+            FrontSurface.Dispose();
+            BackContext.Dispose();
+            BackSurface.Dispose();
         }
     }
 }

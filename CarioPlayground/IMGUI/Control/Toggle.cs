@@ -173,6 +173,8 @@ namespace ImGui
 
             var toggleTextRect = new Rect(toggleBoxRect.TopRight, Rect.BottomRight);
             g.DrawBoxModel(toggleTextRect, new Content(TextContext), style);
+
+            this.RenderRects.Add(Rect);
         }
 
         public override void Dispose()
@@ -183,6 +185,7 @@ namespace ImGui
         public override void OnClear(Context g)
         {
             g.FillRectangle(Rect, CairoEx.ColorWhite);
+            this.RenderRects.Add(Rect);
         }
 
         #endregion

@@ -186,11 +186,11 @@ namespace ImGui
         {
             TextBox textBox = (TextBox)textBoxControl;
 
-            if (Input.Keyboard.KeyPressed(Key.Home))
+            if (Input.Keyboard.KeyDown(Key.Home))
             {
                 textBox.SelectIndex = textBox.CaretIndex = 0;
             }
-            if (Input.Keyboard.KeyPressed(Key.End))
+            if (Input.Keyboard.KeyDown(Key.End))
             {
                 textBox.SelectIndex = textBox.CaretIndex = (uint)textBox.Text.Length;
             }
@@ -488,6 +488,7 @@ namespace ImGui
             {
                 g.DrawBoxModel(Rect, new Content(TextContext), style);
             }
+            this.RenderRects.Add(Rect);//TODO construct a more specific render section
         }
 
         public override void Dispose()
@@ -498,6 +499,7 @@ namespace ImGui
         public override void OnClear(Context g)
         {
             g.FillRectangle(Rect, CairoEx.ColorWhite);
+            this.RenderRects.Add(Rect);
         }
 
     }

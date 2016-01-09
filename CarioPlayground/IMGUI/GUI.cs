@@ -20,7 +20,6 @@ namespace ImGui
             DoLayout(rect);
         }
 
-        //TODO auto-size button and other controls
         public bool Button(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);

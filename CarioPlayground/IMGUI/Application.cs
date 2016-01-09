@@ -21,6 +21,11 @@ namespace ImGui
         /// </summary>
         internal static Queue<char> imeBuffer = new Queue<char>();
 
+        internal static List<BaseForm> Forms = new List<BaseForm>();
+        internal static List<BaseForm> removeList = new List<BaseForm>();
+        internal static Map _map;
+        private static readonly Stopwatch stopwatch = new Stopwatch();
+
         /// <summary>
         /// The character buffer for input from IME
         /// </summary>
@@ -29,24 +34,6 @@ namespace ImGui
             get { return imeBuffer; }
             set { imeBuffer = value; }
         }
-
-        internal static List<BaseForm> Forms;
-
-        internal static Map _map;
-
-        private static void InitSysDependencies()
-        {
-            if (Utility.CurrentOS.IsWindows)
-            {
-                _map = MapWindows.MapFactory();
-            }
-            else if(Utility.CurrentOS.IsLinux)
-            {
-                _map = MapLinux.MapFactory();
-            }
-        }
-
-        private static readonly Stopwatch stopwatch = new Stopwatch();
 
         /// <summary>
         /// Time in ms since the application started.
@@ -64,105 +51,156 @@ namespace ImGui
             }
         }
 
+        private static void InitSysDependencies()
+        {
+            if(Utility.CurrentOS.IsWindows)
+            {
+                _map = MapWindows.MapFactory();
+            }
+            else if(Utility.CurrentOS.IsLinux)
+            {
+                _map = MapLinux.MapFactory();
+            }
+        }
+
         public static void Run(Form mainForm)
         {
-            stopwatch.Start();
+            //Check paramter
             if(mainForm == null)
             {
                 throw new ArgumentNullException("mainForm");
             }
 
-            InitSysDependencies();
+            //Time
+            stopwatch.Start();
 
-            //Initialize forms
-            Forms = new List<BaseForm>();
+            //Initialize
+            InitSysDependencies();
             Forms.Add(mainForm);
             mainForm.Name = "MainForm";
-            for (int i = 0; i < Forms.Count; i++)//Only one form now
+            for (var i = 0; i < Forms.Count; i++) //Only one form now
             {
                 var form = (SFMLForm) Forms[i];
                 var window = (SFML.Window.Window) form.InternalForm;
-
                 // Setup event handlers
-                window.Closed += OnClosed;
-                window.KeyPressed += OnKeyPressed;
-                window.KeyReleased += OnKeyReleased;
-                window.Resized += OnResized;
-                window.TextEntered += OnTextEntered;
-
-                // Make it the active window for OpenGL calls
-                window.SetActive();
-
-                // Create OpenGL GUI renderer
-                form.guiRenderer = new GUIRenderer(form.Size);
-                form.guiRenderer.OnLoad();
+                InitEvents(window);
             }
 
+            //Show main form
             mainForm.Show();
 
-            while (mainForm.internalForm.IsOpen)
+            //Process every form
+            while (!mainForm.Closed)
             {
                 //Input
-                Input.Mouse.Refresh();//TODO remove this
+                Input.Mouse.Refresh(); //TODO remove this
 
                 //TODO a better method for manage newly created windows
-                for (int i = 0; i < Forms.Count; i++)
+                foreach (BaseForm baseForm in Forms)
                 {
-                    var form = (SFMLForm)Forms[i];
-                    var window = (SFML.Window.Window)form.InternalForm;
+                    var form = (SFMLForm) baseForm;
+                    var window = (SFML.Window.Window) form.InternalForm;
 
-                    bool mouseSuspended = false;
+                    var mouseSuspended = false;
                     if(!form.Focused)
                     {
                         Input.Mouse.Suspend();
                         mouseSuspended = true;
                     }
 
-                    // Start window loop
-                    if(window.IsOpen)
-                    {
-                        // Process events
-                        window.DispatchEvents();
-                        // Run GUI looper
-                        var isRepainted = form.GUILoop();
-                        if(isRepainted)
-                        {
-                            var surface = (form.FrontSurface as Cairo.ImageSurface);
-                            if(surface != null)
-                            {
-                                // Make it the active window for OpenGL calls
-                                window.SetActive();
-                                if (form.guiRenderer == null)
-                                {
-                                    form.guiRenderer = new GUIRenderer(form.Size);
-                                    form.guiRenderer.OnLoad();
-                                }
-                                //TODO update entire surface is too slow(When it happens, a CPU peak occurs.), this can be improved by only updating re-rendered section (or using cairo-gl?)
-                                form.guiRenderer.OnUpdateTexture(surface.Width, surface.Height, surface.DataPtr);
-                                form.guiRenderer.OnRenderFrame();
-                            }
-                        }
-                        // Display the rendered frame on screen
-                        window.Display();
-                    }
+                    // Process events
+                    window.DispatchEvents();
 
-                    if (mouseSuspended)
+                    // Run GUI looper
+                    var guiLoopResult = form.GUILoop();
+                    if(guiLoopResult.needExit)
+                    {
+                        removeList.Add(form);
+                        continue;
+                    }
+                    if(guiLoopResult.isRepainted)
+                    {
+                        //update re-rendered section //TODO consider using cairo-gl?
+                        var dirtyRect = Rect.Empty;
+                        foreach (var control in form.Controls.Values)
+                        {
+                            foreach (var rect in control.RenderRects)
+                            {
+                                dirtyRect.Union(rect);
+                            }
+                            control.RenderRects.Clear();
+                        }
+                        if(!dirtyRect.IsEmpty)
+                        {
+                            //Render dirty rect
+                            //using (Cairo.Context c = new Cairo.Context(form.FrontSurface))
+                            //{
+                            //    c.FillRectangle(dirtyRect, CairoEx.ColorArgb(100, 200, 242, 200));
+                            //}
+                            //Get data of pixels in dirty rect
+                            var x = (int) dirtyRect.X;
+                            var w = (int) dirtyRect.Width;
+                            var h = (int) dirtyRect.Height;
+                            var data = new byte[4*w*h];
+                            var surfaceData = form.FrontSurface.Data;
+                            var surfaceWidth = form.FrontSurface.Width;
+                            var offset = 0;
+                            for (var y = (int) dirtyRect.Y; y < dirtyRect.Bottom; y++)
+                            {
+                                Array.Copy(surfaceData, 4*(surfaceWidth*y + x), data, offset, 4*w);
+                                offset += 4*w;
+                            }
+                            // Make it the active window for OpenGL calls
+                            window.SetActive();
+                            form.guiRenderer.OnUpdateTexture(dirtyRect,
+                                System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
+                            form.guiRenderer.OnRenderFrame();
+                        }
+                    }
+                    // Display the rendered frame on screen
+                    window.Display();
+
+                    if(mouseSuspended)
                     {
                         Input.Mouse.Resume();
                     }
-
                 }
-                System.Threading.Thread.Sleep(10);//TODO Without this, High CPU rate occurs, why?
+
+                if(removeList.Count != 0)
+                {
+                    foreach (var baseForm in removeList)
+                    {
+                        baseForm.Close();
+                    }
+                    removeList.Clear();
+                }
             }
+
+            //Close unclosing forms
+            foreach (var baseForm in Forms)
+            {
+                baseForm.Close();
+            }
+
             stopwatch.Stop();
+        }
+
+        #region Window events
+
+        private static void InitEvents(SFML.Window.Window window)
+        {
+            window.Closed += OnClosed;
+            window.KeyPressed += OnKeyPressed;
+            window.KeyReleased += OnKeyReleased;
+            window.TextEntered += OnTextEntered;
         }
 
         private static void OnTextEntered(object sender, SFML.Window.TextEventArgs e)
         {
             var text = e.Unicode;
-            for (int i = 0; i < text.Length; i++)
+            for (var i = 0; i < text.Length; i++)
             {
-                if (Char.IsControl(text[i]))
+                if(Char.IsControl(text[i]))
                     continue;
                 ImeBuffer.Enqueue(text[i]);
             }
@@ -171,16 +209,16 @@ namespace ImGui
         /// <summary>
         /// Function called when the window is closed
         /// </summary>
-        static void OnClosed(object sender, EventArgs e)
+        private static void OnClosed(object sender, EventArgs e)
         {
-            SFML.Window.Window window = (SFML.Window.Window)sender;
+            var window = (SFML.Window.Window) sender;
             window.Close();
         }
 
         /// <summary>
         /// Function called when a key is pressed
         /// </summary>
-        static void OnKeyPressed(object sender, SFML.Window.KeyEventArgs e)
+        private static void OnKeyPressed(object sender, SFML.Window.KeyEventArgs e)
         {
             if(e.Code == SFML.Window.Keyboard.Key.Unknown)
             {
@@ -194,23 +232,16 @@ namespace ImGui
         /// <summary>
         /// Function called when a key is released
         /// </summary>
-        static void OnKeyReleased(object sender, SFML.Window.KeyEventArgs e)
+        private static void OnKeyReleased(object sender, SFML.Window.KeyEventArgs e)
         {
-            if (e.Code == SFML.Window.Keyboard.Key.Unknown)
+            if(e.Code == SFML.Window.Keyboard.Key.Unknown)
             {
                 return;
             }
-            Input.Keyboard.lastKeyStates[(int)e.Code] = Input.Keyboard.keyStates[(int)e.Code];
-            Input.Keyboard.keyStates[(int)e.Code] = InputState.Up;
+            Input.Keyboard.lastKeyStates[(int) e.Code] = Input.Keyboard.keyStates[(int) e.Code];
+            Input.Keyboard.keyStates[(int) e.Code] = InputState.Up;
         }
 
-        /// <summary>
-        /// Function called when the window is resized
-        /// </summary>
-        static void OnResized(object sender, SFML.Window.SizeEventArgs e)
-        {
-
-        }
-
+        #endregion
     }
 }

@@ -79,7 +79,7 @@ void main()
             GL.Enable(GL.GL_DEPTH_TEST);
             GL.ClearColor(0, 0, 0.9f, 1);
         }
-
+        
         private void CreateShaders()
         {
 			string vertexShaderSource, fragmentShaderSource;
@@ -145,7 +145,7 @@ void main()
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
 
             {
-                var textureData = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Repeat(new byte(), 4 * (int)SurfaceSize.Width * (int)SurfaceSize.Height));
+                var textureData = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Repeat((byte)255, 4 * (int)SurfaceSize.Width * (int)SurfaceSize.Height));
                 var handle = System.Runtime.InteropServices.GCHandle.Alloc(textureData, System.Runtime.InteropServices.GCHandleType.Pinned);
                 GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int)SurfaceSize.Width, (int)SurfaceSize.Height, 0, GL.GL_BGRA,
                     GL.GL_UNSIGNED_BYTE, handle.AddrOfPinnedObject());
@@ -165,12 +165,12 @@ void main()
         {
         }
 
-        public void OnUpdateTexture(int width, int height, System.IntPtr data)
+        public void OnUpdateTexture(Rect rect, System.IntPtr data)
         {
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
 			CheckEroor();
 
-            GL.TexSubImage2D(GL.GL_TEXTURE_2D, 0, 0, 0, width, height, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, data);
+            GL.TexSubImage2D(GL.GL_TEXTURE_2D, 0, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, data);
 			CheckEroor();
         }
 
