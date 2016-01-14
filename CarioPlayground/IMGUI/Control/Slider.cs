@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using Cairo;
 
-//TODO complete slider
 namespace ImGui
 {
     internal class Slider : Control

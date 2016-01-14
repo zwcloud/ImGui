@@ -86,6 +86,10 @@ namespace ImGui
             this.renderContext.Dispose();
             this.internalForm.Close();
             this.internalForm.Dispose();
+            foreach (var control in this.Controls.Values)
+            {
+                control.Dispose();
+            }
         }
 
         /// <summary>
@@ -233,6 +237,10 @@ namespace ImGui
                     removeList.Add(control.Name);
                 }
             }
+            if(Input.Keyboard.KeyDown(SFML.Window.Keyboard.Key.Escape))
+            {
+                return true;
+            }
             return false;
         }
 
@@ -288,7 +296,7 @@ namespace ImGui
                     MajorVersion = 2,
                     MinorVersion = 1
                 });
-            internalForm.SetVisible(false);//form is not show on creating
+            internalForm.SetVisible(false);//not show form on creating
             internalForm.SetVerticalSyncEnabled(true);
 
             var size = this.internalForm.Size;

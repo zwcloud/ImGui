@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define DrawDirtyRect
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -64,7 +65,10 @@ namespace ImGui
         }
 
         static Rect dirtyRect = Rect.Empty;
+        private static bool RequestQuit;
+#if DrawDirtyRect
         static Rect lastDirtyRect = Rect.Empty;
+#endif
 
         public static void Run(Form mainForm)
         {
@@ -137,7 +141,7 @@ namespace ImGui
                         {
                             // Make it the active window for OpenGL calls
                             window.SetActive();
-
+#if DrawDirtyRect
                             //Clear last dirty rect
                             if(lastDirtyRect!=Rect.Empty)
                             {
@@ -147,15 +151,21 @@ namespace ImGui
                             }
 
                             lastDirtyRect = dirtyRect;
-
+#endif
                             //Get data of pixels in dirty rect
                             {
+#if DrawDirtyRect
                                 //Save orginal surface
                                 form.DebugContext.SetSourceSurface(form.FrontSurface, 0, 0);
                                 form.DebugContext.Paint();
+#endif
 
                                 //Update repainted section
+#if DrawDirtyRect
                                 var data = GetDirtyData(dirtyRect, form.FrontSurface, CairoEx.ColorArgb(100, 200, 240, 200));
+#else
+                                var data = GetDirtyData(dirtyRect, form.FrontSurface);
+#endif
                                 form.guiRenderer.OnUpdateTexture(dirtyRect,
                                     System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
                             }
@@ -179,31 +189,44 @@ namespace ImGui
                     }
                     removeList.Clear();
                 }
+
+                if(RequestQuit)
+                {
+                    break;
+                }
             }
 
             //Close unclosing forms
             foreach (var baseForm in Forms)
             {
-                baseForm.Close();
+                if(!baseForm.Closed)
+                {
+                    baseForm.Close();
+                }
             }
 
             stopwatch.Stop();
         }
 
-        private static byte[] GetDirtyData(Rect dirtyRect, Cairo.ImageSurface surface)
+        public static void Quit()
         {
-            return GetDirtyData(dirtyRect, surface, CairoEx.ColorClear);
+            RequestQuit = true;
         }
-        private static byte[] GetDirtyData(Rect dirtyRect, Cairo.ImageSurface surface, Cairo.Color blendColor)
+
+        private static byte[] GetDirtyData(Rect rect, Cairo.ImageSurface surface)
         {
-            var x = (int) dirtyRect.X;
-            var w = (int) dirtyRect.Width;
-            var h = (int) dirtyRect.Height;
+            return GetDirtyData(rect, surface, CairoEx.ColorClear);
+        }
+        private static byte[] GetDirtyData(Rect rect, Cairo.ImageSurface surface, Cairo.Color blendColor)
+        {
+            var x = (int) rect.X;
+            var w = (int) rect.Width;
+            var h = (int) rect.Height;
             var data = new byte[4*w*h];
             var surfaceData = surface.Data;
             var surfaceWidth = surface.Width;
             var offset = 0;
-            for (var y = (int)dirtyRect.Y; y < dirtyRect.Bottom; y++)
+            for (var y = (int)rect.Y; y < rect.Bottom; y++)
             {
                 Array.Copy(surfaceData, 4 * (surfaceWidth * y + x), data, offset, 4 * w);
                 offset += 4 * w;

@@ -105,7 +105,6 @@
     <Compile Include="Content.cs" />
     <Compile Include="Control\Button.cs" />
     <Compile Include="Control\ComboBox.cs" />
-    <Compile Include="Control\Container\Border.cs" />
     <Compile Include="Control\Control.cs" />
     <Compile Include="Control\HoverButton.cs" />
     <Compile Include="Control\Image.cs" />

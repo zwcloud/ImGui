@@ -69,7 +69,6 @@ namespace ImGui
             {
                 Pango.Rectangle inkRectangle, logicRectangle;
                 layout.GetExtents(out inkRectangle, out logicRectangle);
-                //TODO which one?
                 var x = logicRectangle.X/Pango.Scale.PangoScale;
                 var y = logicRectangle.Y/Pango.Scale.PangoScale;
                 var width = logicRectangle.Width/Pango.Scale.PangoScale;

@@ -60,7 +60,7 @@ namespace ImGui
 
         public ITextContext TextContext { get; private set; }
 
-        public int SelectedIndex { get; private set; }//TODO consider remove this property
+        public int SelectedIndex { get; private set; }
         
         internal ComboBox(string name, BaseForm form, string[] texts, Rect rect)
             : base(name, form)

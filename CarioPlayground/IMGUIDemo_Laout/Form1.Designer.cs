@@ -15,7 +15,7 @@ namespace ImGuiIDemo_Layout
             var h = this.Size.Height;
             gui.BeginV();
             {
-                //gui.TitleBar(new Rect(0, 0, w, h*0.08), null, "Cloud Editor", "ApplicationTitle");
+                gui.TitleBar(new Rect(0, 0, w, h*0.08), null, "Cloud Editor", "ApplicationTitle");
                 gui.Space(new Rect(0, 0, w, h * 0.02));
                 gui.BeginH();
                 {

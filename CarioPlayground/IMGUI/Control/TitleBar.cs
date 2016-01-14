@@ -17,7 +17,7 @@
                 gui.Label(rectCaption, caption, name + "_Caption");
                 if(gui.Button(rectCloseButton, "×", name + "_CloseButton"))
                 {
-                    //TODO quit application
+                    Application.Quit();
                 }
             }
             gui.EndH();

@@ -169,19 +169,7 @@ namespace ImGui.Input
         }
 
         #endregion
-
-        #region Drag
-
-
-        public static bool MouseDraging { get; private set; }
-
-        public static IEnumerator<bool> DragChecker
-        {
-            get { return dragChecker; }
-        }
-
-        #endregion
-
+        
         internal static readonly StateMachine stateMachine = new StateMachine(MouseState.Idle, states);
 
         static Mouse()
@@ -224,9 +212,6 @@ namespace ImGui.Input
             var B = stateMachine.CurrentState;
             System.Diagnostics.Debug.WriteLineIf(A != B, string.Format("Mouse {0}=>{1}", A, B));
 #endif
-            
-            DragChecker.MoveNext();
-            MouseDraging = DragChecker.Current;
 
             return true;
         }
@@ -256,78 +241,6 @@ namespace ImGui.Input
                 System.Diagnostics.Debug.Assert(suspendedState != null);
                 stateMachine.CurrentState = suspendedState;
                 suspendedState = null;
-            }
-        }
-        
-        private static IEnumerator<bool> dragChecker = DragStateMachine.Instance.GetEnumerator();
-
-        class DragStateMachine : IEnumerable<bool>
-        {
-            enum DragState
-            {
-                One,
-                Two,
-                Three
-            }
-
-            private static DragStateMachine instance;
-            public static DragStateMachine Instance
-            {
-                get
-                {
-                    if(instance == null)
-                        instance = new DragStateMachine();
-                    return instance;
-                }
-            }
-
-            private DragState state;
-
-            public IEnumerator<bool> GetEnumerator()
-            {
-                while(true)
-                {
-                    switch(state)
-                    {
-                        case DragState.One:
-                            if(LastLeftButtonState == InputState.Up && LeftButtonState == InputState.Down)
-                            {
-                                state = DragState.Two;
-                            }
-                            yield return false;
-                            break;
-                        case DragState.Two:
-                            if(LeftButtonState == InputState.Up)
-                            {
-                                yield return false;
-                            }
-                            if(!MouseMoving)
-                            {
-                                yield return false;
-                            }
-                            state = DragState.Three;
-                            yield return true;
-                            break;
-                        case DragState.Three:
-                            if(LeftButtonState == InputState.Up)
-                            {
-                                state = DragState.One;
-                                yield return false;
-                            }
-                            else
-                            {
-                                yield return true;
-                            }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
             }
         }
     }

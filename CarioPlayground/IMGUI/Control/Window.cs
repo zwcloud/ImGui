@@ -108,7 +108,6 @@ namespace ImGui
 
         #endregion
 
-        //TODO Control-less DoControl overload (without name parameter)
         internal static void DoControl(BaseForm form, Rect rect, GUI.WindowFunction func, string name)
         {
             if (!form.Controls.ContainsKey(name))

@@ -11,11 +11,9 @@ namespace ImGuiDemo
 
         private readonly Calc calc = new Calc();
         
-        private Texture myImage = new Texture(@"W:\VS2013\IMGUI\IMGUIDemo\empowered-by-gnu.png");
-
         protected override void OnGUI(GUI gui)
         {
-            gui.Label(new Rect(0, 0, this.Size.Width, 20), "IMGUI Demo project", "a simple calculator");
+            gui.Label(new Rect(0, 0, this.Size.Width, 20), "Demo project", "a simple calculator");
 
             if(Current != ButtonType.Idle)
                 Last = Current;

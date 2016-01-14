@@ -5,10 +5,10 @@
         protected Form(int width, int height)
             : base(width, height)
         {
-            //this.internalForm.MouseButtonPressed += OnMouseButtonPressed;
-            //this.internalForm.MouseMoved += OnMouseMoved;
-            //this.internalForm.MouseButtonReleased += OnMouseButtonReleased;
-            //IsWinddowDragable = true;
+            this.internalForm.MouseButtonPressed += OnMouseButtonPressed;
+            this.internalForm.MouseMoved += OnMouseMoved;
+            this.internalForm.MouseButtonReleased += OnMouseButtonReleased;
+            IsWinddowDragable = true;
         }
 
         #region Implementation of IDragableWindow

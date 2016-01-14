@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Context = Cairo.Context;
 using Key = SFML.Window.Keyboard.Key;
 
+//TODO construct a more specific render section
 namespace ImGui
 {
     internal class TextBox : Control
@@ -405,7 +406,7 @@ namespace ImGui
             if (active)
             {
                 State = "Active";
-                NeedRepaint = true;//TODO Render tree
+                NeedRepaint = true;
             }
             else if (hover)
             {
@@ -488,7 +489,7 @@ namespace ImGui
             {
                 g.DrawBoxModel(Rect, new Content(TextContext), style);
             }
-            this.RenderRects.Add(Rect);//TODO construct a more specific render section
+            this.RenderRects.Add(Rect);
         }
 
         public override void Dispose()

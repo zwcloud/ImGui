@@ -7,6 +7,23 @@ namespace ImGui
             Horizontal,
             Vertical,
         }
+
+        struct LayoutGroup
+        {
+            public readonly LayoutMode mode;
+            public readonly Point point;
+            public readonly Size size;
+            public readonly Vector offset;
+
+            public LayoutGroup(LayoutMode mode, Point point, Size size)
+            {
+                this.mode = mode;
+                this.point = point;
+                this.size = size;
+                this.offset = Vector.Zero;
+            }
+        }
+
         #region State machine define
         static class GUIState
         {
@@ -38,9 +55,7 @@ namespace ImGui
         private Point currentPoint;
         private Size currentSize;
 
-        private readonly System.Collections.Generic.Stack<Point> pointStack = new System.Collections.Generic.Stack<Point>(8);
-        private readonly System.Collections.Generic.Stack<LayoutMode> modeStack = new System.Collections.Generic.Stack<LayoutMode>(8);
-        private readonly System.Collections.Generic.Stack<Size> sizeStack = new System.Collections.Generic.Stack<Size>(8);
+        private readonly System.Collections.Generic.Stack<LayoutGroup> groupStack = new System.Collections.Generic.Stack<LayoutGroup>(8);
 
         private bool Layouting { get; set; }
 
@@ -49,10 +64,8 @@ namespace ImGui
             //System.Diagnostics.Debug.WriteLine("BeginGroup {0}", mode, null);
             if(stateMachine.MoveNext(GUICommand.BeginGroup))
             {
-                pointStack.Push(currentPoint);
-                modeStack.Push(currentMode);
-                sizeStack.Push(currentSize);
-
+                groupStack.Push(new LayoutGroup(currentMode, currentPoint, currentSize));
+                
                 currentMode = mode;
                 currentSize = new Size();
                 Layouting = true;
@@ -73,21 +86,19 @@ namespace ImGui
 
             if(stateMachine.MoveNext(GUICommand.EndGroup))
             {
-                var oldPoint = pointStack.Pop();
-                var oldMode = modeStack.Pop();
-                var oldSize = sizeStack.Pop();
+                var oldGroup = groupStack.Pop();
 
-                if(oldMode == LayoutMode.Horizontal && currentMode == LayoutMode.Vertical)
+                if(oldGroup.mode == LayoutMode.Horizontal && currentMode == LayoutMode.Vertical)
                 {
-                    currentPoint = new Point(oldPoint.X + currentSize.Width, oldPoint.Y);
+                    currentPoint = new Point(oldGroup.point.X + currentSize.Width, oldGroup.point.Y);
                 }
-                else if(oldMode == LayoutMode.Vertical && currentMode == LayoutMode.Horizontal)
+                else if(oldGroup.mode == LayoutMode.Vertical && currentMode == LayoutMode.Horizontal)
                 {
-                    currentPoint = new Point(oldPoint.X, oldPoint.Y + currentSize.Height);
+                    currentPoint = new Point(oldGroup.point.X, oldGroup.point.Y + currentSize.Height);
                 }
 
-                currentMode = oldMode;
-                if(pointStack.Count == 0)
+                currentMode = oldGroup.mode;
+                if(groupStack.Count == 0)
                 {
                     Layouting = false;
                 }

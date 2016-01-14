@@ -107,6 +107,12 @@ namespace ImGui
             return ImGui.MenuItem.DoControl(rect, text, name);
         }
 
+        #region group methods
+        public void BeginHScroll() { }
+
+        public void EndHScroll() { }
+        #endregion
+
         #region layout methods
         public void BeginH()
         {
