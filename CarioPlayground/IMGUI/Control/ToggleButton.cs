@@ -3,7 +3,7 @@ namespace ImGui
 {
     internal class ToggleButton : Toggle
     {
-        public ToggleButton(string name, BaseForm form, bool value, string text, Rect rect)
+        public ToggleButton(string name, Form form, bool value, string text, Rect rect)
             : base(name, form, value, text, rect)
         {
 
@@ -16,7 +16,7 @@ namespace ImGui
             this.RenderRects.Add(Rect);
         }
 
-        public static new bool DoControl(BaseForm form, Rect rect, string text, bool value, string name)
+        public static new bool DoControl(Form form, Rect rect, string text, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

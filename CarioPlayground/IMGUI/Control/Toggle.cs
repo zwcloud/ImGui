@@ -9,7 +9,7 @@ namespace ImGui
         private string text;
         private readonly StateMachine stateMachine;
 
-        internal Toggle(string name, BaseForm form, bool value, string displayText, Rect rect)
+        internal Toggle(string name, Form form, bool value, string displayText, Rect rect)
             : base(name, form)
         {
             Rect = rect;
@@ -49,7 +49,7 @@ namespace ImGui
 
         public bool Result { get; private set; }
 
-        internal static bool DoControl(BaseForm form, Rect rect, string displayText, bool value, string name)
+        internal static bool DoControl(Form form, Rect rect, string displayText, bool value, string name)
         {
             if(!form.Controls.ContainsKey(name))
             {

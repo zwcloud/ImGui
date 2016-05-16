@@ -126,7 +126,7 @@ namespace ImGui
             get { return System.Text.Encoding.UTF8.GetBytes(Text); }
         }
 
-        public TextBox(string name, BaseForm form, string text, Rect rect)
+        public TextBox(string name, Form form, string text, Rect rect)
             : base(name, form)
         {
             stateMachine = new StateMachineEx(TextBoxState.Normal, states, callBacks);
@@ -145,7 +145,7 @@ namespace ImGui
             Text = text;
         }
 
-        internal static string DoControl(BaseForm form, Rect rect, string text, string name)
+        internal static string DoControl(Form form, Rect rect, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

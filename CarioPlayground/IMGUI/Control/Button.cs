@@ -127,7 +127,7 @@ namespace ImGui
             this.RenderRects.Add(Rect);
         }
 
-        internal Button(string name, BaseForm form, string text, Rect rect)
+        internal Button(string name, Form form, string text, Rect rect)
             : base(name, form)
         {
             stateMachine = new StateMachine(ButtonState.Normal, states);
@@ -153,7 +153,7 @@ namespace ImGui
             //}
         }
 
-        internal static bool DoControl(BaseForm form, Rect rect, string text, string name)
+        internal static bool DoControl(Form form, Rect rect, string text, string name)
         {
             //The control hasn't been created, create it.
             if (!form.Controls.ContainsKey(name))

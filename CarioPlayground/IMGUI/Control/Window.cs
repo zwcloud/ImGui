@@ -6,12 +6,12 @@ namespace ImGui
 {
     class Window : Control
     {
-        sealed class ImmediateForm : BorderlessForm
+        sealed class ImmediateForm : Form
         {
             private GUI.WindowFunction Func { get; set; }
 
             public bool Actived { private get; set; }
-            public ImmediateForm(Rect rect, GUI.WindowFunction func, BaseForm parentForm)
+            public ImmediateForm(Rect rect, GUI.WindowFunction func, Form parentForm)
                 : base((int)rect.Width, (int)rect.Height)
             {
                 var handle = internalForm.SystemHandle;
@@ -77,7 +77,7 @@ namespace ImGui
 
         private readonly ImmediateForm innerForm;
         
-        public Window(string name, BaseForm form, Rect rect, GUI.WindowFunction func)
+        public Window(string name, Form form, Rect rect, GUI.WindowFunction func)
             : base(name, form)
         {
             Rect = rect;
@@ -108,7 +108,7 @@ namespace ImGui
 
         #endregion
 
-        internal static void DoControl(BaseForm form, Rect rect, GUI.WindowFunction func, string name)
+        internal static void DoControl(Form form, Rect rect, GUI.WindowFunction func, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

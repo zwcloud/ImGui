@@ -40,7 +40,7 @@ namespace ImGui
         private readonly StateMachine stateMachine;
 
         public string[] Texts { get; private set; }
-        public BorderlessForm ItemsContainer { get; private set; }
+        public Form ItemsContainer { get; private set; }
 
         private string text;
         public string Text
@@ -62,7 +62,7 @@ namespace ImGui
 
         public int SelectedIndex { get; private set; }
         
-        internal ComboBox(string name, BaseForm form, string[] texts, Rect rect)
+        internal ComboBox(string name, Form form, string[] texts, Rect rect)
             : base(name, form)
         {
             Rect = rect;
@@ -92,7 +92,7 @@ namespace ImGui
                 });
         }
 
-        internal static int DoControl(BaseForm form, Rect rect, string[] texts, int selectedIndex, string name)
+        internal static int DoControl(Form form, Rect rect, string[] texts, int selectedIndex, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
@@ -195,7 +195,7 @@ namespace ImGui
         #endregion
     }
 
-    internal sealed class ComboxBoxItemsForm : BorderlessForm
+    internal sealed class ComboxBoxItemsForm : Form
     {
         private Rect Rect { get; set; }
         private readonly List<string> TextList;

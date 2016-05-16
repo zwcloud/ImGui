@@ -1,5 +1,4 @@
-﻿using Cairo;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -17,7 +16,7 @@ namespace ImGui
         /// <summary>
         /// Position of the form
         /// </summary>
-        public override Point Position
+        public Point Position
         {
             get
             {
@@ -30,7 +29,7 @@ namespace ImGui
         /// <summary>
         /// Size of the form
         /// </summary>
-        public override Size Size
+        public Size Size
         {
             get
             {
@@ -43,7 +42,7 @@ namespace ImGui
         /// <summary>
         /// Cursor of the form (not implemented)
         /// </summary>
-        public override Cursor Cursor
+        public Cursor Cursor
         {
             set
             {
@@ -64,7 +63,7 @@ namespace ImGui
         /// <summary>
         /// Is the form focused? (readonly)
         /// </summary>
-        public override bool Focused
+        public bool Focused
         {
             get { return internalForm.HasFocus(); }
         }
@@ -74,35 +73,26 @@ namespace ImGui
         /// </summary>
         public bool Visible { get; private set; }
 
-        public override bool Closed { get { return closed; } }
+        public bool Closed { get { return closed; } }
 
         /// <summary>
         /// Close the form and distroy it.
         /// </summary>
-        public override void Close()
+        public virtual void Close()
         {
             this.closed = true;
             this.Visible = false;
-            this.renderContext.Dispose();
             this.internalForm.Close();
             this.internalForm.Dispose();
-            foreach (var control in this.Controls.Values)
-            {
-                control.Dispose();
-            }
         }
 
         /// <summary>
         /// Show the form only if it is hiden
         /// </summary>
-        public override void Show()
+        public virtual void Show()
         {
             if(!this.Visible)
             {
-                foreach (var control in Controls.Values)
-                {
-                    control.NeedRepaint = true;
-                }
 
                 this.internalForm.SetVisible(true);
                 this.Visible = true;
@@ -112,7 +102,7 @@ namespace ImGui
         /// <summary>
         /// Hide the form only if it is shown
         /// </summary>
-        public override void Hide()
+        public void Hide()
         {
             if(this.Visible)
             {
@@ -121,7 +111,7 @@ namespace ImGui
             }
         }
 
-        internal override object InternalForm
+        public object InternalForm
         {
             get { return internalForm; }
         }
@@ -137,151 +127,8 @@ namespace ImGui
 
         internal SFML.Window.Window internalForm;
 
-        internal GUIRenderer guiRenderer;
-
-        internal ImageSurface FrontSurface
-        {
-            get { return renderContext.FrontSurface; }
-        }
-
-        internal ImageSurface DebugSurface
-        {
-            get { return renderContext.DebugSurface; }
-        }
-
-        internal Context DebugContext
-        {
-            get { return renderContext.DebugContext; }
-        }
-
-        #region the GUI Loop
-
-        internal struct GUILoopResult
-        {
-            public readonly bool needExit;
-            public readonly bool isRepainted;
-
-            public GUILoopResult(bool needExit, bool isRepainted)
-            {
-                this.isRepainted = isRepainted;
-                this.needExit = needExit;
-            }
-        }
-
-        /// <summary>
-        /// GUI Loop
-        /// </summary>
-        /// <returns>true:need repaint / false: not repaint</returns>
-        internal GUILoopResult GUILoop()
-        {
-            OnGUI(GUI);
-
-            bool needExit, isRepainted = false;
-            needExit = Update();
-            if(this.Visible)
-            {
-                isRepainted = Render();
-                isRepainted = isRepainted || Clear();
-            }
-            return new GUILoopResult(needExit, isRepainted);
-        }
-
-        private GUI GUI { get; set; }
-        private RenderContext renderContext;
-
-        /// <summary>
-        /// Call this to initialize GUI
-        /// </summary>
-        private void InitGUI()
-        {
-            var clientWidth = (int) internalForm.Size.X;
-            var clientHeight = (int) internalForm.Size.Y;
-
-            //build all surface
-            renderContext = new RenderContext();
-            renderContext.BackSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
-                CairoEx.ColorWhite, Format.Argb32);
-            renderContext.BackContext = new Context(renderContext.BackSurface);
-            renderContext.FrontSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
-                CairoEx.ColorWhite, Format.Argb32);
-            renderContext.FrontContext = new Context(renderContext.FrontSurface);
-
-            renderContext.DebugSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
-                CairoEx.ColorClear, Format.Argb32);
-            renderContext.DebugContext = new Context(renderContext.DebugSurface);
-
-            //create GUI
-            GUI = new GUI(renderContext.BackContext, this);
-        }
-        
-        private readonly List<string> removeList = new List<string>();
         private bool closed = false;
 
-        private bool Update()
-        {
-            foreach (var controlName in removeList)
-            {
-                var result = Controls.Remove(controlName);
-                Debug.WriteLineIf(!result, "Remove failed");
-            }
-            removeList.Clear();
-            foreach (var control in Controls.Values)
-            {
-                if(control.Active)
-                {
-                    control.OnUpdate();
-                    control.Active = false;
-                }
-                else
-                {
-                    removeList.Add(control.Name);
-                }
-            }
-            if(Input.Keyboard.KeyDown(SFML.Window.Keyboard.Key.Escape))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private bool Render()
-        {
-            var renderHappend = false;
-            foreach (var control in Controls.Values)
-            {
-                if(control.NeedRepaint)
-                {
-                    renderHappend = true;
-                    control.OnRender(renderContext.BackContext);
-                    control.NeedRepaint = false;
-                }
-            }
-
-            if(renderHappend)
-            {
-                renderContext.SwapSurface();
-            }
-
-            return renderHappend;
-        }
-
-        private bool Clear()
-        {
-            bool cleared = removeList.Count != 0;
-            foreach (var controlName in removeList)
-            {
-                var control = Controls[controlName];
-                control.OnClear(renderContext.BackContext);
-                control.Dispose();
-            }
-            if(cleared)
-            {
-                renderContext.SwapSurface();
-            }
-            return cleared;
-        }
-
-        #endregion
 
         protected SFMLForm(int width, int height)
         {
@@ -299,14 +146,9 @@ namespace ImGui
             internalForm.SetVisible(false);//not show form on creating
             internalForm.SetVerticalSyncEnabled(true);
 
-            var size = this.internalForm.Size;
-            guiRenderer = new GUIRenderer(new Size(size.X, size.Y));
             this.internalForm.SetActive(true);
-            guiRenderer.OnLoad();
 
             Visible = false;
-            controls = new Dictionary<string, Control>();
-            InitGUI();
         }
 
         #endregion

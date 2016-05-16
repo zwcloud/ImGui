@@ -13,6 +13,7 @@ namespace ImGuiIDemo_Layout
         {
             var w = this.Size.Width;
             var h = this.Size.Height;
+#if false
             gui.BeginV();
             {
                 gui.TitleBar(new Rect(0, 0, w, h*0.08), null, "Cloud Editor", "ApplicationTitle");
@@ -50,6 +51,18 @@ namespace ImGuiIDemo_Layout
                 gui.EndH();
             }
             gui.EndV();
+#endif
+            //gui.BeginHBox(new Rect(40,40, 400, 300));
+            //{
+            //    gui.Button(new Rect(100, 100), "dummy0", "dummy0");
+            //    gui.Button(new Rect(100, 100), "dummy1", "dummy1");
+            //    gui.Button(new Rect(100, 100), "dummy2", "dummy2");
+            //    gui.Button(new Rect(100, 100), "dummy3", "dummy3");
+            //    gui.Button(new Rect(100, 100), "dummy4", "dummy4");
+            //}
+            //gui.EndHBox();
+
+
         }
     }
 

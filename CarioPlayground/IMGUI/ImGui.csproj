@@ -135,7 +135,6 @@
     <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
     <Compile Include="GUIRenderer.cs" />
-    <Compile Include="IDragableWindow.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />

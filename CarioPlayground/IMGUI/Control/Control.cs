@@ -15,7 +15,7 @@ namespace ImGui
     {
         private string name;
 
-        protected Control(string name, BaseForm form)
+        protected Control(string name, Form form)
         {
             Form = form;
             Name = name;
@@ -39,7 +39,7 @@ namespace ImGui
         }
 
         public string State { get; set; }
-        internal BaseForm Form { get; set; }
+        internal Form Form { get; set; }
         public bool Active { get; set; }
         public Rect Rect { get; protected set; }
 

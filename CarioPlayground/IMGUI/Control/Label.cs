@@ -59,7 +59,7 @@ namespace ImGui
             this.RenderRects.Add(Rect);
         }
 
-        internal Label(string name, BaseForm form, string text, Rect rect) : base(name, form)
+        internal Label(string name, Form form, string text, Rect rect) : base(name, form)
         {
             Rect = rect;
             Text = text;
@@ -75,7 +75,7 @@ namespace ImGui
                 textStyle.TextAlignment);
         }
 
-        internal static void DoControl(Context g, BaseForm form, Rect rect, string text, string name)
+        internal static void DoControl(Context g, Form form, Rect rect, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

@@ -7,9 +7,9 @@ namespace ImGui
         public delegate bool WindowFunction(GUI gui);
 
         private readonly Context g;
-        private readonly BaseForm form;
+        private readonly Form form;
         
-        public GUI(Context context, BaseForm form)
+        public GUI(Context context, Form form)
         {
             this.g = context;
             this.form = form;

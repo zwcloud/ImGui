@@ -10,12 +10,12 @@ namespace ImGui
         private INode<MenuItem> topItem;
         private INode<MenuItem> currentItem;
 
-        public Menu(string name, BaseForm form, string text, Rect rect)
+        public Menu(string name, Form form, string text, Rect rect)
         {
             //topItem = menuTree.AddChild(MenuItem.Dummy);
         }
 
-        void BeginGroup(string name, BaseForm form, string text, Rect rect)
+        void BeginGroup(string name, Form form, string text, Rect rect)
         {
             if(currentItem == null)
             {
@@ -33,7 +33,7 @@ namespace ImGui
             currentItem = currentItem.Parent;
         }
 
-        void AddItem(string name, BaseForm form, string text, Rect rect)
+        void AddItem(string name, Form form, string text, Rect rect)
         {
             if (currentItem == null)
             {

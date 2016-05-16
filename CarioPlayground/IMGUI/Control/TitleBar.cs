@@ -2,7 +2,7 @@
 {
     internal static class TitleBar
     {
-        public static void DoControl(GUI gui, Rect rect, Texture iconTexture, string caption, BaseForm form, string name)
+        public static void DoControl(GUI gui, Rect rect, Texture iconTexture, string caption, Form form, string name)
         {
             if(rect.Height > rect.Width)
             {

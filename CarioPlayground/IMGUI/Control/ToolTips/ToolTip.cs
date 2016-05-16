@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace ImGui
 {
+#if f
     public sealed class ToolTip : BorderlessForm
     {
         internal enum ToopTipState
@@ -100,5 +101,6 @@ namespace ImGui
             gui.Label(new Rect((Size)Skin.current.ToolTip.ExtraStyles["FixedSize"]), TipText, "ToolTipLabel");
         }
     }
+#endif
 
 }

@@ -197,7 +197,7 @@ namespace ImGui
             }
         }
 
-        public static Rect GetScreenRect(Rect rect, BaseForm form)
+        public static Rect GetScreenRect(Rect rect, Form form)
         {
             var sfmlWindow =  ((SFML.Window.Window) (form.InternalForm));
             var posInWindow = new SFML.System.Vector2i((int)rect.X, (int)rect.Y);
@@ -220,7 +220,7 @@ namespace ImGui
             return rect;
         }
 
-        public static Point ScreenToClient(Point point, BaseForm form)
+        public static Point ScreenToClient(Point point, Form form)
         {
             var sfmlWindow = ((SFML.Window.Window)(form.InternalForm));
             var posInScreen = new SFML.System.Vector2i((int)point.X, (int)point.Y);
@@ -244,7 +244,7 @@ namespace ImGui
             return point;
         }
 
-        public static Point ClientToScreen(Point point, BaseForm form)
+        public static Point ClientToScreen(Point point, Form form)
         {
             var sfmlWindow = ((SFML.Window.Window)(form.InternalForm));
             var posInClient = new SFML.System.Vector2i((int)point.X, (int)point.Y);

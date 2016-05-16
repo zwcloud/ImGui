@@ -100,7 +100,7 @@ namespace ImGui
         }
 
 
-        public Radio(string name, BaseForm form, string text, Rect rect, string groupName)
+        public Radio(string name, Form form, string text, Rect rect, string groupName)
             : base(name, form)
         {
             Rect = rect;
@@ -120,7 +120,7 @@ namespace ImGui
                 textStyle.TextAlignment);
         }
 
-        public static bool DoControl(BaseForm form, Rect rect, string text, string groupName, bool value, string name)
+        public static bool DoControl(Form form, Rect rect, string text, string groupName, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

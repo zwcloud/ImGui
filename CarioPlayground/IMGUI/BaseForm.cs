@@ -1,58 +1,8 @@
 using System.Collections.Generic;
 namespace ImGui
 {
-    public abstract class BaseForm : IWindow
+    public interface BaseForm : IWindow
     {
-        internal Dictionary<string, Control> controls;
-        internal abstract object InternalForm { get; }
-
-        internal System.Collections.Generic.Dictionary<string, Control> Controls
-        {
-            get { return controls; }
-        }
-
-        #region Implementation of IWindow
-
-        /// <summary>
-        /// Position of the form
-        /// </summary>
-        public abstract Point Position { get; set; }
-
-        /// <summary>
-        /// Size of the form
-        /// </summary>
-        public abstract Size Size { get; set; }
-
-        /// <summary>
-        /// Cursor of the form (not implemented)
-        /// </summary>
-        public abstract Cursor Cursor { set; }
-
-        /// <summary>
-        /// Is the form focused? (readonly)
-        /// </summary>
-        public abstract bool Focused { get; }
-
-        /// <summary>
-        /// Is the form closed? (readonly)
-        /// </summary>
-        public abstract bool Closed { get; }
-
-        /// <summary>
-        /// Close the form and distroy it.
-        /// </summary>
-        public abstract void Close();
-
-        /// <summary>
-        /// Show the form only if it is hiden
-        /// </summary>
-        public abstract void Show();
-
-        /// <summary>
-        /// Hide the form only if it is shown
-        /// </summary>
-        public abstract void Hide();
-
-        #endregion
+        object InternalForm { get; }
     }
 }

@@ -4,7 +4,7 @@ namespace ImGui
 {
     class RadioButton : Radio
     {
-        public RadioButton(string name, BaseForm form, string text, Rect rect, string groupName)
+        public RadioButton(string name, Form form, string text, Rect rect, string groupName)
             : base(name, form, text, rect, groupName)
         {
         }
@@ -16,7 +16,7 @@ namespace ImGui
             this.RenderRects.Add(Rect);
         }
 
-        public static new bool DoControl(BaseForm form, Rect rect, string text, string groupName, bool value, string name)
+        public static new bool DoControl(Form form, Rect rect, string text, string groupName, bool value, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {

@@ -1,68 +1,198 @@
-﻿namespace ImGui
+﻿using Cairo;
+using System.Collections.Generic;
+using System.Diagnostics;
+
+namespace ImGui
 {
-    public abstract class Form : SFMLForm, IDragableWindow
+    public abstract class Form : SFMLForm
     {
+        internal Dictionary<string, Control> controls;
+        internal Dictionary<string, Control> Controls
+        {
+            get { return controls; }
+        }
+
         protected Form(int width, int height)
             : base(width, height)
         {
-            this.internalForm.MouseButtonPressed += OnMouseButtonPressed;
-            this.internalForm.MouseMoved += OnMouseMoved;
-            this.internalForm.MouseButtonReleased += OnMouseButtonReleased;
-            IsWinddowDragable = true;
+            controls = new Dictionary<string, Control>();
+            var size = this.internalForm.Size;
+            guiRenderer = new GUIRenderer(new Size(size.X, size.Y));
+            guiRenderer.OnLoad();
+            InitGUI();
         }
 
-        #region Implementation of IDragableWindow
+        internal GUIRenderer guiRenderer;
 
-        private SFML.System.Vector2i grabbedOffset;
-        private bool isWindowGrabbed;
-
-        internal bool IsWinddowDragable { private get; set; }
-
-        public void OnMouseButtonPressed(object sender, SFML.Window.MouseButtonEventArgs e)
+        internal ImageSurface FrontSurface
         {
-            if(!IsWinddowDragable)
-            {
-                return;
-            }
-
-            var window = (SFML.Window.Window)sender;
-            if (e.Button == SFML.Window.Mouse.Button.Left)
-            {
-                grabbedOffset = window.Position - SFML.Window.Mouse.GetPosition();
-                isWindowGrabbed = true;
-            }
+            get { return renderContext.FrontSurface; }
         }
 
-        public void OnMouseMoved(object sender, SFML.Window.MouseMoveEventArgs e)
+        internal ImageSurface DebugSurface
         {
-            if (!IsWinddowDragable)
-            {
-                return;
-            }
+            get { return renderContext.DebugSurface; }
+        }
 
-            var window = (SFML.Window.Window)sender;
-            if (isWindowGrabbed)
+        internal Context DebugContext
+        {
+            get { return renderContext.DebugContext; }
+        }
+
+        #region Overrides of SFMLForm
+
+        public override void Show()
+        {
+            base.Show();
+            if(!Visible)
             {
-                var position = SFML.Window.Mouse.GetPosition();
-                var newPosition = position + grabbedOffset;
-                if (window.Position != newPosition)
+                foreach (var control in Controls.Values)
                 {
-                    window.Position = newPosition;
+                    control.NeedRepaint = true;
                 }
             }
         }
 
-        public void OnMouseButtonReleased(object sender, SFML.Window.MouseButtonEventArgs e)
+        #region Overrides of SFMLForm
+
+        public override void Close()
         {
-            if (!IsWinddowDragable)
+            this.renderContext.Dispose();
+            foreach (var control in this.Controls.Values)
             {
-                return;
+                control.Dispose();
+            }
+            base.Close();
+        }
+
+        #endregion
+
+        #endregion
+
+        #region the GUI Loop
+
+        internal struct GUILoopResult
+        {
+            public readonly bool needExit;
+            public readonly bool isRepainted;
+
+            public GUILoopResult(bool needExit, bool isRepainted)
+            {
+                this.isRepainted = isRepainted;
+                this.needExit = needExit;
+            }
+        }
+
+        /// <summary>
+        /// GUI Loop
+        /// </summary>
+        /// <returns>true:need repaint / false: not repaint</returns>
+        internal GUILoopResult GUILoop()
+        {
+            OnGUI(GUI);
+
+            bool needExit, isRepainted = false;
+            needExit = Update();
+            if (this.Visible)
+            {
+                isRepainted = Render();
+                isRepainted = isRepainted || Clear();
+            }
+            return new GUILoopResult(needExit, isRepainted);
+        }
+
+        private GUI GUI { get; set; }
+        private RenderContext renderContext;
+
+        /// <summary>
+        /// Call this to initialize GUI
+        /// </summary>
+        private void InitGUI()
+        {
+            var clientWidth = (int)internalForm.Size.X;
+            var clientHeight = (int)internalForm.Size.Y;
+
+            //build all surface
+            renderContext = new RenderContext();
+            renderContext.BackSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
+                CairoEx.ColorWhite, Format.Argb32);
+            renderContext.BackContext = new Context(renderContext.BackSurface);
+            renderContext.FrontSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
+                CairoEx.ColorWhite, Format.Argb32);
+            renderContext.FrontContext = new Context(renderContext.FrontSurface);
+
+            renderContext.DebugSurface = CairoEx.BuildSurface(clientWidth, clientHeight,
+                CairoEx.ColorClear, Format.Argb32);
+            renderContext.DebugContext = new Context(renderContext.DebugSurface);
+
+            //create GUI
+            GUI = new GUI(renderContext.BackContext, this);
+        }
+
+        private readonly List<string> removeList = new List<string>();
+
+        private bool Update()
+        {
+            foreach (var controlName in removeList)
+            {
+                var result = Controls.Remove(controlName);
+                Debug.WriteLineIf(!result, "Remove failed");
+            }
+            removeList.Clear();
+            foreach (var control in Controls.Values)
+            {
+                if (control.Active)
+                {
+                    control.OnUpdate();
+                    control.Active = false;
+                }
+                else
+                {
+                    removeList.Add(control.Name);
+                }
+            }
+            if (Input.Keyboard.KeyDown(SFML.Window.Keyboard.Key.Escape))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool Render()
+        {
+            var renderHappend = false;
+            foreach (var control in Controls.Values)
+            {
+                if (control.NeedRepaint)
+                {
+                    renderHappend = true;
+                    control.OnRender(renderContext.BackContext);
+                    control.NeedRepaint = false;
+                }
             }
 
-            if (e.Button == SFML.Window.Mouse.Button.Left)
+            if (renderHappend)
             {
-                isWindowGrabbed = false;
+                renderContext.SwapSurface();
             }
+
+            return renderHappend;
+        }
+
+        private bool Clear()
+        {
+            bool cleared = removeList.Count != 0;
+            foreach (var controlName in removeList)
+            {
+                var control = Controls[controlName];
+                control.OnClear(renderContext.BackContext);
+                control.Dispose();
+            }
+            if (cleared)
+            {
+                renderContext.SwapSurface();
+            }
+            return cleared;
         }
 
         #endregion

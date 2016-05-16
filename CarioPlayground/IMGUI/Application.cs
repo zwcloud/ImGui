@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace ImGui
 {
@@ -22,8 +23,8 @@ namespace ImGui
         /// </summary>
         internal static Queue<char> imeBuffer = new Queue<char>();
 
-        internal static List<BaseForm> Forms = new List<BaseForm>();
-        internal static List<BaseForm> removeList = new List<BaseForm>();
+        internal static List<Form> Forms = new List<Form>();
+        internal static List<Form> removeList = new List<Form>();
         internal static Map _map;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
@@ -72,6 +73,7 @@ namespace ImGui
 
         public static void Run(Form mainForm)
         {
+            #region Init
             //Check paramter
             if(mainForm == null)
             {
@@ -80,34 +82,37 @@ namespace ImGui
 
             //Time
             stopwatch.Start();
+            var debugWatch = new Stopwatch();
+            debugWatch.Start();
 
             //Initialize
             InitSysDependencies();
-            Forms.Add(mainForm);
             mainForm.Name = "MainForm";
-            for (var i = 0; i < Forms.Count; i++) //Only one form now
-            {
-                var form = (SFMLForm) Forms[i];
-                var window = (SFML.Window.Window) form.InternalForm;
-                // Setup event handlers
-                InitEvents(window);
-            }
+            InitEvents(mainForm.internalForm);
+
+            Forms.Add(mainForm);
 
             //Show main form
             mainForm.Show();
 
+            Debug.WriteLine("Init {0}ms", debugWatch.ElapsedMilliseconds);
+            debugWatch.Restart();
+            #endregion
+
+            #region Main loop
             //Process every form
             while (!mainForm.Closed)
             {
+                mainForm.internalForm.SetTitle(stopwatch.ElapsedMilliseconds + "ms");
+                stopwatch.Restart();
+
                 //Input
                 Input.Mouse.Refresh(); //TODO remove this
 
-                //TODO a better method for manage newly created windows
-                foreach (BaseForm baseForm in Forms)
+                foreach (Form baseForm in Forms.ToList())
                 {
-                    var form = (SFMLForm) baseForm;
+                    var form = baseForm;
                     var window = (SFML.Window.Window) form.InternalForm;
-
                     var mouseSuspended = false;
                     if(!form.Focused)
                     {
@@ -195,7 +200,9 @@ namespace ImGui
                     break;
                 }
             }
+            #endregion
 
+            #region Clean up
             //Close unclosing forms
             foreach (var baseForm in Forms)
             {
@@ -206,6 +213,8 @@ namespace ImGui
             }
 
             stopwatch.Stop();
+            debugWatch.Stop();
+            #endregion
         }
 
         public static void Quit()

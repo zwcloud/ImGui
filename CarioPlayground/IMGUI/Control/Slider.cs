@@ -51,7 +51,7 @@ namespace ImGui
             get { return new Point(Rect.Right - 10, Rect.Y + Rect.Height/2); }
         }
 
-        public Slider(string name, BaseForm form, Rect rect, float value, float leftValue, float rightValue)
+        public Slider(string name, Form form, Rect rect, float value, float leftValue, float rightValue)
             : base(name, form)
         {
             Rect = rect;
@@ -61,7 +61,7 @@ namespace ImGui
             stateMachine = new StateMachine(SliderState.Normal, states);
         }
 
-        internal static float DoControl(BaseForm form, Rect rect, float value, float leftValue, float rightValue, string name)
+        internal static float DoControl(Form form, Rect rect, float value, float leftValue, float rightValue, string name)
         {
             Slider slider;
             if (!form.Controls.ContainsKey(name))

@@ -221,7 +221,7 @@ namespace ImGui.Input
         /// </summary>
         /// <param name="form"></param>
         /// <returns></returns>
-        public static Point GetMousePos(BaseForm form)
+        public static Point GetMousePos(Form form)
         {
             var tmp = SFML.Window.Mouse.GetPosition((SFML.Window.Window) form.InternalForm);
             return new Point(tmp.X, tmp.Y);

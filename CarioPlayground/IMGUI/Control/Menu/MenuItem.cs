@@ -2,7 +2,7 @@
 {
     internal class MenuItem : Button
     {
-        public MenuItem(string name, BaseForm form, string text, Rect rect)
+        public MenuItem(string name, Form form, string text, Rect rect)
             : base(name, form, text, rect)
         {
         }

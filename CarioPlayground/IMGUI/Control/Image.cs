@@ -7,13 +7,13 @@ namespace ImGui
     {
         public Texture Texture { get; private set; }
 
-        public Image(string name, BaseForm form, Texture texture)
+        public Image(string name, Form form, Texture texture)
             : base(name, form)
         {
             Texture = texture;
         }
 
-        static internal void DoControl(BaseForm form, Rect rect, Texture texture, string name)
+        static internal void DoControl(Form form, Rect rect, Texture texture, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
