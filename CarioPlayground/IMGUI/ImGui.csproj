@@ -184,6 +184,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CairoSharp\Cairo\Cairo.csproj">
+      <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
+      <Name>Cairo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PangoSharp\GLib\GLib.csproj">
       <Project>{3BF1D531-8840-4F15-8066-A9788D8C398B}</Project>
       <Name>GLib</Name>
@@ -192,15 +196,12 @@
       <Project>{04EC04F9-AA1F-494D-86A7-033DB42D9EBA}</Project>
       <Name>Pango</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ZWCloud.Cairo\Cairo\Cairo.csproj">
-      <Project>{3C49A7E8-1708-4930-B741-8648848EC084}</Project>
-      <Name>Cairo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ZWCloud.DwriteCairo\DwriteCairo\DwriteCairo.csproj">
       <Project>{233143AD-EDF8-49C4-B69D-2D1EBF58B82E}</Project>
       <Name>DwriteCairo</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
