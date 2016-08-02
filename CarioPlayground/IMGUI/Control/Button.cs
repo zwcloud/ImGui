@@ -1,10 +1,9 @@
 ﻿//#define INSPECT_STATE
 using System.Diagnostics;
-using Cairo;
 
 namespace ImGui
 {
-    internal class Button : Control
+    internal class Button : SimpleControl
     {
         #region State machine define
         static class ButtonState
@@ -33,10 +32,14 @@ namespace ImGui
         #endregion
 
         private readonly StateMachine stateMachine;
-
-        public ITextContext TextContext { get; private set; }
-
+        private readonly string name;
         private string text;
+        private Rect rect;
+        private Content content;
+        private Style style;
+
+        private bool textChanged = false;
+
         public string Text
         {
             get { return text; }
@@ -48,12 +51,13 @@ namespace ImGui
                 }
 
                 text = value;
+                textChanged = true;
                 NeedRepaint = true;
             }
         }
         public bool Result { get; private set; }
 
-        public override void OnUpdate()
+        public void Update()
         {
 #if INSPECT_STATE
             var A = stateMachine.CurrentState;
@@ -110,40 +114,19 @@ namespace ImGui
             Result = clicked;
         }
 
-        public override void OnRender(Context g)
+        public Button(string name, Form form, Content content, Rect rect)
         {
-            g.DrawBoxModel(Rect, new Content(TextContext), Skin.current.Button[State]);
-            this.RenderRects.Add(Rect);
-        }
+            this.name = name;
+            this.stateMachine = new StateMachine(ButtonState.Normal, states);
+            this.State = ButtonState.Normal;
+            this.NeedRepaint = true;
+            this.Form = form;
 
-        public override void Dispose()
-        {
-            TextContext.Dispose();
-        }
+            this.rect = rect;
+            this.style = Skin.current.Button[State];
+            this.content = content;
 
-        public override void OnClear(Context g)
-        {
-            g.FillRectangle(Rect, CairoEx.ColorWhite);
-            this.RenderRects.Add(Rect);
-        }
-
-        internal Button(string name, Form form, string text, Rect rect)
-            : base(name, form)
-        {
-            stateMachine = new StateMachine(ButtonState.Normal, states);
-            Rect = rect;
-            Text = text;
-
-            var style = Skin.current.Button[State];
-            var font = style.Font;
-            var textStyle = style.TextStyle;
-            var contentRect = Utility.GetContentRect(Rect, style);
-
-            TextContext = Application._map.CreateTextContext(
-                Text, font.FontFamily, font.Size,
-                font.FontStretch, font.FontStyle, font.FontWeight,
-                (int)contentRect.Width, (int)contentRect.Height,
-                textStyle.TextAlignment);
+            form.SimpleControls[name] = this;
 
             //Auto-size rect of the button
             //if (rect.IsBig)
@@ -151,21 +134,75 @@ namespace ImGui
             //    var boxSize = CairoEx.MeasureBoxModel(new Content(Layout), Skin.current.Button["Normal"]);
             //    Rect = form.GUILayout.AddRect(new Rect(boxSize));
             //}
+
         }
 
-        internal static bool DoControl(Form form, Rect rect, string text, string name)
+        public static bool DoControl(Rect rect, Content content, string name)
         {
-            //The control hasn't been created, create it.
-            if (!form.Controls.ContainsKey(name))
+            var form = Form.current;
+            //Create
+            if (!form.SimpleControls.ContainsKey(name))
             {
-                var button = new Button(name, form, text, rect);
+                var button = new Button(name, form, content, rect);//FIXME this rect is useless
             }
 
-            var control = form.Controls[name] as Button;
+            //Update
+            var control = form.SimpleControls[name] as Button;
             Debug.Assert(control != null);
-            control.Active = true;
+            if (Event.current.type == EventType.Repaint)
+            {
+                control.Rect = rect;
+                control.Text = content.Text;//FIXME control.Text is useless
+                control.SetContent(content);
+            }
+            control.Update();
 
+            //Active
+            form.renderMap.Add(name, control);
+
+            //Result
             return control.Result;
         }
+
+        public void SetContent(Content content)
+        {
+            this.content = content;
+        }
+
+        public override string Name
+        {
+            get { return name; }
+        }
+
+        #region Overrides of SimpleControl
+
+        public override Rect Rect
+        {
+            get { return rect; }
+            set
+            {
+                //TODO onchange
+                rect = value;
+            }
+        }
+
+        public override Content Content
+        {
+            get
+            {
+                return content;
+            }
+        }
+
+        public override Style Style
+        {
+            get
+            {
+                this.style = Skin.current.Button[State];
+                return this.style;
+            }
+        }
+
+        #endregion
     }
 }

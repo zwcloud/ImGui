@@ -28,6 +28,10 @@ namespace ImGui
         /// </summary>
         public Length PaddingLeft { get; set; }
 
+        public float PaddingHorizontal { get { return (float)PaddingLeft + (float)PaddingRight; } }
+
+        public float PaddingVertical { get { return (float)PaddingTop + (float)PaddingBottom; } }
+
         #endregion
         
         #region Border
@@ -51,6 +55,10 @@ namespace ImGui
         /// border-left-width
         /// </summary>
         public Length BorderLeft { get; set; }
+
+        public float BorderHorizontal { get { return (float)BorderLeft + (float)BorderRight; } }
+
+        public float BorderVertical { get { return (float)BorderTop + (float)BorderBottom; } }
 
         /// <summary>
         /// Color of the top
@@ -180,6 +188,14 @@ namespace ImGui
             ExtraStyles = new Dictionary<string, object>();
         }
 
+        public static Style None = new Style();
 
+        internal Size CalcSize(Content content)
+        {
+            var contentSize = content.GetSize(this);
+            contentSize.Width += this.PaddingHorizontal + this.BorderHorizontal;
+            contentSize.Height += this.PaddingVertical + this.BorderVertical;
+            return contentSize;
+        }
     }
 }

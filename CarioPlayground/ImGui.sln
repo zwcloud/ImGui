@@ -36,9 +36,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pango", "..\PangoSharp\Pang
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLib", "..\PangoSharp\GLib\GLib.csproj", "{3BF1D531-8840-4F15-8066-A9788D8C398B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cairo", "..\CairoSharp\Cairo\Cairo.csproj", "{3C49A7E8-1708-4930-B741-8648848EC084}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cairo", "..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj", "{3C49A7E8-1708-4930-B741-8648848EC084}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\CairoSharp\Binding\Binding\Binding.projitems*{3c49a7e8-1708-4930-b741-8648848ec084}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
 		Manager = AnkhSVN - Subversion Support for Visual Studio

@@ -15,7 +15,7 @@ namespace ImGui
         /// <remarks>when set a null value, use "SimHei" as the fallback font family</remarks>
         public string FontFamily
         {
-            get { return "SimHei"; }
+            get { return family ?? "SimHei"; }
             set { family = value ?? "SimHei"; }
         }
 

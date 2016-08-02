@@ -2,29 +2,16 @@ using System;
 
 namespace ImGui
 {
-
-
     [Serializable]
     partial struct Vector : IFormattable
     {
         public static readonly Vector Zero = new Vector();
 
-        //------------------------------------------------------
-        //
-        //  Public Methods
-        //
-        //------------------------------------------------------
-
-        #region Public Methods
-
-
-
-
         /// <summary>
         /// Compares two Vector instances for exact equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
-        /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
+        /// Furthermore, using this equality operator, double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
         /// bool - true if the two Vector instances are exactly equal, false otherwise
@@ -41,7 +28,7 @@ namespace ImGui
         /// Compares two Vector instances for exact inequality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
-        /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
+        /// Furthermore, using this equality operator, double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
         /// bool - true if the two Vector instances are exactly unequal, false otherwise
@@ -54,7 +41,7 @@ namespace ImGui
         }
         /// <summary>
         /// Compares two Vector instances for object equality.  In this equality
-        /// Double.NaN is equal to itself, unlike in numeric equality.
+        /// double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
@@ -72,7 +59,7 @@ namespace ImGui
 
         /// <summary>
         /// Equals - compares this Vector with the passed in object.  In this equality
-        /// Double.NaN is equal to itself, unlike in numeric equality.
+        /// double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
@@ -94,7 +81,7 @@ namespace ImGui
 
         /// <summary>
         /// Equals - compares this Vector with the passed in object.  In this equality
-        /// Double.NaN is equal to itself, unlike in numeric equality.
+        /// double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
@@ -148,19 +135,6 @@ namespace ImGui
 #endif
         }
 
-        #endregion Public Methods
-
-        //------------------------------------------------------
-        //
-        //  Public Properties
-        //
-        //------------------------------------------------------
-
-
-
-
-        #region Public Properties
-
         /// <summary>
         ///     X - double.  Default value is 0.
         /// </summary>
@@ -194,49 +168,6 @@ namespace ImGui
             }
 
         }
-
-        #endregion Public Properties
-
-        //------------------------------------------------------
-        //
-        //  Protected Methods
-        //
-        //------------------------------------------------------
-
-        #region Protected Methods
-
-
-
-
-
-        #endregion ProtectedMethods
-
-        //------------------------------------------------------
-        //
-        //  Internal Methods
-        //
-        //------------------------------------------------------
-
-        #region Internal Methods
-
-
-
-
-
-
-
-
-
-        #endregion Internal Methods
-
-        //------------------------------------------------------
-        //
-        //  Internal Properties
-        //
-        //------------------------------------------------------
-
-        #region Internal Properties
-
 
         /// <summary>
         /// Creates a string representation of this object based on the current culture.
@@ -306,52 +237,8 @@ namespace ImGui
         }
 
 
-
-        #endregion Internal Properties
-
-        //------------------------------------------------------
-        //
-        //  Dependency Properties
-        //
-        //------------------------------------------------------
-
-        #region Dependency Properties
-
-
-
-        #endregion Dependency Properties
-
-        //------------------------------------------------------
-        //
-        //  Internal Fields
-        //
-        //------------------------------------------------------
-
-        #region Internal Fields
-
-
         internal double _x;
         internal double _y;
-
-
-
-
-        #endregion Internal Fields
-
-
-
-        #region Constructors
-
-        //------------------------------------------------------
-        //
-        //  Constructors
-        //
-        //------------------------------------------------------
-
-
-
-
-        #endregion Constructors
 
     }
 }

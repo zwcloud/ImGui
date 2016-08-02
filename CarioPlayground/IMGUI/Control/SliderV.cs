@@ -4,7 +4,7 @@ using Cairo;
 
 namespace ImGui
 {
-    internal class Slider : Control
+    internal class SliderV : Control
     {
         #region State machine define
         static class SliderState
@@ -41,36 +41,36 @@ namespace ImGui
         public float MinValue { get; private set; }
         public float MaxValue { get; private set; }
 
-        private Point leftPoint
+        private Point upPoint
         {
-            get { return new Point(Rect.X + 10, Rect.Y + Rect.Height/2); }
+            get { return new Point(Rect.X + Rect.Width / 2, Rect.Y + 10); }
         }
 
-        private Point rightPoint
+        private Point bottomPoint
         {
-            get { return new Point(Rect.Right - 10, Rect.Y + Rect.Height/2); }
+            get { return new Point(Rect.X + Rect.Width / 2, Rect.Bottom - 10); }
         }
 
-        public Slider(string name, Form form, Rect rect, float value, float leftValue, float rightValue)
+        public SliderV(string name, Form form, Rect rect, float value, float upValue, float bottomValue)
             : base(name, form)
         {
             Rect = rect;
             Value = value;
-            MinValue = leftValue;
-            MaxValue = rightValue;
+            MinValue = upValue;
+            MaxValue = bottomValue;
             stateMachine = new StateMachine(SliderState.Normal, states);
         }
 
-        internal static float DoControl(Form form, Rect rect, float value, float leftValue, float rightValue, string name)
+        internal static float DoControl(Form form, Rect rect, float value, float upValue, float bottomValue, string name)
         {
-            Slider slider;
+            SliderV slider;
             if (!form.Controls.ContainsKey(name))
             {
-                slider = new Slider(name, form, rect, value, leftValue, rightValue);
+                slider = new SliderV(name, form, rect, value, upValue, bottomValue);
             }
             else
             {
-                slider = form.Controls[name] as Slider;
+                slider = form.Controls[name] as SliderV;
             }
             Debug.Assert(slider != null);
             slider.Active = true;
@@ -121,10 +121,10 @@ namespace ImGui
             if (active)
             {
                 State = "Active";
-                var minX = leftPoint.X;
-                var maxX = rightPoint.X;
-                var currentPointX = MathEx.Clamp(mousePos.X, minX, maxX);
-                Value = (float)(MinValue + (currentPointX - minX) / (maxX - minX) * (MaxValue - MinValue));
+                var minY = upPoint.Y;
+                var maxY = bottomPoint.Y;
+                var currentPointX = MathEx.Clamp(mousePos.Y, minY, maxY);
+                Value = (float)(MinValue + (currentPointX - minY) / (maxY - minY) * (MaxValue - MinValue));
             }
             else if (hover)
             {
@@ -145,25 +145,25 @@ namespace ImGui
         public override void OnRender(Context g)
         {
             OnClear(g);
-            var h = Rect.Height;
-            var a = 0.2f*h;
-            var b = 0.3f*h;
+            var h = Rect.Width;
+            var a = 0.2*h;
+            var b = 0.3*h;
 
-            var minX = leftPoint.X;
-            var maxX = rightPoint.X;
-            var currentPoint = leftPoint + new Vector((Value - MinValue)/(MaxValue - MinValue)*(maxX - minX), 0);
+            var minY = upPoint.Y;
+            var maxY = bottomPoint.Y;
+            var currentPoint = upPoint + new Vector(0, (Value - MinValue) / (MaxValue - MinValue) * (maxY - minY));
 
-            var topArcCenter = currentPoint + new Vector(0, b);
-            var bottomArcCenter = currentPoint + new Vector(0, -b);
-            var bottomStartPoint = bottomArcCenter + new Vector(-a, 0);
+            var leftArcCenter = currentPoint + new Vector(-b, 0);
+            var rightArcCenter = currentPoint + new Vector(b, 0);
+            var rightStartPoint = rightArcCenter + new Vector(0, -a);
 
-            g.DrawLine(leftPoint, currentPoint, 1.0f, (Color)Skin.current.Slider["Normal"].ExtraStyles["Line:Used"]);
-            g.DrawLine(currentPoint, rightPoint, 1.0f, (Color)Skin.current.Slider["Normal"].ExtraStyles["Line:Unused"]);
+            g.DrawLine(upPoint, currentPoint, 1.0f, (Color)Skin.current.Slider["Normal"].ExtraStyles["Line:Used"]);
+            g.DrawLine(currentPoint, bottomPoint, 1.0f, (Color)Skin.current.Slider["Normal"].ExtraStyles["Line:Unused"]);
 
             g.NewPath();
-            g.Arc(topArcCenter.X, topArcCenter.Y, a, 0, System.Math.PI);
-            g.LineTo(bottomStartPoint.ToPointD());
-            g.Arc(bottomArcCenter.X, bottomArcCenter.Y, a, System.Math.PI, System.Math.PI * 2);
+            g.Arc(leftArcCenter.X, leftArcCenter.Y, a, System.Math.PI/2, System.Math.PI*3/2);
+            g.LineTo(rightStartPoint.ToPointD());
+            g.Arc(rightArcCenter.X, rightArcCenter.Y, a, System.Math.PI*3/2, System.Math.PI/2);
             g.ClosePath();
             g.SetSourceColor(CairoEx.ColorDarkBlue);
             g.Fill();

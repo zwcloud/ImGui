@@ -119,16 +119,14 @@ namespace ImGui
         /// <summary>
         /// Custom GUI Logic. This should be overrided to create custom GUI elements
         /// </summary>
-        /// <param name="gui">gui context</param>
-        /// <remarks>This is the only method that can be specified by user.</remarks>
-        protected abstract void OnGUI(GUI gui);
+        /// <remarks>This is the only method exposed to user.</remarks>
+        protected abstract void OnGUI();
 
         #region Internal Implementation
 
         internal SFML.Window.Window internalForm;
 
         private bool closed = false;
-
 
         protected SFMLForm(int width, int height)
         {

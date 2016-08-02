@@ -1,5 +1,5 @@
-﻿//#define DrawContentBox
-//#define DrawPaddingBox
+﻿#define DrawContentBox
+#define DrawPaddingBox
 
 using System;
 using Cairo;
@@ -100,11 +100,11 @@ namespace ImGui
             //  Left
             if (bl != Length.Zero)
             {
-                g.FillPolygon(new[] {pbl, bbl, btl, ptl}, style.BorderLeftColor);
+                g.FillPolygon(new[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
             }
 
             //Outline
-            if(style.OutlineWidth != Length.Zero)
+            if (style.OutlineWidth != Length.Zero)
             {
                 g.Rectangle(borderBoxRect.TopLeft.ToPointD(), borderBoxRect.Width, borderBoxRect.Height);
                 g.LineWidth = style.OutlineWidth;
@@ -115,7 +115,7 @@ namespace ImGui
 #if DrawPaddingBox
             g.Rectangle(paddingBoxRect.TopLeft.ToPointD(), paddingBoxRect.Width, paddingBoxRect.Height);
             g.LineWidth = 1;
-            g.SetSourceColor(CairoEx.ColorRgb(0,100,100));
+            g.SetSourceColor(CairoEx.ColorRgb(0, 100, 100));
             g.Stroke();
 #endif
 
@@ -127,7 +127,14 @@ namespace ImGui
 #endif
         }
 
-        public static Size MeasureBoxModel(Content content, Style style)
+        /// <summary>
+        /// Draw a box model
+        /// </summary>
+        /// <param name="g">the Cairo context</param>
+        /// <param name="rect">the rect (of the content-box) in which to draw this box model </param>
+        /// <param name="content">content of the box mode</param>
+        /// <param name="style">style of the box model</param>
+        public static void DrawBoxModel_(this Context g, Rect contentRect, Content content, Style style)
         {
             //Widths of border
             var bt = style.BorderTop;
@@ -140,21 +147,87 @@ namespace ImGui
             var pr = style.PaddingRight;
             var pb = style.PaddingBottom;
             var pl = style.PaddingLeft;
-            
-            /*
-             * TODO Margin is temporarily not used(all zero)
-             */
-            var mt = style.MarginTop;
-            var mr = style.MarginRight;
-            var mb = style.MarginBottom;
-            var ml = style.MarginLeft;
 
-            //calc box model rect
-            var boxRect = content.GetRect();
-            boxRect.Inflate(
-                br + bl + pr + pl + mr + ml,
-                bt + bb + pt + pb + mt + mb);
-            return boxRect.Size;
+            //4 corner of the padding-box
+            var paddingRect = Rect.Inflate(contentRect, pt, pr, pb, pl);
+            var ptl = paddingRect.TopLeft;
+            var ptr = paddingRect.TopRight;
+            var pbl = paddingRect.BottomLeft;
+            var pbr = paddingRect.BottomRight;
+
+            //4 corner of the border-box
+            var borderRect = Rect.Inflate(paddingRect, bt, br, bb, bl);
+            var btl = borderRect.TopLeft;
+            var btr = borderRect.TopRight;
+            var bbl = borderRect.BottomLeft;
+            var bbr = borderRect.BottomRight;
+
+            //background(draw as a filled rectangle now)
+            g.FillRectangle(paddingRect, style.BackgroundStyle.Color);
+
+            /*
+             * Render from inner to outer: Content, Padding, Border, Margin, Outline
+             */
+
+            //Content
+
+            //Content-box
+            if (content != null)
+            {
+                if (content.Image != null)
+                {
+                    g.DrawImage(contentRect, content.Image);
+                }
+                if (content.TextContext != null)
+                {
+                    g.DrawText(contentRect, content.TextContext, style.Font, style.TextStyle);
+                }
+            }
+
+            //Border
+            //  Top
+            if (bt != Length.Zero)
+            {
+                g.FillPolygon(new[] { ptl, btl, btr, ptr }, style.BorderTopColor);
+            }
+            //  Right
+            if (br != Length.Zero)
+            {
+                g.FillPolygon(new[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
+            }
+            //  Bottom
+            if (bb != Length.Zero)
+            {
+                g.FillPolygon(new[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
+            }
+            //  Left
+            if (bl != Length.Zero)
+            {
+                g.FillPolygon(new[] {pbl, bbl, btl, ptl}, style.BorderLeftColor);
+            }
+
+            //Outline
+            if(style.OutlineWidth != Length.Zero)
+            {
+                g.Rectangle(borderRect.TopLeft.ToPointD(), borderRect.Width, borderRect.Height);
+                g.LineWidth = style.OutlineWidth;
+                g.SetSourceColor(style.OutlineColor);
+                g.Stroke();
+            }
+
+#if DrawPaddingBox
+            g.Rectangle(paddingRect.TopLeft.ToPointD(), paddingRect.Width, paddingRect.Height);
+            g.LineWidth = 1;
+            g.SetSourceColor(CairoEx.ColorRgb(0,100,100));
+            g.Stroke();
+#endif
+
+#if DrawContentBox
+            g.Rectangle(contentRect.TopLeft.ToPointD(), contentRect.Width, contentRect.Height);
+            g.LineWidth = 1;
+            g.SetSourceColor(CairoEx.ColorRgb(100, 0, 100));
+            g.Stroke();
+#endif
         }
 
         #region primitive draw helpers
@@ -301,7 +374,7 @@ namespace ImGui
         /// </summary>
         /// <param name="g"></param>
         /// <param name="rect">region of the text</param>
-        /// <param name="textContext">text laout</param>
+        /// <param name="textContext">text context</param>
         /// <param name="font">font</param>
         /// <param name="textStyle">text styles</param>
         public static void DrawText(this Context g, Rect rect, ITextContext textContext, Font font, TextStyle textStyle)

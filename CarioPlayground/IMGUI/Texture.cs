@@ -7,7 +7,7 @@ using Cairo;
 
 namespace ImGui
 {
-    public partial class Texture
+    public partial class Texture :IDisposable
     {
         internal ImageSurface _surface;
 
@@ -114,11 +114,10 @@ namespace ImGui
 
             _surface = imageSurface;
         }
-        
-        ~Texture()
+
+        public void Dispose()
         {
             _surface.Dispose();
         }
-            
     }
 }

@@ -6,30 +6,27 @@ namespace ImGui
     {
         public delegate bool WindowFunction(GUI gui);
 
-        private readonly Context g;
-        private readonly Form form;
-        
-        public GUI(Context context, Form form)
+        public static bool Button(Rect rect, string text, string id)
         {
-            this.g = context;
-            this.form = form;
+            return DoButton(rect, Content.Cached(text, id), id);
         }
 
-        public void Space(Rect rect)
+        public static bool Button(Rect rect, Content content, string id)
         {
-            DoLayout(rect);
+            return DoButton(rect, content, id);
         }
 
-        public bool Button(Rect rect, string text, string name)
+        private static bool DoButton(Rect rect, Content content, string id)
+        {
+            return ImGui.Button.DoControl(rect, content, id);
+        }
+
+
+        /*
+        public static void Label(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return ImGui.Button.DoControl(form, rect, text, name);
-        }
-
-        public void Label(Rect rect, string text, string name)
-        {
-            rect = DoLayout(rect);
-            ImGui.Label.DoControl(g, form, rect, text, name);
+            ImGui.Label.DoControl(Form.current, rect, text, name);
         }
 
         public bool Toggle(Rect rect, string text, bool value, string name)
@@ -62,6 +59,12 @@ namespace ImGui
             return ImGui.Slider.DoControl(form, rect, value, leftValue, rightValue, name);
         }
 
+        public float SliderV(Rect rect, string text, float value, float leftValue, float rightValue, string name)
+        {
+            rect = DoLayout(rect);
+            return ImGui.SliderV.DoControl(form, rect, value, leftValue, rightValue, name);
+        }
+
         public string TextBox(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
@@ -79,10 +82,10 @@ namespace ImGui
             return ImGui.ToggleButton.DoControl(form, rect, text, value, name);
         }
 
-        public bool HoverButton(Rect rect, string text, string name)
+        public static bool HoverButton(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
-            return ImGui.HoverButton.DoControl(form, rect, text, name);
+            return ImGui.HoverButton.DoControl(Form.current, rect, text, name);
         }
 
         public bool RadioButton(Rect rect, string text, string groupName, bool value, string name)
@@ -108,9 +111,17 @@ namespace ImGui
         }
 
         #region group methods
-        public void BeginHScroll() { }
 
-        public void EndHScroll() { }
+        public void BeginClipArea(Rect rect)
+        {
+            g.Rectangle(rect.TopLeft.ToPointD(), rect.Width, rect.Height);
+            g.Clip();
+        }
+
+        public void EndClipArea()
+        {
+            g.ResetClip();
+        }
         #endregion
 
         #region layout methods
@@ -133,17 +144,28 @@ namespace ImGui
         {
             EndGroup(LayoutMode.Vertical);
         }
+
+        public void BeginScrollView(Rect occupiedRect, Point scrollPosition, Rect viewRect)
+        {
+
+        }
+
+        public void EndScrollView()
+        {
+        }
+
         #endregion
+        */
 
         #region control methods
 
         public Rect GetControlRect(string name)
         {
-            Control control;
-            if(form.Controls.TryGetValue(name, out control))
-            {
-                return control.Rect;
-            }
+            //Control control;
+            //if(form.Controls.TryGetValue(name, out control))
+            //{
+            //    return control.Rect;
+            //}
             throw new System.InvalidOperationException(string.Format("Can not find control <{0}>", name));
         }
 

@@ -1,12 +1,13 @@
-﻿using System.Diagnostics;
-using Cairo;
-
-namespace ImGui
+﻿namespace ImGui
 {
-    internal class Label : Control
+    internal class Label : SimpleControl
     {
         private string text;
-        public ITextContext TextContext { get; private set; }
+        private readonly string name;
+        private Rect rect;
+        private Style style;
+        private Content content;
+        private bool textChanged;
 
         public string Text
         {
@@ -19,14 +20,13 @@ namespace ImGui
                 }
 
                 text = value;
+                textChanged = true;
                 NeedRepaint = true;
             }
         }
 
-        public override void OnUpdate()
+        public void Update()
         {
-            TextContext.Text = Text;
-
             var oldState = State;
             bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.GetMousePos(Form));
             bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.GetMousePos(Form));
@@ -42,55 +42,69 @@ namespace ImGui
             }
         }
 
-        public override void OnRender(Context g)
+        internal Label(string name, Form form, string text, Rect rect)
         {
-            g.DrawBoxModel(Rect, new Content(TextContext), Skin.current.Label[State]);
-            this.RenderRects.Add(Rect);
+            this.name = name;
+            this.NeedRepaint = true;
+            this.State = "Normal";
+            this.Form = form;
+            this.rect = rect;
+            this.style = Skin.current.Label[State];
+            var textContext = Content.BuildTextContext(text, rect, style);
+            this.content = new Content(textContext);
+            form.SimpleControls[name] = this;
         }
 
-        public override void Dispose()
-        {
-            TextContext.Dispose();
-        }
-
-        public override void OnClear(Context g)
-        {
-            g.FillRectangle(Rect, CairoEx.ColorWhite);
-            this.RenderRects.Add(Rect);
-        }
-
-        internal Label(string name, Form form, string text, Rect rect) : base(name, form)
-        {
-            Rect = rect;
-            Text = text;
-
-            var style = Skin.current.Label[State];
-            var font = style.Font;
-            var textStyle = style.TextStyle;
-            var contentRect = Utility.GetContentRect(Rect, style);
-            TextContext = Application._map.CreateTextContext(
-                Text, font.FontFamily, font.Size,
-                font.FontStretch, font.FontStyle, font.FontWeight,
-                (int)contentRect.Width, (int)contentRect.Height,
-                textStyle.TextAlignment);
-        }
-
-        internal static void DoControl(Context g, Form form, Rect rect, string text, string name)
+        internal static void DoControl(Form form, Rect rect, string text, string name)
         {
             if (!form.Controls.ContainsKey(name))
             {
                 var label = new Label(name, form, text, rect);
-                label.OnUpdate();
-                label.OnRender(g);
+                label.Update();
             }
 
-            var control = form.Controls[name] as Label;
-            Debug.Assert(control != null);
-            control.Active = true;
+            var control = form.SimpleControls[name] as Label;
+            System.Diagnostics.Debug.Assert(control != null);
 
             //Update text
             control.Text = text;
         }
 
+        public override string Name
+        {
+            get { return name; }
+        }
+
+        #region Overrides of SimpleControl
+
+        public override Rect Rect
+        {
+            get { return rect; }
+            set { rect = value; }
+        }
+
+        public override Content Content
+        {
+            get
+            {
+                if (textChanged)
+                {
+                    textChanged = false;
+                    content.TextContext.Text = text;
+                }
+                return content;
+            }
+        }
+
+        public override Style Style
+        {
+            get
+            {
+                this.style = Skin.current.Label[State];
+                return this.style;
+            }
+        }
+
+        #endregion
     }
 }

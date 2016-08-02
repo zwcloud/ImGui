@@ -5,8 +5,6 @@ namespace ImGui
     /// </summary>
     public partial struct Vector
     {
-        #region Constructors
-
         /// <summary>
         /// Constructor which sets the vector's initial values
         /// </summary>
@@ -18,10 +16,6 @@ namespace ImGui
             _y = y;
         }
 
-        #endregion Constructors
-
-        #region Public Methods
-
         /// <summary>
         /// Length Property - the length of this Vector
         /// </summary>
@@ -29,7 +23,7 @@ namespace ImGui
         {
             get
             {
-                return System.Math.Sqrt(_x*_x + _y*_y);
+                return System.Math.Sqrt(_x * _x + _y * _y);
             }
         }
 
@@ -78,15 +72,12 @@ namespace ImGui
         /// <param name="vector2"> The second Vector </param>
         public static double AngleBetween(Vector vector1, Vector vector2)
         {
-            double sin = vector1._x * vector2._y - vector2._x * vector1._y;  
+            double sin = vector1._x * vector2._y - vector2._x * vector1._y;
             double cos = vector1._x * vector2._x + vector1._y * vector2._y;
  
             return System.Math.Atan2(sin, cos) * (180 / System.Math.PI);
         }
 
-        #endregion Public Methods
-
-        #region Public Operators
         /// <summary>
         /// Operator -Vector (unary negation)
         /// </summary>
@@ -159,7 +150,7 @@ namespace ImGui
         /// <summary>
         /// Operator Vector * double
         /// </summary>
-        public static Vector operator * (Vector vector, double scalar)
+        public static Vector operator *(Vector vector, double scalar)
         {
             return new Vector(vector._x * scalar,
                               vector._y * scalar);
@@ -197,7 +188,7 @@ namespace ImGui
         /// </summary>
         public static Vector operator / (Vector vector, double scalar)
         {
-            return vector * (1.0 / scalar);
+            return vector * (1.0f / scalar);
         }
 
         /// <summary>
@@ -205,7 +196,7 @@ namespace ImGui
         /// </summary>
         public static Vector Divide(Vector vector, double scalar)
         {
-            return vector * (1.0 / scalar);
+            return vector * (1.0f / scalar);
         }
 
 #if Matrix
@@ -229,7 +220,7 @@ namespace ImGui
         /// <summary>
         /// Operator Vector * Vector, interpreted as their dot product
         /// </summary>
-        public static double operator * (Vector vector1, Vector vector2)
+        public static double operator *(Vector vector1, Vector vector2)
         {
             return vector1._x * vector2._x + vector1._y * vector2._y;
         }
@@ -284,6 +275,6 @@ namespace ImGui
         {
             return new Point(vector._x, vector._y);
         }
-        #endregion Public Operators
+
     }
 }

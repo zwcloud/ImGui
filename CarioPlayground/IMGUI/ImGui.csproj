@@ -104,27 +104,25 @@
     </Compile>
     <Compile Include="Content.cs" />
     <Compile Include="Control\Button.cs" />
-    <Compile Include="Control\ComboBox.cs" />
     <Compile Include="Control\Control.cs" />
     <Compile Include="Control\HoverButton.cs" />
     <Compile Include="Control\Image.cs" />
     <Compile Include="Control\IRenderable.cs" />
     <Compile Include="Control\IUpdatable.cs" />
     <Compile Include="Control\Label.cs" />
-    <Compile Include="Control\Menu\Menu.cs" />
-    <Compile Include="Control\Menu\MenuItem.cs" />
     <Compile Include="Control\Radio.cs" />
     <Compile Include="Control\RadioButton.cs" />
+    <Compile Include="Control\SimpleControl.cs" />
+    <Compile Include="Control\SliderV.cs" />
     <Compile Include="Control\Slider.cs" />
+    <Compile Include="Control\Space.cs" />
     <Compile Include="Control\TextBox.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Control\TitleBar.cs" />
     <Compile Include="Control\Toggle.cs" />
     <Compile Include="Control\PolygonButton.cs" />
     <Compile Include="Control\ToggleButton.cs" />
     <Compile Include="Control\ToolTips\ToolTip.cs" />
-    <Compile Include="Control\Window.cs" />
     <Compile Include="Detalied\Point.cs" />
     <Compile Include="Detalied\Rect.cs" />
     <Compile Include="Detalied\Size.cs" />
@@ -134,12 +132,18 @@
     <Compile Include="Font.cs" />
     <Compile Include="Form.cs" />
     <Compile Include="GUI.cs" />
+    <Compile Include="GUILayout.cs" />
     <Compile Include="GUIRenderer.cs" />
+    <Compile Include="Hierarchy\DummyBox.cs" />
+    <Compile Include="Hierarchy\IRenderBox.cs" />
+    <Compile Include="Hierarchy\LayoutEntry.cs" />
+    <Compile Include="Hierarchy\LayoutGroup.cs" />
+    <Compile Include="Hierarchy\LayoutUtility.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="IWindow.cs" />
-    <Compile Include="GUI.Layout.cs" />
+    <Compile Include="Hierarchy\LayoutCache.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MathEx.cs" />
     <Compile Include="MouseButton.cs" />
@@ -166,7 +170,6 @@
     <Compile Include="Texture.Presets.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TODO.cs" />
-    <Compile Include="Tree2.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Application.cs" />
@@ -184,7 +187,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CairoSharp\Cairo\Cairo.csproj">
+    <ProjectReference Include="..\..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj">
       <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
       <Name>Cairo</Name>
     </ProjectReference>
@@ -201,7 +204,9 @@
       <Name>DwriteCairo</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Control\Menu\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

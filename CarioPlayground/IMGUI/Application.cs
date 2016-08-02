@@ -65,7 +65,6 @@ namespace ImGui
             }
         }
 
-        static Rect dirtyRect = Rect.Empty;
         private static bool RequestQuit;
 #if DrawDirtyRect
         static Rect lastDirtyRect = Rect.Empty;
@@ -95,7 +94,7 @@ namespace ImGui
             //Show main form
             mainForm.Show();
 
-            Debug.WriteLine("Init {0}ms", debugWatch.ElapsedMilliseconds);
+            Debug.WriteLine("Init {0:F1}ms", debugWatch.ElapsedTicks * 1000d / Stopwatch.Frequency);
             debugWatch.Restart();
             #endregion
 
@@ -103,7 +102,10 @@ namespace ImGui
             //Process every form
             while (!mainForm.Closed)
             {
-                mainForm.internalForm.SetTitle(stopwatch.ElapsedMilliseconds + "ms");
+                var mousePos = Input.Mouse.GetMousePos(mainForm);
+                mainForm.internalForm.SetTitle(
+                    string.Format("{0:F1}, {1},{2}",
+                    Stopwatch.Frequency*1.0/stopwatch.ElapsedTicks, mousePos.X, mousePos.Y));
                 stopwatch.Restart();
 
                 //Input
@@ -130,61 +132,52 @@ namespace ImGui
                         removeList.Add(form);
                         continue;
                     }
-                    if(guiLoopResult.isRepainted)
+                    var dirtyRect = guiLoopResult.dirtyRect;
+                    if (dirtyRect != Rect.Empty)
                     {
-                        dirtyRect = Rect.Empty;
                         //update re-rendered section //TODO consider using cairo-gl?
-                        foreach (var control in form.Controls.Values)
+                        // Make it the active window for OpenGL calls
+                        window.SetActive();
+#if DrawDirtyRect
+                        //Clear last dirty rect
+                        if(lastDirtyRect!=Rect.Empty)
                         {
-                            foreach (var rect in control.RenderRects)
-                            {
-                                dirtyRect.Union(rect);
-                            }
-                            control.RenderRects.Clear();
+                            var data = GetDirtyData(lastDirtyRect, form.DebugSurface);
+                            form.guiRenderer.OnUpdateTexture(lastDirtyRect,
+                                System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
                         }
-                        if(!dirtyRect.IsEmpty)
+
+                        lastDirtyRect = dirtyRect;
+#endif
+                        //Get data of pixels in dirty rect
                         {
-                            // Make it the active window for OpenGL calls
-                            window.SetActive();
 #if DrawDirtyRect
-                            //Clear last dirty rect
-                            if(lastDirtyRect!=Rect.Empty)
-                            {
-                                var data = GetDirtyData(lastDirtyRect, form.DebugSurface);
-                                form.guiRenderer.OnUpdateTexture(lastDirtyRect,
-                                    System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
-                            }
-
-                            lastDirtyRect = dirtyRect;
-#endif
-                            //Get data of pixels in dirty rect
-                            {
-#if DrawDirtyRect
-                                //Save orginal surface
-                                form.DebugContext.SetSourceSurface(form.FrontSurface, 0, 0);
-                                form.DebugContext.Paint();
+                            //Save orginal surface
+                            form.DebugContext.SetSourceSurface(form.FrontSurface, 0, 0);
+                            form.DebugContext.Paint();
 #endif
 
-                                //Update repainted section
+                            //Update repainted section
 #if DrawDirtyRect
-                                var data = GetDirtyData(dirtyRect, form.FrontSurface, CairoEx.ColorArgb(100, 200, 240, 200));
+                            var data = GetDirtyData(dirtyRect, form.FrontSurface, CairoEx.ColorArgb(100, 200, 240, 200));
 #else
-                                var data = GetDirtyData(dirtyRect, form.FrontSurface);
+                            var data = GetDirtyData(dirtyRect, form.FrontSurface);
 #endif
-                                form.guiRenderer.OnUpdateTexture(dirtyRect,
-                                    System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
-                            }
-                            form.guiRenderer.OnRenderFrame();
+                            form.guiRenderer.OnUpdateTexture(dirtyRect,
+                                System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
                         }
+                        form.guiRenderer.OnRenderFrame();
+                        // Display the rendered frame on screen
+                        window.Display();
                     }
-                    // Display the rendered frame on screen
-                    window.Display();
 
                     if(mouseSuspended)
                     {
                         Input.Mouse.Resume();
                     }
                 }
+
+                System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(1000/60.0));
 
                 if(removeList.Count != 0)
                 {
@@ -193,6 +186,11 @@ namespace ImGui
                         baseForm.Close();
                     }
                     removeList.Clear();
+                }
+
+                if (Input.Keyboard.KeyDown(SFML.Window.Keyboard.Key.Escape))
+                {
+                    Quit();
                 }
 
                 if(RequestQuit)
@@ -214,6 +212,7 @@ namespace ImGui
 
             stopwatch.Stop();
             debugWatch.Stop();
+
             #endregion
         }
 

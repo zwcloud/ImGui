@@ -60,6 +60,63 @@
                 value = max;
             }
             return value;
-        } 
+        }
+
+        /// <summary>
+        ///   <para>Linearly interpolates between a and b by t.</para>
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="t"></param>
+        public static double Lerp(double a, double b, double t)
+        {
+            return a + (b - a) * MathEx.Clamp01(t);
+        }
+
+        /// <summary>
+        ///   <para>Linearly interpolates between a and b by t.</para>
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="t"></param>
+        public static float Lerp(float a, float b, float t)
+        {
+            return a + (b - a) * MathEx.Clamp01(t);
+        }
+
+        /// <summary>
+        ///   <para>Clamps value between 0 and 1 and returns value.</para>
+        /// </summary>
+        /// <param name="value"></param>
+        public static double Clamp01(double value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+            if (value > 1)
+            {
+                return 1;
+            }
+            return value;
+        }
+
+        /// <summary>
+        ///   <para>Clamps value between 0 and 1 and returns value.</para>
+        /// </summary>
+        /// <param name="value"></param>
+        public static float Clamp01(float value)
+        {
+            if (value < 0f)
+            {
+                return 0f;
+            }
+            if (value > 1f)
+            {
+                return 1f;
+            }
+            return value;
+        }
+
     }
 }

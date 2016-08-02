@@ -173,9 +173,9 @@ void main()
         public void OnRenderFrame()
         {
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-            
+
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
-            
+
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
 
             GL.DrawArrays(GL.GL_TRIANGLE_FAN, 0, 6);

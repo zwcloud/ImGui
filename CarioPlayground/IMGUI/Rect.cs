@@ -6,12 +6,11 @@ namespace ImGui
     //[ValueSerializer(typeof(RectValueSerializer))] // Used by MarkupWriter
     partial struct Rect : IFormattable
     {
-        #region Public Methods
         /// <summary>
         /// Compares two Rect instances for exact equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
-        /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
+        /// Furthermore, using this equality operator, double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
         /// bool - true if the two Rect instances are exactly equal, false otherwise
@@ -30,7 +29,7 @@ namespace ImGui
         /// Compares two Rect instances for exact inequality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which are logically equal may fail.
-        /// Furthermore, using this equality operator, Double.NaN is not equal to itself.
+        /// Furthermore, using this equality operator, double.NaN is not equal to itself.
         /// </summary>
         /// <returns>
         /// bool - true if the two Rect instances are exactly unequal, false otherwise
@@ -43,7 +42,7 @@ namespace ImGui
         }
         /// <summary>
         /// Compares two Rect instances for object equality.  In this equality
-        /// Double.NaN is equal to itself, unlike in numeric equality.
+        /// double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
@@ -70,7 +69,7 @@ namespace ImGui
 
         /// <summary>
         /// Equals - compares this Rect with the passed in object.  In this equality
-        /// Double.NaN is equal to itself, unlike in numeric equality.
+        /// double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
@@ -92,7 +91,7 @@ namespace ImGui
 
         /// <summary>
         /// Equals - compares this Rect with the passed in object.  In this equality
-        /// Double.NaN is equal to itself, unlike in numeric equality.
+        /// double.NaN is equal to itself, unlike in numeric equality.
         /// Note that double values can acquire error when operated upon, such that
         /// an exact comparison between two values which
         /// are logically equal may fail.
@@ -105,6 +104,7 @@ namespace ImGui
         {
             return Rect.Equals(this, value);
         }
+
         /// <summary>
         /// Returns the HashCode for this Rect
         /// </summary>
@@ -137,64 +137,6 @@ namespace ImGui
             throw new NotImplementedException();
         }
 
-        #endregion Public Methods
-
-        //------------------------------------------------------
-        //
-        //  Public Properties
-        //
-        //------------------------------------------------------
-
-
-
-
-        #region Public Properties
-
-
-
-        #endregion Public Properties
-
-        //------------------------------------------------------
-        //
-        //  Protected Methods
-        //
-        //------------------------------------------------------
-
-        #region Protected Methods
-
-
-
-
-
-        #endregion ProtectedMethods
-
-        //------------------------------------------------------
-        //
-        //  Internal Methods
-        //
-        //------------------------------------------------------
-
-        #region Internal Methods
-
-
-
-
-
-
-
-
-
-        #endregion Internal Methods
-
-        //------------------------------------------------------
-        //
-        //  Internal Properties
-        //
-        //------------------------------------------------------
-
-        #region Internal Properties
-
-
         /// <summary>
         /// Creates a string representation of this object based on the current culture.
         /// </summary>
@@ -203,7 +145,6 @@ namespace ImGui
         /// </returns>
         public override string ToString()
         {
-
             // Delegate to the internal method which implements all ToString calls.
             return ConvertToString(null /* format string */, null /* format provider */);
         }
@@ -217,7 +158,6 @@ namespace ImGui
         /// </returns>
         public string ToString(IFormatProvider provider)
         {
-
             // Delegate to the internal method which implements all ToString calls.
             return ConvertToString(null /* format string */, provider);
         }
@@ -265,55 +205,10 @@ namespace ImGui
                                  _height);
         }
 
-
-
-        #endregion Internal Properties
-
-        //------------------------------------------------------
-        //
-        //  Dependency Properties
-        //
-        //------------------------------------------------------
-
-        #region Dependency Properties
-
-
-
-        #endregion Dependency Properties
-
-        //------------------------------------------------------
-        //
-        //  Internal Fields
-        //
-        //------------------------------------------------------
-
-        #region Internal Fields
-
-
         internal double _x;
         internal double _y;
         internal double _width;
         internal double _height;
-
-
-
-
-        #endregion Internal Fields
-
-
-
-        #region Constructors
-
-        //------------------------------------------------------
-        //
-        //  Constructors
-        //
-        //------------------------------------------------------
-
-
-
-
-        #endregion Constructors
 
     }
 }

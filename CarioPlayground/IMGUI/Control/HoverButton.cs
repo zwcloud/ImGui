@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace ImGui
 {
-    class HoverButton : Control
+    class HoverButton : SimpleControl
     {
         #region State machine define
         static class ButtonState
@@ -27,10 +27,14 @@ namespace ImGui
         #endregion
 
         private readonly StateMachine stateMachine;
-
-        public ITextContext TextContext { get; private set; }
-
+        private readonly string name;
         private string text;
+        private Rect rect;
+        private Content content;
+        private Style style;
+
+        private bool textChanged = false;
+
         public string Text
         {
             get { return text; }
@@ -42,11 +46,13 @@ namespace ImGui
                 }
 
                 text = value;
+                textChanged = true;
                 NeedRepaint = true;
             }
         }
         public bool Result { get; private set; }
-        public override void OnUpdate()
+
+        public void Update()
         {
 #if INSPECT_STATE
             var A = stateMachine.CurrentState;
@@ -62,7 +68,7 @@ namespace ImGui
             }
 #if INSPECT_STATE
             var B = stateMachine.CurrentState;
-            Debug.WriteLineIf(A != B, string.Format("Button{0} {1}=>{2}", Name, A, B));
+            Debug.WriteLineIf(A != B, string.Format("HoverButton{0} {1}=>{2}", Name, A, B));
 #endif
 
             var oldState = State;
@@ -83,57 +89,73 @@ namespace ImGui
             Result = active;
         }
 
-        public override void OnRender(Context g)
+        public HoverButton(string name, Form form, string text, Rect rect)
         {
-            g.DrawBoxModel(Rect, new Content(TextContext), Skin.current.Button[State]);
-
-            this.RenderRects.Add(Rect);
+            this.name = name;
+            this.stateMachine = new StateMachine(ButtonState.Normal, states);
+            this.State = ButtonState.Normal;
+            this.NeedRepaint = true;
+            this.Form = form;
+            this.rect = rect;
+            this.style = Skin.current.Button[State];
+            var textContext = Content.BuildTextContext(text, rect, style);
+            this.content = new Content(textContext);
+            form.SimpleControls[name] = this;
         }
 
-        public override void Dispose()
+        public static bool DoControl(Form form, Rect rect, string text, string name)
         {
-            TextContext.Dispose();
-        }
-
-        public override void OnClear(Context g)
-        {
-            g.FillRectangle(Rect, CairoEx.ColorWhite);
-
-            this.RenderRects.Add(Rect);
-        }
-
-        internal HoverButton(string name, Form form, string text, Rect rect)
-            : base(name, form)
-        {
-            stateMachine = new StateMachine(ButtonState.Normal, states);
-            Rect = rect;
-            Text = text;
-
-            var style = Skin.current.Button[State];
-            var font = style.Font;
-            var textStyle = style.TextStyle;
-            var contentRect = Utility.GetContentRect(Rect, style);
-
-            TextContext = Application._map.CreateTextContext(
-                Text, font.FontFamily, font.Size,
-                font.FontStretch, font.FontStyle, font.FontWeight,
-                (int)contentRect.Width, (int)contentRect.Height,
-                textStyle.TextAlignment);
-        }
-
-        internal static bool DoControl(Form form, Rect rect, string text, string name)
-        {
-            //The control hasn't been created, create it.
-            if (!form.Controls.ContainsKey(name))
+            //Create
+            if (!form.SimpleControls.ContainsKey(name))
             {
                 var hoverButton = new HoverButton(name, form, text, rect);
             }
 
-            var control = form.Controls[name] as HoverButton;
+            //Update
+            var control = form.SimpleControls[name] as HoverButton;
             Debug.Assert(control != null);
-            control.Active = true;
+            control.Text = text;
+            control.Update();
 
+            //Result
             return control.Result;
         }
+
+        public override string Name
+        {
+            get { return name; }
+        }
+
+        #region Overrides of SimpleControl
+
+        public override Rect Rect
+        {
+            get { return rect; }
+            set { rect = value; }
+        }
+
+        public override Content Content
+        {
+            get
+            {
+                if(textChanged)
+                {
+                    textChanged = false;
+                    content.TextContext.Text = text;
+                }
+                return content;
+            }
+        }
+
+        public override Style Style
+        {
+            get
+            {
+                this.style = Skin.current.Button[State];
+                return this.style;
+            }
+        }
+
+        #endregion
     }
 }

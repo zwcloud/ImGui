@@ -10,8 +10,6 @@ namespace ImGui
     /// </summary>
     public partial struct Rect
     {
-        #region Constructors
-
         /// <summary>
         /// Construct a rect by its width and height (top-left is at (0,0))
         /// </summary>
@@ -82,7 +80,7 @@ namespace ImGui
             _x = Math.Min(point1._x, point2._x);
             _y = Math.Min(point1._y, point2._y);
 
-            //  Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
+            // Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
             _width = Math.Max(Math.Max(point1._x, point2._x) - _x, 0);
             _height = Math.Max(Math.Max(point1._y, point2._y) - _y, 0);
         }
@@ -123,11 +121,6 @@ namespace ImGui
             _height = size.Height;
         }
 
-
-        #endregion Constructors
-
-        #region Statics
-
         /// <summary>
         /// Empty - a static property which provides an Empty rectangle.  X and Y are positive-infinity
         /// and Width and Height are negative infinity.  This is the only situation where Width or
@@ -147,9 +140,7 @@ namespace ImGui
         /// </summary>
         public static Rect Big { get { return s_big; } }
 
-        #endregion Statics
-
-        #region Public Properties
+        public static Rect Zero { get { return s_zero; } }
 
         /// <summary>
         /// IsEmpty - this returns true if this rect is the Empty rectangle.
@@ -365,7 +356,7 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    return Double.NegativeInfinity;
+                    return double.NegativeInfinity;
                 }
 
                 return _x + _width;
@@ -382,7 +373,7 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    return Double.NegativeInfinity;
+                    return double.NegativeInfinity;
                 }
 
                 return _y + _height;
@@ -441,10 +432,6 @@ namespace ImGui
         {
             get { return new Point(X + 0.5 * Width, Y + 0.5 * Height); }
         }
-
-        #endregion Public Properties
-
-        #region Public Methods
 
         /// <summary>
         /// Contains - Returns true if the Point is within the rectangle, inclusive of the edges.
@@ -538,7 +525,7 @@ namespace ImGui
                 double left = Math.Max(Left, rect.Left);
                 double top = Math.Max(Top, rect.Top);
 
-                //  Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
+                // Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
                 _width = Math.Max(Math.Min(Right, rect.Right) - left, 0);
                 _height = Math.Max(Math.Min(Bottom, rect.Bottom) - top, 0);
 
@@ -573,25 +560,25 @@ namespace ImGui
 
 
                 // We need this check so that the math does not result in NaN
-                if ((rect.Width == Double.PositiveInfinity) || (Width == Double.PositiveInfinity))
+                if ((rect.Width == double.PositiveInfinity) || (Width == double.PositiveInfinity))
                 {
-                    _width = Double.PositiveInfinity;
+                    _width = double.PositiveInfinity;
                 }
                 else
                 {
-                    //  Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)                    
+                    // Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
                     double maxRight = Math.Max(Right, rect.Right);
                     _width = Math.Max(maxRight - left, 0);
                 }
 
                 // We need this check so that the math does not result in NaN
-                if ((rect.Height == Double.PositiveInfinity) || (Height == Double.PositiveInfinity))
+                if ((rect.Height == double.PositiveInfinity) || (Height == double.PositiveInfinity))
                 {
-                    _height = Double.PositiveInfinity;
+                    _height = double.PositiveInfinity;
                 }
                 else
                 {
-                    //  Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
+                    // Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
                     double maxBottom = Math.Max(Bottom, rect.Bottom);
                     _height = Math.Max(maxBottom - top, 0);
                 }
@@ -721,6 +708,29 @@ namespace ImGui
         }
 
         /// <summary>
+        /// Inflate - inflate the bounds by the value provided, in all four directions.
+        /// If any paramer is negative, this method is illegal.
+        /// If this is Empty, this method is illegal.
+        /// </summary>
+        public void Inflate(double top, double right, double bottom, double left)
+        {
+            if (IsEmpty)
+            {
+                throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotCallMethod));
+            }
+
+            if (top < 0 || right < 0 || bottom < 0 || left < 0)
+            {
+                throw new ArgumentOutOfRangeException("Cannot use negative values.");
+            }
+
+            _x -= top;
+            _y -= left;
+            _width += (left + right);
+            _height += (top + bottom);
+        }
+
+        /// <summary>
         /// Inflate - return the result of inflating rect by the size provided, in all directions
         /// If this is Empty, this method is illegal.
         /// </summary>
@@ -739,6 +749,18 @@ namespace ImGui
             rect.Inflate(width, height);
             return rect;
         }
+
+        /// <summary>
+        /// Inflate - return the result of inflating rect by the size provided, in all four directions
+        /// If any paramer is negative, this method is illegal.
+        /// If this is Empty, this method is illegal.
+        /// </summary>
+        public static Rect Inflate(Rect rect, double top, double right, double bottom, double left)
+        {
+            rect.Inflate(top, right, bottom, left);
+            return rect;
+        }
+
 #if Matrix
         /// <summary>
         /// Returns the bounds of the transformed rectangle.
@@ -805,10 +827,6 @@ namespace ImGui
             }
         }
 
-        #endregion Public Methods
-
-        #region Private Methods
-
         /// <summary>
         /// ContainsInternal - Performs just the "point inside" logic
         /// </summary>
@@ -832,10 +850,10 @@ namespace ImGui
             Rect rect = new Rect();
             // We can't set these via the property setters because negatives widths
             // are rejected in those APIs.
-            rect._x = Double.PositiveInfinity;
-            rect._y = Double.PositiveInfinity;
-            rect._width = Double.NegativeInfinity;
-            rect._height = Double.NegativeInfinity;
+            rect._x = double.PositiveInfinity;
+            rect._y = double.PositiveInfinity;
+            rect._width = double.NegativeInfinity;
+            rect._height = double.NegativeInfinity;
             return rect;
         }
 
@@ -849,14 +867,10 @@ namespace ImGui
             return rect;
         }
 
-        #endregion Private Methods
-
-        #region Private Fields
-
-        private readonly static Rect s_empty = CreateEmptyRect();
+        private static readonly Rect s_empty = CreateEmptyRect();
 
         private static readonly Rect s_big = CreateVeryBigRect();
 
-        #endregion Private Fields
+        private static readonly Rect s_zero = new Rect(0, 0);
     }
 }

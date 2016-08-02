@@ -7,8 +7,6 @@ namespace ImGui
     /// </summary>
     public partial struct Size
     {
-        #region Constructors
-
         /// <summary>
         /// Constructor which sets the size's initial values.  Width and Height must be non-negative
         /// </summary>
@@ -25,10 +23,6 @@ namespace ImGui
             _height = height;
         }
 
-        #endregion Constructors
-
-        #region Statics
-
         /// <summary>
         /// Empty - a static property which provides an Empty size.  Width and Height are 
         /// negative-infinity.  This is the only situation
@@ -41,10 +35,6 @@ namespace ImGui
                 return s_empty;
             }
         }
-
-        #endregion Statics
-
-        #region Public Methods and Properties
 
         /// <summary>
         /// IsEmpty - this returns true if this size is the Empty size.
@@ -109,10 +99,6 @@ namespace ImGui
             }
         }
 
-        #endregion Public Methods
-
-        #region Public Operators
-
         /// <summary>
         /// Explicit conversion to Vector.
         /// </summary>
@@ -137,26 +123,16 @@ namespace ImGui
             return new Point(size._width, size._height);
         }
 
-        #endregion Public Operators
-
-        #region Private Methods
-            
         static private Size CreateEmptySize()
         {
             Size size = new Size();
             // We can't set these via the property setters because negatives widths
             // are rejected in those APIs.
-            size._width = Double.NegativeInfinity;
-            size._height = Double.NegativeInfinity;
+            size._width = double.NegativeInfinity;
+            size._height = double.NegativeInfinity;
             return size;
         }
 
-        #endregion Private Methods
-            
-        #region Private Fields
-
         private readonly static Size s_empty = CreateEmptySize();
-
-        #endregion Private Fields
     }
 }
