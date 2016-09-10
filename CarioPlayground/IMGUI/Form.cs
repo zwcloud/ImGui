@@ -67,11 +67,12 @@ namespace ImGui
         {
             this.renderContext.Dispose();
 
-            foreach (var box in this.renderMap.Values)
+            var controls = SimpleControls.Values;
+            foreach (var control in controls)
             {
-                if (box.Type != RenderBoxType.Dummy)
+                if (control.Type != RenderBoxType.Dummy)
                 {
-                    box.Content.Dispose();
+                    control.Content.Dispose();
                 }
             }
 
@@ -137,14 +138,14 @@ namespace ImGui
                 EndGUI();
             }
 
-            this.renderMap.Clear();
+            this.renderBoxMap.Clear();
             return new GUILoopResult(needExit, dirtyRect);
         }
 
         private Rect DoRender()
         {
             Rect dirtyRect = Rect.Empty;
-            foreach (var box in this.renderMap.Values)
+            foreach (var box in this.renderBoxMap.Values)
             {
                 if(box.Type == RenderBoxType.Dummy) continue;
                 if(box.NeedRepaint)
@@ -163,7 +164,7 @@ namespace ImGui
         }
 
         private RenderContext renderContext;
-        internal readonly Dictionary<string, IRenderBox> renderMap = new Dictionary<string, IRenderBox>();
+        internal readonly Dictionary<string, IRenderBox> renderBoxMap = new Dictionary<string, IRenderBox>();
 
         /// <summary>
         /// Call this to initialize GUI

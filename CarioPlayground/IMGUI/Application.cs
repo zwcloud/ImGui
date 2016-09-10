@@ -177,7 +177,7 @@ namespace ImGui
                     }
                 }
 
-                System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(1000/60.0));
+                System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(1000/60.0));//limit FPS to 60
 
                 if(removeList.Count != 0)
                 {

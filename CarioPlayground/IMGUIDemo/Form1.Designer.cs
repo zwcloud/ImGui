@@ -65,25 +65,25 @@ namespace ImGuiDemo
             //}
             //GUILayout.EndHorizontal();
 
-            GUILayout.BeginVertical();//A
-            {
-                GUILayout.BeginHorizontal();//B
-                {
-                    GUILayout.Button("dummy0", "dummy0");
-                }
-                GUILayout.EndHorizontal();
-                GUILayout.BeginHorizontal();//C
-                {
-                    GUILayout.Button("dummy1", "dummy1");
-                    GUILayout.BeginVertical();//D
-                    {
-                        GUILayout.Button("dummy2", "dummy2");
-                    }
-                    GUILayout.EndVertical();
-                }
-                GUILayout.EndHorizontal();
-            }
-            GUILayout.EndVertical();
+            //GUILayout.BeginVertical();//A
+            //{
+            //    GUILayout.BeginHorizontal();//B
+            //    {
+            //        GUILayout.Button("dummy0", "dummy0");
+            //    }
+            //    GUILayout.EndHorizontal();
+            //    GUILayout.BeginHorizontal();//C
+            //    {
+            //        GUILayout.Button("dummy1", "dummy1");
+            //        GUILayout.BeginVertical();//D
+            //        {
+            //            GUILayout.Button("dummy2", "dummy2");
+            //        }
+            //        GUILayout.EndVertical();
+            //    }
+            //    GUILayout.EndHorizontal();
+            //}
+            //GUILayout.EndVertical();
 
             //GUILayout.BeginVertical();
             //{
@@ -96,10 +96,10 @@ namespace ImGuiDemo
             //        GUILayout.EndVertical();
             //        GUILayout.BeginVertical();
             //        {
-            //            GUILayout.Button("dummy11", "dummy11");
+            //            GUILayout.Button("dummy1", "dummy1");
             //            GUILayout.BeginHorizontal();
             //            {
-            //                GUILayout.Button("dummy12", "dummy13");
+            //                GUILayout.Button("dummy2", "dummy2");
             //            }
             //            GUILayout.EndHorizontal();
             //        }
@@ -109,41 +109,55 @@ namespace ImGuiDemo
             //}
             //GUILayout.EndVertical();
 
-            //GUILayout.BeginVertical();
+            GUILayout.BeginVertical(Skin.current.Box);
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Button("dummy0", "dummy0");
+                    GUILayout.Button("dummy1", "dummy1");
+                    GUILayout.Button("dummy2", "dummy2");
+                    GUILayout.Button("dummy3", "dummy3");
+                    GUILayout.Button("dummy4", "dummy4");
+                    GUILayout.Button("dummy5", "dummy5");
+                    GUILayout.Button("dummy6", "dummy6");
+                    GUILayout.Button("dummy7", "dummy7");
+                    GUILayout.Button("dummy8", "dummy8");
+                    GUILayout.Button("dummy9", "dummy9");
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Button("dummy11", "dummy11");
+                    GUILayout.BeginVertical(Skin.current.Box);
+                    {
+                        GUILayout.Button("dummy12", "dummy12");
+                        GUILayout.Button("dummy13", "dummy13");
+                        GUILayout.BeginHorizontal();
+                        {
+                            GUILayout.Button("dummy14", "dummy14");
+                            GUILayout.Button("dummy15", "dummy15");
+                        }
+                        GUILayout.EndHorizontal();
+                    }
+                    GUILayout.EndVertical();
+                }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
+
+            //GUILayout.BeginVertical(Skin.current.Box);
             //{
+            //    GUILayout.Button("dummy1", "dummy1");
+            //    GUILayout.Button("dummy2", "dummy2");
             //    GUILayout.BeginHorizontal();
             //    {
-            //        GUILayout.Button("dummy0", "dummy0");
-            //        GUILayout.Button("dummy1", "dummy1");
-            //        GUILayout.Button("dummy2", "dummy2");
             //        GUILayout.Button("dummy3", "dummy3");
             //        GUILayout.Button("dummy4", "dummy4");
-            //        GUILayout.Button("dummy5", "dummy5");
-            //        GUILayout.Button("dummy6", "dummy6");
-            //        GUILayout.Button("dummy7", "dummy7");
-            //        GUILayout.Button("dummy8", "dummy8");
-            //        GUILayout.Button("dummy9", "dummy9");
-            //    }
-            //    GUILayout.EndHorizontal();
-            //    GUILayout.BeginHorizontal();
-            //    {
-            //        GUILayout.Button("dummy11", "dummy11");
-            //        GUILayout.BeginVertical();
-            //        {
-            //            GUILayout.Button("dummy12", "dummy12");
-            //            GUILayout.Button("dummy13", "dummy13");
-            //            GUILayout.BeginHorizontal();
-            //            {
-            //                GUILayout.Button("dummy14", "dummy14");
-            //                GUILayout.Button("dummy15", "dummy15");
-            //            }
-            //            GUILayout.EndHorizontal();
-            //        }
-            //        GUILayout.EndVertical();
             //    }
             //    GUILayout.EndHorizontal();
             //}
             //GUILayout.EndVertical();
+
 
 #if ShowButton
             Y = 80; //Debug.WriteLine("at ({0},{1})", 20, offsetY);
@@ -242,5 +256,4 @@ namespace ImGuiDemo
 #endif
         }
     }
-
 }

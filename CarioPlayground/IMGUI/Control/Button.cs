@@ -3,6 +3,13 @@ using System.Diagnostics;
 
 namespace ImGui
 {
+    /// <summary>
+    /// Button
+    /// </summary>
+    /// <remarks>
+    /// The button is a simple control, which only contains a text as its content.
+    /// It handles the click event to respond when the user clicks a Button.
+    /// </remarks>
     internal class Button : SimpleControl
     {
         #region State machine define
@@ -33,25 +40,23 @@ namespace ImGui
 
         private readonly StateMachine stateMachine;
         private readonly string name;
-        private string text;
+
         private Rect rect;
         private Content content;
         private Style style;
 
-        private bool textChanged = false;
-
         public string Text
         {
-            get { return text; }
+            get { return Content.Text; }
             private set
             {
-                if (Text == value)
+                if (Content.Text == value)
                 {
                     return;
                 }
 
-                text = value;
-                textChanged = true;
+                Content.Text = value;
+                Content.Build(Skin.current.Button[State]);
                 NeedRepaint = true;
             }
         }
@@ -109,12 +114,13 @@ namespace ImGui
             if (State != oldState)
             {
                 NeedRepaint = true;
+                Event.current.type = EventType.Repaint;
             }
             bool clicked = oldState == "Active" && State == "Hover";
             Result = clicked;
         }
 
-        public Button(string name, Form form, Content content, Rect rect)
+        public Button(string name, Form form, Content content)
         {
             this.name = name;
             this.stateMachine = new StateMachine(ButtonState.Normal, states);
@@ -122,19 +128,10 @@ namespace ImGui
             this.NeedRepaint = true;
             this.Form = form;
 
-            this.rect = rect;
             this.style = Skin.current.Button[State];
             this.content = content;
 
             form.SimpleControls[name] = this;
-
-            //Auto-size rect of the button
-            //if (rect.IsBig)
-            //{
-            //    var boxSize = CairoEx.MeasureBoxModel(new Content(Layout), Skin.current.Button["Normal"]);
-            //    Rect = form.GUILayout.AddRect(new Rect(boxSize));
-            //}
-
         }
 
         public static bool DoControl(Rect rect, Content content, string name)
@@ -143,7 +140,7 @@ namespace ImGui
             //Create
             if (!form.SimpleControls.ContainsKey(name))
             {
-                var button = new Button(name, form, content, rect);//FIXME this rect is useless
+                var button = new Button(name, form, content);
             }
 
             //Update
@@ -152,21 +149,15 @@ namespace ImGui
             if (Event.current.type == EventType.Repaint)
             {
                 control.Rect = rect;
-                control.Text = content.Text;//FIXME control.Text is useless
-                control.SetContent(content);
+                control.content = content;
             }
             control.Update();
 
             //Active
-            form.renderMap.Add(name, control);
+            form.renderBoxMap[name]= control;
 
             //Result
             return control.Result;
-        }
-
-        public void SetContent(Content content)
-        {
-            this.content = content;
         }
 
         public override string Name
@@ -181,7 +172,7 @@ namespace ImGui
             get { return rect; }
             set
             {
-                //TODO onchange
+                //TODO need re-layout
                 rect = value;
             }
         }

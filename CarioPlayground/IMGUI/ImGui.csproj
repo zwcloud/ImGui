@@ -103,6 +103,7 @@
       <DeployService-Deploy>True</DeployService-Deploy>
     </Compile>
     <Compile Include="Content.cs" />
+    <Compile Include="Control\Box.cs" />
     <Compile Include="Control\Button.cs" />
     <Compile Include="Control\Control.cs" />
     <Compile Include="Control\HoverButton.cs" />
@@ -151,7 +152,6 @@
     <Compile Include="Port\ITextContext.cs" />
     <Compile Include="Proxy\PangoTextContext.cs" />
     <Compile Include="RenderContext.cs" />
-    <Compile Include="Length.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Port\TextEnums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -166,6 +166,7 @@
     <Compile Include="Style.cs" />
     <Compile Include="Style.Make.cs" />
     <Compile Include="StyleModifier.cs" />
+    <Compile Include="StyleState.cs" />
     <Compile Include="TextStyle.cs" />
     <Compile Include="Texture.Presets.cs" />
     <Compile Include="Texture.cs" />

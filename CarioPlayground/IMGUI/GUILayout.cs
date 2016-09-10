@@ -7,13 +7,18 @@
             GUILayout.BeginHorizontal(Content.None, Style.None);
         }
 
+        public static void BeginHorizontal(Style style)
+        {
+            GUILayout.BeginHorizontal(Content.None, style);
+        }
+
         public static void BeginHorizontal(Content content, Style style)
         {
             LayoutGroup layoutGroup = LayoutUtility.BeginLayoutGroup(style);
             layoutGroup.isVertical = false;
             if (style != Style.None || content != Content.None)
             {
-                //GUI.Box(layoutGroup.rect, content, style);
+                GUI.Box(layoutGroup.rect, content, "box_" + layoutGroup.GetHashCode());
             }
         }
 
@@ -27,13 +32,18 @@
             GUILayout.BeginVertical(Content.None, Style.None);
         }
 
+        public static void BeginVertical(Style style)
+        {
+            GUILayout.BeginVertical(Content.None, style);
+        }
+
         public static void BeginVertical(Content content, Style style)
         {
             LayoutGroup layoutGroup = LayoutUtility.BeginLayoutGroup(style);
             layoutGroup.isVertical = true;
             if (style != Style.None)
             {
-                //GUI.Box(layoutGroup.rect, content, style);
+                GUI.Box(layoutGroup.rect, content, "box_" + layoutGroup.GetHashCode());
             }
         }
 

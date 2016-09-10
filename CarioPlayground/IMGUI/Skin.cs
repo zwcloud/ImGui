@@ -14,7 +14,10 @@ namespace ImGui
         public Dictionary<string, Style> TextBox { get; set; }
         public Dictionary<string, Style> Slider { get; set; }
         public Dictionary<string, Style> PolygonButton { get; set; }
+
+        /*Stateless styles*/
         public Style ToolTip { get; set; }
+        public Style Box { get; set; }
 
         public static readonly Skin current;
 
@@ -45,22 +48,23 @@ namespace ImGui
 
             #region Button
             {
+                var bgColor = CairoEx.ColorRgb(204, 204, 204);
                 StyleModifier[] normalModifiers =
                 {
-                    new StyleModifier{Name = "BorderTop", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderRight", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderBottom", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderLeft", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderTop", Value = 2},
+                    new StyleModifier{Name = "BorderRight", Value = 2},
+                    new StyleModifier{Name = "BorderBottom", Value = 2},
+                    new StyleModifier{Name = "BorderLeft", Value = 2},
 
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(225,225,225)},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(225,225,225)},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(225,225,225)},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderTopColor", Value = bgColor},
+                    new StyleModifier{Name = "BorderRightColor", Value = bgColor},
+                    new StyleModifier{Name = "BorderBottomColor", Value = bgColor},
+                    new StyleModifier{Name = "BorderLeftColor", Value = bgColor},
                     
-                    new StyleModifier{Name = "PaddingTop", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "PaddingRight", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "PaddingBottom", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "PaddingLeft", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingTop", Value = 2},
+                    new StyleModifier{Name = "PaddingRight", Value = 2},
+                    new StyleModifier{Name = "PaddingBottom", Value = 2},
+                    new StyleModifier{Name = "PaddingLeft", Value = 2},
 
                     new StyleModifier
                     {
@@ -78,7 +82,7 @@ namespace ImGui
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorRgb(193,193,193),
+                            Color = bgColor,
                             Image = null,
                             Pattern = null
                         }
@@ -91,22 +95,24 @@ namespace ImGui
                     //Button.Active.BackgroundPattern = gradient;
                 };
                 Button["Normal"] = Style.Make(normalModifiers);
-                
+
+                var hoverBorderColor = CairoEx.ColorRgb(122, 122, 122);
                 StyleModifier[] hoverModifiers =
                 {
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(115,115,115)},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(115,115,115)},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(115,115,115)},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderTopColor", Value = hoverBorderColor},
+                    new StyleModifier{Name = "BorderRightColor", Value = hoverBorderColor},
+                    new StyleModifier{Name = "BorderBottomColor", Value = hoverBorderColor},
+                    new StyleModifier{Name = "BorderLeftColor", Value = hoverBorderColor},
                 };
                 Button["Hover"] = Style.Make(Button["Normal"], hoverModifiers);
-                
+
+                var activeBgColor = CairoEx.ColorRgb(153, 153, 153);
                 StyleModifier[] activeModifiers =
                 {
-                    new StyleModifier{Name = "BorderBottomColor",   Value = CairoEx.ColorDarkBlue},
-                    new StyleModifier{Name = "BorderLeftColor",     Value = CairoEx.ColorDarkBlue},
-                    new StyleModifier{Name = "BorderTopColor",      Value = CairoEx.ColorDarkBlue},
-                    new StyleModifier{Name = "BorderRightColor",    Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderBottomColor",   Value = activeBgColor},
+                    new StyleModifier{Name = "BorderLeftColor",     Value = activeBgColor},
+                    new StyleModifier{Name = "BorderTopColor",      Value = activeBgColor},
+                    new StyleModifier{Name = "BorderRightColor",    Value = activeBgColor},
 
                     new StyleModifier
                     {
@@ -126,7 +132,7 @@ namespace ImGui
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorLightBlue,
+                            Color = activeBgColor,
                             Image = null,
                             Pattern = null
                         }
@@ -171,20 +177,20 @@ namespace ImGui
             {
                 StyleModifier[] normalModifiers =
                 {
-                    new StyleModifier{Name = "BorderTop", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderRight", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderBottom", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "BorderLeft", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "BorderTop", Value = 2},
+                    new StyleModifier{Name = "BorderRight", Value = 2},
+                    new StyleModifier{Name = "BorderBottom", Value = 2},
+                    new StyleModifier{Name = "BorderLeft", Value = 2},
 
                     new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(225,225,225)},
                     new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(225,225,225)},
                     new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(225,225,225)},
                     new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(225,225,225)},
                     
-                    new StyleModifier{Name = "PaddingTop", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "PaddingRight", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "PaddingBottom", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name = "PaddingLeft", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name = "PaddingTop", Value = 2},
+                    new StyleModifier{Name = "PaddingRight", Value = 2},
+                    new StyleModifier{Name = "PaddingBottom", Value = 2},
+                    new StyleModifier{Name = "PaddingLeft", Value = 2},
 
                     new StyleModifier
                     {
@@ -289,20 +295,20 @@ namespace ImGui
             {
                 StyleModifier[] normalModifiers =
                 {
-                    new StyleModifier{Name = "BorderTop", Value = Length.OnePixel},
-                    new StyleModifier{Name = "BorderRight", Value = Length.OnePixel},
-                    new StyleModifier{Name = "BorderBottom", Value = Length.OnePixel},
-                    new StyleModifier{Name = "BorderLeft", Value = Length.OnePixel},
+                    new StyleModifier{Name = "BorderTop", Value = 1},
+                    new StyleModifier{Name = "BorderRight", Value = 1},
+                    new StyleModifier{Name = "BorderBottom", Value = 1},
+                    new StyleModifier{Name = "BorderLeft", Value = 1},
 
                     new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorBlack},
                     new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorBlack},
                     new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
                     new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
                     
-                    new StyleModifier{Name="PaddingTop", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name="PaddingRight", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name="PaddingBottom", Value = new Length(2, Unit.Pixel)},
-                    new StyleModifier{Name="PaddingLeft", Value = new Length(2, Unit.Pixel)},
+                    new StyleModifier{Name="PaddingTop", Value = 2},
+                    new StyleModifier{Name="PaddingRight", Value = 2},
+                    new StyleModifier{Name="PaddingBottom", Value = 2},
+                    new StyleModifier{Name="PaddingLeft", Value = 2},
 
                     new StyleModifier
                     {
@@ -432,6 +438,56 @@ namespace ImGui
                 ToolTip.ExtraStyles.Add("FixedSize", new Size(100, 40));
             }
             #endregion
+
+            #region Box
+            {
+                var borderColor = CairoEx.ColorRgb(203, 203, 203);
+                var bgColor = CairoEx.ColorRgb(242, 242, 242);
+                StyleModifier[] normalModifiers =
+                {
+                    new StyleModifier{Name = "BorderTop", Value = 2},
+                    new StyleModifier{Name = "BorderRight", Value = 2},
+                    new StyleModifier{Name = "BorderBottom", Value = 2},
+                    new StyleModifier{Name = "BorderLeft", Value = 2},
+
+                    new StyleModifier{Name = "BorderTopColor", Value = borderColor},
+                    new StyleModifier{Name = "BorderRightColor", Value = borderColor},
+                    new StyleModifier{Name = "BorderBottomColor", Value = borderColor},
+                    new StyleModifier{Name = "BorderLeftColor", Value = borderColor},
+
+                    new StyleModifier{Name = "PaddingTop", Value = 15},
+                    new StyleModifier{Name = "PaddingRight", Value = 10},
+                    new StyleModifier{Name = "PaddingBottom", Value = 10},
+                    new StyleModifier{Name = "PaddingLeft", Value = 15},
+
+                    new StyleModifier{Name = "CellingSpacingHorizontal", Value = 0},
+                    new StyleModifier{Name = "CellingSpacingVertical", Value = 15},
+
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = bgColor,
+                            Image = null,
+                            Pattern = null
+                        }
+                    },
+                };
+                Box = Style.Make(normalModifiers);
+            }
+            #endregion
+
         }
+
+        //internal Style GetStyle(string str)
+        //{
+        //    Style result;
+        //    if (this.StyleMap.TryGetValue(str, out result))
+        //    {
+        //        return result;
+        //    }
+        //    return null;
+        //}
     }
 }

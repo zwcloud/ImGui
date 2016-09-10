@@ -1,4 +1,5 @@
-﻿#define Use_Fill_Layout
+﻿//#define Use_Fill_Layout
+#define Use_Stretch_Layout
 using System;
 using System.Collections.Generic;
 namespace ImGui
@@ -86,6 +87,10 @@ namespace ImGui
         {
 #if Use_Fill_Layout
             current.topGroup.CalcRect();
+#elif Use_Stretch_Layout
+            current.topGroup.CalcWidthAndX();
+            current.topGroup.CalcHeight();
+            current.topGroup.SetVertical(0f, current.topGroup.maxHeight);
 #else
             current.topGroup.CalcWidth();
             current.topGroup.SetHorizontal(0f, current.topGroup.maxWidth);

@@ -1,4 +1,5 @@
-﻿namespace ImGui
+﻿using System.Runtime.CompilerServices;
+namespace ImGui
 {
     /// <summary>
     /// Extended class for System.Math
@@ -85,9 +86,8 @@
         }
 
         /// <summary>
-        ///   <para>Clamps value between 0 and 1 and returns value.</para>
+        /// Clamps value between 0 and 1 and returns value.
         /// </summary>
-        /// <param name="value"></param>
         public static double Clamp01(double value)
         {
             if (value < 0)
@@ -102,9 +102,8 @@
         }
 
         /// <summary>
-        ///   <para>Clamps value between 0 and 1 and returns value.</para>
+        /// Clamps value between 0 and 1 and returns value.
         /// </summary>
-        /// <param name="value"></param>
         public static float Clamp01(float value)
         {
             if (value < 0f)
@@ -118,5 +117,40 @@
             return value;
         }
 
+        /// <summary>
+        /// Check if number is zero, the error is 0.001
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool AmostZero(double value)
+        {
+            return (int)(1000 * value) == 0;
+        }
+
+        /// <summary>
+        /// Check if number is zero, the error is 0.001
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool AmostZero(float value)
+        {
+            return (int)(1000 * value) == 0;
+        }
+
+        /// <summary>
+        /// Check if two number is equal, the error is 0.001
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool AmostEqual(double a, double b)
+        {
+            return AmostZero(a - b);
+        }
+
+        /// <summary>
+        /// Check if two number is equal, the error is 0.001
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool AmostEqual(float a, float b)
+        {
+            return AmostZero(a - b);
+        }
     }
 }

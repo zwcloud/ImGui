@@ -1,5 +1,5 @@
-﻿#define DrawContentBox
-#define DrawPaddingBox
+﻿//#define DrawContentBox
+//#define DrawPaddingBox
 
 using System;
 using Cairo;
@@ -32,14 +32,6 @@ namespace ImGui
             var pb = style.PaddingBottom;
             var pl = style.PaddingLeft;
 
-            /*
-             * TODO Margin is temporarily not used. Margin should be used in layouting rects.
-             */
-            var mt = style.MarginTop;
-            var mr = style.MarginRight;
-            var mb = style.MarginBottom;
-            var ml = style.MarginLeft;
-
             //4 corner of the border-box
             var btl = new Point(rect.Left, rect.Top);
             var btr = new Point(rect.Right, rect.Top);
@@ -62,12 +54,15 @@ namespace ImGui
             var contentBoxRect = new Rect(ctl, cbr);
 
             /*
-             * Render from inner to outer: Content, Padding, Border, Margin, Outline
+             * Render order
+             * 1. from inner to outer: Content, Border, Outline
+             * 2. from background to foreground
              */
 
+            // draw background in padding-box
+            g.FillRectangle(paddingBoxRect, style.BackgroundStyle.Color);
+
             //Content
-            //Content-box background(draw as a filled rectangle now)
-            g.FillRectangle(rect, style.BackgroundStyle.Color);
             //Content-box
             if (content != null)
             {
@@ -81,30 +76,31 @@ namespace ImGui
                 }
             }
 
+
             //Border
             //  Top
-            if (bt != Length.Zero)
+            if (!MathEx.AmostZero(bt))
             {
                 g.FillPolygon(new[] { ptl, btl, btr, ptr }, style.BorderTopColor);
             }
             //  Right
-            if (br != Length.Zero)
+            if (!MathEx.AmostZero(br))
             {
                 g.FillPolygon(new[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
             }
             //  Bottom
-            if (bb != Length.Zero)
+            if (!MathEx.AmostZero(bb))
             {
                 g.FillPolygon(new[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
             }
             //  Left
-            if (bl != Length.Zero)
+            if (!MathEx.AmostZero(bl))
             {
                 g.FillPolygon(new[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
             }
 
             //Outline
-            if (style.OutlineWidth != Length.Zero)
+            if (!MathEx.AmostZero(style.OutlineWidth))
             {
                 g.Rectangle(borderBoxRect.TopLeft.ToPointD(), borderBoxRect.Width, borderBoxRect.Height);
                 g.LineWidth = style.OutlineWidth;
@@ -121,109 +117,6 @@ namespace ImGui
 
 #if DrawContentBox
             g.Rectangle(contentBoxRect.TopLeft.ToPointD(), contentBoxRect.Width, contentBoxRect.Height);
-            g.LineWidth = 1;
-            g.SetSourceColor(CairoEx.ColorRgb(100, 0, 100));
-            g.Stroke();
-#endif
-        }
-
-        /// <summary>
-        /// Draw a box model
-        /// </summary>
-        /// <param name="g">the Cairo context</param>
-        /// <param name="rect">the rect (of the content-box) in which to draw this box model </param>
-        /// <param name="content">content of the box mode</param>
-        /// <param name="style">style of the box model</param>
-        public static void DrawBoxModel_(this Context g, Rect contentRect, Content content, Style style)
-        {
-            //Widths of border
-            var bt = style.BorderTop;
-            var br = style.BorderRight;
-            var bb = style.BorderBottom;
-            var bl = style.BorderLeft;
-
-            //Widths of padding
-            var pt = style.PaddingTop;
-            var pr = style.PaddingRight;
-            var pb = style.PaddingBottom;
-            var pl = style.PaddingLeft;
-
-            //4 corner of the padding-box
-            var paddingRect = Rect.Inflate(contentRect, pt, pr, pb, pl);
-            var ptl = paddingRect.TopLeft;
-            var ptr = paddingRect.TopRight;
-            var pbl = paddingRect.BottomLeft;
-            var pbr = paddingRect.BottomRight;
-
-            //4 corner of the border-box
-            var borderRect = Rect.Inflate(paddingRect, bt, br, bb, bl);
-            var btl = borderRect.TopLeft;
-            var btr = borderRect.TopRight;
-            var bbl = borderRect.BottomLeft;
-            var bbr = borderRect.BottomRight;
-
-            //background(draw as a filled rectangle now)
-            g.FillRectangle(paddingRect, style.BackgroundStyle.Color);
-
-            /*
-             * Render from inner to outer: Content, Padding, Border, Margin, Outline
-             */
-
-            //Content
-
-            //Content-box
-            if (content != null)
-            {
-                if (content.Image != null)
-                {
-                    g.DrawImage(contentRect, content.Image);
-                }
-                if (content.TextContext != null)
-                {
-                    g.DrawText(contentRect, content.TextContext, style.Font, style.TextStyle);
-                }
-            }
-
-            //Border
-            //  Top
-            if (bt != Length.Zero)
-            {
-                g.FillPolygon(new[] { ptl, btl, btr, ptr }, style.BorderTopColor);
-            }
-            //  Right
-            if (br != Length.Zero)
-            {
-                g.FillPolygon(new[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
-            }
-            //  Bottom
-            if (bb != Length.Zero)
-            {
-                g.FillPolygon(new[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
-            }
-            //  Left
-            if (bl != Length.Zero)
-            {
-                g.FillPolygon(new[] {pbl, bbl, btl, ptl}, style.BorderLeftColor);
-            }
-
-            //Outline
-            if(style.OutlineWidth != Length.Zero)
-            {
-                g.Rectangle(borderRect.TopLeft.ToPointD(), borderRect.Width, borderRect.Height);
-                g.LineWidth = style.OutlineWidth;
-                g.SetSourceColor(style.OutlineColor);
-                g.Stroke();
-            }
-
-#if DrawPaddingBox
-            g.Rectangle(paddingRect.TopLeft.ToPointD(), paddingRect.Width, paddingRect.Height);
-            g.LineWidth = 1;
-            g.SetSourceColor(CairoEx.ColorRgb(0,100,100));
-            g.Stroke();
-#endif
-
-#if DrawContentBox
-            g.Rectangle(contentRect.TopLeft.ToPointD(), contentRect.Width, contentRect.Height);
             g.LineWidth = 1;
             g.SetSourceColor(CairoEx.ColorRgb(100, 0, 100));
             g.Stroke();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ImGui
 {
@@ -11,9 +12,21 @@ namespace ImGui
         public List<LayoutEntry> entries = new List<LayoutEntry>();
         private int cursor;
 
+        /// <summary>
+        /// Total min width of all children
+        /// </summary>
         protected double m_ChildMinWidth = 100;
+        /// <summary>
+        /// Total max width of all children
+        /// </summary>
         protected double m_ChildMaxWidth = 100;
+        /// <summary>
+        /// Total min height of all children
+        /// </summary>
         protected double m_ChildMinHeight = 100;
+        /// <summary>
+        /// Total max height of all children
+        /// </summary>
         protected double m_ChildMaxHeight = 100;
 
         public LayoutGroup(Style style) : base(style)
@@ -48,6 +61,7 @@ namespace ImGui
             this.cursor = 0;
         }
 
+        #region Filled layout
         //Filled layout, not used
         public override void CalcRect()
         {
@@ -106,7 +120,9 @@ namespace ImGui
                 }
             }
         }
+        #endregion
 
+        #region Auto-sized layout
         public override void CalcWidth()
         {
             if(this.entries.Count == 0)
@@ -134,6 +150,12 @@ namespace ImGui
                     this.m_ChildMaxWidth += entry.maxWidth;
                 }
             }
+            this.minWidth = Math.Max(this.minWidth, this.m_ChildMinWidth);
+            if (this.maxWidth < 0.01)
+            {
+                this.maxWidth = this.m_ChildMaxWidth;
+            }
+            this.maxWidth = Math.Max(this.maxWidth, this.minWidth);
         }
 
         public override void CalcHeight()
@@ -163,12 +185,29 @@ namespace ImGui
                     this.m_ChildMaxHeight = Math.Max(entry.maxHeight, this.m_ChildMaxHeight);
                 }
             }
-            //this.minHeight = Math.Max(this.minHeight, this.m_ChildMinHeight);
-            //if (this.maxHeight == 0f)
-            //{
-            //    this.maxHeight = this.m_ChildMaxHeight;
-            //}
-            //this.maxHeight = Math.Max(this.maxHeight, this.minHeight);
+            this.minHeight = Math.Max(this.minHeight, this.m_ChildMinHeight);
+            if (this.maxHeight < 0.01)
+            {
+                this.maxHeight = this.m_ChildMaxHeight;
+            }
+            this.maxHeight = Math.Max(this.maxHeight, this.minHeight);
+
+            if (this.style != Style.None)
+            {
+                var bp = this.style.PaddingVertical + this.style.BorderVertical;
+                this.minHeight += bp;
+                this.maxHeight += bp;
+            }
+
+            if(this.isVertical)
+            {
+                if (this.entries.Count != 0)
+                {
+                    var c = (this.entries.Count - 1)*this.style.CellingSpacingVertical;
+                    this.minHeight += c;
+                    this.maxHeight += c;
+                }
+            }
         }
 
         public override void SetHorizontal(double x, double width)
@@ -178,25 +217,23 @@ namespace ImGui
             {
                 if (base.style != Style.None)
                 {
-                    //
+                    x += style.PaddingLeft + style.BorderLeft;
+                    width -= style.PaddingHorizontal + style.BorderHorizontal;
                 }
-                else
+                foreach (var entry in this.entries)
                 {
-                    var childWidth = width + this.style.PaddingHorizontal;
-                    foreach (var entry in this.entries)
-                    {
-                        entry.SetHorizontal(x, MathEx.Clamp(width, entry.minWidth, entry.maxWidth));
-                    }
+                    entry.SetHorizontal(x, MathEx.Clamp(width, entry.minWidth, entry.maxWidth));
                 }
             }
             else
             {
                 if (base.style != Style.None)
                 {
-                    //
+                    x += style.PaddingLeft + style.BorderLeft;
+                    width -= style.PaddingHorizontal + style.BorderHorizontal;
                 }
                 double t = 0;
-                if (this.m_ChildMinWidth != this.m_ChildMaxWidth)
+                if (!MathEx.AmostEqual(this.m_ChildMinWidth, this.m_ChildMaxWidth))
                 {
                     t = MathEx.Clamp((width - this.m_ChildMinWidth) / (this.m_ChildMaxWidth - this.m_ChildMinWidth), 0, 1);
                 }
@@ -224,12 +261,13 @@ namespace ImGui
             }
             if (this.isVertical)
             {
-                if (base.style!=Style.None)
+                if (this.style != Style.None)
                 {
-                    //
+                    y += style.PaddingTop + style.BorderTop;
+                    height -= style.PaddingVertical + style.BorderVertical;
                 }
                 double t = 0;
-                if (this.m_ChildMinHeight != this.m_ChildMaxHeight)
+                if (!MathEx.AmostEqual(this.m_ChildMinHeight, this.m_ChildMaxHeight))
                 {
                     t = MathEx.Clamp((height - this.m_ChildMinHeight) / (this.m_ChildMaxHeight - this.m_ChildMinHeight), 0, 1);
                 }
@@ -238,24 +276,74 @@ namespace ImGui
                     var lerpedHeight = MathEx.Lerp(entry.minHeight, entry.maxHeight, t);
                     entry.SetVertical(Math.Round(y), Math.Round(lerpedHeight));
                     y += lerpedHeight;
+
+                    if (this.style != Style.None)
+                    {
+                        y += style.CellingSpacingVertical;
+                    }
                 }
             }
             else
             {
-                if (base.style != Style.None)
+                if (this.style != Style.None)
                 {
-                    //
+                    y += style.PaddingTop + style.BorderTop;
+                    height -= style.PaddingVertical + style.BorderVertical;
                 }
-                else
+                foreach (var entry in this.entries)
                 {
-                    var childHeight = height + this.style.PaddingVertical;
-                    foreach (var entry in this.entries)
-                    {
-                        entry.SetVertical(y, MathEx.Clamp(height, entry.minHeight, entry.maxHeight));
-                    }
+                    entry.SetVertical(y, MathEx.Clamp(height, entry.minHeight, entry.maxHeight));
                 }
             }
         }
+        #endregion
 
+        #region stretchable layout
+        public override void CalcWidthAndX()
+        {
+            if (this.isForm)
+            {
+                this.rect.X = 0;
+                this.rect.Width = Form.current.Size.Width;
+            }
+
+            if (this.entries.Count == 0)
+            {
+                this.rect.Width = style.PaddingHorizontal;
+                return;
+            }
+            if (isVertical)
+            {
+                var X = this.rect.X;
+                var W = this.rect.Width;
+                var childCount = this.entries.Count;
+                var childX = X + style.PaddingLeft + style.BorderLeft;
+                var childWidth = W - style.PaddingHorizontal - style.BorderHorizontal;
+                for (int i = 0; i < childCount; ++i)
+                {
+                    var entry = this.entries[i];
+                    entry.rect.X = childX;
+                    entry.rect.Width = childWidth;
+                    entry.CalcWidthAndX();
+                }
+            }
+            else
+            {
+                var X = this.rect.X;
+                var W = this.rect.Width;
+                var childCount = this.entries.Count;
+                var nextChildX = X + style.BorderLeft + style.PaddingLeft;
+                var childWidth = (W - style.BorderHorizontal - style.PaddingHorizontal - (childCount-1)*style.CellingSpacingHorizontal)/childCount;
+                for (var i = 0; i < childCount; ++i)
+                {
+                    var entry = this.entries[i];
+                    entry.rect.X = nextChildX;
+                    entry.rect.Width = childWidth;
+                    nextChildX += style.CellingSpacingHorizontal + (float)childWidth;
+                    entry.CalcWidthAndX();
+                }
+            }
+        }
+        #endregion
     }
 }

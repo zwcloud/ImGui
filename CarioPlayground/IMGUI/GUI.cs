@@ -6,6 +6,8 @@ namespace ImGui
     {
         public delegate bool WindowFunction(GUI gui);
 
+        #region Button
+
         public static bool Button(Rect rect, string text, string id)
         {
             return DoButton(rect, Content.Cached(text, id), id);
@@ -21,6 +23,21 @@ namespace ImGui
             return ImGui.Button.DoControl(rect, content, id);
         }
 
+        #endregion
+
+        #region Box
+
+        public static void Box(Rect rect, Content content, string id)
+        {
+            DoBox(rect, content, id);
+        }
+
+        private static void DoBox(Rect rect, Content content, string id)
+        {
+            ImGui.Box.DoControl(rect, content, id);
+        }
+
+        #endregion
 
         /*
         public static void Label(Rect rect, string text, string name)

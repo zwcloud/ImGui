@@ -53,5 +53,8 @@
             this.rect.Height = height;
         }
 
+        public virtual void CalcWidthAndX()
+        {
+        }
     }
 }
