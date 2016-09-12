@@ -91,11 +91,16 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="LayoutTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IMGUITest1.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj">
+      <Project>{3C49A7E8-1708-4930-B741-8648848EC084}</Project>
+      <Name>Cairo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IMGUI\ImGui.csproj">
       <Project>{495935C7-70A3-40E3-93CD-1CEBBD591B99}</Project>
       <Name>ImGui</Name>
