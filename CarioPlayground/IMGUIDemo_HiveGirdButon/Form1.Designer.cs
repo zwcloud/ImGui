@@ -104,12 +104,12 @@ namespace ImGuiDemo_HiveGirdButon
 
         private Polygon[] myPolygons = Polygon.GeneratePolygons(40, 40, 40, 5, 10);
 
-        protected override void OnGUI(GUI gui)
+        protected override void OnGUI()
         {
             for (int i = 0; i < myPolygons.Length; ++i)
             {
-                gui.PolygonButton(myPolygons[i].Points, myPolygons[i].Center.ToString(),
-                    "hellosixpoly" + i);
+                //GUI.PolygonButton(myPolygons[i].Points, myPolygons[i].Center.ToString(),
+                //    "hellosixpoly" + i);
             }
         }
     }

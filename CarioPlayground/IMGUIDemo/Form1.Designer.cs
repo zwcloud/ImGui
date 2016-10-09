@@ -1,4 +1,4 @@
-﻿//#define ShowButton
+﻿#define ShowButton
 //#define ShowToggle
 //#define ShowRadio
 //#define ShowSlider
@@ -33,141 +33,13 @@ namespace ImGuiDemo
 
         protected override void OnGUI()
         {
-            int Y = 0;
-            //GUI.Label(new Rect(0, 0, this.Size.Width, 40), "IMGUI Demo project", "CaptionLabel");
-            //GUILayout.BeginVertical();
-            //    GUILayout.Button("Hello mybutton", "ButtonTop");
-            //    GUILayout.BeginHorizontal();
-            //        GUILayout.Button("Hello mybutton", "ButtonMiddle1");
-            //        GUILayout.Button("Hello mybutton", "ButtonMiddle2");
-            //        GUILayout.Button("Hello mybutton", "ButtonMiddle3");
-            //    GUILayout.EndHorizontal();
-            //    GUILayout.Button("Hello mybutton", "ButtonDown");
-            //GUILayout.EndVertical();
-
-            //GUILayout.Button("dummy0", "dummy0");
-            //GUILayout.Button("dummy1", "dummy1");
-            //GUILayout.Button("dummy2", "dummy2");
-
-            //GUILayout.BeginVertical();
-            //{
-            //    GUILayout.Button("dummy0", "dummy0");
-            //    GUILayout.Button("dummy1", "dummy1");
-            //    GUILayout.Button("dummy2", "dummy2");
-            //}
-            //GUILayout.EndVertical();
-
-            //GUILayout.BeginHorizontal();
-            //{
-            //    GUILayout.Button("dummy0", "dummy0");
-            //    GUILayout.Button("dummy1", "dummy1");
-            //    GUILayout.Button("dummy2", "dummy2");
-            //}
-            //GUILayout.EndHorizontal();
-
-            //GUILayout.BeginVertical();//A
-            //{
-            //    GUILayout.BeginHorizontal();//B
-            //    {
-            //        GUILayout.Button("dummy0", "dummy0");
-            //    }
-            //    GUILayout.EndHorizontal();
-            //    GUILayout.BeginHorizontal();//C
-            //    {
-            //        GUILayout.Button("dummy1", "dummy1");
-            //        GUILayout.BeginVertical();//D
-            //        {
-            //            GUILayout.Button("dummy2", "dummy2");
-            //        }
-            //        GUILayout.EndVertical();
-            //    }
-            //    GUILayout.EndHorizontal();
-            //}
-            //GUILayout.EndVertical();
-
-            //GUILayout.BeginVertical();
-            //{
-            //    GUILayout.BeginHorizontal();
-            //    {
-            //        GUILayout.BeginVertical();
-            //        {
-            //            GUILayout.Button("dummy0", "dummy0");
-            //        }
-            //        GUILayout.EndVertical();
-            //        GUILayout.BeginVertical();
-            //        {
-            //            GUILayout.Button("dummy1", "dummy1");
-            //            GUILayout.BeginHorizontal();
-            //            {
-            //                GUILayout.Button("dummy2", "dummy2");
-            //            }
-            //            GUILayout.EndHorizontal();
-            //        }
-            //        GUILayout.EndVertical();
-            //    }
-            //    GUILayout.EndHorizontal();
-            //}
-            //GUILayout.EndVertical();
-
-            GUILayout.BeginVertical(Skin.current.Box);
-            {
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Button("dummy0", "dummy0");
-                    GUILayout.Button("dummy1", "dummy1");
-                    GUILayout.Button("dummy2", "dummy2");
-                    GUILayout.Button("dummy3", "dummy3");
-                    GUILayout.Button("dummy4", "dummy4");
-                    GUILayout.Button("dummy5", "dummy5");
-                    GUILayout.Button("dummy6", "dummy6");
-                    GUILayout.Button("dummy7", "dummy7");
-                    GUILayout.Button("dummy8", "dummy8");
-                    GUILayout.Button("dummy9", "dummy9");
-                }
-                GUILayout.EndHorizontal();
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Button("dummy11", "dummy11");
-                    GUILayout.BeginVertical(Skin.current.Box);
-                    {
-                        GUILayout.Button("dummy12", "dummy12");
-                        GUILayout.Button("dummy13", "dummy13");
-                        GUILayout.BeginHorizontal();
-                        {
-                            GUILayout.Button("dummy14", "dummy14");
-                            GUILayout.Button("dummy15", "dummy15");
-                        }
-                        GUILayout.EndHorizontal();
-                    }
-                    GUILayout.EndVertical();
-                }
-                GUILayout.EndHorizontal();
-            }
-            GUILayout.EndVertical();
-
-            //GUILayout.BeginVertical(Skin.current.Box);
-            //{
-            //    GUILayout.Button("dummy1", "dummy1");
-            //    GUILayout.Button("dummy2", "dummy2");
-            //    GUILayout.BeginHorizontal();
-            //    {
-            //        GUILayout.Button("dummy3", "dummy3");
-            //        GUILayout.Button("dummy4", "dummy4");
-            //    }
-            //    GUILayout.EndHorizontal();
-            //}
-            //GUILayout.EndVertical();
-
-
 #if ShowButton
-            Y = 80; //Debug.WriteLine("at ({0},{1})", 20, offsetY);
-            if (GUILayout.Button(new Rect(20, Y, 100, 20), "a button", "Button0"))
+            if (GUILayout.Button("a button", "Button0"))
             {
                 Debug.WriteLine("Button0 clicked!");
             }
 
-            Y += 20; //Debug.WriteLine("at ({0},{1})", 20, offsetY);
-            if (GUILayout.Button(new Rect(20, Y, 100, 20), "another button ", "Button1"))
+            if (GUILayout.Button("another button ", "Button1"))
             {
                 Debug.WriteLine("Button1 clicked!");
             }

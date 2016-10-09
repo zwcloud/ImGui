@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CSharpGL;
 
@@ -64,13 +65,25 @@ void main()
         private CSharpGL.Objects.Shaders.ShaderProgram program;
         private System.Collections.Generic.Dictionary<uint, string> attributeMap;
 
-        public GUIRenderer(Size surfaceSize)
-        {
-            SurfaceSize = surfaceSize;
-        }
+        readonly uint[] buffers = { 0 };
 
-        public void OnLoad()
+        readonly uint[] textures = { 0 };
+
+        public void OnLoad(Size surfaceSize)
         {
+            this.SurfaceSize = surfaceSize;
+
+            string version = GL.GetString(CSharpGL.GL.GL_VERSION);
+            Debug.WriteLine("OpenGL version info: " + version);
+            int[] tmp = { 0 };
+            GL.GetIntegerv(CSharpGL.GL.GL_MAX_TEXTURE_SIZE, tmp);
+            int max_texture_size = tmp[0];
+            Debug.WriteLine("Max texture size: " + max_texture_size);
+
+            DeleteShaders();
+            DeleteVBOs();
+            DeleteTexture();
+
             CreateShaders();
             CreateVBOs();
             CreateTexture();
@@ -78,8 +91,9 @@ void main()
             // Other state
             GL.Enable(GL.GL_DEPTH_TEST);
             GL.ClearColor(0, 0, 0.9f, 1);
+            GL.Viewport(0, 0, (int)surfaceSize.Width, (int)surfaceSize.Height);
         }
-        
+
         private void CreateShaders()
         {
 			string vertexShaderSource, fragmentShaderSource;
@@ -105,12 +119,11 @@ void main()
             program.Create(vertexShaderSource, fragmentShaderSource, attributeMap);
             program.Bind();
 
-			CheckEroor();
+			CheckError();
         }
 
         private void CreateVBOs()
         {
-            uint[] buffers = {0};
             GL.GenBuffers(1, buffers);
             positionVboHandle = buffers[0];
             GL.BindBuffer(BufferTarget.ArrayBuffer, positionVboHandle);
@@ -130,8 +143,8 @@ void main()
 
             GL.EnableVertexAttribArray(attributePos);
             GL.EnableVertexAttribArray(attributeTexCoord);
-            
-            CheckEroor();
+
+            CheckError();
         }
 
         private void CreateTexture()
@@ -139,7 +152,6 @@ void main()
             GL.ActiveTexture(GL.GL_TEXTURE0);
             GL.Enable(GL.GL_TEXTURE_2D);
 
-            uint[] textures = {0};
             GL.GenTextures(1, textures);
             textureHandle = textures[0];
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
@@ -159,15 +171,36 @@ void main()
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int) GL.GL_LINEAR);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int) GL.GL_LINEAR);
 
-            CheckEroor();
+            CheckError();
+        }
+
+        private void DeleteShaders()
+        {
+            if (program != null)
+            {
+                program.Unbind(); CheckError();
+                program.Delete(); CheckError();
+                program = null;
+            }
+        }
+
+        private void DeleteVBOs()
+        {
+            GL.DeleteBuffers(1, buffers); CheckError();
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0); CheckError();
+        }
+
+        private void DeleteTexture()
+        {
+            GL.DeleteTextures(1, textures); CheckError();
         }
 
         public void OnUpdateTexture(Rect rect, System.IntPtr data)
         {
-            GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
+            GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle); CheckError();
 
-            GL.TexSubImage2D(GL.GL_TEXTURE_2D, 0, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, data);
-			CheckEroor();
+            GL.TexSubImage2D(GL.GL_TEXTURE_2D, 0, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, data); CheckError();
         }
 
         public void OnRenderFrame()
@@ -180,19 +213,51 @@ void main()
 
             GL.DrawArrays(GL.GL_TRIANGLE_FAN, 0, 6);
 
-			CheckEroor();
+			CheckError();
         }
 
-		private void CheckEroor(
+		private void CheckError(
 			[CallerFilePath] string fileName = null,
 			[CallerLineNumber] int lineNumber = 0,
 			[CallerMemberName] string memberName = null)
 		{
 			var error = GL.GetError();
+            string errorStr = "GL_NO_ERROR";
+		    switch (error)
+		    {
+                case GL.GL_NO_ERROR:
+		            errorStr = "GL_NO_ERROR";
+                    break;
+                case GL.GL_INVALID_ENUM:
+                    errorStr = "GL_INVALID_ENUM";
+                    break;
+                case GL.GL_INVALID_VALUE:
+                    errorStr = "GL_INVALID_VALUE";
+                    break;
+                case GL.GL_INVALID_OPERATION:
+                    errorStr = "GL_INVALID_OPERATION";
+                    break;
+                case GL.GL_STACK_OVERFLOW:
+                    errorStr = "GL_STACK_OVERFLOW";
+                    break;
+                case GL.GL_STACK_UNDERFLOW:
+                    errorStr = "GL_STACK_UNDERFLOW";
+                    break;
+                case GL.GL_OUT_OF_MEMORY:
+                    errorStr = "GL_OUT_OF_MEMORY";
+                    break;
+                case GL.GL_INVALID_FRAMEBUFFER_OPERATION:
+                    errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION";
+                    break;
+                case GL.GL_CONTEXT_LOST:
+                    errorStr = "GL_CONTEXT_LOST";
+                    break;
+		    }
+
 			if (error != GL.GL_NO_ERROR)
 			{
-				System.Diagnostics.Debug.WriteLine("{0}({1}) in {2}: glError: 0x{3:X}",
-					fileName, lineNumber, memberName, error);
+                Debug.WriteLine("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
+					fileName, lineNumber, error, errorStr, memberName);
 			}
 		}
     }

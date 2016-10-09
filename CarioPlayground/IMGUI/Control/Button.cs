@@ -44,19 +44,15 @@ namespace ImGui
         private Rect rect;
         private Content content;
         private Style style;
+        private string text;
+        private string stateBeforeRepaint = ButtonState.Normal;
 
         public string Text
         {
             get { return Content.Text; }
             private set
             {
-                if (Content.Text == value)
-                {
-                    return;
-                }
-
-                Content.Text = value;
-                Content.Build(Skin.current.Button[State]);
+                text = value;
                 NeedRepaint = true;
             }
         }
@@ -115,6 +111,7 @@ namespace ImGui
             {
                 NeedRepaint = true;
                 Event.current.type = EventType.Repaint;
+                stateBeforeRepaint = oldState;
             }
             bool clicked = oldState == "Active" && State == "Hover";
             Result = clicked;
@@ -129,32 +126,41 @@ namespace ImGui
             this.Form = form;
 
             this.style = Skin.current.Button[State];
+            this.Text = content.Text;
             this.content = content;
 
-            form.SimpleControls[name] = this;
+            form.renderBoxMap[name] = this;
         }
 
         public static bool DoControl(Rect rect, Content content, string name)
         {
-            var form = Form.current;
             //Create
-            if (!form.SimpleControls.ContainsKey(name))
+            var form = Form.current;
+            if (!form.renderBoxMap.ContainsKey(name))
             {
                 var button = new Button(name, form, content);
             }
 
             //Update
-            var control = form.SimpleControls[name] as Button;
+            var control = form.renderBoxMap[name] as Button;
             Debug.Assert(control != null);
             if (Event.current.type == EventType.Repaint)
             {
-                control.Rect = rect;
-                control.content = content;
+                if (control.Content == null// first drawn
+                    || control.Rect != rect// rect changed
+                    || control.Text != content.Text// text changed
+                    || Style.IsRebuildTextContextRequired(control.StyleBeforeRepaint, control.Style)
+                    )
+                {
+                    control.Text = content.Text;
+                    control.Rect = rect;
+                    content.Build(control.ContentRect.Size, control.Style);
+                }
             }
             control.Update();
 
             //Active
-            form.renderBoxMap[name]= control;
+            control.Active = true;
 
             //Result
             return control.Result;
@@ -194,6 +200,12 @@ namespace ImGui
             }
         }
 
+        public Style StyleBeforeRepaint
+        {
+            get { return Skin.current.Button[stateBeforeRepaint]; }
+        }
+
         #endregion
+
     }
 }

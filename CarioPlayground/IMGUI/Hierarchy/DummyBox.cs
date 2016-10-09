@@ -30,6 +30,8 @@
 
         public RenderBoxType Type { get { return RenderBoxType.Dummy; } }
 
+        public bool Active { get; set; }
+
         #endregion
     }
 }

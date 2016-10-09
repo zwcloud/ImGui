@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Cairo;
 
 namespace ImGui
@@ -96,9 +97,13 @@ namespace ImGui
 
         #region Container Style
 
-        public float CellingSpacingHorizontal { get; set; }
+        public double CellingSpacingHorizontal { get; set; }
 
-        public float CellingSpacingVertical { get; set; }
+        public double CellingSpacingVertical { get; set; }
+
+        public Alignment AlignmentHorizontal { get; set; }
+
+        public Alignment AlignmentVertical { get; set; }
 
         #endregion
 
@@ -126,6 +131,21 @@ namespace ImGui
 
         public Dictionary<string, object> ExtraStyles;
 
+        public TextAlignment TextAlignment
+        {
+            get { return TextStyle.TextAlignment; }
+            set
+            {
+                TextStyle = new TextStyle
+                {
+                    LineSpacing = TextStyle.LineSpacing,
+                    TextAlignment = value,
+                    TabSize = TextStyle.TabSize
+                };
+            }
+        }
+
+
         /// <summary>
         /// Set defalut style for all kinds of box model
         /// </summary>
@@ -146,6 +166,11 @@ namespace ImGui
                 Image = null,
                 Pattern = null
             };
+
+            CellingSpacingHorizontal = 0;
+            CellingSpacingVertical = 0;
+            AlignmentHorizontal = Alignment.Start;
+            AlignmentVertical = Alignment.Start;
 
             Font = new Font
             {
@@ -173,14 +198,54 @@ namespace ImGui
             ExtraStyles = new Dictionary<string, object>();
         }
 
-        public static Style None = new Style();
+        public static readonly Style None = new Style();
 
-        internal Size CalcSize(Content content)
+        /// <summary>
+        /// Get content's border-box size
+        /// </summary>
+        internal Size CalcSize(Content content, LayoutOption[] options)
         {
-            var contentSize = content.GetSize(this);
-            contentSize.Width += this.PaddingHorizontal + this.BorderHorizontal;
-            contentSize.Height += this.PaddingVertical + this.BorderVertical;
-            return contentSize;
+            var size = content.GetSize(this, options);
+            size.Width += this.PaddingHorizontal + this.BorderHorizontal;
+            size.Height += this.PaddingVertical + this.BorderVertical;
+            return size;
+        }
+
+        /// <summary>
+        /// get actual size of the text
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public Size GetTextActualSize(string text)
+        {
+            Size actualSize;
+            var font = this.Font;
+            var textStyle = this.TextStyle;
+            using (var measureContext = Application._map.CreateTextContext(
+                text,
+                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                4096, 4096,
+                textStyle.TextAlignment))
+            {
+                actualSize = measureContext.Rect.Size;
+            }
+            return actualSize;
+        }
+
+        internal static bool IsRebuildTextContextRequired(Style a, Style b)
+        {
+            return
+                // font changed
+                a.Font.FontFamily != b.Font.FontFamily
+                || a.Font.Size != b.Font.Size
+                || a.Font.FontStretch != b.Font.FontStretch
+                || a.Font.FontStyle != b.Font.FontStyle
+                || a.Font.FontWeight != b.Font.FontWeight
+                // Text styles changed
+                || a.TextStyle.TextAlignment != b.TextStyle.TextAlignment
+                || !MathEx.AmostEqual(a.TextStyle.LineSpacing, b.TextStyle.LineSpacing)
+                || a.TextStyle.TabSize != b.TextStyle.TabSize
+                ;
         }
     }
 }

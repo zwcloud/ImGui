@@ -75,19 +75,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CSharpGL">
-      <HintPath>..\Reference\CSharpGL.dll</HintPath>
-    </Reference>
-    <Reference Include="CSharpGL.Objects">
-      <HintPath>..\Reference\CSharpGL.Objects.dll</HintPath>
-    </Reference>
-    <Reference Include="GLM">
-      <HintPath>..\Reference\GLM.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Serialization" />
-    <Reference Include="System.Xml" />
     <Reference Include="sfmlnet-system-2">
       <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
     </Reference>
@@ -96,6 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Alignment.cs" />
     <Compile Include="BackgroundStyle.cs" />
     <Compile Include="BaseForm.cs" />
     <Compile Include="BorderlessForm.cs" />
@@ -132,6 +122,7 @@
     <Compile Include="Error.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="Form.cs" />
+    <Compile Include="FormState.cs" />
     <Compile Include="GUI.cs" />
     <Compile Include="GUILayout.cs" />
     <Compile Include="GUIRenderer.cs" />
@@ -139,10 +130,12 @@
     <Compile Include="Hierarchy\IRenderBox.cs" />
     <Compile Include="Hierarchy\LayoutEntry.cs" />
     <Compile Include="Hierarchy\LayoutGroup.cs" />
+    <Compile Include="Hierarchy\LayoutOption.cs" />
     <Compile Include="Hierarchy\LayoutUtility.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="IntRect.cs" />
     <Compile Include="IWindow.cs" />
     <Compile Include="Hierarchy\LayoutCache.cs" />
     <Compile Include="Map.cs" />
@@ -177,7 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CSharpGL.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <None Include="sfmlnet-system-2.dll.config">
@@ -191,6 +184,10 @@
     <ProjectReference Include="..\..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj">
       <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
       <Name>Cairo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CSharpGL.Core\Core\CSharpGL\CSharpGL.csproj">
+      <Project>{0d6e73c8-27b8-4614-9861-f4f22808ea7c}</Project>
+      <Name>CSharpGL</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\PangoSharp\GLib\GLib.csproj">
       <Project>{3BF1D531-8840-4F15-8066-A9788D8C398B}</Project>

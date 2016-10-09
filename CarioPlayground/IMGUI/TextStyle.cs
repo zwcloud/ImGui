@@ -18,6 +18,6 @@
         /// <summary>
         /// Tab size (spaces that TabSize characters occupies)
         /// </summary>
-        public int TabSize { get; set; } 
+        public int TabSize { get; set; }
     }
 }

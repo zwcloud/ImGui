@@ -294,8 +294,7 @@ namespace ImGui
         public static readonly Color ColorLightBlue = ColorRgb(46, 167, 224);
         public static readonly Color ColorDarkBlue = ColorRgb(3, 110, 184);
         public static readonly Color ColorPink = ColorRgb(255, 192, 203);
-
-        
+        public static readonly Color ColorOrange = ColorRgb(255, 165, 0);
 
         public static void SetSourceColor(this Context context, Color color)
         {

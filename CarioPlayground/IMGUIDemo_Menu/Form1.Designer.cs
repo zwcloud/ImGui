@@ -13,31 +13,31 @@ namespace ImGuiDemo_Menu
 {
     partial class Form1
     {
-        protected override void OnGUI(GUI gui)
+        protected override void OnGUI()
         {
-            gui.BeginV();
-                gui.Label(new Rect(this.Size.Width, 20), "Demo project - Menu", "caption");
-
-                //TODO implement radio-like button to implement menu
-                gui.BeginH();
-                {
-                    if (gui.ToggleButton(new Rect(80, 26), "文件", false, "MenuItem0"))
-                    {
-                        var rect = gui.GetControlRect("MenuItem0");
-                        gui.Window(new Rect(rect.Left, rect.Bottom, 100, 120), MenuFileWindowFunc, "Menu.File");
-                    }
-                    if (gui.ToggleButton(new Rect(80, 26), "编辑", false, "MenuItem1"))
-                    {
-                        var rect = gui.GetControlRect("MenuItem1");
-                        gui.Window(new Rect(rect.Left, rect.Bottom, 100, 140), MenuEditWindowFunc, "Menu.Edit");
-                    }
-                    gui.ToggleButton(new Rect(80, 26), "视图", false, "MenuItem2");
-                    gui.ToggleButton(new Rect(80, 26), "调试", false, "MenuItem3");
-                    gui.ToggleButton(new Rect(80, 26), "团队", false, "MenuItem4");
-                    gui.ToggleButton(new Rect(80, 26), "工具", false, "MenuItem5");
-                }
-                gui.EndH();
-            gui.EndV();
+            //gui.BeginV();
+            //    gui.Label(new Rect(this.Size.Width, 20), "Demo project - Menu", "caption");
+            //
+            //    //TODO implement radio-like button to implement menu
+            //    gui.BeginH();
+            //    {
+            //        if (gui.ToggleButton(new Rect(80, 26), "文件", false, "MenuItem0"))
+            //        {
+            //            var rect = gui.GetControlRect("MenuItem0");
+            //            gui.Window(new Rect(rect.Left, rect.Bottom, 100, 120), MenuFileWindowFunc, "Menu.File");
+            //        }
+            //        if (gui.ToggleButton(new Rect(80, 26), "编辑", false, "MenuItem1"))
+            //        {
+            //            var rect = gui.GetControlRect("MenuItem1");
+            //            gui.Window(new Rect(rect.Left, rect.Bottom, 100, 140), MenuEditWindowFunc, "Menu.Edit");
+            //        }
+            //        gui.ToggleButton(new Rect(80, 26), "视图", false, "MenuItem2");
+            //        gui.ToggleButton(new Rect(80, 26), "调试", false, "MenuItem3");
+            //        gui.ToggleButton(new Rect(80, 26), "团队", false, "MenuItem4");
+            //        gui.ToggleButton(new Rect(80, 26), "工具", false, "MenuItem5");
+            //    }
+            //    gui.EndH();
+            //gui.EndV();
 
             //if (ImGui::BeginMenuBar())
             //{
@@ -68,7 +68,7 @@ namespace ImGuiDemo_Menu
             //    ImGui::EndMenuBar();
             //}
         }
-
+#if false
         private bool MenuFileWindowFunc(GUI gui)
         {
             bool clicked1 = false;
@@ -104,6 +104,7 @@ namespace ImGuiDemo_Menu
             gui.EndV();
             return clicked1 || clicked2 || clicked3 || clicked4 || clicked5;
         }
+#endif
     }
 
 }

@@ -123,7 +123,7 @@ namespace ImGui
                             FontStyle = FontStyle.Normal,
                             FontWeight = FontWeight.Bold,
                             FontStretch = FontStretch.Normal,
-                            Size = 24,
+                            Size = 12,
                             Color = CairoEx.ColorBlack
                         }
                     },
@@ -441,7 +441,7 @@ namespace ImGui
 
             #region Box
             {
-                var borderColor = CairoEx.ColorRgb(203, 203, 203);
+                var borderColor = CairoEx.ColorRgb(24, 131, 215);
                 var bgColor = CairoEx.ColorRgb(242, 242, 242);
                 StyleModifier[] normalModifiers =
                 {
@@ -455,10 +455,10 @@ namespace ImGui
                     new StyleModifier{Name = "BorderBottomColor", Value = borderColor},
                     new StyleModifier{Name = "BorderLeftColor", Value = borderColor},
 
-                    new StyleModifier{Name = "PaddingTop", Value = 15},
-                    new StyleModifier{Name = "PaddingRight", Value = 10},
-                    new StyleModifier{Name = "PaddingBottom", Value = 10},
-                    new StyleModifier{Name = "PaddingLeft", Value = 15},
+                    new StyleModifier{Name = "PaddingTop", Value = 0},
+                    new StyleModifier{Name = "PaddingRight", Value = 0},
+                    new StyleModifier{Name = "PaddingBottom", Value = 0},
+                    new StyleModifier{Name = "PaddingLeft", Value = 0},
 
                     new StyleModifier{Name = "CellingSpacingHorizontal", Value = 0},
                     new StyleModifier{Name = "CellingSpacingVertical", Value = 15},

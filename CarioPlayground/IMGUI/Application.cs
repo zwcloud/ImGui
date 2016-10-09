@@ -53,7 +53,7 @@ namespace ImGui
             }
         }
 
-        private static void InitSysDependencies()
+        internal static void InitSysDependencies()
         {
             if(Utility.CurrentOS.IsWindows)
             {
@@ -177,8 +177,6 @@ namespace ImGui
                     }
                 }
 
-                System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(1000/60.0));//limit FPS to 60
-
                 if(removeList.Count != 0)
                 {
                     foreach (var baseForm in removeList)
@@ -196,6 +194,12 @@ namespace ImGui
                 if(RequestQuit)
                 {
                     break;
+                }
+
+                var msSleeping = 1000/60.0 - stopwatch.ElapsedMilliseconds;
+                if (msSleeping > 0)
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(msSleeping));//limit FPS to 60
                 }
             }
             #endregion

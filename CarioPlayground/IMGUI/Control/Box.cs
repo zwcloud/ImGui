@@ -23,7 +23,7 @@ namespace ImGui
 
             this.content = content;
 
-            form.SimpleControls[name] = this;
+            form.renderBoxMap[name] = this;
             this.NeedRepaint = true;
         }
 
@@ -31,13 +31,13 @@ namespace ImGui
         {
             var form = Form.current;
             //Create
-            if (!form.SimpleControls.ContainsKey(name))
+            if (!form.renderBoxMap.ContainsKey(name))
             {
                 var box = new Box(name, form, content);
             }
 
             //Update
-            var control = form.SimpleControls[name] as Box;
+            var control = form.renderBoxMap[name] as Box;
             Debug.Assert(control != null);
             if (Event.current.type == EventType.Repaint)
             {
@@ -46,7 +46,7 @@ namespace ImGui
             }
 
             //Active
-            form.renderBoxMap[name] = control;
+            control.Active = true;
         }
 
         public override string Name

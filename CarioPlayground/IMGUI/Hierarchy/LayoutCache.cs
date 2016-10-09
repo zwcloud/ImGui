@@ -18,6 +18,11 @@ namespace ImGui
             this.groupStack.Pop();
         }
 
+        public void Clear()
+        {
+            this.groupStack.Clear();
+        }
+
         public LayoutCache()
         {
         }

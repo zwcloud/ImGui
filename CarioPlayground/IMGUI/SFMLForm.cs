@@ -93,7 +93,6 @@ namespace ImGui
         {
             if(!this.Visible)
             {
-
                 this.internalForm.SetVisible(true);
                 this.Visible = true;
             }
@@ -110,6 +109,10 @@ namespace ImGui
                 this.Visible = false;
             }
         }
+
+        public abstract void Minimize();
+        public abstract void Maximize();
+        public abstract void Normalize();
 
         public object InternalForm
         {

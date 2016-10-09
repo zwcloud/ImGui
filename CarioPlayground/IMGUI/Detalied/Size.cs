@@ -37,6 +37,17 @@ namespace ImGui
         }
 
         /// <summary>
+        /// Empty - a static property which provides an Zero size.  Width and Height are 0.
+        /// </summary>
+        public static Size Zero
+        {
+            get
+            {
+                return s_zero;
+            }
+        }
+
+        /// <summary>
         /// IsEmpty - this returns true if this size is the Empty size.
         /// Note: If size is 0 this Size still contains a 0 or 1 dimensional set
         /// of points, so this method should not be used to check for 0 area.
@@ -134,5 +145,6 @@ namespace ImGui
         }
 
         private readonly static Size s_empty = CreateEmptySize();
+        private readonly static Size s_zero = new Size(0, 0);
     }
 }

@@ -122,6 +122,18 @@ namespace ImGuiDemo
             throw new InvalidOperationException("Can not calc!");
         }
 
+        internal void ClearInput()
+        {
+            if (EnteringOperand0)
+            {
+                Operand0 = "";
+            }
+            else if (EnteringOperand1)
+            {
+                Operand1 = "";
+            }
+        }
+
         internal void Clear()
         {
             Operand0 = Operand1 = "0";
@@ -141,7 +153,7 @@ namespace ImGuiDemo
                     Operand0 = "0";
                 }
             }
-            else if (EnteringOperand0)
+            else if (EnteringOperand1)
             {
                 if (Operand1 != "0")
                 {

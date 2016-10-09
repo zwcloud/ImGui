@@ -29,6 +29,8 @@
             get { return RenderBoxType.Space; }
         }
 
+        public bool Active { get; set; }
+
         #endregion
     }
 }

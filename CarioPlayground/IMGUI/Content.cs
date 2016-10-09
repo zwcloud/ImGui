@@ -8,17 +8,17 @@ namespace ImGui
         public static Content None = new Content();
 
         /// <summary>
-        /// built text
+        /// text
         /// </summary>
         public string Text { get; set; }
 
         /// <summary>
-        /// built text
+        /// text context
         /// </summary>
         public ITextContext TextContext { get; set; }
 
         /// <summary>
-        /// Image
+        /// image
         /// </summary>
         public Texture Image { get; set; }
 
@@ -50,61 +50,76 @@ namespace ImGui
             this.TextContext = textContext;
         }
 
-        internal void Build(Style style)
-        {
-            if (this.Text == null) throw new InvalidOperationException();
-            if (style == null) throw new ArgumentNullException();
-            this.TextContext = BuildTextContext(this.Text, style);
-        }
 
         /// <summary>
-        /// Get rect of the content that it may occupy
+        /// Get size of this content
         /// </summary>
-        /// <returns>rect of the content</returns>
-        public Size GetSize(Style style)
+        public Size GetSize(Style style, LayoutOption[] options)
         {
             if (Text != null)
             {
-                Build(style);
-            }
-            if (TextContext != null)
-            {
-                var width = Math.Ceiling(TextContext.Rect.Width);
-                var height = Math.Ceiling(TextContext.Rect.Height);
-                return new Size(width, height);
+                var width = -1d;
+                var height = -1d;
+                foreach (var option in options)
+                {
+                    if (option.type == LayoutOption.Type.fixedWidth)
+                    {
+                        width = (double)option.value;
+                    }
+                    else if (option.type == LayoutOption.Type.fixedHeight)
+                    {
+                        height = (double)option.value;
+                    }
+                }
+
+                if (width < 0 && height < 0) // auto-sized text
+                {
+                    var actualSize = style.GetTextActualSize(this.Text);
+                    width = actualSize.Width;
+                    height = actualSize.Height;
+                }
+                else
+                {
+                    if (width < 0) // width-auto-sized text
+                    {
+                        var actualSize = style.GetTextActualSize(this.Text);
+                        width = actualSize.Width;
+                    }
+                    if (height < 0) // height-auto-sized text
+                    {
+                        var actualSize = style.GetTextActualSize(this.Text);
+                        height = actualSize.Height;
+                    }
+                }
+
+                return new Size(Math.Ceiling(width), Math.Ceiling(height));
             }
 
-            //Others' are not implemented
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        //dummy
-        public static ITextContext BuildTextContext(string text, Rect rect, Style style)
+        /// <summary>
+        /// build the text context against the size and style
+        /// </summary>
+        internal void Build(Size size, Style style)
         {
-            return null;
-        }
+            if (this.Text == null) throw new InvalidOperationException();
+            if (style == null) throw new ArgumentNullException();
 
-        public static ITextContext BuildTextContext(string text, Style style)
-        {
             var font = style.Font;
             var textStyle = style.TextStyle;
 
-            //get actual rect of the text
-            var measureContext = Application._map.CreateTextContext(
-                text,
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
-                4096, 4096,
-                textStyle.TextAlignment);
-            var measureRect = measureContext.Rect;
-            measureContext.Dispose();
+            if (this.TextContext != null)
+            {
+                this.TextContext.Dispose();
+                this.TextContext = null;
+            }
 
-            // build text context against the rect and style
-            var textContext = Application._map.CreateTextContext(
-                text,
+            this.TextContext = Application._map.CreateTextContext(
+                this.Text,
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
-                (int)Math.Ceiling(measureRect.Width), (int)Math.Ceiling(measureRect.Height),
+                (int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height),
                 textStyle.TextAlignment);
-            return textContext;
         }
 
         internal static Content Cached(string t, string id)
@@ -115,6 +130,7 @@ namespace ImGui
                 content = new Content(t);
                 chachedContentMap.Add(id, content);
             }
+            chachedContentMap[id].Text = t;
             return content;
         }
 

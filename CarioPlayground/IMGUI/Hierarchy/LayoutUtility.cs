@@ -9,6 +9,10 @@ namespace ImGui
         Layout,
         Repaint,
         Used,
+
+        MaximizeWindow,
+        MinimizeWindow,
+        NormalizeWindow,
     }
 
     public class Event
@@ -20,33 +24,33 @@ namespace ImGui
 
     public class LayoutUtility
     {
-        public static Rect GetRect(Content content, Style style)
+        public static Rect GetRect(Content content, Style style, LayoutOption[] options)
         {
-            return DoGetRect(content, style);
+            return DoGetRect(content, style, options);
         }
 
-        private static LayoutCache current
+        internal static LayoutCache current
         {
             get { return Form.current.LayoutCache;}
         }
 
-        internal static LayoutGroup BeginLayoutGroup(Style style)
+        internal static LayoutGroup BeginLayoutGroup(bool isVertical, Style style, LayoutOption[] options)
         {
             EventType type = Event.current.type;
             if (type == EventType.Layout)
             {
-                LayoutGroup layoutGroup = new LayoutGroup(style);
+                LayoutGroup layoutGroup = new LayoutGroup(isVertical, style, options);
                 layoutGroup.isForm = false;
                 current.topGroup.Add(layoutGroup);
                 current.Push(layoutGroup);
                 return layoutGroup;
             }
-            else 
+            else
             {
                 LayoutGroup layoutGroup = current.topGroup.GetNext() as LayoutGroup;
                 if (layoutGroup == null)
                 {
-                    throw new InvalidOperationException("GUILayout mis matched LayoutGroup");
+                    throw new InvalidOperationException("GUILayout mis-matched LayoutGroup");
                 }
                 layoutGroup.ResetCursor();
                 current.Push(layoutGroup);
@@ -59,19 +63,15 @@ namespace ImGui
             current.Pop();
         }
 
-        private static Rect DoGetRect(Content content, Style style)
+        private static Rect DoGetRect(Content content, Style style, LayoutOption[] options)
         {
             if (Event.current.type == EventType.Layout)
             {
-                Size size = style.CalcSize(content);
-                current.topGroup.Add(new LayoutEntry(size.Width, size.Width, size.Height, size.Height, style));
+                Size size = style.CalcSize(content, options);
+                current.topGroup.Add(new LayoutEntry(style, options) { contentWidth = size.Width, contentHeight = size.Height });
                 return Rect.Empty;
             }
-            //if (Event.current.type != EventType.Used)
-            //{
-                return current.topGroup.GetNext().rect;
-            //}
-            //return Rect.Empty;
+            return current.topGroup.GetNext().rect;
         }
 
 
@@ -85,17 +85,13 @@ namespace ImGui
         /// </summary>
         internal static void Layout()
         {
-#if Use_Fill_Layout
-            current.topGroup.CalcRect();
-#elif Use_Stretch_Layout
-            current.topGroup.CalcWidthAndX();
-            current.topGroup.CalcHeight();
-            current.topGroup.SetVertical(0f, current.topGroup.maxHeight);
-#else
+#if Use_Stretch_Layout
             current.topGroup.CalcWidth();
-            current.topGroup.SetHorizontal(0f, current.topGroup.maxWidth);
             current.topGroup.CalcHeight();
-            current.topGroup.SetVertical(0f, current.topGroup.maxHeight);
+            current.topGroup.SetX(0);
+            current.topGroup.SetY(0);
+#elif Use_Stretch_Layout
+            current.topGroup.CalcRect();
 #endif
         }
     }

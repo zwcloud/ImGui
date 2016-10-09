@@ -17,11 +17,25 @@
 
         public abstract Rect Rect { get; set; }
 
+        public Rect ContentRect
+        {
+            get
+            {
+                return new Rect(
+                    Rect.X + Style.PaddingLeft+Style.BorderLeft,
+                    Rect.X + Style.PaddingTop+Style.BorderTop,
+                    Rect.Width - Style.PaddingHorizontal - Style.BorderHorizontal,
+                    Rect.Height - Style.PaddingVertical- Style.BorderVertical);
+            }
+        }
+
         public abstract Content Content { get; }
 
         public abstract Style Style { get; }
 
         public RenderBoxType Type { get { return RenderBoxType.SimpleControl; } }
+
+        public bool Active { get; set; }
 
         #endregion
     }

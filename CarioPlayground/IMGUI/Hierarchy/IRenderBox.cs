@@ -10,6 +10,8 @@ namespace ImGui
         Style Style { get; }
 
         bool NeedRepaint { get; set; }
+
+        bool Active { get; set; }
     }
 
     internal enum RenderBoxType

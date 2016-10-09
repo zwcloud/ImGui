@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLib", "..\PangoSharp\GLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cairo", "..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj", "{3C49A7E8-1708-4930-B741-8648848EC084}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpGL", "..\CSharpGL.Core\Core\CSharpGL\CSharpGL.csproj", "{0D6E73C8-27B8-4614-9861-F4F22808EA7C}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\CairoSharp\Binding\Binding\Binding.projitems*{3c49a7e8-1708-4930-b741-8648848ec084}*SharedItemsImports = 4
@@ -157,6 +159,13 @@ Global
 		{3C49A7E8-1708-4930-B741-8648848EC084}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3C49A7E8-1708-4930-B741-8648848EC084}.Release|x64.ActiveCfg = Release|x64
 		{3C49A7E8-1708-4930-B741-8648848EC084}.Release|x64.Build.0 = Release|x64
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C}.Debug|x64.ActiveCfg = Debug|x64
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C}.Debug|x64.Build.0 = Debug|x64
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -173,5 +182,6 @@ Global
 		{04EC04F9-AA1F-494D-86A7-033DB42D9EBA} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
 		{3BF1D531-8840-4F15-8066-A9788D8C398B} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
 		{3C49A7E8-1708-4930-B741-8648848EC084} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
+		{0D6E73C8-27B8-4614-9861-F4F22808EA7C} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
 	EndGlobalSection
 EndGlobal

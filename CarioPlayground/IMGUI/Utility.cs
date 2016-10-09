@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using SFML.System;
 
 namespace ImGui
 {
@@ -268,5 +269,82 @@ namespace ImGui
             return point;
         }
 
+        public static void MinimizeForm(Form form)
+        {
+            var sfmlWindow = ((SFML.Window.Window)(form.InternalForm));
+            if (Utility.CurrentOS.IsWindows)
+            {
+                var windowHandle = sfmlWindow.SystemHandle;
+                Native.Win32.ShowWindow(windowHandle, 2 /*ShowMinimized*/);//http://pinvoke.net/default.aspx/Enums/ShowWindowCommand.html
+            }
+            else if (Utility.CurrentOS.IsLinux)
+            {
+                throw new NotImplementedException("TODO");
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public static void MaximizeForm(Form form, out Rect rect)
+        {
+            var sfmlWindow = ((SFML.Window.Window)(form.InternalForm));
+            if (Utility.CurrentOS.IsWindows)
+            {
+                //var windowHandle = sfmlWindow.SystemHandle;
+                var workareaRect = GetWorkarea();
+                sfmlWindow.Size = new Vector2u((uint)workareaRect.Size.Width, (uint)workareaRect.Size.Height);
+                sfmlWindow.Position = new Vector2i((int)workareaRect.X, (int)workareaRect.Y);
+                rect = workareaRect;
+                //Native.Win32.ShowWindow(windowHandle, 3 /*ShowMaximized*/);//http://pinvoke.net/default.aspx/Enums/ShowWindowCommand.html
+            }
+            else if (Utility.CurrentOS.IsLinux)
+            {
+                throw new NotImplementedException("TODO");
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public static void NormalizeForm(Form form)
+        {
+            var sfmlWindow = ((SFML.Window.Window)(form.InternalForm));
+            if (Utility.CurrentOS.IsWindows)
+            {
+                sfmlWindow.Size = new Vector2u((uint)form.originalSize.Width, (uint)form.originalSize.Height);
+                sfmlWindow.Position = new Vector2i((int)form.originalPosition.X, (int)form.originalPosition.Y);
+                //var windowHandle = sfmlWindow.SystemHandle;
+                //Native.Win32.ShowWindow(windowHandle, 1 /*SW_SHOWNORMAL*/);//http://pinvoke.net/default.aspx/Enums/ShowWindowCommand.html
+            }
+            else if (Utility.CurrentOS.IsLinux)
+            {
+                throw new NotImplementedException("TODO");
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public static Rect GetWorkarea()
+        {
+            if (Utility.CurrentOS.IsWindows)
+            {
+                IntRect rectDesktop = new IntRect();
+                Native.Win32.SystemParametersInfo(0x0030 /*SPI_GETWORKAREA*/, 0, ref rectDesktop, 0);
+                return new Rect(rectDesktop.Right - rectDesktop.Left, rectDesktop.Bottom - rectDesktop.Top);
+            }
+            else if (Utility.CurrentOS.IsLinux)
+            {
+                throw new NotImplementedException("TODO");
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

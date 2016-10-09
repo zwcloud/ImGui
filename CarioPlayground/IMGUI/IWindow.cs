@@ -41,5 +41,20 @@ namespace ImGui
         /// Hide the window only if it is shown
         /// </summary>
         void Hide();
+
+        /// <summary>
+        /// Minimize the window if it is shown
+        /// </summary>
+        void Minimize();
+
+        /// <summary>
+        /// Maximize the window if it is shown
+        /// </summary>
+        void Maximize();
+
+        /// <summary>
+        /// Normalize the window if it is maximized
+        /// </summary>
+        void Normalize();
     }
 }

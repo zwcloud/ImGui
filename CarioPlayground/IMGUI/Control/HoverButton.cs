@@ -98,24 +98,27 @@ namespace ImGui
             this.Form = form;
             this.rect = rect;
             this.style = Skin.current.Button[State];
-            var textContext = Content.BuildTextContext(text, rect, style);
-            this.content = new Content(textContext);
-            form.SimpleControls[name] = this;
+            //var textContext = Content.BuildTextContext(text, rect.Width, rect.Height, style);
+            //this.content = new Content(textContext);
+            form.renderBoxMap[name] = this;
         }
 
         public static bool DoControl(Form form, Rect rect, string text, string name)
         {
             //Create
-            if (!form.SimpleControls.ContainsKey(name))
+            if (!form.renderBoxMap.ContainsKey(name))
             {
                 var hoverButton = new HoverButton(name, form, text, rect);
             }
 
             //Update
-            var control = form.SimpleControls[name] as HoverButton;
+            var control = form.renderBoxMap[name] as HoverButton;
             Debug.Assert(control != null);
             control.Text = text;
             control.Update();
+
+            //Active
+            control.Active = true;
 
             //Result
             return control.Result;

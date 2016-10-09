@@ -1,73 +1,65 @@
-﻿namespace ImGui
+﻿using System.Diagnostics;
+namespace ImGui
 {
     internal class Label : SimpleControl
     {
-        private string text;
         private readonly string name;
         private Rect rect;
         private Style style;
+        private string text;
         private Content content;
-        private bool textChanged;
 
         public string Text
         {
             get { return text; }
             private set
             {
-                if (Text == value)
-                {
-                    return;
-                }
-
                 text = value;
-                textChanged = true;
                 NeedRepaint = true;
             }
         }
 
-        public void Update()
-        {
-            var oldState = State;
-            bool active = Input.Mouse.LeftButtonState == InputState.Down && Rect.Contains(Input.Mouse.GetMousePos(Form));
-            bool hover = Input.Mouse.LeftButtonState == InputState.Up && Rect.Contains(Input.Mouse.GetMousePos(Form));
-            if(active)
-                State = "Active";
-            else if(hover)
-                State = "Hover";
-            else
-                State = "Normal";
-            if(State != oldState)
-            {
-                NeedRepaint = true;
-            }
-        }
-
-        internal Label(string name, Form form, string text, Rect rect)
+        internal Label(string name, Form form, Content content)
         {
             this.name = name;
-            this.NeedRepaint = true;
             this.State = "Normal";
+            this.NeedRepaint = true;
             this.Form = form;
-            this.rect = rect;
+
             this.style = Skin.current.Label[State];
-            var textContext = Content.BuildTextContext(text, rect, style);
-            this.content = new Content(textContext);
-            form.SimpleControls[name] = this;
+            this.Text = content.Text;
+            this.content = content;
+
+            form.renderBoxMap[name] = this;
         }
 
-        internal static void DoControl(Form form, Rect rect, string text, string name)
+        internal static void DoControl(Rect rect, Content content, string name)
         {
-            if (!form.Controls.ContainsKey(name))
+            //Create
+            var form = Form.current;
+            if (!form.renderBoxMap.ContainsKey(name))
             {
-                var label = new Label(name, form, text, rect);
-                label.Update();
+                var label = new Label(name, form, content);
             }
 
-            var control = form.SimpleControls[name] as Label;
-            System.Diagnostics.Debug.Assert(control != null);
+            //Update
+            var control = form.renderBoxMap[name] as Label;
+            Debug.Assert(control != null);
+            if (Event.current.type == EventType.Repaint)
+            {
+                if (control.Content == null// first drawn
+                    || control.Rect != rect// rect changed
+                    || control.Text != content.Text// text changed
+                    )
+                {
+                    control.Text = content.Text;
+                    control.Rect = rect;
+                    content.Build(control.ContentRect.Size, control.Style);
+                }
+            }
 
-            //Update text
-            control.Text = text;
+            //Active
+            control.Active = true;
         }
 
         public override string Name
@@ -80,18 +72,17 @@
         public override Rect Rect
         {
             get { return rect; }
-            set { rect = value; }
+            set
+            {
+                //TODO need re-layout
+                rect = value;
+            }
         }
 
         public override Content Content
         {
             get
             {
-                if (textChanged)
-                {
-                    textChanged = false;
-                    content.TextContext.Text = text;
-                }
                 return content;
             }
         }

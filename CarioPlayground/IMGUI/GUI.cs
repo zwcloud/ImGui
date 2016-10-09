@@ -25,6 +25,20 @@ namespace ImGui
 
         #endregion
 
+        #region Label
+
+        public static void Label(Rect rect, string text, string id)
+        {
+            ImGui.Label.DoControl(rect, Content.Cached(text, id), id);
+        }
+
+        public static void Label(Rect rect, Content content, string id)
+        {
+            ImGui.Label.DoControl(rect, content, id);
+        }
+
+        #endregion
+
         #region Box
 
         public static void Box(Rect rect, Content content, string id)
@@ -39,13 +53,8 @@ namespace ImGui
 
         #endregion
 
-        /*
-        public static void Label(Rect rect, string text, string name)
-        {
-            rect = DoLayout(rect);
-            ImGui.Label.DoControl(Form.current, rect, text, name);
-        }
 
+        /*
         public bool Toggle(Rect rect, string text, bool value, string name)
         {
             rect = DoLayout(rect);
@@ -176,14 +185,14 @@ namespace ImGui
 
         #region control methods
 
-        public Rect GetControlRect(string name)
+        public Rect GetControlRect(string id)
         {
-            //Control control;
-            //if(form.Controls.TryGetValue(name, out control))
-            //{
-            //    return control.Rect;
-            //}
-            throw new System.InvalidOperationException(string.Format("Can not find control <{0}>", name));
+            IRenderBox control;
+            if(Form.current.renderBoxMap.TryGetValue(id, out control))
+            {
+                return control.Rect;
+            }
+            throw new System.InvalidOperationException(string.Format("Can not find control <{0}>", id));
         }
 
         #endregion

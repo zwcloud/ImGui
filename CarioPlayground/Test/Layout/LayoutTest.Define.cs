@@ -1,42 +1,212 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using Cairo;
+using ImGui;
+using System;
 
-namespace ImGui
+namespace Test
 {
-    internal class LayoutGroup : LayoutEntry
+    public class Const
     {
-        public bool isForm;
+        public static double ItemBorderTop = 2;
+        public static double ItemBorderRight = 2;
+        public static double ItemBorderBottom = 2;
+        public static double ItemBorderLeft = 2;
+
+        public static double ItemPaddingTop = 5;
+        public static double ItemPaddingRight = 5;
+        public static double ItemPaddingBottom = 5;
+        public static double ItemPaddingLeft = 5;
+
+        public static double GroupBorderTop = 10;
+        public static double GroupBorderRight = 10;
+        public static double GroupBorderBottom = 10;
+        public static double GroupBorderLeft = 10;
+
+        public static double GroupPaddingTop = 5;
+        public static double GroupPaddingRight = 5;
+        public static double GroupPaddingBottom = 5;
+        public static double GroupPaddingLeft = 5;
+
+        public static double CellingSpacingVertical = 10;
+        public static double CellingSpacingHorizontal = 5;
+    }
+
+    public class Item : ICloneable
+    {
+        public Rect rect;//border-box
+        public double contentWidth;//exact content width, pre-calculated from content and style
+        public double contentHeight;//exact content height, pre-calculated from content and style
+        public double minWidth = 1;//minimum width of content-box
+        public double maxWidth = 9999;//maximum width of content-box
+        public double minHeight = 1;//minimum height of content-box
+        public double maxHeight = 9999;//maximum height of content-box
+        public int horizontalStretchFactor;//horizontal stretch factor
+        public int verticalStretchFactor;//vertical stretch factor
+
+        public Style style = Style.Make(
+                new[]{
+                        new StyleModifier{Name = "BorderTop", Value = Const.ItemBorderTop},
+                        new StyleModifier{Name = "BorderRight", Value = Const.ItemBorderRight},
+                        new StyleModifier{Name = "BorderBottom", Value = Const.ItemBorderBottom},
+                        new StyleModifier{Name = "BorderLeft", Value = Const.ItemBorderLeft},
+
+                        new StyleModifier{Name = "PaddingTop", Value = Const.ItemPaddingTop},
+                        new StyleModifier{Name = "PaddingRight", Value = Const.ItemPaddingRight},
+                        new StyleModifier{Name = "PaddingBottom", Value = Const.ItemPaddingBottom},
+                        new StyleModifier{Name = "PaddingLeft", Value = Const.ItemPaddingLeft},
+                }
+            );
+
+        public bool HorizontallyStretched { get { return !IsFixedWidth && horizontalStretchFactor > 0; } }
+        public bool VerticallyStretched { get { return !IsFixedHeight && verticalStretchFactor > 0; } }
+
+        public bool IsFixedWidth { get { return MathEx.AmostEqual(this.minWidth, this.maxWidth); } }
+        public bool IsFixedHeight { get { return MathEx.AmostEqual(this.minHeight, this.maxHeight); } }
+
+
+        public Item(params LayoutOption[] options)
+        {
+            if (options != null)
+            {
+                this.ApplyOptions(options);
+            }
+        }
+
+        protected void ApplyOptions(LayoutOption[] options)
+        {
+            if (options == null)
+            {
+                return;
+            }
+            //TODO handle min/max width/height
+            for (var i = 0; i < options.Length; i++)
+            {
+                var option = options[i];
+                switch (option.type)
+                {
+                    case LayoutOption.Type.fixedWidth:
+                        if ((double) option.value < this.style.PaddingHorizontal + this.style.BorderHorizontal)
+                        {
+                            throw new InvalidOperationException(
+                                string.Format("The specified width is too small. It must bigger than the horizontal padding and border size ({0}).", this.style.PaddingHorizontal + this.style.BorderHorizontal));
+                        }
+                        this.minWidth = this.maxWidth = (double)option.value;
+                        this.horizontalStretchFactor = 0;
+                        break;
+                    case LayoutOption.Type.fixedHeight:
+                        if ((double)option.value < this.style.PaddingVertical + this.style.BorderVertical)
+                        {
+                            throw new InvalidOperationException(
+                                string.Format("The specified height is too small. It must bigger than the vertical padding and border size ({0}).", this.style.PaddingVertical + this.style.BorderVertical));
+                        }
+                        this.minHeight = this.maxHeight = (double)option.value;
+                        this.verticalStretchFactor = 0;
+                        break;
+                    case LayoutOption.Type.stretchWidth:
+                        this.horizontalStretchFactor = (int)option.value;
+                        break;
+                    case LayoutOption.Type.stretchHeight:
+                        this.verticalStretchFactor = (int)option.value;
+                        break;
+                }
+            }
+        }
+
+        public virtual void CalcWidth(double unitPartWidth = -1d)
+        {
+            if (this.HorizontallyStretched)
+            {
+                if (unitPartWidth > 0)
+                {
+                    this.rect.Width = unitPartWidth * this.horizontalStretchFactor;
+                    this.contentWidth = this.rect.Width - this.style.PaddingHorizontal - this.style.BorderHorizontal;
+                }
+                else
+                {
+                    throw new ArgumentException("The unit part width is invalid", "unitPartWidth");
+                }
+            }
+            else if (this.IsFixedWidth)
+            {
+                this.rect.Width = this.minWidth;
+                this.contentWidth = this.rect.Width - this.style.PaddingHorizontal - this.style.BorderHorizontal;
+            }
+            else
+            {
+                this.rect.Width = this.contentWidth + this.style.PaddingHorizontal + this.style.BorderHorizontal;
+            }
+        }
+
+        public virtual void CalcHeight(double unitPartHeight = -1d)
+        {
+            if (this.VerticallyStretched)
+            {
+                if (unitPartHeight > 0)
+                {
+                    this.rect.Height = unitPartHeight * this.verticalStretchFactor;
+                    this.contentHeight = this.rect.Height - this.style.PaddingVertical - this.style.BorderVertical;
+                }
+                else
+                {
+                    throw new ArgumentException("The unit part height is invalid", "unitPartHeight");
+                }
+            }
+            else if (this.IsFixedHeight)
+            {
+                this.rect.Height = this.minHeight;
+                this.contentHeight = this.rect.Height - this.style.PaddingVertical - this.style.BorderVertical;
+            }
+            else
+            {
+                this.rect.Height = this.contentHeight + this.style.PaddingVertical + this.style.BorderVertical;
+            }
+        }
+
+        public virtual void SetX(double x)
+        {
+            this.rect.X = x;
+        }
+
+        public virtual void SetY(double y)
+        {
+            this.rect.Y = y;
+        }
+
+        public Item Clone() { return (Item)this.MemberwiseClone(); }
+        object ICloneable.Clone() { return Clone(); }
+    }
+
+    public class Group : Item
+    {
         public bool isVertical;
         public bool isClipped;
+        public List<Item> entries = new List<Item>();
 
-        public List<LayoutEntry> entries = new List<LayoutEntry>();
-        private int cursor;
+        public Style style = Style.Make(
+                new[]{
+                        new StyleModifier{Name = "BorderTop", Value = Const.GroupBorderTop},
+                        new StyleModifier{Name = "BorderRight", Value = Const.GroupBorderRight},
+                        new StyleModifier{Name = "BorderBottom", Value = Const.GroupBorderBottom},
+                        new StyleModifier{Name = "BorderLeft", Value = Const.GroupBorderLeft},
 
-        public LayoutGroup(bool isVertical, Style style, params LayoutOption[] options) : base(style, options)
+                        new StyleModifier{Name = "PaddingTop", Value = Const.GroupPaddingTop},
+                        new StyleModifier{Name = "PaddingRight", Value = Const.GroupPaddingRight},
+                        new StyleModifier{Name = "PaddingBottom", Value = Const.GroupPaddingBottom},
+                        new StyleModifier{Name = "PaddingLeft", Value = Const.GroupPaddingLeft},
+
+                        new StyleModifier{Name = "CellingSpacingVertical", Value = Const.CellingSpacingVertical},
+                        new StyleModifier{Name = "CellingSpacingHorizontal", Value = Const.CellingSpacingHorizontal},
+                }
+            );
+
+        public Group(bool isVertical, params LayoutOption[] options)
         {
             this.isVertical = isVertical;
-            cursor = 0;
+            base.ApplyOptions(options);
         }
 
-        public LayoutEntry GetNext()
-        {
-            if (this.cursor < this.entries.Count)
-            {
-                LayoutEntry result = this.entries[this.cursor];
-                this.cursor++;
-                return result;
-            }
-            throw new InvalidOperationException();
-        }
-
-        public void ResetCursor()
-        {
-            this.cursor = 0;
-        }
-
-
-        public void Add(LayoutEntry item)
+        public void Add(Item item)
         {
             if (this.IsFixedWidth)
             {
@@ -471,7 +641,7 @@ namespace ImGui
                     context.FillRectangle(entry.rect, CairoEx.ColorPink);
                 }
                 context.StrokeRectangle(entry.rect, CairoEx.ColorBlack);
-                var innerGroup = entry as LayoutGroup;
+                var innerGroup = entry as Group;
                 if (innerGroup != null)
                 {
                     context.Save();
@@ -487,7 +657,7 @@ namespace ImGui
 
         public void ShowResult()
         {
-            var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Cairo.Format.Rgb24);
+            var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
             var context = new Cairo.Context(surface);
 
             Draw(context, needClip: true);
@@ -505,66 +675,5 @@ namespace ImGui
 
             Process.Start("rundll32.exe", @"""C:\Program Files\Windows Photo Viewer\PhotoViewer.dll"",ImageView_Fullscreen " + filePath);
         }
-
-        #region Filled layout (not used)
-        public override void CalcRect()
-        {
-            if (this.isForm)
-            {
-                this.rect = new Rect(0, 0, Form.current.Size);
-            }
-
-            if (this.entries.Count == 0)
-            {
-                this.rect.Width = (float)base.style.PaddingHorizontal;
-                return;
-            }
-            if (isVertical)
-            {
-                var X = this.rect.X;
-                var Y = this.rect.Y;
-                var W = this.rect.Width;
-                var H = this.rect.Height;
-                var childCount = this.entries.Count;
-                var childX = X + style.PaddingLeft;
-                var nextChildY = Y + (float)style.PaddingTop;
-                var childWidth = W - style.PaddingHorizontal;
-                var childHeight = H / childCount - style.PaddingVertical;
-                for (int i = 0; i < childCount; ++i)
-                {
-                    var entry = this.entries[i];
-                    entry.rect.X = childX;
-                    entry.rect.Y = nextChildY;
-                    entry.rect.Width = childWidth;
-                    entry.rect.Height = childHeight;
-                    nextChildY += style.PaddingVertical + entry.rect.Height;
-                    entry.CalcRect();
-                }
-            }
-            else
-            {
-                var X = this.rect.X;
-                var Y = this.rect.Y;
-                var W = this.rect.Width;
-                var H = this.rect.Height;
-                var childCount = this.entries.Count;
-                var nextChildX = X + (float)style.PaddingLeft;
-                var childY = Y + style.PaddingTop;
-                var childWidth = W / childCount - style.PaddingHorizontal;
-                var childHeight = H - style.PaddingVertical;
-                for (var i=0; i<childCount; ++i)
-                {
-                    var entry = this.entries[i];
-                    entry.rect.X = nextChildX;
-                    entry.rect.Y = childY;
-                    entry.rect.Width = childWidth;
-                    entry.rect.Height = childHeight;
-                    nextChildX += style.PaddingHorizontal + (float)childWidth;
-                    entry.CalcRect();
-                }
-            }
-        }
-        #endregion
-
     }
 }

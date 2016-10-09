@@ -9,7 +9,7 @@ namespace ImGuiDemo
         [STAThread]
         static void Main()
         {
-            Application.Run(new Form1(512, 512));
+            Application.Run(new Form1(220, 230));
         }
     }
 }

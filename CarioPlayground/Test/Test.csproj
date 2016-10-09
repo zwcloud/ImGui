@@ -76,6 +76,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\ExCSS.net40.2.0.5\lib\net45\ExCSS.dll</HintPath>
     </Reference>
+    <Reference Include="sfmlnet-system-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
+    </Reference>
+    <Reference Include="sfmlnet-window-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -91,10 +99,16 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="LayoutTest.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="Layout\ClipTest.cs" />
+    <Compile Include="Layout\LayoutTest.StretchedSizeTests.cs" />
+    <Compile Include="Layout\LayoutTest.DefaultSizeTest.cs" />
+    <Compile Include="Layout\LayoutTest.FixedSizeTests.cs" />
+    <Compile Include="Layout\LayoutTest.Define.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IMGUITest1.cs" />
+    <Compile Include="IMGUITest.cs" />
+    <Compile Include="Layout\AlignmentTest.cs" />
+    <Compile Include="Layout\ContentTest.cs" />
+    <Compile Include="GUIRenderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj">
