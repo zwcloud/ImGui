@@ -24,10 +24,13 @@ void main()
 uniform sampler2D mysampler;
 in vec2 TexCoord;
 out vec4 out_Color;
+
 void main()
 {
 	vec2 st = TexCoord.st;
 	out_Color = texture2D(mysampler,vec2(st.s, 1- st.t));
+    out_Color.r *= st.s;
+    out_Color.g *= st.t;
 }";
 
 		private string vertexShaderSource120 = @"
@@ -72,13 +75,6 @@ void main()
         public void OnLoad(Size surfaceSize)
         {
             this.SurfaceSize = surfaceSize;
-
-            string version = GL.GetString(CSharpGL.GL.GL_VERSION);
-            Debug.WriteLine("OpenGL version info: " + version);
-            int[] tmp = { 0 };
-            GL.GetIntegerv(CSharpGL.GL.GL_MAX_TEXTURE_SIZE, tmp);
-            int max_texture_size = tmp[0];
-            Debug.WriteLine("Max texture size: " + max_texture_size);
 
             DeleteShaders();
             DeleteVBOs();
@@ -214,6 +210,16 @@ void main()
             GL.DrawArrays(GL.GL_TRIANGLE_FAN, 0, 6);
 
 			CheckError();
+        }
+
+        public void PrintGraphicInfo()
+        {
+            string version = GL.GetString(CSharpGL.GL.GL_VERSION);
+            Debug.WriteLine("OpenGL version info: " + version);
+            int[] tmp = { 0 };
+            GL.GetIntegerv(CSharpGL.GL.GL_MAX_TEXTURE_SIZE, tmp);
+            int max_texture_size = tmp[0];
+            Debug.WriteLine("Max texture size: " + max_texture_size);
         }
 
 		private void CheckError(

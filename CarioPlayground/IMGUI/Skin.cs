@@ -18,6 +18,7 @@ namespace ImGui
         /*Stateless styles*/
         public Style ToolTip { get; set; }
         public Style Box { get; set; }
+        public Style Space { get; set; }
 
         public static readonly Skin current;
 
@@ -478,6 +479,12 @@ namespace ImGui
             }
             #endregion
 
+            #region Space
+            {
+                Space = Style.Make();
+            }
+            #endregion
+             
         }
 
         //internal Style GetStyle(string str)

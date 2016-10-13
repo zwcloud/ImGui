@@ -1,4 +1,6 @@
 ﻿//#define INSPECT_STATE
+
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ImGui

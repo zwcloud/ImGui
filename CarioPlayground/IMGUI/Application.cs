@@ -196,11 +196,11 @@ namespace ImGui
                     break;
                 }
 
-                var msSleeping = 1000/60.0 - stopwatch.ElapsedMilliseconds;
-                if (msSleeping > 0)
-                {
-                    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(msSleeping));//limit FPS to 60
-                }
+                //var msSleeping = 1000/60.0 - stopwatch.ElapsedMilliseconds;
+                //if (msSleeping > 0)
+                //{
+                //    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(msSleeping));//limit FPS to 60
+                //}
             }
             #endregion
 

@@ -346,5 +346,25 @@ namespace ImGui
                 throw new NotImplementedException();
             }
         }
+
+        public static void GetId(string t, out string text, out string id)
+        {
+            if (t.Contains("###"))
+            {
+                var tmp0 = t.IndexOf("###");
+                text = t.Substring(0, tmp0);
+                id = t;
+            }
+            else if (t.Contains("##"))
+            {
+                var tmp0 = t.IndexOf("##");
+                text = t.Substring(0, tmp0);
+                id = t.Substring(tmp0 + 1);
+            }
+            else
+            {
+                text = id = t;
+            }
+        }
     }
 }

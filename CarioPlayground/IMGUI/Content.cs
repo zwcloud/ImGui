@@ -56,22 +56,22 @@ namespace ImGui
         /// </summary>
         public Size GetSize(Style style, LayoutOption[] options)
         {
+            var width = -1d;
+            var height = -1d;
+            foreach (var option in options)
+            {
+                if (option.type == LayoutOption.Type.fixedWidth)
+                {
+                    width = (double)option.value;
+                }
+                else if (option.type == LayoutOption.Type.fixedHeight)
+                {
+                    height = (double)option.value;
+                }
+            }
+
             if (Text != null)
             {
-                var width = -1d;
-                var height = -1d;
-                foreach (var option in options)
-                {
-                    if (option.type == LayoutOption.Type.fixedWidth)
-                    {
-                        width = (double)option.value;
-                    }
-                    else if (option.type == LayoutOption.Type.fixedHeight)
-                    {
-                        height = (double)option.value;
-                    }
-                }
-
                 if (width < 0 && height < 0) // auto-sized text
                 {
                     var actualSize = style.GetTextActualSize(this.Text);
@@ -91,11 +91,22 @@ namespace ImGui
                         height = actualSize.Height;
                     }
                 }
-
-                return new Size(Math.Ceiling(width), Math.Ceiling(height));
             }
 
-            throw new NotImplementedException();
+            if (width < 0 && height < 0)
+            {
+                throw new NotImplementedException();
+            }
+            if (width < 0)
+            {
+                width = 0;
+            }
+            if (height < 0)
+            {
+                height = 0;
+            }
+
+            return new Size(Math.Ceiling(width), Math.Ceiling(height));
         }
 
         /// <summary>

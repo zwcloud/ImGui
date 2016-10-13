@@ -94,11 +94,36 @@ namespace ImGui
 
         #region simple control
 
+        #region Space
+        public static void Space(double pixels)
+        {
+            LayoutUtility.GetRect(Content.None, Skin.current.Space,
+                LayoutUtility.current.topGroup.isVertical
+                    ? new[] {GUILayout.Height(pixels)}
+                    : new[] {GUILayout.Width(pixels)});
+        }
+
+        #endregion
+
         #region Button
+
+        public static bool Button(string textWithPossibleId, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(textWithPossibleId, out text, out id);
+            return Button(text, Skin.current.Button["Normal"], id, options);
+        }
 
         public static bool Button(string text, string name, params LayoutOption[] options)
         {
             return Button(text, Skin.current.Button["Normal"], name, options);
+        }
+
+        public static bool Button(Content content, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(content.Text, out text, out id);
+            return Button(content, Skin.current.Button["Normal"], id, options);
         }
 
         public static bool Button(Content content, string name, params LayoutOption[] options)
@@ -124,12 +149,25 @@ namespace ImGui
 
         #endregion
 
-
         #region Label
+
+        public static void Label(string textWithPossibleId, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(textWithPossibleId, out text, out id);
+            Label(text, Skin.current.Label["Normal"], id, options);
+        }
 
         public static void Label(string text, string name, params LayoutOption[] options)
         {
             Label(text, Skin.current.Label["Normal"], name, options);
+        }
+
+        public static void Label(Content content, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(content.Text, out text, out id);
+            Label(content, Skin.current.Label["Normal"], id, options);
         }
 
         public static void Label(Content content, string name, params LayoutOption[] options)

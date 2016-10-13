@@ -24,6 +24,7 @@ namespace ImGui
             var size = this.internalForm.Size;
             guiRenderer = new GUIRenderer();
             guiRenderer.OnLoad(new Size(size.X, size.Y));
+            guiRenderer.PrintGraphicInfo();
 
             InitGUI();
         }
@@ -192,8 +193,9 @@ namespace ImGui
                     this.guiRenderer.OnLoad(rect.Size);
                     foreach (var pair in renderBoxMap)
                     {
-                        var simpleControl = pair.Value;
+                        SimpleControl simpleControl = (SimpleControl)pair.Value;
                         simpleControl.NeedRepaint = true;
+                        //simpleControl.State = "Normal";
                     }
 
                     Event.current.type = EventType.Layout;
@@ -215,8 +217,9 @@ namespace ImGui
                     this.guiRenderer.OnLoad(originalSize);
                     foreach (var pair in renderBoxMap)
                     {
-                        var simpleControl = pair.Value;
+                        SimpleControl simpleControl = (SimpleControl)pair.Value;
                         simpleControl.NeedRepaint = true;
+                        //simpleControl.State = "Normal";
                     }
 
                     Event.current.type = EventType.Layout;
