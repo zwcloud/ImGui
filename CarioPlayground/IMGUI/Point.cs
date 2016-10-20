@@ -152,5 +152,6 @@ namespace ImGui
         internal double _x;
         internal double _y;
 
+        public readonly static Point Zero = new Point(0, 0);
     }
 }

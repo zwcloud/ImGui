@@ -145,7 +145,7 @@ namespace ImGui
                     MinorVersion = 1
                 });
             internalForm.SetVisible(false);//not show form on creating
-            internalForm.SetVerticalSyncEnabled(true);
+            internalForm.SetVerticalSyncEnabled(false);
 
             this.internalForm.SetActive(true);
 

@@ -70,6 +70,10 @@ namespace ImGui
         static Rect lastDirtyRect = Rect.Empty;
 #endif
 
+        private static long lastFPSUpdateTime;
+        private static int fps;
+        private static int elapsedFrameCount = 0;
+
         public static void Run(Form mainForm)
         {
             #region Init
@@ -81,8 +85,8 @@ namespace ImGui
 
             //Time
             stopwatch.Start();
-            var debugWatch = new Stopwatch();
-            debugWatch.Start();
+            var sw = new Stopwatch();
+            sw.Start();
 
             //Initialize
             InitSysDependencies();
@@ -94,8 +98,8 @@ namespace ImGui
             //Show main form
             mainForm.Show();
 
-            Debug.WriteLine("Init {0:F1}ms", debugWatch.ElapsedTicks * 1000d / Stopwatch.Frequency);
-            debugWatch.Restart();
+            Debug.WriteLine("Init {0:F1}ms", sw.ElapsedTicks * 1000d / Stopwatch.Frequency);
+            sw.Restart();
             #endregion
 
             #region Main loop
@@ -103,10 +107,15 @@ namespace ImGui
             while (!mainForm.Closed)
             {
                 var mousePos = Input.Mouse.GetMousePos(mainForm);
-                mainForm.internalForm.SetTitle(
-                    string.Format("{0:F1}, {1},{2}",
-                    Stopwatch.Frequency*1.0/stopwatch.ElapsedTicks, mousePos.X, mousePos.Y));
-                stopwatch.Restart();
+                elapsedFrameCount++;
+                var detlaTime = Time - lastFPSUpdateTime;
+                if (detlaTime > 1000)
+                {
+                    fps = elapsedFrameCount;
+                    elapsedFrameCount = 0;
+                    lastFPSUpdateTime = Time;
+                    mainForm.internalForm.SetTitle(string.Format("{0,5:0.0}, {1},{2}", fps, mousePos.X, mousePos.Y));
+                }
 
                 //Input
                 Input.Mouse.Refresh(); //TODO remove this
@@ -133,6 +142,7 @@ namespace ImGui
                         continue;
                     }
                     var dirtyRect = guiLoopResult.dirtyRect;
+                    dirtyRect = new Rect(form.Size);
                     if (dirtyRect != Rect.Empty)
                     {
                         //update re-rendered section //TODO consider using cairo-gl?
@@ -161,7 +171,10 @@ namespace ImGui
 #if DrawDirtyRect
                             var data = GetDirtyData(dirtyRect, form.FrontSurface, CairoEx.ColorArgb(100, 200, 240, 200));
 #else
+                            sw = Stopwatch.StartNew();
                             var data = GetDirtyData(dirtyRect, form.FrontSurface);
+                            sw.Stop();
+                            Debug.WriteLine("GetDirtyData(): {0}us", sw.ElapsedTicks / (Stopwatch.Frequency / (1000L*1000L)));
 #endif
                             form.guiRenderer.OnUpdateTexture(dirtyRect,
                                 System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
@@ -170,7 +183,6 @@ namespace ImGui
                         // Display the rendered frame on screen
                         window.Display();
                     }
-
                     if(mouseSuspended)
                     {
                         Input.Mouse.Resume();
@@ -195,12 +207,6 @@ namespace ImGui
                 {
                     break;
                 }
-
-                //var msSleeping = 1000/60.0 - stopwatch.ElapsedMilliseconds;
-                //if (msSleeping > 0)
-                //{
-                //    System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(msSleeping));//limit FPS to 60
-                //}
             }
             #endregion
 
@@ -215,7 +221,7 @@ namespace ImGui
             }
 
             stopwatch.Stop();
-            debugWatch.Stop();
+            sw.Stop();
 
             #endregion
         }
@@ -224,13 +230,16 @@ namespace ImGui
         {
             RequestQuit = true;
         }
-
         private static byte[] GetDirtyData(Rect rect, Cairo.ImageSurface surface)
         {
             return GetDirtyData(rect, surface, CairoEx.ColorClear);
         }
+
+        private static byte[] data1 = new byte[4*800*600];
         private static byte[] GetDirtyData(Rect rect, Cairo.ImageSurface surface, Cairo.Color blendColor)
         {
+            return data1;
+
             var x = (int) rect.X;
             var w = (int) rect.Width;
             var h = (int) rect.Height;
@@ -238,11 +247,14 @@ namespace ImGui
             var surfaceData = surface.Data;
             var surfaceWidth = surface.Width;
             var offset = 0;
+
             for (var y = (int)rect.Y; y < rect.Bottom; y++)
             {
                 Array.Copy(surfaceData, 4 * (surfaceWidth * y + x), data, offset, 4 * w);
                 offset += 4 * w;
             }
+
+            // TODO: Move this to shader
             if (blendColor != CairoEx.ColorClear)
             {
                 for (int i = 0; i < data.Length; i+=4)
@@ -259,6 +271,7 @@ namespace ImGui
                     data[i] = (byte)(c.B * 255);
                 }
             }
+
             return data;
         }
 

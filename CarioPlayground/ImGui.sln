@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo", "IMGUIDemo\ImGuiDemo.csproj", "{6A401FDF-4939-4623-8AE6-A3CD6E250ABD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo", "IMGUIDemo\ImGuiDemo.csproj", "{6A401FDF-4939-4623-8AE6-A3CD6E250ABD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{495935C7-70A3-40E3-93CD-1CEBBD591B99} = {495935C7-70A3-40E3-93CD-1CEBBD591B99}
 	EndProjectSection
@@ -14,13 +14,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{DD39D4D9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGui", "IMGUI\ImGui.csproj", "{495935C7-70A3-40E3-93CD-1CEBBD591B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_TextBox", "IMGUIDemo_TextBox\ImGuiDemo_TextBox.csproj", "{E020C043-7427-4718-B336-AA8BE4B22F27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_TextBox", "IMGUIDemo_TextBox\ImGuiDemo_TextBox.csproj", "{E020C043-7427-4718-B336-AA8BE4B22F27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTemplate", "ProjectTemplate", "{593C5B50-52E6-436D-9BF2-93E220984E45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_HiveGirdButon", "IMGUIDemo_HiveGirdButon\ImGuiDemo_HiveGirdButon.csproj", "{54D3873E-4CF9-4099-97C8-9AF557F724A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIProjectTemplate", "IMGUIProjectTemplate\ImGuiProjectTemplate.csproj", "{1FF35342-ABC9-4AE1-8D80-ACA74022A87D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiProjectTemplate", "IMGUIProjectTemplate\ImGuiProjectTemplate.csproj", "{1FF35342-ABC9-4AE1-8D80-ACA74022A87D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwriteCairo", "..\ZWCloud.DwriteCairo\DwriteCairo\DwriteCairo.csproj", "{233143AD-EDF8-49C4-B69D-2D1EBF58B82E}"
 EndProject
@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_Calc", "IMGUIDemo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_Layout", "IMGUIDemo_Laout\ImGuiDemo_Layout.csproj", "{9D6694C5-DA35-4834-9C56-511A73E91520}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGUIDemo_Menu", "IMGUIDemo_Menu\ImGuiDemo_Menu.csproj", "{F6757CA8-3AA4-4C74-A94B-A80265BC9BC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiDemo_Menu", "IMGUIDemo_Menu\ImGuiDemo_Menu.csproj", "{F6757CA8-3AA4-4C74-A94B-A80265BC9BC3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dep", "Dep", "{C16F05EE-1871-41EC-BB3A-DC834EF47533}"
 EndProject
@@ -43,10 +43,6 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\CairoSharp\Binding\Binding\Binding.projitems*{3c49a7e8-1708-4930-b741-8648848ec084}*SharedItemsImports = 4
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -183,5 +179,9 @@ Global
 		{3BF1D531-8840-4F15-8066-A9788D8C398B} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
 		{3C49A7E8-1708-4930-B741-8648848EC084} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
 		{0D6E73C8-27B8-4614-9861-F4F22808EA7C} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

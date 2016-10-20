@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImGuiDemo_TextBox.Properties {
+namespace IMGUIDemo_TextBox.Properties {
     using System;
     
     

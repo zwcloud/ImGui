@@ -155,7 +155,7 @@ namespace ImGui
                         using (var p = Process.GetCurrentProcess())
                         {
                             bool retVal;
-                            if (!IsWow64Process(p.Handle, out retVal)) return false;
+                            if (!IsWow64Process(p.SafeHandle, out retVal)) return false;
                             return retVal;
                         }
                     }
@@ -165,7 +165,7 @@ namespace ImGui
 
             [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool wow64Process);
+            private static extern bool IsWow64Process([In] SafeHandle hProcess, [Out] out bool wow64Process);
 
             private static string ReadProcessOutput(string name, string args = null)
             {

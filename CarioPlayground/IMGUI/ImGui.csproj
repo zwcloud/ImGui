@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ImGui</RootNamespace>
     <AssemblyName>ImGui</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RegisterForComInterop>false</RegisterForComInterop>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -74,6 +76,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -83,6 +88,7 @@
     <Reference Include="sfmlnet-window-2">
       <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
     </Reference>
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alignment.cs" />
@@ -92,6 +98,7 @@
     <Compile Include="CarioExtension.cs">
       <DeployService-Deploy>True</DeployService-Deploy>
     </Compile>
+    <Compile Include="DrawList\DrawList.Primitives.cs" />
     <Compile Include="Content.cs" />
     <Compile Include="Control\Box.cs" />
     <Compile Include="Control\Button.cs" />
@@ -118,6 +125,10 @@
     <Compile Include="Detalied\Rect.cs" />
     <Compile Include="Detalied\Size.cs" />
     <Compile Include="Detalied\Vector.cs" />
+    <Compile Include="DrawList\DrawCommand.cs" />
+    <Compile Include="DrawList\DrawIndex.cs" />
+    <Compile Include="DrawList\DrawList.cs" />
+    <Compile Include="DrawList\DrawVertex.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Font.cs" />
@@ -143,6 +154,11 @@
     <Compile Include="MouseButton.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Port\ITextContext.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Proxy\PangoTextContext.cs" />
     <Compile Include="RenderContext.cs" />
     <Compile Include="Point.cs" />
@@ -164,6 +180,7 @@
     <Compile Include="Texture.Presets.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TODO.cs" />
+    <Compile Include="List.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Application.cs" />
@@ -204,6 +221,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Control\Menu\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
