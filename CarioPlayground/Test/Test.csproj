@@ -72,10 +72,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExCSS, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ExCSS.net40.2.0.5\lib\net45\ExCSS.dll</HintPath>
-    </Reference>
     <Reference Include="sfmlnet-system-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
@@ -85,6 +81,11 @@
       <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Primitives, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.Serialization.Primitives.4.1.1\lib\net46\System.Runtime.Serialization.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -109,16 +110,6 @@
     <Compile Include="Layout\AlignmentTest.cs" />
     <Compile Include="Layout\ContentTest.cs" />
     <Compile Include="GUIRenderTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj">
-      <Project>{3C49A7E8-1708-4930-B741-8648848EC084}</Project>
-      <Name>Cairo</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IMGUI\ImGui.csproj">
-      <Project>{495935C7-70A3-40E3-93CD-1CEBBD591B99}</Project>
-      <Name>ImGui</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
