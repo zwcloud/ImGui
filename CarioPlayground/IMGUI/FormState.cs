@@ -4,6 +4,7 @@
     {
         Normal,
         Minimized,
-        Maximized
+        Maximized,
+        Hiden,
     }
 }

@@ -12,11 +12,8 @@ namespace ImGui
 
             public bool Actived { private get; set; }
             public ImmediateForm(Rect rect, GUI.WindowFunction func, Form parentForm)
-                : base((int)rect.Width, (int)rect.Height)
+                : base(rect)
             {
-                var handle = internalForm.SystemHandle;
-                var parentHandle = ((SFML.Window.Window) (parentForm.InternalForm)).SystemHandle;
-
                 //TODO Move these to Form(SFMLForm) and try to abstract these for multiple platform
                 //Remove WS_POPUP style and add WS_CHILD style
                 const uint WS_POPUP = 0x80000000;
@@ -24,8 +21,7 @@ namespace ImGui
                 const int GWL_STYLE = -16;
                 const int GWL_EXSTYLE = -20;
                 const long WS_EX_TOOLWINDOW = 0x00000080L;
-                var handleRef = new System.Runtime.InteropServices.HandleRef(this, handle);
-                System.IntPtr exStyle = Native.GetWindowLong(handleRef, (int) Native.GWL.GWL_EXSTYLE);
+                System.IntPtr exStyle = Native.GetWindowLong(this.Pointer, (int) Native.GWL.GWL_EXSTYLE);
                 var error = Native.GetLastError();
                 //style = (style & ~(WS_POPUP)) | WS_CHILD;
                 if (IntPtr.Size == 4)
@@ -36,14 +32,14 @@ namespace ImGui
                 {
                     exStyle = new IntPtr(exStyle.ToInt64() | ((long)WS_EX_TOOLWINDOW));
                 }
-                Native.SetWindowLongPtr(handleRef, (int)Native.GWL.GWL_EXSTYLE, exStyle);
+                Native.SetWindowLongPtr(this.Pointer, (int)Native.GWL.GWL_EXSTYLE, exStyle);
                 error = Native.GetLastError();
 
                 Func = func;
                 Position = rect.TopLeft;//NOTE Consider move this to constructor of SFMLForm
             }
 
-            protected override void OnGUI(GUI gui)
+            protected override void OnGUI()
             {
                 if (ForceHide)
                 {
@@ -64,7 +60,7 @@ namespace ImGui
 
                 if(Func!= null)
                 {
-                    if(Func(gui))
+                    if(Func())
                     {
                         Actived = false;
                         ForceHide = true;
@@ -82,7 +78,7 @@ namespace ImGui
         {
             Rect = rect;
 
-            var tmp = Utility.ClientToScreen(new Point(), form);//offset the window's position relative to parent window 
+            var tmp = form.ClientToScreen(Point.Zero);//offset the window's position relative to parent window 
             Rect = Rect.Offset(this.Rect, tmp.X, tmp.Y);
             innerForm = new ImmediateForm(Rect, func, form);
             Application.Forms.Add(innerForm);

@@ -1,0 +1,74 @@
+using System;
+
+namespace ImGui
+{
+    public interface IWindow
+    {
+        /// <summary>
+        /// Platform specific handle related to the window.
+        /// </summary>
+        object Handle { get; }
+
+        /// <summary>
+        /// Platform specific pointer related to the window.
+        /// </summary>
+        IntPtr Pointer { get; }
+
+        /// <summary>
+        /// Position of the window
+        /// </summary>
+        Point Position { get; set; }
+
+        /// <summary>
+        /// Size of the window
+        /// </summary>
+        Size Size { get; set; }
+
+        /// <summary>
+        /// Title of the window
+        /// </summary>
+        string Title { get; set; }
+
+        /// <summary>
+        /// Show the window
+        /// </summary>
+        void Show();
+
+        /// <summary>
+        /// Hide the window
+        /// </summary>
+        void Hide();
+
+        /// <summary>
+        /// Close the window
+        /// </summary>
+        void Close();
+
+        /// <summary>
+        /// Minimize the window
+        /// </summary>
+        void Minimize();
+
+        /// <summary>
+        /// Maximize the window
+        /// </summary>
+        void Maximize();
+
+        /// <summary>
+        /// Normalize the window
+        /// </summary>
+        void Normalize();
+
+        /// <summary>
+        /// Convert the screen coordinates of a specified point on the screen to client-area (window) coordinates
+        /// </summary>
+        Point ScreenToClient(Point point);
+
+        /// <summary>
+        /// Convert the client-area (window) coordinates of a specified point to screen coordinates.
+        /// </summary>
+        Point ClientToScreen(Point point);
+
+
+    }
+}

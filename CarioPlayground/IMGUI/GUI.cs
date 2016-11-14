@@ -4,7 +4,7 @@ namespace ImGui
 {
     public partial class GUI
     {
-        public delegate bool WindowFunction(GUI gui);
+        public delegate bool WindowFunction();
 
         #region Button
 

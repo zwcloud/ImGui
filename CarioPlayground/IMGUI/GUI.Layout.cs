@@ -1,12 +1,12 @@
 namespace ImGui
 {
+    enum LayoutMode
+    {
+        Horizontal,
+        Vertical,
+    }
     public partial class GUI
     {
-        enum LayoutMode
-        {
-            Horizontal,
-            Vertical,
-        }
 
         struct LayoutGroup
         {
@@ -50,14 +50,14 @@ namespace ImGui
         };
         #endregion
 
-        private readonly StateMachine stateMachine = new StateMachine(GUIState.Initial, states);
-        private LayoutMode currentMode;
-        private Point currentPoint;
-        private Size currentSize;
+        private static readonly StateMachine stateMachine = new StateMachine(GUIState.Initial, states);
+        private static LayoutMode currentMode;
+        private static Point currentPoint;
+        private static Size currentSize;
 
         private readonly System.Collections.Generic.Stack<LayoutGroup> groupStack = new System.Collections.Generic.Stack<LayoutGroup>(8);
 
-        private bool Layouting { get; set; }
+        private static bool Layouting { get; set; }
 
         void BeginGroup(LayoutMode mode)
         {
@@ -105,7 +105,7 @@ namespace ImGui
             }
         }
 
-        Rect AddRect(Rect rect)
+        static Rect AddRect(Rect rect)
         {
             if(stateMachine.MoveNext(GUICommand.AddRect))
             {
@@ -135,7 +135,7 @@ namespace ImGui
             return rect;
         }
 
-        Rect DoLayout(Rect rect)
+        static Rect DoLayout(Rect rect)
         {
             if (Layouting)
             {

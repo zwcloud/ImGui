@@ -1,0 +1,23 @@
+{
+    "title": "ImGui Framework Library",
+    "copyright": "Copyright (c) 2016 Zou Wei, https://zwcloud.net/ , zwcloud@hotmail.com",
+    "version": "1.0.0-*",
+
+    "dependencies": {
+        "Cairo": "1.0.0-*",
+        "CSharpGL": "1.0.0-*",
+        "DWriteSharp": "1.0.0-*",
+        "NETStandard.Library": "1.6.0",
+        "System.ComponentModel.Primitives": "4.1.0",
+        "System.Diagnostics.Contracts": "4.0.1",
+        "System.Runtime.Serialization.Formatters": "4.0.0-rc3-24212-01",
+        "System.Xml.XmlSerializer": "4.0.11"
+    },
+
+    "frameworks": {
+        "netstandard1.6": {
+            "imports": "dnxcore50"
+        }
+    }
+
+}

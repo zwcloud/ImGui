@@ -188,13 +188,13 @@ namespace ImGui.Input
 
             //Buttons's states
             lastLeftButtonState = leftButtonState;
-            leftButtonState = SFML.Window.Mouse.IsButtonPressed(SFML.Window.Mouse.Button.Left) ? InputState.Down : InputState.Up;
+            leftButtonState = Application.inputContext.IsMouseLeftButtonDown ? InputState.Down : InputState.Up;
             lastRightButtonState = rightButtonState;
-            rightButtonState = SFML.Window.Mouse.IsButtonPressed(SFML.Window.Mouse.Button.Right) ? InputState.Down : InputState.Up;
+            rightButtonState = Application.inputContext.IsMouseRightButtonDown ? InputState.Down : InputState.Up;
             //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
             //Position
             lastMousePos = mousePos;
-            var pos = SFML.Window.Mouse.GetPosition();
+            var pos = Application.inputContext.MousePosition;
             mousePos = new Point(pos.X, pos.Y);
 
 #if INSPECT_STATE
@@ -215,18 +215,7 @@ namespace ImGui.Input
 
             return true;
         }
-
-        /// <summary>
-        /// Get mouse position relative to a form
-        /// </summary>
-        /// <param name="form"></param>
-        /// <returns></returns>
-        public static Point GetMousePos(Form form)
-        {
-            var tmp = SFML.Window.Mouse.GetPosition((SFML.Window.Window) form.InternalForm);
-            return new Point(tmp.X, tmp.Y);
-        }
-
+        
         private static string suspendedState;
         public static void Suspend()
         {

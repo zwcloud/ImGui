@@ -5,28 +5,6 @@ namespace ImGui
 {
     public static class Native
     {
-        public class Win32
-        {
-            [DllImport("user32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool ClientToScreen(IntPtr hWnd, ref SFML.System.Vector2i lpPoint);
-
-            [DllImport("user32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool ScreenToClient(IntPtr hWnd, ref SFML.System.Vector2i lpPoint);
-
-            [DllImport("user32.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref IntRect pvParam, uint fWinIni);
-        }
-
-        public class Linux
-        {
-        }
 
         //---Below is to be removed!---
 
@@ -57,10 +35,10 @@ namespace ImGui
             return GetWindowLongPtr64(hWnd, nIndex);
         }
 
-        [DllImport("user32.dll", EntryPoint = "GetWindowLong", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
         private static extern IntPtr GetWindowLong32(IntPtr hWnd, int nIndex);
 
-        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
         private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
 
         public enum GWL

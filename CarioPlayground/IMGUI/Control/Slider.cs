@@ -86,11 +86,11 @@ namespace ImGui
             var A = stateMachine.CurrentState;
 #endif
             //Execute state commands
-            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            if (!Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && Rect.Contains(Form.current.ScreenToClient(Input.Mouse.MousePos)))
             {
                 stateMachine.MoveNext(SliderCommand.MoveIn);
             }
-            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            if (Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && !Rect.Contains(Form.current.ScreenToClient(Input.Mouse.MousePos)))
             {
                 stateMachine.MoveNext(SliderCommand.MoveOut);
             }
@@ -117,7 +117,7 @@ namespace ImGui
             var oldState = State;
             bool active = stateMachine.CurrentState == SliderState.Active;
             bool hover = stateMachine.CurrentState == SliderState.Hover;
-            var mousePos = Utility.ScreenToClient(Input.Mouse.LastMousePos, Form);
+            var mousePos = Form.current.ScreenToClient(Input.Mouse.LastMousePos);
             if (active)
             {
                 State = "Active";

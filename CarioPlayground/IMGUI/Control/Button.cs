@@ -1,4 +1,4 @@
-﻿//#define INSPECT_STATE
+﻿#define INSPECT_STATE
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,6 +14,19 @@ namespace ImGui
     /// </remarks>
     internal class Button : SimpleControl
     {
+        static Button button;
+        static Button Instance
+        {
+            get
+            {
+                if (button == null)
+                {
+                    button = new Button();
+                }
+                return button;
+            }
+        }
+
         #region State machine define
         static class ButtonState
         {
@@ -66,11 +79,11 @@ namespace ImGui
             var A = stateMachine.CurrentState;
 #endif
             //Execute state commands
-            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            if (!Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && Rect.Contains(Form.current.ScreenToClient(Input.Mouse.MousePos)))
             {
                 stateMachine.MoveNext(ButtonCommand.MoveIn);
             }
-            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form)))
+            if (Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && !Rect.Contains(Form.current.ScreenToClient(Input.Mouse.MousePos)))
             {
                 stateMachine.MoveNext(ButtonCommand.MoveOut);
             }
@@ -90,7 +103,7 @@ namespace ImGui
             }
 #if INSPECT_STATE
             var B = stateMachine.CurrentState;
-            Debug.WriteLineIf(A != B, string.Format("Button{0} {1}=>{2}", Name, A, B));
+            Debug.WriteLineIf(A != B, string.Format("Button {0}=>{1}", A, B));
 #endif
 
             var oldState = State;
@@ -111,31 +124,70 @@ namespace ImGui
 
             if (State != oldState)
             {
-                NeedRepaint = true;
-                Event.current.type = EventType.Repaint;
+                //NeedRepaint = true;
+                //Event.current.type = EventType.Repaint;
                 stateBeforeRepaint = oldState;
             }
             bool clicked = oldState == "Active" && State == "Hover";
             Result = clicked;
         }
 
-        public Button(string name, Form form, Content content)
+        public Button()
         {
-            this.name = name;
             this.stateMachine = new StateMachine(ButtonState.Normal, states);
             this.State = ButtonState.Normal;
-            this.NeedRepaint = true;
-            this.Form = form;
-
             this.style = Skin.current.Button[State];
-            this.Text = content.Text;
-            this.content = content;
+        }
 
-            form.renderBoxMap[name] = this;
+        static Dictionary<string, string> stateMap = new Dictionary<string, string>();
+        static string GetState(string name)
+        {
+            string state;
+            if(stateMap.TryGetValue(name, out state))
+            {
+                return state;
+            }
+            else
+            {
+                return ButtonState.Normal;
+            }
+        }
+
+        static void SetState(string id, string state)
+        {
+            stateMap[id] = state;
         }
 
         public static bool DoControl(Rect rect, Content content, string name)
         {
+            string lastState = GetState(name);
+
+            string state;
+            if (rect.Contains(Form.current.GetMousePos()))
+            {
+                if (Input.Mouse.LeftButtonState == InputState.Down)
+                {
+                    state = ButtonState.Active;
+                }
+                else
+                {
+                    state = ButtonState.Hover;
+                }
+            }
+            else
+            {
+                state = ButtonState.Normal;
+            }
+            Debug.WriteLineIf(lastState != state, string.Format("Button##{0} {1}=>{2}", name, lastState, state));
+            SetState(name, state);
+
+            if (Event.current.type == EventType.Repaint)
+            {
+                GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Button[state]);
+            }
+
+            return lastState == ButtonState.Hover && state == ButtonState.Active;
+#if false
             //Create
             var form = Form.current;
             if (!form.renderBoxMap.ContainsKey(name))
@@ -163,9 +215,9 @@ namespace ImGui
 
             //Active
             control.Active = true;
-
             //Result
             return control.Result;
+#endif
         }
 
         public override string Name
@@ -173,7 +225,7 @@ namespace ImGui
             get { return name; }
         }
 
-        #region Overrides of SimpleControl
+#region Overrides of SimpleControl
 
         public override Rect Rect
         {
@@ -207,7 +259,7 @@ namespace ImGui
             get { return Skin.current.Button[stateBeforeRepaint]; }
         }
 
-        #endregion
+#endregion
 
     }
 }

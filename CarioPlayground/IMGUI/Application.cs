@@ -28,6 +28,10 @@ namespace ImGui
         internal static Map _map;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
+        internal static IWindowContext windowContext;
+        internal static IInputContext inputContext;
+
+
         /// <summary>
         /// The character buffer for input from IME
         /// </summary>
@@ -38,9 +42,9 @@ namespace ImGui
         }
 
         /// <summary>
-        /// Time in ms since the application started.
+        /// The time in ms since the application started.
         /// </summary>
-        internal static long Time
+        public static long Time
         {
             get
             {
@@ -53,8 +57,25 @@ namespace ImGui
             }
         }
 
+        private static long frameStartTime = 0;
+        private static long detlaTime = 0;
+        /// <summary>
+        /// The time in ms it took to complete the last frame
+        /// </summary>
+        public static long DetlaTime
+        {
+            get { return detlaTime; }
+        }
+
+        static Application()
+        {
+            InitSysDependencies();
+        }
+
         internal static void InitSysDependencies()
         {
+            // create factory:
+            //     platform-dependent object implementation
             if(Utility.CurrentOS.IsWindows)
             {
                 _map = MapWindows.MapFactory();
@@ -63,6 +84,10 @@ namespace ImGui
             {
                 _map = MapLinux.MapFactory();
             }
+
+            // load the implementation into delegate instances
+            windowContext = _map.CreateWindowContext();
+            inputContext = _map.CreateInputContext();
         }
 
         private static bool RequestQuit;
@@ -70,15 +95,11 @@ namespace ImGui
         static Rect lastDirtyRect = Rect.Empty;
 #endif
 
-        private static long lastFPSUpdateTime;
-        private static int fps;
-        private static int elapsedFrameCount = 0;
-
         public static void Run(Form mainForm)
         {
             #region Init
             //Check paramter
-            if(mainForm == null)
+            if (mainForm == null)
             {
                 throw new ArgumentNullException("mainForm");
             }
@@ -87,11 +108,6 @@ namespace ImGui
             stopwatch.Start();
             var sw = new Stopwatch();
             sw.Start();
-
-            //Initialize
-            InitSysDependencies();
-            mainForm.Name = "MainForm";
-            InitEvents(mainForm.internalForm);
 
             Forms.Add(mainForm);
 
@@ -102,236 +118,28 @@ namespace ImGui
             sw.Restart();
             #endregion
 
-            #region Main loop
-            //Process every form
             while (!mainForm.Closed)
             {
-                var mousePos = Input.Mouse.GetMousePos(mainForm);
-                elapsedFrameCount++;
-                var detlaTime = Time - lastFPSUpdateTime;
-                if (detlaTime > 1000)
+                frameStartTime = Time;
+                Input.Mouse.Refresh();
+                foreach (Form form in Forms)
                 {
-                    fps = elapsedFrameCount;
-                    elapsedFrameCount = 0;
-                    lastFPSUpdateTime = Time;
-                    mainForm.internalForm.SetTitle(string.Format("{0,5:0.0}, {1},{2}", fps, mousePos.X, mousePos.Y));
+                    windowContext.MainLoop(form.GUILoop);
                 }
-
-                //Input
-                Input.Mouse.Refresh(); //TODO remove this
-
-                foreach (Form baseForm in Forms.ToList())
-                {
-                    var form = baseForm;
-                    var window = (SFML.Window.Window) form.InternalForm;
-                    var mouseSuspended = false;
-                    if(!form.Focused)
-                    {
-                        Input.Mouse.Suspend();
-                        mouseSuspended = true;
-                    }
-
-                    // Process events
-                    window.DispatchEvents();
-
-                    // Run GUI looper
-                    var guiLoopResult = form.GUILoop();
-                    if(guiLoopResult.needExit)
-                    {
-                        removeList.Add(form);
-                        continue;
-                    }
-                    var dirtyRect = guiLoopResult.dirtyRect;
-                    dirtyRect = new Rect(form.Size);
-                    if (dirtyRect != Rect.Empty)
-                    {
-                        //update re-rendered section //TODO consider using cairo-gl?
-                        // Make it the active window for OpenGL calls
-                        window.SetActive();
-#if DrawDirtyRect
-                        //Clear last dirty rect
-                        if(lastDirtyRect!=Rect.Empty)
-                        {
-                            var data = GetDirtyData(lastDirtyRect, form.DebugSurface);
-                            form.guiRenderer.OnUpdateTexture(lastDirtyRect,
-                                System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
-                        }
-
-                        lastDirtyRect = dirtyRect;
-#endif
-                        //Get data of pixels in dirty rect
-                        {
-#if DrawDirtyRect
-                            //Save orginal surface
-                            form.DebugContext.SetSourceSurface(form.FrontSurface, 0, 0);
-                            form.DebugContext.Paint();
-#endif
-
-                            //Update repainted section
-#if DrawDirtyRect
-                            var data = GetDirtyData(dirtyRect, form.FrontSurface, CairoEx.ColorArgb(100, 200, 240, 200));
-#else
-                            sw = Stopwatch.StartNew();
-                            var data = GetDirtyData(dirtyRect, form.FrontSurface);
-                            sw.Stop();
-                            Debug.WriteLine("GetDirtyData(): {0}us", sw.ElapsedTicks / (Stopwatch.Frequency / (1000L*1000L)));
-#endif
-                            form.guiRenderer.OnUpdateTexture(dirtyRect,
-                                System.Runtime.InteropServices.Marshal.UnsafeAddrOfPinnedArrayElement(data, 0));
-                        }
-                        form.guiRenderer.OnRenderFrame();
-                        // Display the rendered frame on screen
-                        window.Display();
-                    }
-                    if(mouseSuspended)
-                    {
-                        Input.Mouse.Resume();
-                    }
-                }
-
-                if(removeList.Count != 0)
-                {
-                    foreach (var baseForm in removeList)
-                    {
-                        baseForm.Close();
-                    }
-                    removeList.Clear();
-                }
-
-                if (Input.Keyboard.KeyDown(SFML.Window.Keyboard.Key.Escape))
-                {
-                    Quit();
-                }
-
-                if(RequestQuit)
+                if (RequestQuit)
                 {
                     break;
                 }
+                detlaTime = Time - frameStartTime;
             }
-            #endregion
-
-            #region Clean up
-            //Close unclosing forms
-            foreach (var baseForm in Forms)
-            {
-                if(!baseForm.Closed)
-                {
-                    baseForm.Close();
-                }
-            }
-
-            stopwatch.Stop();
-            sw.Stop();
-
-            #endregion
+            
+            //TODO clean up
         }
 
         public static void Quit()
         {
             RequestQuit = true;
         }
-        private static byte[] GetDirtyData(Rect rect, Cairo.ImageSurface surface)
-        {
-            return GetDirtyData(rect, surface, CairoEx.ColorClear);
-        }
 
-        private static byte[] data1 = new byte[4*800*600];
-        private static byte[] GetDirtyData(Rect rect, Cairo.ImageSurface surface, Cairo.Color blendColor)
-        {
-            return data1;
-
-            var x = (int) rect.X;
-            var w = (int) rect.Width;
-            var h = (int) rect.Height;
-            var data = new byte[4*w*h];
-            var surfaceData = surface.Data;
-            var surfaceWidth = surface.Width;
-            var offset = 0;
-
-            for (var y = (int)rect.Y; y < rect.Bottom; y++)
-            {
-                Array.Copy(surfaceData, 4 * (surfaceWidth * y + x), data, offset, 4 * w);
-                offset += 4 * w;
-            }
-
-            // TODO: Move this to shader
-            if (blendColor != CairoEx.ColorClear)
-            {
-                for (int i = 0; i < data.Length; i+=4)
-                {
-                    Cairo.Color c = CairoEx.ColorArgb(
-                        data[i + 3],
-                        data[i + 2],
-                        data[i + 1],
-                        data[i]);
-                    c = CairoEx.AlphaBlend(c, blendColor);
-                    data[i+3] = (byte)(c.A * 255);
-                    data[i+2] = (byte)(c.R * 255);
-                    data[i+1] = (byte)(c.G * 255);
-                    data[i] = (byte)(c.B * 255);
-                }
-            }
-
-            return data;
-        }
-
-        #region Window events
-
-        private static void InitEvents(SFML.Window.Window window)
-        {
-            window.Closed += OnClosed;
-            window.KeyPressed += OnKeyPressed;
-            window.KeyReleased += OnKeyReleased;
-            window.TextEntered += OnTextEntered;
-        }
-
-        private static void OnTextEntered(object sender, SFML.Window.TextEventArgs e)
-        {
-            var text = e.Unicode;
-            for (var i = 0; i < text.Length; i++)
-            {
-                if(Char.IsControl(text[i]))
-                    continue;
-                ImeBuffer.Enqueue(text[i]);
-            }
-        }
-
-        /// <summary>
-        /// Function called when the window is closed
-        /// </summary>
-        private static void OnClosed(object sender, EventArgs e)
-        {
-            var window = (SFML.Window.Window) sender;
-            window.Close();
-        }
-
-        /// <summary>
-        /// Function called when a key is pressed
-        /// </summary>
-        private static void OnKeyPressed(object sender, SFML.Window.KeyEventArgs e)
-        {
-            if(e.Code == SFML.Window.Keyboard.Key.Unknown)
-            {
-                return;
-            }
-
-            Input.Keyboard.lastKeyStates[(int) e.Code] = Input.Keyboard.keyStates[(int) e.Code];
-            Input.Keyboard.keyStates[(int) e.Code] = InputState.Down;
-        }
-
-        /// <summary>
-        /// Function called when a key is released
-        /// </summary>
-        private static void OnKeyReleased(object sender, SFML.Window.KeyEventArgs e)
-        {
-            if(e.Code == SFML.Window.Keyboard.Key.Unknown)
-            {
-                return;
-            }
-            Input.Keyboard.lastKeyStates[(int) e.Code] = Input.Keyboard.keyStates[(int) e.Code];
-            Input.Keyboard.keyStates[(int) e.Code] = InputState.Up;
-        }
-
-        #endregion
     }
 }

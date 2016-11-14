@@ -1,4 +1,5 @@
-﻿namespace ImGui
+﻿#if false
+namespace ImGui
 {
     internal class MenuItem : Button
     {
@@ -14,3 +15,4 @@
         }
     }
 }
+#endif

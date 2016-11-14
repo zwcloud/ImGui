@@ -1,0 +1,6 @@
+{
+    "projects": [ "src", "test", ".", "../CSharpGL.Core", "../CairoSharp", "../../VS2015/DWriteSharp/src", "../../VS2015/Triangle/src" ],
+  "sdk": {
+    "version": "1.0.0-preview2-003131"
+  }
+}

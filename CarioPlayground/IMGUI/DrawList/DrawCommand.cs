@@ -3,10 +3,10 @@
     class DrawCommand
     {
         int elemCount;
-        Rect    clipRect;
-        object  textureData;
+        Rect clipRect;
+        object textureData;
 
-        DrawCommand()
+        public DrawCommand()
         {
             elemCount = 0;
             clipRect.X = clipRect.Y = -8192.0f;
@@ -17,6 +17,7 @@
         /// <summary>
         /// Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee DrawList's vtx_buffer[] array, indices in idx_buffer[].
         /// </summary>
+        /// <remarks>Added when calling <see cref="ImGui.DrawList.PrimReserve(int, int)"/></remarks>
         public int ElemCount
         {
             get { return elemCount; }

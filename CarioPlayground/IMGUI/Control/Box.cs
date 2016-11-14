@@ -17,36 +17,14 @@ namespace ImGui
 
         public Box(string name, Form form, Content content)
         {
-            this.name = name;
-            this.NeedRepaint = true;
-            this.Form = form;
-
-            this.content = content;
-
-            form.renderBoxMap[name] = this;
-            this.NeedRepaint = true;
         }
 
         public static void DoControl(Rect rect, Content content, string name)
         {
-            var form = Form.current;
-            //Create
-            if (!form.renderBoxMap.ContainsKey(name))
-            {
-                var box = new Box(name, form, content);
-            }
-
-            //Update
-            var control = form.renderBoxMap[name] as Box;
-            Debug.Assert(control != null);
             if (Event.current.type == EventType.Repaint)
             {
-                control.Rect = rect;
-                control.content = content;
+                GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Box);
             }
-
-            //Active
-            control.Active = true;
         }
 
         public override string Name

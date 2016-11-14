@@ -7,11 +7,11 @@ using System.Resources;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ImGui")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("ImGui Framework Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ZWCloud")]
-[assembly: AssemblyProduct("ZWCloud.ImGui")]
-[assembly: AssemblyCopyright("Copyright © Zou Wei 2015")]
+[assembly: AssemblyCompany("zwcloud")]
+[assembly: AssemblyProduct("zwcloud.ImGui")]
+[assembly: AssemblyCopyright("Copyright (c) 2016 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -37,3 +37,5 @@ using System.Resources;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("")]
 [assembly: InternalsVisibleTo("Test")]
+[assembly: InternalsVisibleTo("TextRenderingTest")]
+[assembly: InternalsVisibleTo("PrimitiveRenderingTest")]

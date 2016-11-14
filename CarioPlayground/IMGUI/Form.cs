@@ -1,30 +1,32 @@
-﻿using Cairo;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ImGui
 {
-    public abstract class Form : SFMLForm
+    public abstract class Form
     {
         public static Form current;
-        internal Dictionary<string, Control> controls;
-        internal GUIRenderer guiRenderer;
+        IWindow window;
+        internal DrawList DrawList = new DrawList();
+        internal IRenderer renderer;
+
         internal LayoutCache layoutCache = new LayoutCache();
 
-        internal Point originalPosition;
-        internal Size originalSize;
+        internal Dictionary<string, Control> Controls;//Temp
 
-        protected Form(int width, int height)
-            : base(width, height)
+        protected Form(Rect rect):this(rect.TopLeft, rect.Size)
         {
-            controls = new Dictionary<string, Control>();
+        }
 
-            originalSize = new Size(this.internalForm.Size.X, this.internalForm.Size.Y);
-            originalPosition = Position;
+        protected Form(Point position, Size size, string Title = "<unnamed>")
+        {
+            this.window = Application.windowContext.CreateWindow(position, size);
+            this.window.Title = Title;
 
-            var size = this.internalForm.Size;
-            guiRenderer = new GUIRenderer();
-            guiRenderer.OnLoad(new Size(size.X, size.Y));
-            guiRenderer.PrintGraphicInfo();
+            renderer = Application._map.CreateRenderer();
+            renderer.Init(this.Pointer);
+
+            this.DrawList.AddDrawCommand(new DrawCommand());
 
             InitGUI();
         }
@@ -34,43 +36,46 @@ namespace ImGui
             get { return formState; }
             set { formState = value; }
         }
-
-        internal Dictionary<string, Control> Controls
-        {
-            get { return controls; }
-        }
-
+        
         internal LayoutCache LayoutCache
         {
             get { return layoutCache; }
         }
 
-        internal ImageSurface FrontSurface
+        #region window management
+
+        public bool Closed { get; private set; }
+
+        public IntPtr Pointer { get { return window.Pointer; } }
+
+        public Size Size
         {
-            get { return renderContext.FrontSurface; }
+            get { return window.Size; }
+            set { window.Size = value; }
         }
 
-        internal ImageSurface DebugSurface
+        public Point Position
         {
-            get { return renderContext.DebugSurface; }
+            get { return window.Position; }
+            set { window.Position = value; }
         }
 
-        internal Context DebugContext
-        {
-            get { return renderContext.DebugContext; }
-        }
+        public bool Focused { get { throw new NotImplementedException(); } }
 
-        #region Overrides of SFMLForm
-
-        public override void Show()
+        public void Show()
         {
-            base.Show();
+            window.Show();
             Event.current.type = EventType.Layout;
         }
 
-        public override void Close()
+        public void Hide()
         {
-            this.renderContext.Dispose();
+            window.Hide();
+        }
+
+        public void Close()
+        {
+            this.renderer.ShutDown();
 
             foreach (var pair in renderBoxMap)
             {
@@ -81,48 +86,32 @@ namespace ImGui
                 }
             }
 
-            base.Close();
+            window.Close();
+            this.Closed = true;
         }
 
-        public override void Minimize()
+        public void Minimize()
         {
-            if (this.Visible)
-            {
-                Event.current.type = EventType.MinimizeWindow;
-            }
+            Event.current.type = EventType.MinimizeWindow;
         }
 
-        public override void Maximize()
+        public void Maximize()
         {
-            if (this.Visible)
-            {
-                Event.current.type = EventType.MaximizeWindow;
-            }
+            Event.current.type = EventType.MaximizeWindow;
         }
 
-        public override void Normalize()
+        public void Normalize()
         {
-            if (this.Visible)
-            {
-                Event.current.type = EventType.NormalizeWindow;
-            }
+            Event.current.type = EventType.NormalizeWindow;
+
+#if implementation
+            var originalWindowRect = new Rect(window.NormalPosition, window.NormalSize);
+#endif
         }
 
         #endregion
 
         #region the GUI Loop
-
-        internal struct GUILoopResult
-        {
-            public readonly Rect dirtyRect;
-            public readonly bool needExit;
-
-            public GUILoopResult(bool needExit, Rect dirtyRect)
-            {
-                this.dirtyRect = dirtyRect;
-                this.needExit = needExit;
-            }
-        }
 
         internal static void BeginGUI(bool useGUILayout)
         {
@@ -131,6 +120,11 @@ namespace ImGui
                 LayoutUtility.Begin();
             }
         }
+
+        /// <summary>
+        /// Custom GUI Logic. This should be implemented by the user.
+        /// </summary>
+        protected abstract void OnGUI();
 
         internal static void EndGUI()
         {
@@ -141,29 +135,32 @@ namespace ImGui
             }
         }
 
+        private long lastFPSUpdateTime;
+        private int fps;
+        private int elapsedFrameCount = 0;
+
         /// <summary>
         /// GUI Loop
         /// </summary>
-        internal GUILoopResult GUILoop()
+        internal void GUILoop()
         {
             current = this;
 
-            Rect dirtyRect;
-            handleEvent(out dirtyRect);//TODO Use event message queue. Do not change Event.current directly!
+            _handleEvent();
 
-            // deactive all render-boxes
-            foreach (var pair in renderBoxMap)
+            elapsedFrameCount++;
+            var detlaTime = Application.Time - lastFPSUpdateTime;
+            if (detlaTime > 1000)
             {
-                var renderBox = pair.Value;
-                renderBox.Active = false;
+                fps = elapsedFrameCount;
+                elapsedFrameCount = 0;
+                lastFPSUpdateTime = Application.Time;
             }
-
-            return new GUILoopResult(needExit, dirtyRect);
+            this.window.Title = string.Format("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
         }
 
-        private void handleEvent(out Rect dirtyRect)
+        void _handleEvent()
         {
-            dirtyRect = Rect.Empty;
             switch (Event.current.type)
             {
                 case EventType.Layout:
@@ -174,29 +171,81 @@ namespace ImGui
                     EndGUI();
                     break;
                 case EventType.Repaint:
-                    if (this.Visible)
+                    if (!this.Closed)
+                    {
+                        this.DrawList.Clear();
+                        BeginGUI(true);
+                        OnGUI();
+                        EndGUI();
+                        _Render();
+                        //Event.current.type = EventType.Used;
+                    }
+                    break;
+                case EventType.MaximizeWindow:
+                    {
+                        window.Maximize();
+                        FormState = FormState.Maximized;
+
+                        Event.current.type = EventType.Layout;
+                    }
+                    break;
+                case EventType.MinimizeWindow:
+                    BeginGUI(true);
+                    OnGUI();
+                    EndGUI();
+                    window.Minimize();
+                    FormState = FormState.Minimized;
+                    Event.current.type = EventType.Used;
+                    break;
+                case EventType.NormalizeWindow:
+                    {
+                        window.Normalize();
+                        FormState = FormState.Normal;
+
+                        Event.current.type = EventType.Layout;
+                    }
+                    break;
+                default:
+                    BeginGUI(true);
+                    OnGUI();
+                    EndGUI();
+                    break;
+            }
+        }
+
+        void _Render()
+        {
+            this.renderer.Clear();
+            this.renderer.RenderDrawList(this.DrawList, (int)this.Size.Width, (int)this.Size.Height);
+            this.renderer.SwapBuffers();
+        }
+
+        private void handleEvent()
+        {
+            switch (Event.current.type)
+            {
+                case EventType.Layout:
+                    LayoutUtility.current.Clear();
+                    LoadFormGroup();
+                    BeginGUI(true);
+                    OnGUI();
+                    EndGUI();
+                    break;
+                case EventType.Repaint:
+                    if (!this.Closed)
                     {
                         BeginGUI(true);
                         OnGUI();
                         EndGUI();
-                        dirtyRect = DoRender();
+                        //dirtyRect = DoRender();
                         Event.current.type = EventType.Used;
                     }
                     break;
+#if false
                 case EventType.MaximizeWindow:
                 {
-                    Rect rect;
-                    Utility.MaximizeForm(this, out rect);
+                    window.Maximize();
                     FormState = FormState.Maximized;
-                    renderContext.Dispose();
-                    renderContext.Build((int)rect.Width, (int)rect.Height);
-                    this.guiRenderer.OnLoad(rect.Size);
-                    foreach (var pair in renderBoxMap)
-                    {
-                        SimpleControl simpleControl = (SimpleControl)pair.Value;
-                        simpleControl.NeedRepaint = true;
-                        //simpleControl.State = "Normal";
-                    }
 
                     Event.current.type = EventType.Layout;
                 }
@@ -205,25 +254,20 @@ namespace ImGui
                     BeginGUI(true);
                     OnGUI();
                     EndGUI();
-                    Utility.MinimizeForm(this);
+                    Minimize();
                     FormState = FormState.Minimized;
                     Event.current.type = EventType.Used;
                     break;
                 case EventType.NormalizeWindow:
-                    Utility.NormalizeForm(this);
-                    FormState = FormState.Normal;
-                    renderContext.Dispose();
-                    renderContext.Build((int)originalSize.Width, (int)originalSize.Height);
-                    this.guiRenderer.OnLoad(originalSize);
-                    foreach (var pair in renderBoxMap)
-                    {
-                        SimpleControl simpleControl = (SimpleControl)pair.Value;
-                        simpleControl.NeedRepaint = true;
-                        //simpleControl.State = "Normal";
-                    }
+                    { 
+                        var rect = new Rect(this.NormalPosition, this.NormalSize);
+                        window.Normalize(rect);
+                        FormState = FormState.Normal;                        
 
-                    Event.current.type = EventType.Layout;
+                        Event.current.type = EventType.Layout;
+                    }
                     break;
+#endif
                 default:
                     BeginGUI(true);
                     OnGUI();
@@ -241,7 +285,7 @@ namespace ImGui
                 if (!box.Active) continue;
                 if (box.NeedRepaint)
                 {
-                    renderContext.BackContext.DrawBoxModel(box.Rect, box.Content, box.Style);
+                    //renderContext.BackContext.DrawBoxModel(box.Rect, box.Content, box.Style);
                     box.NeedRepaint = false;
                     dirtyRect.Union(box.Rect);
                 }
@@ -270,8 +314,8 @@ namespace ImGui
         /// </summary>
         private void InitGUI()
         {
-            var clientWidth = (int) internalForm.Size.X;
-            var clientHeight = (int) internalForm.Size.Y;
+            var clientWidth = (int) Size.Width;
+            var clientHeight = (int) Size.Height;
 
             // init the render context
             renderContext = new RenderContext(clientWidth, clientHeight);
@@ -291,6 +335,26 @@ namespace ImGui
             layoutCache.Push(formGroup);
         }
 
-        #endregion
+#endregion
+
+        /// <summary>
+        /// Get the mouse position relative to the form
+        /// </summary>
+        /// <param name="form"></param>
+        /// <returns></returns>
+        public Point GetMousePos()
+        {
+            return Application.windowContext.ScreenToClient(window, Application.inputContext.MousePosition);
+        }
+
+        public Point ScreenToClient(Point point)
+        {
+            return window.ScreenToClient(point);
+        }
+
+        public Point ClientToScreen(Point point)
+        {
+            return window.ClientToScreen(point);
+        }
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace ImGui
+namespace ImGui.Internal
 {
     // Implements a variable-size List that uses an array of objects to store the
     // elements. A List has a capacity, which is the allocated length
@@ -361,23 +361,24 @@ namespace ImGui
             return false;
         }
 
-        public List<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
-        {
-            if (converter == null)
-            {
-                throw new ArgumentNullException("converter");
-            }
-
-            Contract.EndContractBlock();
-
-            List<TOutput> list = new List<TOutput>(_size);
-            for (int i = 0; i < _size; i++)
-            {
-                list._items[i] = converter(_items[i]);
-            }
-            list._size = _size;
-            return list;
-        }
+        // Converter<T, TOutput> not available??
+        //public List<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
+        //{
+        //    if (converter == null)
+        //    {
+        //        throw new ArgumentNullException("converter");
+        //    }
+        //
+        //    Contract.EndContractBlock();
+        //
+        //    List<TOutput> list = new List<TOutput>(_size);
+        //    for (int i = 0; i < _size; i++)
+        //    {
+        //        list._items[i] = converter(_items[i]);
+        //    }
+        //    list._size = _size;
+        //    return list;
+        //}
 
         // Copies this List into array, which must be of a 
         // compatible array type.  

@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 using Context = Cairo.Context;
-using Key = SFML.Window.Keyboard.Key;
+using Key = ImGui.Input.Keyboard.Key;
 
 //TODO construct a more specific render section
 namespace ImGui
@@ -173,9 +173,10 @@ namespace ImGui
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;
             bool isInside;
+            var mousePos = Form.GetMousePos();
             caretIndex = TextContext.XyToIndex(
-                (float)(Input.Mouse.GetMousePos(Form).X - offsetOfTextRect.X),
-                (float)(Input.Mouse.GetMousePos(Form).Y - offsetOfTextRect.Y), out isInside);
+                (float)(mousePos.X - offsetOfTextRect.X),
+                (float)(mousePos.Y - offsetOfTextRect.Y), out isInside);
             if (!isInside && caretIndex == Text.Length - 1)
             {
                 ++caretIndex;
@@ -201,7 +202,7 @@ namespace ImGui
                 {
                     textBox.CaretIndex -= 1;
                 }
-                if (!Input.Keyboard.KeyDown(Key.LShift))
+                if (!Input.Keyboard.KeyDown(Key.LeftShift))
                 {
                     textBox.SelectIndex = textBox.CaretIndex;
                 }
@@ -212,7 +213,7 @@ namespace ImGui
                 {
                     textBox.CaretIndex += 1;
                 }
-                if (!Input.Keyboard.KeyDown(Key.LShift))
+                if (!Input.Keyboard.KeyDown(Key.LeftShift))
                 {
                     textBox.SelectIndex = textBox.CaretIndex;
                 }
@@ -234,9 +235,10 @@ namespace ImGui
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;
             bool isInside;
+            var mousePos = Form.GetMousePos();
             caretIndex = TextContext.XyToIndex(
-                (float)(Input.Mouse.GetMousePos(Form).X - offsetOfTextRect.X),
-                (float)(Input.Mouse.GetMousePos(Form).Y - offsetOfTextRect.Y), out isInside);
+                (float)(mousePos.X - offsetOfTextRect.X),
+                (float)(mousePos.Y - offsetOfTextRect.Y), out isInside);
             if (!isInside && caretIndex == Text.Length - 1)
             {
                 ++caretIndex;
@@ -283,7 +285,7 @@ namespace ImGui
                 Application.ImeBuffer.Clear();
             }
             //Backspace, delete one character before the caret
-            else if (Input.Keyboard.KeyPressed(Key.BackSpace, true))
+            else if (Input.Keyboard.KeyPressed(Key.Back, true))
             {
                 if (CaretIndex != SelectIndex)
                 {
@@ -341,8 +343,8 @@ namespace ImGui
 #if INSPECT_STATE
             var A = stateMachine.CurrentState;
 #endif
-            bool insideRectLast = Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form));
-            bool insideRectCurrent = Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form));
+            bool insideRectLast = Rect.Contains(Form.ScreenToClient(Input.Mouse.LastMousePos));
+            bool insideRectCurrent = Rect.Contains(Form.ScreenToClient(Input.Mouse.MousePos));
             bool insideRect = insideRectCurrent;
 
             //Execute state commands
@@ -389,7 +391,7 @@ namespace ImGui
                     Name, A, B, CaretIndex, SelectIndex));
 #endif
 
-            this.Form.Cursor = insideRect ? Cursor.Text : Cursor.Default;
+            //TODO this.Form.Cursor = insideRect ? Cursor.Text : Cursor.Default;
             if (stateMachine.CurrentState == TextBoxState.Active)
             {
                 stateMachine.MoveNext(TextBoxCommand.DoEdit, this);

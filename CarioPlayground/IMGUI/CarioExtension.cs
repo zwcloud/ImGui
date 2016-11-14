@@ -272,13 +272,6 @@ namespace ImGui
         /// <param name="textStyle">text styles</param>
         public static void DrawText(this Context g, Rect rect, ITextContext textContext, Font font, TextStyle textStyle)
         {
-            g.NewPath();
-            g.SetSourceColor(font.Color);
-            Point p = rect.TopLeft;
-            g.MoveTo(p.ToPointD());
-            textContext.BuildPath(g);
-            g.AppendPath(textContext.Path);
-            g.Fill();
         }
         #endregion
 
@@ -367,7 +360,7 @@ namespace ImGui
             g.Save();
             g.Translate(destRect.X, destRect.Y);
             g.Scale(xScale, yScale);
-            g.SetSourceSurface(image._surface, 0, 0);
+            g.SetSource(image._surface, 0, 0);
             g.Rectangle(destRect.TopLeft.ToPointD(), destRect.Width, destRect.Height);
             g.Paint();
             g.Restore();

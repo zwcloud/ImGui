@@ -152,5 +152,14 @@ namespace ImGui
         {
             return AmostZero(a - b);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double InverseLength(Vector lhs, double fail_value)
+        {
+            var d = lhs.X * lhs.X + lhs.Y * lhs.Y;
+            if (d > 0.0f) return 1.0 / System.Math.Sqrt(d);
+            return fail_value;
+        }
+
     }
 }

@@ -1,0 +1,30 @@
+{
+    "buildOptions": {
+        "define": [ "DEBUG" ]
+    },
+    "dependencies": {
+        "dotnet-test-nunit": "3.4.0-beta-3",
+        "IMGUI": {
+            "target": "project"
+        },
+        "NETStandard.Library": "1.6.0",
+        "NUnit": "3.5.0"
+    },
+    "frameworks": {
+        "netcoreapp1.0": {
+            "imports": [
+                "netcoreapp1.0",
+                "portable-net45+win8"
+            ],
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "version": "1.0.1-*",
+                    "type": "platform"
+                },
+                "NSubstitute": "2.0.0-rc"
+            }
+        }
+    },
+    "testRunner": "nunit",
+    "version": "1.0.0-*"
+}

@@ -81,8 +81,9 @@ namespace ImGui
                 font.FontStretch, font.FontStyle, font.FontWeight,
                 (int)contentRect.Width, (int)contentRect.Height,
                 textStyle.TextAlignment);
-            
-            var screenRect = Utility.GetScreenRect(Rect, this.Form);
+
+            var screenPos = this.Form.ClientToScreen(Rect.TopLeft);
+            var screenRect = new Rect(screenPos, Rect.Size);
             ItemsContainer = new ComboxBoxItemsForm(
                 screenRect,
                 Texts, i =>
@@ -135,12 +136,12 @@ namespace ImGui
             }
 
             //Execute state commands
-            var containMousePosition = Rect.Contains(Utility.ScreenToClient(Input.Mouse.MousePos, Form));
-            if (!Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && containMousePosition)
+            var containMousePosition = Rect.Contains(Form.current.ScreenToClient(Input.Mouse.MousePos));
+            if (!Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && containMousePosition)
             {
                 stateMachine.MoveNext(ComboBoxCommand.MoveIn);
             }
-            if (Rect.Contains(Utility.ScreenToClient(Input.Mouse.LastMousePos, Form)) && !containMousePosition)
+            if (Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && !containMousePosition)
             {
                 stateMachine.MoveNext(ComboBoxCommand.MoveOut);
             }
@@ -153,8 +154,7 @@ namespace ImGui
             }
             if(stateMachine.CurrentState == ComboBoxState.Active)//instant transition of state
             {
-                var screenRect = Utility.GetScreenRect(new Rect(Rect.BottomLeft.X, Rect.BottomLeft.Y, Rect.Size), this.Form);
-                ItemsContainer.Position = screenRect.TopLeft;
+                ItemsContainer.Position = Form.current.ClientToScreen(Rect.BottomLeft);
                 Application.Forms.Add(ItemsContainer);
                 ItemsContainer.Show();
                 stateMachine.MoveNext(ComboBoxCommand.ShowItems);
@@ -202,7 +202,7 @@ namespace ImGui
         private System.Action<int> CallBack { get; set; }
 
         public ComboxBoxItemsForm(Rect rect, string[] texts, System.Action<int> callBack)
-            : base((int)rect.Width, (int)rect.Height * texts.Length)
+            : base(rect)
         {
             Position = rect.TopLeft;
             rect.X = rect.Y = 0;
@@ -211,14 +211,14 @@ namespace ImGui
             CallBack = callBack;
         }
 
-        protected override void OnGUI(GUI gui)
+        protected override void OnGUI()
         {
-            gui.BeginV();
+            GUILayout.BeginVertical();
             for (int i = 0; i < TextList.Count; i++)
             {
                 var itemRect = Rect;
                 itemRect.Y += (i + 1) * Rect.Height;
-                if(gui.Button(new Rect(Rect.Width, itemRect.Height), TextList[i], this.Name + "item" + i))
+                if(GUI.Button(new Rect(Rect.Width, itemRect.Height), TextList[i], this.GetHashCode() + "item" + i))
                 {
                     if(CallBack!=null)
                     {
@@ -228,7 +228,7 @@ namespace ImGui
                     Application.Forms.Remove(this);
                 }
             }
-            gui.EndV();
+            GUILayout.EndVertical();
         }
     }
 }

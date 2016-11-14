@@ -85,7 +85,6 @@ namespace ImGui
                         {
                             Color = bgColor,
                             Image = null,
-                            Pattern = null
                         }
                     },
                     //var gradient = new LinearGradient(0, 0, 0, 1);
@@ -135,7 +134,6 @@ namespace ImGui
                         {
                             Color = activeBgColor,
                             Image = null,
-                            Pattern = null
                         }
                     }
                 };
@@ -154,7 +152,6 @@ namespace ImGui
                         {
                             Color = new Color(0x9F, 0x9F, 0x9F),
                             Image = null,
-                            Pattern = null
                         }
                     },
                     new StyleModifier
@@ -211,7 +208,6 @@ namespace ImGui
                         {
                             Color = CairoEx.ColorRgb(193,193,193),
                             Image = null,
-                            Pattern = null
                         }
                     },
 
@@ -248,7 +244,6 @@ namespace ImGui
                         {
                             Color = CairoEx.ColorLightBlue,
                             Image = null,
-                            Pattern = null
                         }
                     },
                 };
@@ -329,7 +324,6 @@ namespace ImGui
                         {
                             Color = CairoEx.ColorWhite,
                             Image = null,
-                            Pattern = null
                         }
                     },
                 };
@@ -370,7 +364,6 @@ namespace ImGui
                         {
                             Color = CairoEx.ColorArgb(0xFFAFAFAF),
                             Image = null,
-                            Pattern = null
                         }
                     }
                 };
@@ -385,7 +378,6 @@ namespace ImGui
                         {
                             Color = CairoEx.ColorArgb(0xFF8F8F8F),
                             Image = null,
-                            Pattern = null
                         }
                     }
                 };
@@ -471,7 +463,6 @@ namespace ImGui
                         {
                             Color = bgColor,
                             Image = null,
-                            Pattern = null
                         }
                     },
                 };

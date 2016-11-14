@@ -164,7 +164,6 @@ namespace ImGui
             {
                 Color = CairoEx.ColorWhite,
                 Image = null,
-                Pattern = null
             };
 
             CellingSpacingHorizontal = 0;

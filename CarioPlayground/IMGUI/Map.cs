@@ -1,24 +1,36 @@
 ﻿using System;
 namespace ImGui
 {
-    public delegate ITextContext CTextContext(
+    delegate ITextContext CTextContext(
         string text, string fontFamily, int fontSize,
         FontStretch stretch, FontStyle style, FontWeight weight,
         int maxWidth, int maxHeight,
         TextAlignment alignment);
 
-    public abstract class Map
+    delegate IWindowContext CWindowContext();
+
+    delegate IInputContext CInputContext();
+
+    delegate IRenderer CRenderer();
+
+    abstract class Map
     {
         public CTextContext CreateTextContext;
+        public CWindowContext CreateWindowContext;
+        public CInputContext CreateInputContext;
+        public CRenderer CreateRenderer;
     }
-    
-    public class MapWindows : Map
+
+    class MapWindows : Map
     {
         public static Map MapFactory()
         {
             return new MapWindows
             {
-                CreateTextContext = CTextContext
+                CreateTextContext = CTextContext,
+                CreateWindowContext = CWindowContext,
+                CreateInputContext = CInputContext,
+                CreateRenderer = CRenderer,
             };
         }
 
@@ -28,21 +40,39 @@ namespace ImGui
             int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
+            var fontSizeInDip = Utility.PointToDip(fontSize);
             return new DWriteTextContext(
-                text, fontFamily, fontSize,
+                text, fontFamily, fontSizeInDip,
                 stretch, style, weight,
                 maxWidth, maxHeight, alignment);
         }
 
+        private static IWindowContext CWindowContext()
+        {
+            return new Win32WindowContext();
+        }
+
+        private static IInputContext CInputContext()
+        {
+            return new Win32InputContext();
+        }
+
+        private static IRenderer CRenderer()
+        {
+            return new OpenGLRenderer();
+        }
     }
 
-    public class MapLinux : Map
+    class MapLinux : Map
     {
         public static Map MapFactory()
         {
             return new MapLinux
             {
                 CreateTextContext = CTextContext,
+                CreateWindowContext = CWindowContext,
+                CreateInputContext = CInputContext,
+                CreateRenderer = CRenderer,
             };
         }
 
@@ -52,11 +82,28 @@ namespace ImGui
             int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
-            return new PangoTextContext(
-                text, fontFamily, fontSize,
-                stretch, style, weight,
-                maxWidth, maxHeight,
-                alignment);
+            throw new NotImplementedException();
+
+            //return new PangoTextContext(
+            //    text, fontFamily, fontSize,
+            //    stretch, style, weight,
+            //    maxWidth, maxHeight,
+            //    alignment);
+        }
+        
+        private static IWindowContext CWindowContext()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IInputContext CInputContext()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IRenderer CRenderer()
+        {
+            throw new NotImplementedException();
         }
     }
 }

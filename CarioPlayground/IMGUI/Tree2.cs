@@ -9,7 +9,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Security.Permissions;
 
 [assembly: SuppressMessage( "Microsoft.Performance", "CA1804:RemoveUnusedLocals", Scope = "member", Target = "Common.NodeTree`1+EnumeratorBase`1.Count", MessageId = "o" )]
 [assembly: SuppressMessage( "Microsoft.Performance", "CA1804:RemoveUnusedLocals", Scope = "member", Target = "Common.NodeTree`1+BaseEnumerableCollectionPair+BaseNodesEnumerableCollection.Count", MessageId = "o" )]
@@ -417,8 +416,7 @@ namespace ImGui
 
 		//-----------------------------------------------------------------------------
 		// DeepCopyData
-
-		[ReflectionPermission( SecurityAction.Demand, Unrestricted = true )]
+        
 		protected virtual T DeepCopyData( T data )
 		{
 			//if ( ! Root.IsTree ) throw new InvalidOperationException( "This is not a tree" );
@@ -429,15 +427,17 @@ namespace ImGui
 			IDeepCopy deepCopy = data as IDeepCopy;
 			if ( deepCopy != null ) return ( T ) deepCopy.CreateDeepCopy();
 
-			// ICloneable
-			ICloneable cloneable = data as ICloneable;
-			if ( cloneable != null ) return ( T ) cloneable.Clone();
+            // ICloneable (not supported on .NET Core)
+            //ICloneable cloneable = data as ICloneable;
+            //if ( cloneable != null ) return ( T ) cloneable.Clone();
 
-			// Copy constructor
-			ConstructorInfo ctor = data.GetType().GetConstructor(
-				 BindingFlags.Instance | BindingFlags.Public,
-				 null, new Type[] { typeof( T ) }, null );
-			if ( ctor != null ) return ( T ) ctor.Invoke( new object[] { data } );
+            // Copy constructor
+            // ConstructorInfo ctor = data.GetType().GetConstructor(
+            // 	 BindingFlags.Instance | BindingFlags.Public,
+            // 	 null, new Type[] { typeof( T ) }, null);
+            // (fix for .NET Core)
+            ConstructorInfo ctor = data.GetType().GetTypeInfo().GetConstructor(new Type[] { typeof(T) });
+            if ( ctor != null ) return ( T ) ctor.Invoke( new object[] { data } );
 			//return ( T ) Activator.CreateInstance( typeof( T ), new object[] { data } );
 
 			// give up
@@ -496,7 +496,6 @@ namespace ImGui
 			/// <p>This method is called during serialization.</p>
 			/// <p>Do not call this method directly.</p>
 			/// </remarks>
-			[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 			public override void GetObjectData( SerializationInfo info, StreamingContext context )
 			{
 				base.GetObjectData( info, context );
@@ -600,7 +599,6 @@ namespace ImGui
 		/// <p>This method is called during serialization.</p>
 		/// <p>Do not call this method directly.</p>
 		/// </remarks>
-		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "NodeTreeVersion", 1 );
@@ -2656,7 +2654,7 @@ namespace ImGui
 			if ( !Root.IsTree ) throw new InvalidOperationException( "This is not a tree" );
 			if ( data is INode<T> ) throw new ArgumentException( "Object is a node" );
 
-			if ( ( !typeof( T ).IsClass ) || ( ( object ) data ) != null )
+			if ( ( !typeof( T ).GetTypeInfo().IsClass) || ( ( object ) data ) != null )
 				if ( !DataType.IsInstanceOfType( data ) )
 					throw new ArgumentException( "Object is not a " + DataType.Name );
 

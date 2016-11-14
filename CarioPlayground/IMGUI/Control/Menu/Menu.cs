@@ -1,11 +1,8 @@
-﻿
+﻿#if false
 namespace ImGui
 {
     public class Menu
     {
-
-
-
         private ITree<MenuItem> menuTree = NodeTree<MenuItem>.NewTree();
         private INode<MenuItem> topItem;
         private INode<MenuItem> currentItem;
@@ -46,3 +43,4 @@ namespace ImGui
         }
     }
 }
+#endif

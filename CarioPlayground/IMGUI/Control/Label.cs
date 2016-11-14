@@ -35,6 +35,12 @@ namespace ImGui
 
         internal static void DoControl(Rect rect, Content content, string name)
         {
+            if (Event.current.type == EventType.Repaint)
+            {
+                GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Label["Normal"]);
+            }
+
+#if false
             //Create
             var form = Form.current;
             if (!form.renderBoxMap.ContainsKey(name))
@@ -60,6 +66,7 @@ namespace ImGui
 
             //Active
             control.Active = true;
+#endif
         }
 
         public override string Name
