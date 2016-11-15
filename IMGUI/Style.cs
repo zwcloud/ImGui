@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cairo;
 
 namespace ImGui
 {
@@ -153,16 +152,16 @@ namespace ImGui
         {
             PaddingTop = PaddingRight = PaddingBottom = PaddingLeft = 0;
             BorderTop = BorderRight = BorderBottom = BorderLeft = 0;
-            BorderTopColor = CairoEx.ColorBlack;
-            BorderRightColor = CairoEx.ColorBlack;
-            BorderBottomColor = CairoEx.ColorBlack;
-            BorderLeftColor = CairoEx.ColorBlack;
+            BorderTopColor = Color.Black;
+            BorderRightColor = Color.Black;
+            BorderBottomColor = Color.Black;
+            BorderLeftColor = Color.Black;
             OutlineWidth = 0;
             OutlineColor = new Color(0, 0, 0, 0.5);
 
             BackgroundStyle = new BackgroundStyle
             {
-                Color = CairoEx.ColorWhite,
+                Color = Color.White,
                 Image = null,
             };
 
@@ -178,7 +177,7 @@ namespace ImGui
                 FontWeight = FontWeight.Normal,
                 FontStretch = FontStretch.Normal,
                 Size = 12,
-                Color = CairoEx.ColorBlack
+                Color = Color.Black
             };
 
             TextStyle = new TextStyle
@@ -190,7 +189,7 @@ namespace ImGui
 
             Cursor = Cursor.Default;
 
-            LineColor = CairoEx.ColorBlack;
+            LineColor = Color.Black;
             LineWidth = 1;
             FillColor = new Color(1,1,1);
 

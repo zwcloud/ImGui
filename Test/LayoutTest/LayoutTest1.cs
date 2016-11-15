@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using Cairo;
 using ImGui;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Xunit;
 
 namespace Test
 {
@@ -36,7 +35,7 @@ namespace Test
             public static double CellingSpacingHorizontal = 5;
         }
 
-        public class Item : ICloneable
+        public class Item
         {
             public Rect rect;//border-box
             public double contentWidth;//exact content width, pre-calculated from content and style
@@ -83,7 +82,6 @@ namespace Test
             }
 
             public Item Clone() { return (Item)this.MemberwiseClone(); }
-            object ICloneable.Clone() { return Clone(); }
         }
 
         public class Group : Item
@@ -262,7 +260,7 @@ namespace Test
 
             public void ShowResult()
             {
-                var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
+                var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Cairo.Format.Rgb24);
                 var context = new Cairo.Context(surface);
 
                 Draw(context, isClipped);
@@ -315,18 +313,18 @@ namespace Test
 
         #endregion
 
-        [TestMethod, TestCategory("Rect & content size"), Description("The size of an entry is correctly calculated")]
+        [Fact, Trait("Category", "Rect & content size"), Trait("Description", "The size of an entry is correctly calculated")]
         public void TheSizeOfAnEntryIsCorrectlyCalculated()
         {
             Item item = CreateItem();
             item.CalcWidth();
             item.CalcHeight();
 
-            Assert.AreEqual(item.contentWidth + Const.ItemPaddingLeft + Const.ItemPaddingRight + Const.ItemBorderLeft + Const.ItemBorderRight, item.rect.Width);
-            Assert.AreEqual(item.contentHeight + Const.ItemPaddingTop + Const.ItemPaddingBottom + Const.ItemBorderTop + Const.ItemBorderBottom, item.rect.Height);
+            Assert.Equal(item.contentWidth + Const.ItemPaddingLeft + Const.ItemPaddingRight + Const.ItemBorderLeft + Const.ItemBorderRight, item.rect.Width);
+            Assert.Equal(item.contentHeight + Const.ItemPaddingTop + Const.ItemPaddingBottom + Const.ItemBorderTop + Const.ItemBorderBottom, item.rect.Height);
         }
 
-        [TestMethod, TestCategory("Rect & content size"), Description("The size of a vertical group that contains a single entry is correctly calculated")]
+        [Fact, Trait("Category", "Rect & content size"), Trait("Description", "The size of a vertical group that contains a single entry is correctly calculated")]
         public void TheSizeOfAVerticalGroupThatContainsASingleEntryIsCorrectlyCalculated()
         {
             Group group = CreateVerticalGroup();
@@ -336,11 +334,11 @@ namespace Test
             group.CalcWidth();
             group.CalcHeight();
 
-            Assert.AreEqual(item.rect.Width + group.style.PaddingHorizontal + group.style.BorderHorizontal, group.rect.Width);
-            Assert.AreEqual(item.rect.Height + group.style.PaddingVertical + group.style.BorderVertical, group.rect.Height);
+            Assert.Equal(item.rect.Width + group.style.PaddingHorizontal + group.style.BorderHorizontal, group.rect.Width);
+            Assert.Equal(item.rect.Height + group.style.PaddingVertical + group.style.BorderVertical, group.rect.Height);
         }
 
-        [TestMethod, TestCategory("Rect & content size"), Description("The size of a vertical group that contains multiple entries is correctly calculated")]
+        [Fact, Trait("Category", "Rect & content size"), Trait("Description", "The size of a vertical group that contains multiple entries is correctly calculated")]
         public void TheSizeOfAVerticalGroupThatContainsMultipleEntriesIsCorrectlyCalculated()
         {
             Group group = CreateVerticalGroup();
@@ -367,11 +365,11 @@ namespace Test
             expectedWidth += group.style.PaddingHorizontal + group.style.BorderHorizontal;
             expectedHeight += group.style.PaddingVertical + group.style.BorderVertical;
 
-            Assert.AreEqual(expectedWidth, group.rect.Width);
-            Assert.AreEqual(expectedHeight, group.rect.Height);
+            Assert.Equal(expectedWidth, group.rect.Width);
+            Assert.Equal(expectedHeight, group.rect.Height);
         }
 
-        [TestMethod, TestCategory("Rect & content size"), Description("The size of a horizontal group that contains a single entry is correctly calculated")]
+        [Fact, Trait("Category", "Rect & content size"), Trait("Description", "The size of a horizontal group that contains a single entry is correctly calculated")]
         public void TheSizeOfAHorizontalGroupThatContainsASingleEntryIsCorrectlyCalculated()
         {
             Group group = CreateHorizontalGroup();
@@ -381,11 +379,11 @@ namespace Test
             group.CalcWidth();
             group.CalcHeight();
 
-            Assert.AreEqual(item.rect.Width + group.style.PaddingHorizontal + group.style.BorderHorizontal, group.rect.Width);
-            Assert.AreEqual(item.rect.Height + group.style.PaddingVertical + group.style.BorderVertical, group.rect.Height);
+            Assert.Equal(item.rect.Width + group.style.PaddingHorizontal + group.style.BorderHorizontal, group.rect.Width);
+            Assert.Equal(item.rect.Height + group.style.PaddingVertical + group.style.BorderVertical, group.rect.Height);
         }
 
-        [TestMethod, TestCategory("Rect & content size"), Description("The size of a horizontal group that contains multiple entries is correctly calculated")]
+        [Fact, Trait("Category", "Rect & content size"), Trait("Description", "The size of a horizontal group that contains multiple entries is correctly calculated")]
         public void TheSizeOfAHorizontalGroupThatContainsMultipleEntriesIsCorrectlyCalculated()
         {
             Group group = CreateHorizontalGroup();
@@ -412,12 +410,12 @@ namespace Test
             expectedWidth += group.style.PaddingHorizontal + group.style.BorderHorizontal;
             expectedHeight += group.style.PaddingVertical + group.style.BorderVertical;
 
-            Assert.AreEqual(expectedWidth, group.rect.Width);
-            Assert.AreEqual(expectedHeight, group.rect.Height);
+            Assert.Equal(expectedWidth, group.rect.Width);
+            Assert.Equal(expectedHeight, group.rect.Height);
         }
 
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show an empty horizontal group")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show an empty horizontal group")]
         public void ShowAnEmptyHorizontalGroup()
         {
             Group group = CreateHorizontalGroup();
@@ -429,7 +427,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show a horizontal group of 1 item")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show a horizontal group of 1 item")]
         public void ShowAHorizontalGroupOf1Item()
         {
             Group group = CreateHorizontalGroup();
@@ -445,7 +443,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show a horizontal group of 3 items")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show a horizontal group of 3 items")]
         public void ShowAHorizontalGroupOf3Items()
         {
             Group group = CreateHorizontalGroup();
@@ -464,7 +462,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show an empty vertical group")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show an empty vertical group")]
         public void ShowAnEmptyVerticalGroup()
         {
             Group group = CreateVerticalGroup();
@@ -476,7 +474,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show a vertical group of 1 items")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show a vertical group of 1 items")]
         public void ShowAVerticalGroupOf1Items()
         {
             Group group = CreateVerticalGroup();
@@ -492,7 +490,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show a vertical group of 3 items")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show a vertical group of 3 items")]
         public void ShowAVerticalGroupOf3Items()
         {
             Group group = CreateVerticalGroup();
@@ -510,7 +508,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show a group of 3x3 items, outter group is vertical")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show a group of 3x3 items, outter group is vertical")]
         public void ShowAGroupOf3x3Items_OutterGroupIsVertical()
         {
             Group outterGroup = CreateVerticalGroup();
@@ -539,7 +537,7 @@ namespace Test
             outterGroup.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show a group of 3x3 items, outter group is horizontal")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show a group of 3x3 items, outter group is horizontal")]
         public void ShowAGroupOf3x3Items_OutterGroupIsHorizontal()
         {
             Group outterGroup = CreateHorizontalGroup();
@@ -568,7 +566,7 @@ namespace Test
             outterGroup.ShowResult();
         }
 
-        [TestMethod, TestCategory("Layout(non-stretch)"), Description("Show a 3 layer group")]
+        [Fact, Trait("Category", "Layout(non-stretch)"), Trait("Description", "Show a 3 layer group")]
         public void ShowA3LayerGroup()
         {
             Group group1 = CreateVerticalGroup();

@@ -32,7 +32,7 @@ namespace Test
         public static double CellingSpacingHorizontal = 5;
     }
 
-    public class Item : ICloneable
+    public class Item
     {
         public Rect rect;//border-box
         public double contentWidth;//exact content width, pre-calculated from content and style
@@ -174,7 +174,6 @@ namespace Test
         }
 
         public Item Clone() { return (Item)this.MemberwiseClone(); }
-        object ICloneable.Clone() { return Clone(); }
     }
 
     public class Group : Item

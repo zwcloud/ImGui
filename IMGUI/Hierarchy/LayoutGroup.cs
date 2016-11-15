@@ -447,65 +447,6 @@ namespace ImGui
             }
         }
 
-        private void Draw(Cairo.Context context, bool needClip)
-        {
-            if (needClip)
-            {
-                context.Rectangle(rect.X + style.PaddingLeft + style.BorderLeft, rect.Y + style.PaddingTop + style.BorderTop,
-                    rect.Width - style.PaddingHorizontal - style.BorderHorizontal, rect.Height - style.PaddingVertical - style.BorderVertical);
-                //context.StrokePreserve();
-                context.Clip();
-            }
-            foreach (var entry in this.entries)
-            {
-                if (entry.HorizontallyStretched || entry.VerticallyStretched)
-                {
-                    context.FillRectangle(entry.rect, CairoEx.ColorLightBlue);
-                }
-                else if (entry.IsFixedWidth || entry.IsFixedHeight)
-                {
-                    context.FillRectangle(entry.rect, CairoEx.ColorOrange);
-                }
-                else
-                {
-                    context.FillRectangle(entry.rect, CairoEx.ColorPink);
-                }
-                context.StrokeRectangle(entry.rect, CairoEx.ColorBlack);
-                var innerGroup = entry as LayoutGroup;
-                if (innerGroup != null)
-                {
-                    context.Save();
-                    innerGroup.Draw(context, needClip);
-                    context.Restore();
-                }
-            }
-            if (needClip)
-            {
-                context.ResetClip();
-            }
-        }
-
-        public void ShowResult()
-        {
-            var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Cairo.Format.Rgb24);
-            var context = new Cairo.Context(surface);
-
-            Draw(context, needClip: true);
-
-            string outputPath = "D:\\LayoutTest";
-            if (!System.IO.Directory.Exists(outputPath))
-            {
-                System.IO.Directory.CreateDirectory(outputPath);
-            }
-
-            string filePath = outputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + ".png";
-            surface.WriteToPng(filePath);
-            surface.Dispose();
-            context.Dispose();
-
-            Process.Start("rundll32.exe", @"""C:\Program Files\Windows Photo Viewer\PhotoViewer.dll"",ImageView_Fullscreen " + filePath);
-        }
-
         #region Filled layout (not used)
         public override void CalcRect()
         {

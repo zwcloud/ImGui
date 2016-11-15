@@ -1,4 +1,5 @@
-﻿//#define DrawContentBox
+﻿#if false
+//#define DrawContentBox
 //#define DrawPaddingBox
 
 using System;
@@ -412,3 +413,4 @@ namespace ImGui
     }
 
 }
+#endif

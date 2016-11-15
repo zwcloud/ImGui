@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Cairo;
 //using Svg;
 
 namespace ImGui
 {
-    public partial class Texture :IDisposable
+    public partial class Texture
     {
+        internal static Dictionary<string, Texture> _presets;
+#if false
         internal ImageSurface _surface;
 
         public int Width
@@ -20,8 +21,6 @@ namespace ImGui
         {
             get { return _surface.Height; }
         }
-
-        internal static Dictionary<string, Texture> _presets;
 
         public Texture(string filePath)
         {
@@ -119,5 +118,6 @@ namespace ImGui
         {
             _surface.Dispose();
         }
+#endif
     }
 }

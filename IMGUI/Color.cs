@@ -71,31 +71,31 @@ namespace ImGui
         #endregion
 
 
-        public static readonly Color Clear = ColorArgb(0, 0, 0, 0);
-        public static readonly Color Black = ColorRgb(0, 0, 0);
-        public static readonly Color White = ColorRgb(255, 255, 255);
-        public static readonly Color Red = ColorRgb(255, 0, 0);
-        public static readonly Color Green = ColorRgb(0, 255, 0);
-        public static readonly Color Blue = ColorRgb(0, 0, 255);
-        public static readonly Color Metal = ColorRgb(192, 192, 192);
-        public static readonly Color LightBlue = ColorRgb(46, 167, 224);
-        public static readonly Color DarkBlue = ColorRgb(3, 110, 184);
-        public static readonly Color Pink = ColorRgb(255, 192, 203);
-        public static readonly Color Orange = ColorRgb(255, 165, 0);
+        public static readonly Color Clear = Argb(0, 0, 0, 0);
+        public static readonly Color Black = Rgb(0, 0, 0);
+        public static readonly Color White = Rgb(255, 255, 255);
+        public static readonly Color Red = Rgb(255, 0, 0);
+        public static readonly Color Green = Rgb(0, 255, 0);
+        public static readonly Color Blue = Rgb(0, 0, 255);
+        public static readonly Color Metal = Rgb(192, 192, 192);
+        public static readonly Color LightBlue = Rgb(46, 167, 224);
+        public static readonly Color DarkBlue = Rgb(3, 110, 184);
+        public static readonly Color Pink = Rgb(255, 192, 203);
+        public static readonly Color Orange = Rgb(255, 165, 0);
 
-        public static Color ColorRgb(byte r, byte g, byte b)
+        public static Color Rgb(byte r, byte g, byte b)
         {
             return new Color(r / 255.0, g / 255.0, b / 255.0, 1.0);
         }
 
-        public static Color ColorArgb(byte a, byte r, byte g, byte b)
+        public static Color Argb(byte a, byte r, byte g, byte b)
         {
             return new Color(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
         }
 
-        public static Color ColorArgb(uint colorValue)
+        public static Color Argb(uint colorValue)
         {
-            return ColorArgb(
+            return Argb(
                 (byte)((colorValue >> 24) & 0xff),
                 (byte)((colorValue >> 16) & 0xff),
                 (byte)((colorValue >> 8) & 0xff),
@@ -115,17 +115,17 @@ namespace ImGui
             byte t = Convert.ToByte(value * (1 - (1 - f) * saturation));
 
             if (hi == 0)
-                return CairoEx.ColorArgb(255, v, t, p);
+                return Argb(255, v, t, p);
             if (hi == 1)
-                return CairoEx.ColorArgb(255, q, v, p);
+                return Argb(255, q, v, p);
             if (hi == 2)
-                return CairoEx.ColorArgb(255, p, v, t);
+                return Argb(255, p, v, t);
             if (hi == 3)
-                return CairoEx.ColorArgb(255, p, q, v);
+                return Argb(255, p, q, v);
             if (hi == 4)
-                return CairoEx.ColorArgb(255, t, p, v);
+                return Color.Argb(255, t, p, v);
 
-            return CairoEx.ColorArgb(255, v, p, q);
+            return Argb(255, v, p, q);
         }
 
     }

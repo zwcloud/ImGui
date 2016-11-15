@@ -1,6 +1,4 @@
-﻿using Cairo;
-
-namespace ImGui
+﻿namespace ImGui
 {
     public partial class GUI
     {

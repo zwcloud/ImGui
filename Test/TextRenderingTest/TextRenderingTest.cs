@@ -1,6 +1,6 @@
 ﻿using ImGui;
-using NUnit.Framework;
 using System;
+using Xunit;
 
 namespace TextRenderingTest
 {
@@ -16,8 +16,7 @@ namespace TextRenderingTest
                 this.onGUI();
         }
     }
-
-    [TestFixture]
+    
     public class TextRenderingTest
     {
         /// <summary>
@@ -29,7 +28,7 @@ namespace TextRenderingTest
         /// https://developer.apple.com/fonts/TrueType-Reference-Manual/RM01/Chap1.html#points
         /// http://stackoverflow.com/questions/20733790/truetype-fonts-glyph-are-made-of-quadratic-bezier-why-do-more-than-one-consecu/20772557?noredirect=1#comment68243476_20772557
         /// </remarks>
-        [Test]
+        [Fact]
         public void ShouldRenderAFilledCubicBezierCurve()
         {
             // 76, 410,   93, 312,   119, 188,   193, 190,
@@ -51,7 +50,7 @@ namespace TextRenderingTest
         }
 
 
-        [Test]
+        [Fact]
         public void ShouldRenderABigGlyph()
         {
             Application.Run(new Form1(()=> {
@@ -63,7 +62,7 @@ namespace TextRenderingTest
                     FontWeight = FontWeight.Normal,
                     FontStretch = FontStretch.Normal,
                     Size = 400,
-                    Color = CairoEx.ColorBlack
+                    Color = Color.Black
                 };
 
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
@@ -71,7 +70,7 @@ namespace TextRenderingTest
             }));
         }
 
-        [Test]
+        [Fact]
         public void ShouldRenderAMidiumGlyph()
         {
             Application.Run(new Form1(() => {
@@ -83,15 +82,15 @@ namespace TextRenderingTest
                     FontWeight = FontWeight.Normal,
                     FontStretch = FontStretch.Normal,
                     Size = 32,
-                    Color = CairoEx.ColorBlack
+                    Color = Color.Black
                 };
 
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
 
             }));
         }
-
-        [Test]
+        
+        [Fact]
         public void ShouldRenderASmallGlyph()
         {
             Application.Run(new Form1(() => {
@@ -103,7 +102,7 @@ namespace TextRenderingTest
                     FontWeight = FontWeight.Normal,
                     FontStretch = FontStretch.Normal,
                     Size = 12,
-                    Color = CairoEx.ColorBlack
+                    Color = Color.Black
                 };
 
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));

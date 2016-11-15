@@ -11,9 +11,7 @@ namespace ImGui
         internal IRenderer renderer;
 
         internal LayoutCache layoutCache = new LayoutCache();
-
-        internal Dictionary<string, Control> Controls;//Temp
-
+        
         protected Form(Rect rect):this(rect.TopLeft, rect.Size)
         {
         }

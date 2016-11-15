@@ -1,6 +1,4 @@
-﻿using Cairo;
-
-namespace ImGui
+﻿namespace ImGui
 {
     /// <summary>
     /// Font face info, properties of one single character

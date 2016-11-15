@@ -1,6 +1,6 @@
 ﻿using ImGui;
-using NUnit.Framework;
 using System;
+using Xunit;
 
 namespace PrimitiveRenderingTest
 {
@@ -16,11 +16,10 @@ namespace PrimitiveRenderingTest
                 this.onGUI();
         }
     }
-
-    [TestFixture]
+    
     public class PathRenderingTest
     {
-        [Test]
+        [Fact]
         public void ShouldRenderAnAnimatedTriangle()
         {
             var A = new Point(200, 200);

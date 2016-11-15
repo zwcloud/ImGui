@@ -153,7 +153,7 @@ namespace ImGui
         {
             if (Image != null)
             {
-                Image.Dispose();
+                //Image.Dispose();
             }
             if (TextContext != null)
             {

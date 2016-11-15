@@ -4,6 +4,7 @@ namespace ImGui
 {
     internal class StateMachineEx
     {
+#if false
         class Transition
         {
             private readonly string State;
@@ -80,5 +81,6 @@ namespace ImGui
             }
             return true;
         }
+#endif
     }
 }

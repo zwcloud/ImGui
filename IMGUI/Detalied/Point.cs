@@ -1,5 +1,4 @@
 using System;
-using Cairo;
 
 namespace ImGui
 {
@@ -157,16 +156,5 @@ namespace ImGui
         }
 
         #endregion Public Methods
-
-        #region Conversion Methods
-        /// <summary>
-        /// Conversion to Cairo.PointD
-        /// </summary>
-        /// <returns>Cairo.PointD - A Cairo.PointD equal to this Point</returns>
-        internal Cairo.PointD ToPointD()
-        {
-            return new PointD(_x, _y);
-        }
-        #endregion
     }
 }

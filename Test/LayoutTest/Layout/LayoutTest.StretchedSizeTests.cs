@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using ImGui;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Xunit;
 
 namespace Test
 {
-    [TestClass]
     public class StretchedSizeTest
     {
-        [TestMethod, TestCategory("layout"), Description("Show a horizontal group of 1 item")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a horizontal group of 1 item")]
         public void ShowAHorizontalGroupOf1Item()
         {
             Group group = new Group(false, GUILayout.Width(600));
@@ -23,7 +22,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a horizontal group of 3 items")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a horizontal group of 3 items")]
         public void ShowAHorizontalGroupOf3Items()
         {
             Group group = new Group(false, GUILayout.Width(600));
@@ -42,7 +41,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a horizontal group of 3 items with different stretch factors")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a horizontal group of 3 items with different stretch factors")]
         public void ShowAHorizontalGroupOf3ItemsWithDifferentStretchFactors()
         {
             Group group = new Group(false, GUILayout.Width(600));
@@ -62,7 +61,7 @@ namespace Test
         }
 
 
-        [TestMethod, TestCategory("layout"), Description("Show a vertical group of 1 item")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a vertical group of 1 item")]
         public void ShowAVerticalGroupOf1Item()
         {
             Group group = new Group(true, GUILayout.Height(600));
@@ -77,7 +76,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a vertical group of 3 items")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a vertical group of 3 items")]
         public void ShowAVerticalGroupOf3Items()
         {
             Group group = new Group(true, GUILayout.Height(600));
@@ -96,7 +95,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a vertical group of 3 items with different stretch factors")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a vertical group of 3 items with different stretch factors")]
         public void ShowAVerticalGroupOf3ItemsWithDifferentStretchFactors()
         {
             Group group = new Group(true, GUILayout.Height(600));
@@ -115,7 +114,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a two-layer group. Case 1: inner group horizontally stretched.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a two-layer group. Case 1: inner group horizontally stretched.")]
         public void ShowATwoLayerGroup1()
         {
             Group group1 = new Group(true, GUILayout.Width(400), GUILayout.Height(400));
@@ -130,7 +129,7 @@ namespace Test
             group1.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a two-layer group. Case 2: inner group vertically stretched.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a two-layer group. Case 2: inner group vertically stretched.")]
         public void ShowATwoLayerGroup2()
         {
             Group group1 = new Group(true, GUILayout.Width(400), GUILayout.Height(400));
@@ -145,7 +144,7 @@ namespace Test
             group1.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a two-layer group. Case 3: inner group horizontally and vertically stretched.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a two-layer group. Case 3: inner group horizontally and vertically stretched.")]
         public void ShowATwoLayerGroup3()
         {
             Group group1 = new Group(true, GUILayout.Width(400), GUILayout.Height(400));
@@ -160,7 +159,7 @@ namespace Test
             group1.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a two-layer group. Case 4: multiple inner group horizontally stretched.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a two-layer group. Case 4: multiple inner group horizontally stretched.")]
         public void ShowATwoLayerGroup4()
         {
             Group group1 = new Group(true, GUILayout.Width(400), GUILayout.Height(400));
@@ -177,7 +176,7 @@ namespace Test
             group1.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a two-layer group. Case 5: multiple inner group vertically stretched.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a two-layer group. Case 5: multiple inner group vertically stretched.")]
         public void ShowATwoLayerGroup5()
         {
             Group group1 = new Group(true, GUILayout.Width(400), GUILayout.Height(400));
@@ -194,7 +193,7 @@ namespace Test
             group1.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a two-layer group. Case 6: multiple inner group horizontally and vertically stretched.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a two-layer group. Case 6: multiple inner group horizontally and vertically stretched.")]
         public void ShowATwoLayerGroup6()
         {
             Group group1 = new Group(true, GUILayout.Width(400), GUILayout.Height(400));
@@ -212,7 +211,7 @@ namespace Test
         }
 
 
-        [TestMethod, TestCategory("layout"), Description("Show a three-layer group.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a three-layer group.")]
         public void ShowAThreeLayerGroup()
         {
             // layer 1
@@ -256,7 +255,7 @@ namespace Test
             group1.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a group with no space to hold the child.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a group with no space to hold the child.")]
         public void ShowAGroupWithNoSpaceToHoldTheChild()
         {
             Group group = new Group(false, GUILayout.Width(400), GUILayout.Height(30));// content box height of this group is 0
@@ -271,7 +270,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a three-layer group.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a three-layer group.")]
         public void ShowARealCase()
         {
             Style compactStyle = StyleTestEx.GenCompactStyle();

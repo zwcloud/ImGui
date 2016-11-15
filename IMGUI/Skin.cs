@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Cairo;
 
 namespace ImGui
 {
@@ -49,7 +48,7 @@ namespace ImGui
 
             #region Button
             {
-                var bgColor = CairoEx.ColorRgb(204, 204, 204);
+                var bgColor = Color.Rgb(204, 204, 204);
                 StyleModifier[] normalModifiers =
                 {
                     new StyleModifier{Name = "BorderTop", Value = 2},
@@ -96,7 +95,7 @@ namespace ImGui
                 };
                 Button["Normal"] = Style.Make(normalModifiers);
 
-                var hoverBorderColor = CairoEx.ColorRgb(122, 122, 122);
+                var hoverBorderColor = Color.Rgb(122, 122, 122);
                 StyleModifier[] hoverModifiers =
                 {
                     new StyleModifier{Name = "BorderTopColor", Value = hoverBorderColor},
@@ -106,7 +105,7 @@ namespace ImGui
                 };
                 Button["Hover"] = Style.Make(Button["Normal"], hoverModifiers);
 
-                var activeBgColor = CairoEx.ColorRgb(153, 153, 153);
+                var activeBgColor = Color.Rgb(153, 153, 153);
                 StyleModifier[] activeModifiers =
                 {
                     new StyleModifier{Name = "BorderBottomColor",   Value = activeBgColor},
@@ -124,7 +123,7 @@ namespace ImGui
                             FontWeight = FontWeight.Bold,
                             FontStretch = FontStretch.Normal,
                             Size = 12,
-                            Color = CairoEx.ColorBlack
+                            Color = Color.Black
                         }
                     },
                     new StyleModifier
@@ -164,8 +163,8 @@ namespace ImGui
                     }
                 };
                 Toggle["Normal"] = Style.Make(normalModifiers);
-                Toggle["Normal"].ExtraStyles["TickColor"] = CairoEx.ColorWhite;
-                Toggle["Normal"].ExtraStyles["FillColor"] = CairoEx.ColorDarkBlue;
+                Toggle["Normal"].ExtraStyles["TickColor"] = Color.White;
+                Toggle["Normal"].ExtraStyles["FillColor"] = Color.DarkBlue;
                 Toggle["Hover"] = Style.Make(Toggle["Normal"]);
                 Toggle["Active"] = Style.Make(Toggle["Normal"]);
             }
@@ -180,10 +179,10 @@ namespace ImGui
                     new StyleModifier{Name = "BorderBottom", Value = 2},
                     new StyleModifier{Name = "BorderLeft", Value = 2},
 
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(225,225,225)},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(225,225,225)},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(225,225,225)},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(225,225,225)},
+                    new StyleModifier{Name = "BorderTopColor", Value = Color.Rgb(225,225,225)},
+                    new StyleModifier{Name = "BorderRightColor", Value = Color.Rgb(225,225,225)},
+                    new StyleModifier{Name = "BorderBottomColor", Value = Color.Rgb(225,225,225)},
+                    new StyleModifier{Name = "BorderLeftColor", Value = Color.Rgb(225,225,225)},
                     
                     new StyleModifier{Name = "PaddingTop", Value = 2},
                     new StyleModifier{Name = "PaddingRight", Value = 2},
@@ -206,7 +205,7 @@ namespace ImGui
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorRgb(193,193,193),
+                            Color = Color.Rgb(193,193,193),
                             Image = null,
                         }
                     },
@@ -214,7 +213,7 @@ namespace ImGui
                     new StyleModifier
                     {
                         Name = "LineColor",
-                        Value = CairoEx.ColorRgb(225,225,225)
+                        Value = Color.Rgb(225,225,225)
                     }
                 };
                 ComboBox["Normal"] = Style.Make(normalModifiers);
@@ -222,15 +221,15 @@ namespace ImGui
 
                 StyleModifier[] hoverModifiers =
                 {
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorRgb(115,115,115)},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorRgb(115,115,115)},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorRgb(115,115,115)},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorRgb(115,115,115)},
+                    new StyleModifier{Name = "BorderTopColor", Value = Color.Rgb(115,115,115)},
+                    new StyleModifier{Name = "BorderRightColor", Value = Color.Rgb(115,115,115)},
+                    new StyleModifier{Name = "BorderBottomColor", Value = Color.Rgb(115,115,115)},
+                    new StyleModifier{Name = "BorderLeftColor", Value = Color.Rgb(115,115,115)},
 
                     new StyleModifier
                     {
                         Name = "LineColor",
-                        Value = CairoEx.ColorRgb(115,115,115)
+                        Value = Color.Rgb(115,115,115)
                     }
                 };
                 ComboBox["Hover"] = Style.Make(ComboBox["Normal"], hoverModifiers);
@@ -242,7 +241,7 @@ namespace ImGui
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorLightBlue,
+                            Color = Color.LightBlue,
                             Image = null,
                         }
                     },
@@ -261,10 +260,10 @@ namespace ImGui
                     new StyleModifier {Name = "BorderBottom", Value = new Length(1, Unit.Pixel)},
                     new StyleModifier {Name = "BorderLeft", Value = new Length(1, Unit.Pixel)},
 
-                    new StyleModifier {Name = "BorderTopColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier {Name = "BorderRightColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier {Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier {Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier {Name = "BorderTopColor", Value = Color.Black},
+                    new StyleModifier {Name = "BorderRightColor", Value = Color.Black},
+                    new StyleModifier {Name = "BorderBottomColor", Value = Color.Black},
+                    new StyleModifier {Name = "BorderLeftColor", Value = Color.Black},
                 };
                 Image["Normal"] = Style.Make(normalModifiers);
 #else
@@ -279,7 +278,7 @@ namespace ImGui
             {
                 Radio["Normal"] = Style.Make();
                 //TODO build ExtraStyles into modifier
-                Radio["Normal"].ExtraStyles["CircleColor.Selected"] = CairoEx.ColorDarkBlue;
+                Radio["Normal"].ExtraStyles["CircleColor.Selected"] = Color.DarkBlue;
 
                 Radio["Hover"] = Style.Make();
                 Radio["Active"] = Style.Make();
@@ -296,10 +295,10 @@ namespace ImGui
                     new StyleModifier{Name = "BorderBottom", Value = 1},
                     new StyleModifier{Name = "BorderLeft", Value = 1},
 
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorBlack},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorBlack},
+                    new StyleModifier{Name = "BorderTopColor", Value = Color.Black},
+                    new StyleModifier{Name = "BorderRightColor", Value = Color.Black},
+                    new StyleModifier{Name = "BorderBottomColor", Value = Color.Black},
+                    new StyleModifier{Name = "BorderLeftColor", Value = Color.Black},
                     
                     new StyleModifier{Name="PaddingTop", Value = 2},
                     new StyleModifier{Name="PaddingRight", Value = 2},
@@ -322,7 +321,7 @@ namespace ImGui
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorWhite,
+                            Color = Color.White,
                             Image = null,
                         }
                     },
@@ -331,19 +330,19 @@ namespace ImGui
 
                 StyleModifier[] hoverModifiers =
                 {
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorLightBlue},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorLightBlue},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorLightBlue},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorLightBlue},
+                    new StyleModifier{Name = "BorderTopColor", Value = Color.LightBlue},
+                    new StyleModifier{Name = "BorderRightColor", Value = Color.LightBlue},
+                    new StyleModifier{Name = "BorderBottomColor", Value = Color.LightBlue},
+                    new StyleModifier{Name = "BorderLeftColor", Value = Color.LightBlue},
                 };
                 TextBox["Hover"] = Style.Make(TextBox["Normal"], hoverModifiers);
 
                 StyleModifier[] activeModifiers =
                 {
-                    new StyleModifier{Name = "BorderTopColor", Value = CairoEx.ColorDarkBlue},
-                    new StyleModifier{Name = "BorderRightColor", Value = CairoEx.ColorDarkBlue},
-                    new StyleModifier{Name = "BorderBottomColor", Value = CairoEx.ColorDarkBlue},
-                    new StyleModifier{Name = "BorderLeftColor", Value = CairoEx.ColorDarkBlue},
+                    new StyleModifier{Name = "BorderTopColor", Value = Color.DarkBlue},
+                    new StyleModifier{Name = "BorderRightColor", Value = Color.DarkBlue},
+                    new StyleModifier{Name = "BorderBottomColor", Value = Color.DarkBlue},
+                    new StyleModifier{Name = "BorderLeftColor", Value = Color.DarkBlue},
 
                     new StyleModifier{Name = "Cursor", Value = Cursor.Text}
                 };
@@ -362,7 +361,7 @@ namespace ImGui
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorArgb(0xFFAFAFAF),
+                            Color = Color.Argb(0xFFAFAFAF),
                             Image = null,
                         }
                     }
@@ -376,7 +375,7 @@ namespace ImGui
                         Name = "BackgroundStyle",
                         Value = new BackgroundStyle
                         {
-                            Color = CairoEx.ColorArgb(0xFF8F8F8F),
+                            Color = Color.Argb(0xFF8F8F8F),
                             Image = null,
                         }
                     }
@@ -384,8 +383,8 @@ namespace ImGui
                 Slider["Active"] = Style.Make(activeModifiers);
 
                 Slider["Line:Normal"] = Style.Make(Slider["Normal"]);
-                Slider["Normal"].ExtraStyles["Line:Unused"] = CairoEx.ColorBlack;
-                Slider["Normal"].ExtraStyles["Line:Used"] = CairoEx.ColorDarkBlue;
+                Slider["Normal"].ExtraStyles["Line:Unused"] = Color.Black;
+                Slider["Normal"].ExtraStyles["Line:Used"] = Color.DarkBlue;
             }
             #endregion
 
@@ -434,8 +433,8 @@ namespace ImGui
 
             #region Box
             {
-                var borderColor = CairoEx.ColorRgb(24, 131, 215);
-                var bgColor = CairoEx.ColorRgb(242, 242, 242);
+                var borderColor = Color.Rgb(24, 131, 215);
+                var bgColor = Color.Rgb(242, 242, 242);
                 StyleModifier[] normalModifiers =
                 {
                     new StyleModifier{Name = "BorderTop", Value = 2},

@@ -1,33 +1,32 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Test
 {
-    [TestClass]
     public class ImGuiTest
     {
-        [TestMethod]
+        [Fact]
         public void TestUnicodeTextSize()
         {
             {
                 var str = "123456";
                 var strBytes = System.Text.Encoding.UTF8.GetBytes(str);
                 var byteCount = strBytes.Length;
-                Assert.AreEqual(6, byteCount);
+                Assert.Equal(6, byteCount);
             }
 
             {
                 var str = "123456你好";
                 var strBytes = System.Text.Encoding.UTF8.GetBytes(str);
                 var byteCount = strBytes.Length;
-                Assert.AreEqual(12, byteCount);
+                Assert.Equal(12, byteCount);
             }
 
             {
                 var str = "123456你";
                 var strBytes = System.Text.Encoding.UTF8.GetBytes(str);
                 var byteCount = strBytes.Length;
-                Assert.AreEqual(9, byteCount);
+                Assert.Equal(9, byteCount);
             }
         }
 

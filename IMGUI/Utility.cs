@@ -162,6 +162,7 @@ namespace ImGui
             System.IO.File.WriteAllText(filePath, sb.ToString());
         }
 
+#if false //to be moved to unit test
         public static void SavePathToPng(IList<Point> path)
         {
             if (path == null || path.Count <= 1) return;
@@ -249,7 +250,7 @@ namespace ImGui
                 surface.WriteToPng(@"D:\contour_test.png");
             }
         }
-
+#endif
         /// <summary>
         /// convert pt to dip
         /// </summary>

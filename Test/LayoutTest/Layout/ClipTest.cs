@@ -1,11 +1,11 @@
 ﻿using ImGui;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
+
 namespace Test
 {
-    [TestClass]
     public class ClipTest
     {
-        [TestMethod, TestCategory("layout"), Description("Show an item clipped by the content box of a group.")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show an item clipped by the content box of a group.")]
         public void ShowAnItemClippedByTheContentBoxOfAGroup()
         {
             Group group = new Group(false, GUILayout.Width(400), GUILayout.Height(40));
@@ -20,7 +20,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod, TestCategory("layout"), Description("Show a 3 layer group")]
+        [Fact, Trait("Category", "layout"), Trait("Description", "Show a 3 layer group")]
         public void ShowA3LayerGroup()
         {
             Group group1 = new Group(true, GUILayout.Width(600), GUILayout.Height(600));

@@ -1,13 +1,12 @@
 ﻿using System;
 using ImGui;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Test
 {
-    [TestClass]
     public class AlignmentTest
     {
-        [TestMethod]
+        [Fact]
         public void Show3HorizontalGroupOf1ItemWithDifferentAlignment()
         {
             Group group = new Group(true);
@@ -38,7 +37,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod]
+        [Fact]
         public void Show3VerticalGroupOf1ItemWithDifferentAlignment()
         {
             Group group = new Group(false);
@@ -69,7 +68,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod]
+        [Fact]
         public void Show9GroupOf1ItemWithDifferentAlignment()
         {
             Group group = new Group(true);
@@ -151,7 +150,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod]
+        [Fact]
         public void Show5HorizontalGroupWithDifferentAlignment()
         {
             Group group = new Group(true);
@@ -214,7 +213,7 @@ namespace Test
             group.ShowResult();
         }
 
-        [TestMethod]
+        [Fact]
         public void Show5VerticalGroupWithDifferentAlignment()
         {
             Group group = new Group(false);

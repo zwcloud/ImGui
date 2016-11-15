@@ -5,6 +5,7 @@ namespace ImGui
 {
     public partial class Texture
     {
+#if false
         static Texture()
         {
             //TODO Use relative path or resource file
@@ -266,5 +267,7 @@ namespace ImGui
 "AIhc6MY2FwBis8UFkQsAAAAiF7qyzQWAmGxxQeQCAIDABUQudGebCwAAIheELgBwOVtcELkAAAAgcoH/"+
 "ss0FgLVscUHkAgAAgMgFHrPNBYA1bHFB5AJCFwAELiByAQAA4Aq39/d3rwJk+cDebj6wALCALS7kYZML"+
 "AACAyAXmc4sMAM5f4DlfV4asH15fXQYAcQv84X8CDAAp0dnq5pGfhwAAAABJRU5ErkJggg==";
+
+#endif
     }
 }

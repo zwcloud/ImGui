@@ -6,15 +6,10 @@ namespace ImGui
     /// Box
     /// </summary>
     /// <remarks>
-    /// The box is a simple control, which only contains a Content.
+    /// The box is a simple control containing an optinal Content.
     /// </remarks>
-    internal class Box : SimpleControl
+    internal class Box
     {
-        private readonly string name;
-
-        private Rect rect;
-        private Content content;
-
         public Box(string name, Form form, Content content)
         {
         }
@@ -26,40 +21,5 @@ namespace ImGui
                 GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Box);
             }
         }
-
-        public override string Name
-        {
-            get { return name; }
-        }
-
-        #region Overrides of SimpleControl
-
-        public override Rect Rect
-        {
-            get { return rect; }
-            set
-            {
-                //TODO need re-layout
-                rect = value;
-            }
-        }
-
-        public override Content Content
-        {
-            get
-            {
-                return content;
-            }
-        }
-
-        public override Style Style
-        {
-            get
-            {
-                return Skin.current.Box;
-            }
-        }
-
-        #endregion
     }
 }

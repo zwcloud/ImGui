@@ -435,6 +435,7 @@ namespace ImGui
             PathClear();
         }
 
+#if false //to be moved to unit test
         // for rendering path in the immediate window
         public void Debug_DrawToCairoSurface()
         {
@@ -454,7 +455,8 @@ namespace ImGui
                 surface.WriteToPng(@"D:\_Path.png");
             }
         }
-        
+#endif
+
         private static bool IsClockwise(IList<Point> vertices)
         {
             double sum = 0.0;
@@ -476,6 +478,6 @@ namespace ImGui
             return wind;
         }
 
-        #endregion
+#endregion
     }
 }
