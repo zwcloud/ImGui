@@ -10,6 +10,8 @@ namespace DefaultTemplate
     {
         protected override void OnGUI()
         {
+            GUILayout.Label("DIMGUI Demo project");
+#if f
             GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.Height(50));
             {
                 GUILayout.Label("DIMGUI Demo project");
@@ -84,6 +86,7 @@ namespace DefaultTemplate
                 GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
+#endif
         }
 
     }

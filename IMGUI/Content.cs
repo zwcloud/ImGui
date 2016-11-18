@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ImGui
 {
     public sealed class Content : IDisposable
     {
         public static Content None = new Content();
+
+        Rect rect;
+        Style style;
+
+        internal TextMesh TextMesh;
 
         /// <summary>
         /// text
@@ -112,25 +118,39 @@ namespace ImGui
         /// <summary>
         /// build the text context against the size and style
         /// </summary>
-        internal void Build(Size size, Style style)
+        internal void Build(Rect rect, Style style)
         {
+            // check 
             if (this.Text == null) throw new InvalidOperationException();
             if (style == null) throw new ArgumentNullException();
 
+            //check if the content need to be rebuilt
+            bool rebuiltNeeded = this.rect != rect || Style.IsRebuildTextContextRequired(this.style, style);
+            if (!rebuiltNeeded)
+            {
+                Debug.Assert(TextMesh != null);
+                return;
+            }
+            
+            // (re)create a TextContent for the text
             var font = style.Font;
             var textStyle = style.TextStyle;
 
             if (this.TextContext != null)
             {
                 this.TextContext.Dispose();
-                this.TextContext = null;
+                this.style = style;
+                this.rect = rect;
             }
 
             this.TextContext = Application._map.CreateTextContext(
                 this.Text,
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
-                (int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height),
+                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
                 textStyle.TextAlignment);
+
+            // create a text mesh
+            this.TextMesh.Build(rect.TopLeft, style, this.TextContext);
         }
 
         internal static Content Cached(string t, string id)
@@ -139,6 +159,7 @@ namespace ImGui
             if(!chachedContentMap.TryGetValue(id, out content))
             {
                 content = new Content(t);
+                content.TextMesh = new TextMesh();
                 chachedContentMap.Add(id, content);
             }
             chachedContentMap[id].Text = t;

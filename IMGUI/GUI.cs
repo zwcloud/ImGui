@@ -185,12 +185,7 @@
 
         public Rect GetControlRect(string id)
         {
-            IRenderBox control;
-            if(Form.current.renderBoxMap.TryGetValue(id, out control))
-            {
-                return control.Rect;
-            }
-            throw new System.InvalidOperationException(string.Format("Can not find control <{0}>", id));
+            throw new System.NotImplementedException();
         }
 
         #endregion

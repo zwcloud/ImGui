@@ -38,12 +38,9 @@ namespace TextRenderingTest
             var c1 = new Point(273, 190);// control point 1
             var p1 = new Point(311, 521);// end point
             
+            var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
             Application.Run(new Form1(() => {
-                var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
-                var fun = (Application.Time % 100) / 100f;
-                p.X += Math.Cos(fun)*100;
-                p.Y += -Math.Sin(fun)*100;
                 Form.current.DrawList.AddBezier(p0, c0, p, Color.Blue);
                 Form.current.DrawList.AddBezier(p, c1, p1, Color.Red);
             }));

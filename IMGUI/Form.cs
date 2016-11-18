@@ -23,8 +23,9 @@ namespace ImGui
 
             renderer = Application._map.CreateRenderer();
             renderer.Init(this.Pointer);
-
-            this.DrawList.AddDrawCommand(new DrawCommand());
+            
+            this.DrawList.CommandBuffer.Add(new DrawCommand());
+            this.DrawList.BezierCommandBuffer.Add(new DrawCommand());
 
             InitGUI();
         }
@@ -74,15 +75,6 @@ namespace ImGui
         public void Close()
         {
             this.renderer.ShutDown();
-
-            foreach (var pair in renderBoxMap)
-            {
-                var control = pair.Value;
-                if (control.Type != RenderBoxType.Dummy)
-                {
-                    control.Content.Dispose();
-                }
-            }
 
             window.Close();
             this.Closed = true;
@@ -144,7 +136,7 @@ namespace ImGui
         {
             current = this;
 
-            _handleEvent();
+            handleEvent();
 
             elapsedFrameCount++;
             var detlaTime = Application.Time - lastFPSUpdateTime;
@@ -154,10 +146,10 @@ namespace ImGui
                 elapsedFrameCount = 0;
                 lastFPSUpdateTime = Application.Time;
             }
-            this.window.Title = string.Format("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+            Console.Write("\r{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
         }
 
-        void _handleEvent()
+        void handleEvent()
         {
             switch (Event.current.type)
             {
@@ -175,7 +167,7 @@ namespace ImGui
                         BeginGUI(true);
                         OnGUI();
                         EndGUI();
-                        _Render();
+                        Render();
                         //Event.current.type = EventType.Used;
                     }
                     break;
@@ -211,100 +203,13 @@ namespace ImGui
             }
         }
 
-        void _Render()
+        void Render()
         {
             this.renderer.Clear();
             this.renderer.RenderDrawList(this.DrawList, (int)this.Size.Width, (int)this.Size.Height);
             this.renderer.SwapBuffers();
         }
 
-        private void handleEvent()
-        {
-            switch (Event.current.type)
-            {
-                case EventType.Layout:
-                    LayoutUtility.current.Clear();
-                    LoadFormGroup();
-                    BeginGUI(true);
-                    OnGUI();
-                    EndGUI();
-                    break;
-                case EventType.Repaint:
-                    if (!this.Closed)
-                    {
-                        BeginGUI(true);
-                        OnGUI();
-                        EndGUI();
-                        //dirtyRect = DoRender();
-                        Event.current.type = EventType.Used;
-                    }
-                    break;
-#if false
-                case EventType.MaximizeWindow:
-                {
-                    window.Maximize();
-                    FormState = FormState.Maximized;
-
-                    Event.current.type = EventType.Layout;
-                }
-                    break;
-                case EventType.MinimizeWindow:
-                    BeginGUI(true);
-                    OnGUI();
-                    EndGUI();
-                    Minimize();
-                    FormState = FormState.Minimized;
-                    Event.current.type = EventType.Used;
-                    break;
-                case EventType.NormalizeWindow:
-                    { 
-                        var rect = new Rect(this.NormalPosition, this.NormalSize);
-                        window.Normalize(rect);
-                        FormState = FormState.Normal;                        
-
-                        Event.current.type = EventType.Layout;
-                    }
-                    break;
-#endif
-                default:
-                    BeginGUI(true);
-                    OnGUI();
-                    EndGUI();
-                    break;
-            }
-        }
-
-        private Rect DoRender()
-        {
-            var dirtyRect = Rect.Empty;
-            foreach (var box in this.renderBoxMap.Values)
-            {
-                if (box.Type == RenderBoxType.Dummy) continue;
-                if (!box.Active) continue;
-                if (box.NeedRepaint)
-                {
-                    //renderContext.BackContext.DrawBoxModel(box.Rect, box.Content, box.Style);
-                    box.NeedRepaint = false;
-                    dirtyRect.Union(box.Rect);
-                }
-            }
-
-            if (dirtyRect != Rect.Empty)
-            {
-                renderContext.SwapSurface();
-            }
-            return dirtyRect;
-        }
-
-        private bool needExit;
-
-        public void RequestClose()
-        {
-            needExit = true;
-        }
-
-        private RenderContext renderContext;
-        internal readonly Dictionary<string, IRenderBox> renderBoxMap = new Dictionary<string, IRenderBox>();
         private FormState formState = FormState.Normal;
 
         /// <summary>
@@ -314,10 +219,7 @@ namespace ImGui
         {
             var clientWidth = (int) Size.Width;
             var clientHeight = (int) Size.Height;
-
-            // init the render context
-            renderContext = new RenderContext(clientWidth, clientHeight);
-
+            
             // init the layout group of this form
             LoadFormGroup();
 

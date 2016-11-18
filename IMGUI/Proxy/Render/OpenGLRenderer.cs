@@ -248,7 +248,7 @@ void main()
         public void RenderDrawList(DrawList drawList, int width, int height)
         {
             DoRender(m, drawList.CommandBuffer, drawList.IndexBuffer, drawList.VertexBuffer, width, height);
-            DoRender(mExtra, drawList.CommandBuffer, drawList.BezierIndexBuffer, drawList.BezierVertexBuffer, width, height);
+            DoRender(mExtra, drawList.BezierCommandBuffer, drawList.BezierIndexBuffer, drawList.BezierVertexBuffer, width, height);
         }
 
         public void ShutDown()

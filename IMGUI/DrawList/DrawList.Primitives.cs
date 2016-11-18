@@ -148,8 +148,7 @@ namespace ImGui
                 _currentIdx += (short)vtx_count;
             }
         }
-
-
+        
         // Fully unrolled with inline call to keep our debug builds decently fast.
         public void PrimRect(Point a, Point c, Color col)
         {
@@ -200,8 +199,6 @@ namespace ImGui
         #endregion
 
         #region stateful path constructing methods
-
-        #region line segments and polygons
 
         static void PathBezierToCasteljau(IList<Point> path, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double tess_tol, int level)
         {
@@ -279,13 +276,7 @@ namespace ImGui
                 //PathArcToFast(ImVec2(a.x+r3, b.y-r3), r3, 3, 6);
             }
         }
-
-        //inline
-        public void PathLineTo(Point pos)
-        {
-            _Path.Add(pos);
-        }
-
+        
         //inline
         public void PathStroke(Color col, bool closed, float thickness = 1.0f)
         {
@@ -310,12 +301,16 @@ namespace ImGui
             _Path.Add(point);
         }
 
+        //inline
+        public void PathLineTo(Point pos)
+        {
+            _Path.Add(pos);
+        }
+
         public void PathClose()
         {
             _Path.Add(_Path[0]);
         }
-
-        #endregion
 
         #region filled bezier curve
 
@@ -333,151 +328,116 @@ namespace ImGui
 
         #endregion
 
-        #region paths and beziers
+        #region TODO data-based path api
 
-        public void AddContour(Color color)
+#if false
+        struct Path
         {
-            // determine the winding of the path
-            var pathIsClockwise = IsClockwise(_Path);
-
-            var contour = new List<LibTessDotNet.ContourVertex>();
-
-            int j = 0;
-            for (int i = 0; i < _Path.Count; i++)
-            {
-                var p = _Path[i];
-
-                //check if p is a control point of a quadratic bezier curve
-                bool isControlPoint = false;
-                if (j <= _BezierControlPointIndex.Count-1 && i == _BezierControlPointIndex[j])
-                {
-                    j++;
-                    isControlPoint = true;
-                }
-                
-                if (isControlPoint)
-                {
-                    var start = _Path[i - 1];
-                    var control = p;
-                    var end = _Path[i + 1];
-                
-                    var bezierIsClockwise = IsClockwise(start, control, end);
-                
-                    if (bezierIsClockwise)//bezier 'triangle' is clockwise
-                    {
-                        //[picture]
-                        contour.Add(new LibTessDotNet.ContourVertex
-                        {
-                            Position = new LibTessDotNet.Vec3
-                            {
-                                X = (float)control.X,
-                                Y = (float)control.Y,
-                                Z = 0.0f
-                            }
-                        });
-                    }
-
-                    // add this bezier to bezier buffer
-                    AddBezier(start, control, end, color);
-                }
-                else//not control point of a bezier
-                {
-                    contour.Add(new LibTessDotNet.ContourVertex
-                    {
-                        Position = new LibTessDotNet.Vec3
-                        {
-                            X = (float)p.X,
-                            Y = (float)p.Y,
-                            Z = 0.0f
-                        }
-                    });
-                }
-
-            }
-            _BezierControlPointIndex.Clear();
-            // Add the contour with a specific orientation, use "Original" if you want to keep the input orientation.
-            tess.AddContour(contour.ToArray()/* TODO remove this copy here!!  */, LibTessDotNet.ContourOrientation.Original);
+            PathData[] data;
         }
 
-        LibTessDotNet.Tess tess;
-        public void BeginTessedPolygon()
+        struct PathData
         {
-            // Create an instance of the tessellator. Can be reused.
-            tess = new LibTessDotNet.Tess();
+            public PathType type;
         }
 
-        public void EndTessedPolygon(Color color)
+        enum PathType
         {
-            tess.Tessellate(LibTessDotNet.WindingRule.EvenOdd, LibTessDotNet.ElementType.Polygons, 3, null);
-            
-            int numTriangles = tess.ElementCount;
-            int idx_count = numTriangles * 3;
-            int vtx_count = numTriangles * 3;
-            PrimReserve(idx_count, vtx_count);
-            for (int i = 0; i < numTriangles; i++)
-            {
-                var index0 = tess.Elements[i * 3];
-                var index1 = tess.Elements[i * 3 + 1];
-                var index2 = tess.Elements[i * 3 + 2];
-                var v0 = tess.Vertices[index0].Position;
-                var v1 = tess.Vertices[index1].Position;
-                var v2 = tess.Vertices[index2].Position;
-
-                AppendVertex(new DrawVertex { pos = new PointF(v0.X, v0.Y), uv = PointF.Zero, color = (ColorF)color });
-                AppendVertex(new DrawVertex { pos = new PointF(v1.X, v1.Y), uv = PointF.Zero, color = (ColorF)color });
-                AppendVertex(new DrawVertex { pos = new PointF(v2.X, v2.Y), uv = PointF.Zero, color = (ColorF)color });
-                AppendIndex(0);
-                AppendIndex(1);
-                AppendIndex(2);
-                _currentIdx += 3;
-            }
-
-            PathClear();
-        }
-
-#if false //to be moved to unit test
-        // for rendering path in the immediate window
-        public void Debug_DrawToCairoSurface()
-        {
-            if(_Path.Count == 0) return;
-
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)Form.current.Size.Width, (int)Form.current.Size.Height))
-            using (Cairo.Context g = new Cairo.Context(surface))
-            {
-                g.MoveTo(_Path[0].X, _Path[0].Y);
-                for (int i = 1; i < _Path.Count; i++)
-                {
-                    var p = _Path[i];
-                    g.LineTo(p.X, p.Y);
-                }
-
-                g.Stroke();
-                surface.WriteToPng(@"D:\_Path.png");
-            }
+            MoveTo,
+            LineTo,
+            Close,
+            AddBezier,
+            Clear,
         }
 #endif
 
-        private static bool IsClockwise(IList<Point> vertices)
+        #endregion
+
+        /// <summary>
+        /// Append a text mesh to this drawlist
+        /// </summary>
+        /// <param name="textMesh"></param>
+        public void Append(TextMesh textMesh)
         {
-            double sum = 0.0;
-            for (int i = 0; i < vertices.Count; i++)
+            if (textMesh == null)
             {
-                Point v1 = vertices[i];
-                Point v2 = vertices[(i + 1) % vertices.Count]; // % is the modulo operator
-                sum += (v2.X - v1.X) * (v2.Y + v1.Y);
+                return;
             }
-            return sum > 0.0;
-        }
-        
-        private static bool IsClockwise(Point v0, Point v1, Point v2)
-        {
-            var vA = v1 - v0; // .normalize()
-            var vB = v2 - v1;
-            var z = vA.X * vB.Y - vA.Y * vB.X; // z component of cross Production
-            var wind = z < 0; // clockwise/anticlock wind
-            return wind;
+            
+            // append triangles
+            {
+                // TODO This is a temp hack, need to be moved to a suitable place.
+                if (CommandBuffer.Count == 0)
+                {
+                    CommandBuffer.Add(new DrawCommand());
+                }
+                DrawCommand draw_cmd = this.CommandBuffer[this.CommandBuffer.Count - 1];
+                var idx_count = textMesh.IndexBuffer.Count;
+                var vtx_count = textMesh.VertexBuffer.Count;
+                if (idx_count != 0 && vtx_count != 0)
+                {
+                    draw_cmd.ElemCount += idx_count;
+
+                    var vertexCountBefore = this.VertexBuffer.Count;
+
+                    int vtx_buffer_size = this.VertexBuffer.Count + vtx_count;
+                    this._vtxWritePosition = vtx_buffer_size;
+                    this.VertexBuffer.AddRange(textMesh.VertexBuffer);
+
+                    int idx_buffer_size = this.IndexBuffer.Count + idx_count;
+                    this._idxWritePosition = idx_buffer_size;
+
+                    var sizeBefore = this.IndexBuffer.Count;
+                    this.IndexBuffer.AddRange(textMesh.IndexBuffer);
+                    var sizeAfter = this.IndexBuffer.Count;
+
+                    if (vertexCountBefore != 0)
+                    {
+                        for (int i = sizeBefore; i < sizeAfter - 1; i++)
+                        {
+                            this.IndexBuffer[i] = new DrawIndex { Index = (short)(this.IndexBuffer[i].Index + vertexCountBefore) };
+                        }
+                    }
+                }
+            }
+
+            // append beziers
+            {
+                // TODO This is a temp hack, need to be moved to a suitable place.
+                if (BezierCommandBuffer.Count == 0)
+                {
+                    BezierCommandBuffer.Add(new DrawCommand());
+                }
+                DrawCommand draw_cmd = this.BezierCommandBuffer[this.BezierCommandBuffer.Count - 1];
+                var idx_count = textMesh.BezierIndexBuffer.Count;
+                var vtx_count = textMesh.BezierVertexBuffer.Count;
+                if (idx_count != 0 && vtx_count != 0)
+                {
+                    draw_cmd.ElemCount += idx_count;
+
+                    var vertexCountBefore = this.BezierVertexBuffer.Count;
+
+                    int vtx_buffer_size = this.BezierVertexBuffer.Count + vtx_count;
+                    this._bezier_vtxWritePosition = vtx_buffer_size;
+                    this.BezierVertexBuffer.AddRange(textMesh.BezierVertexBuffer);
+
+                    int idx_buffer_size = this.BezierIndexBuffer.Count + idx_count;
+                    this._bezier_idxWritePosition = idx_buffer_size;
+
+                    var sizeBefore = this.BezierIndexBuffer.Count;
+                    this.BezierIndexBuffer.AddRange(textMesh.BezierIndexBuffer);
+                    var sizeAfter = this.BezierIndexBuffer.Count;
+
+                    if (vertexCountBefore != 0)
+                    {
+                        for (int i = sizeBefore; i < sizeAfter - 1; i++)
+                        {
+                            this.BezierIndexBuffer[i] = new DrawIndex { Index = (short)(this.BezierIndexBuffer[i].Index + vertexCountBefore) };
+                        }
+                    }
+                }
+            }
         }
 
-#endregion
     }
 }

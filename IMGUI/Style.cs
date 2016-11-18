@@ -230,6 +230,7 @@ namespace ImGui
             return actualSize;
         }
 
+        //TODO implement this in a overriden Equal method maybe more appropriate
         internal static bool IsRebuildTextContextRequired(Style a, Style b)
         {
             return

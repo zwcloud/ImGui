@@ -82,7 +82,7 @@ namespace ImGui
                 //}
                 if (content.Text != null)
                 {
-                    DrawText(contentBoxRect, content.Text, style);
+                    DrawText(contentBoxRect, content, style);
                 }
             }
 
@@ -164,71 +164,13 @@ namespace ImGui
             return wind;
         }
 
-        public static void DrawText(Rect rect, string text, Style style)
+        public static void DrawText(Rect rect, Content content, Style style)
         {
+            content.Build(rect, style);
             Form window = Form.current;
             var drawList = window.DrawList;
-            var extraDrawList = window.DrawList;
 
-            var textContext = Application._map.CreateTextContext(
-                        text, style.Font.FontFamily, style.Font.Size,
-                        style.Font.FontStretch, style.Font.FontStyle, style.Font.FontWeight,
-                        (int)rect.Width, (int)rect.Height,
-                        style.TextStyle.TextAlignment);
-
-            var position = rect.TopLeft;
-            var color = style.Font.Color;
-
-            extraDrawList.BeginTessedPolygon();
-            
-            Point lastPoint = Point.Zero;
-            textContext.Build(position,
-                // point adder
-                (x, y) =>
-                {
-                    extraDrawList.PathLineTo(new Point(x, y));
-                    lastPoint = new Point(x, y);
-                },
-
-                // bezier adder
-                (c0x, c0y, c1x, c1y, p1x, p1y) =>
-                {
-                    var p0 = lastPoint;//The start point of the cubic Bezier segment.
-                    var c0 = new Point(c0x, c0y);//The first control point of the cubic Bezier segment.
-                    var p = new Point((c0x + c1x) / 2, (c0y + c1y) / 2);
-                    var c1 = new Point(c1x, c1y);//The second control point of the cubic Bezier segment.
-                    var p1 = new Point(p1x, p1y);//The end point of the cubic Bezier segment.
-
-                    extraDrawList.PathAddBezier(p0, c0, p);
-                    extraDrawList.PathAddBezier(p, c1, p1);
-
-                    //set last point for next bezier
-                    lastPoint = p1;
-                },
-
-                // path closer
-                () =>
-                {
-                },
-
-                // figure beginner
-                (x, y) =>
-                {
-                    lastPoint = new Point(x, y);
-                    extraDrawList.PathMoveTo(lastPoint);
-                },
-
-                // figure ender
-                () =>
-                {
-                    extraDrawList.PathClose();
-                    extraDrawList.AddContour(color);
-                    extraDrawList.PathClear();
-                }
-            );
-            textContext.Dispose();
-
-            extraDrawList.EndTessedPolygon(color);
+            drawList.Append(content.TextMesh);
         }
 
     }

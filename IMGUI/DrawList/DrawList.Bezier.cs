@@ -32,11 +32,11 @@ namespace ImGui
                 return;
             }
 
-            if (CommandBuffer.Count == 0)
+            if (BezierCommandBuffer.Count == 0)
             {
-                CommandBuffer.Add(new DrawCommand());
+                BezierCommandBuffer.Add(new DrawCommand());
             }
-            DrawCommand draw_cmd = this.CommandBuffer[CommandBuffer.Count - 1];
+            DrawCommand draw_cmd = this.BezierCommandBuffer[BezierCommandBuffer.Count - 1];
             draw_cmd.ElemCount += idx_count;
 
             int vtx_buffer_size = this.BezierVertexBuffer.Count;
