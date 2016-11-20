@@ -101,6 +101,38 @@ namespace ImGui
         }
 
         [Conditional("DEBUG")]
+        public static void SaveToObjFile(string path, IList<DrawVertex> vertexes, IList<DrawIndex> indexes)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append("# MTE");
+            sb.AppendLine();
+
+            for (int i = 0; i < vertexes.Count; i++)
+            {
+                var position = vertexes[i].pos;
+                sb.AppendFormat("v {0} {1} {2}", -position.x, position.y, 0);
+                sb.AppendLine();
+            }
+
+            for (int i = 0; i < vertexes.Count; i++)
+            {
+                var uv = vertexes[i].uv;
+                sb.AppendFormat("vt {0} {1}", uv.x, uv.y);
+                sb.AppendLine();
+            }
+
+            for (int i = 0; i < indexes.Count; i += 3)
+            {
+                sb.AppendFormat("f {0}/{0} {1}/{1} {2}/{2}",
+                    indexes[i] + 1,
+                    indexes[i + 2] + 1,
+                    indexes[i + 1] + 1);
+                sb.AppendLine();
+            }
+            System.IO.File.WriteAllText(path, sb.ToString());
+        }
+
+        [Conditional("DEBUG")]
         public static void SaveToObjFile(IList<DrawVertex> vertexes, IList<DrawIndex> indexes)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();

@@ -88,7 +88,7 @@ namespace ImGui
 
             //Border
             //  Top
-            if (!MathEx.AmostZero(bt))
+            if (!MathEx.AmostZero(bt) && !MathEx.AmostZero(style.BorderTopColor.A))
             {
                 drawList.PathLineTo(ptl);
                 drawList.PathLineTo(btl);
@@ -97,7 +97,7 @@ namespace ImGui
                 drawList.PathFill(style.BorderTopColor);
             }
             //  Right
-            if (!MathEx.AmostZero(br))
+            if (!MathEx.AmostZero(br) && !MathEx.AmostZero(style.BorderTopColor.A))
             {
                 drawList.PathLineTo(ptr);
                 drawList.PathLineTo(btr);
@@ -106,7 +106,7 @@ namespace ImGui
                 drawList.PathFill(style.BorderRightColor);
             }
             //  Bottom
-            if (!MathEx.AmostZero(bb))
+            if (!MathEx.AmostZero(bb) && !MathEx.AmostZero(style.BorderTopColor.A))
             {
                 drawList.PathLineTo(pbr);
                 drawList.PathLineTo(bbr);
@@ -115,7 +115,7 @@ namespace ImGui
                 drawList.PathFill(style.BorderBottomColor);
             }
             //  Left
-            if (!MathEx.AmostZero(bl))
+            if (!MathEx.AmostZero(bl) && !MathEx.AmostZero(style.BorderTopColor.A))
             {
                 drawList.PathLineTo(pbl);
                 drawList.PathLineTo(bbl);
@@ -125,7 +125,7 @@ namespace ImGui
             }
 
             //Outline
-            if (!MathEx.AmostZero(style.OutlineWidth))
+            if (!MathEx.AmostZero(style.OutlineWidth) && !MathEx.AmostZero(style.BorderTopColor.A))
             {
                 drawList.PathRect(btl, bbr);
                 drawList.PathStroke(style.OutlineColor, true, (float)style.OutlineWidth);
@@ -140,28 +140,6 @@ namespace ImGui
             drawList.PathRect(ctl, cbr);
             drawList.PathStroke(Color.ColorRgb(100, 0, 100), true, 1);
 #endif
-        }
-
-        
-        private static bool IsClockwise(IList<Point> vertices)
-        {
-            double sum = 0.0;
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                Point v1 = vertices[i];
-                Point v2 = vertices[(i + 1) % vertices.Count]; // % is the modulo operator
-                sum += (v2.X - v1.X) * (v2.Y + v1.Y);
-            }
-            return sum > 0.0;
-        }
-
-        private static bool IsClockwise(Point v0, Point v1, Point v2)
-        {
-            var vA = v1 - v0; // .normalize()
-            var vB = v2 - v1;
-            var z = vA.X * vB.Y - vA.Y * vB.X; // z component of cross Production
-            var wind = z < 0; // clockwise/anticlock wind
-            return wind;
         }
 
         public static void DrawText(Rect rect, Content content, Style style)

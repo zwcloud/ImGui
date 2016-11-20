@@ -21,7 +21,7 @@ namespace ImGui
 
         private int _vtxWritePosition;
         private int _idxWritePosition;
-        private short _currentIdx;
+        private int _currentIdx;
 
         private void AppendVertex(DrawVertex vertex)
         {
@@ -29,9 +29,9 @@ namespace ImGui
             _vtxWritePosition++;
         }
 
-        private void AppendIndex(short offsetToCurrentIndex)
+        private void AppendIndex(int offsetToCurrentIndex)
         {
-            indexBuffer[_idxWritePosition] = new DrawIndex { Index = (short)(_currentIdx + offsetToCurrentIndex) };
+            indexBuffer[_idxWritePosition] = new DrawIndex { Index = _currentIdx + offsetToCurrentIndex };
             _idxWritePosition++;
         }
         
@@ -142,10 +142,10 @@ namespace ImGui
                 for (int i = 2; i < points_count; i++)
                 {
                     AppendIndex(0);
-                    AppendIndex((short)(i-1));
-                    AppendIndex((short)i);
+                    AppendIndex(i-1);
+                    AppendIndex(i);
                 }
-                _currentIdx += (short)vtx_count;
+                _currentIdx += vtx_count;
             }
         }
         
@@ -380,12 +380,12 @@ namespace ImGui
 
                     var vertexCountBefore = this.VertexBuffer.Count;
 
-                    int vtx_buffer_size = this.VertexBuffer.Count + vtx_count;
-                    this._vtxWritePosition = vtx_buffer_size;
+                    int vtx_buffer_size = this.VertexBuffer.Count;
+                    this._vtxWritePosition = vtx_buffer_size + vtx_count;
                     this.VertexBuffer.AddRange(textMesh.VertexBuffer);
 
-                    int idx_buffer_size = this.IndexBuffer.Count + idx_count;
-                    this._idxWritePosition = idx_buffer_size;
+                    int idx_buffer_size = this.IndexBuffer.Count;
+                    this._idxWritePosition = idx_buffer_size + idx_count;
 
                     var sizeBefore = this.IndexBuffer.Count;
                     this.IndexBuffer.AddRange(textMesh.IndexBuffer);
@@ -393,11 +393,12 @@ namespace ImGui
 
                     if (vertexCountBefore != 0)
                     {
-                        for (int i = sizeBefore; i < sizeAfter - 1; i++)
+                        for (int i = sizeBefore; i < sizeAfter; i++)
                         {
-                            this.IndexBuffer[i] = new DrawIndex { Index = (short)(this.IndexBuffer[i].Index + vertexCountBefore) };
+                            this.IndexBuffer[i] = new DrawIndex { Index = this.IndexBuffer[i].Index + vertexCountBefore };
                         }
                     }
+                    _currentIdx += vtx_count;
                 }
             }
 
@@ -430,11 +431,12 @@ namespace ImGui
 
                     if (vertexCountBefore != 0)
                     {
-                        for (int i = sizeBefore; i < sizeAfter - 1; i++)
+                        for (int i = sizeBefore; i < sizeAfter; i++)
                         {
-                            this.BezierIndexBuffer[i] = new DrawIndex { Index = (short)(this.BezierIndexBuffer[i].Index + vertexCountBefore) };
+                            this.BezierIndexBuffer[i] = new DrawIndex { Index = this.BezierIndexBuffer[i].Index + vertexCountBefore };
                         }
                     }
+                    _bezier_currentIdx += vtx_count;
                 }
             }
         }

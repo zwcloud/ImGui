@@ -85,11 +85,12 @@ namespace ImGui
             this.BezierCommandBuffer.Clear();
             this.BezierIndexBuffer.Clear();
             this.BezierVertexBuffer.Clear();
-
-            _bezier_vtxWritePosition = 0;
+            
             _bezier_vtxWritePosition = 0;
             _bezier_idxWritePosition = 0;
             _bezier_currentIdx = 0;
+
+            _BezierControlPointIndex.Clear();
         }
     }
 }

@@ -238,7 +238,7 @@ void main()
             {
                 //GL.BindTexture(...)
                 //GL.Scissor(...)
-                GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_SHORT, indexBufferOffset);
+                GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
                 indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount);
             }
 

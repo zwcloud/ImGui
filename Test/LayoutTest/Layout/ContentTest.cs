@@ -40,7 +40,7 @@ namespace Test
         [Fact]
         public void ShowAnEmptyBox()
         {
-            DrawContent(new Rect(400, 300), Content.None, Style.None);
+            DrawContent(new Rect(400, 300), Content.None, Style.Default);
         }
 
         [Fact]

@@ -5,15 +5,15 @@ namespace ImGui
     [DebuggerDisplay("{Index}")]
     internal struct DrawIndex
     {
-        short index;
+        int index;
 
-        public short Index
+        public int Index
         {
             get { return index; }
             set { this.index = value; }
         }
 
-        public static implicit operator short(DrawIndex v)
+        public static implicit operator int(DrawIndex v)
         {
             return v.Index;
         }

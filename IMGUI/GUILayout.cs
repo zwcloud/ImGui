@@ -8,7 +8,7 @@ namespace ImGui
 
         public static void BeginHorizontal(params LayoutOption[] options)
         {
-            GUILayout.BeginHorizontal(Content.None, Style.None, options);
+            GUILayout.BeginHorizontal(Content.None, Style.Default, options);
         }
 
         public static void BeginHorizontal(Style style, params LayoutOption[] options)
@@ -19,7 +19,7 @@ namespace ImGui
         public static void BeginHorizontal(Content content, Style style, params LayoutOption[] options)
         {
             LayoutGroup layoutGroup = LayoutUtility.BeginLayoutGroup(isVertical: false, style: style, options: options);
-            if (style != Style.None || content != Content.None)
+            if (style != Style.Default || content != Content.None)
             {
                 GUI.Box(layoutGroup.rect, content, "box_" + layoutGroup.GetHashCode());
             }
@@ -32,7 +32,7 @@ namespace ImGui
 
         public static void BeginVertical(params LayoutOption[] options)
         {
-            GUILayout.BeginVertical(Content.None, Style.None, options);
+            GUILayout.BeginVertical(Content.None, Style.Default, options);
         }
 
         public static void BeginVertical(Style style, params LayoutOption[] options)
@@ -43,7 +43,7 @@ namespace ImGui
         public static void BeginVertical(Content content, Style style, params LayoutOption[] options)
         {
             LayoutGroup layoutGroup = LayoutUtility.BeginLayoutGroup(isVertical: true, style:style, options: options);
-            if (style != Style.None)
+            if (style != Style.Default)
             {
                 GUI.Box(layoutGroup.rect, content, "box_" + layoutGroup.GetHashCode());
             }

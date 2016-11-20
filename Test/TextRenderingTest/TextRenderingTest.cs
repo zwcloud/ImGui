@@ -1,5 +1,6 @@
 ﻿using ImGui;
 using System;
+using System.Diagnostics;
 using Xunit;
 
 namespace TextRenderingTest
@@ -19,6 +20,13 @@ namespace TextRenderingTest
     
     public class TextRenderingTest
     {
+        public TextRenderingTest()
+        {
+            Application.InitSysDependencies();
+        }
+
+        private const string FBXReviewPath = @"E:\Program Files\Autodesk\FBX Review\fbxreview.exe";
+
         /// <summary>
         /// This should render a filled cubic bezier curve that commonly used in font
         /// </summary>
@@ -44,6 +52,90 @@ namespace TextRenderingTest
                 Form.current.DrawList.AddBezier(p0, c0, p, Color.Blue);
                 Form.current.DrawList.AddBezier(p, c1, p1, Color.Red);
             }));
+        }
+
+        [Fact]
+        public void ShouldGenerateARightTexMesh()
+        {
+            var textMesh = new TextMesh();
+            var style = Style.Default;
+            var font = style.Font;
+            var textStyle = style.TextStyle;
+            var rect = new Rect(0, 0, 200, 200);
+            var textContext = Application._map.CreateTextContext(
+                "ABC",
+                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
+                textStyle.TextAlignment);
+
+            textMesh.Build(Point.Zero, Style.Default, textContext);
+            var objFilePath = "D:\\TextRenderingTest_ShouldGenerateARightTexMesh.obj";
+            Utility.SaveToObjFile(objFilePath, textMesh.VertexBuffer, textMesh.IndexBuffer);
+            Process.Start(FBXReviewPath, objFilePath);
+        }
+
+        [Fact]
+        public void ShouldGetARightMeshAfterAppendingATextMesh()
+        {
+            var style = Style.Default;
+            var font = style.Font;
+            var textStyle = style.TextStyle;
+            var rect = new Rect(0, 0, 200, 200);
+            var textContext = Application._map.CreateTextContext(
+                "ij = I::oO(0xB81l);",
+                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
+                textStyle.TextAlignment);
+
+            var textMesh = new TextMesh();
+            textMesh.Build(Point.Zero, Style.Default, textContext);
+            
+            var anotherTextContext = Application._map.CreateTextContext(
+                "auto-sized",
+                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                200, 200,
+                textStyle.TextAlignment);
+
+            var anotherTextMesh = new TextMesh();
+            anotherTextMesh.Build(new Point(50, 100), Style.Default, anotherTextContext);
+
+            DrawList drawList = new DrawList();
+            var expectedVertexCount = 0;
+            var expectedIndexCount = 0;
+
+            drawList.AddRectFilled(Point.Zero, new Point(200,100), Color.Metal);
+            expectedVertexCount += 4;
+            expectedIndexCount += 6;
+            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+
+            drawList.Append(textMesh);
+            expectedVertexCount += textMesh.VertexBuffer.Count;
+            expectedIndexCount += textMesh.IndexBuffer.Count;
+            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+
+            drawList.AddRectFilled(new Point(0, 110), new Point(200, 150), Color.Metal);
+            expectedVertexCount += 4;
+            expectedIndexCount += 6;
+            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+
+            drawList.AddRectFilled(new Point(0, 160), new Point(200, 200), Color.Metal);
+            expectedVertexCount += 4;
+            expectedIndexCount += 6;
+            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+
+            drawList.Append(anotherTextMesh);
+            expectedVertexCount += anotherTextMesh.VertexBuffer.Count;
+            expectedIndexCount += anotherTextMesh.IndexBuffer.Count;
+            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+
+            var objFilePath = "D:\\TextRenderingTest_ShouldGetARightMeshAfterAppendingATextMesh.obj";
+            Utility.SaveToObjFile(objFilePath, drawList.VertexBuffer, drawList.IndexBuffer);
+            Process.Start(FBXReviewPath, objFilePath);
         }
 
 
@@ -104,6 +196,27 @@ namespace TextRenderingTest
 
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
 
+            }));
+        }
+
+        [Fact]
+        public void ShouldRenderAString()
+        {
+            Application.Run(new Form1(() => {
+
+                Skin.current.Label["Normal"].Font = new Font
+                {
+                    FontFamily = "Consolas",
+                    FontStyle = FontStyle.Normal,
+                    FontWeight = FontWeight.Normal,
+                    FontStretch = FontStretch.Normal,
+                    Size = 32,
+                    Color = Color.Black
+                };
+
+                GUILayout.Label("A");
+                GUILayout.Label("B");
+                GUILayout.Label("C");
             }));
         }
     }

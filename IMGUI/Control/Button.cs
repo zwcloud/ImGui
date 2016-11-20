@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ImGui
@@ -38,35 +39,42 @@ namespace ImGui
             stateMap[id] = state;
         }
 
-        public static bool DoControl(Rect rect, Content content, string name)
+        public static bool DoControl(Rect rect, Content content, string id)
         {
-            string lastState = GetState(name);
-
-            string state;
+            var uiState = Form.current.uiState;
             if (rect.Contains(Form.current.GetMousePos()))
             {
-                if (Input.Mouse.LeftButtonState == InputState.Down)
+                uiState.hotitem = id;
+                if (uiState.activeitem == null && Input.Mouse.LeftButtonState == InputState.Down)
                 {
-                    state = ButtonState.Active;
-                }
-                else
-                {
-                    state = ButtonState.Hover;
+                    uiState.activeitem = id;
                 }
             }
-            else
-            {
-                state = ButtonState.Normal;
-            }
-            Debug.WriteLineIf(lastState != state, string.Format("Button##{0} {1}=>{2}", name, lastState, state));
-            SetState(name, state);
 
             if (Event.current.type == EventType.Repaint)
             {
+                var state = ButtonState.Normal;
+                if (uiState.hotitem == id)
+                {
+                    if (uiState.activeitem == id)
+                    {
+                        state = ButtonState.Active;
+                    }
+                    else
+                    {
+                        state = ButtonState.Hover;
+                    }
+                }
                 GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Button[state]);
             }
 
-            return lastState == ButtonState.Hover && state == ButtonState.Active;
+            if (Input.Mouse.LeftButtonState == InputState.Up &&
+                uiState.hotitem == id && uiState.activeitem == id)
+            {
+                return true;
+            }
+
+            return false;
         }
 
     }

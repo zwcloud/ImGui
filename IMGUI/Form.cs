@@ -11,7 +11,9 @@ namespace ImGui
         internal IRenderer renderer;
 
         internal LayoutCache layoutCache = new LayoutCache();
-        
+
+        internal GUIState uiState = new GUIState();
+
         protected Form(Rect rect):this(rect.TopLeft, rect.Size)
         {
         }
@@ -109,6 +111,9 @@ namespace ImGui
             {
                 LayoutUtility.Begin();
             }
+
+            // handle gui states
+            Form.current.uiState.hotitem = null;
         }
 
         /// <summary>
@@ -122,6 +127,13 @@ namespace ImGui
             {
                 LayoutUtility.Layout();
                 Event.current.type = EventType.Repaint;
+            }
+
+            // handle gui states
+            var uiState = Form.current.uiState;
+            if (Input.Mouse.LeftButtonState == InputState.Up)
+            {
+                uiState.activeitem = null;
             }
         }
 
@@ -229,7 +241,7 @@ namespace ImGui
 
         private void LoadFormGroup()
         {
-            var formGroup = new LayoutGroup(true, Style.None, GUILayout.Width(this.Size.Width),
+            var formGroup = new LayoutGroup(true, Style.Default, GUILayout.Width(this.Size.Width),
                 GUILayout.Height(this.Size.Height));
             formGroup.isForm = true;
             layoutCache.Push(formGroup);
@@ -238,10 +250,8 @@ namespace ImGui
 #endregion
 
         /// <summary>
-        /// Get the mouse position relative to the form
+        /// Get the mouse position relative to this form
         /// </summary>
-        /// <param name="form"></param>
-        /// <returns></returns>
         public Point GetMousePos()
         {
             return Application.windowContext.ScreenToClient(window, Application.inputContext.MousePosition);

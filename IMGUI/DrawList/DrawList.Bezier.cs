@@ -9,7 +9,7 @@ namespace ImGui
     {
         private int _bezier_vtxWritePosition;
         private int _bezier_idxWritePosition;
-        private short _bezier_currentIdx;
+        private int _bezier_currentIdx;
 
         private List<int> _BezierControlPointIndex = new List<int>();
 
@@ -19,9 +19,9 @@ namespace ImGui
             _bezier_vtxWritePosition++;
         }
 
-        private void AppendBezierIndex(short offsetToCurrentIndex)
+        private void AppendBezierIndex(int offsetToCurrentIndex)
         {
-            bezierIndexBuffer[_bezier_idxWritePosition] = new DrawIndex { Index = (short)(_bezier_currentIdx + offsetToCurrentIndex) };
+            bezierIndexBuffer[_bezier_idxWritePosition] = new DrawIndex { Index = _bezier_currentIdx + offsetToCurrentIndex };
             _bezier_idxWritePosition++;
         }
 

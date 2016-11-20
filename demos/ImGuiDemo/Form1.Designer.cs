@@ -20,7 +20,7 @@ namespace Calculator
 
         private readonly string[] comboBoxItems = new[] { "item0", "item1", "item2", "item3" };
         
-        private Texture myImage = new Texture("gnu_hornedword.png");
+        //private Texture myImage = new Texture("gnu_hornedword.png");
 
         private bool radio0Selected = false;
         private bool radio1Selected = false;

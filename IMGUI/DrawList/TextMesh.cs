@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LibTessDotNet;
 
 namespace ImGui
 {
@@ -13,7 +14,7 @@ namespace ImGui
 
         private int _bezier_vtxWritePosition;
         private int _bezier_idxWritePosition;
-        private short _bezier_currentIdx;
+        private int _bezier_currentIdx;
 
         private List<int> _BezierControlPointIndex = new List<int>();
 
@@ -23,9 +24,9 @@ namespace ImGui
             _bezier_vtxWritePosition++;
         }
 
-        private void AppendBezierIndex(short offsetToCurrentIndex)
+        private void AppendBezierIndex(int offsetToCurrentIndex)
         {
-            bezierIndexBuffer[_bezier_idxWritePosition] = new DrawIndex { Index = (short)(_bezier_currentIdx + offsetToCurrentIndex) };
+            bezierIndexBuffer[_bezier_idxWritePosition] = new DrawIndex { Index = _bezier_currentIdx + offsetToCurrentIndex };
             _bezier_idxWritePosition++;
         }
 
@@ -110,7 +111,7 @@ namespace ImGui
 
         private int _vtxWritePosition;
         private int _idxWritePosition;
-        private short _currentIdx;
+        private int _currentIdx;
 
         private void AppendVertex(DrawVertex vertex)
         {
@@ -118,9 +119,9 @@ namespace ImGui
             _vtxWritePosition++;
         }
 
-        private void AppendIndex(short offsetToCurrentIndex)
+        private void AppendIndex(int offsetToCurrentIndex)
         {
-            indexBuffer[_idxWritePosition] = new DrawIndex { Index = (short)(_currentIdx + offsetToCurrentIndex) };
+            indexBuffer[_idxWritePosition] = new DrawIndex { Index = _currentIdx + offsetToCurrentIndex };
             _idxWritePosition++;
         }
 
@@ -249,12 +250,15 @@ namespace ImGui
             tess.AddContour(contour.ToArray()/* TODO remove this copy here!!  */, LibTessDotNet.ContourOrientation.Original);
         }
 
-        static readonly LibTessDotNet.Tess tess = new LibTessDotNet.Tess();// Create an instance of the tessellator. Can be reused.
+        static LibTessDotNet.Tess tess = new LibTessDotNet.Tess();// Create an instance of the tessellator. Can be reused.
 
         public void PathTessPolygon(Color color)
         {
             tess.Tessellate(LibTessDotNet.WindingRule.EvenOdd, LibTessDotNet.ElementType.Polygons, 3, null);
-
+            if (tess.Elements == null || tess.Elements.Length == 0)
+            {
+                return;
+            }
             int numTriangles = tess.ElementCount;
             int idx_count = numTriangles * 3;
             int vtx_count = numTriangles * 3;
@@ -276,8 +280,7 @@ namespace ImGui
                 AppendIndex(2);
                 _currentIdx += 3;
             }
-
-            PathClear();
+            
         }
 
 #if false //to be moved to unit test
@@ -377,6 +380,7 @@ namespace ImGui
             );
 
             this.PathTessPolygon(color);
+
         }
     }
 }

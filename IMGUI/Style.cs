@@ -196,7 +196,7 @@ namespace ImGui
             ExtraStyles = new Dictionary<string, object>();
         }
 
-        public static readonly Style None = new Style();
+        public static readonly Style Default = new Style();
 
         /// <summary>
         /// Get content's border-box size
