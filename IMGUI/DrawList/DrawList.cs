@@ -68,7 +68,7 @@ namespace ImGui
             get { return bezierVertexBuffer; }
         }
 
-        public void Clear()//TODO add bezier related clearing
+        public void Clear()
         {
             // triangles
             this.CommandBuffer.Clear();

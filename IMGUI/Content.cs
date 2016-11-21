@@ -143,6 +143,7 @@ namespace ImGui
                 this.rect = rect;
             }
 
+
             this.TextContext = Application._map.CreateTextContext(
                 this.Text,
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
@@ -150,6 +151,7 @@ namespace ImGui
                 textStyle.TextAlignment);
 
             // create a text mesh
+            this.TextMesh.Clear();
             this.TextMesh.Build(rect.TopLeft, style, this.TextContext);
         }
 

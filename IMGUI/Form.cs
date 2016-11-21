@@ -113,7 +113,7 @@ namespace ImGui
             }
 
             // handle gui states
-            Form.current.uiState.hotitem = null;
+            Form.current.uiState.hotitem = GUIState.None;
         }
 
         /// <summary>
@@ -133,7 +133,12 @@ namespace ImGui
             var uiState = Form.current.uiState;
             if (Input.Mouse.LeftButtonState == InputState.Up)
             {
-                uiState.activeitem = null;
+                uiState.activeitem = GUIState.None;
+            }
+            else
+            {
+                if (uiState.activeitem == GUIState.None)
+                    uiState.activeitem = GUIState.Unavailable;
             }
         }
 

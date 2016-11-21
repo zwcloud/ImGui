@@ -107,6 +107,29 @@ namespace ImGui
             get { return bezierVertexBuffer; }
         }
 
+        public void Clear()
+        {
+            // triangles
+            this.IndexBuffer.Clear();
+            this.VertexBuffer.Clear();
+
+            _vtxWritePosition = 0;
+            _idxWritePosition = 0;
+            _currentIdx = 0;
+
+            _Path.Clear();
+
+            // beziers
+            this.BezierIndexBuffer.Clear();
+            this.BezierVertexBuffer.Clear();
+
+            _bezier_vtxWritePosition = 0;
+            _bezier_idxWritePosition = 0;
+            _bezier_currentIdx = 0;
+
+            _BezierControlPointIndex.Clear();
+        }
+
         #region buffer writing
 
         private int _vtxWritePosition;

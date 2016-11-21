@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace ImGui
 {
@@ -20,51 +19,33 @@ namespace ImGui
             public const string Active = "Active";
         }
 
-        static Dictionary<string, string> stateMap = new Dictionary<string, string>();
-        static string GetState(string name)
-        {
-            string state;
-            if(stateMap.TryGetValue(name, out state))
-            {
-                return state;
-            }
-            else
-            {
-                return ButtonState.Normal;
-            }
-        }
-
-        static void SetState(string id, string state)
-        {
-            stateMap[id] = state;
-        }
-
         public static bool DoControl(Rect rect, Content content, string id)
         {
             var uiState = Form.current.uiState;
             if (rect.Contains(Form.current.GetMousePos()))
             {
                 uiState.hotitem = id;
-                if (uiState.activeitem == null && Input.Mouse.LeftButtonState == InputState.Down)
+                if (uiState.activeitem == GUIState.None && Input.Mouse.LeftButtonState == InputState.Down)
                 {
                     uiState.activeitem = id;
                 }
             }
 
+            var state = ButtonState.Normal;
+            if (uiState.hotitem == id)
+            {
+                if (uiState.activeitem == id)
+                {
+                    state = ButtonState.Active;
+                }
+                else
+                {
+                    state = ButtonState.Hover;
+                }
+            }
+
             if (Event.current.type == EventType.Repaint)
             {
-                var state = ButtonState.Normal;
-                if (uiState.hotitem == id)
-                {
-                    if (uiState.activeitem == id)
-                    {
-                        state = ButtonState.Active;
-                    }
-                    else
-                    {
-                        state = ButtonState.Hover;
-                    }
-                }
                 GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Button[state]);
             }
 
