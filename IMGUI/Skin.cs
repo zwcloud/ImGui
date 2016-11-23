@@ -163,8 +163,6 @@ namespace ImGui
                     }
                 };
                 Toggle["Normal"] = Style.Make(normalModifiers);
-                Toggle["Normal"].ExtraStyles["TickColor"] = Color.White;
-                Toggle["Normal"].ExtraStyles["FillColor"] = Color.DarkBlue;
                 Toggle["Hover"] = Style.Make(Toggle["Normal"]);
                 Toggle["Active"] = Style.Make(Toggle["Normal"]);
             }
@@ -277,7 +275,6 @@ namespace ImGui
             #region Radio
             {
                 Radio["Normal"] = Style.Make();
-                //TODO build ExtraStyles into modifier
                 Radio["Normal"].ExtraStyles["CircleColor.Selected"] = Color.DarkBlue;
 
                 Radio["Hover"] = Style.Make();

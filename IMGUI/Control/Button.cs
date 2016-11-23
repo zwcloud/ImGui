@@ -3,22 +3,8 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    /// <summary>
-    /// Button
-    /// </summary>
-    /// <remarks>
-    /// The button is a simple control, which only contains a text as its content.
-    /// It handles the click event to respond when the user clicks a Button.
-    /// </remarks>
     internal class Button
     {
-        static class ButtonState
-        {
-            public const string Normal = "Normal";
-            public const string Hover = "Hover";
-            public const string Active = "Active";
-        }
-
         public static bool DoControl(Rect rect, Content content, string id)
         {
             var uiState = Form.current.uiState;
@@ -31,16 +17,16 @@ namespace ImGui
                 }
             }
 
-            var state = ButtonState.Normal;
+            var state = GUI.Normal;
             if (uiState.hotitem == id)
             {
                 if (uiState.activeitem == id)
                 {
-                    state = ButtonState.Active;
+                    state = GUI.Active;
                 }
                 else
                 {
-                    state = ButtonState.Hover;
+                    state = GUI.Hover;
                 }
             }
 

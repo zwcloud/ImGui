@@ -95,12 +95,21 @@ namespace ImGui
         #region simple control
 
         #region Space
+
         public static void Space(double pixels)
         {
             LayoutUtility.GetRect(Content.None, Skin.current.Space,
                 LayoutUtility.current.topGroup.isVertical
                     ? new[] {GUILayout.Height(pixels)}
                     : new[] {GUILayout.Width(pixels)});
+        }
+
+        public static void FlexibleSpace()
+        {
+            LayoutUtility.GetRect(Size.Zero, Skin.current.Space,
+                LayoutUtility.current.topGroup.isVertical
+                    ? new[] { GUILayout.StretchHeight(1) }
+                    : new[] { GUILayout.StretchWidth(1) });
         }
 
         #endregion
@@ -193,9 +202,72 @@ namespace ImGui
 
         #endregion
 
+        #region Toggle
+
+        #region Toggle with label
+
+        public static bool Toggle(string textWithPossibleId, bool value, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(textWithPossibleId, out text, out id);
+            return DoToggle(Content.Cached(text, id), value, Skin.current.Toggle["Normal"], id, options);
+        }
+
+        public static bool Toggle(string text, bool value, string name, params LayoutOption[] options)
+        {
+            return DoToggle(Content.Cached(text, name), value, Skin.current.Toggle["Normal"], name, options);
+        }
+
+        public static bool Toggle(string text, bool value, Style style, string name, params LayoutOption[] options)
+        {
+            return DoToggle(Content.Cached(text, name), value, style, name, options);
+        }
+
+        public static bool Toggle(Content content, bool value, Style style, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(content.Text, out text, out id);
+            return DoToggle(content, value, style, id, options);
+        }
+
+        public static bool Toggle(Content content, bool value, Style style, string name, params LayoutOption[] options)
+        {
+            return DoToggle(content, value, style, name, options);
+        }
+
+        private static bool DoToggle(Content content, bool value, Style style, string name, params LayoutOption[] options)
+        {
+            GUILayout.BeginHorizontal();
+            var result = GUI.Toggle(LayoutUtility.GetRect(new Size(16, 16), style, options), value, name);
+            GUILayout.Label(content, name);
+            GUILayout.EndHorizontal();
+            return result;
+        }
+
+        #endregion
+
+        #region Toggle without label
+
+        public static bool Toggle(bool value, Style style, string name, params LayoutOption[] options)//TODO How to auto-gen name?
+        {
+            return DoToggle(value, style, name, options);
+        }
+
+        private static bool DoToggle(bool value, Style style, string name, params LayoutOption[] options)
+        {
+            return GUI.Toggle(LayoutUtility.GetRect(new Size(16, 16), style, options), value, name);
+        }
+
+        #endregion
+
+        #endregion
+
         #endregion
 
 
+        #region helpers
 
+
+        #endregion
     }
 }

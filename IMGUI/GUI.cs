@@ -51,13 +51,21 @@
 
         #endregion
 
+        #region Toggle
+
+        public static bool Toggle(Rect rect, bool value, string id)
+        {
+            return DoToggle(rect, value, id);
+        }
+
+        private static bool DoToggle(Rect rect, bool value, string id)
+        {
+            return ImGui.Toggle.DoControl(rect, value, id);
+        }
+
+        #endregion
 
         /*
-        public bool Toggle(Rect rect, string text, bool value, string name)
-        {
-            rect = DoLayout(rect);
-            return ImGui.Toggle.DoControl(form, rect, text, value, name);
-        }
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
         {
@@ -187,6 +195,14 @@
         {
             throw new System.NotImplementedException();
         }
+
+        #endregion
+
+        #region Constant
+
+        public const string Normal = "Normal";
+        public const string Hover = "Hover";
+        public const string Active = "Active";
 
         #endregion
     }

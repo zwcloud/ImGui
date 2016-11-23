@@ -29,6 +29,11 @@ namespace ImGui
             return DoGetRect(content, style, options);
         }
 
+        public static Rect GetRect(Size contentSize, Style style, LayoutOption[] options)
+        {
+            return DoGetRect(contentSize, style, options);
+        }
+
         internal static LayoutCache current
         {
             get { return Form.current.LayoutCache;}
@@ -63,6 +68,16 @@ namespace ImGui
             current.Pop();
         }
 
+        private static Rect DoGetRect(Size contentZize, Style style, LayoutOption[] options)
+        {
+            if (Event.current.type == EventType.Layout)
+            {
+                current.topGroup.Add(new LayoutEntry(style, options) { contentWidth = contentZize.Width, contentHeight = contentZize.Height });
+                return Rect.Empty;
+            }
+            return current.topGroup.GetNext().rect;
+        }
+
         private static Rect DoGetRect(Content content, Style style, LayoutOption[] options)
         {
             if (Event.current.type == EventType.Layout)
@@ -90,7 +105,7 @@ namespace ImGui
             current.topGroup.CalcHeight();
             current.topGroup.SetX(0);
             current.topGroup.SetY(0);
-#elif Use_Stretch_Layout
+#elif Use_Filled_Layout
             current.topGroup.CalcRect();
 #endif
         }

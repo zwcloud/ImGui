@@ -128,7 +128,7 @@ namespace ImGui
         public Color FillColor { get; set; }
         #endregion
 
-        public Dictionary<string, object> ExtraStyles;
+        public Dictionary<string, object> ExtraStyles;//TODO Remove the box/unbox here.
 
         public TextAlignment TextAlignment
         {

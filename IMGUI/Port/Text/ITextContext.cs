@@ -11,8 +11,6 @@ namespace ImGui
         int MaxHeight { get; set; }
         Rect Rect { get; }
         string Text { get; set; }
-        int[] IndexBuffer { get; }
-        float[] PositionBuffer { get; }
 
         void Build(Point offset, PointAdder pointAdder, BezierAdder bezierAdder, PathCloser pathCloser, FigureBeginner figureBeginner, FigureEnder figureEnder);
 

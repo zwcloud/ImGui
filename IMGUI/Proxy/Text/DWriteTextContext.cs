@@ -7,9 +7,6 @@ namespace ImGui
     {
         private readonly DWriteSharp.TextFormat textFormat;
         private DWriteSharp.TextLayout textLayout;
-        private bool dirty;
-        private int[] indexBuffer;
-        private float[] positionBuffer;
         private string text;
 
         public DWriteTextContext(string text, string fontFamily, float fontSizeInDip,
@@ -69,7 +66,6 @@ namespace ImGui
                     return;
                 }
                 textLayout.MaxWidth = value;
-                dirty = true;
             }
         }
 
@@ -83,7 +79,6 @@ namespace ImGui
                     return;
                 }
                 textLayout.MaxHeight = value;
-                dirty = true;
             }
         }
 
@@ -126,43 +121,13 @@ namespace ImGui
                     text,
                     textFormat,
                     tempMaxWidth, tempMaxHeight);
-                dirty = true;
-            }
-        }
-
-        public int[] IndexBuffer
-        {
-            get
-            {
-                if (indexBuffer == null)
-                {
-                    throw new InvalidOperationException(
-                        "IndexBuffer is not available beacuse it is not build. Call BuildPath to build first.");
-                }
-                return indexBuffer;
-            }
-        }
-
-        public float[] PositionBuffer
-        {
-            get
-            {
-                if (positionBuffer == null)
-                {
-                    throw new InvalidOperationException(
-                        "PositionBuffer is not available beacuse it is not build. Call BuildPath to build first.");
-                }
-                return positionBuffer;
             }
         }
 
         public void Build(Point offset, PointAdder pointAdder, BezierAdder bezierAdder, PathCloser pathCloser, FigureBeginner figureBeginner, FigureEnder figureEnder)
         {
-            if(indexBuffer == null || dirty)
-            {
-                DWriteSharp.DWrite.RenderLayoutToMesh(textLayout, (float)offset.X, (float)offset.Y, pointAdder.Invoke, bezierAdder.Invoke, pathCloser.Invoke,
-                    figureBeginner.Invoke, figureEnder.Invoke);
-            }
+            DWriteSharp.DWrite.RenderLayoutToMesh(textLayout, (float)offset.X, (float)offset.Y, pointAdder.Invoke, bezierAdder.Invoke, pathCloser.Invoke,
+                figureBeginner.Invoke, figureEnder.Invoke);
         }
 
         public uint XyToIndex(float pointX, float pointY, out bool isInside)
