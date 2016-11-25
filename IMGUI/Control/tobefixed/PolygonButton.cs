@@ -142,7 +142,7 @@ namespace ImGui
                 NeedRepaint = true;
             }
 
-            Result = Input.Mouse.LeftButtonClicked && isHit;
+            Result = Input.Mouse.LeftButtonReleased && isHit;
         }
 
         public override void OnRender(Context g)

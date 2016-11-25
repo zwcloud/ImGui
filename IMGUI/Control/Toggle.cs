@@ -6,36 +6,40 @@ namespace ImGui
     {
         internal static bool DoControl(Rect rect, bool value, string id)
         {
+            var result = value;
+            var hovered = rect.Contains(Form.current.GetMousePos());
+
+            //control logic
             var uiState = Form.current.uiState;
-            if (rect.Contains(Form.current.GetMousePos()))
+            uiState.KeepAliveId(id);
+            if (hovered)
             {
-                uiState.hotitem = id;
-                if (uiState.activeitem == GUIState.None && Input.Mouse.LeftButtonState == InputState.Down)
+                uiState.SetHoverId(id);
+
+                if (Input.Mouse.LeftButtonPressed)
                 {
-                    uiState.activeitem = id;
+                    uiState.ActiveId = id;
+                }
+
+                if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
+                {
+                    result = !value;
+                    uiState.SetActiveId(GUIState.None);
                 }
             }
 
+            // ui representation
             var state = GUI.Normal;
-            if (uiState.hotitem == id)
+            if (hovered)
             {
-                if (uiState.activeitem == id)
+                state = GUI.Hover;
+                if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
                 {
                     state = GUI.Active;
                 }
-                else
-                {
-                    state = GUI.Hover;
-                }
             }
 
-            var result = value;
-            if (Input.Mouse.LeftButtonState == InputState.Up &&
-                uiState.hotitem == id && uiState.activeitem == id)
-            {
-                result = !value;
-            }
-
+            // ui painting
             if (Event.current.type == EventType.Repaint)
             {
                 var g = Form.current.DrawList;

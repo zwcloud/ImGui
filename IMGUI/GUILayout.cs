@@ -248,22 +248,89 @@ namespace ImGui
 
         #region Toggle without label
 
-        public static bool Toggle(bool value, Style style, string name, params LayoutOption[] options)//TODO How to auto-gen name?
+        public static bool Toggle(bool value, string name, params LayoutOption[] options)//TODO How to auto-gen id?
         {
-            return DoToggle(value, style, name, options);
+            return DoToggle(value, Skin.current.Toggle["Normal"], name, options);
         }
 
-        private static bool DoToggle(bool value, Style style, string name, params LayoutOption[] options)
+        public static bool Toggle(bool value, Style style, string id, params LayoutOption[] options)
         {
-            return GUI.Toggle(LayoutUtility.GetRect(new Size(16, 16), style, options), value, name);
+            return DoToggle(value, style, id, options);
+        }
+
+        private static bool DoToggle(bool value, Style style, string id, params LayoutOption[] options)
+        {
+            return GUI.Toggle(LayoutUtility.GetRect(new Size(16, 16), style, options), value, id);
         }
 
         #endregion
 
         #endregion
 
+        #region Extended button
+
+        public static bool HoverButton(string textWithPossibleId, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(textWithPossibleId, out text, out id);
+            return HoverButton(text, Skin.current.Button["Normal"], id, options);
+        }
+
+        public static bool HoverButton(string text, string name, params LayoutOption[] options)
+        {
+            return HoverButton(text, Skin.current.Button["Normal"], name, options);
+        }
+
+        public static bool HoverButton(Content content, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(content.Text, out text, out id);
+            return HoverButton(content, Skin.current.Button["Normal"], id, options);
+        }
+
+        public static bool HoverButton(Content content, string name, params LayoutOption[] options)
+        {
+            return HoverButton(content, Skin.current.Button["Normal"], name, options);
+        }
+
+        public static bool HoverButton(string text, Style style, string name, params LayoutOption[] options)
+        {
+            return DoHoverButton(Content.Cached(text, name), style, name, options);
+        }
+
+        public static bool HoverButton(Content content, Style style, string name, params LayoutOption[] options)
+        {
+            return DoHoverButton(content, style, name);
+        }
+
+        private static bool DoHoverButton(Content content, Style style, string name, params LayoutOption[] options)
+        {
+            var rect = LayoutUtility.GetRect(content, style, options);
+            return GUI.HoverButton(rect, content, name);
+        }
+
         #endregion
 
+        #region Slider
+
+        public static double Slider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)//TODO How to auto-gen name?
+        {
+            return DoSlider(size, value, minValue, maxValue, Skin.current.Slider["Normal"], id, options);
+        }
+
+        public static double Slider(Size size, double value, double minValue, double maxValue, Style style, string id, params LayoutOption[] options)//TODO How to auto-gen name?
+        {
+            return DoSlider(size, value, minValue, maxValue, style, id, options);
+        }
+
+        private static double DoSlider(Size size, double value, double minValue, double maxValue, Style style, string id, params LayoutOption[] options)
+        {
+            return GUI.Slider(LayoutUtility.GetRect(size, style, options), value, minValue, maxValue, id);
+        }
+
+        #endregion
+
+        #endregion
 
         #region helpers
 

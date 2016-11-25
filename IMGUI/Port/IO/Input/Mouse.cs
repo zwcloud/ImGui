@@ -85,17 +85,28 @@ namespace ImGui.Input
             get { return leftButtonState; }
         }
 
-        private static bool leftButtonClicked = false;
+        private static bool leftButtonReleased = false;
         /// <summary>
-        /// Is left mouse button clicked?(readonly)
+        /// Is left mouse button released?(readonly)
         /// </summary>
-        public static bool LeftButtonClicked
+        public static bool LeftButtonReleased
         {
             get
             {
-                return leftButtonClicked;
+                return leftButtonReleased;
             }
-            private set { leftButtonClicked = value; }
+        }
+
+        public static bool leftButtonPressed = false;
+        /// <summary>
+        /// Is left mouse button clicked?(readonly)
+        /// </summary>
+        public static bool LeftButtonPressed
+        {
+            get
+            {
+                return leftButtonPressed;
+            }
         }
 
         #endregion
@@ -192,6 +203,25 @@ namespace ImGui.Input
             lastRightButtonState = rightButtonState;
             rightButtonState = Application.inputContext.IsMouseRightButtonDown ? InputState.Down : InputState.Up;
             //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
+
+            if (lastLeftButtonState == InputState.Down && leftButtonState == InputState.Up)
+            {
+                leftButtonReleased = true;
+            }
+            else
+            {
+                leftButtonReleased = false;
+            }
+
+            if (lastLeftButtonState == InputState.Up && leftButtonState == InputState.Down)
+            {
+                leftButtonPressed = true;
+            }
+            else
+            {
+                leftButtonPressed = false;
+            }
+
             //Position
             lastMousePos = mousePos;
             var pos = Application.inputContext.MousePosition;

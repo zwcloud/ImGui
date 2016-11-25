@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 
 namespace ImGui
 {
-    internal class Button
+    class HoverButton
     {
         public static bool DoControl(Rect rect, Content content, string id)
         {
-            var clicked = false;
+            var result = false;
             var hovered = rect.Contains(Form.current.GetMousePos());
 
             //control logic
@@ -15,29 +14,27 @@ namespace ImGui
             uiState.KeepAliveId(id);
             if (hovered)
             {
-                uiState.SetHoverId(id);
-
-                if (Input.Mouse.LeftButtonPressed)//start track
+                uiState.HoverId = id;
+                if (uiState.ActiveId == GUIState.None)
                 {
                     uiState.SetActiveId(id);
+                    result = true;
                 }
-
-                if (Input.Mouse.LeftButtonReleased)//end track
+            }
+            else
+            {
+                if (uiState.ActiveId == id)
                 {
-                    clicked = true;
                     uiState.SetActiveId(GUIState.None);
                 }
+                result = false;
             }
 
             // ui representation
             var state = GUI.Normal;
-            if (hovered)
+            if (uiState.ActiveId == id)
             {
-                state = GUI.Hover;
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
-                {
-                    state = GUI.Active;
-                }
+                state = GUI.Active;
             }
 
             // ui painting
@@ -46,8 +43,7 @@ namespace ImGui
                 GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Button[state]);
             }
 
-            return clicked;
+            return result;
         }
-
     }
 }

@@ -65,6 +65,34 @@
 
         #endregion
 
+        #region HoverButton
+
+        public static bool HoverButton(Rect rect, string text, string id)
+        {
+            return DoHoverButton(rect, Content.Cached(text, id), id);
+        }
+
+        public static bool HoverButton(Rect rect, Content content, string id)
+        {
+            return DoHoverButton(rect, content, id);
+        }
+
+        private static bool DoHoverButton(Rect rect, Content content, string id)
+        {
+            return ImGui.HoverButton.DoControl(rect, content, id);
+        }
+
+        #endregion
+
+        #region Slider
+
+        public static double Slider(Rect rect, double value, double minValue, double maxValue, string id)
+        {
+            return ImGui.Slider.DoControl(rect, value, minValue, maxValue, id);
+        }
+
+        #endregion
+
         /*
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
@@ -114,11 +142,6 @@
             return ImGui.ToggleButton.DoControl(form, rect, text, value, name);
         }
 
-        public static bool HoverButton(Rect rect, string text, string name)
-        {
-            rect = DoLayout(rect);
-            return ImGui.HoverButton.DoControl(Form.current, rect, text, name);
-        }
 
         public bool RadioButton(Rect rect, string text, string groupName, bool value, string name)
         {

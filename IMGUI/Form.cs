@@ -112,8 +112,15 @@ namespace ImGui
                 LayoutUtility.Begin();
             }
 
-            // handle gui states
-            Form.current.uiState.hotitem = GUIState.None;
+            // Clear reference to active widget if the widget isn't alive anymore
+            var g = Form.current.uiState;
+            g.HoverIdPreviousFrame = g.HoverId;
+            g.HoverId = GUIState.None;
+            if (!g.ActiveIdIsAlive && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != GUIState.None)
+                g.ActiveId = GUIState.None;
+            g.ActiveIdPreviousFrame = g.ActiveId;
+            g.ActiveIdIsAlive = false;
+            g.ActiveIdIsJustActivated = false;
         }
 
         /// <summary>
@@ -127,18 +134,6 @@ namespace ImGui
             {
                 LayoutUtility.Layout();
                 Event.current.type = EventType.Repaint;
-            }
-
-            // handle gui states
-            var uiState = Form.current.uiState;
-            if (Input.Mouse.LeftButtonState == InputState.Up)
-            {
-                uiState.activeitem = GUIState.None;
-            }
-            else
-            {
-                if (uiState.activeitem == GUIState.None)
-                    uiState.activeitem = GUIState.Unavailable;
             }
         }
 
@@ -163,7 +158,11 @@ namespace ImGui
                 elapsedFrameCount = 0;
                 lastFPSUpdateTime = Application.Time;
             }
-            Console.Write("\r{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+
+            Console.Clear();
+            Console.WriteLine("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+            Console.WriteLine("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
+            Console.WriteLine("HoverId: {0}", this.uiState.HoverId);
         }
 
         void handleEvent()

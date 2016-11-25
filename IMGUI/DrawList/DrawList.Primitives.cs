@@ -307,6 +307,38 @@ namespace ImGui
             _Path.Add(pos);
         }
 
+        private static readonly Point[] circle_vtx = InitCircleVtx();
+
+        private static Point[] InitCircleVtx()
+        {
+            Point[] result = new Point[12];
+            for (int i = 0; i < 12; i++)
+            {
+                var a = (float) i/12*2*Math.PI;
+                result[i].X = Math.Cos(a);
+                result[i].Y = Math.Sin(a);
+            }
+            return result;
+        }
+
+        public void PathArcToFast(Point center, double radius, int amin, int amax)
+        {
+            if (amin > amax) return;
+            if (radius == 0.0f)
+            {
+                _Path.Add(center);
+            }
+            else
+            {
+                _Path.Capacity = _Path.Count + amax - amin + 1;
+                for (int a = amin; a <= amax; a++)
+                {
+                    Point c = circle_vtx[a % circle_vtx.Length];
+                    _Path.Add(new Point(center.X + c.X* radius, center.Y + c.Y* radius));
+                }
+            }
+        }
+
         public void PathClose()
         {
             _Path.Add(_Path[0]);
