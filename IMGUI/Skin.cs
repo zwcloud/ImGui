@@ -9,7 +9,6 @@ namespace ImGui
         public Dictionary<string, Style> Toggle { get; private set; }
         public Dictionary<string, Style> ComboBox { get; private set; }
         public Dictionary<string, Style> Image { get; private set; }
-        public Dictionary<string, Style> Radio { get; set; }
         public Dictionary<string, Style> TextBox { get; set; }
         public Dictionary<string, Style> Slider { get; set; }
         public Dictionary<string, Style> PolygonButton { get; set; }
@@ -33,7 +32,6 @@ namespace ImGui
             Toggle = new Dictionary<string, Style>(3);
             ComboBox = new Dictionary<string, Style>(3);
             Image = new Dictionary<string, Style>(1);
-            Radio = new Dictionary<string, Style>(2);
             TextBox = new Dictionary<string, Style>(3);
             Slider = new Dictionary<string, Style>(3);
             PolygonButton = new Dictionary<string, Style>(3);
@@ -272,17 +270,6 @@ namespace ImGui
 
             #endregion
 
-            #region Radio
-            {
-                Radio["Normal"] = Style.Make();
-                Radio["Normal"].ExtraStyles["CircleColor.Selected"] = Color.DarkBlue;
-
-                Radio["Hover"] = Style.Make();
-                Radio["Active"] = Style.Make();
-
-            }
-            #endregion
-
             #region TextBox
             {
                 StyleModifier[] normalModifiers =
@@ -387,7 +374,30 @@ namespace ImGui
 
             #region PolygonButton
             {
-                PolygonButton["Normal"] = Style.Make();
+                StyleModifier[] normalModifiers =
+                {
+                    new StyleModifier
+                    {
+                        Name = "TextStyle",
+                        Value = new TextStyle
+                        {
+                            TextAlignment = TextAlignment.Center,
+                            LineSpacing = 0,
+                            TabSize = 4
+                        }
+                    },
+
+                    new StyleModifier
+                    {
+                        Name = "BackgroundStyle",
+                        Value = new BackgroundStyle
+                        {
+                            Color = Color.Clear,
+                            Image = null,
+                        }
+                    },
+                };
+                PolygonButton["Normal"] = Style.Make(normalModifiers);
 
                 StyleModifier[] hoverModifiers =
                 {
@@ -402,7 +412,7 @@ namespace ImGui
                         Value = new Color(0,0,1)
                     }
                 };
-                PolygonButton["Hover"] = Style.Make(hoverModifiers);
+                PolygonButton["Hover"] = Style.Make(PolygonButton["Normal"], hoverModifiers);
 
                 StyleModifier[] activeModifiers =
                 {
@@ -417,7 +427,7 @@ namespace ImGui
                         Value = new Color(1,0,0)
                     }
                 };
-                PolygonButton["Active"] = Style.Make(activeModifiers);
+                PolygonButton["Active"] = Style.Make(PolygonButton["Normal"], activeModifiers);
             }
             #endregion
 

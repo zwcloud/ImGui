@@ -10,10 +10,6 @@ namespace ImGui
     /// </remarks>
     internal class Box
     {
-        public Box(string name, Form form, Content content)
-        {
-        }
-
         public static void DoControl(Rect rect, Content content, string name)
         {
             if (Event.current.type == EventType.Repaint)

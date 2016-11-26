@@ -267,7 +267,7 @@ namespace ImGui
 
         #endregion
 
-        #region Extended button
+        #region HoverButton
 
         public static bool HoverButton(string textWithPossibleId, params LayoutOption[] options)
         {
@@ -315,18 +315,120 @@ namespace ImGui
 
         public static double Slider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)//TODO How to auto-gen name?
         {
-            return DoSlider(size, value, minValue, maxValue, Skin.current.Slider["Normal"], id, options);
+            return DoSlider(size, value, minValue, maxValue, Skin.current.Slider["Normal"], true, id, options);
         }
 
         public static double Slider(Size size, double value, double minValue, double maxValue, Style style, string id, params LayoutOption[] options)//TODO How to auto-gen name?
         {
-            return DoSlider(size, value, minValue, maxValue, style, id, options);
+            return DoSlider(size, value, minValue, maxValue, style, true, id, options);
         }
 
-        private static double DoSlider(Size size, double value, double minValue, double maxValue, Style style, string id, params LayoutOption[] options)
+        public static double VSlider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)//TODO How to auto-gen name?
         {
-            return GUI.Slider(LayoutUtility.GetRect(size, style, options), value, minValue, maxValue, id);
+            return DoSlider(size, value, minValue, maxValue, Skin.current.Slider["Normal"], false, id, options);
         }
+
+        public static double VSlider(Size size, double value, double minValue, double maxValue, Style style, string id, params LayoutOption[] options)//TODO How to auto-gen name?
+        {
+            return DoSlider(size, value, minValue, maxValue, style, false, id, options);
+        }
+
+        private static double DoSlider(Size size, double value, double minValue, double maxValue, Style style, bool isHorizontal, string id, params LayoutOption[] options)
+        {
+            return GUI.Slider(LayoutUtility.GetRect(size, style, options), value, minValue, maxValue, isHorizontal, id);
+        }
+
+
+        #endregion
+
+        #region ToggleButton
+
+        public static bool ToggleButton(string textWithPossibleId, bool value, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(textWithPossibleId, out text, out id);
+            return DoToggleButton(Content.Cached(text, id), value, Skin.current.Button["Normal"], id, options);
+        }
+
+        public static bool ToggleButton(string text, bool value, string name, params LayoutOption[] options)
+        {
+            return DoToggleButton(Content.Cached(text, name), value, Skin.current.Button["Normal"], name, options);
+        }
+
+        public static bool ToggleButton(string text, bool value, Style style, string name, params LayoutOption[] options)
+        {
+            return DoToggleButton(Content.Cached(text, name), value, style, name, options);
+        }
+
+        public static bool ToggleButton(Content content, bool value, Style style, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(content.Text, out text, out id);
+            return DoToggleButton(content, value, style, id, options);
+        }
+
+        public static bool ToggleButton(Content content, bool value, Style style, string name, params LayoutOption[] options)
+        {
+            return DoToggleButton(content, value, style, name, options);
+        }
+
+        private static bool DoToggleButton(Content content, bool value, Style style, string name, params LayoutOption[] options)
+        {
+            var rect = LayoutUtility.GetRect(content, style, options);
+            var result = GUI.ToggleButton(rect, content, value, name);
+            return result;
+        }
+
+        #endregion
+
+        #region PolygonButton
+
+        public static bool PolygonButton(Point[] points, Rect textRect, string textWithPossibleId, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(textWithPossibleId, out text, out id);
+            return PolygonButton(points, textRect, text, Skin.current.Button["Normal"], id, options);
+        }
+
+        public static bool PolygonButton(Point[] points, Rect textRect, string text, string name, params LayoutOption[] options)
+        {
+            return PolygonButton(points, textRect, text, Skin.current.Button["Normal"], name, options);
+        }
+
+        public static bool PolygonButton(Point[] points, Rect textRect, Content content, params LayoutOption[] options)
+        {
+            string text, id;
+            Utility.GetId(content.Text, out text, out id);
+            return PolygonButton(points, textRect, content, Skin.current.Button["Normal"], id, options);
+        }
+
+        public static bool PolygonButton(Point[] points, Rect textRect, Content content, string name, params LayoutOption[] options)
+        {
+            return PolygonButton(points, textRect, content, Skin.current.Button["Normal"], name, options);
+        }
+
+        public static bool PolygonButton(Point[] points, Rect textRect, string text, Style style, string name, params LayoutOption[] options)
+        {
+            return DoPolygonButton(points, textRect, Content.Cached(text, name), style, name, options);
+        }
+
+        public static bool PolygonButton(Point[] points, Rect textRect, Content content, Style style, string name, params LayoutOption[] options)
+        {
+            return DoPolygonButton(points, textRect, content, style, name);
+        }
+
+        private static bool DoPolygonButton(Point[] points, Rect textRect, Content content, Style style, string id, params LayoutOption[] options)
+        {
+            var rect = new Rect();
+            for (int i = 0; i < points.Length; i++)
+            {
+                var point = points[i];
+                rect.Union(point);
+            }
+            rect = LayoutUtility.GetRect(rect.Size, style, options);
+            return GUI.PolygonButton(rect, points, textRect, content, id);
+        }
+
 
         #endregion
 

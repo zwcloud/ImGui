@@ -88,7 +88,55 @@
 
         public static double Slider(Rect rect, double value, double minValue, double maxValue, string id)
         {
-            return ImGui.Slider.DoControl(rect, value, minValue, maxValue, id);
+            return Slider(rect, value, minValue, maxValue, true, id);
+        }
+
+        public static double VSlider(Rect rect, double value, double minValue, double maxValue, string id)
+        {
+            return Slider(rect, value, minValue, maxValue, false, id);
+        }
+
+        public static double Slider(Rect rect, double value, double minValue, double maxValue, bool isHorizontal, string id)
+        {
+            return ImGui.Slider.DoControl(rect, value, minValue, maxValue, isHorizontal, id);
+        }
+
+        #endregion
+
+        #region ToggleButton
+
+        public static bool ToggleButton(Rect rect, string text, bool value, string id)
+        {
+            return DoToggleButton(rect, Content.Cached(text, id), value, id);
+        }
+
+        public static bool ToggleButton(Rect rect, Content content, bool value, string id)
+        {
+            return DoToggleButton(rect, content, value, id);
+        }
+
+        private static bool DoToggleButton(Rect rect, Content content, bool value, string id)
+        {
+            return ImGui.ToggleButton.DoControl(rect, content, value, id);
+        }
+
+        #endregion
+
+        #region PolygonButton
+
+        public static bool PolygonButton(Rect rect, Point[] points, Rect textRect, string text, string id)
+        {
+            return DoPolygonButton(rect, points, textRect, Content.Cached(text, id), id);
+        }
+
+        public static bool PolygonButton(Rect rect, Point[] points, Rect textRect, Content content, string id)
+        {
+            return DoPolygonButton(rect, points, textRect, content, id);
+        }
+
+        public static bool DoPolygonButton(Rect rect, Point[] points, Rect textRect, Content content, string id)
+        {
+            return ImGui.PolygonButton.DoControl(rect, points, textRect, content, id);
         }
 
         #endregion
@@ -107,51 +155,10 @@
             ImGui.Image.DoControl(form, rect, image, name);
         }
 
-        public bool Radio(Rect rect, string text, string groupName, bool value, string name)
-        {
-            rect = DoLayout(rect);
-            return ImGui.Radio.DoControl(form, rect, text, groupName, value, name);
-        }
-
-        public float Slider(Rect rect, string text, float value, float leftValue, float rightValue, string name)
-        {
-            rect = DoLayout(rect);
-            return ImGui.Slider.DoControl(form, rect, value, leftValue, rightValue, name);
-        }
-
-        public float SliderV(Rect rect, string text, float value, float leftValue, float rightValue, string name)
-        {
-            rect = DoLayout(rect);
-            return ImGui.SliderV.DoControl(form, rect, value, leftValue, rightValue, name);
-        }
-
         public string TextBox(Rect rect, string text, string name)
         {
             rect = DoLayout(rect);
             return ImGui.TextBox.DoControl(form, rect, text, name);
-        }
-
-        public bool PolygonButton(Point[] points, string text, string name)
-        {
-            return ImGui.PolygonButton.DoControl(form, points, text, name);
-        }
-
-        public bool ToggleButton(Rect rect, string text, bool value, string name)
-        {
-            rect = DoLayout(rect);
-            return ImGui.ToggleButton.DoControl(form, rect, text, value, name);
-        }
-
-
-        public bool RadioButton(Rect rect, string text, string groupName, bool value, string name)
-        {
-            rect = DoLayout(rect);
-            return ImGui.RadioButton.DoControl(form, rect, text, groupName, value, name);
-        }
-
-        public void TitleBar(Rect rect, Texture iconTexture, string caption, string name)
-        {
-            ImGui.TitleBar.DoControl(this, rect, iconTexture, caption, form, name);
         }
 
         public void Window(Rect rect, WindowFunction func, string name)
@@ -180,25 +187,6 @@
         #endregion
 
         #region layout methods
-        public void BeginH()
-        {
-            BeginGroup(LayoutMode.Horizontal);
-        }
-
-        public void EndH()
-        {
-            EndGroup(LayoutMode.Horizontal);
-        }
-
-        public void BeginV()
-        {
-            BeginGroup(LayoutMode.Vertical);
-        }
-
-        public void EndV()
-        {
-            EndGroup(LayoutMode.Vertical);
-        }
 
         public void BeginScrollView(Rect occupiedRect, Point scrollPosition, Rect viewRect)
         {
@@ -211,15 +199,7 @@
 
         #endregion
         */
-
-        #region control methods
-
-        public Rect GetControlRect(string id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        #endregion
+        
 
         #region Constant
 
