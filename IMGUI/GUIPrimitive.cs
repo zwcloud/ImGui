@@ -76,10 +76,10 @@ namespace ImGui
             //Content-box
             if (content != null)
             {
-                //if (content.Image != null)
-                //{
-                //    g.DrawImage(contentBoxRect, content.Image);
-                //}
+                if (content.Image != null)
+                {
+                    DrawImage(contentBoxRect, content, style);
+                }
                 if (content.Text != null)
                 {
                     DrawText(contentBoxRect, content, style);
@@ -144,11 +144,16 @@ namespace ImGui
 
         public static void DrawText(Rect rect, Content content, Style style)
         {
-            content.Build(rect, style);
+            content.BuildText(rect, style);
             Form window = Form.current;
             var drawList = window.DrawList;
 
             drawList.Append(content.TextMesh);
+        }
+
+        public static void DrawImage(Rect rect, Content content, Style style)
+        {
+
         }
 
     }

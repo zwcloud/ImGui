@@ -118,7 +118,7 @@ namespace ImGui
         /// <summary>
         /// build the text context against the size and style
         /// </summary>
-        internal void Build(Rect rect, Style style)
+        internal void BuildText(Rect rect, Style style)
         {
             // check 
             if (this.Text == null) throw new InvalidOperationException();
@@ -168,6 +168,20 @@ namespace ImGui
             return content;
         }
 
+        internal static Content Cached(Texture texture, string id)
+        {
+            Content content;
+            if (!chachedContentMap.TryGetValue(id, out content))
+            {
+                content = new Content(texture);
+                content.TextMesh = new TextMesh();
+                chachedContentMap.Add(id, content);
+            }
+            chachedContentMap[id].Image = texture;
+            return content;
+        }
+
+        // TODO This is a temp hack and not a real cache!!
         private static readonly Dictionary<string, Content> chachedContentMap = new Dictionary<string, Content>(256);
 
         #region IDisposable Members

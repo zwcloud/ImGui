@@ -106,35 +106,35 @@ namespace TextRenderingTest
             drawList.AddRectFilled(Point.Zero, new Point(200,100), Color.Metal);
             expectedVertexCount += 4;
             expectedIndexCount += 6;
-            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
 
             drawList.Append(textMesh);
             expectedVertexCount += textMesh.VertexBuffer.Count;
             expectedIndexCount += textMesh.IndexBuffer.Count;
-            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
 
             drawList.AddRectFilled(new Point(0, 110), new Point(200, 150), Color.Metal);
             expectedVertexCount += 4;
             expectedIndexCount += 6;
-            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
 
             drawList.AddRectFilled(new Point(0, 160), new Point(200, 200), Color.Metal);
             expectedVertexCount += 4;
             expectedIndexCount += 6;
-            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
 
             drawList.Append(anotherTextMesh);
             expectedVertexCount += anotherTextMesh.VertexBuffer.Count;
             expectedIndexCount += anotherTextMesh.IndexBuffer.Count;
-            Assert.Equal(drawList.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.IndexBuffer.Count, expectedIndexCount);
+            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
+            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
 
             var objFilePath = "D:\\TextRenderingTest_ShouldGetARightMeshAfterAppendingATextMesh.obj";
-            Utility.SaveToObjFile(objFilePath, drawList.VertexBuffer, drawList.IndexBuffer);
+            Utility.SaveToObjFile(objFilePath, drawList.DrawBuffer.VertexBuffer, drawList.DrawBuffer.IndexBuffer);
             Process.Start(FBXReviewPath, objFilePath);
         }
 

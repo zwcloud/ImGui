@@ -55,7 +55,7 @@ namespace Test
                 TextAlignment = TextAlignment.Leading,
                 TabSize = style.TextStyle.TabSize
             };
-            content.Build(rect.Size, style);
+            content.BuildText(rect.Size, style);
 
             DrawContent(rect, content, style);
         }
@@ -72,7 +72,7 @@ namespace Test
                 TextAlignment = TextAlignment.Center,
                 TabSize = style.TextStyle.TabSize
             };
-            content.Build(rect.Size, style);
+            content.BuildText(rect.Size, style);
 
             DrawContent(rect, content, style);
         }
@@ -89,7 +89,7 @@ namespace Test
                 TabSize = style.TextStyle.TabSize
             };
             Rect rect = new Rect(400, 300);
-            content.Build(rect.Size, style);
+            content.BuildText(rect.Size, style);
 
             DrawContent(rect, content, style);
         }
@@ -119,7 +119,7 @@ namespace Test
                 }
             });
             Size size = style.CalcSize(content, new LayoutOption[0]);
-            content.Build(size, style);
+            content.BuildText(size, style);
             Rect rect = new Rect(size);
             DrawContent(rect, content, style);
             content.Dispose();
@@ -141,7 +141,7 @@ namespace Test
                 }
             });
             Size size = style.CalcSize(content, new []{GUILayout.Height(100)});
-            content.Build(size, style);
+            content.BuildText(size, style);
             Rect rect = new Rect(size);
             DrawContent(rect, content, style);
             content.Dispose();
@@ -163,7 +163,7 @@ namespace Test
                 }
             });
             Size size = style.CalcSize(content, new[] { GUILayout.Width(100) });
-            content.Build(size, style);
+            content.BuildText(size, style);
             Rect rect = new Rect(size);
             DrawContent(rect, content, style);
             content.Dispose();

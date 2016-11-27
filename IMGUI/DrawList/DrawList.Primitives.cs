@@ -17,48 +17,6 @@ namespace ImGui
 
     partial class DrawList
     {
-        #region buffer writing
-
-        private int _vtxWritePosition;
-        private int _idxWritePosition;
-        private int _currentIdx;
-
-        private void AppendVertex(DrawVertex vertex)
-        {
-            vertexBuffer[_vtxWritePosition] = vertex;
-            _vtxWritePosition++;
-        }
-
-        private void AppendIndex(int offsetToCurrentIndex)
-        {
-            indexBuffer[_idxWritePosition] = new DrawIndex { Index = _currentIdx + offsetToCurrentIndex };
-            _idxWritePosition++;
-        }
-        
-        public void PrimReserve(int idx_count, int vtx_count)
-        {
-            if (idx_count == 0)
-            {
-                return;
-            }
-
-            if (CommandBuffer.Count == 0)
-            {
-                CommandBuffer.Add(new DrawCommand());
-            }
-            DrawCommand draw_cmd = this.CommandBuffer[CommandBuffer.Count - 1];
-            draw_cmd.ElemCount += idx_count;
-
-            int vtx_buffer_size = this.VertexBuffer.Count;
-            this._vtxWritePosition = vtx_buffer_size;
-            this.VertexBuffer.Resize(vtx_buffer_size + vtx_count);
-
-            int idx_buffer_size = this.IndexBuffer.Count;
-            this._idxWritePosition = idx_buffer_size;
-            this.IndexBuffer.Resize(idx_buffer_size + idx_count);
-        }
-
-        #endregion
 
         #region primitives
 
@@ -86,7 +44,7 @@ namespace ImGui
                 // Non Anti-aliased Stroke
                 int idx_count = count*6;
                 int vtx_count = count*4;      // FIXME-OPT: Not sharing edges
-                PrimReserve(idx_count, vtx_count);
+                DrawBuffer.PrimReserve(idx_count, vtx_count);
 
                 for (int i1 = 0; i1 < count; i1++)
                 {
@@ -102,19 +60,19 @@ namespace ImGui
                     var vertex1 = new DrawVertex { pos = new PointF(p2.X + dy, p2.Y - dx), uv = PointF.Zero, color = (ColorF)col };
                     var vertex2 = new DrawVertex { pos = new PointF(p2.X - dy, p2.Y + dx), uv = PointF.Zero, color = (ColorF)col };
                     var vertex3 = new DrawVertex { pos = new PointF(p1.X - dy, p1.Y + dx), uv = PointF.Zero, color = (ColorF)col };
-                    AppendVertex(vertex0);
-                    AppendVertex(vertex1);
-                    AppendVertex(vertex2);
-                    AppendVertex(vertex3);
-                    
-                    AppendIndex(0);
-                    AppendIndex(1);
-                    AppendIndex(2);
-                    AppendIndex(0);
-                    AppendIndex(2);
-                    AppendIndex(3);
+                    DrawBuffer.AppendVertex(vertex0);
+                    DrawBuffer.AppendVertex(vertex1);
+                    DrawBuffer.AppendVertex(vertex2);
+                    DrawBuffer.AppendVertex(vertex3);
 
-                    _currentIdx += 4;
+                    DrawBuffer.AppendIndex(0);
+                    DrawBuffer.AppendIndex(1);
+                    DrawBuffer.AppendIndex(2);
+                    DrawBuffer.AppendIndex(0);
+                    DrawBuffer.AppendIndex(2);
+                    DrawBuffer.AppendIndex(3);
+
+                    DrawBuffer._currentIdx += 4;
                 }
             }
         }
@@ -134,18 +92,18 @@ namespace ImGui
                 // Non Anti-aliased Fill
                 int idx_count = (points_count-2)*3;
                 int vtx_count = points_count;
-                PrimReserve(idx_count, vtx_count);
+                DrawBuffer.PrimReserve(idx_count, vtx_count);
                 for (int i = 0; i < vtx_count; i++)
                 {
-                    AppendVertex(new DrawVertex { pos = (PointF)points[i], uv = PointF.Zero, color = (ColorF)col });
+                    DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)points[i], uv = PointF.Zero, color = (ColorF)col });
                 }
                 for (int i = 2; i < points_count; i++)
                 {
-                    AppendIndex(0);
-                    AppendIndex(i-1);
-                    AppendIndex(i);
+                    DrawBuffer.AppendIndex(0);
+                    DrawBuffer.AppendIndex(i-1);
+                    DrawBuffer.AppendIndex(i);
                 }
-                _currentIdx += vtx_count;
+                DrawBuffer._currentIdx += vtx_count;
             }
         }
         
@@ -155,22 +113,43 @@ namespace ImGui
             Point b = new Point(c.X, a.Y);
             Point d = new Point(a.X, c.Y);
             Point uv = Point.Zero;
-            
-            AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)col });
-            AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)col });
-            AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)col });
-            AppendVertex(new DrawVertex { pos = (PointF)d, uv = PointF.Zero, color = (ColorF)col });
 
-            AppendIndex(0);
-            AppendIndex(1);
-            AppendIndex(2);
-            AppendIndex(0);
-            AppendIndex(2);
-            AppendIndex(3);
-            
-            _currentIdx += 4;
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)col });
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)col });
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)col });
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)d, uv = PointF.Zero, color = (ColorF)col });
+
+            DrawBuffer.AppendIndex(0);
+            DrawBuffer.AppendIndex(1);
+            DrawBuffer.AppendIndex(2);
+            DrawBuffer.AppendIndex(0);
+            DrawBuffer.AppendIndex(2);
+            DrawBuffer.AppendIndex(3);
+
+            DrawBuffer._currentIdx += 4;
         }
 
+        void PrimRectUV(Point a, Point c, Point uv_a, Point uv_c, Color col)
+        {
+            Point b = new Point(c.X, a.Y);
+            Point d = new Point(a.X, c.Y);
+            Point uv_b = new Point(uv_c.X, uv_a.Y);
+            Point uv_d = new Point(uv_a.X, uv_c.Y);
+
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uv_a, color = (ColorF)col });
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uv_b, color = (ColorF)col });
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uv_c, color = (ColorF)col });
+            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uv_d, color = (ColorF)col });
+
+            DrawBuffer.AppendIndex(0);
+            DrawBuffer.AppendIndex(1);
+            DrawBuffer.AppendIndex(2);
+            DrawBuffer.AppendIndex(0);
+            DrawBuffer.AppendIndex(2);
+            DrawBuffer.AppendIndex(3);
+
+            DrawBuffer._currentIdx += 4;
+        }
         // a: upper-left, b: lower-right. we don't render 1 px sized rectangles properly.
         public void AddRect(Point a, Point b, Color col, float rounding = 0.0f, int rounding_corners = 0x0F, float thickness = 1.0f)
         {
@@ -191,9 +170,35 @@ namespace ImGui
             }
             else
             {
-                PrimReserve(6, 4);
+                DrawBuffer.PrimReserve(6, 4);
                 PrimRect(a, b, col);
             }
+        }
+
+        void AddImage(Texture texture, Point a, Point b, Point uv0, Point uv1, Color col)
+        {
+            //if (MathEx.AmostZero(col.A))
+            //    return;
+            //
+            //CommandBuffer.Add(
+            //    new DrawCommand
+            //    {
+            //        ClipRect = new Rect(a, b),
+            //        ElemCount = 6,
+            //        TextureData = texture
+            //    }
+            //);
+            //
+            //// FIXME-OPT: This is wasting draw calls.
+            //const bool push_texture_id = _TextureIdStack.empty() || user_texture_id != _TextureIdStack.back();
+            //if (push_texture_id)
+            //    PushTextureID(user_texture_id);
+            //
+            //PrimReserve(6, 4);
+            //PrimRectUV(a, b, uv0, uv1, col);
+            //
+            //if (push_texture_id)
+            //    PopTextureID();
         }
 
         #endregion
@@ -221,8 +226,8 @@ namespace ImGui
                 double x234 = (x23 + x34) * 0.5f, y234 = (y23 + y34) * 0.5f;
                 double x1234 = (x123 + x234) * 0.5f, y1234 = (y123 + y234) * 0.5f;
 
-                PathBezierToCasteljau(path, x1, y1, x12, y12, x123, y123, x1234, y1234, tess_tol, level + 1);
-                PathBezierToCasteljau(path, x1234, y1234, x234, y234, x34, y34, x4, y4, tess_tol, level + 1);
+                DrawList.PathBezierToCasteljau(path, x1, y1, x12, y12, x123, y123, x1234, y1234, tess_tol, level + 1);
+                DrawList.PathBezierToCasteljau(path, x1234, y1234, x234, y234, x34, y34, x4, y4, tess_tol, level + 1);
             }
         }
 
@@ -266,14 +271,14 @@ namespace ImGui
             }
             else
             {
-                //const float r0 = (rounding_corners & 1) ? r : 0.0f;
-                //const float r1 = (rounding_corners & 2) ? r : 0.0f;
-                //const float r2 = (rounding_corners & 4) ? r : 0.0f;
-                //const float r3 = (rounding_corners & 8) ? r : 0.0f;
-                //PathArcToFast(ImVec2(a.x+r0, a.y+r0), r0, 6, 9);
-                //PathArcToFast(ImVec2(b.x-r1, a.y+r1), r1, 9, 12);
-                //PathArcToFast(ImVec2(b.x-r2, b.y-r2), r2, 0, 3);
-                //PathArcToFast(ImVec2(a.x+r3, b.y-r3), r3, 3, 6);
+                var r0 = (rounding_corners & 1) != 0 ? r : 0.0f;
+                var r1 = (rounding_corners & 2) != 0 ? r : 0.0f;
+                var r2 = (rounding_corners & 4) != 0 ? r : 0.0f;
+                var r3 = (rounding_corners & 8) != 0 ? r : 0.0f;
+                PathArcToFast(new Point(rect_min.X+r0, rect_min.Y+r0), r0, 6, 9);
+                PathArcToFast(new Point(rect_max.X-r1, rect_min.Y+r1), r1, 9, 12);
+                PathArcToFast(new Point(rect_max.X-r2, rect_max.Y-r2), r2, 0, 3);
+                PathArcToFast(new Point(rect_min.X+r3, rect_max.Y-r3), r3, 3, 6);
             }
         }
         
@@ -399,79 +404,80 @@ namespace ImGui
             // append triangles
             {
                 // TODO This is a temp hack, need to be moved to a suitable place.
-                if (CommandBuffer.Count == 0)
+                if (DrawBuffer.CommandBuffer.Count == 0)
                 {
-                    CommandBuffer.Add(new DrawCommand());
+                    DrawBuffer.CommandBuffer.Add(new DrawCommand());
                 }
-                DrawCommand draw_cmd = this.CommandBuffer[this.CommandBuffer.Count - 1];
+                DrawCommand draw_cmd = DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1];
                 var idx_count = textMesh.IndexBuffer.Count;
                 var vtx_count = textMesh.VertexBuffer.Count;
                 if (idx_count != 0 && vtx_count != 0)
                 {
                     draw_cmd.ElemCount += idx_count;
 
-                    var vertexCountBefore = this.VertexBuffer.Count;
+                    var vertexCountBefore = DrawBuffer.VertexBuffer.Count;
 
-                    int vtx_buffer_size = this.VertexBuffer.Count;
-                    this._vtxWritePosition = vtx_buffer_size + vtx_count;
-                    this.VertexBuffer.AddRange(textMesh.VertexBuffer);
+                    int vtx_buffer_size = DrawBuffer.VertexBuffer.Count;
+                    DrawBuffer._vtxWritePosition = vtx_buffer_size + vtx_count;
+                    DrawBuffer.VertexBuffer.AddRange(textMesh.VertexBuffer);
 
-                    int idx_buffer_size = this.IndexBuffer.Count;
-                    this._idxWritePosition = idx_buffer_size + idx_count;
+                    int idx_buffer_size = DrawBuffer.IndexBuffer.Count;
+                    DrawBuffer._idxWritePosition = idx_buffer_size + idx_count;
 
-                    var sizeBefore = this.IndexBuffer.Count;
-                    this.IndexBuffer.AddRange(textMesh.IndexBuffer);
-                    var sizeAfter = this.IndexBuffer.Count;
+                    var sizeBefore = DrawBuffer.IndexBuffer.Count;
+                    DrawBuffer.IndexBuffer.AddRange(textMesh.IndexBuffer);
+                    var sizeAfter = DrawBuffer.IndexBuffer.Count;
 
                     if (vertexCountBefore != 0)
                     {
                         for (int i = sizeBefore; i < sizeAfter; i++)
                         {
-                            this.IndexBuffer[i] = new DrawIndex { Index = this.IndexBuffer[i].Index + vertexCountBefore };
+                            DrawBuffer.IndexBuffer[i] = new DrawIndex { Index = DrawBuffer.IndexBuffer[i].Index + vertexCountBefore };
                         }
                     }
-                    _currentIdx += vtx_count;
+                    DrawBuffer._currentIdx += vtx_count;
                 }
             }
 
             // append beziers
             {
                 // TODO This is a temp hack, need to be moved to a suitable place.
-                if (BezierCommandBuffer.Count == 0)
+                if (this.BezierBuffer.CommandBuffer.Count == 0)
                 {
-                    BezierCommandBuffer.Add(new DrawCommand());
+                    this.BezierBuffer.CommandBuffer.Add(new DrawCommand());
                 }
-                DrawCommand draw_cmd = this.BezierCommandBuffer[this.BezierCommandBuffer.Count - 1];
+                DrawCommand draw_cmd = this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1];
                 var idx_count = textMesh.BezierIndexBuffer.Count;
                 var vtx_count = textMesh.BezierVertexBuffer.Count;
                 if (idx_count != 0 && vtx_count != 0)
                 {
                     draw_cmd.ElemCount += idx_count;
 
-                    var vertexCountBefore = this.BezierVertexBuffer.Count;
+                    var vertexCountBefore = this.BezierBuffer.VertexBuffer.Count;
 
-                    int vtx_buffer_size = this.BezierVertexBuffer.Count + vtx_count;
-                    this._bezier_vtxWritePosition = vtx_buffer_size;
-                    this.BezierVertexBuffer.AddRange(textMesh.BezierVertexBuffer);
+                    int vtx_buffer_size = this.BezierBuffer.VertexBuffer.Count + vtx_count;
+                    this.BezierBuffer._vtxWritePosition = vtx_buffer_size;
+                    this.BezierBuffer.VertexBuffer.AddRange(textMesh.BezierVertexBuffer);
 
-                    int idx_buffer_size = this.BezierIndexBuffer.Count + idx_count;
-                    this._bezier_idxWritePosition = idx_buffer_size;
+                    int idx_buffer_size = this.BezierBuffer.IndexBuffer.Count + idx_count;
+                    this.BezierBuffer._idxWritePosition = idx_buffer_size;
 
-                    var sizeBefore = this.BezierIndexBuffer.Count;
-                    this.BezierIndexBuffer.AddRange(textMesh.BezierIndexBuffer);
-                    var sizeAfter = this.BezierIndexBuffer.Count;
+                    var sizeBefore = this.BezierBuffer.IndexBuffer.Count;
+                    this.BezierBuffer.IndexBuffer.AddRange(textMesh.BezierIndexBuffer);
+                    var sizeAfter = this.BezierBuffer.IndexBuffer.Count;
 
                     if (vertexCountBefore != 0)
                     {
                         for (int i = sizeBefore; i < sizeAfter; i++)
                         {
-                            this.BezierIndexBuffer[i] = new DrawIndex { Index = this.BezierIndexBuffer[i].Index + vertexCountBefore };
+                            this.BezierBuffer.IndexBuffer[i] = new DrawIndex { Index = this.BezierBuffer.IndexBuffer[i].Index + vertexCountBefore };
                         }
                     }
-                    _bezier_currentIdx += vtx_count;
+                    this.BezierBuffer._currentIdx += vtx_count;
                 }
             }
         }
+
 
     }
 }

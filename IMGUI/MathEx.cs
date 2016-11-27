@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 namespace ImGui
 {
     /// <summary>
@@ -153,13 +154,120 @@ namespace ImGui
             return AmostZero(a - b);
         }
 
+        /// <summary>
+        /// Get the inverse of the length of a vector
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="fail_value"></param>
+        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double InverseLength(Vector lhs, double fail_value)
         {
             var d = lhs.X * lhs.X + lhs.Y * lhs.Y;
-            if (d > 0.0f) return 1.0 / System.Math.Sqrt(d);
+            if (d > 0.0f) return 1.0 / Math.Sqrt(d);
             return fail_value;
         }
 
+        /// <summary>
+        /// Check if a point is in the __convex__ polyon.
+        /// </summary>
+        public static bool IsPointInPolygon(Point p, Point[] polygon)
+        {
+            double minX = polygon[0].X;
+            double maxX = polygon[0].X;
+            double minY = polygon[0].Y;
+            double maxY = polygon[0].Y;
+            for (int i = 1; i < polygon.Length; i++)
+            {
+                Point q = polygon[i];
+                minX = Math.Min(q.X, minX);
+                maxX = Math.Max(q.X, maxX);
+                minY = Math.Min(q.Y, minY);
+                maxY = Math.Max(q.Y, maxY);
+            }
+
+            if (p.X < minX || p.X > maxX || p.Y < minY || p.Y > maxY)
+            {
+                return false;
+            }
+
+            // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+            bool inside = false;
+            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            {
+                if ((polygon[i].Y > p.Y) != (polygon[j].Y > p.Y) &&
+                    p.X < (polygon[j].X - polygon[i].X) * (p.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X)
+                {
+                    inside = !inside;
+                }
+            }
+
+            return inside;
+        }
+
+        /// <summary>
+        /// Check if a point is in the __convex__ polyon with an offset. Every point in points is offset first before checking. The checking will not change points' position.
+        /// </summary>
+        public static bool IsPointInPolygon(Point p, Point[] polygon, Vector offset)
+        {
+            var polygon0 = polygon[0] + offset;
+            double minX = polygon0.X;
+            double maxX = polygon0.X;
+            double minY = polygon0.Y;
+            double maxY = polygon0.Y;
+            for (int i = 1; i < polygon.Length; i++)
+            {
+                Point q = polygon[i] + offset;
+                minX = Math.Min(q.X, minX);
+                maxX = Math.Max(q.X, maxX);
+                minY = Math.Min(q.Y, minY);
+                maxY = Math.Max(q.Y, maxY);
+            }
+
+            if (p.X < minX || p.X > maxX || p.Y < minY || p.Y > maxY)
+            {
+                return false;
+            }
+
+            // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+            bool inside = false;
+            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            {
+                var point = polygon[i] + offset;
+                var point1 = polygon[j] + offset;
+                if ((point.Y > p.Y) != (point1.Y > p.Y) &&
+                    p.X < (point1.X - point.X) * (p.Y - point.Y) / (point1.Y - point.Y) + point.X)
+                {
+                    inside = !inside;
+                }
+            }
+
+            return inside;
+        }
+
+        /// <summary>
+        /// Get the certroid of a polygon, convex or non-convex.
+        /// </summary>
+        /// <remarks>
+        /// http://stackoverflow.com/a/33852627/3427520
+        ///</remarks>
+        public static Point GetPolygonCentroid(Point[] verts)
+        {
+            var sum = 0.0;
+            Point vsum = Point.Zero;
+
+            var numVerts = verts.Length;
+            for (int i = 0; i<numVerts; i++)
+            {
+                Point v1 = verts[i];
+                Point v2 = verts[(i + 1) % numVerts];
+                var cross = v1.X*v2.Y - v1.Y*v2.X;
+                sum += cross;
+                vsum = new Point(((v1.X + v2.X) * cross) + vsum.X, ((v1.Y + v2.Y) * cross) + vsum.Y);
+            }
+
+            var z = 1.0 / (3.0 * sum);
+            return new Point(vsum.X * z, vsum.Y * z);
+        }
     }
 }

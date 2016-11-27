@@ -4,7 +4,7 @@
     {
         int elemCount;
         Rect clipRect;
-        object textureData;
+        Texture textureData;
 
         public DrawCommand()
         {
@@ -25,7 +25,7 @@
         }
 
         /// <summary>
-        /// Clipping rectangle 
+        /// Clipping rectangle
         /// </summary>
         public Rect ClipRect
         {
@@ -34,9 +34,9 @@
         }
 
         /// <summary>
-        /// User-provided texture ID
+        /// texture data
         /// </summary>
-        public object TextureData
+        public Texture TextureData
         {
             get { return textureData; }
             set { textureData = value; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    public partial class Texture
+    partial class Texture
     {
 #if false
         static Texture()
