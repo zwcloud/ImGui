@@ -6,12 +6,11 @@ namespace ImGui
     public abstract class Form
     {
         public static Form current;
-        IWindow window;
+
+        private readonly IWindow window;
         internal DrawList DrawList = new DrawList();
         internal IRenderer renderer;
-
         internal LayoutCache layoutCache = new LayoutCache();
-
         internal GUIState uiState = new GUIState();
 
         protected Form(Rect rect):this(rect.TopLeft, rect.Size)
@@ -26,8 +25,16 @@ namespace ImGui
             renderer = Application._map.CreateRenderer();
             renderer.Init(this.Pointer);
             
-            this.DrawList.DrawBuffer.CommandBuffer.Add(DrawCommand.Default);
-            this.DrawList.BezierBuffer.CommandBuffer.Add(DrawCommand.Default);
+            this.DrawList.DrawBuffer.CommandBuffer.Add(
+                new DrawCommand
+                {
+                    ClipRect = new Rect(this.Size)
+                });
+            this.DrawList.BezierBuffer.CommandBuffer.Add(
+                new DrawCommand
+                {
+                    ClipRect = new Rect(this.Size)
+                });
 
             InitGUI();
         }

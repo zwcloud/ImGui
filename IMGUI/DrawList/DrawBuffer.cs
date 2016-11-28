@@ -67,7 +67,11 @@
 
             if (CommandBuffer.Count == 0)
             {
-                CommandBuffer.Add(DrawCommand.Default);
+                CommandBuffer.Add(
+                    new DrawCommand
+                    {
+                        ClipRect = new Rect(Form.current.Size)
+                    });
             }
             DrawCommand newDrawCommand = this.CommandBuffer[CommandBuffer.Count - 1];
             newDrawCommand.ElemCount += idx_count;

@@ -153,7 +153,8 @@ namespace ImGui
 
         public static void DrawImage(Rect rect, Content content, Style style)
         {
-
+            var drawList = Form.current.DrawList;
+            drawList.AddImage(content.Image, rect.TopLeft, rect.BottomRight, Point.Zero, new Point(1, 1), Color.Clear);
         }
 
     }

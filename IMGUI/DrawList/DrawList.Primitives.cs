@@ -175,7 +175,7 @@ namespace ImGui
             }
         }
 
-        void AddImage(Texture texture, Point a, Point b, Point uv0, Point uv1, Color col)
+        public void AddImage(Texture texture, Point a, Point b, Point uv0, Point uv1, Color col)
         {
             if (MathEx.AmostZero(col.A))
                 return;
@@ -398,7 +398,11 @@ namespace ImGui
                 // TODO This is a temp hack, need to be moved to a suitable place.
                 if (DrawBuffer.CommandBuffer.Count == 0)
                 {
-                    DrawBuffer.CommandBuffer.Add(DrawCommand.Default);
+                    DrawBuffer.CommandBuffer.Add(
+                        new DrawCommand
+                        {
+                            ClipRect = new Rect(Form.current.Size)
+                        });
                 }
                 DrawCommand newDrawCommand = DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1];
                 var idx_count = textMesh.IndexBuffer.Count;
@@ -437,7 +441,11 @@ namespace ImGui
                 // TODO This is a temp hack, need to be moved to a suitable place.
                 if (this.BezierBuffer.CommandBuffer.Count == 0)
                 {
-                    this.BezierBuffer.CommandBuffer.Add(DrawCommand.Default);
+                    this.BezierBuffer.CommandBuffer.Add(
+                        new DrawCommand
+                        {
+                            ClipRect = new Rect(Form.current.Size)
+                        });
                 }
                 DrawCommand newDrawCommand = this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1];
                 var idx_count = textMesh.BezierIndexBuffer.Count;
