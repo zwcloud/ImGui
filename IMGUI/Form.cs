@@ -26,8 +26,8 @@ namespace ImGui
             renderer = Application._map.CreateRenderer();
             renderer.Init(this.Pointer);
             
-            this.DrawList.DrawBuffer.CommandBuffer.Add(new DrawCommand());
-            this.DrawList.BezierBuffer.CommandBuffer.Add(new DrawCommand());
+            this.DrawList.DrawBuffer.CommandBuffer.Add(DrawCommand.Default);
+            this.DrawList.BezierBuffer.CommandBuffer.Add(DrawCommand.Default);
 
             InitGUI();
         }

@@ -177,28 +177,20 @@ namespace ImGui
 
         void AddImage(Texture texture, Point a, Point b, Point uv0, Point uv1, Color col)
         {
-            //if (MathEx.AmostZero(col.A))
-            //    return;
-            //
-            //CommandBuffer.Add(
-            //    new DrawCommand
-            //    {
-            //        ClipRect = new Rect(a, b),
-            //        ElemCount = 6,
-            //        TextureData = texture
-            //    }
-            //);
-            //
-            //// FIXME-OPT: This is wasting draw calls.
-            //const bool push_texture_id = _TextureIdStack.empty() || user_texture_id != _TextureIdStack.back();
-            //if (push_texture_id)
-            //    PushTextureID(user_texture_id);
-            //
-            //PrimReserve(6, 4);
-            //PrimRectUV(a, b, uv0, uv1, col);
-            //
-            //if (push_texture_id)
-            //    PopTextureID();
+            if (MathEx.AmostZero(col.A))
+                return;
+            
+            ImageBuffer.CommandBuffer.Add(
+                new DrawCommand
+                {
+                    ClipRect = new Rect(a, b),
+                    ElemCount = 6,
+                    TextureData = texture
+                }
+            );
+
+            ImageBuffer.PrimReserve(6, 4);
+            AddImageRect(a, b, uv0, uv1, col);
         }
 
         #endregion
@@ -329,7 +321,7 @@ namespace ImGui
         public void PathArcToFast(Point center, double radius, int amin, int amax)
         {
             if (amin > amax) return;
-            if (radius == 0.0f)
+            if (MathEx.AmostZero(radius))
             {
                 _Path.Add(center);
             }
@@ -406,14 +398,15 @@ namespace ImGui
                 // TODO This is a temp hack, need to be moved to a suitable place.
                 if (DrawBuffer.CommandBuffer.Count == 0)
                 {
-                    DrawBuffer.CommandBuffer.Add(new DrawCommand());
+                    DrawBuffer.CommandBuffer.Add(DrawCommand.Default);
                 }
-                DrawCommand draw_cmd = DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1];
+                DrawCommand newDrawCommand = DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1];
                 var idx_count = textMesh.IndexBuffer.Count;
                 var vtx_count = textMesh.VertexBuffer.Count;
                 if (idx_count != 0 && vtx_count != 0)
                 {
-                    draw_cmd.ElemCount += idx_count;
+                    newDrawCommand.ElemCount += idx_count;
+                    DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1] = newDrawCommand;
 
                     var vertexCountBefore = DrawBuffer.VertexBuffer.Count;
 
@@ -444,14 +437,15 @@ namespace ImGui
                 // TODO This is a temp hack, need to be moved to a suitable place.
                 if (this.BezierBuffer.CommandBuffer.Count == 0)
                 {
-                    this.BezierBuffer.CommandBuffer.Add(new DrawCommand());
+                    this.BezierBuffer.CommandBuffer.Add(DrawCommand.Default);
                 }
-                DrawCommand draw_cmd = this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1];
+                DrawCommand newDrawCommand = this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1];
                 var idx_count = textMesh.BezierIndexBuffer.Count;
                 var vtx_count = textMesh.BezierVertexBuffer.Count;
                 if (idx_count != 0 && vtx_count != 0)
                 {
-                    draw_cmd.ElemCount += idx_count;
+                    newDrawCommand.ElemCount += idx_count;
+                    this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1] = newDrawCommand;
 
                     var vertexCountBefore = this.BezierBuffer.VertexBuffer.Count;
 

@@ -67,10 +67,11 @@
 
             if (CommandBuffer.Count == 0)
             {
-                CommandBuffer.Add(new DrawCommand());
+                CommandBuffer.Add(DrawCommand.Default);
             }
-            DrawCommand draw_cmd = this.CommandBuffer[CommandBuffer.Count - 1];
-            draw_cmd.ElemCount += idx_count;
+            DrawCommand newDrawCommand = this.CommandBuffer[CommandBuffer.Count - 1];
+            newDrawCommand.ElemCount += idx_count;
+            this.CommandBuffer[CommandBuffer.Count - 1] = newDrawCommand;
 
             int vtx_buffer_size = this.VertexBuffer.Count;
             this._vtxWritePosition = vtx_buffer_size;
