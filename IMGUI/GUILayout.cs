@@ -432,6 +432,39 @@ namespace ImGui
 
         #endregion
 
+        #region Image
+
+        public static void Image(string imageFilePathWithPossibleId, params LayoutOption[] options)
+        {
+            string imageFilePath, id;
+            Utility.GetId(imageFilePathWithPossibleId, out imageFilePath, out id);
+            Image(Content.CachedTexture(imageFilePath, id), Skin.current.Image["Normal"], id, options);
+        }
+
+        public static void Image(ITexture texture, string id, params LayoutOption[] options)
+        {
+            Image(Content.Cached(texture, id), Skin.current.Image["Normal"], id, options);
+        }
+
+        public static void Image(Content content, string id, params LayoutOption[] options)
+        {
+            Image(content, Skin.current.Image["Normal"], id, options);
+        }
+
+        public static void Image(Content content, Style style, string id, params LayoutOption[] options)
+        {
+            DoImage(content, style, id, options);
+        }
+
+        private static void DoImage(Content content, Style style, string id, params LayoutOption[] options)
+        {
+            var rect = LayoutUtility.GetRect(content, style, options);
+            GUI.Image(rect, content, id);
+        }
+
+        #endregion
+
+
         #endregion
 
         #region helpers

@@ -13,12 +13,15 @@ namespace ImGui
 
     delegate IRenderer CRenderer();
 
+    delegate ITexture CTexture();
+
     abstract class Map
     {
         public CTextContext CreateTextContext;
         public CWindowContext CreateWindowContext;
         public CInputContext CreateInputContext;
         public CRenderer CreateRenderer;
+        public CTexture CreateTexture;
     }
 
     class MapWindows : Map
@@ -31,6 +34,7 @@ namespace ImGui
                 CreateWindowContext = CWindowContext,
                 CreateInputContext = CInputContext,
                 CreateRenderer = CRenderer,
+                CreateTexture = CTexture,
             };
         }
 
@@ -61,6 +65,11 @@ namespace ImGui
         {
             return new OpenGLRenderer();
         }
+
+        private static ITexture CTexture()
+        {
+            return new OpenGLTexture();
+        }
     }
 
     class MapLinux : Map
@@ -73,6 +82,7 @@ namespace ImGui
                 CreateWindowContext = CWindowContext,
                 CreateInputContext = CInputContext,
                 CreateRenderer = CRenderer,
+                CreateTexture = CTexture,
             };
         }
 
@@ -105,5 +115,12 @@ namespace ImGui
         {
             throw new NotImplementedException();
         }
+
+        private static ITexture CTexture()
+        {
+            throw new NotImplementedException();
+        }
+
     }
+
 }

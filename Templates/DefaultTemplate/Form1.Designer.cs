@@ -49,6 +49,7 @@ namespace DefaultTemplate
                     new Point((points[4].X + points[5].X)/2, (points[4].Y + points[5].Y)/2)
                 ),
                 "P##PolygonButton0");
+            GUILayout.Image("D:\\1.png");
         }
 
     }

@@ -26,7 +26,7 @@ namespace ImGui
         /// <summary>
         /// image
         /// </summary>
-        public Texture Image { get; set; }
+        public ITexture Image { get; set; }
 
         private Content()
         {
@@ -42,7 +42,7 @@ namespace ImGui
             this.TextContext = null;
         }
 
-        public Content(Texture image)
+        public Content(ITexture image)
         {
             this.Image = image;
             this.TextContext = null;
@@ -76,7 +76,7 @@ namespace ImGui
                 }
             }
 
-            if (Text != null)
+            if (this.Text != null)
             {
                 if (width < 0 && height < 0) // auto-sized text
                 {
@@ -97,6 +97,11 @@ namespace ImGui
                         height = actualSize.Height;
                     }
                 }
+            }
+            else if (this.Image!= null)
+            {
+                width = this.Image.Width;
+                height = this.Image.Height;
             }
 
             if (width < 0 && height < 0)
@@ -168,7 +173,7 @@ namespace ImGui
             return content;
         }
 
-        internal static Content Cached(Texture texture, string id)
+        internal static Content Cached(ITexture texture, string id)
         {
             Content content;
             if (!chachedContentMap.TryGetValue(id, out content))
@@ -178,6 +183,19 @@ namespace ImGui
                 chachedContentMap.Add(id, content);
             }
             chachedContentMap[id].Image = texture;
+            return content;
+        }
+        
+        internal static Content CachedTexture(string filePath, string id)
+        {
+            Content content;
+            if (!chachedContentMap.TryGetValue(id, out content))
+            {
+                var texture = GUI.Create(filePath);
+                content = new Content(texture);
+                content.TextMesh = new TextMesh();
+                chachedContentMap.Add(id, content);
+            }
             return content;
         }
 
@@ -190,7 +208,7 @@ namespace ImGui
         {
             if (Image != null)
             {
-                //Image.Dispose();
+                Image.Dispose();
             }
             if (TextContext != null)
             {

@@ -175,7 +175,7 @@ namespace ImGui
             }
         }
 
-        public void AddImage(Texture texture, Point a, Point b, Point uv0, Point uv1, Color col)
+        public void AddImage(ITexture texture, Point a, Point b, Point uv0, Point uv1, Color col)
         {
             if (MathEx.AmostZero(col.A))
                 return;
@@ -184,7 +184,6 @@ namespace ImGui
                 new DrawCommand
                 {
                     ClipRect = new Rect(a, b),
-                    ElemCount = 6,
                     TextureData = texture
                 }
             );

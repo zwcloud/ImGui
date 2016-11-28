@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    public interface ITextContext : System.IDisposable
+    public interface ITextContext : IDisposable
     {
         int FontSize { get; }
         TextAlignment Alignment { get; set; }

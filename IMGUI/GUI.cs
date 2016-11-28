@@ -141,18 +141,36 @@
 
         #endregion
 
+        #region Image
+
+        //public static void Image(Rect rect, string imageFilePath, string id)
+        //{
+        //    DoImage(rect, Content.Cached(new te, id), id);
+        //}
+
+        public static void Image(Rect rect, ITexture image, string id)
+        {
+            DoImage(rect, Content.Cached(image, id), id);
+        }
+
+        public static void Image(Rect rect, Content imageContent, string id)
+        {
+            DoImage(rect, imageContent, id);
+        }
+
+        private static void DoImage(Rect rect, Content content, string id)
+        {
+            ImGui.Image.DoControl(rect, content, id);
+        }
+
+        #endregion
+
         /*
 
         public int CombolBox(Rect rect, string[] text, int selectedIndex, string name)
         {
             rect = DoLayout(rect);
             return ComboBox.DoControl(form, rect, text, selectedIndex, name);
-        }
-
-        public void Image(Rect rect, Texture image, string name)
-        {
-            rect = DoLayout(rect);
-            ImGui.Image.DoControl(form, rect, image, name);
         }
 
         public string TextBox(Rect rect, string text, string name)
@@ -199,13 +217,24 @@
 
         #endregion
         */
-        
+
 
         #region Constant
 
         public const string Normal = "Normal";
         public const string Hover = "Hover";
         public const string Active = "Active";
+
+        #endregion
+
+        #region Helper
+
+        public static ITexture Create(string filePath)
+        {
+            var texture = Application._map.CreateTexture();
+            texture.LoadImage(filePath);
+            return texture;
+        }
 
         #endregion
     }

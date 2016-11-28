@@ -59,7 +59,7 @@ namespace ImGui
                 };
                 program.Create(vertexShaderSource, fragmentShaderSource, attributeMap);
 
-                CheckError();
+                Utility.CheckGLError();
             }
 
             private void CreateVBOs()
@@ -84,24 +84,28 @@ namespace ImGui
                 GL.VertexAttribPointer(attributeUV, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("uv"));
                 GL.VertexAttribPointer(attributeColor, 4, GL.GL_FLOAT, true, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("color"));
 
-                CheckError();
+                Utility.CheckGLError();
             }
 
             private void DeleteShaders()
             {
                 if (program != null)
                 {
-                    program.Unbind(); CheckError();
-                    program.Delete(); CheckError();
+                    program.Unbind();
+                    Utility.CheckGLError();
+                    program.Delete();
+                    Utility.CheckGLError();
                     program = null;
                 }
             }
 
             private void DeleteVBOs()
             {
-                GL.DeleteBuffers(1, buffers); CheckError();
+                GL.DeleteBuffers(1, buffers);
+                Utility.CheckGLError();
 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0); CheckError();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                Utility.CheckGLError();
             }
 
         }
@@ -224,11 +228,12 @@ void main()
 
             m.Init();
             mExtra.Init();
+            mImage.Init();
 
             // Other state
             GL.ClearColor(1, 1, 1, 1);
 
-            CheckError();
+            Utility.CheckGLError();
         }
 
         public void Clear()
@@ -284,13 +289,16 @@ void main()
             foreach (var drawCmd in commandBuffer)
             {
                 var clipRect = drawCmd.ClipRect;
-                GL.BindTexture(GL.GL_TEXTURE_2D, material.textures[0]);// TODO this should be optional
-                GL.Scissor((int) clipRect.X, (int) clipRect.Y, (int) clipRect.Width, (int) clipRect.Height);
+                if (drawCmd.TextureData != null)
+                {
+                    GL.BindTexture(GL.GL_TEXTURE_2D, (uint)drawCmd.TextureData.GetNativeTextureID());
+                }
+                GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                 GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
                 indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount);
             }
 
-            CheckError();
+            Utility.CheckGLError();
 
             // Restore modified GL state
             GL.UseProgram((uint)last_program);//TODO Confirm the conversion from int to uint is correct.
@@ -312,7 +320,7 @@ void main()
         {
             DoRender(m, drawList.DrawBuffer.CommandBuffer, drawList.DrawBuffer.IndexBuffer, drawList.DrawBuffer.VertexBuffer, width, height);
             DoRender(mExtra, drawList.BezierBuffer.CommandBuffer, drawList.BezierBuffer.IndexBuffer, drawList.BezierBuffer.VertexBuffer, width, height);
-            //DoRender(mImage, drawList.ImageBuffer.CommandBuffer, drawList.ImageBuffer.IndexBuffer, drawList.ImageBuffer.VertexBuffer, width, height);
+            DoRender(mImage, drawList.ImageBuffer.CommandBuffer, drawList.ImageBuffer.IndexBuffer, drawList.ImageBuffer.VertexBuffer, width, height);
         }
 
         public void ShutDown()
@@ -320,52 +328,5 @@ void main()
             m.ShutDown();
             mExtra.ShutDown();
         }
-
-        private static void CheckError(
-            [CallerFilePath] string fileName = null,
-            [CallerLineNumber] int lineNumber = 0,
-            [CallerMemberName] string memberName = null)
-        {
-            var error = GL.GetError();
-            string errorStr = "GL_NO_ERROR";
-            switch (error)
-            {
-                case GL.GL_NO_ERROR:
-                    errorStr = "GL_NO_ERROR";
-                    break;
-                case GL.GL_INVALID_ENUM:
-                    errorStr = "GL_INVALID_ENUM";
-                    break;
-                case GL.GL_INVALID_VALUE:
-                    errorStr = "GL_INVALID_VALUE";
-                    break;
-                case GL.GL_INVALID_OPERATION:
-                    errorStr = "GL_INVALID_OPERATION";
-                    break;
-                case GL.GL_STACK_OVERFLOW:
-                    errorStr = "GL_STACK_OVERFLOW";
-                    break;
-                case GL.GL_STACK_UNDERFLOW:
-                    errorStr = "GL_STACK_UNDERFLOW";
-                    break;
-                case GL.GL_OUT_OF_MEMORY:
-                    errorStr = "GL_OUT_OF_MEMORY";
-                    break;
-                case GL.GL_INVALID_FRAMEBUFFER_OPERATION:
-                    errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION";
-                    break;
-                case GL.GL_CONTEXT_LOST:
-                    errorStr = "GL_CONTEXT_LOST";
-                    break;
-            }
-
-            if (error != GL.GL_NO_ERROR)
-            {
-                Debug.WriteLine("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
-                    fileName, lineNumber, error, errorStr, memberName);
-            }
-        }
-
-
     }
 }

@@ -4,7 +4,7 @@
     {
         int elemCount;
         Rect clipRect;
-        Texture textureData;
+        ITexture textureData;
 
         /// <summary>
         /// Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee DrawList's vtx_buffer[] array, indices in idx_buffer[].
@@ -28,7 +28,7 @@
         /// <summary>
         /// texture data
         /// </summary>
-        public Texture TextureData
+        public ITexture TextureData
         {
             get { return textureData; }
             set { textureData = value; }
