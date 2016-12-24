@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace ImGui
 {
-    public sealed class Content : IDisposable
+    public sealed partial class Content : IDisposable
     {
         public static Content None = new Content();
 
@@ -160,47 +160,7 @@ namespace ImGui
             this.TextMesh.Build(rect.TopLeft, style, this.TextContext);
         }
 
-        internal static Content Cached(string t, string id)
-        {
-            Content content;
-            if(!chachedContentMap.TryGetValue(id, out content))
-            {
-                content = new Content(t);
-                content.TextMesh = new TextMesh();
-                chachedContentMap.Add(id, content);
-            }
-            chachedContentMap[id].Text = t;
-            return content;
-        }
-
-        internal static Content Cached(ITexture texture, string id)
-        {
-            Content content;
-            if (!chachedContentMap.TryGetValue(id, out content))
-            {
-                content = new Content(texture);
-                content.TextMesh = new TextMesh();
-                chachedContentMap.Add(id, content);
-            }
-            chachedContentMap[id].Image = texture;
-            return content;
-        }
-        
-        internal static Content CachedTexture(string filePath, string id)
-        {
-            Content content;
-            if (!chachedContentMap.TryGetValue(id, out content))
-            {
-                var texture = GUI.Create(filePath);
-                content = new Content(texture);
-                content.TextMesh = new TextMesh();
-                chachedContentMap.Add(id, content);
-            }
-            return content;
-        }
-
         // TODO This is a temp hack and not a real cache!!
-        private static readonly Dictionary<string, Content> chachedContentMap = new Dictionary<string, Content>(256);
 
         #region IDisposable Members
 

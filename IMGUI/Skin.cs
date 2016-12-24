@@ -248,13 +248,12 @@ namespace ImGui
 
             #region Image
             {
-#if ImageBorder
                 StyleModifier[] normalModifiers =
                 {
-                    new StyleModifier {Name = "BorderTop", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier {Name = "BorderRight", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier {Name = "BorderBottom", Value = new Length(1, Unit.Pixel)},
-                    new StyleModifier {Name = "BorderLeft", Value = new Length(1, Unit.Pixel)},
+                    new StyleModifier {Name = "BorderTop", Value =    1},
+                    new StyleModifier {Name = "BorderRight", Value =  1},
+                    new StyleModifier {Name = "BorderBottom", Value = 1},
+                    new StyleModifier {Name = "BorderLeft", Value =   1},
 
                     new StyleModifier {Name = "BorderTopColor", Value = Color.Black},
                     new StyleModifier {Name = "BorderRightColor", Value = Color.Black},
@@ -262,9 +261,6 @@ namespace ImGui
                     new StyleModifier {Name = "BorderLeftColor", Value = Color.Black},
                 };
                 Image["Normal"] = Style.Make(normalModifiers);
-#else
-                Image["Normal"] = Style.Make();
-#endif
             }
 
 

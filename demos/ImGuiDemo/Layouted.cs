@@ -6,37 +6,36 @@ namespace Calculator
     {
         void F()
         {
-            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.Height(50));
-            {
-                GUILayout.Label("IMGUI Demo project");
-                GUILayout.Label(" ", GUILayout.ExpandWidth(true));
-
-                if (GUILayout.Button("🗕", GUILayout.Width(46), GUILayout.Height(29)))
-                {
-                    Form.current.Minimize();
-                }
-                if (Form.current.FormState == FormState.Normal)
-                {
-                    if (GUILayout.Button("🗖", GUILayout.Width(46), GUILayout.Height(29)))
-                    {
-                        Form.current.Maximize();
-                    }
-                }
-                else
-                {
-                    if (GUILayout.Button("🗗", GUILayout.Width(46), GUILayout.Height(29)))
-                    {
-                        Form.current.Normalize();
-                    }
-                }
-                if (GUILayout.Button("🗙", GUILayout.Width(46), GUILayout.Height(29)))
-                {
-                    //Form.current.RequestClose();
-                }
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.Space(20);
-            GUILayout.Label("ij = I::oO(0xB81l);");
+            //GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.Height(50));
+            //{
+            //    GUILayout.Label("IMGUI Demo project");
+            //    GUILayout.Label(" ", GUILayout.ExpandWidth(true));
+            //
+            //    if (GUILayout.Button("🗕", GUILayout.Width(46), GUILayout.Height(29)))
+            //    {
+            //        Form.current.Minimize();
+            //    }
+            //    if (Form.current.FormState == FormState.Normal)
+            //    {
+            //        if (GUILayout.Button("🗖", GUILayout.Width(46), GUILayout.Height(29)))
+            //        {
+            //            Form.current.Maximize();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (GUILayout.Button("🗗", GUILayout.Width(46), GUILayout.Height(29)))
+            //        {
+            //            Form.current.Normalize();
+            //        }
+            //    }
+            //    if (GUILayout.Button("🗙", GUILayout.Width(46), GUILayout.Height(29)))
+            //    {
+            //        //Form.current.RequestClose();
+            //    }
+            //}
+            //GUILayout.EndHorizontal();
+            //GUILayout.Space(20);
             GUILayout.BeginVertical(Skin.current.Box);
             GUILayout.Label("auto-sized");
             GUILayout.Button("Top Button");

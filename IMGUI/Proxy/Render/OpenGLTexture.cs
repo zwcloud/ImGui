@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -24,6 +25,7 @@ namespace ImGui
 
         public bool LoadImage(string filePath)
         {
+            // check file header, save texture data to buffer
             using (var fileStream = File.Open(filePath, FileMode.Open))
             using (var binaryReader = new BinaryReader(fileStream))
             {
@@ -37,20 +39,20 @@ namespace ImGui
                 textureData = image.Pixels;
             }
 
+            // create opengl texture object
             GL.ActiveTexture(GL.GL_TEXTURE0);
             GL.GenTextures(1, textureIdBuffer);
             var textureHandle = textureIdBuffer[0];
             GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
             var textureDataPtr = Marshal.UnsafeAddrOfPinnedArrayElement(textureData, 0);
             GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, Width, Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, textureDataPtr);
-
             //sampler settings
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
-
             Utility.CheckGLError();
+
             return true;
         }
 
@@ -112,7 +114,7 @@ namespace ImGui
         /// <returns>
         /// The id of the OpenGL texture object.
         /// </returns>
-        public int GetNativeTextureID()
+        public int GetNativeTextureId()
         {
             return (int)textureIdBuffer[0];
         }
@@ -122,7 +124,6 @@ namespace ImGui
         public void Dispose()
         {
             GL.DeleteTextures(1, textureIdBuffer);
-
             Utility.CheckGLError();
         }
 

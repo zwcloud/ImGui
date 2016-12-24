@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -383,44 +384,44 @@ namespace ImGui
 
         #region PolygonButton
 
-        public static bool PolygonButton(Point[] points, Rect textRect, string textWithPossibleId, params LayoutOption[] options)
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string textWithPossibleId, params LayoutOption[] options)
         {
             string text, id;
             Utility.GetId(textWithPossibleId, out text, out id);
             return PolygonButton(points, textRect, text, Skin.current.Button["Normal"], id, options);
         }
 
-        public static bool PolygonButton(Point[] points, Rect textRect, string text, string name, params LayoutOption[] options)
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, string name, params LayoutOption[] options)
         {
             return PolygonButton(points, textRect, text, Skin.current.Button["Normal"], name, options);
         }
 
-        public static bool PolygonButton(Point[] points, Rect textRect, Content content, params LayoutOption[] options)
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, params LayoutOption[] options)
         {
             string text, id;
             Utility.GetId(content.Text, out text, out id);
             return PolygonButton(points, textRect, content, Skin.current.Button["Normal"], id, options);
         }
 
-        public static bool PolygonButton(Point[] points, Rect textRect, Content content, string name, params LayoutOption[] options)
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, string name, params LayoutOption[] options)
         {
             return PolygonButton(points, textRect, content, Skin.current.Button["Normal"], name, options);
         }
 
-        public static bool PolygonButton(Point[] points, Rect textRect, string text, Style style, string name, params LayoutOption[] options)
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, Style style, string name, params LayoutOption[] options)
         {
             return DoPolygonButton(points, textRect, Content.Cached(text, name), style, name, options);
         }
 
-        public static bool PolygonButton(Point[] points, Rect textRect, Content content, Style style, string name, params LayoutOption[] options)
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, Style style, string name, params LayoutOption[] options)
         {
             return DoPolygonButton(points, textRect, content, style, name);
         }
 
-        private static bool DoPolygonButton(Point[] points, Rect textRect, Content content, Style style, string id, params LayoutOption[] options)
+        private static bool DoPolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, Style style, string id, params LayoutOption[] options)
         {
             var rect = new Rect();
-            for (int i = 0; i < points.Length; i++)
+            for (int i = 0; i < points.Count; i++)
             {
                 var point = points[i];
                 rect.Union(point);

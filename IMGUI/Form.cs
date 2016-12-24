@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    public abstract class Form
+    public abstract class Form : IDisposable
     {
         public static Form current;
 
@@ -84,8 +84,8 @@ namespace ImGui
         public void Close()
         {
             this.renderer.ShutDown();
-
             window.Close();
+            this.Dispose();
             this.Closed = true;
         }
 
@@ -277,5 +277,11 @@ namespace ImGui
         {
             return window.ClientToScreen(point);
         }
+
+        #region Implementation of IDisposable
+
+        public abstract void Dispose();
+
+        #endregion
     }
 }

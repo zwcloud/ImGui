@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace ImGui
 {
@@ -41,6 +42,6 @@ namespace ImGui
         /// <returns>
         /// The id of the OpenGL texture object.
         /// </returns>
-        int GetNativeTextureID();
+        int GetNativeTextureId();
     }
 }

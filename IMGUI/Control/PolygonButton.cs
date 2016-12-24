@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ImGui
 {
     internal class PolygonButton
     {
-        internal static bool DoControl(Rect rect, Point[] points, Rect textRect, Content content, string id)
+        internal static bool DoControl(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
         {
             var clicked = false;
             var hovered = MathEx.IsPointInPolygon(Form.current.GetMousePos(), points, new Vector(rect.X, rect.Y));

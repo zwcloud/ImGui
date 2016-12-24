@@ -2,7 +2,7 @@
 {
     internal class Image
     {
-        static internal void DoControl(Rect rect, Content content, string id)
+        internal static void DoControl(Rect rect, Content content, string id)
         {
             if (Event.current.type == EventType.Repaint)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 namespace ImGui
 {
@@ -171,13 +172,13 @@ namespace ImGui
         /// <summary>
         /// Check if a point is in the __convex__ polyon.
         /// </summary>
-        public static bool IsPointInPolygon(Point p, Point[] polygon)
+        public static bool IsPointInPolygon(Point p, IReadOnlyList<Point> polygon)
         {
             double minX = polygon[0].X;
             double maxX = polygon[0].X;
             double minY = polygon[0].Y;
             double maxY = polygon[0].Y;
-            for (int i = 1; i < polygon.Length; i++)
+            for (int i = 1; i < polygon.Count; i++)
             {
                 Point q = polygon[i];
                 minX = Math.Min(q.X, minX);
@@ -193,7 +194,7 @@ namespace ImGui
 
             // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
             bool inside = false;
-            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            for (int i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
             {
                 if ((polygon[i].Y > p.Y) != (polygon[j].Y > p.Y) &&
                     p.X < (polygon[j].X - polygon[i].X) * (p.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X)
@@ -208,14 +209,14 @@ namespace ImGui
         /// <summary>
         /// Check if a point is in the __convex__ polyon with an offset. Every point in points is offset first before checking. The checking will not change points' position.
         /// </summary>
-        public static bool IsPointInPolygon(Point p, Point[] polygon, Vector offset)
+        public static bool IsPointInPolygon(Point p, IReadOnlyList<Point> polygon, Vector offset)
         {
             var polygon0 = polygon[0] + offset;
             double minX = polygon0.X;
             double maxX = polygon0.X;
             double minY = polygon0.Y;
             double maxY = polygon0.Y;
-            for (int i = 1; i < polygon.Length; i++)
+            for (int i = 1; i < polygon.Count; i++)
             {
                 Point q = polygon[i] + offset;
                 minX = Math.Min(q.X, minX);
@@ -231,7 +232,7 @@ namespace ImGui
 
             // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
             bool inside = false;
-            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            for (int i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
             {
                 var point = polygon[i] + offset;
                 var point1 = polygon[j] + offset;

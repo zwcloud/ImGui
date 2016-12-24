@@ -1,4 +1,7 @@
-﻿namespace ImGui
+﻿using System;
+using System.Collections.Generic;
+
+namespace ImGui
 {
     public partial class GUI
     {
@@ -124,17 +127,17 @@
 
         #region PolygonButton
 
-        public static bool PolygonButton(Rect rect, Point[] points, Rect textRect, string text, string id)
+        public static bool PolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, string text, string id)
         {
             return DoPolygonButton(rect, points, textRect, Content.Cached(text, id), id);
         }
 
-        public static bool PolygonButton(Rect rect, Point[] points, Rect textRect, Content content, string id)
+        public static bool PolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
         {
             return DoPolygonButton(rect, points, textRect, content, id);
         }
 
-        public static bool DoPolygonButton(Rect rect, Point[] points, Rect textRect, Content content, string id)
+        public static bool DoPolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
         {
             return ImGui.PolygonButton.DoControl(rect, points, textRect, content, id);
         }
@@ -151,6 +154,11 @@
         public static void Image(Rect rect, ITexture image, string id)
         {
             DoImage(rect, Content.Cached(image, id), id);
+        }
+
+        public static void Image(Rect rect, string filePath, string id)
+        {
+            throw new NotImplementedException();
         }
 
         public static void Image(Rect rect, Content imageContent, string id)
@@ -229,7 +237,7 @@
 
         #region Helper
 
-        public static ITexture Create(string filePath)
+        public static ITexture CreateTexture(string filePath)
         {
             var texture = Application._map.CreateTexture();
             texture.LoadImage(filePath);

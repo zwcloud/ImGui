@@ -269,7 +269,6 @@ void main()
             GL.Disable(GL.GL_CULL_FACE);
             GL.Disable(GL.GL_DEPTH_TEST);
             GL.Enable(GL.GL_SCISSOR_TEST);
-            GL.ActiveTexture(GL.GL_TEXTURE0);// TODO this should be optional
 
             // Setup viewport, orthographic projection matrix
             GL.Viewport(0, 0, width, height);
@@ -291,17 +290,18 @@ void main()
                 var clipRect = drawCmd.ClipRect;
                 if (drawCmd.TextureData != null)
                 {
-                    GL.BindTexture(GL.GL_TEXTURE_2D, (uint)drawCmd.TextureData.GetNativeTextureID());
+                    GL.ActiveTexture(GL.GL_TEXTURE0);
+                    GL.BindTexture(GL.GL_TEXTURE_2D, (uint)drawCmd.TextureData.GetNativeTextureId());
                 }
-                GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
+                //GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                 GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
-                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount);
+                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount*Marshal.SizeOf<DrawIndex>());
             }
 
             Utility.CheckGLError();
 
             // Restore modified GL state
-            GL.UseProgram((uint)last_program);//TODO Confirm the conversion from int to uint is correct.
+            GL.UseProgram((uint)last_program);
             GL.ActiveTexture((uint)last_active_texture);
             GL.BindTexture(GL.GL_TEXTURE_2D, (uint)last_texture);
             GL.BindVertexArray((uint)last_vertex_array);

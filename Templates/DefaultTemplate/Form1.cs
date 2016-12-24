@@ -7,6 +7,7 @@ namespace DefaultTemplate
         public Form1()
             : base(new Point(400, 300), new Size(800, 600))
         {
+            this.InitializeComponent();
         }
     }
 }
