@@ -1,6 +1,6 @@
 ﻿namespace ImGui
 {
-    public struct StyleModifier
+    internal struct StyleModifier
     {
         public string Name;
         public object Value;

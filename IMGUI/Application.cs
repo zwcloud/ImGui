@@ -7,14 +7,10 @@ using System.Linq;
 namespace ImGui
 {
     /// <summary>
-    /// Unique application class
+    /// Encapsulates a ImGui application.
     /// </summary>
     /// <remarks>
-    /// Manage application-wide objects:
-    /// * IME(Internal)
-    /// * Input
-    /// * Windows(internal)
-    /// * Time(internal)
+    /// Application is a class that encapsulates WPF application-specific functionality.
     /// </remarks>
     public static class Application
     {
@@ -44,7 +40,7 @@ namespace ImGui
         /// <summary>
         /// The time in ms since the application started.
         /// </summary>
-        public static long Time
+        internal static long Time
         {
             get
             {
@@ -62,7 +58,7 @@ namespace ImGui
         /// <summary>
         /// The time in ms it took to complete the last frame
         /// </summary>
-        public static long DetlaTime
+        internal static long DetlaTime
         {
             get { return detlaTime; }
         }
@@ -95,13 +91,17 @@ namespace ImGui
         static Rect lastDirtyRect = Rect.Empty;
 #endif
 
+        /// <summary>
+        /// Begins running a standard application on the current thread and makes the specified form visible.
+        /// </summary>
+        /// <param name="mainForm">A <see cref="Form"/> that represents the form to make visible.</param>
         public static void Run(Form mainForm)
         {
             #region Init
             //Check paramter
             if (mainForm == null)
             {
-                throw new ArgumentNullException("mainForm");
+                throw new ArgumentNullException(nameof(mainForm));
             }
 
             //Time
@@ -122,9 +122,9 @@ namespace ImGui
             {
                 frameStartTime = Time;
                 Input.Mouse.Refresh();
-                foreach (Form form in Forms)
+                foreach (Form childForm in Forms)
                 {
-                    windowContext.MainLoop(form.GUILoop);
+                    windowContext.MainLoop(childForm.GUILoop);
                 }
                 if (RequestQuit)
                 {
@@ -136,6 +136,9 @@ namespace ImGui
             //TODO clean up
         }
 
+        /// <summary>
+        /// Closes all application windows and quit the application.
+        /// </summary>
         public static void Quit()
         {
             RequestQuit = true;

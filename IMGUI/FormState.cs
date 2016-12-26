@@ -1,6 +1,6 @@
 ﻿namespace ImGui
 {
-    public enum FormState
+    internal enum FormState
     {
         Normal,
         Minimized,

@@ -1,6 +1,6 @@
 ﻿namespace ImGui.Input
 {
-    public class Keyboard
+    internal class Keyboard
     {
         /// <summary>
         /// Key codes

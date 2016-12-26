@@ -3,18 +3,28 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    public partial class GUI
+    /// <summary>
+    /// The interface for GUI with manual positioning.
+    /// </summary>
+    public class GUI
     {
-        public delegate bool WindowFunction();
+        internal delegate bool WindowFunction();
 
         #region Button
 
+        /// <summary>
+        /// Create a button. When the user click it, something will happen immediately.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="text">text to display on the button</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>true when the users clicks the button.</returns>
         public static bool Button(Rect rect, string text, string id)
         {
             return DoButton(rect, Content.Cached(text, id), id);
         }
 
-        public static bool Button(Rect rect, Content content, string id)
+        internal static bool Button(Rect rect, Content content, string id)
         {
             return DoButton(rect, content, id);
         }
@@ -28,12 +38,18 @@ namespace ImGui
 
         #region Label
 
+        /// <summary>
+        /// Create a label.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="text">text to display on the label</param>
+        /// <param name="id">the unique id of this control</param>
         public static void Label(Rect rect, string text, string id)
         {
             ImGui.Label.DoControl(rect, Content.Cached(text, id), id);
         }
 
-        public static void Label(Rect rect, Content content, string id)
+        internal static void Label(Rect rect, Content content, string id)
         {
             ImGui.Label.DoControl(rect, content, id);
         }
@@ -42,7 +58,7 @@ namespace ImGui
 
         #region Box
 
-        public static void Box(Rect rect, Content content, string id)
+        internal static void Box(Rect rect, Content content, string id)
         {
             DoBox(rect, content, id);
         }
@@ -56,6 +72,13 @@ namespace ImGui
 
         #region Toggle
 
+        /// <summary>
+        /// Create a toggle (check-box).
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="value">Is this toggle checked or unchecked?</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>new value of the toggle</returns>
         public static bool Toggle(Rect rect, bool value, string id)
         {
             return DoToggle(rect, value, id);
@@ -70,12 +93,19 @@ namespace ImGui
 
         #region HoverButton
 
+        /// <summary>
+        /// Create a button that will be actived when the mouse is over it.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="text">text to display on the control</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>whether it is activated (the mouse is over it)</returns>
         public static bool HoverButton(Rect rect, string text, string id)
         {
             return DoHoverButton(rect, Content.Cached(text, id), id);
         }
 
-        public static bool HoverButton(Rect rect, Content content, string id)
+        internal static bool HoverButton(Rect rect, Content content, string id)
         {
             return DoHoverButton(rect, content, id);
         }
@@ -89,17 +119,37 @@ namespace ImGui
 
         #region Slider
 
+        /// <summary>
+        /// Create a horizontal slider that user can drag to select a value.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="value">The value the slider shows.</param>
+        /// <param name="minValue">The value at the top end of the slider.</param>
+        /// <param name="maxValue">The value at the bottom end of the slider.</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>The value set by the user.</returns>
+        /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double Slider(Rect rect, double value, double minValue, double maxValue, string id)
         {
             return Slider(rect, value, minValue, maxValue, true, id);
         }
 
+        /// <summary>
+        /// Create a vertical slider that user can drag to select a value.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="value">The value the slider shows.</param>
+        /// <param name="minValue">The value at the top end of the slider.</param>
+        /// <param name="maxValue">The value at the bottom end of the slider.</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>The value set by the user.</returns>
+        /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double VSlider(Rect rect, double value, double minValue, double maxValue, string id)
         {
             return Slider(rect, value, minValue, maxValue, false, id);
         }
 
-        public static double Slider(Rect rect, double value, double minValue, double maxValue, bool isHorizontal, string id)
+        internal static double Slider(Rect rect, double value, double minValue, double maxValue, bool isHorizontal, string id)
         {
             return ImGui.Slider.DoControl(rect, value, minValue, maxValue, isHorizontal, id);
         }
@@ -108,12 +158,20 @@ namespace ImGui
 
         #region ToggleButton
 
+        /// <summary>
+        /// Create a button that acts like a toggle.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="text">text to display on the button</param>
+        /// <param name="value">Is this toggle checked or unchecked?</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>new value of the toggle-button</returns>
         public static bool ToggleButton(Rect rect, string text, bool value, string id)
         {
             return DoToggleButton(rect, Content.Cached(text, id), value, id);
         }
 
-        public static bool ToggleButton(Rect rect, Content content, bool value, string id)
+        internal static bool ToggleButton(Rect rect, Content content, bool value, string id)
         {
             return DoToggleButton(rect, content, value, id);
         }
@@ -127,17 +185,26 @@ namespace ImGui
 
         #region PolygonButton
 
+        /// <summary>
+        /// Create a polyon-button.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="points"><see cref="ImGui.Point"/> list of the polygon.</param>
+        /// <param name="textRect">the rect that occupied by the text</param>
+        /// <param name="text">text to display on the button</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>true when the users clicks the button.</returns>
         public static bool PolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, string text, string id)
         {
             return DoPolygonButton(rect, points, textRect, Content.Cached(text, id), id);
         }
 
-        public static bool PolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
+        internal static bool PolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
         {
             return DoPolygonButton(rect, points, textRect, content, id);
         }
 
-        public static bool DoPolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
+        internal static bool DoPolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
         {
             return ImGui.PolygonButton.DoControl(rect, points, textRect, content, id);
         }
@@ -146,22 +213,23 @@ namespace ImGui
 
         #region Image
 
-        //public static void Image(Rect rect, string imageFilePath, string id)
-        //{
-        //    DoImage(rect, Content.Cached(new te, id), id);
-        //}
+        /// <summary>
+        /// Create a image.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="filePath">file path of the image to display. The path should be relative to current dir or absolute.</param>
+        /// <param name="id">the unique id of this control</param>
+        public static void Image(Rect rect, string filePath, string id)
+        {
+            DoImage(rect, Content.CachedTexture(filePath, id), id);
+        }
 
-        public static void Image(Rect rect, ITexture image, string id)
+        internal static void Image(Rect rect, ITexture image, string id)
         {
             DoImage(rect, Content.Cached(image, id), id);
         }
 
-        public static void Image(Rect rect, string filePath, string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static void Image(Rect rect, Content imageContent, string id)
+        internal static void Image(Rect rect, Content imageContent, string id)
         {
             DoImage(rect, imageContent, id);
         }
@@ -237,7 +305,7 @@ namespace ImGui
 
         #region Helper
 
-        public static ITexture CreateTexture(string filePath)
+        internal static ITexture CreateTexture(string filePath)
         {
             var texture = Application._map.CreateTexture();
             texture.LoadImage(filePath);

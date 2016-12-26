@@ -47,7 +47,7 @@ namespace ImGui
         }
 
         // Detects the current OS (Windows, Linux, MacOS)
-        public static class CurrentOS
+        internal static class CurrentOS
         {
             static CurrentOS()
             {

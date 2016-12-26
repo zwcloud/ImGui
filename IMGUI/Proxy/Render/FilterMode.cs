@@ -3,7 +3,7 @@
     /// <summary>
     /// Filtering mode for textures.
     /// </summary>
-    public enum FilterMode
+    internal enum FilterMode
     {
         /// <summary>
         /// Point filtering - texture pixels become blocky up close.

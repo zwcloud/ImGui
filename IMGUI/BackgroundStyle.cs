@@ -1,11 +1,11 @@
 ﻿namespace ImGui
 {
-    public struct BackgroundStyle
+    internal struct BackgroundStyle
     {
         /// <summary>
         /// Image that used as a background
         /// </summary>
-        public Texture Image { get; set; }
+        public ITexture Image { get; set; }
         
         /// <summary>
         /// Background color

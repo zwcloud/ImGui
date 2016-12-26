@@ -1,6 +1,6 @@
 ﻿namespace ImGui
 {
-    public enum Alignment
+    internal enum Alignment
     {
         Start,
         Center,

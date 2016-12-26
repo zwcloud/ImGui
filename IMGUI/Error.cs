@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    public class Error
+    internal class Error
     {
         public static string Get(ErrorId errorId)
         {
@@ -25,7 +25,7 @@ namespace ImGui
         }
     }
 
-    public enum ErrorId
+    internal enum ErrorId
     {
         Unknown,
         Size_WidthAndHeightCannotBeNegative,

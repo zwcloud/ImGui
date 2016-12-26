@@ -1,6 +1,6 @@
 ﻿namespace ImGui
 {
-    public struct ColorF
+    internal struct ColorF
     {
         public float r, g, b, a;
 

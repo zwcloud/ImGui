@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    public sealed partial class Content
+    internal sealed partial class Content
     {
         internal static Content Cached(string t, string id)
         {

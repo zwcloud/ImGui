@@ -15,7 +15,7 @@ namespace ImGui.Internal
     // 
     [DebuggerDisplay("Count = {Count}")]
     [Serializable]
-    public class List<T> : IList<T>, System.Collections.IList, IReadOnlyList<T>
+    internal class List<T> : IList<T>, System.Collections.IList, IReadOnlyList<T>
     {
         private const int _defaultCapacity = 4;
 

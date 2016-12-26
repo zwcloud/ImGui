@@ -43,9 +43,9 @@ using Real = System.Single;
 namespace LibTessDotNet
 #endif
 {
-    public struct Vec3
+    internal struct Vec3
     {
-        public readonly static Vec3 Zero = new Vec3();
+        public static readonly Vec3 Zero = new Vec3();
 
         public Real X, Y, Z;
 

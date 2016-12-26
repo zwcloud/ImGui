@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ImGui
 {
-    public partial class Style
+    internal partial class Style
     {
         /// <summary>
         /// the default style

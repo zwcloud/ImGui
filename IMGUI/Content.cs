@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace ImGui
 {
-    public sealed partial class Content : IDisposable
+    internal sealed partial class Content : IDisposable
     {
         public static Content None = new Content();
 

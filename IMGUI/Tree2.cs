@@ -42,23 +42,23 @@ namespace ImGui
 	//-----------------------------------------------------------------------------
 	// IDeepCopy
 
-	public interface IDeepCopy
+	internal interface IDeepCopy
 	{
 		object CreateDeepCopy();
 	}
 
-	//-----------------------------------------------------------------------------
-	// IEnumerableCollection
+    //-----------------------------------------------------------------------------
+    // IEnumerableCollection
 
-	public interface IEnumerableCollection<T> : IEnumerable<T>, ICollection
+    internal interface IEnumerableCollection<T> : IEnumerable<T>, ICollection
 	{
 		bool Contains( T item );
 	}
 
-	//-----------------------------------------------------------------------------
-	// IEnumerableCollectionPair
+    //-----------------------------------------------------------------------------
+    // IEnumerableCollectionPair
 
-	public interface IEnumerableCollectionPair<T>
+    internal interface IEnumerableCollectionPair<T>
 	{
 		IEnumerableCollection<INode<T>> Nodes { get; }
 		IEnumerableCollection<T> Values { get; }
@@ -66,10 +66,10 @@ namespace ImGui
 		INode<T> Find( Predicate<T> predicate );
 	}
 
-	//-----------------------------------------------------------------------------
-	// EventArgs
+    //-----------------------------------------------------------------------------
+    // EventArgs
 
-	public class NodeTreeDataEventArgs<T> : EventArgs
+    internal class NodeTreeDataEventArgs<T> : EventArgs
 	{
 		private T _Data = default( T );
 
@@ -81,7 +81,7 @@ namespace ImGui
 		}
 	}
 
-	public class NodeTreeNodeEventArgs<T> : EventArgs
+    internal class NodeTreeNodeEventArgs<T> : EventArgs
 	{
 		private INode<T> _Node = null;
 
@@ -93,7 +93,7 @@ namespace ImGui
 		}
 	}
 
-	public enum NodeTreeInsertOperation
+    internal enum NodeTreeInsertOperation
 	{
 		Previous,
 		Next,
@@ -101,7 +101,7 @@ namespace ImGui
 		Tree
 	}
 
-	public class NodeTreeInsertEventArgs<T> : EventArgs
+    internal class NodeTreeInsertEventArgs<T> : EventArgs
 	{
 		private NodeTreeInsertOperation _Operation;
 		public NodeTreeInsertOperation Operation { get { return _Operation; } }
@@ -116,10 +116,10 @@ namespace ImGui
 		}
 	}
 
-	//-----------------------------------------------------------------------------
-	// INode<T>
+    //-----------------------------------------------------------------------------
+    // INode<T>
 
-	public interface INode<T> : IEnumerableCollectionPair<T>, IDisposable//, ICollection<T>
+    internal interface INode<T> : IEnumerableCollectionPair<T>, IDisposable//, ICollection<T>
 	{
 		T Data { get; set; }
 
@@ -223,10 +223,10 @@ namespace ImGui
 		event EventHandler<NodeTreeNodeEventArgs<T>> DeepCopied;
 	}
 
-	//-----------------------------------------------------------------------------
-	// ITree<T>
+    //-----------------------------------------------------------------------------
+    // ITree<T>
 
-	public interface ITree<T> : IEnumerableCollectionPair<T>, IDisposable//, ICollection<T>
+    internal interface ITree<T> : IEnumerableCollectionPair<T>, IDisposable//, ICollection<T>
 	{
 		Type DataType { get; }
 
@@ -289,7 +289,7 @@ namespace ImGui
 	// NodeTree
 
 	[Serializable]
-	public class NodeTree<T> : INode<T>, ITree<T>, ISerializable
+    internal class NodeTree<T> : INode<T>, ITree<T>, ISerializable
 	{
 		private T _Data = default( T );
 

@@ -7,7 +7,7 @@ using CSharpGL;
 
 namespace ImGui
 {
-    public class OpenGLTexture : ITexture
+    internal class OpenGLTexture : ITexture
     {
         public static readonly byte[] PngHeaderEightBytes =
         {

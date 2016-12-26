@@ -4,7 +4,7 @@
     /// The font weight enumeration describes common values for degree of blackness or thickness of strokes of characters in a font.
     /// Font weight values less than 1 or greater than 999 are considered to be invalid, and they are rejected by font API functions.
     /// </summary>
-    public enum FontWeight
+    internal enum FontWeight
     {
         /// <summary>
         /// Predefined font weight : Thin (100).
@@ -97,7 +97,7 @@
     /// as specified by a font designer for the glyphs in a font.
     /// Values less than 1 or greater than 9 are considered to be invalid, and they are rejected by font API functions.
     /// </summary>
-    public enum FontStretch
+    internal enum FontStretch
     {
         /// <summary>
         /// Predefined font stretch : Not known (0).
@@ -159,7 +159,7 @@
     /// The font style enumeration describes the slope style of a font face, such as Normal, Italic or Oblique.
     /// Values other than the ones defined in the enumeration are considered to be invalid, and they are rejected by font API functions.
     /// </summary>
-    public enum FontStyle
+    internal enum FontStyle
     {
         /// <summary>
         /// Font slope style : Normal.
@@ -181,7 +181,7 @@
     /// Alignment of paragraph text along the reading direction axis relative to 
     /// the leading and trailing edge of the layout box.
     /// </summary>
-    public enum TextAlignment
+    internal enum TextAlignment
     {
         /// <summary>
         /// The leading edge of the paragraph text is aligned to the layout box's leading edge.

@@ -3,7 +3,7 @@ using System;
 
 namespace ImGui
 {
-    public class PangoTextContext : ITextContext
+    internal class PangoTextContext : ITextContext
     {
         private readonly Pango.FontDescription desc;
         private readonly Cairo.Context g;

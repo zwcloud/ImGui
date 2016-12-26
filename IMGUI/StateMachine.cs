@@ -1,6 +1,6 @@
 namespace ImGui
 {
-    public class StateMachine
+    internal class StateMachine
     {
         class StateTransition
         {

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    public interface ITexture : IDisposable
+    internal interface ITexture : IDisposable
     {
         bool LoadImage(byte[] data);
         bool LoadImage(string filePath);

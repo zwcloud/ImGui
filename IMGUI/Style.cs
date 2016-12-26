@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    public partial class Style
+    internal partial class Style
     {
         #region Box styles
 

@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    public sealed class Skin
+    internal sealed class Skin
     {
         public Dictionary<string, Style> Button { get; private set; }
         public Dictionary<string, Style> Label { get; private set; }

@@ -6,7 +6,7 @@ namespace ImGui
     /// <summary>
     /// Extended class for System.Math
     /// </summary>
-    public class MathEx
+    internal class MathEx
     {
         /// <summary>
         /// Clamps a value between a minimum float and maximum double value.

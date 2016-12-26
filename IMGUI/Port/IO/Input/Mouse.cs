@@ -8,7 +8,7 @@ namespace ImGui.Input
     /// <summary>
     /// input
     /// </summary>
-    public static class Mouse
+    internal static class Mouse
     {
         #region State machine define
         internal static class MouseState

@@ -2,7 +2,7 @@ using System;
 
 namespace ImGui
 {
-    public interface IWindow
+    internal interface IWindow
     {
         /// <summary>
         /// Platform specific handle related to the window.

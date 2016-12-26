@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    public struct Color
+    internal struct Color
     {
         public Color(double r, double g, double b) : this(r, g, b, 1.0)
         {

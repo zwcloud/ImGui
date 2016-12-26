@@ -3,7 +3,7 @@
     /// <summary>
     /// Wrap mode for textures.
     /// </summary>
-    public enum TextureWrapMode
+    internal enum TextureWrapMode
     {
         /// <summary>
         /// Tiles the texture, creating a repeating pattern.

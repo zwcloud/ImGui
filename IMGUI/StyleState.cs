@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    public class StyleState : Dictionary<string, ImGui.Style>
+    internal class StyleState : Dictionary<string, ImGui.Style>
     {
         public StyleState(Dictionary<string, ImGui.Style> states) : base(states)
         {

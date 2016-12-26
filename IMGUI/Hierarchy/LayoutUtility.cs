@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 namespace ImGui
 {
-    public enum EventType
+    internal enum EventType
     {
         Layout,
         Repaint,
@@ -15,21 +15,21 @@ namespace ImGui
         NormalizeWindow,
     }
 
-    public class Event
+    internal class Event
     {
         public static Event current;
 
         public EventType type;
     }
 
-    public class LayoutUtility
+    internal class LayoutUtility
     {
-        public static Rect GetRect(Content content, Style style, LayoutOption[] options)
+        internal static Rect GetRect(Content content, Style style, LayoutOption[] options)
         {
             return DoGetRect(content, style, options);
         }
 
-        public static Rect GetRect(Size contentSize, Style style, LayoutOption[] options)
+        internal static Rect GetRect(Size contentSize, Style style, LayoutOption[] options)
         {
             return DoGetRect(contentSize, style, options);
         }

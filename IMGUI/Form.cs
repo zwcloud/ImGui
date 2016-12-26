@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    public abstract class Form : IDisposable
+    /// <summary>
+    /// Represents a window that makes up an application's user interface.
+    /// </summary>
+    public abstract class Form
     {
         public static Form current;
 
@@ -13,11 +16,15 @@ namespace ImGui
         internal LayoutCache layoutCache = new LayoutCache();
         internal GUIState uiState = new GUIState();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Form"/> class at specific rectangle.
+        /// </summary>
+        /// <param name="rect">initial rectangle of the form</param>
         protected Form(Rect rect):this(rect.TopLeft, rect.Size)
         {
         }
 
-        protected Form(Point position, Size size, string Title = "<unnamed>")
+        internal Form(Point position, Size size, string Title = "<unnamed>")
         {
             this.window = Application.windowContext.CreateWindow(position, size);
             this.window.Title = Title;
@@ -39,7 +46,7 @@ namespace ImGui
             InitGUI();
         }
 
-        public FormState FormState
+        internal FormState FormState
         {
             get { return formState; }
             set { formState = value; }
@@ -52,54 +59,53 @@ namespace ImGui
 
         #region window management
 
-        public bool Closed { get; private set; }
+        internal bool Closed { get; private set; }
 
-        public IntPtr Pointer { get { return window.Pointer; } }
+        internal IntPtr Pointer { get { return window.Pointer; } }
 
-        public Size Size
+        internal Size Size
         {
             get { return window.Size; }
             set { window.Size = value; }
         }
 
-        public Point Position
+        internal Point Position
         {
             get { return window.Position; }
             set { window.Position = value; }
         }
 
-        public bool Focused { get { throw new NotImplementedException(); } }
+        internal bool Focused { get { throw new NotImplementedException(); } }
 
-        public void Show()
+        internal void Show()
         {
             window.Show();
             Event.current.type = EventType.Layout;
         }
 
-        public void Hide()
+        internal void Hide()
         {
             window.Hide();
         }
 
-        public void Close()
+        internal void Close()
         {
             this.renderer.ShutDown();
             window.Close();
-            this.Dispose();
             this.Closed = true;
         }
 
-        public void Minimize()
+        internal void Minimize()
         {
             Event.current.type = EventType.MinimizeWindow;
         }
 
-        public void Maximize()
+        internal void Maximize()
         {
             Event.current.type = EventType.MaximizeWindow;
         }
 
-        public void Normalize()
+        internal void Normalize()
         {
             Event.current.type = EventType.NormalizeWindow;
 
@@ -131,7 +137,7 @@ namespace ImGui
         }
 
         /// <summary>
-        /// Custom GUI Logic. This should be implemented by the user.
+        /// GUI Logic. This will be implemented by the user.
         /// </summary>
         protected abstract void OnGUI();
 
@@ -172,7 +178,7 @@ namespace ImGui
             Console.WriteLine("HoverId: {0}", this.uiState.HoverId);
         }
 
-        void handleEvent()
+        private void handleEvent()
         {
             switch (Event.current.type)
             {
@@ -226,7 +232,7 @@ namespace ImGui
             }
         }
 
-        void Render()
+        internal void Render()
         {
             this.renderer.Clear();
             this.renderer.RenderDrawList(this.DrawList, (int)this.Size.Width, (int)this.Size.Height);
@@ -258,30 +264,24 @@ namespace ImGui
             layoutCache.Push(formGroup);
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Get the mouse position relative to this form
         /// </summary>
-        public Point GetMousePos()
+        internal Point GetMousePos()
         {
             return Application.windowContext.ScreenToClient(window, Application.inputContext.MousePosition);
         }
 
-        public Point ScreenToClient(Point point)
+        internal Point ScreenToClient(Point point)
         {
             return window.ScreenToClient(point);
         }
 
-        public Point ClientToScreen(Point point)
+        internal Point ClientToScreen(Point point)
         {
             return window.ClientToScreen(point);
         }
-
-        #region Implementation of IDisposable
-
-        public abstract void Dispose();
-
-        #endregion
     }
 }

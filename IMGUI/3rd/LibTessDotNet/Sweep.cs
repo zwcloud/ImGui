@@ -42,7 +42,7 @@ using Real = System.Single;
 namespace LibTessDotNet
 #endif
 {
-    public partial class Tess
+    internal partial class Tess
     {
         internal class ActiveRegion
         {
