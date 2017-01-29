@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    internal partial class OpenGLRenderer
+    internal partial class Win32OpenGLRenderer
     {
         #region Native
         [DllImport("user32.dll", SetLastError = true, ExactSpelling = true)]

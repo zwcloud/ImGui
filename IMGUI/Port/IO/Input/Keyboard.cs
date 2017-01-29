@@ -693,6 +693,11 @@
             return lastKeyStates[(int)key] == InputState.Down && keyStates[(int)key] == InputState.Up;
         }
 
+        public static bool KeyOn(Key key)
+        {
+            return keyStates[(int)key] == InputState.On;
+        }
+
         private static long[] lastKeyPressedTime;
         private static bool[] isRepeatingKey;
 

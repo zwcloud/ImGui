@@ -63,7 +63,7 @@ namespace ImGui
 
         private static IRenderer CRenderer()
         {
-            return new OpenGLRenderer();
+            return new Win32OpenGLRenderer();
         }
 
         private static ITexture CTexture()

@@ -193,7 +193,7 @@ namespace ImGui.Input
         /// <returns>true: successful; false: failed</returns>
         /// <remarks>The mouse states will persist until next call of this method, 
         /// and last states will be recorded.</remarks>
-        public static bool Refresh()
+        public static InputInfo Refresh()
         {
             Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);//Fetch unused state
 
@@ -243,7 +243,7 @@ namespace ImGui.Input
             System.Diagnostics.Debug.WriteLineIf(A != B, string.Format("Mouse {0}=>{1}", A, B));
 #endif
 
-            return true;
+            return new InputInfo();
         }
         
         private static string suspendedState;

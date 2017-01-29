@@ -182,7 +182,7 @@ namespace ImGui
         {
         }
 
-        public void MainLoop(Action guiMethod)
+        public void MainLoop(Action<InputInfo> guiMethod, InputInfo inputInfo)
         {
             MSG msg = new MSG();
             if (PeekMessage(ref msg, IntPtr.Zero, 0, 0, 0x0001/*PM_REMOVE*/))//handle windows messages
@@ -192,7 +192,7 @@ namespace ImGui
             }
             else//handle imgui logic
             {
-                guiMethod();
+                guiMethod(inputInfo);
             }
             //if(msg.message != 0x12/*WM_QUIT*/) //...
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -121,10 +122,57 @@ namespace ImGui
             while (!mainForm.Closed)
             {
                 frameStartTime = Time;
+
                 Input.Mouse.Refresh();
+                //Collect input info form mouse/keyboard
+                InputInfo inputInfo = new InputInfo();
+                inputInfo.MousePosition = Input.Mouse.MousePos;
+                inputInfo.Delta = Input.Mouse.MousePos - Input.Mouse.LastMousePos;
+                if (Input.Mouse.LeftButtonState == InputState.Down)
+                {
+                    inputInfo.Button |= MouseButton.LeftButton;
+                }
+                // TODO
+                //if (Input.Mouse.MiddleButtonState == InputState.Down)
+                //{
+                //    inputInfo.Button |= MouseButton.MiddleButton;
+                //}
+                if (Input.Mouse.RightButtonState == InputState.Down)
+                {
+                    inputInfo.Button |= MouseButton.RightButton;
+                }
+                if (Input.Keyboard.KeyDown(Keyboard.Key.LeftShift)
+                    || Input.Keyboard.KeyDown(Keyboard.Key.RightShift))
+                {
+                    inputInfo.Modifiers |= Modifiers.Shift;
+                }
+                if (Input.Keyboard.KeyDown(Keyboard.Key.LeftControl)
+                    || Input.Keyboard.KeyDown(Keyboard.Key.RightControl))
+                {
+                    inputInfo.Modifiers |= Modifiers.Control;
+                }
+                if (Input.Keyboard.KeyDown(Keyboard.Key.LeftAlt)
+                    || Input.Keyboard.KeyDown(Keyboard.Key.RightAlt))
+                {
+                    inputInfo.Modifiers |= Modifiers.Alt;
+                }
+                if (Input.Keyboard.KeyDown(Keyboard.Key.LeftWindows)
+                    || Input.Keyboard.KeyDown(Keyboard.Key.RightWindows))
+                {
+                    inputInfo.Modifiers |= Modifiers.Command;
+                }
+                if (Input.Keyboard.KeyOn(Keyboard.Key.NumLock))
+                {
+                    inputInfo.Modifiers |= Modifiers.Numeric;
+                }
+                if (Input.Keyboard.KeyOn(Keyboard.Key.CapsLock))
+                {
+                    inputInfo.Modifiers |= Modifiers.CapsLock;
+                }
+
                 foreach (Form childForm in Forms)
                 {
-                    windowContext.MainLoop(childForm.GUILoop);
+                    windowContext.MainLoop(childForm.GUILoop, inputInfo);
                 }
                 if (RequestQuit)
                 {

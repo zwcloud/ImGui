@@ -11,6 +11,8 @@ namespace ImGui
         public static Form current;
 
         private readonly IWindow window;
+        private bool needsRepaint = false;
+
         internal DrawList DrawList = new DrawList();
         internal IRenderer renderer;
         internal LayoutCache layoutCache = new LayoutCache();
@@ -114,6 +116,11 @@ namespace ImGui
 #endif
         }
 
+        internal void Repaint()
+        {
+            needsRepaint = true;
+        }
+
         #endregion
 
         #region the GUI Loop
@@ -157,7 +164,7 @@ namespace ImGui
         /// <summary>
         /// GUI Loop
         /// </summary>
-        internal void GUILoop()
+        internal void GUILoop(InputInfo inputInfo)
         {
             current = this;
 
@@ -246,14 +253,13 @@ namespace ImGui
         /// </summary>
         private void InitGUI()
         {
-            var clientWidth = (int) Size.Width;
-            var clientHeight = (int) Size.Height;
-            
             // init the layout group of this form
             LoadFormGroup();
 
             // init the event
             Event.current = new Event();
+
+            Repaint();
         }
 
         private void LoadFormGroup()

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    partial class OpenGLRenderer : IRenderer
+    partial class Win32OpenGLRenderer : IRenderer
     {
         class Material
         {

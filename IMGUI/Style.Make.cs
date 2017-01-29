@@ -67,7 +67,7 @@ namespace ImGui
             var type = result.GetType();
             foreach (var m in modifiers)
             {
-                var property = type.GetProperty(m.Name);
+                var property = type.GetTypeInfo().GetProperty(m.Name);
 #if DEBUG
                 Debug.Assert(property.CanWrite, "Specified property is readonly");
 #endif

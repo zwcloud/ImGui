@@ -4,7 +4,7 @@ namespace ImGui
 {
     interface IWindowContext
     {
-        void MainLoop(Action guiMethod);
+        void MainLoop(Action<InputInfo> guiMethod, InputInfo inputInfo);
 
         IWindow CreateWindow(Point position, Size size);
 

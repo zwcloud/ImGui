@@ -1,13 +1,12 @@
 ﻿//#define INSPECT_STATE
 using System;
 using System.Diagnostics;
-using Context = Cairo.Context;
 using Key = ImGui.Input.Keyboard.Key;
 
 //TODO construct a more specific render section
 namespace ImGui
 {
-    internal class TextBox : Control
+    internal class TextBox
     {
         #region State machine define
         private static class TextBoxState
@@ -87,7 +86,6 @@ namespace ImGui
                     text = value;
                     //Update layout text
                     TextContext.Text = value;
-                    NeedRepaint = true;
                 }
             }
         }
@@ -103,7 +101,6 @@ namespace ImGui
                 if (value != caretIndex)
                 {
                     caretIndex = value;
-                    NeedRepaint = true;
                 }
             }
         }
@@ -116,7 +113,6 @@ namespace ImGui
                 if(value!=selectIndex)
                 {
                     selectIndex = value;
-                    NeedRepaint = true;
                 }
             }
         }
@@ -491,17 +487,6 @@ namespace ImGui
             {
                 g.DrawBoxModel(Rect, new Content(TextContext), style);
             }
-            this.RenderRects.Add(Rect);
-        }
-
-        public override void Dispose()
-        {
-            TextContext.Dispose();
-        }
-
-        public override void OnClear(Context g)
-        {
-            g.FillRectangle(Rect, CairoEx.ColorWhite);
             this.RenderRects.Add(Rect);
         }
 

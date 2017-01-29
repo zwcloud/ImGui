@@ -1,243 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{495935C7-70A3-40E3-93CD-1CEBBD591B99}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImGui</RootNamespace>
-    <AssemblyName>ImGui</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <Description>ImGui Framework Library</Description>
+    <Company>zwcloud</Company>
+    <Product>zwcloud.ImGui</Product>
+    <Copyright>Copyright (c) 2016-2017 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
+    <PackageProjectUrl>https://zwcloud.net/#project/imgui</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="sfmlnet-system-2">
-      <HintPath>..\Reference\sfmlnet-system-2.dll</HintPath>
-    </Reference>
-    <Reference Include="sfmlnet-window-2">
-      <HintPath>..\Reference\sfmlnet-window-2.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
+    <Compile Remove="Control\tobefixed\**" />
+    <EmbeddedResource Remove="Control\tobefixed\**" />
+    <None Remove="Control\tobefixed\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Alignment.cs" />
-    <Compile Include="BackgroundStyle.cs" />
-    <Compile Include="BaseForm.cs" />
-    <Compile Include="BorderlessForm.cs" />
-    <Compile Include="CarioExtension.cs">
-      <DeployService-Deploy>True</DeployService-Deploy>
-    </Compile>
-    <Compile Include="DrawList\DrawList.Primitives.cs" />
-    <Compile Include="Content.cs" />
-    <Compile Include="Control\Box.cs" />
-    <Compile Include="Control\Button.cs" />
-    <Compile Include="Control\Control.cs" />
-    <Compile Include="Control\HoverButton.cs" />
-    <Compile Include="Control\Image.cs" />
-    <Compile Include="Control\IRenderable.cs" />
-    <Compile Include="Control\IUpdatable.cs" />
-    <Compile Include="Control\Label.cs" />
-    <Compile Include="Control\Radio.cs" />
-    <Compile Include="Control\RadioButton.cs" />
-    <Compile Include="Control\SimpleControl.cs" />
-    <Compile Include="Control\SliderV.cs" />
-    <Compile Include="Control\Slider.cs" />
-    <Compile Include="Control\Space.cs" />
-    <Compile Include="Control\TextBox.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Control\Toggle.cs" />
-    <Compile Include="Control\PolygonButton.cs" />
-    <Compile Include="Control\ToggleButton.cs" />
-    <Compile Include="Control\ToolTips\ToolTip.cs" />
-    <Compile Include="Detalied\Point.cs" />
-    <Compile Include="Detalied\Rect.cs" />
-    <Compile Include="Detalied\Size.cs" />
-    <Compile Include="Detalied\Vector.cs" />
-    <Compile Include="DrawList\DrawCommand.cs" />
-    <Compile Include="DrawList\DrawIndex.cs" />
-    <Compile Include="DrawList\DrawList.cs" />
-    <Compile Include="DrawList\DrawVertex.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="Error.cs" />
-    <Compile Include="Font.cs" />
-    <Compile Include="Form.cs" />
-    <Compile Include="FormState.cs" />
-    <Compile Include="GUI.cs" />
-    <Compile Include="GUILayout.cs" />
-    <Compile Include="GUIRenderer.cs" />
-    <Compile Include="Hierarchy\DummyBox.cs" />
-    <Compile Include="Hierarchy\IRenderBox.cs" />
-    <Compile Include="Hierarchy\LayoutEntry.cs" />
-    <Compile Include="Hierarchy\LayoutGroup.cs" />
-    <Compile Include="Hierarchy\LayoutOption.cs" />
-    <Compile Include="Hierarchy\LayoutUtility.cs" />
-    <Compile Include="InputState.cs" />
-    <Compile Include="Input\Mouse.cs" />
-    <Compile Include="Input\Keyboard.cs" />
-    <Compile Include="IntRect.cs" />
-    <Compile Include="IWindow.cs" />
-    <Compile Include="Hierarchy\LayoutCache.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="MathEx.cs" />
-    <Compile Include="MouseButton.cs" />
-    <Compile Include="Native.cs" />
-    <Compile Include="Port\ITextContext.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Proxy\PangoTextContext.cs" />
-    <Compile Include="RenderContext.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="Port\TextEnums.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Proxy\DWriteTextContext.cs" />
-    <Compile Include="Rect.cs" />
-    <Compile Include="SFMLForm.cs" />
-    <Compile Include="Size.cs" />
-    <Compile Include="Skin.cs" />
-    <Compile Include="StateMachine.cs" />
-    <Compile Include="StateMachineEx.cs" />
-    <Compile Include="Style.Build.cs" />
-    <Compile Include="Style.cs" />
-    <Compile Include="Style.Make.cs" />
-    <Compile Include="StyleModifier.cs" />
-    <Compile Include="StyleState.cs" />
-    <Compile Include="TextStyle.cs" />
-    <Compile Include="Texture.Presets.cs" />
-    <Compile Include="Texture.cs" />
-    <Compile Include="TODO.cs" />
-    <Compile Include="List.cs" />
-    <Compile Include="Utility.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Application.cs" />
+    <ProjectReference Include="W:\VS2015\DWriteSharp\src\DWriteSharp\DWriteSharp.csproj" />
+    <ProjectReference Include="W:\VS2013\CSharpGL.Core\CSharpGL\CSharpGL.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSharpGL.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
-    <None Include="sfmlnet-system-2.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="sfmlnet-window-2.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha1-00099" />
+    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CairoSharp\Binding\CairoSharp.Desktop\Cairo.csproj">
-      <Project>{3c49a7e8-1708-4930-b741-8648848ec084}</Project>
-      <Name>Cairo</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\CSharpGL.Core\Core\CSharpGL\CSharpGL.csproj">
-      <Project>{0d6e73c8-27b8-4614-9861-f4f22808ea7c}</Project>
-      <Name>CSharpGL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\PangoSharp\GLib\GLib.csproj">
-      <Project>{3BF1D531-8840-4F15-8066-A9788D8C398B}</Project>
-      <Name>GLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\PangoSharp\Pango\Pango.csproj">
-      <Project>{04EC04F9-AA1F-494D-86A7-033DB42D9EBA}</Project>
-      <Name>Pango</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ZWCloud.DwriteCairo\DwriteCairo\DwriteCairo.csproj">
-      <Project>{233143AD-EDF8-49C4-B69D-2D1EBF58B82E}</Project>
-      <Name>DwriteCairo</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Control\Menu\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

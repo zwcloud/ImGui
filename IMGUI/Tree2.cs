@@ -2655,7 +2655,7 @@ namespace ImGui
 			if ( data is INode<T> ) throw new ArgumentException( "Object is a node" );
 
 			if ( ( !typeof( T ).GetTypeInfo().IsClass) || ( ( object ) data ) != null )
-				if ( !DataType.IsInstanceOfType( data ) )
+				if ( !DataType.GetTypeInfo().IsInstanceOfType( data ) )
 					throw new ArgumentException( "Object is not a " + DataType.Name );
 
 			if ( _EventHandlerList != null )
