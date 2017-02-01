@@ -39,7 +39,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpGL", "..\..\VS2013\CS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidTemplate", "Templates\AndroidTemplate\AndroidTemplate.csproj", "{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5F2276E6-BDAC-489C-A620-7C14D78B4BEB}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ImGui", "src\ImGui\ImGui.shproj", "{C5FAE04D-B79D-4999-BB5B-80C6EA593A05}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\ImGui\ImGui.projitems*{c5fae04d-b79d-4999-bb5b-80c6ea593a05}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -228,6 +235,7 @@ Global
 		{7168E595-7459-4F1C-81D3-0910E3E3A35D} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
 		{2EE6938F-26A5-4C8B-9972-F3136D5917F1} = {C16F05EE-1871-41EC-BB3A-DC834EF47533}
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A} = {593C5B50-52E6-436D-9BF2-93E220984E45}
+		{C5FAE04D-B79D-4999-BB5B-80C6EA593A05} = {5F2276E6-BDAC-489C-A620-7C14D78B4BEB}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

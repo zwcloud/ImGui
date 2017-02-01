@@ -9,11 +9,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Control\tobefixed\**" />
+    <Compile Remove="Proxy\**" />
     <EmbeddedResource Remove="Control\tobefixed\**" />
+    <EmbeddedResource Remove="Proxy\**" />
     <None Remove="Control\tobefixed\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Proxy\Render\OpenGLESRenderer.Android.cs" />
+    <None Remove="Proxy\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CSharpGLES\CSharpGLES.csproj" />
@@ -28,4 +28,5 @@
     <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
+  <Import Project="..\src\ImGui\ImGui.projitems" Label="Shared" />
 </Project>
