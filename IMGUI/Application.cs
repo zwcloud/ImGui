@@ -73,7 +73,11 @@ namespace ImGui
         {
             // create factory:
             //     platform-dependent object implementation
-            if(Utility.CurrentOS.IsWindows)
+            if (Utility.CurrentOS.IsAndroid)
+            {
+                _map = MapAndroid.MapFactory();
+            }
+            else if(Utility.CurrentOS.IsWindows)
             {
                 _map = MapWindows.MapFactory();
             }
@@ -98,33 +102,16 @@ namespace ImGui
         /// <param name="mainForm">A <see cref="Form"/> that represents the form to make visible.</param>
         public static void Run(Form mainForm)
         {
-            #region Init
-            //Check paramter
-            if (mainForm == null)
-            {
-                throw new ArgumentNullException(nameof(mainForm));
-            }
-
-            //Time
-            stopwatch.Start();
-            var sw = new Stopwatch();
-            sw.Start();
-
-            Forms.Add(mainForm);
-
-            //Show main form
-            mainForm.Show();
-
-            Debug.WriteLine("Init {0:F1}ms", sw.ElapsedTicks * 1000d / Stopwatch.Frequency);
-            sw.Restart();
-            #endregion
+            Init(mainForm);
 
             while (!mainForm.Closed)
             {
                 frameStartTime = Time;
 
-                Input.Mouse.Refresh();
-                //Collect input info form mouse/keyboard
+                Input.Mouse.Refresh();//TODO remove it
+
+                #region Collect input info form mouse/keyboard
+
                 InputInfo inputInfo = new InputInfo();
                 inputInfo.MousePosition = Input.Mouse.MousePos;
                 inputInfo.Delta = Input.Mouse.MousePos - Input.Mouse.LastMousePos;
@@ -170,6 +157,8 @@ namespace ImGui
                     inputInfo.Modifiers |= Modifiers.CapsLock;
                 }
 
+                #endregion
+
                 foreach (Form childForm in Forms)
                 {
                     windowContext.MainLoop(childForm.GUILoop, inputInfo);
@@ -182,6 +171,33 @@ namespace ImGui
             }
             
             //TODO clean up
+        }
+
+        public static void Init(Form mainForm)
+        {
+            //Check paramter
+            if (mainForm == null)
+            {
+                throw new ArgumentNullException(nameof(mainForm));
+            }
+
+            //Time
+            stopwatch.Start();
+            var sw = new Stopwatch();
+            sw.Start();
+
+            Forms.Add(mainForm);
+
+            //Show main form
+            mainForm.Show();
+
+            Debug.WriteLine("Init {0:F1}ms", sw.ElapsedTicks * 1000d / Stopwatch.Frequency);
+            sw.Restart();
+        }
+
+        public static void RunLoop(Form form)
+        {
+            windowContext.MainLoop(form.GUILoop, new InputInfo());
         }
 
         /// <summary>

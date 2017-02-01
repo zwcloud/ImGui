@@ -15,7 +15,7 @@
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v7.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -55,7 +55,6 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="GLView1.cs" />
     <Compile Include="GLView1.Renderer.cs" />
-    <Compile Include="MainForm.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -81,10 +80,6 @@
     <ProjectReference Include="..\..\..\CSharpGLES\CSharpGLES.csproj">
       <Project>{7168e595-7459-4f1c-81d3-0910e3e3a35d}</Project>
       <Name>CSharpGLES</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\IMGUI\ImGui.csproj">
-      <Project>{d8cee2a3-b2a7-46ac-acaf-3b4ef56c3939}</Project>
-      <Name>ImGui</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

@@ -18,6 +18,18 @@ namespace ImGui
         internal LayoutCache layoutCache = new LayoutCache();
         internal GUIState uiState = new GUIState();
 
+        protected Form()
+        {
+            if (!Utility.CurrentOS.IsAndroid)
+            {
+                throw new InvalidOperationException();
+            }
+
+            this.window = Application.windowContext.CreateWindow(new Point(), new Size());//dummy paramters
+            renderer = Application._map.CreateRenderer();
+            renderer.Init(IntPtr.Zero);//dummy paramters
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Form"/> class at specific rectangle.
         /// </summary>
@@ -180,7 +192,10 @@ namespace ImGui
             }
 
             Console.Clear();
-            Console.WriteLine("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+            if (!Utility.CurrentOS.IsAndroid)
+            {
+                Console.WriteLine("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+            }
             Console.WriteLine("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
             Console.WriteLine("HoverId: {0}", this.uiState.HoverId);
         }

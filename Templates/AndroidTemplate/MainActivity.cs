@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using Android.Content.PM;
+using Android.Util;
 
 namespace AndroidTemplate
 {
@@ -17,7 +18,7 @@ namespace AndroidTemplate
 		,HardwareAccelerated=false
 #endif
         )]
-    public class MainActivity : Activity
+    public class MainActivity : NativeActivity
     {
         GLView1 view;
 
@@ -28,6 +29,17 @@ namespace AndroidTemplate
             // Create our OpenGL view, and display it
             view = new GLView1(this);
             SetContentView(view);
+            
+            //Log.Info("", "Environment Variables");
+            //var envars = System.Environment.GetEnvironmentVariables();
+            //var varEnumerator =
+            //    envars.GetEnumerator();
+            //while (varEnumerator.MoveNext())
+            //{
+            //    Log.Info("","\t{0}={1}",
+            //        varEnumerator.Key,
+            //        varEnumerator.Value);
+            //}
         }
 
         protected override void OnPause()

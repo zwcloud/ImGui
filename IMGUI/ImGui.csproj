@@ -13,6 +13,10 @@
     <None Remove="Control\tobefixed\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Proxy\Render\OpenGLESRenderer.Android.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CSharpGLES\CSharpGLES.csproj" />
     <ProjectReference Include="W:\VS2015\DWriteSharp\src\DWriteSharp\DWriteSharp.csproj" />
     <ProjectReference Include="W:\VS2013\CSharpGL.Core\CSharpGL\CSharpGL.csproj" />
   </ItemGroup>

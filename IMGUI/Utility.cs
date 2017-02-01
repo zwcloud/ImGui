@@ -51,6 +51,10 @@ namespace ImGui
         {
             static CurrentOS()
             {
+                var envars = System.Environment.GetEnvironmentVariables();
+                IsAndroid = envars.Contains("ANDROID_PROPERTY_WORKSPACE");
+                if (IsAndroid) return;
+
                 IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
                 if (IsWindows) return;
                 IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
@@ -64,6 +68,9 @@ namespace ImGui
             public static bool IsWindows { get; private set; }
             public static bool IsMac { get; private set; }
             public static bool IsLinux { get; private set; }
+
+            public static bool IsAndroid { get; private set; }
+
             public static bool IsUnknown { get; private set; }
 
             public static bool Is64BitProcess
@@ -344,7 +351,51 @@ namespace ImGui
                     fileName, lineNumber, error, errorStr, memberName);
             }
         }
-        
+
+        public static void CheckGLESError(
+            [CallerFilePath] string fileName = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerMemberName] string memberName = null)
+        {
+            var error = CSharpGLES.GL.GetError();
+            string errorStr = "GL_NO_ERROR";
+            switch (error)
+            {
+                case GL.GL_NO_ERROR:
+                    errorStr = "GL_NO_ERROR";
+                    break;
+                case GL.GL_INVALID_ENUM:
+                    errorStr = "GL_INVALID_ENUM";
+                    break;
+                case GL.GL_INVALID_VALUE:
+                    errorStr = "GL_INVALID_VALUE";
+                    break;
+                case GL.GL_INVALID_OPERATION:
+                    errorStr = "GL_INVALID_OPERATION";
+                    break;
+                case GL.GL_STACK_OVERFLOW:
+                    errorStr = "GL_STACK_OVERFLOW";
+                    break;
+                case GL.GL_STACK_UNDERFLOW:
+                    errorStr = "GL_STACK_UNDERFLOW";
+                    break;
+                case GL.GL_OUT_OF_MEMORY:
+                    errorStr = "GL_OUT_OF_MEMORY";
+                    break;
+                case GL.GL_INVALID_FRAMEBUFFER_OPERATION:
+                    errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION";
+                    break;
+                case GL.GL_CONTEXT_LOST:
+                    errorStr = "GL_CONTEXT_LOST";
+                    break;
+            }
+
+            if (error != GL.GL_NO_ERROR)
+            {
+                Debug.WriteLine("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
+                    fileName, lineNumber, error, errorStr, memberName);
+            }
+        }
 
     }
 }

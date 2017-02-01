@@ -123,4 +123,47 @@ namespace ImGui
 
     }
 
+    class MapAndroid : Map
+    {
+        public static Map MapFactory()
+        {
+            return new MapAndroid
+            {
+                CreateTextContext = CTextContext,
+                CreateWindowContext = CWindowContext,
+                CreateInputContext = CInputContext,
+                CreateRenderer = CRenderer,
+                CreateTexture = CTexture,
+            };
+        }
+
+        private static ITextContext CTextContext(
+            string text, string fontFamily, int fontSize,
+            FontStretch stretch, FontStyle style, FontWeight weight,
+            int maxWidth, int maxHeight,
+            TextAlignment alignment)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IWindowContext CWindowContext()
+        {
+            return new AndroidWindowContext();
+        }
+
+        private static IInputContext CInputContext()
+        {
+            return new AndroidInputContext();
+        }
+
+        private static IRenderer CRenderer()
+        {
+            return new OpenGLESRenderer();
+        }
+
+        private static ITexture CTexture()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -1,13 +1,11 @@
-﻿using System;
+﻿using CSharpGLES;
 using System.Collections.Generic;
-using CSharpGL;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System;
 using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    partial class Win32OpenGLRenderer : IRenderer
+    internal partial class OpenGLESRenderer : IRenderer
     {
         class Material
         {
@@ -22,11 +20,11 @@ namespace ImGui
 
             public uint attributePositon, attributeUV, attributeColor;
 
-            public CSharpGL.Objects.Shaders.ShaderProgram program;
+            public ShaderProgram program;
             public Dictionary<uint, string> attributeMap;
 
             public readonly uint[] textures = { 0 };
-            
+
             public Material(string vertexShader, string fragmentShader)
             {
                 this.vertexShaderSource = vertexShader;
@@ -47,7 +45,7 @@ namespace ImGui
 
             private void CreateShaders()
             {
-                program = new CSharpGL.Objects.Shaders.ShaderProgram();
+                program = new ShaderProgram();
                 attributePositon = 0;
                 attributeUV = 1;
                 attributeColor = 2;
@@ -59,7 +57,7 @@ namespace ImGui
                 };
                 program.Create(vertexShaderSource, fragmentShaderSource, attributeMap);
 
-                Utility.CheckGLError();
+                Utility.CheckGLESError();
             }
 
             private void CreateVBOs()
@@ -84,7 +82,7 @@ namespace ImGui
                 GL.VertexAttribPointer(attributeUV, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("uv"));
                 GL.VertexAttribPointer(attributeColor, 4, GL.GL_FLOAT, true, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("color"));
 
-                Utility.CheckGLError();
+                Utility.CheckGLESError();
             }
 
             private void DeleteShaders()
@@ -92,9 +90,9 @@ namespace ImGui
                 if (program != null)
                 {
                     program.Unbind();
-                    Utility.CheckGLError();
+                    Utility.CheckGLESError();
                     program.Delete();
-                    Utility.CheckGLError();
+                    Utility.CheckGLESError();
                     program = null;
                 }
             }
@@ -102,14 +100,14 @@ namespace ImGui
             private void DeleteVBOs()
             {
                 GL.DeleteBuffers(1, buffers);
-                Utility.CheckGLError();
+                Utility.CheckGLESError();
 
                 GL.BindBuffer(GL.GL_ARRAY_BUFFER, 0);
-                Utility.CheckGLError();
+                Utility.CheckGLESError();
             }
 
         }
-        
+
         Material m = new Material(
             vertexShader: @"
 #version 330
@@ -219,12 +217,12 @@ void main()
 
 
         //Helper for some GL functions
-        private static readonly int[] IntBuffer = {0,0,0,0};
+        private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
 
         public void Init(object windowHandle)
         {
-            CreateOpenGLContext((IntPtr)windowHandle);
-            InitGLEW();
+            //CreateOpenGLContext((IntPtr)windowHandle);//done in android
+            //InitGLEW();//done in android
 
             m.Init();
             mExtra.Init();
@@ -233,7 +231,7 @@ void main()
             // Other state
             GL.ClearColor(1, 1, 1, 1);
 
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
         }
 
         public void Clear()
@@ -251,11 +249,11 @@ void main()
             GL.GetIntegerv(GL.GL_ACTIVE_TEXTURE, IntBuffer); int last_active_texture = IntBuffer[0];
             GL.GetIntegerv(GL.GL_ARRAY_BUFFER_BINDING, IntBuffer); int last_array_buffer = IntBuffer[0];
             GL.GetIntegerv(GL.GL_ELEMENT_ARRAY_BUFFER_BINDING, IntBuffer); int last_element_array_buffer = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_VERTEX_ARRAY_BINDING, IntBuffer);int last_vertex_array = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_VERTEX_ARRAY_BINDING, IntBuffer); int last_vertex_array = IntBuffer[0];
             GL.GetIntegerv(GL.GL_BLEND_SRC, IntBuffer); int last_blend_src = IntBuffer[0];
             GL.GetIntegerv(GL.GL_BLEND_DST, IntBuffer); int last_blend_dst = IntBuffer[0];
             GL.GetIntegerv(GL.GL_BLEND_EQUATION_RGB, IntBuffer); int last_blend_equation_rgb = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLEND_EQUATION_ALPHA, IntBuffer);int last_blend_equation_alpha = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_BLEND_EQUATION_ALPHA, IntBuffer); int last_blend_equation_alpha = IntBuffer[0];
             GL.GetIntegerv(GL.GL_VIEWPORT, IntBuffer); Rect last_viewport = new Rect(IntBuffer[0], IntBuffer[1], IntBuffer[2], IntBuffer[3]);
             uint last_enable_blend = GL.IsEnabled(GL.GL_BLEND);
             uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
@@ -295,10 +293,10 @@ void main()
                 }
                 //GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                 GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
-                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount*Marshal.SizeOf<DrawIndex>());
+                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
             }
 
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
 
             // Restore modified GL state
             GL.UseProgram((uint)last_program);

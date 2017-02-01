@@ -4,7 +4,7 @@ namespace ImGui
 {
     internal class Win32Window : IWindow
     {
-        IntPtr hwnd;
+        readonly IntPtr hwnd;
         
         public Win32Window(IntPtr hwnd)
         {

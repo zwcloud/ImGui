@@ -4,74 +4,112 @@ namespace ImGui
 {
     class AndroidWindow : IWindow
     {
+        private static AndroidWindow instance;
+
+        public static AndroidWindow Instance { get { return instance; } }
+
+        private readonly IntPtr nativeWindow;
+
+        private AndroidWindow(IntPtr nativeWindow)
+        {
+            this.nativeWindow = nativeWindow;
+        }
+
+        public static AndroidWindow CreateAndroidWindow(IntPtr nativeWindow)
+        {
+            instance = new AndroidWindow(nativeWindow);
+            return instance;
+        }
+
         #region Implementation of IWindow
 
         public object Handle
         {
-            get { throw new NotImplementedException(); }
+            get { return nativeWindow; }
         }
 
         public IntPtr Pointer
         {
-            get { throw new NotImplementedException(); }
+            get { return nativeWindow; }
         }
 
         public Point Position
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get
+            {
+                return Application.windowContext.GetWindowPosition(this);
+            }
+
+            set
+            {
+                Application.windowContext.SetWindowPosition(this, value);
+            }
         }
 
         public Size Size
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get
+            {
+                return Application.windowContext.GetWindowSize(this);
+            }
+
+            set
+            {
+                Application.windowContext.SetWindowSize(this, value);
+            }
         }
 
         public string Title
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
-        }
+            get
+            {
+                return Application.windowContext.GetWindowTitle(this);
+            }
 
-        public void Show()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Hide()
-        {
-            throw new NotImplementedException();
+            set
+            {
+                Application.windowContext.SetWindowTitle(this, value);
+            }
         }
 
         public void Close()
         {
-            throw new NotImplementedException();
+            Application.windowContext.CloseWindow(this);
         }
 
-        public void Minimize()
+        public void Hide()
         {
-            throw new NotImplementedException();
+            Application.windowContext.HideWindow(this);
         }
 
         public void Maximize()
         {
-            throw new NotImplementedException();
+            Application.windowContext.MaximizeWindow(this);
+        }
+
+        public void Minimize()
+        {
+            Application.windowContext.MinimizeWindow(this);
         }
 
         public void Normalize()
         {
-            throw new NotImplementedException();
+            Application.windowContext.NormalizeWindow(this);
+        }
+
+        public void Show()
+        {
+            Application.windowContext.ShowWindow(this);
         }
 
         public Point ScreenToClient(Point point)
         {
-            throw new NotImplementedException();
+            return Application.windowContext.ScreenToClient(this, point);
         }
 
         public Point ClientToScreen(Point point)
         {
-            throw new NotImplementedException();
+            return Application.windowContext.ClientToScreen(this, point);
         }
 
         #endregion
