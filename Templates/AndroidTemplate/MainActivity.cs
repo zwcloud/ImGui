@@ -18,7 +18,7 @@ namespace AndroidTemplate
 		,HardwareAccelerated=false
 #endif
         )]
-    public class MainActivity : NativeActivity
+    public class MainActivity : Activity
     {
         GLView1 view;
 
@@ -41,7 +41,6 @@ namespace AndroidTemplate
             //        varEnumerator.Value);
             //}
         }
-
         protected override void OnPause()
         {
             base.OnPause();

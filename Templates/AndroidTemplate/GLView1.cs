@@ -1,13 +1,12 @@
 using System;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Graphics.ES11;
+using OpenTK.Graphics.ES30;
 using OpenTK.Platform;
 using OpenTK.Platform.Android;
 using Android.Views;
 using Android.Content;
 using Android.Util;
-using ImGui;
 
 namespace AndroidTemplate
 {
@@ -27,7 +26,7 @@ namespace AndroidTemplate
             //Create form
             mainForm = new MainForm();
             ImGui.Application.Init(mainForm);
-
+            
             // Run the render loop
             Run();
         }

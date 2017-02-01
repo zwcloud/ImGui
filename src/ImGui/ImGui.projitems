@@ -9,6 +9,52 @@
     <Import_RootNamespace>ImGui</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGLES\Egl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGLES\GL.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGLES\GL_Consts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGLES\GL_Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGLES\Shaders\Shader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGLES\Shaders\ShaderCompilationException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGLES\Shaders\ShaderProgram.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\GL.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\GL_Consts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\GL_Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\GL_Functions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Shaders\Shader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Shaders\ShaderCompilationException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Shaders\ShaderProgram.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\BITMAPINFO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\ClassStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\Delegates.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\GLYPHMETRICSFLOAT.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\PIXELFORMATDESCRIPTOR.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\POINTFLOAT.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\SetWindowPosFlags.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\Win32.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\WindowStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\WindowStylesEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\WNDCLASSEX.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\Direct2D\D2D1Factory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DirectWriteMeshTextRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\Context.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\DWriteFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\TextFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\TextLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\Internal\ComHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\Internal\NativeMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\glm_camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\glm_inverse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\glm_trigonometric.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\glm_vec.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\mat2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\mat3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\mat4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\mat4Helper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\vec2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\vec3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\vec4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\vecHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\Dict.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\Geom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\Mesh.cs" />
@@ -109,6 +155,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Vector.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
     <None Include="$(MSBuildThisFileDirectory)CSharpGL.dll.config" />
   </ItemGroup>

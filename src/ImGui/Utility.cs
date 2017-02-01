@@ -51,16 +51,18 @@ namespace ImGui
         {
             static CurrentOS()
             {
+#if __ANDROID__
                 var envars = System.Environment.GetEnvironmentVariables();
                 IsAndroid = envars.Contains("ANDROID_PROPERTY_WORKSPACE");
                 if (IsAndroid) return;
-
+#else
                 IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
                 if (IsWindows) return;
                 IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
                 if (IsMac) return;
                 IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
                 if (IsLinux) return;
+#endif
 
                 IsUnknown = true;
             }

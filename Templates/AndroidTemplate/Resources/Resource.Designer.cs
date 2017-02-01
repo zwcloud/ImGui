@@ -26,6 +26,8 @@ namespace AndroidTemplate
 		
 		public static void UpdateIdValues()
 		{
+			global::ImGui.Resource.String.ApplicationName = global::AndroidTemplate.Resource.String.ApplicationName;
+			global::ImGui.Resource.String.Hello = global::AndroidTemplate.Resource.String.Hello;
 		}
 		
 		public partial class Attribute

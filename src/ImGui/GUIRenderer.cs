@@ -122,7 +122,7 @@ void main()
         {
             GL.GenBuffers(1, buffers);
             positionVboHandle = buffers[0];
-            GL.BindBuffer(BufferTarget.ArrayBuffer, positionVboHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
 
             var dataHandle = System.Runtime.InteropServices.GCHandle.Alloc(vertexData,
                 System.Runtime.InteropServices.GCHandleType.Pinned);
@@ -184,7 +184,7 @@ void main()
         {
             GL.DeleteBuffers(1, buffers); CheckError();
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0); CheckError();
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, 0); CheckError();
         }
 
         private void DeleteTexture()

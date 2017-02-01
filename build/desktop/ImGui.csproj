@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <Description>ImGui Framework Library</Description>
+    <Company>zwcloud</Company>
+    <Product>zwcloud.ImGui</Product>
+    <Copyright>Copyright (c) 2016-2017 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
+    <PackageProjectUrl>https://zwcloud.net/#project/imgui</PackageProjectUrl>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha1-00099" />
+    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+  </ItemGroup>
+  <Import Project="..\..\src\ImGui\ImGui.projitems" Label="Shared" />
+</Project>
