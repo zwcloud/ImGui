@@ -47,6 +47,7 @@ namespace ImGui
             #region Button
             {
                 var bgColor = Color.Rgb(204, 204, 204);
+                var brColor = Color.Black;
                 StyleModifier[] normalModifiers =
                 {
                     new StyleModifier{Name = "BorderTop", Value = 2},
@@ -54,10 +55,10 @@ namespace ImGui
                     new StyleModifier{Name = "BorderBottom", Value = 2},
                     new StyleModifier{Name = "BorderLeft", Value = 2},
 
-                    new StyleModifier{Name = "BorderTopColor", Value = bgColor},
-                    new StyleModifier{Name = "BorderRightColor", Value = bgColor},
-                    new StyleModifier{Name = "BorderBottomColor", Value = bgColor},
-                    new StyleModifier{Name = "BorderLeftColor", Value = bgColor},
+                    new StyleModifier{Name = "BorderTopColor", Value = brColor},
+                    new StyleModifier{Name = "BorderRightColor", Value = brColor},
+                    new StyleModifier{Name = "BorderBottomColor", Value = brColor},
+                    new StyleModifier{Name = "BorderLeftColor", Value = brColor},
                     
                     new StyleModifier{Name = "PaddingTop", Value = 2},
                     new StyleModifier{Name = "PaddingRight", Value = 2},

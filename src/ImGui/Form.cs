@@ -212,13 +212,17 @@ namespace ImGui
                 lastFPSUpdateTime = Application.Time;
             }
 
-            Console.Clear();
-            if (!Utility.CurrentOS.IsAndroid)
+            if (Utility.CurrentOS.IsAndroid)
             {
-                Console.WriteLine("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+                // TODO do log with Xamarin?
             }
-            Console.WriteLine("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
-            Console.WriteLine("HoverId: {0}", this.uiState.HoverId);
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+                Console.WriteLine("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
+                Console.WriteLine("HoverId: {0}", this.uiState.HoverId);
+            }
         }
 
         private void handleEvent()
@@ -279,7 +283,15 @@ namespace ImGui
         {
             this.renderer.Clear();
             this.renderer.RenderDrawList(this.DrawList, (int)this.Size.Width, (int)this.Size.Height);
-            this.renderer.SwapBuffers();
+
+            if(Utility.CurrentOS.IsAndroid)
+            {
+                // xamarin did this later
+            }
+            else
+            {
+                this.renderer.SwapBuffers();
+            }
         }
 
         private FormState formState = FormState.Normal;

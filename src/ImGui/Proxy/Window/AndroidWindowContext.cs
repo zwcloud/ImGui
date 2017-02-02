@@ -41,7 +41,7 @@ namespace ImGui
 
         public void MainLoop(Action<InputInfo> guiMethod, InputInfo inputInfo)
         {
-            //throw new NotImplementedException();
+            guiMethod(inputInfo);
         }
 
         public IWindow CreateWindow(IntPtr nativeWindow)

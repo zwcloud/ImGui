@@ -245,20 +245,39 @@ void main()
         {
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_ACTIVE_TEXTURE, IntBuffer); int last_active_texture = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_ARRAY_BUFFER_BINDING, IntBuffer); int last_array_buffer = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_ELEMENT_ARRAY_BUFFER_BINDING, IntBuffer); int last_element_array_buffer = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_VERTEX_ARRAY_BINDING, IntBuffer); int last_vertex_array = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLEND_SRC, IntBuffer); int last_blend_src = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLEND_DST, IntBuffer); int last_blend_dst = IntBuffer[0];
+            Utility.CheckGLESError();
+            GL.GetIntegerv(GL.GL_BLEND_SRC_RGB, IntBuffer); int last_blend_src_rgb = IntBuffer[0];
+            Utility.CheckGLESError();
+            GL.GetIntegerv(GL.GL_BLEND_SRC_ALPHA, IntBuffer); int last_blend_src_alpha = IntBuffer[0];
+            Utility.CheckGLESError();
+            GL.GetIntegerv(GL.GL_BLEND_DST_RGB, IntBuffer); int last_blend_dst_rgb = IntBuffer[0];
+            Utility.CheckGLESError();
+            GL.GetIntegerv(GL.GL_BLEND_DST_ALPHA, IntBuffer); int last_blend_dst_alpha = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_BLEND_EQUATION_RGB, IntBuffer); int last_blend_equation_rgb = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_BLEND_EQUATION_ALPHA, IntBuffer); int last_blend_equation_alpha = IntBuffer[0];
+            Utility.CheckGLESError();
             GL.GetIntegerv(GL.GL_VIEWPORT, IntBuffer); Rect last_viewport = new Rect(IntBuffer[0], IntBuffer[1], IntBuffer[2], IntBuffer[3]);
+            Utility.CheckGLESError();
             uint last_enable_blend = GL.IsEnabled(GL.GL_BLEND);
+            Utility.CheckGLESError();
             uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
+            Utility.CheckGLESError();
             uint last_enable_depth_test = GL.IsEnabled(GL.GL_DEPTH_TEST);
+            Utility.CheckGLESError();
             uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
+            Utility.CheckGLESError();
 
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
             GL.Enable(GL.GL_BLEND);
@@ -280,6 +299,8 @@ void main()
             GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
+
+            Utility.CheckGLESError();
 
             // Draw
             var indexBufferOffset = IntPtr.Zero;
@@ -306,7 +327,8 @@ void main()
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, (uint)last_array_buffer);
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, (uint)last_element_array_buffer);
             GL.BlendEquationSeparate((uint)last_blend_equation_rgb, (uint)last_blend_equation_alpha);
-            GL.BlendFunc((uint)last_blend_src, (uint)last_blend_dst);
+            GL.BlendFunc((uint)last_blend_src_rgb, (uint)last_blend_dst_rgb);
+            GL.BlendFunc((uint)last_blend_src_alpha, (uint)last_blend_dst_alpha);
             if (last_enable_blend == GL.GL_TRUE) GL.Enable(GL.GL_BLEND); else GL.Disable(GL.GL_BLEND);
             if (last_enable_cull_face == GL.GL_TRUE) GL.Enable(GL.GL_CULL_FACE); else GL.Disable(GL.GL_CULL_FACE);
             if (last_enable_depth_test == GL.GL_TRUE) GL.Enable(GL.GL_DEPTH_TEST); else GL.Disable(GL.GL_DEPTH_TEST);

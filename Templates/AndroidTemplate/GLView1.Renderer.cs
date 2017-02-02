@@ -13,9 +13,10 @@ namespace AndroidTemplate
             GL.ClearColor(0.5f, 0.5f, 0f, 1.0f);
             GL.Clear((uint) All.ColorBufferBit);
             
+            ImGui.Application.RunLoop(mainForm);
+
             SwapBuffers();
 
-            ImGui.Application.RunLoop(mainForm);
         }
     }
 }

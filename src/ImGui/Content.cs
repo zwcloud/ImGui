@@ -147,7 +147,11 @@ namespace ImGui
                 this.style = style;
                 this.rect = rect;
             }
-
+            
+            if(Utility.CurrentOS.IsAndroid)// tmp: the text context for android hasn't been implemented
+            {
+                return;
+            }
 
             this.TextContext = Application._map.CreateTextContext(
                 this.Text,

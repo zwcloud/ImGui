@@ -216,6 +216,8 @@ namespace ImGui
         /// <returns></returns>
         public Size GetTextActualSize(string text)
         {
+            if (Utility.CurrentOS.IsAndroid) return new Size(100, 20);//temp
+
             Size actualSize;
             var font = this.Font;
             var textStyle = this.TextStyle;

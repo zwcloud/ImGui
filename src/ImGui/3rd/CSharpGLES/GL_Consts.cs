@@ -748,5 +748,9 @@ namespace CSharpGLES
 
         #endregion
 
+        public const int GL_BLEND_SRC_ALPHA = 0x80CB;
+        public const int GL_BLEND_SRC_RGB = 0x80C9;
+        public const int GL_BLEND_DST_ALPHA = ((int)0x80CA);
+        public const int GL_BLEND_DST_RGB = ((int)0x80C8);
     }
 }

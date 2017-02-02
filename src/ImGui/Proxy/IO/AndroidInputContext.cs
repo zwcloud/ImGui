@@ -8,7 +8,7 @@ namespace ImGui
         {
             get
             {
-                throw new InvalidOperationException();
+                return false;//dummy
             }
         }
 
@@ -16,7 +16,7 @@ namespace ImGui
         {
             get
             {
-                throw new InvalidOperationException();
+                return false;//dummy
             }
         }
 
@@ -24,7 +24,7 @@ namespace ImGui
         {
             get
             {
-                throw new InvalidOperationException();
+                return false;//dummy
             }
         }
 
@@ -32,7 +32,7 @@ namespace ImGui
         {
             get
             {
-                throw new InvalidOperationException();
+                return Point.Zero;//dummy
             }
         }
     }
