@@ -124,7 +124,7 @@ void main()
 	Frag_UV = UV;
 	Frag_Color = Color;
 	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-};
+}
 ",
             fragmentShader: @"
 #version 330
@@ -202,7 +202,7 @@ void main()
 	Frag_UV = UV;
 	Frag_Color = Color;
 	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-};
+}
 ",
             fragmentShader: @"
 #version 330

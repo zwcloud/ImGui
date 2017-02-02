@@ -9,6 +9,7 @@ namespace ImGui
         #region Native
 
         #region (not used)
+
         // Get native window from surface
         [DllImport("android")]
         private static extern IntPtr ANativeWindow_fromSurface(IntPtr jni, IntPtr surface);
@@ -16,8 +17,7 @@ namespace ImGui
         // Get native window from surface
         [DllImport("android")]
         private static extern void ANativeWindow_release(IntPtr surface);
-        #endregion
-
+        
         /// <summary>
         /// Get window height
         /// </summary>
@@ -32,6 +32,9 @@ namespace ImGui
         [DllImport("android")]
         private static extern int ANativeWindow_getHeight(IntPtr window);
 
+        #endregion
+
+
         #endregion 
 
         #region Implementation of IWindowContext
@@ -41,20 +44,26 @@ namespace ImGui
             //throw new NotImplementedException();
         }
 
-        public IWindow CreateWindow(Point position, Size size)
+        public IWindow CreateWindow(IntPtr nativeWindow)
         {
             // Only one initial window is available.
-            return AndroidWindow.Instance;
+            return AndroidWindow.CreateAndroidWindow(nativeWindow);//this is dummy for now
+        }
+
+        public IWindow CreateWindow(Point position, Size size)
+        {
+            throw new InvalidOperationException();
         }
 
         public Size GetWindowSize(IWindow window)
         {
-            return new Size(ANativeWindow_getWidth(window.Pointer), ANativeWindow_getHeight(window.Pointer));
+            //dummy
+            return Size.Zero;
         }
 
         public Point GetWindowPosition(IWindow window)
         {
-            // always at (0, 0)
+            //dummy
             return Point.Zero;
         }
 

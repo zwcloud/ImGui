@@ -18,16 +18,37 @@ namespace ImGui
         internal LayoutCache layoutCache = new LayoutCache();
         internal GUIState uiState = new GUIState();
 
-        protected Form()
+        /// <summary>
+        /// Create form for android.
+        /// </summary>
+        /// <param name="nativeWindow"></param>
+        /// <param name="position"></param>
+        /// <param name="size"></param>
+        protected Form(IntPtr nativeWindow, Point position, Size size)
         {
             if (!Utility.CurrentOS.IsAndroid)
             {
                 throw new InvalidOperationException();
             }
 
-            this.window = Application.windowContext.CreateWindow(new Point(), new Size());//dummy paramters
+            this.window = Application.windowContext.CreateWindow(nativeWindow);
+            this.window.Position = Point.Zero;
+            this.window.Size = size;
             renderer = Application._map.CreateRenderer();
             renderer.Init(IntPtr.Zero);//dummy paramters
+
+            this.DrawList.DrawBuffer.CommandBuffer.Add(
+                new DrawCommand
+                {
+                    ClipRect = new Rect(this.Size)
+                });
+            this.DrawList.BezierBuffer.CommandBuffer.Add(
+                new DrawCommand
+                {
+                    ClipRect = new Rect(this.Size)
+                });
+
+            InitGUI();
         }
 
         /// <summary>

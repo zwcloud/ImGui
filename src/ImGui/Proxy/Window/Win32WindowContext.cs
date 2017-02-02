@@ -243,6 +243,11 @@ namespace ImGui
             return DefWindowProc(hWnd, msg, wParam, lParam);
         }
 
+        public IWindow CreateWindow(IntPtr nativeWindow)
+        {
+            throw new NotSupportedException();
+        }
+
         WNDCLASS wndclass; //Forbid GC of the windowProc delegate instance
         public IWindow CreateWindow(Point position, Size size)
         {

@@ -6,7 +6,13 @@ namespace ImGui
     {
         private static AndroidWindow instance;
 
-        public static AndroidWindow Instance { get { return instance; } }
+        public static AndroidWindow Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
 
         private readonly IntPtr nativeWindow;
 
@@ -37,12 +43,12 @@ namespace ImGui
         {
             get
             {
-                return Application.windowContext.GetWindowPosition(this);
+                return Point.Zero;
             }
 
             set
             {
-                Application.windowContext.SetWindowPosition(this, value);
+                //dummy
             }
         }
 
@@ -50,12 +56,12 @@ namespace ImGui
         {
             get
             {
-                return Application.windowContext.GetWindowSize(this);
+                return this.size;
             }
 
             set
             {
-                Application.windowContext.SetWindowSize(this, value);
+                this.size = value;
             }
         }
 
@@ -113,5 +119,7 @@ namespace ImGui
         }
 
         #endregion
+
+        private Size size;
     }
 }

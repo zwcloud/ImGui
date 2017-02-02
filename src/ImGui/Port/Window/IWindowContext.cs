@@ -6,6 +6,8 @@ namespace ImGui
     {
         void MainLoop(Action<InputInfo> guiMethod, InputInfo inputInfo);
 
+        IWindow CreateWindow(IntPtr nativeWindow);
+
         IWindow CreateWindow(Point position, Size size);
 
         Size GetWindowSize(IWindow window);

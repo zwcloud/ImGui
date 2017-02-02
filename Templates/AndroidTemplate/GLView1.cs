@@ -24,7 +24,7 @@ namespace AndroidTemplate
             base.OnLoad(e);
 
             //Create form
-            mainForm = new MainForm();
+            mainForm = new MainForm(this.Handle, ImGui.Point.Zero, new ImGui.Size(this.Size.Width, this.Size.Height));
             ImGui.Application.Init(mainForm);
             
             // Run the render loop
@@ -40,6 +40,8 @@ namespace AndroidTemplate
         // support the defaults
         protected override void CreateFrameBuffer()
         {
+            GLContextVersion = GLContextVersion.Gles3_0;
+
             // the default GraphicsMode that is set consists of (16, 16, 0, 0, 2, false)
             try
             {
