@@ -157,6 +157,5 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
-    <None Include="$(MSBuildThisFileDirectory)CSharpGL.dll.config" />
   </ItemGroup>
 </Project>
