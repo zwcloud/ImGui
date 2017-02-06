@@ -78,10 +78,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Control\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Control\Toggle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Control\ToggleButton.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Detalied\Point.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Detalied\Rect.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Detalied\Size.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Detalied\Vector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DrawList\ColorF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DrawList\DrawBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DrawList\DrawCommand.cs" />
@@ -157,5 +153,8 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Detalied\" />
   </ItemGroup>
 </Project>
