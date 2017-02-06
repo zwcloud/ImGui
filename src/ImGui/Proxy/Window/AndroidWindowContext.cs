@@ -39,9 +39,9 @@ namespace ImGui
 
         #region Implementation of IWindowContext
 
-        public void MainLoop(Action<InputInfo> guiMethod, InputInfo inputInfo)
+        public void MainLoop(Action guiMethod)
         {
-            guiMethod(inputInfo);
+            guiMethod();
         }
 
         public IWindow CreateWindow(IntPtr nativeWindow)

@@ -182,7 +182,7 @@ namespace ImGui
         {
         }
 
-        public void MainLoop(Action<InputInfo> guiMethod, InputInfo inputInfo)
+        public void MainLoop(Action guiMethod)
         {
             MSG msg = new MSG();
             if (PeekMessage(ref msg, IntPtr.Zero, 0, 0, 0x0001/*PM_REMOVE*/))//handle windows messages
@@ -192,7 +192,7 @@ namespace ImGui
             }
             else//handle imgui logic
             {
-                guiMethod(inputInfo);
+                guiMethod();
             }
             //if(msg.message != 0x12/*WM_QUIT*/) //...
         }
@@ -201,6 +201,7 @@ namespace ImGui
         {
             switch (msg)
             {
+                #region keyboard
                 case 0x100:/*WM_KEYDOWN*/
                     {
                         var keyCode = wParam.ToUInt32();
@@ -229,6 +230,34 @@ namespace ImGui
                         }
                         return IntPtr.Zero;
                     }
+                #endregion
+                #region mouse
+                case 0x0201://WM_LBUTTONDOWN
+                    Input.Mouse.LeftButtonState = InputState.Down;
+                    return IntPtr.Zero;
+                case 0x0202://WM_LBUTTONUP
+                    Input.Mouse.LeftButtonState = InputState.Up;
+                    return IntPtr.Zero;
+                case 0x0203://WM_LBUTTONDBLCLK
+                    return IntPtr.Zero;
+                case 0x0206://WM_RBUTTONDBLCLK
+                    return IntPtr.Zero;
+                case 0x0204://WM_RBUTTONDOWN
+                    Input.Mouse.RightButtonState = InputState.Down;
+                    return IntPtr.Zero;
+                case 0x0205://WM_RBUTTONUP
+                    Input.Mouse.RightButtonState = InputState.Up;
+                    return IntPtr.Zero;
+                case 0x020A://WM_MOUSEWHEEL
+                    Input.Mouse.MouseWheel += ((wParam.ToUInt32() >> 16) & 0xffff) > 0 ? +1.0f : -1.0f;
+                    return IntPtr.Zero;
+                case 0x0200://WM_MOUSEMOVE
+                    Input.Mouse.MousePos = new Point(
+                        x: (short) (lParam),
+                        y: (short) (lParam.ToInt32() >> 16));
+                    return IntPtr.Zero;
+                #endregion
+                #region ime
                 case 0x0102:/*WM_CHAR*/
                     {
                         char c = (char)wParam;
@@ -236,6 +265,7 @@ namespace ImGui
                             Application.ImeBuffer.Enqueue(c);
                         return IntPtr.Zero;
                     }
+                #endregion
                 case 0x2://WM_DESTROY
                     PostQuitMessage(0);
                     return IntPtr.Zero;

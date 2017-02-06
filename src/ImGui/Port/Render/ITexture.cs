@@ -3,9 +3,21 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
+    /// <summary>
+    /// Texture-related functions
+    /// </summary>
     internal interface ITexture : IDisposable
     {
+        /// <summary>
+        /// Load image data from byte array into the texture.
+        /// </summary>
+        /// <returns>succeeded?true:false</returns>
         bool LoadImage(byte[] data);
+
+        /// <summary>
+        /// Load image data from a file into the texture.
+        /// </summary>
+        /// <returns>succeeded?true:false</returns>
         bool LoadImage(string filePath);
 
         /// <summary>
@@ -32,7 +44,7 @@ namespace ImGui
         /// Retrieve a native (underlying graphics API) pointer to the texture resource.
         /// </summary>
         /// <returns>
-        /// The id of the OpenGL texture object, converted to an `IntPtr`.
+        /// e.g. The id of the OpenGL texture object, converted to an `IntPtr`.
         /// </returns>
         IntPtr GetNativeTexturePtr();
 
@@ -40,7 +52,7 @@ namespace ImGui
         /// Retrieve an graphics-API-specific id of the texture resource.
         /// </summary>
         /// <returns>
-        /// The id of the OpenGL texture object.
+        /// e.g. The id of the OpenGL texture object.
         /// </returns>
         int GetNativeTextureId();
     }

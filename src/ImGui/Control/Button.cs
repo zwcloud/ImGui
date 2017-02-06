@@ -8,7 +8,7 @@ namespace ImGui
         public static bool DoControl(Rect rect, Content content, string id)
         {
             var clicked = false;
-            var hovered = rect.Contains(Form.current.GetMousePos());
+            var hovered = rect.Contains(Input.Mouse.MousePos);
 
             //control logic
             var uiState = Form.current.uiState;

@@ -2,6 +2,9 @@ using System;
 
 namespace ImGui
 {
+    /// <summary>
+    /// window-related functions
+    /// </summary>
     internal interface IWindow
     {
         /// <summary>

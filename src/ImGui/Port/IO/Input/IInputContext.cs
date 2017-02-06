@@ -1,5 +1,8 @@
 ﻿namespace ImGui
 {
+    /// <summary>
+    /// input-related functions
+    /// </summary>
     interface IInputContext
     {
         bool IsMouseLeftButtonDown { get; }

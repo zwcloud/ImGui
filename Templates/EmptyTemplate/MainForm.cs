@@ -10,7 +10,8 @@ namespace EmptyTemplate
 
         protected override void OnGUI()
         {
-            GUI.Label(new Rect(0, 0, 100, 30), "Hello ImGui", "helloLabel");
+            //GUI.Label(new Rect(0, 0, 100, 30), "Hello ImGui", "helloLabel");
+            GUILayout.Button("my button", "a_b");
         }
     }
 }

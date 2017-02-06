@@ -110,7 +110,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)MathEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Point.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\IInputContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\InputInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Keyboard.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Mouse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\IRenderer.cs" />
@@ -153,8 +152,5 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Detalied\" />
   </ItemGroup>
 </Project>

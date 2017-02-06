@@ -11,7 +11,7 @@ namespace ImGui
         public static Form current;
 
         private readonly IWindow window;
-        private bool needsRepaint = false;
+        private bool needRender = false;
 
         internal DrawList DrawList = new DrawList();
         internal IRenderer renderer;
@@ -112,6 +112,12 @@ namespace ImGui
 
         internal bool Focused { get { throw new NotImplementedException(); } }
 
+        public bool NeedRender
+        {
+            get { return needRender; }
+            set { needRender = value; }
+        }
+
         internal void Show()
         {
             window.Show();
@@ -149,24 +155,29 @@ namespace ImGui
 #endif
         }
 
-        internal void Repaint()
-        {
-            needsRepaint = true;
-        }
-
         #endregion
 
         #region the GUI Loop
 
-        internal static void BeginGUI(bool useGUILayout)
+        internal void BeginGUI(bool useGUILayout)
         {
+            // update input states
+            Input.Mouse.LeftButtonPressed = Input.Mouse.LeftButtonState == InputState.Down && Input.Mouse.LeftButtonDownDuration < 0;
+            Input.Mouse.LeftButtonReleased = Input.Mouse.LeftButtonState == InputState.Up && Input.Mouse.LeftButtonDownDuration >= 0;
+            Input.Mouse.LeftButtonDownDuration = Input.Mouse.LeftButtonState == InputState.Down ? (Input.Mouse.LeftButtonDownDuration < 0 ? 0 : Input.Mouse.LeftButtonDownDuration + Application.DetlaTime) : -1;
+
+            Input.Mouse.RightButtonPressed = Input.Mouse.RightButtonState == InputState.Down && Input.Mouse.RightButtonDownDuration < 0;
+            Input.Mouse.RightButtonReleased = Input.Mouse.RightButtonState == InputState.Up && Input.Mouse.RightButtonDownDuration >= 0;
+            Input.Mouse.RightButtonDownDuration = Input.Mouse.RightButtonState == InputState.Down ? (Input.Mouse.RightButtonDownDuration < 0 ? 0 : Input.Mouse.RightButtonDownDuration + Application.DetlaTime) : -1;
+
+            // layout if needed
             if (useGUILayout)
             {
                 LayoutUtility.Begin();
             }
 
             // Clear reference to active widget if the widget isn't alive anymore
-            var g = Form.current.uiState;
+            var g = this.uiState;
             g.HoverIdPreviousFrame = g.HoverId;
             g.HoverId = GUIState.None;
             if (!g.ActiveIdIsAlive && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != GUIState.None)
@@ -181,7 +192,7 @@ namespace ImGui
         /// </summary>
         protected abstract void OnGUI();
 
-        internal static void EndGUI()
+        internal void EndGUI()
         {
             if (Event.current.type == EventType.Layout)
             {
@@ -194,10 +205,15 @@ namespace ImGui
         private int fps;
         private int elapsedFrameCount = 0;
 
+        private int LeftButtonPressedTimes = 0;
+        private int RightButtonPressedTimes = 0;
+        private int LeftButtonReleasedTimes = 0;
+        private int RightButtonReleasedTimes = 0;
+
         /// <summary>
         /// GUI Loop
         /// </summary>
-        internal void GUILoop(InputInfo inputInfo)
+        internal void GUILoop()
         {
             current = this;
 
@@ -219,7 +235,18 @@ namespace ImGui
             else
             {
                 Console.Clear();
-                Console.WriteLine("{0,5:0.0}, {1}", fps, this.GetMousePos().ToString());
+                Console.WriteLine("{0,5:0.0}, fps: {1}, detlaTime {2}ms", fps, this.GetMousePos().ToString(), Application.DetlaTime);
+                Console.WriteLine("Input");
+                Console.WriteLine("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
+                Console.WriteLine("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
+                Console.WriteLine("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressed ? ++LeftButtonPressedTimes : LeftButtonPressedTimes);
+                Console.WriteLine("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleased ? ++LeftButtonReleasedTimes : LeftButtonReleasedTimes);
+
+                Console.WriteLine("    RightButtonState {0}", Input.Mouse.RightButtonState);
+                Console.WriteLine("    RightButtonDownDuration {0}ms", Input.Mouse.RightButtonDownDuration);
+                Console.WriteLine("    RightButtonPressed {0}, {1} times", Input.Mouse.RightButtonPressed, Input.Mouse.RightButtonPressed ? ++RightButtonPressedTimes : RightButtonPressedTimes);
+                Console.WriteLine("    RightButtonReleased {0}, {1} times", Input.Mouse.RightButtonReleased, Input.Mouse.RightButtonReleased ? ++RightButtonReleasedTimes : RightButtonReleasedTimes);
+
                 Console.WriteLine("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
                 Console.WriteLine("HoverId: {0}", this.uiState.HoverId);
             }
@@ -235,6 +262,7 @@ namespace ImGui
                     BeginGUI(true);
                     OnGUI();
                     EndGUI();
+                    Event.current.type = EventType.Repaint;
                     break;
                 case EventType.Repaint:
                     if (!this.Closed)
@@ -243,7 +271,7 @@ namespace ImGui
                         BeginGUI(true);
                         OnGUI();
                         EndGUI();
-                        Render();
+                        this.NeedRender = true;
                         //Event.current.type = EventType.Used;
                     }
                     break;
@@ -277,6 +305,12 @@ namespace ImGui
                     EndGUI();
                     break;
             }
+
+            if(this.NeedRender && !this.Closed)
+            {
+                Render();
+                this.NeedRender = false;
+            }
         }
 
         internal void Render()
@@ -307,7 +341,7 @@ namespace ImGui
             // init the event
             Event.current = new Event();
 
-            Repaint();
+            this.NeedRender = true;
         }
 
         private void LoadFormGroup()

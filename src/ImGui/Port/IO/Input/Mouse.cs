@@ -57,11 +57,6 @@ namespace ImGui.Input
         internal const float DoubleClickIntervalTimeSpan = 0.2f;
 
         #region Left button
-        /// <summary>
-        /// Last recorded left mouse button state
-        /// </summary>
-        /// <remarks>for detecting left mouse button state' changes</remarks>
-        private static InputState lastLeftButtonState = InputState.Up;
 
         /// <summary>
         /// Left button state
@@ -72,10 +67,7 @@ namespace ImGui.Input
         /// Last recorded left mouse button state
         /// </summary>
         /// <remarks>for detecting left mouse button state' changes</remarks>
-        public static InputState LastLeftButtonState
-        {
-            get { return lastLeftButtonState; }
-        }
+        public static InputState LastLeftButtonState { get; internal set; } = InputState.Up;
 
         /// <summary>
         /// Button state of left mouse button(readonly)
@@ -83,31 +75,20 @@ namespace ImGui.Input
         public static InputState LeftButtonState
         {
             get { return leftButtonState; }
+            internal set { leftButtonState = value; }
         }
 
-        private static bool leftButtonReleased = false;
+        public static long LeftButtonDownDuration { get; internal set; } = -1;
+
         /// <summary>
         /// Is left mouse button released?(readonly)
         /// </summary>
-        public static bool LeftButtonReleased
-        {
-            get
-            {
-                return leftButtonReleased;
-            }
-        }
+        public static bool LeftButtonReleased { get; internal set; } = false;
 
-        public static bool leftButtonPressed = false;
         /// <summary>
         /// Is left mouse button clicked?(readonly)
         /// </summary>
-        public static bool LeftButtonPressed
-        {
-            get
-            {
-                return leftButtonPressed;
-            }
-        }
+        public static bool LeftButtonPressed { get; internal set; } = false;
 
         #endregion
 
@@ -115,8 +96,7 @@ namespace ImGui.Input
         /// <summary>
         /// Last recorded right mouse button state
         /// </summary>
-        /// <remarks>for detecting right mouse button state' changes</remarks>
-        static InputState lastRightButtonState = InputState.Up;
+        public static InputState LastRightButtonState { get; internal set; } = InputState.Up;
 
         /// <summary>
         /// Right button state
@@ -129,19 +109,20 @@ namespace ImGui.Input
         public static InputState RightButtonState
         {
             get { return rightButtonState; }
+            internal set { rightButtonState = value; }
         }
 
+        public static long RightButtonDownDuration { get; internal set; } = -1;
+
         /// <summary>
-        /// Check if the right mouse button is clicked(readonly)
+        /// Is right mouse button released?(readonly)
         /// </summary>
-        public static bool RightButtonClicked
-        {
-            get
-            {
-                return lastRightButtonState == InputState.Down
-                    && rightButtonState == InputState.Up;
-            }
-        }
+        public static bool RightButtonReleased { get; internal set; } = false;
+
+        /// <summary>
+        /// Check if the right mouse button is pressed(readonly)
+        /// </summary>
+        public static bool RightButtonPressed { get; internal set; } = false;
         #endregion
 
         #region Position
@@ -169,82 +150,26 @@ namespace ImGui.Input
         public static Point MousePos
         {
             get { return mousePos; }
+            internal set
+            {
+                lastMousePos = mousePos;
+                mousePos = value;
+            }
         }
 
         /// <summary>
-        /// Is mouse's position changed compared to last frame
+        /// Is mouse moving?
         /// </summary>
         public static bool MouseMoving
         {
             get { return mousePos != lastMousePos; }
         }
 
+        public static float MouseWheel { get; internal set; }
+
         #endregion
-        
+
         internal static readonly StateMachine stateMachine = new StateMachine(MouseState.Idle, states);
-
-        static Mouse()
-        {
-        }
-
-        /// <summary>
-        /// Refresh mouse states
-        /// </summary>
-        /// <returns>true: successful; false: failed</returns>
-        /// <remarks>The mouse states will persist until next call of this method, 
-        /// and last states will be recorded.</remarks>
-        public static InputInfo Refresh()
-        {
-            Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);//Fetch unused state
-
-            //Buttons's states
-            lastLeftButtonState = leftButtonState;
-            leftButtonState = Application.inputContext.IsMouseLeftButtonDown ? InputState.Down : InputState.Up;
-            lastRightButtonState = rightButtonState;
-            rightButtonState = Application.inputContext.IsMouseRightButtonDown ? InputState.Down : InputState.Up;
-            //Debug.WriteLine("Mouse Left {0}, Right {1}", leftButtonState.ToString(), rightButtonState.ToString());
-
-            if (lastLeftButtonState == InputState.Down && leftButtonState == InputState.Up)
-            {
-                leftButtonReleased = true;
-            }
-            else
-            {
-                leftButtonReleased = false;
-            }
-
-            if (lastLeftButtonState == InputState.Up && leftButtonState == InputState.Down)
-            {
-                leftButtonPressed = true;
-            }
-            else
-            {
-                leftButtonPressed = false;
-            }
-
-            //Position
-            lastMousePos = mousePos;
-            var pos = Application.inputContext.MousePosition;
-            mousePos = new Point(pos.X, pos.Y);
-
-#if INSPECT_STATE
-            var A = stateMachine.CurrentState;
-#endif
-            if (leftButtonState == InputState.Down)
-            {
-                stateMachine.MoveNext(MouseCommand.MouseDown);
-            }
-            if (leftButtonState == InputState.Up)
-            {
-                stateMachine.MoveNext(MouseCommand.MouseUp);
-            }
-#if INSPECT_STATE
-            var B = stateMachine.CurrentState;
-            System.Diagnostics.Debug.WriteLineIf(A != B, string.Format("Mouse {0}=>{1}", A, B));
-#endif
-
-            return new InputInfo();
-        }
         
         private static string suspendedState;
         public static void Suspend()
