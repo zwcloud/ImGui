@@ -10,43 +10,6 @@ namespace ImGui.Input
     /// </summary>
     internal static class Mouse
     {
-        #region State machine define
-        internal static class MouseState
-        {
-            public const string Idle = "Idle";
-            public const string Pressed = "Pressed";
-            public const string PressFetched = "PressFetched";
-            public const string Released = "Released";
-            public const string Suspended = "Suspended";
-            public const string Resumed = "_Resumed";//Instant state
-        }
-
-        internal static class MouseCommand
-        {
-            public const string MouseDown = "_MouseDown";
-            public const string MouseUp = "_MouseUp";
-            public const string Fetch = "_Fetch";
-            public const string Resume = "_Resume";
-            public const string Suspend = "_Suspend";
-        }
-
-        private static string[] states =
-        {
-            MouseState.Idle, MouseCommand.MouseDown, MouseState.Pressed,
-            MouseState.Pressed, MouseCommand.Fetch, MouseState.PressFetched,
-            MouseState.Pressed, MouseCommand.MouseUp, MouseState.Released,
-            MouseState.PressFetched, MouseCommand.MouseUp, MouseState.Released,
-            MouseState.Released, MouseCommand.Fetch, MouseState.Idle,
-            MouseState.Released, MouseCommand.MouseDown, MouseState.Pressed,
-            
-            MouseState.Idle, MouseCommand.Suspend, MouseState.Suspended,
-            MouseState.Pressed, MouseCommand.Suspend, MouseState.Suspended,
-            MouseState.PressFetched, MouseCommand.Suspend, MouseState.Suspended,
-            MouseState.Released, MouseCommand.Suspend, MouseState.Suspended,
-            MouseState.Suspended, MouseCommand.Resume, MouseState.Resumed,
-        };
-        #endregion
-
         /// <summary>
         /// Double click interval time span
         /// </summary>
@@ -168,25 +131,7 @@ namespace ImGui.Input
         public static float MouseWheel { get; internal set; }
 
         #endregion
-
-        internal static readonly StateMachine stateMachine = new StateMachine(MouseState.Idle, states);
         
-        private static string suspendedState;
-        public static void Suspend()
-        {
-            suspendedState = stateMachine.CurrentState;
-            stateMachine.MoveNext(MouseCommand.Suspend);
-        }
-
-        public static void Resume()
-        {
-            if(stateMachine.MoveNext(MouseCommand.Resume))
-            {
-                System.Diagnostics.Debug.Assert(suspendedState != null);
-                stateMachine.CurrentState = suspendedState;
-                suspendedState = null;
-            }
-        }
     }
 
 

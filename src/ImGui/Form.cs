@@ -1,5 +1,7 @@
-﻿using System;
+﻿#define UseConsoleLog
+using System;
 using System.Collections.Generic;
+using Ivony.Logs;
 
 namespace ImGui
 {
@@ -26,11 +28,6 @@ namespace ImGui
         /// <param name="size"></param>
         protected Form(IntPtr nativeWindow, Point position, Size size)
         {
-            if (!Utility.CurrentOS.IsAndroid)
-            {
-                throw new InvalidOperationException();
-            }
-
             this.window = Application.windowContext.CreateWindow(nativeWindow);
             this.window.Position = Point.Zero;
             this.window.Size = size;
@@ -197,7 +194,6 @@ namespace ImGui
             if (Event.current.type == EventType.Layout)
             {
                 LayoutUtility.Layout();
-                Event.current.type = EventType.Repaint;
             }
         }
 
@@ -228,28 +224,30 @@ namespace ImGui
                 lastFPSUpdateTime = Application.Time;
             }
 
+#if UseConsoleLog
             if (Utility.CurrentOS.IsAndroid)
             {
                 // TODO do log with Xamarin?
             }
             else
             {
-                Console.Clear();
-                Console.WriteLine("{0,5:0.0}, fps: {1}, detlaTime {2}ms", fps, this.GetMousePos().ToString(), Application.DetlaTime);
-                Console.WriteLine("Input");
-                Console.WriteLine("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
-                Console.WriteLine("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
-                Console.WriteLine("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressed ? ++LeftButtonPressedTimes : LeftButtonPressedTimes);
-                Console.WriteLine("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleased ? ++LeftButtonReleasedTimes : LeftButtonReleasedTimes);
+                logger.Clear();
+                logger.LogInfo("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", fps, this.GetMousePos().ToString(), Application.DetlaTime);
+                logger.LogInfo("Input");
+                logger.LogInfo("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
+                logger.LogInfo("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
+                logger.LogInfo("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressed ? ++LeftButtonPressedTimes : LeftButtonPressedTimes);
+                logger.LogInfo("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleased ? ++LeftButtonReleasedTimes : LeftButtonReleasedTimes);
 
-                Console.WriteLine("    RightButtonState {0}", Input.Mouse.RightButtonState);
-                Console.WriteLine("    RightButtonDownDuration {0}ms", Input.Mouse.RightButtonDownDuration);
-                Console.WriteLine("    RightButtonPressed {0}, {1} times", Input.Mouse.RightButtonPressed, Input.Mouse.RightButtonPressed ? ++RightButtonPressedTimes : RightButtonPressedTimes);
-                Console.WriteLine("    RightButtonReleased {0}, {1} times", Input.Mouse.RightButtonReleased, Input.Mouse.RightButtonReleased ? ++RightButtonReleasedTimes : RightButtonReleasedTimes);
+                logger.LogInfo("    RightButtonState {0}", Input.Mouse.RightButtonState);
+                logger.LogInfo("    RightButtonDownDuration {0}ms", Input.Mouse.RightButtonDownDuration);
+                logger.LogInfo("    RightButtonPressed {0}, {1} times", Input.Mouse.RightButtonPressed, Input.Mouse.RightButtonPressed ? ++RightButtonPressedTimes : RightButtonPressedTimes);
+                logger.LogInfo("    RightButtonReleased {0}, {1} times", Input.Mouse.RightButtonReleased, Input.Mouse.RightButtonReleased ? ++RightButtonReleasedTimes : RightButtonReleasedTimes);
 
-                Console.WriteLine("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
-                Console.WriteLine("HoverId: {0}", this.uiState.HoverId);
+                logger.LogInfo("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
+                logger.LogInfo("HoverId: {0}", this.uiState.HoverId);
             }
+#endif
         }
 
         private void handleEvent()
@@ -317,15 +315,7 @@ namespace ImGui
         {
             this.renderer.Clear();
             this.renderer.RenderDrawList(this.DrawList, (int)this.Size.Width, (int)this.Size.Height);
-
-            if(Utility.CurrentOS.IsAndroid)
-            {
-                // xamarin did this later
-            }
-            else
-            {
-                this.renderer.SwapBuffers();
-            }
+            this.renderer.SwapBuffers();
         }
 
         private FormState formState = FormState.Normal;
@@ -371,5 +361,11 @@ namespace ImGui
         {
             return window.ClientToScreen(point);
         }
+
+        #region Log
+
+        private readonly ConsoleLogger logger = new ConsoleLogger();
+
+        #endregion
     }
 }

@@ -55,6 +55,30 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\vec3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\vec4.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\vecHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\BlankLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\ConsoleLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\ILogMetaProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogFileCycles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogFilenameStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LoggerWrapperExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogMeta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogMetaExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogScope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogSourceNameRestrictFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LogType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\MulticastLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\PipedLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\TextFileLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\TextFileLoggerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\TextFileWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\TextLogFileManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\TextLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\Dict.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\Geom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\Mesh.cs" />
@@ -152,5 +176,8 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Port\Core\" />
   </ItemGroup>
 </Project>
