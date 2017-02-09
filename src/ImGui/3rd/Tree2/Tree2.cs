@@ -1,3 +1,12 @@
+#region Copyright
+// From https://www.codeproject.com/Articles/12476/A-Generic-Tree-Collection
+// By Nicholas Butler
+// License: see License.htm.
+// Modified by zwcloud:
+//   1. make it compatible with .NET core
+//   2. remove useless code
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
