@@ -63,7 +63,7 @@ namespace ImGui
             get { return detlaTime; }
         }
 
-        public static Action<float,float, bool> inputEventHandler
+        public static Action<InputType,float,float> inputEventHandler
         {
             get { return windowContext.InputEventHandler; }
         }

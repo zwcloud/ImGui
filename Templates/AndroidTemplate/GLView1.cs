@@ -18,8 +18,6 @@ namespace AndroidTemplate
         {
         }
 
-        private Action<float, float, bool> inputEventHandler;
-
         // This gets called when the drawing surface is ready
         protected override void OnLoad(EventArgs e)
         {
@@ -32,35 +30,6 @@ namespace AndroidTemplate
             // Run the render loop
             Run();
         }
-
-        //public override bool OnTouchEvent(MotionEvent e)
-        //{
-        //    switch (e.ActionMasked)
-        //    {
-        //        case MotionEventActions.Down:
-        //        case MotionEventActions.PointerDown:
-        //            {
-        //                var x = e.GetX();
-        //                var y = e.GetY();
-        //                this.inputEventHandler(x, y, true);
-        //            }
-        //            break;
-        //        case MotionEventActions.Move:
-        //            break;
-        //        case MotionEventActions.Up:
-        //        case MotionEventActions.PointerUp:
-        //        case MotionEventActions.Outside:
-        //            {
-        //                var x = e.GetX();
-        //                var y = e.GetY();
-        //                this.inputEventHandler(x, y, false);
-        //            }
-        //            break;
-        //    }
-        //    return base.OnTouchEvent(e);
-        //}
-        
-
 
         // This method is called everytime the context needs
         // to be recreated. Use it to set any egl-specific settings

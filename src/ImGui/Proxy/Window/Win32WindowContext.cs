@@ -196,8 +196,8 @@ namespace ImGui
             }
             //if(msg.message != 0x12/*WM_QUIT*/) //...
         }
-
-        public void InputEventHandler(float x, float y, bool isDown)//called when touch at (x,y)
+        
+        public void InputEventHandler(InputType type, float x, float y)
         {
             //dummy
         }

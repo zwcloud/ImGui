@@ -22,7 +22,7 @@ namespace AndroidTemplate
     {
         GLView1 view;
 
-        private Action<float, float, bool> inputEventHandler;
+        private Action<ImGui.InputType, float, float> inputEventHandler;
 
         public override bool OnTouchEvent(MotionEvent e)
         {
@@ -33,10 +33,15 @@ namespace AndroidTemplate
                     {
                         var x = e.RawX;
                         var y = e.RawY;
-                        this.inputEventHandler(x, y, true);
+                        this.inputEventHandler(ImGui.InputType.TouchDown, x, y);
                     }
                     break;
                 case MotionEventActions.Move:
+                    {
+                        var x = e.RawX;
+                        var y = e.RawY;
+                        this.inputEventHandler(ImGui.InputType.TouchMove, x, y);
+                    }
                     break;
                 case MotionEventActions.Up:
                 case MotionEventActions.PointerUp:
@@ -44,7 +49,7 @@ namespace AndroidTemplate
                     {
                         var x = e.RawX;
                         var y = e.RawY;
-                        this.inputEventHandler(x, y, false);
+                        this.inputEventHandler(ImGui.InputType.TouchUp, x, y);
                     }
                     break;
             }

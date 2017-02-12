@@ -4,6 +4,12 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
+    public enum InputType
+    {
+        TouchDown,
+        TouchUp,
+        TouchMove,
+    }
     class AndroidWindowContext : IWindowContext
     {
         #region Native
@@ -39,16 +45,23 @@ namespace ImGui
 
         #region Implementation of IWindowContext
 
-        public void InputEventHandler(float x, float y, bool isDown)//called when touch at (x,y)
+        public void InputEventHandler(InputType type, float x, float y)//called when input event happens
         {
-            Input.Mouse.MousePos = new Point(x, y);
-            if (isDown)
+            switch (type)
             {
-                Input.Mouse.LeftButtonState = InputState.Down;
-            }
-            else
-            {
-                Input.Mouse.LeftButtonState = InputState.Up;
+                case InputType.TouchDown:
+                    Input.Mouse.MousePos = new Point(x, y);
+                    Input.Mouse.LeftButtonState = InputState.Down;
+                    break;
+                case InputType.TouchUp:
+                    Input.Mouse.MousePos = new Point(x, y);
+                    Input.Mouse.LeftButtonState = InputState.Up;
+                    break;
+                case InputType.TouchMove:
+                    Input.Mouse.MousePos = new Point(x, y);
+                    break;
+                default:
+                    break;
             }
         }
 

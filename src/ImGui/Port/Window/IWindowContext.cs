@@ -6,7 +6,7 @@ namespace ImGui
     {
         void MainLoop(Action guiMethod);
 
-        void InputEventHandler(float x, float y, bool isDown);
+        void InputEventHandler(InputType type, float x, float y);
 
         IWindow CreateWindow(IntPtr nativeWindow);
 
