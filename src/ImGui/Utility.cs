@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using CSharpGL;
+using System.Linq;
+using System.Reflection;
 
 namespace ImGui
 {
@@ -49,22 +51,39 @@ namespace ImGui
         // Detects the current OS (Windows, Linux, MacOS)
         internal static class CurrentOS
         {
+            public static Platform Platform {get; private set;}
+
             static CurrentOS()
             {
 #if __ANDROID__
                 var envars = System.Environment.GetEnvironmentVariables();
                 IsAndroid = envars.Contains("ANDROID_PROPERTY_WORKSPACE");
-                if (IsAndroid) return;
+                if (IsAndroid)
+                {
+                    Platform = Platform.Android;
+                    return;
+                }
 #else
                 IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                if (IsWindows) return;
+                if (IsWindows)
+                {
+                    Platform = Platform.Windows;
+                    return;
+                }
                 IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-                if (IsMac) return;
+                if (IsMac)
+                {
+                    Platform = Platform.Mac;
+                    return;
+                }
                 IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-                if (IsLinux) return;
+                if (IsLinux)
+                {
+                    Platform = Platform.Linux;
+                    return;
+                }
 #endif
-
-                IsUnknown = true;
+                IsUnknown = true;                
             }
 
             public static bool IsWindows { get; private set; }
@@ -397,6 +416,40 @@ namespace ImGui
                 Debug.WriteLine("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
                     fileName, lineNumber, error, errorStr, memberName);
             }
+        }
+
+        public static T Create<T>(Platform platform)
+        {
+            var IFuncType = typeof(T);
+#if DEBUG
+            if (!IFuncType.GetTypeInfo().IsInterface)
+            {
+                throw new ArgumentException("T must be an interface");
+            }
+#endif
+            var asm = typeof(Utility).GetTypeInfo().Assembly;
+            var asmTypes = asm.GetTypes();
+            var funcType = asmTypes.FirstOrDefault(t =>
+            {
+                var typeInfo = t.GetTypeInfo();
+                if (typeInfo.IsInterface)
+                {
+                    return false;
+                }
+                if (!IFuncType.GetTypeInfo().IsAssignableFrom(t))
+                {
+                    return false;
+                }
+                var platformAttr = (PlatformAttribute)typeInfo.GetCustomAttribute(typeof(PlatformAttribute), false);
+                if (platformAttr == null || ((platformAttr.Value & platform) != platform))
+                {
+                    return false;
+                }
+                return true;
+            });
+            if (funcType == null) { throw new InvalidOperationException(); }
+            var func = (T)Activator.CreateInstance(funcType);
+            return func;
         }
 
     }

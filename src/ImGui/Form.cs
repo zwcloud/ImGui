@@ -1,4 +1,4 @@
-﻿#define UseConsoleLog
+﻿#define UseLog
 using System;
 using System.Collections.Generic;
 using Ivony.Logs;
@@ -8,7 +8,7 @@ namespace ImGui
     /// <summary>
     /// Represents a window that makes up an application's user interface.
     /// </summary>
-    public abstract class Form
+    public abstract partial class Form
     {
         public static Form current;
 
@@ -224,29 +224,22 @@ namespace ImGui
                 lastFPSUpdateTime = Application.Time;
             }
 
-#if UseConsoleLog
-            if (Utility.CurrentOS.IsAndroid)
-            {
-                // TODO do log with Xamarin?
-            }
-            else
-            {
-                logger.Clear();
-                logger.LogInfo("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", fps, this.GetMousePos().ToString(), Application.DetlaTime);
-                logger.LogInfo("Input");
-                logger.LogInfo("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
-                logger.LogInfo("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
-                logger.LogInfo("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressed ? ++LeftButtonPressedTimes : LeftButtonPressedTimes);
-                logger.LogInfo("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleased ? ++LeftButtonReleasedTimes : LeftButtonReleasedTimes);
+#if UseLog
+            Application.logger.Clear();
+            Application.logger.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", fps, this.GetMousePos().ToString(), Application.DetlaTime);
+            Application.logger.Msg("Input");
+            Application.logger.Msg("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
+            Application.logger.Msg("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
+            Application.logger.Msg("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressed ? ++LeftButtonPressedTimes : LeftButtonPressedTimes);
+            Application.logger.Msg("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleased ? ++LeftButtonReleasedTimes : LeftButtonReleasedTimes);
 
-                logger.LogInfo("    RightButtonState {0}", Input.Mouse.RightButtonState);
-                logger.LogInfo("    RightButtonDownDuration {0}ms", Input.Mouse.RightButtonDownDuration);
-                logger.LogInfo("    RightButtonPressed {0}, {1} times", Input.Mouse.RightButtonPressed, Input.Mouse.RightButtonPressed ? ++RightButtonPressedTimes : RightButtonPressedTimes);
-                logger.LogInfo("    RightButtonReleased {0}, {1} times", Input.Mouse.RightButtonReleased, Input.Mouse.RightButtonReleased ? ++RightButtonReleasedTimes : RightButtonReleasedTimes);
+            Application.logger.Msg("    RightButtonState {0}", Input.Mouse.RightButtonState);
+            Application.logger.Msg("    RightButtonDownDuration {0}ms", Input.Mouse.RightButtonDownDuration);
+            Application.logger.Msg("    RightButtonPressed {0}, {1} times", Input.Mouse.RightButtonPressed, Input.Mouse.RightButtonPressed ? ++RightButtonPressedTimes : RightButtonPressedTimes);
+            Application.logger.Msg("    RightButtonReleased {0}, {1} times", Input.Mouse.RightButtonReleased, Input.Mouse.RightButtonReleased ? ++RightButtonReleasedTimes : RightButtonReleasedTimes);
 
-                logger.LogInfo("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
-                logger.LogInfo("HoverId: {0}", this.uiState.HoverId);
-            }
+            Application.logger.Msg("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
+            Application.logger.Msg("HoverId: {0}", this.uiState.HoverId);
 #endif
         }
 
@@ -361,11 +354,5 @@ namespace ImGui
         {
             return window.ClientToScreen(point);
         }
-
-        #region Log
-
-        private readonly ConsoleLogger logger = new ConsoleLogger();
-
-        #endregion
     }
 }

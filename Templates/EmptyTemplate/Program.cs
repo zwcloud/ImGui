@@ -8,6 +8,7 @@ namespace EmptyTemplate
         [STAThread]
         static void Main()
         {
+            Application.Init();
             Application.Run(new MainForm());
         }
     }

@@ -88,6 +88,7 @@ namespace Ivony.Logs
     /// </summary>
     public void Clear()
     {
+      if (ImGui.Utility.CurrentOS.IsAndroid) return;
       Console.Clear();
     }
 

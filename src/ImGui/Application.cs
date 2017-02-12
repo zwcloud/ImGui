@@ -1,9 +1,8 @@
-﻿//#define DrawDirtyRect
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Linq;
-using ImGui.Input;
 
 namespace ImGui
 {
@@ -64,13 +63,16 @@ namespace ImGui
             get { return detlaTime; }
         }
 
-        static Application()
+        public static Action<float,float, bool> inputEventHandler
         {
-            InitSysDependencies();
+            get { return windowContext.InputEventHandler; }
         }
 
         internal static void InitSysDependencies()
         {
+            // create factory: service
+            logger = Utility.Create<ILogger>(Utility.CurrentOS.Platform);
+
             // create factory:
             //     platform-dependent object implementation
             if (Utility.CurrentOS.IsAndroid)
@@ -92,9 +94,11 @@ namespace ImGui
         }
 
         private static bool RequestQuit;
-#if DrawDirtyRect
-        static Rect lastDirtyRect = Rect.Empty;
-#endif
+
+        public static void Init()
+        {
+            InitSysDependencies();
+        }
 
         /// <summary>
         /// Begins running a standard application on the current thread and makes the specified form visible.
@@ -118,7 +122,7 @@ namespace ImGui
                 }
                 detlaTime = Time - frameStartTime;
             }
-            
+
             //TODO clean up
         }
 
@@ -149,6 +153,7 @@ namespace ImGui
             windowContext.MainLoop(form.GUILoop);
         }
 
+
         /// <summary>
         /// Closes all application windows and quit the application.
         /// </summary>
@@ -157,5 +162,6 @@ namespace ImGui
             RequestQuit = true;
         }
 
+        internal static ILogger logger;
     }
 }

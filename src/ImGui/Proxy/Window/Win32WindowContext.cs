@@ -197,6 +197,11 @@ namespace ImGui
             //if(msg.message != 0x12/*WM_QUIT*/) //...
         }
 
+        public void InputEventHandler(float x, float y, bool isDown)//called when touch at (x,y)
+        {
+            //dummy
+        }
+
         private IntPtr WindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
         {
             switch (msg)

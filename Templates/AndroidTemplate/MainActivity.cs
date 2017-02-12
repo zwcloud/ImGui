@@ -22,9 +22,41 @@ namespace AndroidTemplate
     {
         GLView1 view;
 
+        private Action<float, float, bool> inputEventHandler;
+
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            switch (e.ActionMasked)
+            {
+                case MotionEventActions.Down:
+                case MotionEventActions.PointerDown:
+                    {
+                        var x = e.RawX;
+                        var y = e.RawY;
+                        this.inputEventHandler(x, y, true);
+                    }
+                    break;
+                case MotionEventActions.Move:
+                    break;
+                case MotionEventActions.Up:
+                case MotionEventActions.PointerUp:
+                case MotionEventActions.Outside:
+                    {
+                        var x = e.RawX;
+                        var y = e.RawY;
+                        this.inputEventHandler(x, y, false);
+                    }
+                    break;
+            }
+            return base.OnTouchEvent(e);
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            ImGui.Application.Init();
+            this.inputEventHandler = ImGui.Application.inputEventHandler;
 
             // Create our OpenGL view, and display it
             view = new GLView1(this);
@@ -41,6 +73,7 @@ namespace AndroidTemplate
             //        varEnumerator.Value);
             //}
         }
+
         protected override void OnPause()
         {
             base.OnPause();

@@ -39,6 +39,19 @@ namespace ImGui
 
         #region Implementation of IWindowContext
 
+        public void InputEventHandler(float x, float y, bool isDown)//called when touch at (x,y)
+        {
+            Input.Mouse.MousePos = new Point(x, y);
+            if (isDown)
+            {
+                Input.Mouse.LeftButtonState = InputState.Down;
+            }
+            else
+            {
+                Input.Mouse.LeftButtonState = InputState.Up;
+            }
+        }
+
         public void MainLoop(Action guiMethod)
         {
             guiMethod();
