@@ -26,20 +26,16 @@ namespace AndroidTemplate
             //Create form
             mainForm = new MainForm(IntPtr.Zero/*dummy*/, ImGui.Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width, this.Size.Height));
             ImGui.Application.Init(mainForm);
-
-            // Run the render loop
-            Run();
+            
+            Run();// Run the render loop
         }
 
         // This method is called everytime the context needs
         // to be recreated. Use it to set any egl-specific settings
         // prior to context creation
-        //
-        // In this particular case, we demonstrate how to set
-        // the graphics mode and fallback in case the device doesn't
-        // support the defaults
         protected override void CreateFrameBuffer()
         {
+            // using OpenGLES3.0
             this.GLContextVersion = GLContextVersion.Gles3_0;
             // the default GraphicsMode that is set consists of (16, 16, 0, 0, 2, false)
             try
@@ -51,20 +47,6 @@ namespace AndroidTemplate
             catch (Exception ex)
             {
                 Log.Verbose("ImGui", "{0}", ex);
-            }
-
-            // this is a graphics setting that sets everything to the lowest mode possible so
-            // the device returns a reliable graphics setting.
-            try
-            {
-                Log.Verbose("ImGui", "Loading with custom Android settings (low mode)");
-                GraphicsMode = new AndroidGraphicsMode(0, 0, 0, 0, 0, false);
-                base.CreateFrameBuffer();// if you don't call this, the context won't be created
-                return;
-            }
-            catch (Exception ex)
-            {
-                Log.Verbose("GLCube", "{0}", ex);
             }
             throw new Exception("Can't load egl, aborting");
         }

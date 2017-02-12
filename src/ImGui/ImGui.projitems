@@ -160,9 +160,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Window\Win32Window.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Window\Win32WindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Rect.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Service\DefaultLogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Service\ILogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Service\Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\DefaultLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Size.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StateMachine.cs" />
