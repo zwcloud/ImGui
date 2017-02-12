@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace ImGui
 {
-    static class Utility
+    internal static partial class Utility
     {
         /// <summary>
         /// Get rect of the context box

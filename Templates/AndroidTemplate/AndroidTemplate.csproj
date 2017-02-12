@@ -61,9 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
-    <Compile Include="GLView1.cs" />
-    <Compile Include="GLView1.Renderer.cs" />
     <Compile Include="MainForm.cs" />
+    <Compile Include="MainView.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

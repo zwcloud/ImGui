@@ -54,29 +54,18 @@ namespace AndroidTemplate
                     break;
             }
             return base.OnTouchEvent(e);
-        }
+        }        
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-
+            
             ImGui.Application.Init();
             this.inputEventHandler = ImGui.Application.inputEventHandler;
 
             // Create our OpenGL view, and display it
             view = new GLView1(this);
             SetContentView(view);
-            
-            //Log.Info("", "Environment Variables");
-            //var envars = System.Environment.GetEnvironmentVariables();
-            //var varEnumerator =
-            //    envars.GetEnumerator();
-            //while (varEnumerator.MoveNext())
-            //{
-            //    Log.Info("","\t{0}={1}",
-            //        varEnumerator.Key,
-            //        varEnumerator.Value);
-            //}
         }
 
         protected override void OnPause()

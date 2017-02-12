@@ -24,7 +24,7 @@ namespace AndroidTemplate
             base.OnLoad(e);
 
             //Create form
-            mainForm = new MainForm(this.Handle, ImGui.Point.Zero, new ImGui.Size(this.Size.Width, this.Size.Height));
+            mainForm = new MainForm(IntPtr.Zero/*dummy*/, ImGui.Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width, this.Size.Height));
             ImGui.Application.Init(mainForm);
 
             // Run the render loop
@@ -44,26 +44,22 @@ namespace AndroidTemplate
             // the default GraphicsMode that is set consists of (16, 16, 0, 0, 2, false)
             try
             {
-                Log.Verbose("GLCube", "Loading with default settings");
-
-                // if you don't call this, the context won't be created
-                base.CreateFrameBuffer();
+                Log.Verbose("ImGui", "Loading with default settings");
+                base.CreateFrameBuffer();// if you don't call this, the context won't be created
                 return;
             }
             catch (Exception ex)
             {
-                Log.Verbose("GLCube", "{0}", ex);
+                Log.Verbose("ImGui", "{0}", ex);
             }
 
             // this is a graphics setting that sets everything to the lowest mode possible so
             // the device returns a reliable graphics setting.
             try
             {
-                Log.Verbose("GLCube", "Loading with custom Android settings (low mode)");
+                Log.Verbose("ImGui", "Loading with custom Android settings (low mode)");
                 GraphicsMode = new AndroidGraphicsMode(0, 0, 0, 0, 0, false);
-
-                // if you don't call this, the context won't be created
-                base.CreateFrameBuffer();
+                base.CreateFrameBuffer();// if you don't call this, the context won't be created
                 return;
             }
             catch (Exception ex)
@@ -73,5 +69,17 @@ namespace AndroidTemplate
             throw new Exception("Can't load egl, aborting");
         }
 
+        // This gets called on each frame render
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+
+            GL.ClearColor(0.5f, 0.5f, 0f, 1.0f);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            ImGui.Application.RunLoop(mainForm);
+
+            SwapBuffers();
+        }
     }
 }
