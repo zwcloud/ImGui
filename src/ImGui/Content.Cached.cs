@@ -12,8 +12,17 @@ namespace ImGui
                 content = new Content(t);
                 content.TextMesh = new TextMesh();
                 chachedContentMap.Add(id, content);
+                return content;
             }
-            chachedContentMap[id].Text = t;
+            else
+            {
+                // existing text
+                if(t != chachedContentMap[id].Text)
+                {
+                    chachedContentMap[id].Text = t;
+                    chachedContentMap[id].Dirty = true;
+                }
+            }
             return content;
         }
 

@@ -32,7 +32,7 @@ namespace DWriteSharp
                 return render;
             }
         }
-        
+
         /// <summary>
         /// Create a text format object used for text layout.
         /// </summary>
@@ -40,7 +40,7 @@ namespace DWriteSharp
         /// <param name="fontWeight">Font weight</param>
         /// <param name="fontStyle">Font style</param>
         /// <param name="fontStretch">Font stretch</param>
-        /// <param name="fontSize">Logical size of the font in DIP units. A DIP ("device-independent pixel") equals 1/96 inch.</param>
+        /// <param name="fontSizeInDip">Logical size of the font in DIP units. A DIP ("device-independent pixel") equals 1/96 inch.</param>
         /// <param name="localeName">Locale name(optional)</param>
         /// TODO understand the meaning of Locale name
         /// <returns> newly created text format object </returns>

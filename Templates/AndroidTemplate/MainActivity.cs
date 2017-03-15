@@ -20,7 +20,7 @@ namespace AndroidTemplate
         )]
     public class MainActivity : Activity
     {
-        GLView1 view;
+        MainView view;
 
         private Action<ImGui.InputType, float, float> inputEventHandler;
 
@@ -54,17 +54,19 @@ namespace AndroidTemplate
                     break;
             }
             return base.OnTouchEvent(e);
-        }        
+        }
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            
+
+            ImGui.Application.AssetManager = this.Assets;
+
             ImGui.Application.Init();
             this.inputEventHandler = ImGui.Application.inputEventHandler;
 
             // Create our OpenGL view, and display it
-            view = new GLView1(this);
+            view = new MainView(this);
             SetContentView(view);
         }
 

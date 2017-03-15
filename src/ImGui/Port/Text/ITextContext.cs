@@ -41,12 +41,7 @@ namespace ImGui
         /// text building callbacks used to retrive text rendering data
         /// </summary>
         /// <param name="offset">offset of the text base-point against the rectangle position(bottom-left of the rectangle)</param>
-        /// <param name="pointAdder">called when a point is added</param>
-        /// <param name="bezierAdder">called when a bezier segment is added</param>
-        /// <param name="pathCloser">called when the current path should be closed</param>
-        /// <param name="figureBeginner">call when a figure begins</param>
-        /// <param name="figureEnder">call when a figure ends</param>
-        void Build(Point offset, PointAdder pointAdder, BezierAdder bezierAdder, PathCloser pathCloser, FigureBeginner figureBeginner, FigureEnder figureEnder);
+        void Build(Point offset, TextMesh textMesh);
 
         /// <summary>
         /// Get nearest character index from the point.

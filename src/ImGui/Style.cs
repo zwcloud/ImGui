@@ -172,11 +172,16 @@ namespace ImGui
 
             Font = new Font
             {
-                FontFamily = "Consolas",
+                FontFamily =
+#if __ANDROID__
+                "DroidSans.ttf"
+#else
+                "Consolas",
+#endif
                 FontStyle = FontStyle.Normal,
                 FontWeight = FontWeight.Normal,
                 FontStretch = FontStretch.Normal,
-                Size = 12,
+                Size = 8,
                 Color = Color.Black
             };
 
@@ -216,7 +221,7 @@ namespace ImGui
         /// <returns></returns>
         public Size GetTextActualSize(string text)
         {
-            if (Utility.CurrentOS.IsAndroid) return new Size(200, 50);//temp
+            if (Utility.CurrentOS.IsAndroid) return new Size(200, 50);//Dummy: GetTextSize is not implemented for android yet.
 
             Size actualSize;
             var font = this.Font;

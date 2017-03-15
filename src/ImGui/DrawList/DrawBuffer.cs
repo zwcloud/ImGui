@@ -70,7 +70,7 @@
                 CommandBuffer.Add(
                     new DrawCommand
                     {
-                        ClipRect = new Rect(Form.current.Size)
+                        //ClipRect = new Rect(Form.current.Size)
                     });
             }
             DrawCommand newDrawCommand = this.CommandBuffer[CommandBuffer.Count - 1];

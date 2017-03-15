@@ -19,6 +19,11 @@ namespace PrimitiveRenderingTest
     
     public class PathRenderingTest
     {
+        public PathRenderingTest()
+        {
+            Application.InitSysDependencies();
+        }
+
         [Fact]
         public void ShouldRenderAnAnimatedTriangle()
         {

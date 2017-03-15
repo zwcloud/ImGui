@@ -124,10 +124,53 @@ namespace ImGui
             }
         }
 
-        public void Build(Point offset, PointAdder pointAdder, BezierAdder bezierAdder, PathCloser pathCloser, FigureBeginner figureBeginner, FigureEnder figureEnder)
+        public void Build(Point offset, TextMesh textMesh)
         {
-            DWriteSharp.DWrite.RenderLayoutToMesh(textLayout, (float)offset.X, (float)offset.Y, pointAdder.Invoke, bezierAdder.Invoke, pathCloser.Invoke,
-                figureBeginner.Invoke, figureEnder.Invoke);
+            var t = textMesh;
+            Point lastPoint = Point.Zero;
+            DWriteSharp.DWrite.RenderLayoutToMesh(textLayout, (float)offset.X, (float)offset.Y,
+                // point adder
+                (x, y) =>
+                {
+                    t.PathLineTo(new Point(x, y));
+                    lastPoint = new Point(x, y);
+                },
+
+                // bezier adder
+                (c0x, c0y, c1x, c1y, p1x, p1y) =>
+                {
+                    var p0 = lastPoint;//The start point of the cubic Bezier segment.
+                    var c0 = new Point(c0x, c0y);//The first control point of the cubic Bezier segment.
+                    var p = new Point((c0x + c1x) / 2, (c0y + c1y) / 2);
+                    var c1 = new Point(c1x, c1y);//The second control point of the cubic Bezier segment.
+                    var p1 = new Point(p1x, p1y);//The end point of the cubic Bezier segment.
+
+                    t.PathAddBezier(p0, c0, p);
+                    t.PathAddBezier(p, c1, p1);
+
+                    //set last point for next bezier
+                    lastPoint = p1;
+                },
+
+                // path closer(dummy)
+                () =>
+                {
+                },
+
+                // figure beginner
+                (x, y) =>
+                {
+                    lastPoint = new Point(x, y);
+                    t.PathMoveTo(lastPoint);
+                },
+
+                // figure ender
+                () =>
+                {
+                    t.PathClose();
+                    t.AddContour(Color.Black);
+                    t.PathClear();
+                });
         }
 
         public uint XyToIndex(float pointX, float pointY, out bool isInside)

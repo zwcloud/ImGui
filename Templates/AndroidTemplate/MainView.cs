@@ -10,11 +10,11 @@ using Android.Util;
 
 namespace AndroidTemplate
 {
-    partial class GLView1 : AndroidGameView
+    partial class MainView : AndroidGameView
     {
-        private MainForm mainForm;
+        private Calculator.Form1 mainForm;
 
-        public GLView1(Context context) : base(context)
+        public MainView(Context context) : base(context)
         {
         }
 
@@ -24,7 +24,7 @@ namespace AndroidTemplate
             base.OnLoad(e);
 
             //Create form
-            mainForm = new MainForm(IntPtr.Zero/*dummy*/, ImGui.Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width, this.Size.Height));
+            mainForm = new Calculator.Form1(IntPtr.Zero/*dummy*/, ImGui.Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width, this.Size.Height));
             ImGui.Application.Init(mainForm);
             
             Run();// Run the render loop

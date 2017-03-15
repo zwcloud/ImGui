@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 namespace ImGui
 {
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    internal delegate void PathClearer();
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate void PointAdder(float x, float y);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate void BezierAdder(float x0, float y0, float x1, float y1, float x2, float y2);
@@ -400,7 +402,7 @@ namespace ImGui
                     DrawBuffer.CommandBuffer.Add(
                         new DrawCommand
                         {
-                            ClipRect = new Rect(Form.current.Size)
+                            //ClipRect = new Rect(Form.current.Size)
                         });
                 }
                 DrawCommand newDrawCommand = DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1];
@@ -443,7 +445,7 @@ namespace ImGui
                     this.BezierBuffer.CommandBuffer.Add(
                         new DrawCommand
                         {
-                            ClipRect = new Rect(Form.current.Size)
+                            //ClipRect = new Rect(Form.current.Size)
                         });
                 }
                 DrawCommand newDrawCommand = this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1];

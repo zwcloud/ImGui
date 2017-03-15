@@ -56,6 +56,7 @@ namespace ImGui
             this.TextContext = textContext;
         }
 
+        public bool Dirty { get; set; }
 
         /// <summary>
         /// Get size of this content
@@ -130,13 +131,19 @@ namespace ImGui
             if (style == null) throw new ArgumentNullException();
 
             //check if the content need to be rebuilt
-            bool rebuiltNeeded = this.rect != rect || Style.IsRebuildTextContextRequired(this.style, style);
+            // 1. rect size changed
+            // 2. style changed that make the text different looking
+            // 3. the content is dirty
+            bool rebuiltNeeded = Dirty || this.rect != rect || Style.IsRebuildTextContextRequired(this.style, style);
             if (!rebuiltNeeded)
             {
                 Debug.Assert(TextMesh != null);
                 return;
             }
-            
+
+            // clear dirty
+            Dirty = false;
+
             // (re)create a TextContent for the text
             var font = style.Font;
             var textStyle = style.TextStyle;
@@ -146,11 +153,6 @@ namespace ImGui
                 this.TextContext.Dispose();
                 this.style = style;
                 this.rect = rect;
-            }
-            
-            if(Utility.CurrentOS.IsAndroid)// tmp: the text context for android hasn't been implemented
-            {
-                return;
             }
 
             this.TextContext = Application._map.CreateTextContext(

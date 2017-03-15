@@ -95,6 +95,8 @@ namespace ImGui
 
         private static bool RequestQuit;
 
+        public static object AssetManager { get; set; }
+
         public static void Init()
         {
             InitSysDependencies();

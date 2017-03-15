@@ -10,6 +10,7 @@ namespace ImGui
         TouchUp,
         TouchMove,
     }
+
     class AndroidWindowContext : IWindowContext
     {
         #region Native

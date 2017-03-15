@@ -3,6 +3,17 @@
     struct PointF
     {
         public float x, y;
+
+        public float X
+        {
+            get { return x; }
+        }
+
+        public float Y
+        {
+            get { return y; }
+        }
+
         public PointF(float x, float y)
         {
             this.x = x;

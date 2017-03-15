@@ -13,6 +13,7 @@ namespace ImGui
 {
     internal static partial class Utility
     {
+
         /// <summary>
         /// Get rect of the context box
         /// </summary>
@@ -139,12 +140,12 @@ namespace ImGui
                 sb.AppendLine();
             }
 
-            for (int i = 0; i < vertexes.Count; i++)
-            {
-                var uv = vertexes[i].uv;
-                sb.AppendFormat("vt {0} {1}", uv.x, uv.y);
-                sb.AppendLine();
-            }
+            //for (int i = 0; i < vertexes.Count; i++)
+            //{
+            //    var uv = vertexes[i].uv;
+            //    sb.AppendFormat("vt {0} {1}", uv.x, uv.y);
+            //    sb.AppendLine();
+            //}
 
             for (int i = 0; i < indexes.Count; i += 3)
             {
@@ -220,93 +221,6 @@ namespace ImGui
         }
 
 #if false //to be moved to unit test
-        public static void SavePathToPng(IList<Point> path)
-        {
-            if (path == null || path.Count <= 1) return;
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)Form.current.Size.Width, (int)Form.current.Size.Height))
-            using (Cairo.Context g = new Cairo.Context(surface))
-            {
-                g.MoveTo(path[0].X, path[0].Y);
-                for (int i = 1; i < path.Count; i++)
-                {
-                    var x0 = path[i - 1].X;
-                    var y0 = path[i - 1].Y;
-                    var x1 = path[i].X;
-                    var y1 = path[i].Y;
-
-                    g.LineTo(x1, y1);
-
-                    var dx = x1 - x0;
-                    var dy = y1 - y0;
-
-                    if (MathEx.AmostZero(dx) && MathEx.AmostZero(dy)) continue;
-
-                    var n0 = new Vector(-dy, dx); n0.Normalize();
-                    var n1 = new Vector(dy, -dx); n1.Normalize();
-
-                    var B = new Point(x1, y1);
-                    var d = new Vector(x0 - x1, y0 - y1); d.Normalize();
-
-                    var arrowEnd0 = B + 5 * (d + n0);
-                    var arrowEnd1 = B + 5 * (d + n1);
-                    g.MoveTo(x1, y1);
-                    g.LineTo(arrowEnd0.ToPointD());
-                    g.MoveTo(x1, y1);
-                    g.LineTo(arrowEnd1.ToPointD());
-                    g.MoveTo(x1, y1);
-                }
-                g.Stroke();
-                surface.WriteToPng(@"D:\path_test.png");
-            }
-        }
-        
-        public static void SavePathToPng(List<LibTessDotNet.ContourVertex> path)
-        {
-            if (path == null || path.Count <= 1) return;
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)Form.current.Size.Width, (int)Form.current.Size.Height))
-            using (Cairo.Context g = new Cairo.Context(surface))
-            {
-                g.MoveTo(path[0].Position.X , path[0].Position.Y);
-                for (int i = 1; i < path.Count; i++)
-                {
-                    var x0 = path[i-1].Position.X;
-                    var y0 = path[i-1].Position.Y;
-                    var x1 = path[i].Position.X;
-                    var y1 = path[i].Position.Y;
-
-                    g.LineTo(x1, y1);
-                    
-                    {
-                        // draw index number
-                        g.RelMoveTo(5, 5);
-                        g.ShowText(i.ToString());
-                        g.MoveTo(x1, y1);
-
-                        // draw arrow
-                        var dx = x1 - x0;
-                        var dy = y1 - y0;
-
-                        if (MathEx.AmostZero(dx) && MathEx.AmostZero(dy)) continue;
-
-                        var n0 = new Vector(-dy, dx); n0.Normalize();
-                        var n1 = new Vector(dy, -dx); n1.Normalize();
-
-                        var B = new Point(x1, y1);
-                        var d = new Vector(x0 - x1, y0 - y1); d.Normalize();
-
-                        var arrowEnd0 = B + 5 * (d + n0);
-                        var arrowEnd1 = B + 5 * (d + n1);
-                        g.MoveTo(x1, y1);
-                        g.LineTo(arrowEnd0.ToPointD());
-                        g.MoveTo(x1, y1);
-                        g.LineTo(arrowEnd1.ToPointD());
-                        g.MoveTo(x1, y1);
-                    }
-                }
-                g.Stroke();
-                surface.WriteToPng(@"D:\contour_test.png");
-            }
-        }
 #endif
         /// <summary>
         /// convert pt to dip
@@ -452,5 +366,56 @@ namespace ImGui
             return func;
         }
 
+        public static System.IO.Stream ReadFile(string filePath)
+        {
+            var data = File.ReadAllBytes(@"W:\VS2015\msjh.ttf");
+            var str = Convert.ToBase64String(data);
+            var tmpFontFileData = Convert.FromBase64String(str);
+            var memoryStream = new MemoryStream(tmpFontFileData);
+            return memoryStream;
+#if f
+            if (CurrentOS.IsAndroid)
+            {
+#if __ANDROID__
+                //var assets = (Android.Content.Res.AssetManager)Application.AssetManager;
+                //var stream = assets.Open(filePath);
+
+                var tmpFontFileData = Convert.FromBase64String(CompositeMS_base64_str);
+                var memoryStream = new MemoryStream(tmpFontFileData);
+                return memoryStream;
+#endif
+            }
+            else
+            {
+                return new FileStream(filePath, FileMode.Open);
+            }
+            //dummy, without this the .NET core build will not compile
+            return null;
+#endif
+        }
+
+        //private static string CompositeMS_base64_str = @"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";
+    }
+
+
+    public class Profile
+    {
+        private static string name;
+        private static Stopwatch watch = new Stopwatch();
+
+        [Conditional("DEBUG")]
+        public static void Start(string name)
+        {
+            Profile.name = name;
+            watch.Start();
+        }
+
+        [Conditional("DEBUG")]
+        public static void End()
+        {
+            watch.Stop();
+            Debug.WriteLine("[Profile]{0} {1} ms", name, watch.ElapsedMilliseconds.ToString());
+            watch.Reset();
+        }
     }
 }

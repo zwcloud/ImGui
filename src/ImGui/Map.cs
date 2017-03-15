@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace ImGui
 {
     delegate ITextContext CTextContext(
@@ -45,7 +46,7 @@ namespace ImGui
             TextAlignment alignment)
         {
             var fontSizeInDip = Utility.PointToDip(fontSize);
-            return new DWriteTextContext(
+            return new TypographyTextContext(
                 text, fontFamily, fontSizeInDip,
                 stretch, style, weight,
                 maxWidth, maxHeight, alignment);
@@ -93,12 +94,6 @@ namespace ImGui
             TextAlignment alignment)
         {
             throw new NotImplementedException();
-
-            //return new PangoTextContext(
-            //    text, fontFamily, fontSize,
-            //    stretch, style, weight,
-            //    maxWidth, maxHeight,
-            //    alignment);
         }
         
         private static IWindowContext CWindowContext()
@@ -143,7 +138,10 @@ namespace ImGui
             int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
-            throw new NotImplementedException();
+            return new TypographyTextContext(
+                text, fontFamily, fontSize,//TODO confirm fontSize matters
+                stretch, style, weight,
+                maxWidth, maxHeight, alignment);
         }
 
         private static IWindowContext CWindowContext()

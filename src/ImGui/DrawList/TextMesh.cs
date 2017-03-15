@@ -4,7 +4,30 @@ using LibTessDotNet;
 
 namespace ImGui
 {
-    class TextMesh
+    interface ITextPathBuilder
+    {
+        void PathClear();
+        void PathMoveTo(Point point);
+        void PathLineTo(Point pos);
+        void PathClose();
+        void PathAddBezier(Point start, Point control, Point end);
+
+        /// <summary>
+        /// Append contour
+        /// </summary>
+        /// <param name="color"></param>
+        void AddContour(Color color);
+    }
+
+    /// <summary>
+    /// Text mesh
+    /// </summary>
+    /// <remarks>
+    /// A text mesh contains two parts:
+    ///   1. triangles: generated from glyph contours (line segment part)
+    ///   2. bezier segments: generated from glyph bezier curves
+    /// </remarks>
+    class TextMesh : ITextPathBuilder
     {
         ImGui.Internal.List<DrawIndex> indexBuffer = new ImGui.Internal.List<DrawIndex>();
         ImGui.Internal.List<DrawVertex> vertexBuffer = new ImGui.Internal.List<DrawVertex>();
@@ -209,6 +232,10 @@ namespace ImGui
 
         #region polygon tessellation
 
+        /// <summary>
+        /// Append contour
+        /// </summary>
+        /// <param name="color"></param>
         public void AddContour(Color color)
         {
             // determine the winding of the path
@@ -271,6 +298,7 @@ namespace ImGui
             _BezierControlPointIndex.Clear();
             // Add the contour with a specific orientation, use "Original" if you want to keep the input orientation.
             tess.AddContour(contour.ToArray()/* TODO remove this copy here!!  */, LibTessDotNet.ContourOrientation.Original);
+            
         }
 
         static LibTessDotNet.Tess tess = new LibTessDotNet.Tess();// Create an instance of the tessellator. Can be reused.
@@ -306,28 +334,6 @@ namespace ImGui
             
         }
 
-#if false //to be moved to unit test
-        // for rendering path in the immediate window
-        public void Debug_DrawToCairoSurface()
-        {
-            if(_Path.Count == 0) return;
-
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)Form.current.Size.Width, (int)Form.current.Size.Height))
-            using (Cairo.Context g = new Cairo.Context(surface))
-            {
-                g.MoveTo(_Path[0].X, _Path[0].Y);
-                for (int i = 1; i < _Path.Count; i++)
-                {
-                    var p = _Path[i];
-                    g.LineTo(p.X, p.Y);
-                }
-
-                g.Stroke();
-                surface.WriteToPng(@"D:\_Path.png");
-            }
-        }
-#endif
-
         // unused
         private static bool IsClockwise(IList<Point> vertices)
         {
@@ -355,55 +361,8 @@ namespace ImGui
         internal void Build(Point position, Style style, ITextContext textContext)
         {
             var color = style.Font.Color;
-
-            Point lastPoint = Point.Zero;
-            textContext.Build(position,
-                // point adder
-                (x, y) =>
-                {
-                    this.PathLineTo(new Point(x, y));
-                    lastPoint = new Point(x, y);
-                },
-
-                // bezier adder
-                (c0x, c0y, c1x, c1y, p1x, p1y) =>
-                {
-                    var p0 = lastPoint;//The start point of the cubic Bezier segment.
-                    var c0 = new Point(c0x, c0y);//The first control point of the cubic Bezier segment.
-                    var p = new Point((c0x + c1x) / 2, (c0y + c1y) / 2);
-                    var c1 = new Point(c1x, c1y);//The second control point of the cubic Bezier segment.
-                    var p1 = new Point(p1x, p1y);//The end point of the cubic Bezier segment.
-
-                    this.PathAddBezier(p0, c0, p);
-                    this.PathAddBezier(p, c1, p1);
-
-                    //set last point for next bezier
-                    lastPoint = p1;
-                },
-
-                // path closer
-                () =>
-                {
-                },
-
-                // figure beginner
-                (x, y) =>
-                {
-                    lastPoint = new Point(x, y);
-                    this.PathMoveTo(lastPoint);
-                },
-
-                // figure ender
-                () =>
-                {
-                    this.PathClose();
-                    this.AddContour(color);
-                    this.PathClear();
-                }
-            );
-
+            textContext.Build(position, this);
             this.PathTessPolygon(color);
-
         }
     }
 }
