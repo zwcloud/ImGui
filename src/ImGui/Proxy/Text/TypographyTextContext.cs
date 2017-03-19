@@ -1,5 +1,5 @@
 ﻿using System;
-using Typography.TextPrint;
+using Typography.Rendering;
 
 namespace ImGui
 {
@@ -70,6 +70,7 @@ namespace ImGui
             Profile.Start("TypographyTextContext.Build");
             thePrinter.FontSizeInPoints = this.FontSize;            
             thePrinter.Draw(textMesh, this.Text.ToCharArray(), (float)offset.X, (float)offset.Y);//TODO remove ToCharArray
+
             Profile.End();
         }
 

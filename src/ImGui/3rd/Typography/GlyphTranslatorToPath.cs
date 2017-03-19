@@ -4,7 +4,7 @@ using System;
 using ImGui;
 using Typography.OpenFont;
 
-namespace Typography.TextPrint
+namespace Typography.Rendering
 {
     /// <summary>
     /// glyph-to-path translator

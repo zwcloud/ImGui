@@ -92,7 +92,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\GlyphPathBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\GlyphTranslatorToPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\HintTechnique.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.GlyphLayout\GlyphIndexList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.GlyphLayout\GlyphLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.GlyphLayout\GlyphPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.GlyphLayout\GlyphSubtitution.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.GlyphLayout\MeasureStringBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.GlyphLayout\UserCharToGlyphIndexMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Bounds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\CharacterMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\FontCollection\InstalledFont.cs" />

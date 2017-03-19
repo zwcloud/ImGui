@@ -5,7 +5,7 @@ using ImGui;
 using Typography.OpenFont;
 using Typography.TextLayout;
 
-namespace Typography.TextPrint
+namespace Typography.Rendering
 {
     /// <summary>
     /// text printer
@@ -93,17 +93,19 @@ namespace Typography.TextPrint
             // layout glyphs with selected layout technique
             var sizeInPoints = this.FontSizeInPoints;
             outputGlyphPlans.Clear();
-            glyphLayout.Layout(CurrentTypeFace, sizeInPoints, textBuffer, outputGlyphPlans);
+            //glyphLayout.Layout(CurrentTypeFace, textBuffer, 0, textBuffer.Length, outputGlyphPlans);
+            glyphLayout.Typeface = this.CurrentTypeFace;
+            glyphLayout.GenerateGlyphPlans(textBuffer, 0, textBuffer.Length, outputGlyphPlans, null);
 
             // render each glyph
-            var pxScale = CurrentTypeFace.CalculateFromPointToPixelScale(sizeInPoints);
+            var scale = CurrentTypeFace.CalculateFromPointToPixelScale(sizeInPoints);
             pathTranslator.PathBuilder = g;
             for (var i = 0; i < outputGlyphPlans.Count; ++i)
             {
                 pathTranslator.Reset();
                 var glyphPlan = outputGlyphPlans[i];
-                currentGlyphPathBuilder.BuildFromGlyphIndex(glyphPlan.glyphIndex, sizeInPoints, pathTranslator, pxScale,
-                    x + glyphPlan.x, y + glyphPlan.y);
+                currentGlyphPathBuilder.BuildFromGlyphIndex(glyphPlan.glyphIndex, sizeInPoints);
+                currentGlyphPathBuilder.ReadShapes(pathTranslator, sizeInPoints, x + glyphPlan.x * scale, y + glyphPlan.y * scale);
             }
         }
     }
