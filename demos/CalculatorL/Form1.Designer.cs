@@ -71,7 +71,7 @@ namespace Calculator
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.BeginVertical();
+                GUILayout.BeginVertical(GUILayout.StretchWidth(4));
                 {
                     GUILayout.BeginHorizontal();
                     {
@@ -88,7 +88,7 @@ namespace Calculator
 
                     GUILayout.BeginHorizontal();
                     {
-                        number[0] = GUILayout.Button("0", "_0Button");
+                        number[0] = GUILayout.Button("0", "_0Button", GUILayout.StretchWidth(2));
                         if (number[0]) Current = ButtonType.Number0;
                         var dot = GUILayout.Button(".", "PointButton");
                         if (dot) Current = ButtonType.Dot;
@@ -98,7 +98,8 @@ namespace Calculator
                     GUILayout.EndHorizontal();
                 }
                 GUILayout.EndVertical();
-                var equal = GUILayout.Button("=", "_EqualButton");
+
+                var equal = GUILayout.Button("=", "_EqualButton", GUILayout.ExpandHeight(true));
                 if (equal) Current = ButtonType.Equal;
             }
             GUILayout.EndHorizontal();

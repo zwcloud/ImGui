@@ -10,8 +10,8 @@ namespace ImGui
         public double maxWidth = 9999;//maximum width of content-box
         public double minHeight = 1;//minimum height of content-box
         public double maxHeight = 9999;//maximum height of content-box
-        public int horizontalStretchFactor;//horizontal stretch factor
-        public int verticalStretchFactor;//vertical stretch factor
+        public int horizontalStretchFactor = 1;//horizontal stretch factor
+        public int verticalStretchFactor = 0;//vertical stretch factor
 
         public bool HorizontallyStretched { get { return !IsFixedWidth && horizontalStretchFactor > 0; } }
         public bool VerticallyStretched { get { return !IsFixedHeight && verticalStretchFactor > 0; } }
@@ -25,6 +25,10 @@ namespace ImGui
 
         public LayoutEntry(Style style, params LayoutOption[] options)
         {
+            if (Utility.CurrentOS.IsAndroid)
+            {
+                this.verticalStretchFactor = 1;
+            }
             this.style = style;
             if (options != null)
             {

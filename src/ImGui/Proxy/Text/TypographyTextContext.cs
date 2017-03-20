@@ -75,8 +75,11 @@ namespace ImGui
 
         public Size Measure()
         {
+            Profile.Start("TypographyTextContext.Measure");
             thePrinter.FontSizeInPoints = this.FontSize;
-            return thePrinter.Measure(this.Text.ToCharArray(), 0, this.Text.Length);
+            var size = thePrinter.Measure(this.Text.ToCharArray(), 0, this.Text.Length);
+            Profile.End();
+            return size;
         }
 
         public uint XyToIndex(float pointX, float pointY, out bool isInside)

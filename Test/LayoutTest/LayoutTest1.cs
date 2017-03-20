@@ -91,7 +91,7 @@ namespace Test
             public bool isClipped;
             public List<Item> entries = new List<Item>();
 
-            public readonly Style style = Style.Make(
+            internal readonly Style style = Style.Make(
                     new[]{
                         new StyleModifier{Name = "BorderTop", Value = Const.GroupBorderTop},
                         new StyleModifier{Name = "BorderRight", Value = Const.GroupBorderRight},

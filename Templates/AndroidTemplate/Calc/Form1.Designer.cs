@@ -13,68 +13,96 @@ namespace Calculator
         protected override void OnGUI()
         {
             //GUI.Box(new Rect(0, 0, new Size(220, 230)), Content.None, "FormBorder");
-            GUI.Label(new Rect(14, 2, 190, 20), "Simple Calculator", "Title");
+            GUILayout.Label("Simple Calculator", "Title");
 
             if(Current != ButtonType.Idle)
                 Last = Current;
             Current = ButtonType.Idle;
 
-            GUI.Label(new Rect(14, 22, new Size(190, 20)), calc.Expression, "ExpressionLabel");
-            GUI.Label(new Rect(14, 42, new Size(190, 24)), calc.Result, "ResultLabel");
+            GUILayout.Label(calc.Expression, "ExpressionLabel");
+            GUILayout.Label(calc.Result, "ResultLabel");
 
-            var backspace = GUI.Button(new Rect(14, 68, new Size(34, 27)), "←", "backspaceButton");
-            if(backspace) Current = ButtonType.Backspace;
-            var clearInput = GUI.Button(new Rect(53, 68, new Size(34, 27)), "CE", "CEButton");
-            if (clearInput) Current = ButtonType.ClearInput;
-            var clear = GUI.Button(new Rect(92, 68, new Size(34, 27)), "C", "CButton");
-            if (clear) Current = ButtonType.Clear;
-            var plusMinus = GUI.Button(new Rect(131, 68, new Size(34, 27)), "±", "SignButton");
-            if (plusMinus) Current = ButtonType.PlusMinus;
-            var sqrt = GUI.Button(new Rect(170, 68, new Size(34, 27)), "√", "SqrtButton");
-            if (sqrt) Current = ButtonType.Sqrt;
+            GUILayout.BeginHorizontal();
+            {
+                var backspace = GUILayout.Button("←", "backspaceButton");
+                if(backspace) Current = ButtonType.Backspace;
+                var clearInput = GUILayout.Button("CE", "CEButton");
+                if (clearInput) Current = ButtonType.ClearInput;
+                var clear = GUILayout.Button("C", "CButton");
+                if (clear) Current = ButtonType.Clear;
+                var plusMinus = GUILayout.Button("±", "SignButton");
+                if (plusMinus) Current = ButtonType.PlusMinus;
+                var sqrt = GUILayout.Button("√", "SqrtButton");
+                if (sqrt) Current = ButtonType.Sqrt;
+            }
+            GUILayout.EndHorizontal();
 
             bool[] number = new bool[10];
 
-            number[7] = GUI.Button(new Rect(14, 100, new Size(34, 27)), "7", "_7Button");
-            if (number[7]) Current = ButtonType.Number7;
-            number[8] = GUI.Button(new Rect(53, 100, new Size(34, 27)), "8", "_8Button");
-            if (number[8]) Current = ButtonType.Number8;
-            number[9] = GUI.Button(new Rect(92, 100, new Size(34, 27)), "9", "_9Button");
-            if (number[9]) Current = ButtonType.Number9;
-            var divide = GUI.Button(new Rect(131, 100, new Size(34, 27)), "/", "DivideButton");
-            if (divide) Current = ButtonType.Divide;
-            var percent = GUI.Button(new Rect(170, 100, new Size(34, 27)), "%", "PercentButton");
-            if (percent) Current = ButtonType.Percent;
+            GUILayout.BeginHorizontal();
+            {
+                number[7] = GUILayout.Button("7", "_7Button");
+                if (number[7]) Current = ButtonType.Number7;
+                number[8] = GUILayout.Button( "8", "_8Button");
+                if (number[8]) Current = ButtonType.Number8;
+                number[9] = GUILayout.Button("9", "_9Button");
+                if (number[9]) Current = ButtonType.Number9;
+                var divide = GUILayout.Button("/", "DivideButton");
+                if (divide) Current = ButtonType.Divide;
+                var percent = GUILayout.Button("%", "PercentButton");
+                if (percent) Current = ButtonType.Percent;
+            }
+            GUILayout.EndHorizontal();
 
-            number[4] = GUI.Button(new Rect(14, 132, new Size(34, 27)), "4", "_4Button");
-            if (number[4]) Current = ButtonType.Number4;
-            number[5] = GUI.Button(new Rect(53, 132, new Size(34, 27)), "5", "_5Button");
-            if (number[5]) Current = ButtonType.Number5;
-            number[6] = GUI.Button(new Rect(92, 132, new Size(34, 27)), "6", "_6Button");
-            if (number[6]) Current = ButtonType.Number6;
-            var multiply = GUI.Button(new Rect(131, 132, new Size(34, 27)), "*", "MultiplyButton");
-            if (multiply) Current = ButtonType.Multiply;
-            var inverse = GUI.Button(new Rect(170, 132, new Size(34, 27)), "1/x", "InverseButton");
-            if (inverse) Current = ButtonType.Inverse;
+            GUILayout.BeginHorizontal();
+            {
+                number[4] = GUILayout.Button("4", "_4Button");
+                if (number[4]) Current = ButtonType.Number4;
+                number[5] = GUILayout.Button("5", "_5Button");
+                if (number[5]) Current = ButtonType.Number5;
+                number[6] = GUILayout.Button("6", "_6Button");
+                if (number[6]) Current = ButtonType.Number6;
+                var multiply = GUILayout.Button("*", "MultiplyButton");
+                if (multiply) Current = ButtonType.Multiply;
+                var inverse = GUILayout.Button("1/x", "InverseButton");
+                if (inverse) Current = ButtonType.Inverse;
+            }
+            GUILayout.EndHorizontal();
 
-            number[1] = GUI.Button(new Rect(14, 164, new Size(34, 27)), "1", "_1Button");
-            if (number[1]) Current = ButtonType.Number1;
-            number[2] = GUI.Button(new Rect(53, 164, new Size(34, 27)), "2", "_2Button");
-            if (number[2]) Current = ButtonType.Number2;
-            number[3] = GUI.Button(new Rect(92, 164, new Size(34, 27)), "3", "_3Button");
-            if (number[3]) Current = ButtonType.Number3;
-            var minus = GUI.Button(new Rect(131, 164, new Size(34, 27)), "-", "MinusButton");
-            if (minus) Current = ButtonType.Minus;
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.BeginVertical(GUILayout.StretchWidth(4));
+                {
+                    GUILayout.BeginHorizontal();
+                    {
+                        number[1] = GUILayout.Button("1", "_1Button");
+                        if (number[1]) Current = ButtonType.Number1;
+                        number[2] = GUILayout.Button("2", "_2Button");
+                        if (number[2]) Current = ButtonType.Number2;
+                        number[3] = GUILayout.Button("3", "_3Button");
+                        if (number[3]) Current = ButtonType.Number3;
+                        var minus = GUILayout.Button("-", "MinusButton");
+                        if (minus) Current = ButtonType.Minus;
+                    }
+                    GUILayout.EndHorizontal();
 
-            number[0] = GUI.Button(new Rect(14, 196, new Size(73, 27)), "0", "_0Button");
-            if (number[0]) Current = ButtonType.Number0;
-            var dot = GUI.Button(new Rect(92, 196, new Size(34, 27)), ".", "PointButton");
-            if (dot) Current = ButtonType.Dot;
-            var plus = GUI.Button(new Rect(131, 196, new Size(34, 27)), "+", "_plusButton");
-            if (plus) Current = ButtonType.Plus;
+                    GUILayout.BeginHorizontal();
+                    {
+                        number[0] = GUILayout.Button("0", "_0Button", GUILayout.StretchWidth(2));
+                        if (number[0]) Current = ButtonType.Number0;
+                        var dot = GUILayout.Button(".", "PointButton");
+                        if (dot) Current = ButtonType.Dot;
+                        var plus = GUILayout.Button("+", "_plusButton");
+                        if (plus) Current = ButtonType.Plus;
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();
 
-            var equal = GUI.Button(new Rect(170, 164, new Size(34, 59)), "=", "_EqualButton");
-            if (equal) Current = ButtonType.Equal;
+                var equal = GUILayout.Button("=", "_EqualButton", GUILayout.ExpandHeight(true));
+                if (equal) Current = ButtonType.Equal;
+            }
+            GUILayout.EndHorizontal();
 
             if (Current == ButtonType.Idle)
                 return;
