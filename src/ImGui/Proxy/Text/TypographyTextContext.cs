@@ -68,10 +68,15 @@ namespace ImGui
         public void Build(Point offset, TextMesh textMesh)
         {
             Profile.Start("TypographyTextContext.Build");
-            thePrinter.FontSizeInPoints = this.FontSize;            
+            thePrinter.FontSizeInPoints = this.FontSize;
             thePrinter.Draw(textMesh, this.Text.ToCharArray(), (float)offset.X, (float)offset.Y);//TODO remove ToCharArray
-
             Profile.End();
+        }
+
+        public Size Measure()
+        {
+            thePrinter.FontSizeInPoints = this.FontSize;
+            return thePrinter.Measure(this.Text.ToCharArray(), 0, this.Text.Length);
         }
 
         public uint XyToIndex(float pointX, float pointY, out bool isInside)

@@ -108,5 +108,15 @@ namespace Typography.Rendering
                 currentGlyphPathBuilder.ReadShapes(pathTranslator, sizeInPoints, x + glyphPlan.x * scale, y + glyphPlan.y * scale);
             }
         }
+
+        public Size Measure(char[] textBuffer, int startAt, int len)
+        {
+            glyphLayout.Typeface = this.CurrentTypeFace;
+            var scale = CurrentTypeFace.CalculateFromPointToPixelScale(this.FontSizeInPoints);
+            MeasuredStringBox strBox;
+            glyphLayout.MeasureString(textBuffer, startAt, len, out strBox, scale);
+            return new Size(strBox.width, strBox.CalculateLineHeight());
+        }
+
     }
 }

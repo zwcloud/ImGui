@@ -173,6 +173,11 @@ namespace ImGui
                 });
         }
 
+        public Size Measure()
+        {
+            throw new NotImplementedException();
+        }
+
         public uint XyToIndex(float pointX, float pointY, out bool isInside)
         {
             return textLayout.XyToIndex(pointX, pointY, out isInside);
@@ -191,6 +196,7 @@ namespace ImGui
             textFormat.Dispose();
             textLayout.Dispose();
         }
+
 
         #endregion
     }

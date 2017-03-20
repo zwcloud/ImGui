@@ -44,6 +44,12 @@ namespace ImGui
         void Build(Point offset, TextMesh textMesh);
 
         /// <summary>
+        /// get space that the text occupies
+        /// </summary>
+        /// <returns></returns>
+        Size Measure();
+
+        /// <summary>
         /// Get nearest character index from the point.
         /// </summary>
         /// <param name="pointX">x, relative to the top-left location of the layout box.</param>
