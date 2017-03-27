@@ -134,7 +134,8 @@ namespace ImGui
             // 1. rect size changed
             // 2. style changed that make the text different looking
             // 3. the content is dirty
-            bool rebuiltNeeded = Dirty || this.rect != rect || Style.IsRebuildTextContextRequired(this.style, style);
+            bool rebuiltNeeded = Dirty || this.rect != rect// TODO If rect size isn't changed, there is no need to rebuild the text mesh from glyphs-offset the mesh is enough.
+                || Style.IsRebuildTextContextRequired(this.style, style);
             if (!rebuiltNeeded)
             {
                 Debug.Assert(TextMesh != null);

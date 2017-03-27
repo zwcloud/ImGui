@@ -10,7 +10,7 @@ namespace Test
     public class ContentTest
     {
         // to be fixed
-        public void DrawContent(Rect rect, Content content, Style style)
+        internal void DrawContent(Rect rect, Content content, Style style)
         {
             var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
             var context = new Context(surface);
@@ -55,7 +55,7 @@ namespace Test
                 TextAlignment = TextAlignment.Leading,
                 TabSize = style.TextStyle.TabSize
             };
-            content.BuildText(rect.Size, style);
+            content.BuildText(rect, style);
 
             DrawContent(rect, content, style);
         }
@@ -72,7 +72,7 @@ namespace Test
                 TextAlignment = TextAlignment.Center,
                 TabSize = style.TextStyle.TabSize
             };
-            content.BuildText(rect.Size, style);
+            content.BuildText(rect, style);
 
             DrawContent(rect, content, style);
         }
@@ -89,7 +89,7 @@ namespace Test
                 TabSize = style.TextStyle.TabSize
             };
             Rect rect = new Rect(400, 300);
-            content.BuildText(rect.Size, style);
+            content.BuildText(rect, style);
 
             DrawContent(rect, content, style);
         }
@@ -119,8 +119,8 @@ namespace Test
                 }
             });
             Size size = style.CalcSize(content, new LayoutOption[0]);
-            content.BuildText(size, style);
             Rect rect = new Rect(size);
+            content.BuildText(rect, style);
             DrawContent(rect, content, style);
             content.Dispose();
         }
@@ -141,8 +141,8 @@ namespace Test
                 }
             });
             Size size = style.CalcSize(content, new []{GUILayout.Height(100)});
-            content.BuildText(size, style);
             Rect rect = new Rect(size);
+            content.BuildText(rect, style);
             DrawContent(rect, content, style);
             content.Dispose();
         }
@@ -163,8 +163,8 @@ namespace Test
                 }
             });
             Size size = style.CalcSize(content, new[] { GUILayout.Width(100) });
-            content.BuildText(size, style);
             Rect rect = new Rect(size);
+            content.BuildText(rect, style);
             DrawContent(rect, content, style);
             content.Dispose();
         }

@@ -44,7 +44,7 @@ namespace Test
         public int horizontalStretchFactor;//horizontal stretch factor
         public int verticalStretchFactor;//vertical stretch factor
 
-        public Style style = Style.Make(
+        internal Style style = Style.Make(
                 new[]{
                         new StyleModifier{Name = "BorderTop", Value = Const.ItemBorderTop},
                         new StyleModifier{Name = "BorderRight", Value = Const.ItemBorderRight},
@@ -63,7 +63,6 @@ namespace Test
 
         public bool IsFixedWidth { get { return MathEx.AmostEqual(this.minWidth, this.maxWidth); } }
         public bool IsFixedHeight { get { return MathEx.AmostEqual(this.minHeight, this.maxHeight); } }
-
 
         public Item(params LayoutOption[] options)
         {
@@ -182,7 +181,7 @@ namespace Test
         public bool isClipped;
         public List<Item> entries = new List<Item>();
 
-        public Style style = Style.Make(
+        internal new Style style = Style.Make(
                 new[]{
                         new StyleModifier{Name = "BorderTop", Value = Const.GroupBorderTop},
                         new StyleModifier{Name = "BorderRight", Value = Const.GroupBorderRight},

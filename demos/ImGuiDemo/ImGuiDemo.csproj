@@ -9,4 +9,10 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Layouted.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\build\desktop\ImGui.csproj" />
+  </ItemGroup>
 </Project>

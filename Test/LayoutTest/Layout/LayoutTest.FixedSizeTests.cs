@@ -49,13 +49,15 @@ namespace Test
         public void TheSizeOfAVerticalGroupThatContainsMultipleEntriesIsCorrectlyCalculated()
         {
             Group group = new Group(true,GUILayout.Width(100), GUILayout.Height(200));
+            var minWidth = group.style.BorderHorizontal + group.style.PaddingHorizontal;
+            var minHeight = group.style.BorderVertical + group.style.PaddingVertical;
             Item[] items =
             {
-                new Item(GUILayout.Width(10), GUILayout.Height(20)),
-                new Item(GUILayout.Width(20), GUILayout.Height(30)),
-                new Item(GUILayout.Width(30), GUILayout.Height(40)),
-                new Item(GUILayout.Width(40), GUILayout.Height(50)),
-                new Item(GUILayout.Width(50), GUILayout.Height(60)),
+                new Item(GUILayout.Width(minWidth+10), GUILayout.Height(minHeight+20)),
+                new Item(GUILayout.Width(minWidth+20), GUILayout.Height(minHeight+30)),
+                new Item(GUILayout.Width(minWidth+30), GUILayout.Height(minHeight+40)),
+                new Item(GUILayout.Width(minWidth+40), GUILayout.Height(minHeight+50)),
+                new Item(GUILayout.Width(minWidth+50), GUILayout.Height(minHeight+60)),
             };
             foreach (var item in items)
             {

@@ -9,6 +9,7 @@ namespace Calculator
         [STAThread]
         static void Main()
         {
+            Application.Init();
             Application.Run(new Form1());
         }
     }

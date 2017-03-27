@@ -342,7 +342,7 @@ namespace Test
 
     public static class StyleTestEx
     {
-        public static Style GenCompactStyle()
+        internal static Style GenCompactStyle()
         {
             return Style.Make(new[]{
                 new StyleModifier{Name = "BorderTop", Value = 0},
