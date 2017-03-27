@@ -174,7 +174,7 @@ namespace ImGui
             {
                 FontFamily =
 #if __ANDROID__
-                "msjh.ttf",
+                "DroidSans.ttf",
 #else
                 @"W:\VS2015\DroidSans.ttf",
 #endif
@@ -184,7 +184,7 @@ namespace ImGui
 #if __ANDROID__
                 Size = 42,
 #else
-                Size = 8,
+                Size = 12,
 #endif
                 Color = Color.Black
             };
@@ -242,6 +242,13 @@ namespace ImGui
         //TODO implement this in a overriden Equal method maybe more appropriate
         internal static bool IsRebuildTextContextRequired(Style a, Style b)
         {
+            if (Utility.CurrentOS.IsAndroid)
+            {
+                return//TODO Other features hasn't been implemented by Typography yet.
+                    // font changed
+                    a.Font.FontFamily != b.Font.FontFamily
+                    || a.Font.Size != b.Font.Size;
+            }
             return
                 // font changed
                 a.Font.FontFamily != b.Font.FontFamily

@@ -110,7 +110,7 @@ namespace Typography.OpenFont
                 bool isFirstPoint = true;  //first point of this contour
 
 
-                ///for each point in this contour
+                //for each point in this contour
                 for (; cpoint_index < nextCntBeginAtIndex; ++cpoint_index)
                 {
 

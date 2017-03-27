@@ -393,94 +393,9 @@ namespace ImGui
             {
                 return;
             }
-            
-            // append triangles
-            {
-                // TODO This is a temp hack, need to be moved to a suitable place.
-                if (DrawBuffer.CommandBuffer.Count == 0)
-                {
-                    DrawBuffer.CommandBuffer.Add(
-                        new DrawCommand
-                        {
-                            //ClipRect = new Rect(Form.current.Size)
-                        });
-                }
-                DrawCommand newDrawCommand = DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1];
-                var idx_count = textMesh.IndexBuffer.Count;
-                var vtx_count = textMesh.VertexBuffer.Count;
-                if (idx_count != 0 && vtx_count != 0)
-                {
-                    newDrawCommand.ElemCount += idx_count;
-                    DrawBuffer.CommandBuffer[DrawBuffer.CommandBuffer.Count - 1] = newDrawCommand;
 
-                    var vertexCountBefore = DrawBuffer.VertexBuffer.Count;
-
-                    int vtx_buffer_size = DrawBuffer.VertexBuffer.Count;
-                    DrawBuffer._vtxWritePosition = vtx_buffer_size + vtx_count;
-                    DrawBuffer.VertexBuffer.AddRange(textMesh.VertexBuffer);
-
-                    int idx_buffer_size = DrawBuffer.IndexBuffer.Count;
-                    DrawBuffer._idxWritePosition = idx_buffer_size + idx_count;
-
-                    var sizeBefore = DrawBuffer.IndexBuffer.Count;
-                    DrawBuffer.IndexBuffer.AddRange(textMesh.IndexBuffer);
-                    var sizeAfter = DrawBuffer.IndexBuffer.Count;
-
-                    if (vertexCountBefore != 0)
-                    {
-                        for (int i = sizeBefore; i < sizeAfter; i++)
-                        {
-                            DrawBuffer.IndexBuffer[i] = new DrawIndex { Index = DrawBuffer.IndexBuffer[i].Index + vertexCountBefore };
-                        }
-                    }
-                    DrawBuffer._currentIdx += vtx_count;
-                }
-            }
-
-            // append beziers
-            {
-                // TODO This is a temp hack, need to be moved to a suitable place.
-                if (this.BezierBuffer.CommandBuffer.Count == 0)
-                {
-                    this.BezierBuffer.CommandBuffer.Add(
-                        new DrawCommand
-                        {
-                            //ClipRect = new Rect(Form.current.Size)
-                        });
-                }
-                DrawCommand newDrawCommand = this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1];
-                var idx_count = textMesh.BezierIndexBuffer.Count;
-                var vtx_count = textMesh.BezierVertexBuffer.Count;
-                if (idx_count != 0 && vtx_count != 0)
-                {
-                    newDrawCommand.ElemCount += idx_count;
-                    this.BezierBuffer.CommandBuffer[this.BezierBuffer.CommandBuffer.Count - 1] = newDrawCommand;
-
-                    var vertexCountBefore = this.BezierBuffer.VertexBuffer.Count;
-
-                    int vtx_buffer_size = this.BezierBuffer.VertexBuffer.Count + vtx_count;
-                    this.BezierBuffer._vtxWritePosition = vtx_buffer_size;
-                    this.BezierBuffer.VertexBuffer.AddRange(textMesh.BezierVertexBuffer);
-
-                    int idx_buffer_size = this.BezierBuffer.IndexBuffer.Count + idx_count;
-                    this.BezierBuffer._idxWritePosition = idx_buffer_size;
-
-                    var sizeBefore = this.BezierBuffer.IndexBuffer.Count;
-                    this.BezierBuffer.IndexBuffer.AddRange(textMesh.BezierIndexBuffer);
-                    var sizeAfter = this.BezierBuffer.IndexBuffer.Count;
-
-                    if (vertexCountBefore != 0)
-                    {
-                        for (int i = sizeBefore; i < sizeAfter; i++)
-                        {
-                            this.BezierBuffer.IndexBuffer[i] = new DrawIndex { Index = this.BezierBuffer.IndexBuffer[i].Index + vertexCountBefore };
-                        }
-                    }
-                    this.BezierBuffer._currentIdx += vtx_count;
-                }
-            }
+            DrawBuffer.Fill(textMesh.IndexBuffer, textMesh.VertexBuffer);
+            BezierBuffer.Fill(textMesh.BezierIndexBuffer, textMesh.BezierVertexBuffer);
         }
-
-
     }
 }

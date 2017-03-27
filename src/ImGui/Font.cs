@@ -10,7 +10,7 @@
         /// <summary>
         /// Font family name
         /// </summary>
-        /// <remarks>when set a null value, use "SimHei" as the fallback font family</remarks>
+        /// <remarks>HACK when set a null value, use "SimHei" as the fallback font family</remarks>
         public string FontFamily
         {
             get { return family ?? "SimHei"; }

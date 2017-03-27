@@ -129,114 +129,52 @@ namespace CSharpGLES
             string log = il.ToString();
             return log;
         }
-
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
+        
         public void SetUniform(string uniformName, int v1)
         {
             GL.Uniform1(GetUniformLocation(uniformName), v1);
         }
-
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
+        
         public void SetUniform(string uniformName, int v1, int v2)
         {
             GL.Uniform2(GetUniformLocation(uniformName), v1, v2);
         }
 
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
         public void SetUniform(string uniformName, int v1, int v2, int v3)
         {
             GL.Uniform3(GetUniformLocation(uniformName), v1, v2, v3);
         }
-
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
-        /// <param name="v4"></param>
+        
         public void SetUniform(string uniformName, int v1, int v2, int v3, int v4)
         {
             GL.Uniform4(GetUniformLocation(uniformName), v1, v2, v3, v4);
         }
 
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
         public void SetUniform(string uniformName, float v1)
         {
             GL.Uniform1(GetUniformLocation(uniformName), v1);
         }
-
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
+        
         public void SetUniform(string uniformName, float v1, float v2)
         {
             GL.Uniform2(GetUniformLocation(uniformName), v1, v2);
         }
 
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
         public void SetUniform(string uniformName, float v1, float v2, float v3)
         {
             GL.Uniform3(GetUniformLocation(uniformName), v1, v2, v3);
         }
 
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
-        /// <param name="v4"></param>
         public void SetUniform(string uniformName, float v1, float v2, float v3, float v4)
         {
             GL.Uniform4(GetUniformLocation(uniformName), v1, v2, v3, v4);
         }
-
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="m"></param>
+        
         public void SetUniformMatrix3(string uniformName, float[] m)
         {
             GL.UniformMatrix3(GetUniformLocation(uniformName), 1, false, m);
         }
 
-        /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
-        /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="m"></param>
         public void SetUniformMatrix4(string uniformName, float[] m)
         {
             GL.UniformMatrix4(GetUniformLocation(uniformName), 1, false, m);

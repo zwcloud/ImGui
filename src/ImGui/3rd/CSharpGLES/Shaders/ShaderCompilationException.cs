@@ -25,7 +25,6 @@ namespace CSharpGLES
 
         public override string ToString()
         {
-            //return base.ToString();
             return string.Format("{0}{1}{2}", base.ToString(), Environment.NewLine, compilerOutput);
         }
     }

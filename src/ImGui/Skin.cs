@@ -117,11 +117,20 @@ namespace ImGui
                         Name = "Font",
                         Value = new Font
                         {
-                            FontFamily = "Consolas",
+                            FontFamily =
+#if __ANDROID__
+                            "DroidSans.ttf",
+#else
+                            @"W:\VS2015\DroidSans.ttf",
+#endif
                             FontStyle = FontStyle.Normal,
                             FontWeight = FontWeight.Bold,
                             FontStretch = FontStretch.Normal,
-                            Size = 8,
+#if __ANDROID__
+                            Size = 42,
+#else
+                            Size = 12,
+#endif
                             Color = Color.Black
                         }
                     },
