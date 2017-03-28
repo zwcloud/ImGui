@@ -50,7 +50,7 @@ namespace ImGui
             GUILayout.BeginVertical(Content.None, Style.Default, options);
         }
 
-        internal static void BeginVertical(Style style, params LayoutOption[] options)
+        public static void BeginVertical(Style style, params LayoutOption[] options)
         {
             GUILayout.BeginVertical(Content.None, style, options);
         }

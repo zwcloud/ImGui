@@ -3,7 +3,7 @@
     /// <summary>
     /// Styles of texts
     /// </summary>
-    internal struct TextStyle
+    public struct TextStyle
     {
         /// <summary>
         /// Alignment of the text

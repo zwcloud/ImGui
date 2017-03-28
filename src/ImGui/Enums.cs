@@ -5,7 +5,7 @@ namespace ImGui
     /// Cursor types
     /// </summary>
     /// TODO implement all these cursor
-    internal enum Cursor
+    public enum Cursor
     {
 #if false
         Auto,

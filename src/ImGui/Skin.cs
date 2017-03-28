@@ -2,21 +2,21 @@
 
 namespace ImGui
 {
-    internal sealed class Skin
+    public sealed class Skin
     {
-        public Dictionary<string, Style> Button { get; private set; }
-        public Dictionary<string, Style> Label { get; private set; }
-        public Dictionary<string, Style> Toggle { get; private set; }
-        public Dictionary<string, Style> ComboBox { get; private set; }
-        public Dictionary<string, Style> Image { get; private set; }
-        public Dictionary<string, Style> TextBox { get; set; }
-        public Dictionary<string, Style> Slider { get; set; }
-        public Dictionary<string, Style> PolygonButton { get; set; }
+        internal Dictionary<string, Style> Button { get; private set; }
+        internal Dictionary<string, Style> Label { get; private set; }
+        internal Dictionary<string, Style> Toggle { get; private set; }
+        internal Dictionary<string, Style> ComboBox { get; private set; }
+        internal Dictionary<string, Style> Image { get; private set; }
+        internal Dictionary<string, Style> TextBox { get; set; }
+        internal Dictionary<string, Style> Slider { get; set; }
+        internal Dictionary<string, Style> PolygonButton { get; set; }
 
         /*Stateless styles*/
-        public Style ToolTip { get; set; }
+        internal Style ToolTip { get; set; }
         public Style Box { get; set; }
-        public Style Space { get; set; }
+        internal Style Space { get; set; }
 
         public static readonly Skin current;
 

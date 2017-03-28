@@ -215,6 +215,7 @@ namespace ImGui
         private IntPtr WindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
         {
             #region Handle window moving and resizing
+            //source: http://stackoverflow.com/a/17220049/3427520
             const int wmNcHitTest = 0x84;
             const int HTCAPTION = 2;
             const int htLeft = 10;
@@ -225,6 +226,9 @@ namespace ImGui
             const int htBottom = 15;
             const int htBottomLeft = 16;
             const int htBottomRight = 17;
+
+            const int borderwidth = 4;
+
             IntPtr Result;
             if (msg == wmNcHitTest)
             {
@@ -236,52 +240,52 @@ namespace ImGui
                 GetWindowRect(hWnd, out rect);
                 Size clientSize = new Size(rect.right - rect.left, rect.bottom - rect.top);
                 ///allow resize on the lower right corner
-                if (pt.X >= clientSize.Width - 16 && pt.Y >= clientSize.Height - 16 && clientSize.Height >= 16)
+                if (pt.X >= clientSize.Width - borderwidth && pt.Y >= clientSize.Height - borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htBottomRight);
                     return Result;
                 }
                 ///allow resize on the lower left corner
-                if (pt.X <= 16 && pt.Y >= clientSize.Height - 16 && clientSize.Height >= 16)
+                if (pt.X <= borderwidth && pt.Y >= clientSize.Height - borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htBottomLeft);
                     return Result;
                 }
                 ///allow resize on the upper right corner
-                if (pt.X <= 16 && pt.Y <= 16 && clientSize.Height >= 16)
+                if (pt.X <= borderwidth && pt.Y <= borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htTopLeft);
                     return Result;
                 }
                 ///allow resize on the upper left corner
-                if (pt.X >= clientSize.Width - 16 && pt.Y <= 16 && clientSize.Height >= 16)
+                if (pt.X >= clientSize.Width - borderwidth && pt.Y <= borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htTopRight);
                     return Result;
                 }
                 ///allow resize on the top border
-                if (pt.Y <= 16 && clientSize.Height >= 16)
+                if (pt.Y <= borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htTop);
                     Input.Mouse.Cursor = Cursor.NsResize;
                     return Result;
                 }
                 ///allow resize on the bottom border
-                if (pt.Y >= clientSize.Height - 16 && clientSize.Height >= 16)
+                if (pt.Y >= clientSize.Height - borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htBottom);
                     Input.Mouse.Cursor = Cursor.NsResize;
                     return Result;
                 }
                 ///allow resize on the left border
-                if (pt.X <= 16 && clientSize.Height >= 16)
+                if (pt.X <= borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htLeft);
                     Input.Mouse.Cursor = Cursor.EwResize;
                     return Result;
                 }
                 ///allow resize on the right border
-                if (pt.X >= clientSize.Width - 16 && clientSize.Height >= 16)
+                if (pt.X >= clientSize.Width - borderwidth && clientSize.Height >= 16)
                 {
                     Result = (IntPtr)(htRight);
                     Input.Mouse.Cursor = Cursor.EwResize;

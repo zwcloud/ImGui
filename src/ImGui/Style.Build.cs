@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ImGui
 {
-    internal partial class Style
+    public partial class Style
     {
 #if false
         public static bool BuildFrom(out Style style, ExCSS.StyleRule rule)

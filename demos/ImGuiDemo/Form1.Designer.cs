@@ -13,6 +13,7 @@ namespace Calculator
 
         protected override void OnGUI()
         {
+            GUILayout.BeginVertical(Skin.current.Box, GUILayout.ExpandHeight(true));
             if (widgetsOn = GUILayout.ToggleButton("Widgets", widgetsOn, "Widgets"))
             {
                 GUILayout.BeginHorizontal();
@@ -51,6 +52,7 @@ namespace Calculator
                 }
                 GUILayout.EndHorizontal();
             }
+            GUILayout.EndVertical();
 
         }
     }

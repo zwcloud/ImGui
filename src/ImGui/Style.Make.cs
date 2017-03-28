@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ImGui
 {
-    internal partial class Style
+    public partial class Style
     {
         /// <summary>
         /// the default style
@@ -24,7 +24,7 @@ namespace ImGui
         /// </summary>
         /// <param name="modifiers">modifiers</param>
         /// <returns>a style made from the prototype modified by modifiers</returns>
-        public static Style Make(StyleModifier[] modifiers)
+        internal static Style Make(StyleModifier[] modifiers)
         {
             var result = Make();
 #if DEBUG
@@ -58,7 +58,7 @@ namespace ImGui
         /// <param name="srcStyle">the source style</param>
         /// <param name="modifiers">modifiers</param>
         /// <returns>a style made from the source style modified by modifiers</returns>
-        public static Style Make(Style srcStyle, StyleModifier[] modifiers)
+        internal static Style Make(Style srcStyle, StyleModifier[] modifiers)
         {
             var result = srcStyle.MemberwiseClone() as Style;
 #if DEBUG

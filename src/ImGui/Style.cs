@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    internal partial class Style
+    public partial class Style
     {
         #region Box styles
 
@@ -130,7 +130,7 @@ namespace ImGui
 
         public Dictionary<string, object> ExtraStyles;//TODO Remove the box/unbox here.
 
-        public TextAlignment TextAlignment
+        internal TextAlignment TextAlignment
         {
             get { return TextStyle.TextAlignment; }
             set

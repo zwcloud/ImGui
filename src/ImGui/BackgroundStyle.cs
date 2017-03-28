@@ -1,6 +1,6 @@
 ﻿namespace ImGui
 {
-    internal struct BackgroundStyle
+    public struct BackgroundStyle
     {
         /// <summary>
         /// Image that used as a background

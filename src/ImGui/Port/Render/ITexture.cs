@@ -6,7 +6,7 @@ namespace ImGui
     /// <summary>
     /// Texture-related functions
     /// </summary>
-    internal interface ITexture : IDisposable
+    public interface ITexture : IDisposable
     {
         /// <summary>
         /// Load image data from byte array into the texture.

@@ -3,7 +3,7 @@
     /// <summary>
     /// Font face info, properties of one single character
     /// </summary>
-    internal struct Font
+    public struct Font
     {
         public string family;
 
