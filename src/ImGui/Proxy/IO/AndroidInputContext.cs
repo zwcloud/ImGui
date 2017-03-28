@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    public class AndroidInputContext : IInputContext
+    internal class AndroidInputContext : IInputContext
     {
         public bool IsMouseLeftButtonDown
         {
@@ -33,6 +33,19 @@ namespace ImGui
             get
             {
                 return Point.Zero;//dummy
+            }
+        }
+
+        public Cursor MouseCursor
+        {
+            get
+            {
+                return Cursor.Default;
+                //dummy
+            }
+            set
+            {
+                //dummy
             }
         }
     }

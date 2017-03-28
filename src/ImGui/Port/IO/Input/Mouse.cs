@@ -131,7 +131,14 @@ namespace ImGui.Input
         public static float MouseWheel { get; internal set; }
 
         #endregion
-        
+
+        #region Cursor
+        public static Cursor Cursor
+        {
+            get { return Application.inputContext.MouseCursor; }
+            set { Application.inputContext.MouseCursor = value; }
+        }
+        #endregion
     }
 
 

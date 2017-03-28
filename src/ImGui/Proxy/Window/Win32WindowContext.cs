@@ -172,7 +172,17 @@ namespace ImGui
         }
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetWindowText(IntPtr hwnd, string lpString);
+        static extern bool SetWindowText(IntPtr hwnd, string lpString);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SetCapture(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetCursorPos(int x, int y);
+
+        [DllImport("user32.dll")]
+        static extern bool ReleaseCapture();
 
         #endregion
 
@@ -204,6 +214,86 @@ namespace ImGui
 
         private IntPtr WindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
         {
+            #region Handle window moving and resizing
+            const int wmNcHitTest = 0x84;
+            const int HTCAPTION = 2;
+            const int htLeft = 10;
+            const int htRight = 11;
+            const int htTop = 12;
+            const int htTopLeft = 13;
+            const int htTopRight = 14;
+            const int htBottom = 15;
+            const int htBottomLeft = 16;
+            const int htBottomRight = 17;
+            IntPtr Result;
+            if (msg == wmNcHitTest)
+            {
+                int x = (int)(lParam.ToInt64() & 0xFFFF);
+                int y = (int)((lParam.ToInt64() & 0xFFFF0000) >> 16);
+                POINT pt = new POINT { X = x, Y = y };
+                ScreenToClient(hWnd, ref pt);
+                RECT rect;
+                GetWindowRect(hWnd, out rect);
+                Size clientSize = new Size(rect.right - rect.left, rect.bottom - rect.top);
+                ///allow resize on the lower right corner
+                if (pt.X >= clientSize.Width - 16 && pt.Y >= clientSize.Height - 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htBottomRight);
+                    return Result;
+                }
+                ///allow resize on the lower left corner
+                if (pt.X <= 16 && pt.Y >= clientSize.Height - 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htBottomLeft);
+                    return Result;
+                }
+                ///allow resize on the upper right corner
+                if (pt.X <= 16 && pt.Y <= 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htTopLeft);
+                    return Result;
+                }
+                ///allow resize on the upper left corner
+                if (pt.X >= clientSize.Width - 16 && pt.Y <= 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htTopRight);
+                    return Result;
+                }
+                ///allow resize on the top border
+                if (pt.Y <= 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htTop);
+                    Input.Mouse.Cursor = Cursor.NsResize;
+                    return Result;
+                }
+                ///allow resize on the bottom border
+                if (pt.Y >= clientSize.Height - 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htBottom);
+                    Input.Mouse.Cursor = Cursor.NsResize;
+                    return Result;
+                }
+                ///allow resize on the left border
+                if (pt.X <= 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htLeft);
+                    Input.Mouse.Cursor = Cursor.EwResize;
+                    return Result;
+                }
+                ///allow resize on the right border
+                if (pt.X >= clientSize.Width - 16 && clientSize.Height >= 16)
+                {
+                    Result = (IntPtr)(htRight);
+                    Input.Mouse.Cursor = Cursor.EwResize;
+                    return Result;
+                }
+
+                Result = (IntPtr)(HTCAPTION);
+                Input.Mouse.Cursor = Cursor.NeswResize;
+                return Result;
+            }
+            #endregion
+
             switch (msg)
             {
                 #region keyboard
@@ -257,10 +347,15 @@ namespace ImGui
                     Input.Mouse.MouseWheel += ((wParam.ToUInt32() >> 16) & 0xffff) > 0 ? +1.0f : -1.0f;
                     return IntPtr.Zero;
                 case 0x0200://WM_MOUSEMOVE
-                    Input.Mouse.MousePos = new Point(
-                        x: (short) (lParam),
-                        y: (short) (lParam.ToInt32() >> 16));
+                    var p = new POINT {
+                        X = unchecked((short)lParam),
+                        Y = unchecked((short)((uint)lParam >> 16))
+                    };
+                    ClientToScreen(hWnd, ref p);
+                    Input.Mouse.MousePos = new Point(p.X, p.Y);
                     return IntPtr.Zero;
+                case 0x0020:// WM_SETCURSOR
+                    return IntPtr.Zero;//do nothing, we'll handle the cursor.
                 #endregion
                 #region ime
                 case 0x0102:/*WM_CHAR*/
@@ -329,6 +424,8 @@ namespace ImGui
 
             ShowWindow(hwnd, 1/*SW_SHOWNORMAL*/);
             UpdateWindow(hwnd);
+
+            Win32InputContext.LoadCursors();
 
             return new Win32Window(hwnd);
         }

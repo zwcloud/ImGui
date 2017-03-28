@@ -67,18 +67,18 @@ namespace ImGui
 
         public void Build(Point offset, TextMesh textMesh)
         {
-            Profile.Start("TypographyTextContext.Build");
+            //Profile.Start("TypographyTextContext.Build");
             thePrinter.FontSizeInPoints = this.FontSize;
             thePrinter.Draw(textMesh, this.Text.ToCharArray(), (float)offset.X, (float)offset.Y);//TODO remove ToCharArray
-            Profile.End();
+            //Profile.End();
         }
 
         public Size Measure()
         {
-            Profile.Start("TypographyTextContext.Measure");
+            //Profile.Start("TypographyTextContext.Measure");
             thePrinter.FontSizeInPoints = this.FontSize;
             var size = thePrinter.Measure(this.Text.ToCharArray(), 0, this.Text.Length);
-            Profile.End();
+            //Profile.End();
             return size;
         }
 

@@ -39,9 +39,11 @@ namespace ImGui
         SeResize,
         SwResize,
         WResize,
+#endif
         EwResize,
         NsResize,
         NeswResize,
+#if false
         NwseResize,
         ColResize,
         RowResize,

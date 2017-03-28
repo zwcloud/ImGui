@@ -12,5 +12,7 @@
         bool IsMouseRightButtonDown { get; }
 
         Point MousePosition { get; }
+
+        Cursor MouseCursor { get; set; }
     }
 }

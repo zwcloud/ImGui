@@ -75,6 +75,8 @@ namespace ImGui
                     ClipRect = new Rect(this.Size)
                 });
 
+            Input.Mouse.Cursor = Cursor.Default;
+
             InitGUI();
         }
 
@@ -105,6 +107,11 @@ namespace ImGui
         {
             get { return window.Position; }
             set { window.Position = value; }
+        }
+
+        internal Rect Rect
+        {
+            get { return new Rect(Position, Size); }
         }
 
         internal bool Focused { get { throw new NotImplementedException(); } }
@@ -214,6 +221,7 @@ namespace ImGui
             current = this;
 
             handleEvent();
+            //handleWindowEvent();
 
             elapsedFrameCount++;
             var detlaTime = Application.Time - lastFPSUpdateTime;
@@ -226,7 +234,7 @@ namespace ImGui
 
 #if UseLog
             Application.logger.Clear();
-            Application.logger.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", fps, this.GetMousePos().ToString(), Application.DetlaTime);
+            Application.logger.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", fps, GetMousePos().ToString(), Application.DetlaTime);
             Application.logger.Msg("Input");
             Application.logger.Msg("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
             Application.logger.Msg("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
@@ -240,6 +248,9 @@ namespace ImGui
 
             Application.logger.Msg("ActiveId: {0}, ActiveIdIsAlive: {1}", this.uiState.ActiveId, this.uiState.ActiveIdIsAlive);
             Application.logger.Msg("HoverId: {0}", this.uiState.HoverId);
+
+            Application.logger.Msg("Cursor: {0}", Input.Mouse.Cursor);
+            
 #endif
         }
 
@@ -335,7 +346,7 @@ namespace ImGui
             layoutCache.Push(formGroup);
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// Get the mouse position relative to this form
