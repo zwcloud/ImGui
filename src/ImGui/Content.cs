@@ -65,15 +65,18 @@ namespace ImGui
         {
             var width = -1d;
             var height = -1d;
-            foreach (var option in options)
+            if(options!= null)
             {
-                if (option.type == LayoutOption.Type.fixedWidth)
+                foreach (var option in options)
                 {
-                    width = (double)option.value;
-                }
-                else if (option.type == LayoutOption.Type.fixedHeight)
-                {
-                    height = (double)option.value;
+                    if (option.type == LayoutOption.Type.fixedWidth)
+                    {
+                        width = (double)option.value;
+                    }
+                    else if (option.type == LayoutOption.Type.fixedHeight)
+                    {
+                        height = (double)option.value;
+                    }
                 }
             }
 

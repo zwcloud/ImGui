@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 namespace ImGui
 {
-    internal enum EventType
+    public enum EventType
     {
         Layout,
         Repaint,
@@ -15,7 +15,7 @@ namespace ImGui
         NormalizeWindow,
     }
 
-    internal class Event
+    public class Event
     {
         public static Event current;
 
@@ -72,7 +72,10 @@ namespace ImGui
         {
             if (Event.current.type == EventType.Layout)
             {
-                current.topGroup.Add(new LayoutEntry(style, options) { contentWidth = contentZize.Width, contentHeight = contentZize.Height });
+                LayoutEntry layoutEntry = new LayoutEntry(style, options) { contentWidth = contentZize.Width, contentHeight = contentZize.Height };
+                layoutEntry.minWidth = layoutEntry.maxWidth = layoutEntry.contentWidth;
+                layoutEntry.minHeight = layoutEntry.maxHeight = layoutEntry.contentHeight;
+                current.topGroup.Add(layoutEntry);
                 return Rect.Empty;
             }
             return current.topGroup.GetNext().rect;

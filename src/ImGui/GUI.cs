@@ -84,9 +84,31 @@ namespace ImGui
             return DoToggle(rect, value, id);
         }
 
+        /// <summary>
+        /// Create a toggle (check-box) with a label.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="value">Is this toggle checked or unchecked?</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>new value of the toggle</returns>
+        public static bool Toggle(Rect rect, string label, bool value, string id)
+        {
+            return DoToggle(rect, Content.Cached(label, id), value, id);
+        }
+
+        internal static bool Toggle(Rect rect, Content content, bool value, string id)
+        {
+            return DoToggle(rect, content, value, id);
+        }
+
         private static bool DoToggle(Rect rect, bool value, string id)
         {
             return ImGui.Toggle.DoControl(rect, value, id);
+        }
+
+        private static bool DoToggle(Rect rect, Content content, bool value, string id)
+        {
+            return ImGui.Toggle.DoControl(rect, content, value, id);
         }
 
         #endregion

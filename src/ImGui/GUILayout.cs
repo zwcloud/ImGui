@@ -140,6 +140,10 @@ namespace ImGui
 
         #endregion
 
+        #region Internal Styles
+        internal static double fieldWidth = 50;
+        #endregion
+
         #region controls
 
         #region Space
@@ -282,7 +286,7 @@ namespace ImGui
         /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>new value of the toggle</returns>
-        internal static bool Toggle(string text, bool value, string id, params LayoutOption[] options)
+        public static bool Toggle(string text, bool value, string id, params LayoutOption[] options)
         {
             return DoToggle(Content.Cached(text, id), value, Skin.current.Toggle["Normal"], id, options);
         }
@@ -313,11 +317,22 @@ namespace ImGui
 
         private static bool DoToggle(Content content, bool value, Style style, string name, params LayoutOption[] options)
         {
-            GUILayout.BeginHorizontal();
-            var result = GUI.Toggle(LayoutUtility.GetRect(new Size(16, 16), style, options), value, name);
-            GUILayout.Label(content, name);
-            GUILayout.EndHorizontal();
+            var result = GUI.Toggle(GUILayout.GetToggleRect(content, style, options), content, value, name);
             return result;
+        }
+
+        private static Rect GetToggleRect(Content label, Style style, params LayoutOption[] options)
+        {
+            if(label == null)
+            {
+                return LayoutUtility.GetRect(new Size(16, 16), style, options);
+            }
+            else
+            {
+                var textSize = label.GetSize(style, null);
+                var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
+                return LayoutUtility.GetRect(size, style, options);
+            }
         }
 
         #endregion
@@ -331,7 +346,7 @@ namespace ImGui
         /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>new value of the toggle</returns>
-        public static bool Toggle(bool value, string id, params LayoutOption[] options)
+        internal static bool Toggle(bool value, string id, params LayoutOption[] options)
         {
             return DoToggle(value, Skin.current.Toggle["Normal"], id, options);
         }
@@ -347,6 +362,26 @@ namespace ImGui
         }
 
         #endregion
+
+        #endregion
+
+        #region Radio
+
+        public static bool Radio(string label, ref string active_id, string id)
+        {
+            bool pressed = DoRadio(Content.Cached(label, id), id == active_id, Skin.current.Label["Normal"], id);
+            if (pressed)
+            {
+                active_id = id;
+            }
+            return pressed;
+        }
+
+        private static bool DoRadio(Content content, bool value, Style style, string id)
+        {
+            var result = GUILayout.Toggle(content, value, style, id);
+            return result;
+        }
 
         #endregion
 
@@ -603,7 +638,7 @@ namespace ImGui
         }
 
         #endregion
-
+        
         #endregion
     }
 }

@@ -20,7 +20,10 @@ namespace DefaultTemplate
         {
             for (int i = 0; i < this.labels.Length; i++)
             {
-                this.newToggleValues[i] = GUILayout.Toggle(this.labels[i], this.toggleValues[i]);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(this.labels[i], this.labels[i]);
+                this.newToggleValues[i] = GUILayout.Toggle(this.toggleValues[i], this.labels[i]);
+                GUILayout.EndHorizontal();
             }
 
             for (var i = 0; i < this.labels.Length; ++i)
