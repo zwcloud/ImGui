@@ -55,6 +55,26 @@ namespace ImGui
             }
         }
 
+
+        public Point ClientPosition
+        {
+            get => Application.windowContext.GetClientPosition(this);
+            set => Application.windowContext.SetClientPosition(this, value);
+        }
+
+        public Size ClientSize
+        {
+            get
+            {
+                return Application.windowContext.GetClientSize(this);
+            }
+
+            set
+            {
+                Application.windowContext.SetClientSize(this, value);
+            }
+        }
+
         public string Title
         {
             get

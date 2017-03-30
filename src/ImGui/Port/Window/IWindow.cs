@@ -28,6 +28,16 @@ namespace ImGui
         Size Size { get; set; }
 
         /// <summary>
+        /// position of the client area
+        /// </summary>
+        Point ClientPosition { get; set; }
+
+        /// <summary>
+        /// size of the client area
+        /// </summary>
+        Size ClientSize { get; set; }
+
+        /// <summary>
         /// Title of the window
         /// </summary>
         string Title { get; set; }

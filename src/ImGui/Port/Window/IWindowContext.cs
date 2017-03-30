@@ -8,15 +8,21 @@ namespace ImGui
 
         void InputEventHandler(InputType type, float x, float y);
 
-        IWindow CreateWindow(IntPtr nativeWindow);
-
-        IWindow CreateWindow(Point position, Size size);
+        IWindow CreateWindow(Point position, Size size, WindowTypes windowType);
 
         Size GetWindowSize(IWindow window);
 
         Point GetWindowPosition(IWindow window);
 
         void SetWindowSize(IWindow window, Size size);
+
+        Point GetClientPosition(IWindow window);
+
+        void SetClientPosition(IWindow window, Point position);
+
+        Size GetClientSize(IWindow window);
+
+        void SetClientSize(IWindow window, Size size);
 
         void SetWindowPosition(IWindow window, Point position);
         

@@ -452,7 +452,7 @@ namespace ImGui
         {
             if (this.isForm)
             {
-                this.rect = new Rect(0, 0, Form.current.Size);
+                this.rect = new Rect(0, 0, Form.current.ClientSize);
             }
 
             if (this.entries.Count == 0)

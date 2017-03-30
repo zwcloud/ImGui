@@ -216,6 +216,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\Text\TextEnums.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\IWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\IWindowContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\IO\AndroidInputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\IO\Win32InputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\FilterMode.cs" />

@@ -28,21 +28,19 @@ namespace ImGui
         /// <param name="size"></param>
         protected Form(IntPtr nativeWindow, Point position, Size size)
         {
-            this.window = Application.windowContext.CreateWindow(nativeWindow);
-            this.window.Position = Point.Zero;
-            this.window.Size = size;
+            this.window = Application.windowContext.CreateWindow(Point.Zero, Size.Zero, WindowTypes.Regular);
             renderer = Application._map.CreateRenderer();
             renderer.Init(IntPtr.Zero);//dummy paramters
 
             this.DrawList.DrawBuffer.CommandBuffer.Add(
                 new DrawCommand
                 {
-                    ClipRect = new Rect(this.Size)
+                    ClipRect = new Rect(this.ClientSize)
                 });
             this.DrawList.BezierBuffer.CommandBuffer.Add(
                 new DrawCommand
                 {
-                    ClipRect = new Rect(this.Size)
+                    ClipRect = new Rect(this.ClientSize)
                 });
 
             InitGUI();
@@ -58,7 +56,7 @@ namespace ImGui
 
         internal Form(Point position, Size size, string Title = "<unnamed>")
         {
-            this.window = Application.windowContext.CreateWindow(position, size);
+            this.window = Application.windowContext.CreateWindow(position, size, WindowTypes.Regular);
             this.window.Title = Title;
 
             renderer = Application._map.CreateRenderer();
@@ -67,12 +65,12 @@ namespace ImGui
             this.DrawList.DrawBuffer.CommandBuffer.Add(
                 new DrawCommand
                 {
-                    ClipRect = new Rect(this.Size)
+                    //ClipRect = new Rect(this.ClientSize)
                 });
             this.DrawList.BezierBuffer.CommandBuffer.Add(
                 new DrawCommand
                 {
-                    ClipRect = new Rect(this.Size)
+                    //ClipRect = new Rect(this.ClientSize)
                 });
 
             Input.Mouse.Cursor = Cursor.Default;
@@ -101,6 +99,18 @@ namespace ImGui
         {
             get { return window.Size; }
             set { window.Size = value; }
+        }
+
+        internal Point ClientPosition
+        {
+            get => window.ClientPosition;
+            set => window.ClientPosition = value;
+        }
+
+        internal Size ClientSize
+        {
+            get => window.ClientSize;
+            set => window.ClientSize = value;
         }
 
         internal Point Position
@@ -221,7 +231,6 @@ namespace ImGui
             current = this;
 
             handleEvent();
-            //handleWindowEvent();
 
             elapsedFrameCount++;
             var detlaTime = Application.Time - lastFPSUpdateTime;
@@ -318,7 +327,7 @@ namespace ImGui
         internal void Render()
         {
             this.renderer.Clear();
-            this.renderer.RenderDrawList(this.DrawList, (int)this.Size.Width, (int)this.Size.Height);
+            this.renderer.RenderDrawList(this.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
             this.renderer.SwapBuffers();
         }
 
@@ -340,8 +349,10 @@ namespace ImGui
 
         private void LoadFormGroup()
         {
-            var formGroup = new LayoutGroup(true, Style.Default, GUILayout.Width(this.Size.Width),
-                GUILayout.Height(this.Size.Height));
+            var formGroup = new LayoutGroup(true, Style.Default,
+                GUILayout.Width(this.ClientSize.Width),
+                GUILayout.Height(this.ClientSize.Height)
+                );
             formGroup.isForm = true;
             layoutCache.Push(formGroup);
         }

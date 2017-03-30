@@ -71,13 +71,7 @@ namespace ImGui
             guiMethod();
         }
 
-        public IWindow CreateWindow(IntPtr nativeWindow)
-        {
-            // Only one initial window is available.
-            return AndroidWindow.CreateAndroidWindow(nativeWindow);//this is dummy for now
-        }
-
-        public IWindow CreateWindow(Point position, Size size)
+        public IWindow CreateWindow(Point position, Size size, WindowTypes windowType)
         {
             throw new InvalidOperationException();
         }
@@ -153,6 +147,27 @@ namespace ImGui
         public Point ClientToScreen(IWindow window, Point point)
         {
             return point;
+        }
+
+        public Size GetClientSize(IWindow window)
+        {
+            //dummy
+            return Size.Zero;
+        }
+
+        public void SetClientSize(IWindow window, Size size)
+        {
+            //dummy
+        }
+
+        public Point GetClientPosition(IWindow window)
+        {
+            return Point.Zero;
+        }
+
+        public void SetClientPosition(IWindow window, Point position)
+        {
+            //dummy
         }
 
         #endregion

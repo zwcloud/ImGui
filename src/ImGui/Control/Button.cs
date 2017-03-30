@@ -7,10 +7,12 @@ namespace ImGui
     {
         public static bool DoControl(Rect rect, Content content, string id)
         {
+            var mousePos = Form.current.GetMousePos();
+
             if (Utility.CurrentOS.IsAndroid)
             {
                 var clicked = false;
-                var inside = rect.Contains(Input.Mouse.MousePos);
+                var inside = rect.Contains(mousePos);
 
                 //control logic
                 var uiState = Form.current.uiState;
@@ -43,7 +45,7 @@ namespace ImGui
             else
             {
                 var clicked = false;
-                var hovered = rect.Contains(Input.Mouse.MousePos);
+                var hovered = rect.Contains(mousePos);
 
                 //control logic
                 var uiState = Form.current.uiState;

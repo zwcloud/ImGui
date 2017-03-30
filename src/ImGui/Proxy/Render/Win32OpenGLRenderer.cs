@@ -260,7 +260,7 @@ void main()
             uint last_enable_blend = GL.IsEnabled(GL.GL_BLEND);
             uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
             uint last_enable_depth_test = GL.IsEnabled(GL.GL_DEPTH_TEST);
-            uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
+            //uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
 
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
             GL.Enable(GL.GL_BLEND);
@@ -268,7 +268,7 @@ void main()
             GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             GL.Disable(GL.GL_CULL_FACE);
             GL.Disable(GL.GL_DEPTH_TEST);
-            GL.Enable(GL.GL_SCISSOR_TEST);
+            //GL.Enable(GL.GL_SCISSOR_TEST);
 
             // Setup viewport, orthographic projection matrix
             GL.Viewport(0, 0, width, height);
@@ -312,7 +312,7 @@ void main()
             if (last_enable_blend == GL.GL_TRUE) GL.Enable(GL.GL_BLEND); else GL.Disable(GL.GL_BLEND);
             if (last_enable_cull_face == GL.GL_TRUE) GL.Enable(GL.GL_CULL_FACE); else GL.Disable(GL.GL_CULL_FACE);
             if (last_enable_depth_test == GL.GL_TRUE) GL.Enable(GL.GL_DEPTH_TEST); else GL.Disable(GL.GL_DEPTH_TEST);
-            if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
+            //if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
         }
 
@@ -327,6 +327,7 @@ void main()
         {
             m.ShutDown();
             mExtra.ShutDown();
+            mImage.ShutDown();
         }
     }
 }

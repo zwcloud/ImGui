@@ -133,13 +133,27 @@ namespace ImGui
 
         [DllImport("user32.dll")]
         static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
-        
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AdjustWindowRect(ref RECT lpRect, uint dwStyle, bool bMenu);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
+        const int GWL_STYLE = -16;
+
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
             public int left, top, right, bottom;
         }
         [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -175,14 +189,11 @@ namespace ImGui
         static extern bool SetWindowText(IntPtr hwnd, string lpString);
 
         [DllImport("user32.dll")]
-        static extern IntPtr SetCapture(IntPtr hWnd);
+        static extern IntPtr SetTimer(IntPtr hWnd, IntPtr nIDEvent, uint uElapse, IntPtr lpTimerFunc);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetCursorPos(int x, int y);
-
-        [DllImport("user32.dll")]
-        static extern bool ReleaseCapture();
+        static extern bool KillTimer(IntPtr hWnd, IntPtr uIDEvent);
 
         #endregion
 
@@ -191,7 +202,6 @@ namespace ImGui
         public Win32WindowContext()
         {
         }
-
         public void MainLoop(Action guiMethod)
         {
             MSG msg = new MSG();
@@ -204,7 +214,6 @@ namespace ImGui
             {
                 guiMethod();
             }
-            //if(msg.message != 0x12/*WM_QUIT*/) //...
         }
         
         public void InputEventHandler(InputType type, float x, float y)
@@ -214,90 +223,6 @@ namespace ImGui
 
         private IntPtr WindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
         {
-            #region Handle window moving and resizing
-            //source: http://stackoverflow.com/a/17220049/3427520
-            const int wmNcHitTest = 0x84;
-            const int HTCAPTION = 2;
-            const int htLeft = 10;
-            const int htRight = 11;
-            const int htTop = 12;
-            const int htTopLeft = 13;
-            const int htTopRight = 14;
-            const int htBottom = 15;
-            const int htBottomLeft = 16;
-            const int htBottomRight = 17;
-
-            const int borderwidth = 4;
-
-            IntPtr Result;
-            if (msg == wmNcHitTest)
-            {
-                int x = (int)(lParam.ToInt64() & 0xFFFF);
-                int y = (int)((lParam.ToInt64() & 0xFFFF0000) >> 16);
-                POINT pt = new POINT { X = x, Y = y };
-                ScreenToClient(hWnd, ref pt);
-                RECT rect;
-                GetWindowRect(hWnd, out rect);
-                Size clientSize = new Size(rect.right - rect.left, rect.bottom - rect.top);
-                ///allow resize on the lower right corner
-                if (pt.X >= clientSize.Width - borderwidth && pt.Y >= clientSize.Height - borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htBottomRight);
-                    return Result;
-                }
-                ///allow resize on the lower left corner
-                if (pt.X <= borderwidth && pt.Y >= clientSize.Height - borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htBottomLeft);
-                    return Result;
-                }
-                ///allow resize on the upper right corner
-                if (pt.X <= borderwidth && pt.Y <= borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htTopLeft);
-                    return Result;
-                }
-                ///allow resize on the upper left corner
-                if (pt.X >= clientSize.Width - borderwidth && pt.Y <= borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htTopRight);
-                    return Result;
-                }
-                ///allow resize on the top border
-                if (pt.Y <= borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htTop);
-                    Input.Mouse.Cursor = Cursor.NsResize;
-                    return Result;
-                }
-                ///allow resize on the bottom border
-                if (pt.Y >= clientSize.Height - borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htBottom);
-                    Input.Mouse.Cursor = Cursor.NsResize;
-                    return Result;
-                }
-                ///allow resize on the left border
-                if (pt.X <= borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htLeft);
-                    Input.Mouse.Cursor = Cursor.EwResize;
-                    return Result;
-                }
-                ///allow resize on the right border
-                if (pt.X >= clientSize.Width - borderwidth && clientSize.Height >= 16)
-                {
-                    Result = (IntPtr)(htRight);
-                    Input.Mouse.Cursor = Cursor.EwResize;
-                    return Result;
-                }
-
-                Result = (IntPtr)(HTCAPTION);
-                Input.Mouse.Cursor = Cursor.NeswResize;
-                return Result;
-            }
-            #endregion
-
             switch (msg)
             {
                 #region keyboard
@@ -358,8 +283,6 @@ namespace ImGui
                     ClientToScreen(hWnd, ref p);
                     Input.Mouse.MousePos = new Point(p.X, p.Y);
                     return IntPtr.Zero;
-                case 0x0020:// WM_SETCURSOR
-                    return IntPtr.Zero;//do nothing, we'll handle the cursor.
                 #endregion
                 #region ime
                 case 0x0102:/*WM_CHAR*/
@@ -370,6 +293,9 @@ namespace ImGui
                         return IntPtr.Zero;
                     }
                 #endregion
+                case 0x0232://WM_EXITSIZEMOVE
+                    if (Event.current != null) Event.current.type = EventType.Layout;
+                    break;
                 case 0x2://WM_DESTROY
                     PostQuitMessage(0);
                     return IntPtr.Zero;
@@ -383,20 +309,19 @@ namespace ImGui
         }
 
         WNDCLASS wndclass; //Forbid GC of the windowProc delegate instance
-        public IWindow CreateWindow(Point position, Size size)
+        public IWindow CreateWindow(Point position, Size size, WindowTypes windowType)
         {
             IntPtr hInstance = processHandle.DangerousGetHandle();
             string szAppName = "ImGuiApplication~";
 
             wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/;
             wndclass.lpfnWndProc = WindowProc;
-
             wndclass.cbClsExtra = 0;
             wndclass.cbWndExtra = 0;
             wndclass.hInstance = hInstance;
             wndclass.hIcon = LoadIcon(IntPtr.Zero, new IntPtr(32512/*IDI_APPLICATION*/));
             wndclass.hCursor = LoadCursor(IntPtr.Zero, 32512/*IDC_ARROW*/);
-            wndclass.hbrBackground = GetStockObject(0);
+            wndclass.hbrBackground = IntPtr.Zero;// GetStockObject(0);
             wndclass.lpszMenuName = null;
             wndclass.lpszClassName = szAppName;
 
@@ -404,18 +329,51 @@ namespace ImGui
 
             if (atom == 0)
             {
-                throw new Exception(string.Format("RegisterClass error: {0}", Marshal.GetLastWin32Error()));
+                throw new WindowCreateException(string.Format("RegisterClass error: {0}", Marshal.GetLastWin32Error()));
             }
+
+            WindowStyles windowStyle;
+            switch (windowType)
+            {
+                case WindowTypes.Regular:
+                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW;
+                    break;
+                case WindowTypes.ToolBox:
+                    windowStyle = WindowStyles.WS_DLGFRAME;
+                    break;
+                case WindowTypes.ToolTip:
+                    windowStyle = WindowStyles.WS_POPUP;
+                    break;
+                default:
+                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW;
+                    break;
+            }
+
+            // rect of the desired client area
+            RECT rc = new RECT
+            {
+                left = (int)position.X,
+                top = (int)position.Y,
+                right = (int)(position.X + size.Width),
+                bottom = (int)(position.Y + size.Height)
+            };
+
+            if(!AdjustWindowRect(ref rc, (uint)windowStyle, false))
+            {
+                throw new WindowCreateException(string.Format("AdjustWindowRectEx fails, win32 error: {0}", Marshal.GetLastWin32Error()));
+            }
+
+            //now rc is the rect of the window
 
             IntPtr hwnd = CreateWindowEx(
                 0,
                 new IntPtr(atom), // window class name
                 "ImGuiWindow~", // window caption
-                (uint)(WindowStyles.WS_POPUP), // window style
-                (int)position.X, // initial x position
-                (int)position.Y, // initial y position
-                (int)size.Width, // initial x size
-                (int)size.Height, // initial y size
+                (uint)windowStyle, // window style
+                rc.left, // initial x position
+                rc.top, // initial y position
+                rc.right - rc.left, // initial x size
+                rc.bottom - rc.top, // initial y size
                 IntPtr.Zero, // parent window handle
                 IntPtr.Zero, // window menu handle
                 hInstance, // program instance handle
@@ -423,7 +381,7 @@ namespace ImGui
 
             if (hwnd == IntPtr.Zero)
             {
-                throw new Exception(string.Format("CreateWindowEx error: {0}", Marshal.GetLastWin32Error()));
+                throw new WindowCreateException(string.Format("CreateWindowEx error: {0}", Marshal.GetLastWin32Error()));
             }
 
             ShowWindow(hwnd, 1/*SW_SHOWNORMAL*/);
@@ -446,6 +404,78 @@ namespace ImGui
             RECT rect;
             GetWindowRect(window.Pointer, out rect);
             return new Point(rect.left, rect.top);
+        }
+
+        public Point GetClientPosition(IWindow window)
+        {
+            RECT rect;
+            GetClientRect(window.Pointer, out rect);
+            return new Point(rect.left, rect.top);
+        }
+
+        public void SetClientPosition(IWindow window, Point position)
+        {
+            RECT windowRect;
+            GetWindowRect(window.Pointer, out windowRect);
+
+            RECT clientRect;
+            GetClientRect(window.Pointer, out clientRect);
+            var clientWidth = clientRect.right - clientRect.left;
+            var clientHeight = clientRect.bottom - clientRect.top;
+
+            var windowStyle = GetWindowLong(window.Pointer, GWL_STYLE);
+
+            //rect of the desired client area: size adjusted relative to the top-left corner
+            RECT rc = new RECT
+            {
+                left = (int)position.X,
+                top = (int)position.Y,
+                right = (int)position.X + clientWidth,
+                bottom = (int)position.Y + clientHeight
+            };
+
+            if (!AdjustWindowRect(ref rc, windowStyle, false))
+            {
+                throw new WindowUpdateException(string.Format("AdjustWindowRectEx fails, win32 error: {0}", Marshal.GetLastWin32Error()));
+            }
+
+            //now rc is the rect of the window, apply it
+            SetWindowPos(window.Pointer, IntPtr.Zero, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, 0x0002/*SWP_NOMOVE*/ | 0x0004/*SWP_NOZORDER*/);
+        }
+
+        public Size GetClientSize(IWindow window)
+        {
+            RECT rect;
+            GetClientRect(window.Pointer, out rect);
+            return new Size(rect.right - rect.left, rect.bottom - rect.top);
+        }
+
+        public void SetClientSize(IWindow window, Size size)
+        {
+            RECT windowRect;
+            GetWindowRect(window.Pointer, out windowRect);
+
+            RECT clientRect;
+            GetClientRect(window.Pointer, out clientRect);
+
+            var windowStyle = GetWindowLong(window.Pointer, GWL_STYLE);
+
+            //rect of the desired client area: size adjusted relative to the top-left corner
+            RECT rc = new RECT
+            {
+                left = clientRect.left,
+                top = clientRect.top,
+                right = clientRect.left + (int)size.Width,
+                bottom = clientRect.top + (int)size.Height
+            };
+
+            if (!AdjustWindowRect(ref rc, windowStyle, false))
+            {
+                throw new WindowUpdateException(string.Format("AdjustWindowRectEx fails, win32 error: {0}", Marshal.GetLastWin32Error()));
+            }
+
+            //now rc is the rect of the window, apply it
+            SetWindowPos(window.Pointer, IntPtr.Zero, rc.left, rc.top, rc.right - rc.left, rc.bottom-rc.top, 0x0002/*SWP_NOMOVE*/ | 0x0004/*SWP_NOZORDER*/);
         }
 
         public void SetWindowSize(IWindow window, Size size)
@@ -525,5 +555,6 @@ namespace ImGui
             ClientToScreen(window.Pointer, ref p);
             return new Point(p.X, p.Y);
         }
+
     }
 }
