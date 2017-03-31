@@ -210,8 +210,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\IInputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Keyboard.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Mouse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\Render\FilterMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\IRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\ITexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\Render\TextureWrapMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Text\ITextContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Text\TextEnums.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\IWindow.cs" />
@@ -220,11 +222,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\IO\AndroidInputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\IO\Win32InputContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\FilterMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\OpenGLESRenderer.Android.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\OpenGLESRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\OpenGLTexture.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\TextureWrapMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\Win32OpenGLRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\Win32OpenGLRenderer.Windows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Text\DWriteTextContext.cs" />
