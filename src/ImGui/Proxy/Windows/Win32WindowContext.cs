@@ -236,7 +236,7 @@ namespace ImGui
                         }
 
                         //DEBUG only begin
-                        if(keyCode == (int)Input.Keyboard.Key.Escape)
+                        if(keyCode == (int)Key.Escape)
                         {
                             Application.Quit();
                         }

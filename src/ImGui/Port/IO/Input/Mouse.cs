@@ -3,12 +3,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ImGui.Input
+namespace ImGui
 {
     /// <summary>
     /// input
     /// </summary>
-    internal static class Mouse
+    internal class Mouse
     {
         /// <summary>
         /// Double click interval time span
@@ -24,34 +24,34 @@ namespace ImGui.Input
         /// <summary>
         /// Left button state
         /// </summary>
-        private static InputState leftButtonState = InputState.Up;
+        private InputState leftButtonState = InputState.Up;
 
         /// <summary>
         /// Last recorded left mouse button state
         /// </summary>
         /// <remarks>for detecting left mouse button state' changes</remarks>
-        public static InputState LastLeftButtonState { get; internal set; } = InputState.Up;
+        public InputState LastLeftButtonState { get; internal set; } = InputState.Up;
 
         /// <summary>
         /// Button state of left mouse button(readonly)
         /// </summary>
-        public static InputState LeftButtonState
+        public InputState LeftButtonState
         {
             get { return leftButtonState; }
             internal set { leftButtonState = value; }
         }
 
-        public static long LeftButtonDownDuration { get; internal set; } = -1;
+        public long LeftButtonDownDuration { get; internal set; } = -1;
 
         /// <summary>
         /// Is left mouse button released?(readonly)
         /// </summary>
-        public static bool LeftButtonReleased { get; internal set; } = false;
+        public bool LeftButtonReleased { get; internal set; } = false;
 
         /// <summary>
         /// Is left mouse button clicked?(readonly)
         /// </summary>
-        public static bool LeftButtonPressed { get; internal set; } = false;
+        public bool LeftButtonPressed { get; internal set; } = false;
 
         #endregion
 
@@ -59,33 +59,33 @@ namespace ImGui.Input
         /// <summary>
         /// Last recorded right mouse button state
         /// </summary>
-        public static InputState LastRightButtonState { get; internal set; } = InputState.Up;
+        public InputState LastRightButtonState { get; internal set; } = InputState.Up;
 
         /// <summary>
         /// Right button state
         /// </summary>
-        static InputState rightButtonState = InputState.Up;
+        InputState rightButtonState = InputState.Up;
 
         /// <summary>
         /// Button state of the right mouse button(readonly)
         /// </summary>
-        public static InputState RightButtonState
+        public InputState RightButtonState
         {
             get { return rightButtonState; }
             internal set { rightButtonState = value; }
         }
 
-        public static long RightButtonDownDuration { get; internal set; } = -1;
+        public long RightButtonDownDuration { get; internal set; } = -1;
 
         /// <summary>
         /// Is right mouse button released?(readonly)
         /// </summary>
-        public static bool RightButtonReleased { get; internal set; } = false;
+        public bool RightButtonReleased { get; internal set; } = false;
 
         /// <summary>
         /// Check if the right mouse button is pressed(readonly)
         /// </summary>
-        public static bool RightButtonPressed { get; internal set; } = false;
+        public bool RightButtonPressed { get; internal set; } = false;
         #endregion
 
         #region Position
@@ -102,7 +102,7 @@ namespace ImGui.Input
         /// <summary>
         /// Last mouse position in screen (readonly)
         /// </summary>
-        public static Point LastMousePos
+        public Point LastMousePos
         {
             get { return lastMousePos; }
         }
@@ -110,7 +110,7 @@ namespace ImGui.Input
         /// <summary>
         /// Mouse position in screen (readonly)
         /// </summary>
-        public static Point MousePos
+        public Point MousePos
         {
             get { return mousePos; }
             internal set
@@ -123,17 +123,17 @@ namespace ImGui.Input
         /// <summary>
         /// Is mouse moving?
         /// </summary>
-        public static bool MouseMoving
+        public bool MouseMoving
         {
             get { return mousePos != lastMousePos; }
         }
 
-        public static float MouseWheel { get; internal set; }
+        public float MouseWheel { get; internal set; }
 
         #endregion
 
         #region Cursor
-        public static Cursor Cursor
+        public Cursor Cursor
         {
             get { return Application.inputContext.MouseCursor; }
             set { Application.inputContext.MouseCursor = value; }

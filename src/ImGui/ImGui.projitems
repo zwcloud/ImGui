@@ -207,6 +207,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)PlatformContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MathEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Point.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\IInputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Keyboard.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Mouse.cs" />
