@@ -220,20 +220,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\IWindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowTypes.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\IO\AndroidInputContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\IO\Win32InputContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\OpenGLESRenderer.Android.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\OpenGLESRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\OpenGLTexture.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\Win32OpenGLRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Render\Win32OpenGLRenderer.Windows.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidInputContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32InputContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\OpenGLESRenderer.Android.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\OpenGLESRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\OpenGLTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32OpenGLRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32OpenGLRenderer.Windows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Text\DWriteTextContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Text\PangoTextContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Text\TypographyTextContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Window\AndroidWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Window\AndroidWindowContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Window\Win32Window.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Window\Win32WindowContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\TypographyTextContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidWindowContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32Window.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32WindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Rect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\DefaultLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\ILogger.cs" />
@@ -254,5 +254,12 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Proxy\IO\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Render\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Window\" />
   </ItemGroup>
 </Project>
