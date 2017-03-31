@@ -227,9 +227,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\OpenGLTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32OpenGLRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32OpenGLRenderer.Windows.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Text\DWriteTextContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Text\PangoTextContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\TypographyTextContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\TypographyTextContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidWindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32Window.cs" />
@@ -257,9 +255,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Proxy\IO\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Render\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Window\" />
   </ItemGroup>
 </Project>
