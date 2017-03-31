@@ -10,7 +10,20 @@ namespace ImGui
     /// Encapsulates a ImGui application.
     /// </summary>
     /// <remarks>
-    /// Application is a class that encapsulates WPF application-specific functionality.
+    /// Application is a class that encapsulates application-specific functionality.
+    /// An application can be started in two ways:
+    /// 1. If you have access to the main entry point, use
+    /// <code>
+    /// Application.Init();
+    /// Application.Run(mainForm);
+    /// </code>
+    /// 2. If you can only provide an callback in the main loop, use
+    /// <code>
+    /// //first init
+    /// Application.Init();
+    /// //then in the loop callback, call
+    /// Application.RunLoop(mainForm);
+    /// </code>
     /// </remarks>
     public static class Application
     {
@@ -21,7 +34,7 @@ namespace ImGui
 
         internal static List<Form> Forms = new List<Form>();
         internal static List<Form> removeList = new List<Form>();
-        internal static Map _map;
+        internal static ContextFactory _map;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
         internal static IWindowContext windowContext;
@@ -77,15 +90,15 @@ namespace ImGui
             //     platform-dependent object implementation
             if (Utility.CurrentOS.IsAndroid)
             {
-                _map = MapAndroid.MapFactory();
+                _map = AndroidContextFactory.MapFactory();
             }
             else if(Utility.CurrentOS.IsWindows)
             {
-                _map = MapWindows.MapFactory();
+                _map = WindowsContextFactory.MapFactory();
             }
             else if(Utility.CurrentOS.IsLinux)
             {
-                _map = MapLinux.MapFactory();
+                _map = LinuxContextFactory.MapFactory();
             }
 
             // load the implementation into delegate instances

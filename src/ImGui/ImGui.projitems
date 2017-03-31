@@ -220,7 +220,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\IWindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidContextFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidInputContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxContextFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\WindowsContextFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32InputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\OpenGLESRenderer.Android.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\OpenGLESRenderer.cs" />
@@ -255,6 +258,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Linux\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
   </ItemGroup>
 </Project>
