@@ -33,8 +33,7 @@ namespace ImGui
         internal static Queue<char> imeBuffer = new Queue<char>();
 
         internal static List<Form> Forms = new List<Form>();
-        internal static List<Form> removeList = new List<Form>();
-        internal static PlatformContext _map;
+        internal static PlatformContext platformContext;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
         internal static IWindowContext windowContext;
@@ -86,24 +85,24 @@ namespace ImGui
             // create factory: service
             logger = Utility.Create<ILogger>(Utility.CurrentOS.Platform);
 
-            // create factory:
-            //     platform-dependent object implementation
+            // load platform context:
+            //     platform-dependent implementation
             if (Utility.CurrentOS.IsAndroid)
             {
-                _map = AndroidContext.MapFactory();
+                platformContext = AndroidContext.MapFactory();
             }
             else if(Utility.CurrentOS.IsWindows)
             {
-                _map = WindowsContext.MapFactory();
+                platformContext = WindowsContext.MapFactory();
             }
             else if(Utility.CurrentOS.IsLinux)
             {
-                _map = LinuxContext.MapFactory();
+                platformContext = LinuxContext.MapFactory();
             }
 
             // load the implementation into delegate instances
-            windowContext = _map.CreateWindowContext();
-            inputContext = _map.CreateInputContext();
+            windowContext = platformContext.CreateWindowContext();
+            inputContext = platformContext.CreateInputContext();
         }
 
         private static bool RequestQuit;

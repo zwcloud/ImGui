@@ -62,7 +62,7 @@ namespace TextRenderingTest
             var font = style.Font;
             var textStyle = style.TextStyle;
             var rect = new Rect(0, 0, 200, 200);
-            var textContext = Application._map.CreateTextContext(
+            var textContext = Application.platformContext.CreateTextContext(
                 "ABC",
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
@@ -81,7 +81,7 @@ namespace TextRenderingTest
             var font = style.Font;
             var textStyle = style.TextStyle;
             var rect = new Rect(0, 0, 200, 200);
-            var textContext = Application._map.CreateTextContext(
+            var textContext = Application.platformContext.CreateTextContext(
                 "ij = I::oO(0xB81l);",
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
@@ -90,7 +90,7 @@ namespace TextRenderingTest
             var textMesh = new TextMesh();
             textMesh.Build(Point.Zero, Style.Default, textContext);
             
-            var anotherTextContext = Application._map.CreateTextContext(
+            var anotherTextContext = Application.platformContext.CreateTextContext(
                 "auto-sized",
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
                 200, 200,

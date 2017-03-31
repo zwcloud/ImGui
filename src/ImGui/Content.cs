@@ -159,7 +159,7 @@ namespace ImGui
                 this.rect = rect;
             }
 
-            this.TextContext = Application._map.CreateTextContext(
+            this.TextContext = Application.platformContext.CreateTextContext(
                 this.Text,
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),

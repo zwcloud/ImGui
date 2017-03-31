@@ -329,7 +329,7 @@ namespace ImGui
 
         internal static ITexture CreateTexture(string filePath)
         {
-            var texture = Application._map.CreateTexture();
+            var texture = Application.platformContext.CreateTexture();
             texture.LoadImage(filePath);
             return texture;
         }

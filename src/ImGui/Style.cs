@@ -228,7 +228,7 @@ namespace ImGui
             Size actualSize;
             var font = this.Font;
             var textStyle = this.TextStyle;
-            using (var measureContext = Application._map.CreateTextContext(
+            using (var measureContext = Application.platformContext.CreateTextContext(
                 text,
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
                 4096, 4096,

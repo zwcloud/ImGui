@@ -137,7 +137,7 @@ namespace TextRenderingTest
             var textMesh = new TextMesh();
             textMesh.Build(Point.Zero, Style.Default, textContext);
 
-            var anotherTextContext = Application._map.CreateTextContext(
+            var anotherTextContext = Application.platformContext.CreateTextContext(
                 "auto-sized",
                 font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
                 200, 200,

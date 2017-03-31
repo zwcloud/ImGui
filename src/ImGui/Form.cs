@@ -29,7 +29,7 @@ namespace ImGui
         protected Form(IntPtr nativeWindow, Point position, Size size)
         {
             this.window = Application.windowContext.CreateWindow(Point.Zero, Size.Zero, WindowTypes.Regular);
-            renderer = Application._map.CreateRenderer();
+            renderer = Application.platformContext.CreateRenderer();
             renderer.Init(IntPtr.Zero);//dummy paramters
 
             this.DrawList.DrawBuffer.CommandBuffer.Add(
@@ -59,7 +59,7 @@ namespace ImGui
             this.window = Application.windowContext.CreateWindow(position, size, WindowTypes.Regular);
             this.window.Title = Title;
 
-            renderer = Application._map.CreateRenderer();
+            renderer = Application.platformContext.CreateRenderer();
             renderer.Init(this.Pointer);
             
             this.DrawList.DrawBuffer.CommandBuffer.Add(
