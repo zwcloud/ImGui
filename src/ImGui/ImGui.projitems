@@ -204,7 +204,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)List.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Map.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatformContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MathEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Point.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\IInputContext.cs" />
