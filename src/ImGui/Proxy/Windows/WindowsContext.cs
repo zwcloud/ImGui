@@ -1,10 +1,10 @@
 ﻿namespace ImGui
 {
-    class WindowsContextFactory : ContextFactory
+    class WindowsContext : PlatformContext
     {
-        public static ContextFactory MapFactory()
+        public static PlatformContext MapFactory()
         {
-            return new WindowsContextFactory
+            return new WindowsContext
             {
                 CreateTextContext = CTextContext,
                 CreateWindowContext = CWindowContext,

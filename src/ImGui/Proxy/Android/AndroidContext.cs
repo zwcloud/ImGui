@@ -2,11 +2,11 @@
 
 namespace ImGui
 {
-    class AndroidContextFactory : ContextFactory
+    class AndroidContext : PlatformContext
     {
-        public static ContextFactory MapFactory()
+        public static PlatformContext MapFactory()
         {
-            return new AndroidContextFactory
+            return new AndroidContext
             {
                 CreateTextContext = CTextContext,
                 CreateWindowContext = CWindowContext,

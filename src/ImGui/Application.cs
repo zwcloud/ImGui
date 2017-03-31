@@ -34,7 +34,7 @@ namespace ImGui
 
         internal static List<Form> Forms = new List<Form>();
         internal static List<Form> removeList = new List<Form>();
-        internal static ContextFactory _map;
+        internal static PlatformContext _map;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
         internal static IWindowContext windowContext;
@@ -90,15 +90,15 @@ namespace ImGui
             //     platform-dependent object implementation
             if (Utility.CurrentOS.IsAndroid)
             {
-                _map = AndroidContextFactory.MapFactory();
+                _map = AndroidContext.MapFactory();
             }
             else if(Utility.CurrentOS.IsWindows)
             {
-                _map = WindowsContextFactory.MapFactory();
+                _map = WindowsContext.MapFactory();
             }
             else if(Utility.CurrentOS.IsLinux)
             {
-                _map = LinuxContextFactory.MapFactory();
+                _map = LinuxContext.MapFactory();
             }
 
             // load the implementation into delegate instances

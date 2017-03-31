@@ -8,7 +8,7 @@ namespace ImGui
         int maxWidth, int maxHeight,
         TextAlignment alignment);
 
-    abstract class ContextFactory
+    abstract class PlatformContext
     {
         public CTextContext CreateTextContext;
         public Func<IWindowContext> CreateWindowContext;

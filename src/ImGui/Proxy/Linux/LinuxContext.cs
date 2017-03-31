@@ -2,9 +2,9 @@
 
 namespace ImGui
 {
-    class LinuxContextFactory : ContextFactory
+    class LinuxContext : PlatformContext
     {
-        public static ContextFactory MapFactory()
+        public static PlatformContext MapFactory()
         {
             throw new NotImplementedException();
             //return new LinuxContextFactory
