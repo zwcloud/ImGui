@@ -209,8 +209,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Point.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\IInputContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Keyboard.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\Mouse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Keyboard.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Mouse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\FilterMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\IRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\ITexture.cs" />
