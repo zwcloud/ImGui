@@ -7,6 +7,7 @@ using Android.Widget;
 using Android.OS;
 using Android.Content.PM;
 using Android.Util;
+using ImGui;
 
 namespace AndroidTemplate
 {
@@ -22,40 +23,6 @@ namespace AndroidTemplate
     {
         MainView view;
 
-        private Action<ImGui.InputType, float, float> inputEventHandler;
-
-        public override bool OnTouchEvent(MotionEvent e)
-        {
-            switch (e.ActionMasked)
-            {
-                case MotionEventActions.Down:
-                case MotionEventActions.PointerDown:
-                    {
-                        var x = e.RawX;
-                        var y = e.RawY;
-                        this.inputEventHandler(ImGui.InputType.TouchDown, x, y);
-                    }
-                    break;
-                case MotionEventActions.Move:
-                    {
-                        var x = e.RawX;
-                        var y = e.RawY;
-                        this.inputEventHandler(ImGui.InputType.TouchMove, x, y);
-                    }
-                    break;
-                case MotionEventActions.Up:
-                case MotionEventActions.PointerUp:
-                case MotionEventActions.Outside:
-                    {
-                        var x = e.RawX;
-                        var y = e.RawY;
-                        this.inputEventHandler(ImGui.InputType.TouchUp, x, y);
-                    }
-                    break;
-            }
-            return base.OnTouchEvent(e);
-        }
-
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -63,7 +30,6 @@ namespace AndroidTemplate
             ImGui.Application.AssetManager = this.Assets;
 
             ImGui.Application.Init();
-            this.inputEventHandler = ImGui.Application.inputEventHandler;
 
             // Create our OpenGL view, and display it
             view = new MainView(this);
@@ -80,6 +46,40 @@ namespace AndroidTemplate
         {
             base.OnResume();
             view.Resume();
+        }
+
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            switch (e.ActionMasked)
+            {
+                case MotionEventActions.Down:
+                case MotionEventActions.PointerDown:
+                    {
+                        var x = e.RawX;
+                        var y = e.RawY;
+                        Input.Mouse.MousePos = new Point(x, y);
+                        Input.Mouse.LeftButtonState = InputState.Down;
+                    }
+                    break;
+                case MotionEventActions.Move:
+                    {
+                        var x = e.RawX;
+                        var y = e.RawY;
+                        Input.Mouse.MousePos = new Point(x, y);
+                    }
+                    break;
+                case MotionEventActions.Up:
+                case MotionEventActions.PointerUp:
+                case MotionEventActions.Outside:
+                    {
+                        var x = e.RawX;
+                        var y = e.RawY;
+                        Input.Mouse.MousePos = new Point(x, y);
+                        Input.Mouse.LeftButtonState = InputState.Up;
+                    }
+                    break;
+            }
+            return base.OnTouchEvent(e);
         }
     }
 }

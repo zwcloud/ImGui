@@ -16,14 +16,15 @@ namespace ImGui
 
         private readonly IntPtr nativeWindow;
 
-        private AndroidWindow(IntPtr nativeWindow)
+        private AndroidWindow(Point position, Size size, IntPtr nativeWindow)
         {
             this.nativeWindow = nativeWindow;
+            this.size = size;
         }
 
-        public static AndroidWindow CreateAndroidWindow(IntPtr nativeWindow)
+        public static AndroidWindow CreateAndroidWindow(Point position, Size size, IntPtr nativeWindow)
         {
-            instance = new AndroidWindow(nativeWindow);
+            if(instance == null) instance = new AndroidWindow(position, size, nativeWindow);
             return instance;
         }
 
@@ -80,14 +81,14 @@ namespace ImGui
 
         public Point ClientPosition
         {
-            get => Application.windowContext.GetClientPosition(this);
-            set => Application.windowContext.SetClientPosition(this, value);
+            get => this.Position;
+            set => this.Position = value;
         }
 
         public Size ClientSize
         {
-            get => Application.windowContext.GetClientSize(this);
-            set => Application.windowContext.SetClientSize(this, value);
+            get => this.size;
+            set => this.size = value; //dummy
         }
 
 

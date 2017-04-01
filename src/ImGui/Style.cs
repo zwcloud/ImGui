@@ -246,6 +246,7 @@ namespace ImGui
             {
                 return//TODO Other features hasn't been implemented by Typography yet.
                     // font changed
+                    a == null ||
                     a.Font.FontFamily != b.Font.FontFamily
                     || a.Font.Size != b.Font.Size;
             }

@@ -74,12 +74,7 @@ namespace ImGui
         {
             get { return detlaTime; }
         }
-
-        public static Action<InputType,float,float> inputEventHandler
-        {
-            get { return windowContext.InputEventHandler; }
-        }
-
+        
         internal static void InitSysDependencies()
         {
             // create factory: service
@@ -160,11 +155,15 @@ namespace ImGui
 
             Debug.WriteLine("Init {0:F1}ms", sw.ElapsedTicks * 1000d / Stopwatch.Frequency);
             sw.Restart();
+
+            frameStartTime = Time;
         }
 
         public static void RunLoop(Form form)
         {
+            frameStartTime = Time;
             windowContext.MainLoop(form.GUILoop);
+            detlaTime = Time - frameStartTime;
         }
 
 

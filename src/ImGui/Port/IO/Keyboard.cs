@@ -652,7 +652,7 @@
         KeyCount,
     }
 
-    internal class Keyboard
+    public class Keyboard
     {
 
         public Keyboard()

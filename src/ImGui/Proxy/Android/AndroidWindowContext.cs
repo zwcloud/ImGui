@@ -46,26 +46,6 @@ namespace ImGui
 
         #region Implementation of IWindowContext
 
-        public void InputEventHandler(InputType type, float x, float y)//called when input event happens
-        {
-            switch (type)
-            {
-                case InputType.TouchDown:
-                    Input.Mouse.MousePos = new Point(x, y);
-                    Input.Mouse.LeftButtonState = InputState.Down;
-                    break;
-                case InputType.TouchUp:
-                    Input.Mouse.MousePos = new Point(x, y);
-                    Input.Mouse.LeftButtonState = InputState.Up;
-                    break;
-                case InputType.TouchMove:
-                    Input.Mouse.MousePos = new Point(x, y);
-                    break;
-                default:
-                    break;
-            }
-        }
-
         public void MainLoop(Action guiMethod)
         {
             guiMethod();
@@ -73,7 +53,8 @@ namespace ImGui
 
         public IWindow CreateWindow(Point position, Size size, WindowTypes windowType)
         {
-            throw new InvalidOperationException();
+            //dummy
+            return AndroidWindow.CreateAndroidWindow(position, size, IntPtr.Zero);
         }
 
         public Size GetWindowSize(IWindow window)
@@ -152,7 +133,7 @@ namespace ImGui
         public Size GetClientSize(IWindow window)
         {
             //dummy
-            return Size.Zero;
+            return GetWindowSize(window);
         }
 
         public void SetClientSize(IWindow window, Size size)

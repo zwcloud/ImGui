@@ -8,7 +8,7 @@ namespace ImGui
     /// <summary>
     /// input
     /// </summary>
-    internal class Mouse
+    public class Mouse
     {
         /// <summary>
         /// Double click interval time span
@@ -38,7 +38,7 @@ namespace ImGui
         public InputState LeftButtonState
         {
             get { return leftButtonState; }
-            internal set { leftButtonState = value; }
+            set { leftButtonState = value; }
         }
 
         public long LeftButtonDownDuration { get; internal set; } = -1;
@@ -72,7 +72,7 @@ namespace ImGui
         public InputState RightButtonState
         {
             get { return rightButtonState; }
-            internal set { rightButtonState = value; }
+            set { rightButtonState = value; }
         }
 
         public long RightButtonDownDuration { get; internal set; } = -1;
@@ -113,7 +113,7 @@ namespace ImGui
         public Point MousePos
         {
             get { return mousePos; }
-            internal set
+            set
             {
                 lastMousePos = mousePos;
                 mousePos = value;
@@ -128,7 +128,7 @@ namespace ImGui
             get { return mousePos != lastMousePos; }
         }
 
-        public float MouseWheel { get; internal set; }
+        public float MouseWheel { get; set; }
 
         #endregion
 

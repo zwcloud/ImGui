@@ -1,6 +1,6 @@
 ﻿namespace ImGui
 {
-    internal static class Input
+    public static class Input
     {
         private static Mouse mouse;
         private static Keyboard keyboard;

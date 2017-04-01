@@ -28,7 +28,7 @@ namespace ImGui
         /// <param name="size"></param>
         protected Form(IntPtr nativeWindow, Point position, Size size)
         {
-            this.window = Application.windowContext.CreateWindow(Point.Zero, Size.Zero, WindowTypes.Regular);
+            this.window = Application.windowContext.CreateWindow(position, size, WindowTypes.Regular);
             renderer = Application.platformContext.CreateRenderer();
             renderer.Init(IntPtr.Zero);//dummy paramters
 

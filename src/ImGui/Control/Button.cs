@@ -12,7 +12,7 @@ namespace ImGui
             if (Utility.CurrentOS.IsAndroid)
             {
                 var clicked = false;
-                var inside = rect.Contains(mousePos);
+                var inside = rect.Contains(Input.Mouse.MousePos);
 
                 //control logic
                 var uiState = Form.current.uiState;

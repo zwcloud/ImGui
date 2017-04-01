@@ -3,7 +3,7 @@
     /// <summary>
     /// Key state
     /// </summary>
-    internal enum InputState
+    public enum InputState
     {
         /// <summary>Pressing</summary>
         Up,

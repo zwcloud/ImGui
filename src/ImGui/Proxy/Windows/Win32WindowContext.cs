@@ -215,11 +215,6 @@ namespace ImGui
                 guiMethod();
             }
         }
-        
-        public void InputEventHandler(InputType type, float x, float y)
-        {
-            //dummy
-        }
 
         private IntPtr WindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
         {
