@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{DD39D4D9-52B4-47A7-86BF-ECB8D136D767}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTemplate", "ProjectTemplate", "{593C5B50-52E6-436D-9BF2-93E220984E45}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{593C5B50-52E6-436D-9BF2-93E220984E45}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{C16F05EE-1871-41EC-BB3A-DC834EF47533}"
 EndProject
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{1F08C70D-0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{50EF0486-DF11-4AEA-B01C-22D8F5981BF8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DefaultTemplate", "Templates\DefaultTemplate\DefaultTemplate.csproj", "{FA0F3248-758F-470E-8892-A295398EA30E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DefaultTemplate", "templates_\DefaultTemplate\DefaultTemplate.csproj", "{FA0F3248-758F-470E-8892-A295398EA30E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRenderingTest", "Test\TextRenderingTest\TextRenderingTest.csproj", "{230D274D-4101-479D-BBB4-1DEA70353FBD}"
 EndProject
@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGuiDemo", "demos\ImGuiDem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "demos\Calculator\Calculator.csproj", "{5A9E507B-9090-4B3A-9EFC-53EBE7EC3E3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmptyTemplate", "Templates\EmptyTemplate\EmptyTemplate.csproj", "{7FC6CF46-173F-4F95-A121-19C557A0AFA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmptyTemplate", "templates_\EmptyTemplate\EmptyTemplate.csproj", "{7FC6CF46-173F-4F95-A121-19C557A0AFA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidTemplate", "Templates\AndroidTemplate\AndroidTemplate.csproj", "{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidTemplate", "templates_\AndroidTemplate\AndroidTemplate.csproj", "{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5F2276E6-BDAC-489C-A620-7C14D78B4BEB}"
 EndProject
