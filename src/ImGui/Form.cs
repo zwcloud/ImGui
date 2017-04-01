@@ -364,7 +364,7 @@ namespace ImGui
         /// </summary>
         internal Point GetMousePos()
         {
-            return Application.windowContext.ScreenToClient(window, Application.inputContext.MousePosition);
+            return ScreenToClient(Input.Mouse.MousePos);
         }
 
         internal Point ScreenToClient(Point point)

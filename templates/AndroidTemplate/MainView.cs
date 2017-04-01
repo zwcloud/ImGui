@@ -12,7 +12,7 @@ namespace AndroidTemplate
 {
     partial class MainView : AndroidGameView
     {
-        private Calculator.Form1 mainForm;
+        private MainForm mainForm;
 
         public MainView(Context context) : base(context)
         {
@@ -22,9 +22,9 @@ namespace AndroidTemplate
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
+            
             //Create form
-            mainForm = new Calculator.Form1(IntPtr.Zero/*dummy*/, ImGui.Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width, this.Size.Height));
+            mainForm = new MainForm(ImGui.Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width, this.Size.Height));
             ImGui.Application.Init(mainForm);
             
             Run();// Run the render loop
@@ -40,7 +40,6 @@ namespace AndroidTemplate
             // the default GraphicsMode that is set consists of (16, 16, 0, 0, 2, false)
             try
             {
-                Log.Verbose("ImGui", "Loading with default settings");
                 base.CreateFrameBuffer();// if you don't call this, the context won't be created
                 return;
             }

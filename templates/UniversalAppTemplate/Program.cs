@@ -1,7 +1,7 @@
 ﻿using System;
 using ImGui;
 
-namespace DefaultTemplate
+namespace UniversalAppTemplate
 {
     class Program
     {
@@ -9,7 +9,7 @@ namespace DefaultTemplate
         static void Main()
         {
             Application.Init();
-            Application.Run(new Form1());
+            Application.Run(new MainForm());
         }
     }
 }

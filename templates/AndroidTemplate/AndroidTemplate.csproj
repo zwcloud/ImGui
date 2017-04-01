@@ -62,15 +62,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calc\ButtonType.cs" />
-    <Compile Include="Calc\Calc.cs" />
-    <Compile Include="Calc\Form1.cs" />
-    <Compile Include="Calc\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Calc\OperatorType.cs" />
-    <Compile Include="Calc\Phase.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MainForm.cs" />
     <Compile Include="MainView.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -104,6 +97,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\DroidSans.ttf" />
   </ItemGroup>
+  <Import Project="..\TestUI\TestUI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
      Other similar extension points exist, see Microsoft.Common.targets.

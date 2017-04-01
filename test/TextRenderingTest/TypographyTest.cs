@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Xunit;
 using System.Collections.Generic;
 using System.Text;
-using Typography.TextPrint;
+using Typography.Rendering;
 using System.IO;
 using Typography.OpenFont;
 
