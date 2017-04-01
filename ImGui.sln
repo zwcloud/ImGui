@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{50EF0486-DF1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DefaultTemplate", "templates_\DefaultTemplate\DefaultTemplate.csproj", "{FA0F3248-758F-470E-8892-A295398EA30E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRenderingTest", "Test\TextRenderingTest\TextRenderingTest.csproj", "{230D274D-4101-479D-BBB4-1DEA70353FBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRenderingTest", "test_\TextRenderingTest\TextRenderingTest.csproj", "{230D274D-4101-479D-BBB4-1DEA70353FBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGuiDemo", "demos\ImGuiDemo\ImGuiDemo.csproj", "{4EBD44C0-885B-4876-9E7D-72E8DB39DBF5}"
 EndProject
@@ -41,9 +41,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGui", "build\mobile\ImGui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cairo", "..\CairoSharp\Cairo\Cairo.csproj", "{401F7675-F982-4650-B59F-A91A3AFC4FFC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutTest", "Test\LayoutTest\LayoutTest.csproj", "{8F10F86C-F924-48BA-9E54-54073C1616CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutTest", "test_\LayoutTest\LayoutTest.csproj", "{8F10F86C-F924-48BA-9E54-54073C1616CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrimitiveRenderingTest", "Test\PrimitiveRenderingTest\PrimitiveRenderingTest.csproj", "{2A8640A5-5E91-4DEC-9BFD-840F78A663FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrimitiveRenderingTest", "test_\PrimitiveRenderingTest\PrimitiveRenderingTest.csproj", "{2A8640A5-5E91-4DEC-9BFD-840F78A663FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculatorL", "demos\CalculatorL\CalculatorL.csproj", "{22581B22-2605-4FA4-AAE3-F2ACBF42C251}"
 EndProject
