@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{C16F05EE-187
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{1F08C70D-0D16-48E8-B4E7-4726BE7D4518}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{50EF0486-DF11-4AEA-B01C-22D8F5981BF8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRenderingTest", "test\TextRenderingTest\TextRenderingTest.csproj", "{230D274D-4101-479D-BBB4-1DEA70353FBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGuiDemo", "demos\ImGuiDemo\ImGuiDemo.csproj", "{4EBD44C0-885B-4876-9E7D-72E8DB39DBF5}"

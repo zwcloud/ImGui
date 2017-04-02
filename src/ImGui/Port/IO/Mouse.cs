@@ -1,15 +1,11 @@
-﻿//#define INSPECT_STATE
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace ImGui
+﻿namespace ImGui
 {
     /// <summary>
     /// input
     /// </summary>
     public class Mouse
     {
+        #region Settings
         /// <summary>
         /// Double click interval time span
         /// </summary>
@@ -18,6 +14,7 @@ namespace ImGui
         /// the two clicking action is not considered as a double-click action.
         /// </remarks>
         internal const float DoubleClickIntervalTimeSpan = 0.2f;
+        #endregion
 
         #region Left button
 
@@ -140,6 +137,5 @@ namespace ImGui
         }
         #endregion
     }
-
 
 }

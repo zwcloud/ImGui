@@ -194,7 +194,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)GUI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUILayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIPrimitive.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GUIRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutCache.cs" />
