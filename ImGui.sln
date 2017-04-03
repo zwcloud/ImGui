@@ -4,13 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{DD39D4D9-52B4-47A7-86BF-ECB8D136D767}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\tmp\egl\egl.h = ..\..\tmp\egl\egl.h
-		..\..\tmp\egl\eglext.h = ..\..\tmp\egl\eglext.h
-		..\..\tmp\egl\eglplatform.h = ..\..\tmp\egl\eglplatform.h
-		..\..\tmp\xcb\xcb.h = ..\..\tmp\xcb\xcb.h
-		..\..\tmp\xcb\xproto.h = ..\..\tmp\xcb\xproto.h
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{593C5B50-52E6-436D-9BF2-93E220984E45}"
 EndProject

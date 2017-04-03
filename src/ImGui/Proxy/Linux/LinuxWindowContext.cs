@@ -172,10 +172,10 @@ namespace ImGui
         public IWindow CreateWindow(Point position, Size size, WindowTypes windowType)
         {
             IntPtr/*xcb_connection_t* */ c;
+            xcb_window_t win;
             unsafe
             {
                 xcb_screen_t* screen;
-                xcb_window_t win;
 
                 //connect to X server
                 Console.WriteLine("xcb_connect..");
@@ -217,9 +217,12 @@ namespace ImGui
                 // flush pending requests
                 xcb_flush(c);
                 Console.WriteLine("xcb_flush..");
+
+                Console.WriteLine("Press key to continue.");//hack for remote debugging
+                Console.ReadKey();
             }
 
-            return new LinuxWindow(c, size);
+            return new LinuxWindow((IntPtr)win, size);
         }
 
         public Size GetWindowSize(IWindow window)

@@ -16,6 +16,10 @@ namespace CSharpGLES
         {
             //  Create the OpenGL shader object.
             ShaderObject = GL.CreateShader(shaderType);
+            if (ShaderObject == 0)
+            {
+                throw new InvalidOperationException("glCreateShader failed.");
+            }
 
             //  Set the shader source.
             GL.ShaderSource(ShaderObject, 1, new[] { source }, new[] { source.Length });

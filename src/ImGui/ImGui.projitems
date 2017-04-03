@@ -223,6 +223,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\Window\WindowTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidInputContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxOpenGLRenderer.Linux.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxInputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxOpenGLRenderer.cs" />

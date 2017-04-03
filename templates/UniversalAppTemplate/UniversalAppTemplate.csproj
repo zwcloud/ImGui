@@ -3,7 +3,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <DotNetCliToolReference Include="DotnetPublishSsh" Version="0.0.4" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\build\desktop\ImGui.csproj" />
