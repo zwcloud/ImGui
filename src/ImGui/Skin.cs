@@ -121,7 +121,7 @@ namespace ImGui
 #if __ANDROID__
                             "DroidSans.ttf",
 #else
-                            @"W:\VS2015\DroidSans.ttf",
+                            Utility.FontDir+"DroidSans.ttf",
 #endif
                             FontStyle = FontStyle.Normal,
                             FontWeight = FontWeight.Bold,

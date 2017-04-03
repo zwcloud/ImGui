@@ -11,4 +11,9 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)TestUI.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Font\DroidSans.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

@@ -213,6 +213,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\FilterMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\IRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\ITexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\Render\RendererException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Render\TextureWrapMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Text\ITextContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\Text\TextEnums.cs" />
@@ -223,6 +224,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidInputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxInputContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxOpenGLRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Proxy\Linux\LinuxWindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\WindowsContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32InputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\OpenGLESRenderer.Android.cs" />
@@ -258,7 +263,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Proxy\Linux\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
   </ItemGroup>
 </Project>

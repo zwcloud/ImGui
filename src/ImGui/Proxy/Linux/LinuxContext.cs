@@ -6,15 +6,14 @@ namespace ImGui
     {
         public static PlatformContext MapFactory()
         {
-            throw new NotImplementedException();
-            //return new LinuxContextFactory
-            //{
-            //    CreateTextContext = CTextContext,
-            //    CreateWindowContext = CWindowContext,
-            //    CreateInputContext = CInputContext,
-            //    CreateRenderer = CRenderer,
-            //    CreateTexture = CTexture,
-            //};
+            return new LinuxContext
+            {
+                CreateTextContext = CTextContext,
+                CreateWindowContext = CWindowContext,
+                CreateInputContext = CInputContext,
+                CreateRenderer = CRenderer,
+                CreateTexture = CTexture,
+            };
         }
 
         private static ITextContext CTextContext(
@@ -23,22 +22,26 @@ namespace ImGui
             int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
-            throw new NotImplementedException();
+            var fontSizeInDip = Utility.PointToDip(fontSize);
+            return new TypographyTextContext(
+                text, fontFamily, fontSizeInDip,
+                stretch, style, weight,
+                maxWidth, maxHeight, alignment);
         }
         
         private static IWindowContext CWindowContext()
         {
-            throw new NotImplementedException();
+            return new LinuxWindowContext();
         }
 
         private static IInputContext CInputContext()
         {
-            throw new NotImplementedException();
+            return new LinuxInputContext();
         }
 
         private static IRenderer CRenderer()
         {
-            throw new NotImplementedException();
+            return new LinuxOpenGLRenderer();
         }
 
         private static ITexture CTexture()
