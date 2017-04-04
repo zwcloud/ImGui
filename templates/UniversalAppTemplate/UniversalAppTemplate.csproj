@@ -5,6 +5,10 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
   
   <ItemGroup>
     <DotNetCliToolReference Include="DotnetPublishSsh" Version="0.0.4" />
