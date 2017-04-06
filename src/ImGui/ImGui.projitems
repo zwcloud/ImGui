@@ -34,15 +34,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\WindowStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\WindowStylesEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\CSharpGL\Win32API\WNDCLASSEX.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\Direct2D\D2D1Factory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DirectWriteMeshTextRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\Context.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\DWriteFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\TextFormat.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\DWrite\TextLayout.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\Internal\ComHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\DWriteSharp\Internal\NativeMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\glm_camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\glm_inverse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\GLM\glm_trigonometric.cs" />
