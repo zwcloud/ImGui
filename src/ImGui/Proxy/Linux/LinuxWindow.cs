@@ -34,12 +34,12 @@ namespace ImGui
         {
             get
             {
-                return Point.Zero;
+                return Application.windowContext.GetWindowPosition(this);
             }
 
             set
             {
-                //dummy
+                Application.windowContext.SetWindowPosition(this, value);
             }
         }
 
@@ -52,7 +52,11 @@ namespace ImGui
 
             set
             {
-                this.size = value;
+                if(value!= this.size)
+                {
+                    Application.windowContext.SetWindowSize(this, value);
+                    this.size = value;
+                }
             }
         }
         public string Title
@@ -120,7 +124,7 @@ namespace ImGui
         {
             return Application.windowContext.ClientToScreen(this, point);
         }
-
+        
         private Size size;
     }
 }

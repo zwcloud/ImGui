@@ -17,7 +17,7 @@ namespace ImGui
 
         const string libXcb = "libxcb";
 
-        #region Window
+        #region Window Creating
 
         [DllImport(libXcb, CallingConvention=CallingConvention.Cdecl)]
         static extern IntPtr xcb_connect(IntPtr displayname, IntPtr screenp);
@@ -445,6 +445,148 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
         #endregion
 
+        #region Window Property
+
+        /**
+         * @brief Changes a window property
+         *
+         * @param c The connection
+         * @param mode A bitmask of #xcb_prop_mode_t values.
+         * @param mode \n
+         * @param window The window whose property you want to change.
+         * @param property The property you want to change (an atom).
+         * @param type The type of the property you want to change (an atom).
+         * @param format Specifies whether the data should be viewed as a list of 8-bit, 16-bit or
+         * 32-bit quantities. Possible values are 8, 16 and 32. This information allows
+         * the X server to correctly perform byte-swap operations as necessary.
+         * @param data_len Specifies the number of elements (see \a format).
+         * @param data The property data.
+         * @return A cookie
+         *
+         * Sets or updates a property on the specified \a window. Properties are for
+         * example the window title (`WM_NAME`) or its minimum size (`WM_NORMAL_HINTS`).
+         * Protocols such as EWMH also use properties - for example EWMH defines the
+         * window title, encoded as UTF-8 string, in the `_NET_WM_NAME` property.
+         * 
+         * xcb_void_cookie_t
+         * xcb_change_property(xcb_connection_t* c,
+         *                     uint8_t mode,
+         *                     xcb_window_t window,
+         *                     xcb_atom_t property,
+         *                     xcb_atom_t type,
+         *                     uint8_t format,
+         *                     uint32_t data_len,
+         *                     const void* data);
+         */
+        [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
+        static extern xcb_void_cookie_t xcb_change_property(
+            IntPtr c,//xcb_connection_t*
+            xcb_prop_mode_t mode,
+            xcb_window_t window,
+            UInt32 property,//xcb_atom_t;
+            UInt32 type,//xcb_atom_t;
+            byte format,
+            byte data_len,
+            IntPtr data//const void*
+            );
+
+        [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
+        static extern xcb_void_cookie_t xcb_change_property(
+            IntPtr c,//xcb_connection_t*
+            xcb_prop_mode_t mode,
+            xcb_window_t window,
+            UInt32 property,//xcb_atom_t;
+            UInt32 type,//xcb_atom_t;
+            byte format,
+            byte data_len,
+            string string_data//const void*
+            );
+
+        enum xcb_prop_mode_t : System.Byte
+        {
+            /// <summary>
+            /// Discard the previous property value and store the new data.
+            /// </summary>
+            XCB_PROP_MODE_REPLACE = 0,
+
+            /// <summary>
+            /// Insert the new data before the beginning of existing data.
+            /// The `format` must match existing property value.
+            /// If the property is undefined, 
+            /// it is treated as defined with the correct type and format with zero-length data.
+            /// </summary>
+            XCB_PROP_MODE_PREPEND = 1,
+
+            /// <summary>
+            /// Insert the new data after the beginning of existing data. The `format` must
+            /// match existing property value. If the property is undefined, it is treated as
+            /// defined with the correct type and format with zero-length data.
+            /// </summary>
+            XCB_PROP_MODE_APPEND = 2,
+        }
+
+        /**
+         * @brief Makes a window invisible
+         *
+         * @param c The connection
+         * @param window The window to make invisible.
+         * @return A cookie
+         *
+         * Unmaps the specified window. This means making the window invisible (and all
+         * its child windows).
+         * 
+         * Unmapping a window leads to the `UnmapNotify` event being generated. Also,
+         * `Expose` events are generated for formerly obscured windows.
+         * 
+         * xcb_void_cookie_t xcb_unmap_window (xcb_connection_t *c, xcb_window_t window);
+         */
+        [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
+        static extern xcb_void_cookie_t xcb_unmap_window(IntPtr connection, xcb_window_t window);
+
+        /**
+         * @brief Configures window attributes
+         *
+         * @param c The connection
+         * @param window The window to configure.
+         * @param value_mask Bitmask of attributes to change.
+         * @param value_list New values, corresponding to the attributes in value_mask. The order has to
+         * correspond to the order of possible \a value_mask bits. See the example.
+         * @return A cookie
+         *
+         * Configures a window's size, position, border width and stacking order.
+         * 
+           xcb_void_cookie_t
+           xcb_configure_window(xcb_connection_t* c,
+                                xcb_window_t window,
+                                uint16_t value_mask,
+                                const uint32_t* value_list);
+         */
+        [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
+        static extern xcb_void_cookie_t xcb_configure_window(IntPtr c,
+                                  xcb_window_t window,
+                                  xcb_config_window_t value_mask,
+                                  UInt32[] value_list);
+
+        [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
+        static unsafe extern xcb_void_cookie_t xcb_configure_window(IntPtr c,
+                                  xcb_window_t window,
+                                  xcb_config_window_t value_mask,
+                                  UInt32* value_list);
+
+        [Flags]
+        enum xcb_config_window_t : UInt16
+        {
+            XCB_CONFIG_WINDOW_X = 1,
+            XCB_CONFIG_WINDOW_Y = 2,
+            XCB_CONFIG_WINDOW_WIDTH = 4,
+            XCB_CONFIG_WINDOW_HEIGHT = 8,
+            XCB_CONFIG_WINDOW_BORDER_WIDTH = 16,
+            XCB_CONFIG_WINDOW_SIBLING = 32,
+            XCB_CONFIG_WINDOW_STACK_MODE = 64
+        }
+
+        #endregion
+
         #endregion
 
         IntPtr/*xcb_connection_t* */ c;//Temp HACK, maybe this should be a per-window data
@@ -520,12 +662,28 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
         public void SetWindowSize(IWindow window, Size size)
         {
-            //dummy
+            unsafe
+            {
+                UInt32* values = stackalloc UInt32[2];
+                values[0] = (UInt32)size.Width;
+                values[1] = (UInt32)size.Height;
+                xcb_configure_window(c, (xcb_window_t)window.Pointer,
+                    xcb_config_window_t.XCB_CONFIG_WINDOW_WIDTH | xcb_config_window_t.XCB_CONFIG_WINDOW_HEIGHT,
+                    values);
+            }
         }
 
         public void SetWindowPosition(IWindow window, Point position)
         {
-            //dummy
+            unsafe
+            {
+                UInt32* values = stackalloc UInt32[2];
+                values[0] = (UInt32)position.X;
+                values[1] = (UInt32)position.Y;
+                xcb_configure_window(c, (xcb_window_t)window.Pointer,
+                    xcb_config_window_t.XCB_CONFIG_WINDOW_X | xcb_config_window_t.XCB_CONFIG_WINDOW_Y,
+                    values);
+            }
         }
 
         public string GetWindowTitle(IWindow window)
@@ -536,17 +694,28 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
         public void SetWindowTitle(IWindow window, string title)
         {
-            //dummy
+            if(title.Length > 256)
+            {
+                throw new ArgumentOutOfRangeException(nameof(title), "Length of titile cannot be larger than 256.");
+            }
+            xcb_change_property(c,
+                                 xcb_prop_mode_t.XCB_PROP_MODE_REPLACE,
+                                 (xcb_window_t)window.Pointer,
+                                 39/*XCB_ATOM_WM_NAME*/,
+                                 31/*XCB_ATOM_STRING*/,
+                                 8,
+                                 (byte)(title.Length),
+                                 title);
         }
 
         public void ShowWindow(IWindow window)
         {
-            //dummy
+            xcb_map_window(c, (xcb_window_t)window.Pointer);
         }
 
         public void HideWindow(IWindow window)
         {
-            //dummy
+            xcb_unmap_window(c, (xcb_window_t)window.Pointer);
         }
 
         public void CloseWindow(IWindow window)
@@ -607,7 +776,6 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                 IntPtr eventPtr = xcb_poll_for_event(c);
                 if (eventPtr != IntPtr.Zero)
                 {
-                    Debug.WriteLine("xcb_poll_for_event got an event.");
                     ProcessEvent(eventPtr);
                 }
                 else
