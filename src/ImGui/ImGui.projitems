@@ -151,9 +151,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\TrueTypeInterperter\Interpreter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\TrueTypeInterperter\InvalidFontException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Typeface.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Alignment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\Alignment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Application.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)BackgroundStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\BackgroundStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Color.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content.Cached.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content.cs" />
@@ -237,15 +237,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\ILogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Size.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Skin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StateMachine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StateMachineEx.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style.Build.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style.Make.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)StyleModifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)StyleState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TextStyle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\Style.Build.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\Style.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\Style.Make.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\StyleModifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\TextStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Vector.cs" />
   </ItemGroup>
@@ -254,6 +253,7 @@
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Style\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
   </ItemGroup>
