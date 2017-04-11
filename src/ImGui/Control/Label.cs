@@ -6,7 +6,7 @@
         {
             if (Event.current.type == EventType.Repaint)
             {
-                GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Label["Normal"]);
+                GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Label]);
             }
         }
     }

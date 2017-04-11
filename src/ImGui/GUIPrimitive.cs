@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ImGui
+﻿namespace ImGui
 {
     internal class GUIPrimitive
     {
@@ -25,22 +20,22 @@ namespace ImGui
         /// <param name="rect">the rect (of the border-box) in which to draw this box model </param>
         /// <param name="content">content of the box mode</param>
         /// <param name="style">style of the box model</param>
-        public static void DrawBoxModel(Rect rect, Content content, Style style)
+        public static void DrawBoxModel(Rect rect, Content content, GUIStyle style, GUIState state = GUIState.Normal)
         {
             Form window = Form.current;
             var drawList = window.DrawList;
 
             //Widths of border
-            var bt = style.BorderTop;
-            var br = style.BorderRight;
-            var bb = style.BorderBottom;
-            var bl = style.BorderLeft;
+            var bt = style.Get<double>(GUIStyleName.BorderTop, state);
+            var br = style.Get<double>(GUIStyleName.BorderRight, state);
+            var bb = style.Get<double>(GUIStyleName.BorderBottom, state);
+            var bl = style.Get<double>(GUIStyleName.BorderLeft, state);
 
             //Widths of padding
-            var pt = style.PaddingTop;
-            var pr = style.PaddingRight;
-            var pb = style.PaddingBottom;
-            var pl = style.PaddingLeft;
+            var pt = style.Get<double>(GUIStyleName.PaddingTop, state);
+            var pr = style.Get<double>(GUIStyleName.PaddingRight, state);
+            var pb = style.Get<double>(GUIStyleName.PaddingBottom, state);
+            var pl = style.Get<double>(GUIStyleName.PaddingLeft, state);
 
             //4 corner of the border-box
             var btl = new Point(rect.Left, rect.Top);
@@ -70,7 +65,7 @@ namespace ImGui
              */
 
             // draw background in padding-box
-            drawList.AddRectFilled(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight, style.BackgroundStyle.Color);
+            drawList.AddRectFilled(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight, style.Get<Color>(GUIStyleName.BackgroundColor, state));
 
             //Content
             //Content-box
@@ -82,53 +77,74 @@ namespace ImGui
                 }
                 if (content.Text != null)
                 {
-                    DrawText(contentBoxRect, content, style);
+                    DrawText(contentBoxRect, content, style, state);
                 }
             }
 
             //Border
             //  Top
-            if (!MathEx.AmostZero(bt) && !MathEx.AmostZero(style.BorderTopColor.A))
+            if (!MathEx.AmostZero(bt))
             {
-                drawList.PathLineTo(ptl);
-                drawList.PathLineTo(btl);
-                drawList.PathLineTo(btr);
-                drawList.PathLineTo(ptr);
-                drawList.PathFill(style.BorderTopColor);
+                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor, state);
+                if (!MathEx.AmostZero(borderTopColor.A))
+                {
+                    drawList.PathLineTo(ptl);
+                    drawList.PathLineTo(btl);
+                    drawList.PathLineTo(btr);
+                    drawList.PathLineTo(ptr);
+                    drawList.PathFill(borderTopColor);
+                }
             }
             //  Right
-            if (!MathEx.AmostZero(br) && !MathEx.AmostZero(style.BorderTopColor.A))
+            if (!MathEx.AmostZero(br))
             {
-                drawList.PathLineTo(ptr);
-                drawList.PathLineTo(btr);
-                drawList.PathLineTo(bbr);
-                drawList.PathLineTo(pbr);
-                drawList.PathFill(style.BorderRightColor);
+                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor, state);
+                if(!MathEx.AmostZero(borderRightColor.A))
+                {
+                    drawList.PathLineTo(ptr);
+                    drawList.PathLineTo(btr);
+                    drawList.PathLineTo(bbr);
+                    drawList.PathLineTo(pbr);
+                    drawList.PathFill(borderRightColor);
+                }
             }
             //  Bottom
-            if (!MathEx.AmostZero(bb) && !MathEx.AmostZero(style.BorderTopColor.A))
+            if (!MathEx.AmostZero(bb))
             {
-                drawList.PathLineTo(pbr);
-                drawList.PathLineTo(bbr);
-                drawList.PathLineTo(bbl);
-                drawList.PathLineTo(pbl);
-                drawList.PathFill(style.BorderBottomColor);
+                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor, state);
+                if (!MathEx.AmostZero(borderBottomColor.A))
+                {
+                    drawList.PathLineTo(pbr);
+                    drawList.PathLineTo(bbr);
+                    drawList.PathLineTo(bbl);
+                    drawList.PathLineTo(pbl);
+                    drawList.PathFill(borderBottomColor);
+                }
             }
             //  Left
-            if (!MathEx.AmostZero(bl) && !MathEx.AmostZero(style.BorderTopColor.A))
+            if (!MathEx.AmostZero(bl))
             {
-                drawList.PathLineTo(pbl);
-                drawList.PathLineTo(bbl);
-                drawList.PathLineTo(btl);
-                drawList.PathLineTo(ptl);
-                drawList.PathFill(style.BorderBottomColor);
+                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor, state);
+                if (!MathEx.AmostZero(borderLeftColor.A))
+                {
+                    drawList.PathLineTo(pbl);
+                    drawList.PathLineTo(bbl);
+                    drawList.PathLineTo(btl);
+                    drawList.PathLineTo(ptl);
+                    drawList.PathFill(borderLeftColor);
+                }
             }
 
             //Outline
-            if (!MathEx.AmostZero(style.OutlineWidth) && !MathEx.AmostZero(style.BorderTopColor.A))
+            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth, state);
+            if (!MathEx.AmostZero(outlineWidth))
             {
-                drawList.PathRect(btl, bbr);
-                drawList.PathStroke(style.OutlineColor, true, (float)style.OutlineWidth);
+                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor, state);
+                if(!MathEx.AmostZero(outlineColor.A))
+                {
+                    drawList.PathRect(btl, bbr);
+                    drawList.PathStroke(outlineColor, true, outlineWidth);
+                }
             }
 
 #if DrawPaddingBox
@@ -142,16 +158,16 @@ namespace ImGui
 #endif
         }
 
-        public static void DrawText(Rect rect, Content content, Style style)
+        public static void DrawText(Rect rect, Content content, GUIStyle style, GUIState state)
         {
-            content.BuildText(rect, style);
+            content.BuildText(rect, style, state);
             Form window = Form.current;
             var drawList = window.DrawList;
 
             drawList.Append(content.TextMesh);
         }
 
-        public static void DrawImage(Rect rect, Content content, Style style)
+        public static void DrawImage(Rect rect, Content content, GUIStyle style)
         {
             var drawList = Form.current.DrawList;
             drawList.AddImage(content.Image, rect.TopLeft, rect.BottomRight, Point.Zero, new Point(1, 1), Color.White);

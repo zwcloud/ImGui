@@ -18,7 +18,8 @@ namespace ImGui
         internal DrawList DrawList = new DrawList();
         internal IRenderer renderer;
         internal LayoutCache layoutCache = new LayoutCache();
-        internal GUIState uiState = new GUIState();
+        internal UIState uiState = new UIState();
+        //internal Skin skin;
 
         /// <summary>
         /// Create form for android.
@@ -193,9 +194,9 @@ namespace ImGui
             // Clear reference to active widget if the widget isn't alive anymore
             var g = this.uiState;
             g.HoverIdPreviousFrame = g.HoverId;
-            g.HoverId = GUIState.None;
-            if (!g.ActiveIdIsAlive && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != GUIState.None)
-                g.ActiveId = GUIState.None;
+            g.HoverId = UIState.None;
+            if (!g.ActiveIdIsAlive && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != UIState.None)
+                g.ActiveId = UIState.None;
             g.ActiveIdPreviousFrame = g.ActiveId;
             g.ActiveIdIsAlive = false;
             g.ActiveIdIsJustActivated = false;
@@ -341,6 +342,8 @@ namespace ImGui
             // init the layout group of this form
             LoadFormGroup();
 
+            //skin = new Skin();
+
             // init the event
             Event.current = new Event();
 
@@ -349,7 +352,7 @@ namespace ImGui
 
         private void LoadFormGroup()
         {
-            var formGroup = new LayoutGroup(true, Style.Default,
+            var formGroup = new LayoutGroup(true, GUIStyle.Default,
                 GUILayout.Width(this.ClientSize.Width),
                 GUILayout.Height(this.ClientSize.Height)
                 );

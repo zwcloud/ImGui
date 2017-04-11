@@ -35,7 +35,7 @@ namespace ImGui
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
                 {
                     result = !value;
-                    uiState.SetActiveId(GUIState.None);
+                    uiState.SetActiveId(UIState.None);
                 }
             }
 
@@ -54,7 +54,7 @@ namespace ImGui
             if (Event.current.type == EventType.Repaint)
             {
                 var g = Form.current.DrawList;
-                var style = Skin.current.Toggle[state];
+                var style = GUISkin.Instance[GUIControlName.Toggle];
                 if (result)
                 {
                     if (state == GUI.Normal)
@@ -152,7 +152,7 @@ namespace ImGui
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
                 {
                     result = !value;
-                    uiState.SetActiveId(GUIState.None);
+                    uiState.SetActiveId(UIState.None);
                 }
             }
 
@@ -175,7 +175,7 @@ namespace ImGui
 
                 // box
                 var g = Form.current.DrawList;
-                var style = Skin.current.Toggle[state];
+                var style = GUISkin.Instance[GUIControlName.Toggle];
                 if (result)
                 {
                     if (state == GUI.Normal)
@@ -231,7 +231,7 @@ namespace ImGui
                     }
                 }
                 // label
-                GUIPrimitive.DrawBoxModel(textRect, label, Skin.current.Label["Normal"]);
+                GUIPrimitive.DrawBoxModel(textRect, label, GUISkin.Instance[GUIControlName.Label]);
             }
 
             return result;

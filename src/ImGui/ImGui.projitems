@@ -151,9 +151,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\TrueTypeInterperter\Interpreter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\TrueTypeInterperter\InvalidFontException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Typeface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GUI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GUILayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Style\Alignment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Application.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style\BackgroundStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Color.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content.Cached.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content.cs" />
@@ -179,11 +180,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)DrawList\TextMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Enums.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Error.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Font.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Form.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FormState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GUI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GUILayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIPrimitive.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputState.cs" />
@@ -237,14 +235,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\ILogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\Log.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Size.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style\Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StateMachine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StateMachineEx.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style\Style.Build.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Style\Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Style\Style.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style\Style.Make.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style\StyleModifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Style\TextStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Vector.cs" />
   </ItemGroup>
@@ -253,7 +247,6 @@
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Style\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
   </ItemGroup>

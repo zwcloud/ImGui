@@ -14,6 +14,113 @@ namespace Test
 
         #endregion
 
+        /// <summary>
+        /// Draw a box model
+        /// </summary>
+        /// <param name="g">the Cairo context</param>
+        /// <param name="rect">the rect (of the border-box) in which to draw this box model </param>
+        /// <param name="content">content of the box mode</param>
+        /// <param name="style">style of the box model</param>
+        internal static void DrawBoxModel(this Cairo.Context g, Rect rect, Content content, GUIStyle style)
+        {
+            //Widths of border
+            var bt = style.BorderTop;
+            var br = style.BorderRight;
+            var bb = style.BorderBottom;
+            var bl = style.BorderLeft;
+
+            //Widths of padding
+            var pt = style.PaddingTop;
+            var pr = style.PaddingRight;
+            var pb = style.PaddingBottom;
+            var pl = style.PaddingLeft;
+
+            //4 corner of the border-box
+            var btl = new Point(rect.Left, rect.Top);
+            var btr = new Point(rect.Right, rect.Top);
+            var bbr = new Point(rect.Right, rect.Bottom);
+            var bbl = new Point(rect.Left, rect.Bottom);
+            var borderBoxRect = new Rect(btl, bbr);
+
+            //4 corner of the padding-box
+            var ptl = new Point(btl.X + bl, btl.Y + bt);
+            var ptr = new Point(btr.X - br, btr.Y + bt);
+            var pbr = new Point(bbr.X - br, bbr.Y - bb);
+            var pbl = new Point(bbl.X + bl, bbl.Y - bb);
+            var paddingBoxRect = new Rect(ptl, pbr);
+
+            //4 corner of the content-box
+            var ctl = new Point(ptl.X + pl, ptl.Y + pt);
+            var ctr = new Point(ptr.X - pr, ptr.Y + pr);
+            var cbr = new Point(pbr.X - pr, pbr.Y - pb);
+            var cbl = new Point(pbl.X + pl, pbl.Y - pb);
+            var contentBoxRect = new Rect(ctl, cbr);
+
+            /*
+             * Render from inner to outer: Content, Padding, Border, Margin, Outline
+             */
+
+            //Content
+            //Content-box background(draw as a filled rectangle now)
+            g.FillRectangle(rect, style.BackgroundColor);
+            //Content-box
+            if (content != null)
+            {
+                if (content.Image != null)
+                {
+                    //
+                }
+                if (content.TextContext != null)
+                {
+                    g.DrawText(contentBoxRect, content.TextContext.Text, style.FontSize, style.FontColor);
+                }
+            }
+
+            //Border
+            //  Top
+            if (bt != 0)
+            {
+                g.FillPolygon(new[] { ptl, btl, btr, ptr }, style.BorderTopColor);
+            }
+            //  Right
+            if (br != 0)
+            {
+                g.FillPolygon(new[] { ptr, btr, bbr, pbr }, style.BorderRightColor);
+            }
+            //  Bottom
+            if (bb != 0)
+            {
+                g.FillPolygon(new[] { pbr, bbr, bbl, pbl }, style.BorderBottomColor);
+            }
+            //  Left
+            if (bl != 0)
+            {
+                g.FillPolygon(new[] { pbl, bbl, btl, ptl }, style.BorderLeftColor);
+            }
+
+            //Outline
+            if (style.OutlineWidth != 0)
+            {
+                g.Rectangle(borderBoxRect.TopLeft.ToPointD(), borderBoxRect.Width, borderBoxRect.Height);
+                g.LineWidth = style.OutlineWidth;
+                g.SetSourceColor(style.OutlineColor);
+                g.Stroke();
+            }
+
+#if DrawPaddingBox
+            g.Rectangle(paddingBoxRect.TopLeft.ToPointD(), paddingBoxRect.Width, paddingBoxRect.Height);
+            g.LineWidth = 1;
+            g.SetSourceColor(CairoEx.ColorRgb(0,100,100));
+            g.Stroke();
+#endif
+
+#if DrawContentBox
+            g.Rectangle(contentBoxRect.TopLeft.ToPointD(), contentBoxRect.Width, contentBoxRect.Height);
+            g.LineWidth = 1;
+            g.SetSourceColor(CairoEx.ColorRgb(100, 0, 100));
+            g.Stroke();
+#endif
+        }
 
         #region primitive
 
@@ -223,7 +330,16 @@ namespace Test
                 );
             return outputColor;
         }
-#endregion
+        #endregion
+        
+        public static void DrawText(this Cairo.Context g, Rect rect, string text, double fontSize, Color fontColor)
+        {
+            g.SetSourceColor(fontColor);
+            Point p = rect.TopLeft;
+            g.MoveTo(p.ToPointD());
+            g.SetFontSize(fontSize);
+            g.ShowText(text);
+        }
 
         #region Image
         //TODO specfiy image fill method (fill, unscale, 9-box, etc.) and alignment

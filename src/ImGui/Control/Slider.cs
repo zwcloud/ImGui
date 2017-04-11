@@ -44,7 +44,7 @@
                 }
                 else//end track
                 {
-                    uiState.SetActiveId(GUIState.None);
+                    uiState.SetActiveId(UIState.None);
                 }
             }
 
@@ -63,7 +63,9 @@
             if (Event.current.type == EventType.Repaint)
             {
                 var g = Form.current.DrawList;
-                var style = Skin.current.Slider[state];
+                var style = GUISkin.Instance[GUIControlName.Slider];
+                var colorForLineUsed = style.Get<Color>(GUIStyleName.Slider_LineUsed);
+                var colorForLineUnused = style.Get<Color>(GUIStyleName.Slider_LineUnused);
 
                 if (isHorizontal)
                 {
@@ -83,11 +85,11 @@
 
                     g.PathMoveTo(leftPoint);
                     g.PathLineTo(currentPoint);
-                    g.PathStroke((Color) style.ExtraStyles["Line:Used"], false, 2);
+                    g.PathStroke(colorForLineUsed, false, 2);
 
                     g.PathMoveTo(currentPoint);
                     g.PathLineTo(rightPoint);
-                    g.PathStroke((Color) style.ExtraStyles["Line:Unused"], false, 2);
+                    g.PathStroke(colorForLineUnused, false, 2);
 
                     g.PathArcToFast(topArcCenter, a, 0, 6);
                     g.PathLineTo(bottomStartPoint);
@@ -112,11 +114,11 @@
 
                     g.PathMoveTo(upPoint);
                     g.PathLineTo(currentPoint);
-                    g.PathStroke((Color)style.ExtraStyles["Line:Used"], false, 2);
+                    g.PathStroke(colorForLineUsed, false, 2);
 
                     g.PathMoveTo(currentPoint);
                     g.PathLineTo(bottomPoint);
-                    g.PathStroke((Color)style.ExtraStyles["Line:Unused"], false, 2);
+                    g.PathStroke(colorForLineUnused, false, 2);
 
                     g.PathArcToFast(leftArcCenter, a, 3, 9);
                     g.PathLineTo(rightStartPoint);
@@ -135,6 +137,8 @@
                     fillColor = Color.Rgb(23, 23, 23);
                 }
                 g.PathFill(fillColor);
+
+                GUIPrimitive.DrawBoxModel(rect, null, GUISkin.Instance[GUIControlName.Slider]);
             }
 
             return value;

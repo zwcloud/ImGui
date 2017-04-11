@@ -20,7 +20,7 @@ namespace ImGui
         /// <param name="rect">rect of the entire box</param>
         /// <param name="style">style</param>
         /// <returns>rect of the context box</returns>
-        public static Rect GetContentRect(Rect rect, Style style)
+        public static Rect GetContentRect(Rect rect, GUIStyle style)
         {
             //Widths of border
             var bt = style.BorderTop;
@@ -389,7 +389,8 @@ namespace ImGui
             return stream;
         }
 
-        public static string FontDir = Path.GetDirectoryName(typeof(ImGui.Application).GetTypeInfo().Assembly.Location) + Path.DirectorySeparatorChar + "Font" + Path.DirectorySeparatorChar;
+        //HACK
+        public static string FontDir = CurrentOS.IsWindows? @"W:\VS2015\ImGui\templates\TestUI\Font\" : Path.GetDirectoryName(typeof(ImGui.Application).GetTypeInfo().Assembly.Location) + Path.DirectorySeparatorChar + "Font" + Path.DirectorySeparatorChar;
         
     }
 

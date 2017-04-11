@@ -25,20 +25,20 @@ namespace ImGui
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    uiState.SetActiveId(GUIState.None);
+                    uiState.SetActiveId(UIState.None);
                 }
 
                 // ui representation
-                var state = GUI.Normal;
+                var state = GUIState.Normal;
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
                 {
-                    state = GUI.Active;
+                    state = GUIState.Active;
                 }
 
                 // ui painting
                 if (Event.current.type == EventType.Repaint)
                 {
-                    GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Button[state]);
+                    GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
                 }
                 return clicked;
             }
@@ -62,25 +62,25 @@ namespace ImGui
                     if (Input.Mouse.LeftButtonReleased)//end track
                     {
                         clicked = true;
-                        uiState.SetActiveId(GUIState.None);
+                        uiState.SetActiveId(UIState.None);
                     }
                 }
 
                 // ui representation
-                var state = GUI.Normal;
+                var state = GUIState.Normal;
                 if (hovered)
                 {
-                    state = GUI.Hover;
+                    state = GUIState.Hover;
                     if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
                     {
-                        state = GUI.Active;
+                        state = GUIState.Active;
                     }
                 }
 
                 // ui painting
                 if (Event.current.type == EventType.Repaint)
                 {
-                    GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Button[state]);
+                    GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
                 }
                 return clicked;
             }

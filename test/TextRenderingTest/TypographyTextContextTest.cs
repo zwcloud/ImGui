@@ -70,19 +70,26 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGetCorrectOffsetOfAGlyph()
         {
-            var style = Style.Default;
-            var font = style.Font;
-            font.Size = 36;
-            var textStyle = style.TextStyle;
+            var style = GUIStyle.Default;
+            style.Set<double>(GUIStyleName.FontSize, 36);
+
+            var state = GUIState.Normal;
+            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
+            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
+            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
+            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
+            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
+            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+            
             var rect = new Rect(0, 0, 200, 200);
             var textContext = new TypographyTextContext(
                 "A",
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textStyle.TextAlignment);
+                textAlignment);
 
             var textMesh = new TextMesh();
-            textMesh.Build(new Point(0, font.Size), Style.Default, textContext);
+            textMesh.Build(new Point(0, fontSize), style, textContext);
 
             DrawList drawList = new DrawList();
             drawList.Append(textMesh);
@@ -96,20 +103,26 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGetARightMeshFromTypography()
         {
-            var style = Style.Default;
-            var font = style.Font;
-            font.Size = 8;
-            var textStyle = style.TextStyle;
+            var style = GUIStyle.Default;
+            style.Set<double>(GUIStyleName.FontSize, 8);
+
+            var state = GUIState.Normal;
+            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
+            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
+            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
+            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
+            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
+            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+
             var rect = new Rect(0, 0, 200, 200);
             var textContext = new TypographyTextContext(
-                //"ij = I::oO(0xB81l);",
                 "8",
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textStyle.TextAlignment);
+                textAlignment);
 
             var textMesh = new TextMesh();
-            textMesh.Build(new Point(0, font.Size), Style.Default, textContext);
+            textMesh.Build(new Point(0, fontSize), style, textContext);
 
             //PathUtil.SaveToPng(paths, @"D:\TypographyTextPath.png");
 
@@ -124,27 +137,35 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGetARightMeshAfterAppendingATextMesh()
         {
-            var style = Style.Default;
-            var font = style.Font;
-            var textStyle = style.TextStyle;
+            var style = GUIStyle.Default;
+            style.Set<double>(GUIStyleName.FontSize, 36);
+
+            var state = GUIState.Normal;
+            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
+            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
+            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
+            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
+            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
+            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+
             var rect = new Rect(0, 0, 200, 200);
             var textContext = new TypographyTextContext(
-                "ij = I::oO(0xB81l);",
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                "A",
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textStyle.TextAlignment);
+                textAlignment);
 
             var textMesh = new TextMesh();
-            textMesh.Build(Point.Zero, Style.Default, textContext);
+            textMesh.Build(Point.Zero, style, textContext);
 
-            var anotherTextContext = Application.platformContext.CreateTextContext(
+            var anotherTextContext = new TypographyTextContext(
                 "auto-sized",
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
-                200, 200,
-                textStyle.TextAlignment);
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
+                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
+                textAlignment);
 
             var anotherTextMesh = new TextMesh();
-            anotherTextMesh.Build(new Point(50, 100), Style.Default, anotherTextContext);
+            anotherTextMesh.Build(new Point(50, 100), style, anotherTextContext);
 
             DrawList drawList = new DrawList();
             var expectedVertexCount = 0;

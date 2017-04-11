@@ -14,7 +14,7 @@ namespace ImGui
         {
             if (Event.current.type == EventType.Repaint)
             {
-                GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Box);
+                GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Box]);
             }
         }
     }

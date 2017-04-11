@@ -24,12 +24,7 @@ namespace ImGui
 
     internal class LayoutUtility
     {
-        internal static Rect GetRect(Content content, Style style, LayoutOption[] options)
-        {
-            return DoGetRect(content, style, options);
-        }
-
-        internal static Rect GetRect(Size contentSize, Style style, LayoutOption[] options)
+        internal static Rect GetRect(Size contentSize, GUIStyle style, LayoutOption[] options)
         {
             return DoGetRect(contentSize, style, options);
         }
@@ -39,7 +34,7 @@ namespace ImGui
             get { return Form.current.LayoutCache;}
         }
 
-        internal static LayoutGroup BeginLayoutGroup(bool isVertical, Style style, LayoutOption[] options)
+        internal static LayoutGroup BeginLayoutGroup(bool isVertical, GUIStyle style, LayoutOption[] options)
         {
             EventType type = Event.current.type;
             if (type == EventType.Layout)
@@ -68,30 +63,16 @@ namespace ImGui
             current.Pop();
         }
 
-        private static Rect DoGetRect(Size contentZize, Style style, LayoutOption[] options)
+        private static Rect DoGetRect(Size contentZize, GUIStyle style, LayoutOption[] options)
         {
             if (Event.current.type == EventType.Layout)
             {
                 LayoutEntry layoutEntry = new LayoutEntry(style, options) { contentWidth = contentZize.Width, contentHeight = contentZize.Height };
-                layoutEntry.minWidth = layoutEntry.maxWidth = layoutEntry.contentWidth;
-                layoutEntry.minHeight = layoutEntry.maxHeight = layoutEntry.contentHeight;
                 current.topGroup.Add(layoutEntry);
                 return Rect.Empty;
             }
             return current.topGroup.GetNext().rect;
         }
-
-        private static Rect DoGetRect(Content content, Style style, LayoutOption[] options)
-        {
-            if (Event.current.type == EventType.Layout)
-            {
-                Size size = style.CalcSize(content, options);
-                current.topGroup.Add(new LayoutEntry(style, options) { contentWidth = size.Width, contentHeight = size.Height });
-                return Rect.Empty;
-            }
-            return current.topGroup.GetNext().rect;
-        }
-
 
         internal static void Begin()
         {

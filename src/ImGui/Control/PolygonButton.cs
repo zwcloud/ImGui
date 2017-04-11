@@ -26,7 +26,7 @@ namespace ImGui
                 if (Input.Mouse.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    uiState.SetActiveId(GUIState.None);
+                    uiState.SetActiveId(UIState.None);
                 }
             }
 
@@ -45,7 +45,7 @@ namespace ImGui
             if (Event.current.type == EventType.Repaint)
             {
                 var g = Form.current.DrawList;
-                var style = Skin.current.PolygonButton[state];
+                var style = GUISkin.Instance[GUIControlName.PolygonButton];
                 
                 g.PathClear();
                 foreach (var point in points)
@@ -61,7 +61,7 @@ namespace ImGui
                 }
                 g.PathStroke(style.LineColor, true, 2);
 
-                GUIPrimitive.DrawBoxModel(textRect, content, style);
+                GUIPrimitive.DrawBoxModel(textRect, content, style, state);
             }
 
             return clicked;

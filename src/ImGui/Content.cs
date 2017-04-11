@@ -9,7 +9,7 @@ namespace ImGui
         public static Content None = new Content();
 
         Rect rect;
-        Style style;
+        GUIStyle style;
 
         internal TextMesh TextMesh;
 
@@ -39,6 +39,7 @@ namespace ImGui
         {
             this.Image = null;
             this.Text = text;
+            this.TextMesh = new TextMesh();
             this.TextContext = null;
         }
 
@@ -53,81 +54,16 @@ namespace ImGui
         {
             this.Image = null;
             this.Text = textContext.Text;
+            this.TextMesh = new TextMesh();
             this.TextContext = textContext;
         }
 
         public bool Dirty { get; set; }
 
         /// <summary>
-        /// Get size of this content
-        /// </summary>
-        public Size GetSize(Style style, LayoutOption[] options)
-        {
-            var width = -1d;
-            var height = -1d;
-            if(options!= null)
-            {
-                foreach (var option in options)
-                {
-                    if (option.type == LayoutOption.Type.fixedWidth)
-                    {
-                        width = (double)option.value;
-                    }
-                    else if (option.type == LayoutOption.Type.fixedHeight)
-                    {
-                        height = (double)option.value;
-                    }
-                }
-            }
-
-            if (this.Text != null)
-            {
-                if (width < 0 && height < 0) // auto-sized text
-                {
-                    var actualSize = style.GetTextActualSize(this.Text);
-                    width = actualSize.Width;
-                    height = actualSize.Height;
-                }
-                else
-                {
-                    if (width < 0) // width-auto-sized text
-                    {
-                        var actualSize = style.GetTextActualSize(this.Text);
-                        width = actualSize.Width;
-                    }
-                    if (height < 0) // height-auto-sized text
-                    {
-                        var actualSize = style.GetTextActualSize(this.Text);
-                        height = actualSize.Height;
-                    }
-                }
-            }
-            else if (this.Image!= null)
-            {
-                width = this.Image.Width;
-                height = this.Image.Height;
-            }
-
-            if (width < 0 && height < 0)
-            {
-                throw new NotImplementedException();
-            }
-            if (width < 0)
-            {
-                width = 0;
-            }
-            if (height < 0)
-            {
-                height = 0;
-            }
-
-            return new Size(Math.Ceiling(width), Math.Ceiling(height));
-        }
-
-        /// <summary>
         /// build the text context against the size and style
         /// </summary>
-        internal void BuildText(Rect rect, Style style)
+        internal void BuildText(Rect rect, GUIStyle style, GUIState state)
         {
             // check 
             if (this.Text == null) throw new InvalidOperationException();
@@ -138,7 +74,7 @@ namespace ImGui
             // 2. style changed that make the text different looking
             // 3. the content is dirty
             bool rebuiltNeeded = Dirty || this.rect != rect// TODO If rect size isn't changed, there is no need to rebuild the text mesh from glyphs-offset the mesh is enough.
-                || Style.IsRebuildTextContextRequired(this.style, style);
+                || GUIStyle.IsRebuildTextContextRequired(this.style, style);
             if (!rebuiltNeeded)
             {
                 Debug.Assert(TextMesh != null);
@@ -149,8 +85,12 @@ namespace ImGui
             Dirty = false;
 
             // (re)create a TextContent for the text
-            var font = style.Font;
-            var textStyle = style.TextStyle;
+            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
+            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
+            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
+            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
+            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
+            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
 
             if (this.TextContext != null)
             {
@@ -161,9 +101,9 @@ namespace ImGui
 
             this.TextContext = Application.platformContext.CreateTextContext(
                 this.Text,
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textStyle.TextAlignment);
+                textAlignment);
 
             // create a text mesh
             this.TextMesh.Clear();

@@ -12,7 +12,18 @@ public class TestUI
 
     public void OnGUI()
     {
-        GUILayout.BeginVertical(Skin.current.Box, GUILayout.ExpandHeight(true));
+#if false
+        if (GUILayout.Button("Button", "Button"))
+        {
+            a ^= true;
+            Event.current.type = EventType.Layout;
+        }
+        if (a)
+        {
+            GUILayout.Label("Thanks for clicking me!", "ThanksForClickingMe");
+        }
+#else
+        GUILayout.BeginVertical("Box", GUILayout.ExpandHeight(true));
         if (widgetsOn = GUILayout.ToggleButton("Widgets", widgetsOn, "Widgets"))
         {
             GUILayout.BeginHorizontal();
@@ -52,6 +63,7 @@ public class TestUI
             GUILayout.EndHorizontal();
         }
         GUILayout.EndVertical();
+#endif
 
     }
 }

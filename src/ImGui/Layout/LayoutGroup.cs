@@ -13,7 +13,7 @@ namespace ImGui
         public List<LayoutEntry> entries = new List<LayoutEntry>();
         private int cursor;
 
-        public LayoutGroup(bool isVertical, Style style, params LayoutOption[] options) : base(style, options)
+        public LayoutGroup(bool isVertical, GUIStyle style, params LayoutOption[] options) : base(style, options)
         {
             this.isVertical = isVertical;
             cursor = 0;

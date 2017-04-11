@@ -1,6 +1,6 @@
 ﻿namespace ImGui
 {
-    internal class GUIState
+    internal class UIState
     {
         public const string None = "None";
         public const string Unavailable = "Unavailable";

@@ -15,7 +15,7 @@ namespace ImGui
             if (hovered)
             {
                 uiState.HoverId = id;
-                if (uiState.ActiveId == GUIState.None)
+                if (uiState.ActiveId == UIState.None)
                 {
                     uiState.SetActiveId(id);
                     result = true;
@@ -25,7 +25,7 @@ namespace ImGui
             {
                 if (uiState.ActiveId == id)
                 {
-                    uiState.SetActiveId(GUIState.None);
+                    uiState.SetActiveId(UIState.None);
                 }
                 result = false;
             }
@@ -40,7 +40,7 @@ namespace ImGui
             // ui painting
             if (Event.current.type == EventType.Repaint)
             {
-                GUIPrimitive.DrawBoxModel(rect, content, Skin.current.Button[state]);
+                GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
             }
 
             return result;

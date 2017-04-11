@@ -273,7 +273,7 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a three-layer group.")]
         public void ShowARealCase()
         {
-            Style compactStyle = StyleTestEx.GenCompactStyle();
+            GUIStyle compactStyle = StyleTestEx.GenCompactStyle();
 
             Group window = new Group(true, GUILayout.Width(400), GUILayout.Height(600));
             window.style = compactStyle;
@@ -342,19 +342,20 @@ namespace Test
 
     public static class StyleTestEx
     {
-        internal static Style GenCompactStyle()
+        internal static GUIStyle GenCompactStyle()
         {
-            return Style.Make(new[]{
-                new StyleModifier{Name = "BorderTop", Value = 0},
-                new StyleModifier{Name = "BorderRight", Value = 0},
-                new StyleModifier{Name = "BorderBottom", Value = 0},
-                new StyleModifier{Name = "BorderLeft", Value = 0},
+            var style = new GUIStyle();
+            style.Set<double>(GUIStyleName.BorderTop, 0);
+            style.Set<double>(GUIStyleName.BorderRight, 0);
+            style.Set<double>(GUIStyleName.BorderBottom, 0);
+            style.Set<double>(GUIStyleName.BorderLeft, 0);
 
-                new StyleModifier{Name = "PaddingTop", Value = 0},
-                new StyleModifier{Name = "PaddingRight", Value = 0},
-                new StyleModifier{Name = "PaddingBottom", Value = 0},
-                new StyleModifier{Name = "PaddingLeft", Value = 0}
-            });
+            style.Set<double>(GUIStyleName.PaddingTop, 0);
+            style.Set<double>(GUIStyleName.PaddingRight, 0);
+            style.Set<double>(GUIStyleName.PaddingBottom, 0);
+            style.Set<double>(GUIStyleName.PaddingLeft, 0);
+
+            return style;
         }
     }
 }

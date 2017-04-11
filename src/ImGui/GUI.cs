@@ -319,9 +319,9 @@ namespace ImGui
 
         #region Constant
 
-        public const string Normal = "Normal";
-        public const string Hover = "Hover";
-        public const string Active = "Active";
+        public const GUIState Normal = GUIState.Normal;
+        public const GUIState Hover = GUIState.Hover;
+        public const GUIState Active = GUIState.Active;
 
         #endregion
 

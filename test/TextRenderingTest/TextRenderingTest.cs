@@ -25,7 +25,7 @@ namespace TextRenderingTest
             Application.InitSysDependencies();
         }
 
-        private const string ModelViewerPath = @"E:\Program Files\Autodesk\FBX Review\fbxreview.exe";
+        private const string ModelViewerPath = @"E:\Program Files (green)\open3mod_1_1_standalone\open3mod.exe";
 
         /// <summary>
         /// This should render a filled cubic bezier curve that commonly used in font
@@ -57,18 +57,26 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGenerateARightTexMesh()
         {
-            var textMesh = new TextMesh();
-            var style = Style.Default;
-            var font = style.Font;
-            var textStyle = style.TextStyle;
+            var style = GUIStyle.Default;
+            style.Set<double>(GUIStyleName.FontSize, 36);
+
+            var state = GUIState.Normal;
+            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
+            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
+            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
+            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
+            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
+            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+
             var rect = new Rect(0, 0, 200, 200);
             var textContext = Application.platformContext.CreateTextContext(
                 "ABC",
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textStyle.TextAlignment);
+                textAlignment);
 
-            textMesh.Build(Point.Zero, Style.Default, textContext);
+            var textMesh = new TextMesh();
+            textMesh.Build(Point.Zero, style, textContext);
             var objFilePath = "D:\\TextRenderingTest_ShouldGenerateARightTexMesh.obj";
             Utility.SaveToObjFile(objFilePath, textMesh.VertexBuffer, textMesh.IndexBuffer);
             Process.Start(ModelViewerPath, objFilePath);
@@ -77,27 +85,34 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGetARightMeshAfterAppendingATextMesh()
         {
-            var style = Style.Default;
-            var font = style.Font;
-            var textStyle = style.TextStyle;
+            var style = GUIStyle.Default;
+
+            var state = GUIState.Normal;
+            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
+            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
+            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
+            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
+            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
+            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+
             var rect = new Rect(0, 0, 200, 200);
             var textContext = Application.platformContext.CreateTextContext(
                 "ij = I::oO(0xB81l);",
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textStyle.TextAlignment);
+                textAlignment);
 
             var textMesh = new TextMesh();
-            textMesh.Build(Point.Zero, Style.Default, textContext);
+            textMesh.Build(Point.Zero, style, textContext);
             
             var anotherTextContext = Application.platformContext.CreateTextContext(
                 "auto-sized",
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 200, 200,
-                textStyle.TextAlignment);
+                textAlignment);
 
             var anotherTextMesh = new TextMesh();
-            anotherTextMesh.Build(new Point(50, 100), Style.Default, anotherTextContext);
+            anotherTextMesh.Build(new Point(50, 100), style, anotherTextContext);
 
             DrawList drawList = new DrawList();
             var expectedVertexCount = 0;
@@ -144,15 +159,8 @@ namespace TextRenderingTest
         {
             Application.Run(new Form1(()=> {
 
-                Skin.current.Label["Normal"].Font = new Font
-                {
-                    FontFamily = "Consolas",
-                    FontStyle = FontStyle.Normal,
-                    FontWeight = FontWeight.Normal,
-                    FontStretch = FontStretch.Normal,
-                    Size = 400,
-                    Color = Color.Black
-                };
+                GUIStyle labelStyle = "Label";
+                labelStyle.Set<double>(GUIStyleName.FontSize, 400);
 
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
 
@@ -164,15 +172,8 @@ namespace TextRenderingTest
         {
             Application.Run(new Form1(() => {
 
-                Skin.current.Label["Normal"].Font = new Font
-                {
-                    FontFamily = "Consolas",
-                    FontStyle = FontStyle.Normal,
-                    FontWeight = FontWeight.Normal,
-                    FontStretch = FontStretch.Normal,
-                    Size = 32,
-                    Color = Color.Black
-                };
+                GUIStyle labelStyle = "Label";
+                labelStyle.Set<double>(GUIStyleName.FontSize, 32);
 
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
 
@@ -184,15 +185,8 @@ namespace TextRenderingTest
         {
             Application.Run(new Form1(() => {
 
-                Skin.current.Label["Normal"].Font = new Font
-                {
-                    FontFamily = "Consolas",
-                    FontStyle = FontStyle.Normal,
-                    FontWeight = FontWeight.Normal,
-                    FontStretch = FontStretch.Normal,
-                    Size = 12,
-                    Color = Color.Black
-                };
+                GUIStyle labelStyle = "Label";
+                labelStyle.Set<double>(GUIStyleName.FontSize, 12);
 
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
 
@@ -204,15 +198,8 @@ namespace TextRenderingTest
         {
             Application.Run(new Form1(() => {
 
-                Skin.current.Label["Normal"].Font = new Font
-                {
-                    FontFamily = "Consolas",
-                    FontStyle = FontStyle.Normal,
-                    FontWeight = FontWeight.Normal,
-                    FontStretch = FontStretch.Normal,
-                    Size = 32,
-                    Color = Color.Black
-                };
+                GUIStyle labelStyle = "Label";
+                labelStyle.Set<double>(GUIStyleName.FontSize, 32);
 
                 GUILayout.Label("A");
                 GUILayout.Label("B");

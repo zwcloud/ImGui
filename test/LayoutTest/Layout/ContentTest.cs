@@ -10,12 +10,12 @@ namespace Test
     public class ContentTest
     {
         // to be fixed
-        internal void DrawContent(Rect rect, Content content, Style style)
+        internal void DrawContent(Rect rect, Content content, GUIStyle style)
         {
             var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
             var context = new Context(surface);
 
-            //context.DrawBoxModel(rect, content, style);
+            context.DrawBoxModel(rect, content, style);
 
             string outputPath = "D:\\ContentTest";
             if (!System.IO.Directory.Exists(outputPath))
@@ -40,7 +40,7 @@ namespace Test
         [Fact]
         public void ShowAnEmptyBox()
         {
-            DrawContent(new Rect(400, 300), Content.None, Style.Default);
+            DrawContent(new Rect(400, 300), Content.None, GUIStyle.Default);
         }
 
         [Fact]
@@ -48,14 +48,9 @@ namespace Test
         {
             Rect rect = new Rect(400, 300);
             Content content = new Content("New Text");
-            Style style = Skin.current.Label["Normal"];
-            style.TextStyle = new TextStyle
-            {
-                LineSpacing = style.TextStyle.LineSpacing,
-                TextAlignment = TextAlignment.Leading,
-                TabSize = style.TextStyle.TabSize
-            };
-            content.BuildText(rect, style);
+            GUIStyle style = "Label";
+            style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Leading);
+            content.BuildText(rect, style, GUIState.Normal);
 
             DrawContent(rect, content, style);
         }
@@ -65,14 +60,9 @@ namespace Test
         {
             Rect rect = new Rect(400, 300);
             Content content = new Content("New Text");
-            Style style = Skin.current.Label["Normal"];
-            style.TextStyle = new TextStyle
-            {
-                LineSpacing = style.TextStyle.LineSpacing,
-                TextAlignment = TextAlignment.Center,
-                TabSize = style.TextStyle.TabSize
-            };
-            content.BuildText(rect, style);
+            GUIStyle style = "Label";
+            style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Center);
+            content.BuildText(rect, style, GUIState.Normal);
 
             DrawContent(rect, content, style);
         }
@@ -80,16 +70,11 @@ namespace Test
         [Fact]
         public void ShowATextTrailingAligned()
         {
-            Content content = new Content("New Text");
-            Style style = Skin.current.Label["Normal"];
-            style.TextStyle = new TextStyle
-            {
-                LineSpacing = style.TextStyle.LineSpacing,
-                TextAlignment = TextAlignment.Trailing,
-                TabSize = style.TextStyle.TabSize
-            };
             Rect rect = new Rect(400, 300);
-            content.BuildText(rect, style);
+            Content content = new Content("New Text");
+            GUIStyle style = "Label";
+            style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Trailing);
+            content.BuildText(rect, style, GUIState.Normal);
 
             DrawContent(rect, content, style);
         }
@@ -98,29 +83,20 @@ namespace Test
         public void ShowATextAutoSized()
         {
             Content content = new Content("New Text");
-            Style style = Style.Make(new[]
-            {
-                    new StyleModifier{Name = "BorderTop", Value = 10},
-                    new StyleModifier{Name = "BorderRight", Value = 10},
-                    new StyleModifier{Name = "BorderBottom", Value = 10},
-                    new StyleModifier{Name = "BorderLeft", Value = 10},
-                    
-                    new StyleModifier{Name = "PaddingTop", Value = 10},
-                    new StyleModifier{Name = "PaddingRight", Value = 10},
-                    new StyleModifier{Name = "PaddingBottom", Value = 10},
-                    new StyleModifier{Name = "PaddingLeft", Value = 10},
-                new StyleModifier
-                {
-                    Name = "TextStyle",
-                    Value = new TextStyle
-                    {
-                        TextAlignment = TextAlignment.Leading,
-                    }
-                }
-            });
-            Size size = style.CalcSize(content, new LayoutOption[0]);
+
+            GUIStyle style = new GUIStyle();
+            style.Set<double>(GUIStyleName.BorderTop, 10);
+            style.Set<double>(GUIStyleName.BorderRight, 10);
+            style.Set<double>(GUIStyleName.BorderBottom, 10);
+            style.Set<double>(GUIStyleName.BorderLeft, 10);
+
+            style.Set<double>(GUIStyleName.PaddingTop, 10);
+            style.Set<double>(GUIStyleName.PaddingRight, 10);
+            style.Set<double>(GUIStyleName.PaddingBottom, 10);
+            style.Set<double>(GUIStyleName.PaddingLeft, 10);
+            Size size = style.CalcSize(content, GUIState.Normal, new[] { GUILayout.Height(100) });
             Rect rect = new Rect(size);
-            content.BuildText(rect, style);
+            content.BuildText(rect, style, GUIState.Normal);
             DrawContent(rect, content, style);
             content.Dispose();
         }
@@ -129,20 +105,11 @@ namespace Test
         public void ShowATextWidthAutoSizedHeightFixed()
         {
             Content content = new Content("New Text");
-            Style style = Style.Make(new[]
-            {
-                new StyleModifier
-                {
-                    Name = "TextStyle",
-                    Value = new TextStyle
-                    {
-                        TextAlignment = TextAlignment.Leading,
-                    }
-                }
-            });
-            Size size = style.CalcSize(content, new []{GUILayout.Height(100)});
+            GUIStyle style = "Label";
+            style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Leading);
+            Size size = style.CalcSize(content, GUIState.Normal, new []{GUILayout.Height(100)});
             Rect rect = new Rect(size);
-            content.BuildText(rect, style);
+            content.BuildText(rect, style, GUIState.Normal);
             DrawContent(rect, content, style);
             content.Dispose();
         }
@@ -151,20 +118,11 @@ namespace Test
         public void ShowATextWidthFixedHeightAutoSized()
         {
             Content content = new Content("New Text");
-            Style style = Style.Make(new[]
-            {
-                new StyleModifier
-                {
-                    Name = "TextStyle",
-                    Value = new TextStyle
-                    {
-                        TextAlignment = TextAlignment.Leading,
-                    }
-                }
-            });
-            Size size = style.CalcSize(content, new[] { GUILayout.Width(100) });
+            GUIStyle style = "Label";
+            style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Leading);
+            Size size = style.CalcSize(content, GUIState.Normal, new[] { GUILayout.Height(100) });
             Rect rect = new Rect(size);
-            content.BuildText(rect, style);
+            content.BuildText(rect, style, GUIState.Normal);
             DrawContent(rect, content, style);
             content.Dispose();
         }

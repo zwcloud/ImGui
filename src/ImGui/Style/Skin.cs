@@ -1,503 +1,188 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ImGui
 {
-    public sealed class Skin
+    enum GUIControlName
     {
-        internal Dictionary<string, Style> Button { get; private set; }
-        internal Dictionary<string, Style> Label { get; private set; }
-        internal Dictionary<string, Style> Toggle { get; private set; }
-        internal Dictionary<string, Style> ComboBox { get; private set; }
-        internal Dictionary<string, Style> Image { get; private set; }
-        internal Dictionary<string, Style> TextBox { get; set; }
-        internal Dictionary<string, Style> Slider { get; set; }
-        internal Dictionary<string, Style> PolygonButton { get; set; }
+        Label,
+        Image,
+        ToolTip,
+        Box,
+        Space,
 
-        /*Stateless styles*/
-        internal Style ToolTip { get; set; }
-        public Style Box { get; set; }
-        internal Style Space { get; set; }
+        //_StatefulStart,
 
-        public static readonly Skin current;
+        Button,
+        Toggle,
+        ComboBox,
+        TextBox,
+        Slider,
+        PolygonButton,
+    }
 
-        static Skin()
+
+    class GUISkin
+    {
+        public static GUISkin Instance { get; private set; }
+
+        static GUISkin() { Instance = new GUISkin(); }
+        
+        public GUIStyle this[GUIControlName name]
         {
-            current = new Skin();
+            get { return styles[name]; }
         }
 
-        public Skin()
+        /// <summary> Get a GUIStyle from a string. </summary>
+        public GUIStyle GetStyle(string styleName)
         {
-            Button = new Dictionary<string, Style>(3);
-            Label = new Dictionary<string, Style>(3);
-            Toggle = new Dictionary<string, Style>(3);
-            ComboBox = new Dictionary<string, Style>(3);
-            Image = new Dictionary<string, Style>(1);
-            TextBox = new Dictionary<string, Style>(3);
-            Slider = new Dictionary<string, Style>(3);
-            PolygonButton = new Dictionary<string, Style>(3);
-
-            #region Label
+            bool exist = this.controlNames.TryGetValue(styleName, out GUIControlName controlName);
+            if(!exist)
             {
-                Label["Normal"] = Style.Make();
-                Label["Hover"] = Style.Make();
-                Label["Active"] = Style.Make();
+                throw new ArgumentOutOfRangeException(nameof(styleName), string.Format("style<{0}> doesn't exist.", styleName));
             }
-            #endregion
+            return this.styles[controlName];
+        }
 
-            #region Button
+        private Dictionary<GUIControlName, GUIStyle> styles = new Dictionary<GUIControlName, GUIStyle>();
+
+        private Dictionary<string, GUIControlName> controlNames = new Dictionary<string, GUIControlName>();
+
+        private GUISkin()
+        {
+            GUIStyle Label      = new GUIStyle();//no modification
+            GUIStyle Image      = new GUIStyle();
+            GUIStyle Box        = new GUIStyle();
+            GUIStyle Space      = new GUIStyle();
+            GUIStyle Button     = new GUIStyle();
+            GUIStyle Toggle     = new GUIStyle();
+            GUIStyle ComboBox   = new GUIStyle();
+            GUIStyle TextBox    = new GUIStyle();
+            GUIStyle Slider     = new GUIStyle();
+            GUIStyle PolygonButton = new GUIStyle();
+
+            styles.Add(GUIControlName.Label        , Label        );
+            styles.Add(GUIControlName.Image        , Image        );
+            styles.Add(GUIControlName.Box          , Box          );
+            styles.Add(GUIControlName.Space        , Space        );
+            styles.Add(GUIControlName.Button       , Button       );
+            styles.Add(GUIControlName.Toggle       , Toggle       );
+            styles.Add(GUIControlName.ComboBox     , ComboBox     );
+            styles.Add(GUIControlName.TextBox      , TextBox      );
+            styles.Add(GUIControlName.Slider       , Slider       );
+            styles.Add(GUIControlName.PolygonButton, PolygonButton);
+
+            controlNames.Add("Label",         GUIControlName.Label        );
+            controlNames.Add("Image",         GUIControlName.Image        );
+            controlNames.Add("Box",           GUIControlName.Box          );
+            controlNames.Add("Space",         GUIControlName.Space        );
+            controlNames.Add("Button",        GUIControlName.Button       );
+            controlNames.Add("Toggle",        GUIControlName.Toggle       );
+            controlNames.Add("ComboBox",      GUIControlName.ComboBox     );
+            controlNames.Add("TextBox",       GUIControlName.TextBox      );
+            controlNames.Add("Slider",        GUIControlName.Slider       );
+            controlNames.Add("PolygonButton", GUIControlName.PolygonButton);
+
+            //Set default styles for each control
+
             {
-                var bgColor = Color.Rgb(204, 204, 204);
-                var brColor = Color.Black;
-                StyleModifier[] normalModifiers =
-                {
-                    new StyleModifier{Name = "BorderTop", Value = 2},
-                    new StyleModifier{Name = "BorderRight", Value = 2},
-                    new StyleModifier{Name = "BorderBottom", Value = 2},
-                    new StyleModifier{Name = "BorderLeft", Value = 2},
-
-                    new StyleModifier{Name = "BorderTopColor", Value = brColor},
-                    new StyleModifier{Name = "BorderRightColor", Value = brColor},
-                    new StyleModifier{Name = "BorderBottomColor", Value = brColor},
-                    new StyleModifier{Name = "BorderLeftColor", Value = brColor},
-                    
-                    new StyleModifier{Name = "PaddingTop", Value = 2},
-                    new StyleModifier{Name = "PaddingRight", Value = 2},
-                    new StyleModifier{Name = "PaddingBottom", Value = 2},
-                    new StyleModifier{Name = "PaddingLeft", Value = 2},
-
-                    new StyleModifier
-                    {
-                        Name = "TextStyle",
-                        Value = new TextStyle
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            LineSpacing = 0,
-                            TabSize = 4
-                        }
-                    },
-                    
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = bgColor,
-                            Image = null,
-                        }
-                    },
-                    //var gradient = new LinearGradient(0, 0, 0, 1);
-                    //gradient.AddColorStop(0, new Color(0.87, 0.93, 0.96));
-                    //gradient.AddColorStop(1, new Color(0.65, 0.85, 0.96));
-                    //Button.Normal.BackgroundPattern = gradient;
-                    //Button.Hover.BackgroundPattern = gradient;
-                    //Button.Active.BackgroundPattern = gradient;
-                };
-                Button["Normal"] = Style.Make(normalModifiers);
-
-                var hoverBorderColor = Color.Rgb(122, 122, 122);
-                StyleModifier[] hoverModifiers =
-                {
-                    new StyleModifier{Name = "BorderTopColor", Value = hoverBorderColor},
-                    new StyleModifier{Name = "BorderRightColor", Value = hoverBorderColor},
-                    new StyleModifier{Name = "BorderBottomColor", Value = hoverBorderColor},
-                    new StyleModifier{Name = "BorderLeftColor", Value = hoverBorderColor},
-                };
-                Button["Hover"] = Style.Make(Button["Normal"], hoverModifiers);
-
-                var activeBgColor = Color.Rgb(153, 153, 153);
-                StyleModifier[] activeModifiers =
-                {
-                    new StyleModifier{Name = "BorderBottomColor",   Value = activeBgColor},
-                    new StyleModifier{Name = "BorderLeftColor",     Value = activeBgColor},
-                    new StyleModifier{Name = "BorderTopColor",      Value = activeBgColor},
-                    new StyleModifier{Name = "BorderRightColor",    Value = activeBgColor},
-
-                    new StyleModifier
-                    {
-                        Name = "Font",
-                        Value = new Font
-                        {
-                            FontFamily =
-#if __ANDROID__
-                            "DroidSans.ttf",
-#else
-                            Utility.FontDir+"DroidSans.ttf",
-#endif
-                            FontStyle = FontStyle.Normal,
-                            FontWeight = FontWeight.Bold,
-                            FontStretch = FontStretch.Normal,
-#if __ANDROID__
-                            Size = 42,
-#else
-                            Size = 12,
-#endif
-                            Color = Color.Black
-                        }
-                    },
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = activeBgColor,
-                            Image = null,
-                        }
-                    }
-                };
-                Button["Active"] = Style.Make(Button["Normal"], activeModifiers);
-            }
-            #endregion
-
-            #region Toggle
-            {
-                StyleModifier[] normalModifiers =
-                {
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = new Color(0x9F, 0x9F, 0x9F),
-                            Image = null,
-                        }
-                    },
-                    new StyleModifier
-                    {
-                        Name = "TextStyle",
-                        Value = new TextStyle
-                        {
-                            TextAlignment = TextAlignment.Center
-                        }
-                    }
-                };
-                Toggle["Normal"] = Style.Make(normalModifiers);
-                Toggle["Hover"] = Style.Make(Toggle["Normal"]);
-                Toggle["Active"] = Style.Make(Toggle["Normal"]);
-            }
-            #endregion
-
-            #region ComboBox
-            {
-                StyleModifier[] normalModifiers =
-                {
-                    new StyleModifier{Name = "BorderTop", Value = 2},
-                    new StyleModifier{Name = "BorderRight", Value = 2},
-                    new StyleModifier{Name = "BorderBottom", Value = 2},
-                    new StyleModifier{Name = "BorderLeft", Value = 2},
-
-                    new StyleModifier{Name = "BorderTopColor", Value = Color.Rgb(225,225,225)},
-                    new StyleModifier{Name = "BorderRightColor", Value = Color.Rgb(225,225,225)},
-                    new StyleModifier{Name = "BorderBottomColor", Value = Color.Rgb(225,225,225)},
-                    new StyleModifier{Name = "BorderLeftColor", Value = Color.Rgb(225,225,225)},
-                    
-                    new StyleModifier{Name = "PaddingTop", Value = 2},
-                    new StyleModifier{Name = "PaddingRight", Value = 2},
-                    new StyleModifier{Name = "PaddingBottom", Value = 2},
-                    new StyleModifier{Name = "PaddingLeft", Value = 2},
-
-                    new StyleModifier
-                    {
-                        Name = "TextStyle",
-                        Value = new TextStyle
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            LineSpacing = 0,
-                            TabSize = 4
-                        }
-                    },
-                    
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = Color.Rgb(193,193,193),
-                            Image = null,
-                        }
-                    },
-
-                    new StyleModifier
-                    {
-                        Name = "LineColor",
-                        Value = Color.Rgb(225,225,225)
-                    }
-                };
-                ComboBox["Normal"] = Style.Make(normalModifiers);
-
-
-                StyleModifier[] hoverModifiers =
-                {
-                    new StyleModifier{Name = "BorderTopColor", Value = Color.Rgb(115,115,115)},
-                    new StyleModifier{Name = "BorderRightColor", Value = Color.Rgb(115,115,115)},
-                    new StyleModifier{Name = "BorderBottomColor", Value = Color.Rgb(115,115,115)},
-                    new StyleModifier{Name = "BorderLeftColor", Value = Color.Rgb(115,115,115)},
-
-                    new StyleModifier
-                    {
-                        Name = "LineColor",
-                        Value = Color.Rgb(115,115,115)
-                    }
-                };
-                ComboBox["Hover"] = Style.Make(ComboBox["Normal"], hoverModifiers);
-
-                StyleModifier[] activeModifiers =
-                {
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = Color.LightBlue,
-                            Image = null,
-                        }
-                    },
-                };
-                ComboBox["Active"] = Style.Make(ComboBox["Normal"], activeModifiers);
-            }
-            #endregion
-
-            #region Image
-            {
-                StyleModifier[] normalModifiers =
-                {
-                    new StyleModifier {Name = "BorderTop", Value =    1},
-                    new StyleModifier {Name = "BorderRight", Value =  1},
-                    new StyleModifier {Name = "BorderBottom", Value = 1},
-                    new StyleModifier {Name = "BorderLeft", Value =   1},
-
-                    new StyleModifier {Name = "BorderTopColor", Value = Color.Black},
-                    new StyleModifier {Name = "BorderRightColor", Value = Color.Black},
-                    new StyleModifier {Name = "BorderBottomColor", Value = Color.Black},
-                    new StyleModifier {Name = "BorderLeftColor", Value = Color.Black},
-                };
-                Image["Normal"] = Style.Make(normalModifiers);
+                Image.Set(GUIStyleName.BorderTop, 1.0, GUIState.Normal);
+                Image.Set(GUIStyleName.BorderRight, 1.0, GUIState.Normal);
+                Image.Set(GUIStyleName.BorderBottom, 1.0, GUIState.Normal);
+                Image.Set(GUIStyleName.BorderLeft, 1.0, GUIState.Normal);
+                Image.Set(GUIStyleName.BorderTopColor, Color.Black, GUIState.Normal);
+                Image.Set(GUIStyleName.BorderRightColor, Color.Black, GUIState.Normal);
+                Image.Set(GUIStyleName.BorderBottomColor, Color.Black, GUIState.Normal);
+                Image.Set(GUIStyleName.BorderLeftColor, Color.Black, GUIState.Normal); 
             }
 
-
-            #endregion
-
-            #region TextBox
-            {
-                StyleModifier[] normalModifiers =
-                {
-                    new StyleModifier{Name = "BorderTop", Value = 1},
-                    new StyleModifier{Name = "BorderRight", Value = 1},
-                    new StyleModifier{Name = "BorderBottom", Value = 1},
-                    new StyleModifier{Name = "BorderLeft", Value = 1},
-
-                    new StyleModifier{Name = "BorderTopColor", Value = Color.Black},
-                    new StyleModifier{Name = "BorderRightColor", Value = Color.Black},
-                    new StyleModifier{Name = "BorderBottomColor", Value = Color.Black},
-                    new StyleModifier{Name = "BorderLeftColor", Value = Color.Black},
-                    
-                    new StyleModifier{Name="PaddingTop", Value = 2},
-                    new StyleModifier{Name="PaddingRight", Value = 2},
-                    new StyleModifier{Name="PaddingBottom", Value = 2},
-                    new StyleModifier{Name="PaddingLeft", Value = 2},
-
-                    new StyleModifier
-                    {
-                        Name = "TextStyle",
-                        Value = new TextStyle
-                        {
-                            TextAlignment = TextAlignment.Leading,
-                            LineSpacing = 0,
-                            TabSize = 4
-                        }
-                    },
-                    
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = Color.White,
-                            Image = null,
-                        }
-                    },
-                };
-                TextBox["Normal"] = Style.Make(normalModifiers);
-
-                StyleModifier[] hoverModifiers =
-                {
-                    new StyleModifier{Name = "BorderTopColor", Value = Color.LightBlue},
-                    new StyleModifier{Name = "BorderRightColor", Value = Color.LightBlue},
-                    new StyleModifier{Name = "BorderBottomColor", Value = Color.LightBlue},
-                    new StyleModifier{Name = "BorderLeftColor", Value = Color.LightBlue},
-                };
-                TextBox["Hover"] = Style.Make(TextBox["Normal"], hoverModifiers);
-
-                StyleModifier[] activeModifiers =
-                {
-                    new StyleModifier{Name = "BorderTopColor", Value = Color.DarkBlue},
-                    new StyleModifier{Name = "BorderRightColor", Value = Color.DarkBlue},
-                    new StyleModifier{Name = "BorderBottomColor", Value = Color.DarkBlue},
-                    new StyleModifier{Name = "BorderLeftColor", Value = Color.DarkBlue},
-
-                    new StyleModifier{Name = "Cursor", Value = Cursor.Text}
-                };
-                TextBox["Active"] = Style.Make(TextBox["Normal"], activeModifiers);
-            }
-            #endregion
-
-            #region Slider
-            {
-                Slider["Normal"] = Style.Make();
-
-                StyleModifier[] hoverModifiers =
-                {
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = Color.Argb(0xFFAFAFAF),
-                            Image = null,
-                        }
-                    }
-                };
-                Slider["Hover"] = Style.Make(hoverModifiers);
-
-                StyleModifier[] activeModifiers =
-                {
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = Color.Argb(0xFF8F8F8F),
-                            Image = null,
-                        }
-                    }
-                };
-                Slider["Active"] = Style.Make(activeModifiers);
-
-                Slider["Line:Normal"] = Style.Make(Slider["Normal"]);
-                Slider["Normal"].ExtraStyles["Line:Unused"] = Color.Black;
-                Slider["Normal"].ExtraStyles["Line:Used"] = Color.DarkBlue;
-            }
-            #endregion
-
-            #region PolygonButton
-            {
-                StyleModifier[] normalModifiers =
-                {
-                    new StyleModifier
-                    {
-                        Name = "TextStyle",
-                        Value = new TextStyle
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            LineSpacing = 0,
-                            TabSize = 4
-                        }
-                    },
-
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = Color.Clear,
-                            Image = null,
-                        }
-                    },
-                };
-                PolygonButton["Normal"] = Style.Make(normalModifiers);
-
-                StyleModifier[] hoverModifiers =
-                {
-                    new StyleModifier
-                    {
-                        Name = "LineColor",
-                        Value = new Color(0,0,1)
-                    },
-                    new StyleModifier
-                    {
-                        Name = "FillColor",
-                        Value = new Color(0,0,1)
-                    }
-                };
-                PolygonButton["Hover"] = Style.Make(PolygonButton["Normal"], hoverModifiers);
-
-                StyleModifier[] activeModifiers =
-                {
-                    new StyleModifier
-                    {
-                        Name = "LineColor",
-                        Value = new Color(1,0,0)
-                    },
-                    new StyleModifier
-                    {
-                        Name = "FillColor",
-                        Value = new Color(1,0,0)
-                    }
-                };
-                PolygonButton["Active"] = Style.Make(PolygonButton["Normal"], activeModifiers);
-            }
-            #endregion
-
-            #region ToolTip
-            {
-                ToolTip = Style.Make();
-                ToolTip.ExtraStyles.Add("FixedSize", new Size(100, 40));
-            }
-            #endregion
-
-            #region Box
             {
                 var borderColor = Color.Rgb(24, 131, 215);
                 var bgColor = Color.Rgb(242, 242, 242);
-                StyleModifier[] normalModifiers =
-                {
-                    new StyleModifier{Name = "BorderTop", Value = 2},
-                    new StyleModifier{Name = "BorderRight", Value = 2},
-                    new StyleModifier{Name = "BorderBottom", Value = 2},
-                    new StyleModifier{Name = "BorderLeft", Value = 2},
-
-                    new StyleModifier{Name = "BorderTopColor", Value = borderColor},
-                    new StyleModifier{Name = "BorderRightColor", Value = borderColor},
-                    new StyleModifier{Name = "BorderBottomColor", Value = borderColor},
-                    new StyleModifier{Name = "BorderLeftColor", Value = borderColor},
-
-                    new StyleModifier{Name = "PaddingTop", Value = 0},
-                    new StyleModifier{Name = "PaddingRight", Value = 0},
-                    new StyleModifier{Name = "PaddingBottom", Value = 0},
-                    new StyleModifier{Name = "PaddingLeft", Value = 0},
-
-                    new StyleModifier{Name = "CellingSpacingHorizontal", Value = 0},
-                    new StyleModifier{Name = "CellingSpacingVertical", Value = 15},
-
-                    new StyleModifier
-                    {
-                        Name = "BackgroundStyle",
-                        Value = new BackgroundStyle
-                        {
-                            Color = bgColor,
-                            Image = null,
-                        }
-                    },
-                };
-                Box = Style.Make(normalModifiers);
+                Box.Set(GUIStyleName.BorderTop, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.BorderRight, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.BorderTopColor, borderColor, GUIState.Normal);
+                Box.Set(GUIStyleName.BorderRightColor, borderColor, GUIState.Normal);
+                Box.Set(GUIStyleName.BorderBottomColor, borderColor, GUIState.Normal);
+                Box.Set(GUIStyleName.BorderLeftColor, borderColor, GUIState.Normal);
+                Box.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Normal);
+                Box.Set(GUIStyleName.CellingSpacingHorizontal, 0.0, GUIState.Normal);
+                Box.Set(GUIStyleName.CellingSpacingVertical, 15.0, GUIState.Normal);
+                Box.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Normal);
             }
-            #endregion
 
-            #region Space
             {
-                Space = Style.Make();
+                var bgColor = Color.Rgb(204, 204, 204);
+                //normal
+                Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Normal);
+                Button.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Normal);
+                //hover
+                var hoverBorderColor = Color.Rgb(122, 122, 122);
+                Button.Set(GUIStyleName.BorderTopColor, hoverBorderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderRightColor, hoverBorderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderBottomColor, hoverBorderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderLeftColor, hoverBorderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Hover);
+                Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Hover);
+                Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Hover);
+                Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Hover);
+                Button.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Hover);
+                //active
+                var activeBgColor = Color.Rgb(153, 153, 153);
+                Button.Set(GUIStyleName.BorderTopColor, hoverBorderColor, GUIState.Active);
+                Button.Set(GUIStyleName.BorderRightColor, hoverBorderColor, GUIState.Active);
+                Button.Set(GUIStyleName.BorderBottomColor, hoverBorderColor, GUIState.Active);
+                Button.Set(GUIStyleName.BorderLeftColor, hoverBorderColor, GUIState.Active);
+                Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Active);
+                Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Active);
+                Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Active);
+                Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Active);
+                Button.Set(GUIStyleName.BackgroundColor, activeBgColor, GUIState.Active);
+                Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Bold, GUIState.Active);
             }
-            #endregion
-             
-        }
 
-        //internal Style GetStyle(string str)
-        //{
-        //    Style result;
-        //    if (this.StyleMap.TryGetValue(str, out result))
-        //    {
-        //        return result;
-        //    }
-        //    return null;
-        //}
+            {
+                var bgColor = new Color(0x9F, 0x9F, 0x9F);
+                Toggle.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Normal);
+                Toggle.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Hover);
+                Toggle.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Active);
+            }
+
+            {
+                Slider.Set(GUIStyleName.BackgroundColor, Color.Argb(0xFFAFAFAF), GUIState.Hover);
+                Slider.Set(GUIStyleName.BackgroundColor, Color.Argb(0xFF8F8F8F), GUIState.Active);
+                Slider.Set(GUIStyleName.Slider_LineUsed, Color.DarkBlue, GUIState.Normal);
+                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Black, GUIState.Normal);
+            }
+
+            {
+                PolygonButton.Set(GUIStyleName.TextAlignment, (int)TextAlignment.Center, GUIState.Normal);
+                PolygonButton.Set(GUIStyleName.BackgroundColor, Color.Clear, GUIState.Normal);
+
+                PolygonButton.Set(GUIStyleName.TextAlignment, (int)TextAlignment.Center, GUIState.Hover);
+                PolygonButton.Set(GUIStyleName.BackgroundColor, Color.Clear, GUIState.Hover);
+                PolygonButton.Set(GUIStyleName.LineColor, Color.Blue, GUIState.Hover);
+                PolygonButton.Set(GUIStyleName.FillColor, Color.Blue, GUIState.Hover);
+                
+                PolygonButton.Set(GUIStyleName.TextAlignment, (int)TextAlignment.Center, GUIState.Active);
+                PolygonButton.Set(GUIStyleName.BackgroundColor, Color.Clear, GUIState.Active);
+                PolygonButton.Set(GUIStyleName.LineColor, Color.Blue, GUIState.Active);
+                PolygonButton.Set(GUIStyleName.FillColor, Color.Red, GUIState.Active);
+            }
+
+        }
     }
 }

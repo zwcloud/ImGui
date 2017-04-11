@@ -358,9 +358,9 @@ namespace ImGui
 
         #endregion
 
-        internal void Build(Point position, Style style, ITextContext textContext)
+        internal void Build(Point position, GUIStyle style, ITextContext textContext)
         {
-            var color = style.Font.Color;
+            var color = style.Get<Color>(GUIStyleName.FontColor);
             textContext.Build(position, this);
             this.PathTessPolygon(color);
         }

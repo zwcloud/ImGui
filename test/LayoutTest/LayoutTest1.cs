@@ -47,19 +47,20 @@ namespace Test
             public int horizontalStretchFactor;//horizontal stretch factor
             public int verticalStretchFactor;//vertical stretch factor
 
-            private readonly Style style = Style.Make(
-                    new[]{
-                        new StyleModifier{Name = "BorderTop", Value = Const.ItemBorderTop},
-                        new StyleModifier{Name = "BorderRight", Value = Const.ItemBorderRight},
-                        new StyleModifier{Name = "BorderBottom", Value = Const.ItemBorderBottom},
-                        new StyleModifier{Name = "BorderLeft", Value = Const.ItemBorderLeft},
+            private readonly GUIStyle style = new GUIStyle();
 
-                        new StyleModifier{Name = "PaddingTop", Value = Const.ItemPaddingTop},
-                        new StyleModifier{Name = "PaddingRight", Value = Const.ItemPaddingRight},
-                        new StyleModifier{Name = "PaddingBottom", Value = Const.ItemPaddingBottom},
-                        new StyleModifier{Name = "PaddingLeft", Value = Const.ItemPaddingLeft},
-                }
-                );
+            public Item()
+            {
+                style.Set<double>(GUIStyleName.BorderTop, Const.ItemBorderTop);
+                style.Set<double>(GUIStyleName.BorderRight, Const.ItemBorderRight);
+                style.Set<double>(GUIStyleName.BorderBottom, Const.ItemBorderBottom);
+                style.Set<double>(GUIStyleName.BorderLeft, Const.ItemBorderLeft);
+
+                style.Set<double>(GUIStyleName.PaddingTop, Const.ItemPaddingTop);
+                style.Set<double>(GUIStyleName.PaddingRight, Const.ItemPaddingRight);
+                style.Set<double>(GUIStyleName.PaddingBottom, Const.ItemPaddingBottom);
+                style.Set<double>(GUIStyleName.PaddingLeft, Const.ItemPaddingLeft);
+            }
 
             public virtual void CalcWidth()
             {
@@ -91,30 +92,31 @@ namespace Test
             public bool isClipped;
             public List<Item> entries = new List<Item>();
 
-            internal readonly Style style = Style.Make(
-                    new[]{
-                        new StyleModifier{Name = "BorderTop", Value = Const.GroupBorderTop},
-                        new StyleModifier{Name = "BorderRight", Value = Const.GroupBorderRight},
-                        new StyleModifier{Name = "BorderBottom", Value = Const.GroupBorderBottom},
-                        new StyleModifier{Name = "BorderLeft", Value = Const.GroupBorderLeft},
+            internal readonly GUIStyle style = new GUIStyle();
+            
+            public Group()
+            {
+                style.Set<double>(GUIStyleName.BorderTop, Const.GroupBorderTop);
+                style.Set<double>(GUIStyleName.BorderRight, Const.GroupBorderRight);
+                style.Set<double>(GUIStyleName.BorderBottom, Const.GroupBorderBottom);
+                style.Set<double>(GUIStyleName.BorderLeft, Const.GroupBorderLeft);
 
-                        new StyleModifier{Name = "PaddingTop", Value = Const.GroupPaddingTop},
-                        new StyleModifier{Name = "PaddingRight", Value = Const.GroupPaddingRight},
-                        new StyleModifier{Name = "PaddingBottom", Value = Const.GroupPaddingBottom},
-                        new StyleModifier{Name = "PaddingLeft", Value = Const.GroupPaddingLeft},
+                style.Set<double>(GUIStyleName.PaddingTop, Const.GroupPaddingTop);
+                style.Set<double>(GUIStyleName.PaddingRight, Const.GroupPaddingRight);
+                style.Set<double>(GUIStyleName.PaddingBottom, Const.GroupPaddingBottom);
+                style.Set<double>(GUIStyleName.PaddingLeft, Const.GroupPaddingLeft);
 
-                        new StyleModifier{Name = "CellingSpacingVertical", Value = Const.CellingSpacingVertical},
-                        new StyleModifier{Name = "CellingSpacingHorizontal", Value = Const.CellingSpacingHorizontal},
-                }
-                );
+                style.Set<double>(GUIStyleName.CellingSpacingVertical, Const.CellingSpacingVertical);
+                style.Set<double>(GUIStyleName.CellingSpacingHorizontal, Const.CellingSpacingHorizontal);
+            }
 
-            public Group(bool isVertical, bool isForm = false)
+            public Group(bool isVertical, bool isForm = false) : this()
             {
                 this.isVertical = isVertical;
                 this.isForm = isForm;
             }
 
-            public Group(Rect rect, bool isVertical, bool isForm = false)
+            public Group(Rect rect, bool isVertical, bool isForm = false) : this()
             {
                 this.rect = rect;
                 this.isVertical = isVertical;

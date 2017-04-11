@@ -276,7 +276,7 @@ namespace ImGui
         }
         
         //inline
-        public void PathStroke(Color col, bool closed, float thickness = 1.0f)
+        public void PathStroke(Color col, bool closed, double thickness = 1)
         {
             AddPolyline(_Path, col, closed, thickness);
             PathClear();

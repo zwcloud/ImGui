@@ -1,238 +1,316 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ImGui
 {
-    public partial class Style
+    public enum GUIStyleName
     {
-        #region Box styles
+        PaddingTop,
+        PaddingRight,
+        PaddingBottom,
+        PaddingLeft,
 
-        #region Padding
+        BorderTop,
+        BorderRight,
+        BorderBottom,
+        BorderLeft,
 
-        /// <summary>
-        /// padding-top
-        /// </summary>
-        public double PaddingTop { get; set; }
+        BorderTopColor,
+        BorderRightColor,
+        BorderBottomColor,
+        BorderLeftColor,
 
-        /// <summary>
-        /// padding-right
-        /// </summary>
-        public double PaddingRight { get; set; }
+        OutlineWidth,
+        OutlineColor,
 
-        /// <summary>
-        /// padding-bottom
-        /// </summary>
-        public double PaddingBottom { get; set; }
+        CellingSpacingHorizontal,
+        CellingSpacingVertical,
 
-        /// <summary>
-        /// padding-left
-        /// </summary>
-        public double PaddingLeft { get; set; }
+        BackgroundColor,
+        BackgroundImage,
 
-        public double PaddingHorizontal { get { return PaddingLeft + PaddingRight; } }
+        TextAlignment,
+        AlignmentHorizontal,
+        AlignmentVertical,
 
-        public double PaddingVertical { get { return PaddingTop + PaddingBottom; } }
+        FontFamily,
+        FontStyle,
+        FontStretch,
+        FontWeight,
+        FontSize,
+        FontColor,
 
-        #endregion
+        Slider_LineUsed,
+        Slider_LineUnused,
 
-        #region Border
+        LineColor,
+        FillColor,
 
-        /// <summary>
-        /// border-top-width
-        /// </summary>
-        public double BorderTop { get; set; }
+        A, B, C, D
+    }
 
-        /// <summary>
-        /// border-right-width
-        /// </summary>
-        public double BorderRight { get; set; }
+    public enum GUIState
+    {
+        Normal,
+        Hover,
+        Active
+    }
 
-        /// <summary>
-        /// border-bottom-width
-        /// </summary>
-        public double BorderBottom { get; set; }
-
-        /// <summary>
-        /// border-left-width
-        /// </summary>
-        public double BorderLeft { get; set; }
-
-        public double BorderHorizontal { get { return (float)BorderLeft + (float)BorderRight; } }
-
-        public double BorderVertical { get { return (float)BorderTop + (float)BorderBottom; } }
-
-        /// <summary>
-        /// Color of the top
-        /// </summary>
-        public Color BorderTopColor { get; set; }
-
-        /// <summary>
-        /// Color of the right
-        /// </summary>
-        public Color BorderRightColor { get; set; }
-
-        /// <summary>
-        /// Color of the bottom
-        /// </summary>
-        public Color BorderBottomColor { get; set; }
-
-        /// <summary>
-        /// Color of the left
-        /// </summary>
-        public Color BorderLeftColor { get; set; }
-
-        #endregion
-
-        #region Outline
-        public double OutlineWidth { get; set; }
-        public Color OutlineColor { get; set; }
-        #endregion
-
-        #region Background
-
-        public BackgroundStyle BackgroundStyle { get; set; }
-
-        #endregion
-
-        #region Container Style
-
-        public double CellingSpacingHorizontal { get; set; }
-
-        public double CellingSpacingVertical { get; set; }
-
-        public Alignment AlignmentHorizontal { get; set; }
-
-        public Alignment AlignmentVertical { get; set; }
-
-        #endregion
-
-        #endregion
-
-        #region Text
-
-        public Font Font { get; set; }
-
-        public TextStyle TextStyle { get; set; }
-
-        #endregion
-
-        #region Cursor
-
-        public Cursor Cursor { get; set; }
-
-        #endregion
-
-        #region Verctor graphic styles
-        public Color LineColor { get; set; }
-        public int LineWidth { get; set; }
-        public Color FillColor { get; set; }
-        #endregion
-
-        public Dictionary<string, object> ExtraStyles;//TODO Remove the box/unbox here.
-
-        internal TextAlignment TextAlignment
+    public class GUIStyle
+    {
+        private struct NameState
         {
-            get { return TextStyle.TextAlignment; }
-            set
+            public GUIStyleName Name { get; set; }
+            public GUIState State { get; set; }
+        }
+
+        public static GUIStyle Default { get; private set; } = new GUIStyle();
+
+        const double DefaultFontSize =
+#if __ANDROID__
+                42
+#else
+                12
+#endif
+            ;
+
+        static string DefaultFontFamily => Utility.FontDir + "DroidSans.ttf";
+
+        public static implicit operator GUIStyle(string str)
+        {
+            return GUISkin.Instance.GetStyle(str);
+        }
+
+        private Dictionary<NameState, double> NumberStyles = new Dictionary<NameState, double>
+        {
+            [new NameState { Name = GUIStyleName.BorderTop,     State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderTop,     State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderTop,     State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.BorderRight,   State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderRight,   State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderRight,   State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.BorderBottom,  State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderBottom,  State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderBottom,  State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Active }] = 0,
+
+            [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingRight,  State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingRight,  State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingRight,  State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Active }] = 0,
+
+            [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Active }] = 0,
+
+            [new NameState { Name = GUIStyleName.FontSize,      State = GUIState.Normal }] = DefaultFontSize,
+            [new NameState { Name = GUIStyleName.FontSize,      State = GUIState.Hover  }] = DefaultFontSize,
+            [new NameState { Name = GUIStyleName.FontSize,      State = GUIState.Active }] = DefaultFontSize,
+
+        };
+        
+        private Dictionary<NameState, Color> ColorStyles = new Dictionary<NameState, Color>
+        {
+            [new NameState { Name = GUIStyleName.BorderTopColor,    State = GUIState.Normal    }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderTopColor,    State = GUIState.Hover     }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderTopColor,    State = GUIState.Active    }] = Color.Black,
+
+            [new NameState { Name = GUIStyleName.BorderRightColor,  State = GUIState.Normal    }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderRightColor,  State = GUIState.Hover     }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderRightColor,  State = GUIState.Active    }] = Color.Black,
+
+            [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Normal    }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Hover     }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Active    }] = Color.Black,
+
+            [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Normal    }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Hover     }] = Color.Black,
+            [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Active    }] = Color.Black,
+
+            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Normal    }] = Color.White,
+            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Hover     }] = Color.White,
+            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Active    }] = Color.White,
+
+            [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Normal    }] = Color.Black,
+            [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Hover     }] = Color.Black,
+            [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Active    }] = Color.Black,
+        };
+
+        private Dictionary<NameState, Image> ImageStyles = new Dictionary<NameState, Image>
+        {
+            [new NameState { Name = GUIStyleName.BackgroundImage,   State = GUIState.Normal    }] = null,
+            [new NameState { Name = GUIStyleName.BackgroundImage,   State = GUIState.Hover     }] = null,
+            [new NameState { Name = GUIStyleName.BackgroundImage,   State = GUIState.Active    }] = null,
+        };
+
+        // enum
+        private Dictionary<NameState, int> EnumStyles = new Dictionary<NameState, int>
+        {
+            [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Normal }] = (int)TextAlignment.Leading,
+            [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Hover  }] = (int)TextAlignment.Leading,
+            [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Active }] = (int)TextAlignment.Leading,
+
+            [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Normal }] = (int)FontWeight.Normal,
+            [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Hover  }] = (int)FontWeight.Normal,
+            [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Active }] = (int)FontWeight.Normal,
+
+            [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Normal }] = (int)Alignment.Start,
+            [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Hover  }] = (int)Alignment.Start,
+            [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Active }] = (int)Alignment.Start,
+            [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Normal }] = (int)Alignment.Start,
+            [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Hover  }] = (int)Alignment.Start,
+            [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Active }] = (int)Alignment.Start,
+        };
+
+        private Dictionary<NameState, string> StrStyles = new Dictionary<NameState, string>
+        {
+            [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
+            [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover  }] = DefaultFontFamily,
+            [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Active }] = DefaultFontFamily,
+        };
+
+        public T Get<T>(GUIStyleName styleName, GUIState state = GUIState.Normal)
+        {
+            var nameState = new NameState { Name = styleName, State = state };
+            var dict = GetDict<T>();
+            if (dict.TryGetValue(nameState, out T v))
             {
-                TextStyle = new TextStyle
-                {
-                    LineSpacing = TextStyle.LineSpacing,
-                    TextAlignment = value,
-                    TabSize = TextStyle.TabSize
-                };
+                return v;
+            }
+            return GetDefault<T>(styleName, state);
+        }
+
+        public void Set<T>(GUIStyleName styleName, T value, GUIState state = GUIState.Normal)
+        {
+            var nameState = new NameState { Name = styleName, State = state };
+            var dict = GetDict<T>();
+            if (dict.ContainsKey(nameState))
+            {
+                dict[nameState] = value;
             }
         }
 
-
-        /// <summary>
-        /// Set defalut style for all kinds of box model
-        /// </summary>
-        private Style()
+        public T GetDefault<T>(GUIStyleName styleName, GUIState state)
         {
-            PaddingTop = PaddingRight = PaddingBottom = PaddingLeft = 0;
-            BorderTop = BorderRight = BorderBottom = BorderLeft = 0;
-            BorderTopColor = Color.Black;
-            BorderRightColor = Color.Black;
-            BorderBottomColor = Color.Black;
-            BorderLeftColor = Color.Black;
-            OutlineWidth = 0;
-            OutlineColor = new Color(0, 0, 0, 0.5);
-
-            BackgroundStyle = new BackgroundStyle
-            {
-                Color = Color.White,
-                Image = null,
-            };
-
-            CellingSpacingHorizontal = 0;
-            CellingSpacingVertical = 0;
-            AlignmentHorizontal = Alignment.Start;
-            AlignmentVertical = Alignment.Start;
-
-            Font = new Font
-            {
-                FontFamily =
-#if __ANDROID__
-                "DroidSans.ttf",
-#else
-                Utility.FontDir+"DroidSans.ttf",
-#endif
-                FontStyle = FontStyle.Normal,
-                FontWeight = FontWeight.Normal,
-                FontStretch = FontStretch.Normal,
-#if __ANDROID__
-                Size = 42,
-#else
-                Size = 12,
-#endif
-                Color = Color.Black
-            };
-
-            TextStyle = new TextStyle
-            {
-                TextAlignment = TextAlignment.Center,
-                LineSpacing = 0,
-                TabSize = 4
-            };
-
-            Cursor = Cursor.Default;
-
-            LineColor = Color.Black;
-            LineWidth = 1;
-            FillColor = new Color(1,1,1);
-
-            ExtraStyles = new Dictionary<string, object>();
+            return default(T);//TODO replace with real default styles
         }
 
-        public static readonly Style Default = new Style();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Dictionary<NameState, T> GetDict<T>()
+        {
+            return NumberStyles as Dictionary<NameState, T>
+                ?? EnumStyles as Dictionary<NameState, T>
+                ?? ColorStyles as Dictionary<NameState, T>
+                ?? StrStyles as Dictionary<NameState, T>
+                ?? ImageStyles as Dictionary<NameState, T>;
+        }
 
         /// <summary>
         /// Get content's border-box size
         /// </summary>
-        internal Size CalcSize(Content content, LayoutOption[] options)
+        internal Size CalcSize(Content content, GUIState state, LayoutOption[] options)
         {
-            var size = content.GetSize(this, options);
-            size.Width += this.PaddingHorizontal + this.BorderHorizontal;
-            size.Height += this.PaddingVertical + this.BorderVertical;
+            var width = -1d;
+            var height = -1d;
+
+            // apply options
+            if (options != null)
+            {
+                foreach (var option in options)
+                {
+                    if (option.type == LayoutOption.Type.fixedWidth)
+                    {
+                        width = (double)option.value;
+                    }
+                    else if (option.type == LayoutOption.Type.fixedHeight)
+                    {
+                        height = (double)option.value;
+                    }
+                }
+            }
+
+            // text: apply font and text styles
+            if (content.Text != null)
+            {
+                var fontFamily = this.Get<string>(GUIStyleName.FontFamily, state);
+                var fontSize = this.Get<double>(GUIStyleName.FontSize, state);
+                var fontStretch = (FontStretch)this.Get<int>(GUIStyleName.FontStretch, state);
+                var fontStyle = (FontStyle)this.Get<int>(GUIStyleName.FontStyle, state);
+                var fontWeight = (FontWeight)this.Get<int>(GUIStyleName.FontWeight, state);
+                var textAlignment = (TextAlignment)this.Get<int>(GUIStyleName.TextAlignment, state);
+
+                if (width < 0 && height < 0) // auto-sized text
+                {
+                    var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, content.Text);
+                    width = actualSize.Width;
+                    height = actualSize.Height;
+                }
+                else
+                {
+                    if (width < 0) // width-auto-sized text
+                    {
+                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, content.Text);
+                        width = actualSize.Width;
+                    }
+                    else if (height < 0) // height-auto-sized text
+                    {
+                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, content.Text);
+                        height = actualSize.Height;
+                    }
+                }
+            }
+            else if (content.Image != null)//image: apply image styles
+            {
+                width = content.Image.Width;
+                height = content.Image.Height;
+            }
+
+            if (width < 0 && height < 0)
+            {
+                throw new NotImplementedException();
+            }
+            if (width < 0)
+            {
+                width = 0;
+            }
+            if (height < 0)
+            {
+                height = 0;
+            }
+            var size = new Size(Math.Ceiling(width), Math.Ceiling(height));
+
+            var paddingHorizontal = Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
+            var borderHorizontal = Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
+            var paddingVertical = Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
+            var borderVertical = Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
+            size.Width += paddingHorizontal + borderHorizontal;
+            size.Height += paddingVertical + borderVertical;
             return size;
         }
 
-        /// <summary>
-        /// get actual size of the text
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public Size GetTextActualSize(string text)
+        private static Size MeasureText(string fontFamily, double fontSize,
+            FontStretch fontStretch, FontStyle fontStyle, FontWeight fontWeight,
+            TextAlignment textAlignment,
+            string text)
         {
             Size actualSize;
-            var font = this.Font;
-            var textStyle = this.TextStyle;
+
             using (var measureContext = Application.platformContext.CreateTextContext(
                 text,
-                font.FontFamily, font.Size, font.FontStretch, font.FontStyle, font.FontWeight,
+                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                 4096, 4096,
-                textStyle.TextAlignment))
+                textAlignment))
             {
                 actualSize = measureContext.Measure();
             }
@@ -240,28 +318,76 @@ namespace ImGui
         }
 
         //TODO implement this in a overriden Equal method maybe more appropriate
-        internal static bool IsRebuildTextContextRequired(Style a, Style b)
+        internal static bool IsRebuildTextContextRequired(GUIStyle a, GUIStyle b)
         {
-            if (Utility.CurrentOS.IsAndroid)
-            {
-                return//TODO Other features hasn't been implemented by Typography yet.
+            return//TODO Other features hasn't been implemented by Typography yet.
                     // font changed
-                    a == null ||
-                    a.Font.FontFamily != b.Font.FontFamily
-                    || a.Font.Size != b.Font.Size;
-            }
-            return
-                // font changed
-                a.Font.FontFamily != b.Font.FontFamily
-                || a.Font.Size != b.Font.Size
-                || a.Font.FontStretch != b.Font.FontStretch
-                || a.Font.FontStyle != b.Font.FontStyle
-                || a.Font.FontWeight != b.Font.FontWeight
-                // Text styles changed
-                || a.TextStyle.TextAlignment != b.TextStyle.TextAlignment
-                || !MathEx.AmostEqual(a.TextStyle.LineSpacing, b.TextStyle.LineSpacing)
-                || a.TextStyle.TabSize != b.TextStyle.TabSize
-                ;
+                a == null ||
+                a.Get<string>(GUIStyleName.FontFamily) != b.Get<string>(GUIStyleName.FontFamily)
+                || a.Get<double>(GUIStyleName.FontSize) != b.Get<double>(GUIStyleName.FontSize);
+            //return
+            //    // font changed
+            //    a.Font.FontFamily != b.Font.FontFamily
+            //    || a.Font.Size != b.Font.Size
+            //    || a.Font.FontStretch != b.Font.FontStretch
+            //    || a.Font.FontStyle != b.Font.FontStyle
+            //    || a.Font.FontWeight != b.Font.FontWeight
+            //    // Text styles changed
+            //    || a.TextStyle.TextAlignment != b.TextStyle.TextAlignment
+            //    || !MathEx.AmostEqual(a.TextStyle.LineSpacing, b.TextStyle.LineSpacing)
+            //    || a.TextStyle.TabSize != b.TextStyle.TabSize
+            //    ;
         }
+
+        #region common styles
+
+        public double BorderTop => Get<double>(GUIStyleName.BorderTop);
+        public double BorderRight => Get<double>(GUIStyleName.BorderRight);
+        public double BorderBottom => Get<double>(GUIStyleName.BorderBottom);
+        public double BorderLeft => Get<double>(GUIStyleName.BorderLeft);
+
+        public double PaddingTop => Get<double>(GUIStyleName.PaddingTop);
+        public double PaddingRight => Get<double>(GUIStyleName.PaddingRight);
+        public double PaddingBottom => Get<double>(GUIStyleName.PaddingBottom);
+        public double PaddingLeft => Get<double>(GUIStyleName.PaddingLeft);
+
+        public Color BorderTopColor => Get<Color>(GUIStyleName.BorderTopColor);
+        public Color BorderRightColor => Get<Color>(GUIStyleName.BorderRightColor);
+        public Color BorderBottomColor => Get<Color>(GUIStyleName.BorderBottomColor);
+        public Color BorderLeftColor => Get<Color>(GUIStyleName.BorderLeftColor);
+
+        public double PaddingHorizontal => Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
+        public double BorderHorizontal => Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
+
+        public double PaddingVertical => Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
+        public double BorderVertical => Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
+
+        public double CellingSpacingHorizontal => Get<double>(GUIStyleName.CellingSpacingHorizontal);
+        public double CellingSpacingVertical => Get<double>(GUIStyleName.CellingSpacingVertical);
+
+        public double OutlineWidth => Get<double>(GUIStyleName.OutlineWidth);
+        public Color OutlineColor => Get<Color>(GUIStyleName.OutlineColor);
+
+        public Alignment AlignmentHorizontal
+        {
+            get => (Alignment)Get<int>(GUIStyleName.AlignmentHorizontal);
+            set => Set<int>(GUIStyleName.AlignmentHorizontal, (int)value);
+        }
+        public Alignment AlignmentVertical
+        {
+            get => (Alignment)Get<int>(GUIStyleName.AlignmentVertical);
+            set => Set<int>(GUIStyleName.AlignmentVertical, (int)value);
+        }
+
+        public Color LineColor => Get<Color>(GUIStyleName.LineColor);
+        public Color FillColor => Get<Color>(GUIStyleName.FillColor);
+
+        public Color BackgroundColor => Get<Color>(GUIStyleName.BackgroundColor);
+
+        public double FontSize => Get<double>(GUIStyleName.FontSize);
+        public Color FontColor => Get<Color>(GUIStyleName.FontColor);
+
+
+        #endregion
     }
 }

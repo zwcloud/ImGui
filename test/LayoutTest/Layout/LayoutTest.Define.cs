@@ -44,19 +44,20 @@ namespace Test
         public int horizontalStretchFactor;//horizontal stretch factor
         public int verticalStretchFactor;//vertical stretch factor
 
-        internal Style style = Style.Make(
-                new[]{
-                        new StyleModifier{Name = "BorderTop", Value = Const.ItemBorderTop},
-                        new StyleModifier{Name = "BorderRight", Value = Const.ItemBorderRight},
-                        new StyleModifier{Name = "BorderBottom", Value = Const.ItemBorderBottom},
-                        new StyleModifier{Name = "BorderLeft", Value = Const.ItemBorderLeft},
+        internal GUIStyle style = new GUIStyle();
 
-                        new StyleModifier{Name = "PaddingTop", Value = Const.ItemPaddingTop},
-                        new StyleModifier{Name = "PaddingRight", Value = Const.ItemPaddingRight},
-                        new StyleModifier{Name = "PaddingBottom", Value = Const.ItemPaddingBottom},
-                        new StyleModifier{Name = "PaddingLeft", Value = Const.ItemPaddingLeft},
-                }
-            );
+        public Item()
+        {
+            style.Set<double>(GUIStyleName.BorderTop, Const.ItemBorderTop);
+            style.Set<double>(GUIStyleName.BorderRight, Const.ItemBorderRight);
+            style.Set<double>(GUIStyleName.BorderBottom, Const.ItemBorderBottom);
+            style.Set<double>(GUIStyleName.BorderLeft, Const.ItemBorderLeft);
+
+            style.Set<double>(GUIStyleName.PaddingTop, Const.ItemPaddingTop);
+            style.Set<double>(GUIStyleName.PaddingRight, Const.ItemPaddingRight);
+            style.Set<double>(GUIStyleName.PaddingBottom, Const.ItemPaddingBottom);
+            style.Set<double>(GUIStyleName.PaddingLeft, Const.ItemPaddingLeft);
+        }
 
         public bool HorizontallyStretched { get { return !IsFixedWidth && horizontalStretchFactor > 0; } }
         public bool VerticallyStretched { get { return !IsFixedHeight && verticalStretchFactor > 0; } }
@@ -64,7 +65,7 @@ namespace Test
         public bool IsFixedWidth { get { return MathEx.AmostEqual(this.minWidth, this.maxWidth); } }
         public bool IsFixedHeight { get { return MathEx.AmostEqual(this.minHeight, this.maxHeight); } }
 
-        public Item(params LayoutOption[] options)
+        public Item(params LayoutOption[] options) : this()
         {
             if (options != null)
             {
@@ -181,24 +182,25 @@ namespace Test
         public bool isClipped;
         public List<Item> entries = new List<Item>();
 
-        internal new Style style = Style.Make(
-                new[]{
-                        new StyleModifier{Name = "BorderTop", Value = Const.GroupBorderTop},
-                        new StyleModifier{Name = "BorderRight", Value = Const.GroupBorderRight},
-                        new StyleModifier{Name = "BorderBottom", Value = Const.GroupBorderBottom},
-                        new StyleModifier{Name = "BorderLeft", Value = Const.GroupBorderLeft},
+        internal new GUIStyle style = new GUIStyle();
 
-                        new StyleModifier{Name = "PaddingTop", Value = Const.GroupPaddingTop},
-                        new StyleModifier{Name = "PaddingRight", Value = Const.GroupPaddingRight},
-                        new StyleModifier{Name = "PaddingBottom", Value = Const.GroupPaddingBottom},
-                        new StyleModifier{Name = "PaddingLeft", Value = Const.GroupPaddingLeft},
+        public Group()
+        {
+            style.Set<double>(GUIStyleName.BorderTop, Const.GroupBorderTop);
+            style.Set<double>(GUIStyleName.BorderRight, Const.GroupBorderRight);
+            style.Set<double>(GUIStyleName.BorderBottom, Const.GroupBorderBottom);
+            style.Set<double>(GUIStyleName.BorderLeft, Const.GroupBorderLeft);
 
-                        new StyleModifier{Name = "CellingSpacingVertical", Value = Const.CellingSpacingVertical},
-                        new StyleModifier{Name = "CellingSpacingHorizontal", Value = Const.CellingSpacingHorizontal},
-                }
-            );
+            style.Set<double>(GUIStyleName.PaddingTop, Const.GroupPaddingTop);
+            style.Set<double>(GUIStyleName.PaddingRight, Const.GroupPaddingRight);
+            style.Set<double>(GUIStyleName.PaddingBottom, Const.GroupPaddingBottom);
+            style.Set<double>(GUIStyleName.PaddingLeft, Const.GroupPaddingLeft);
 
-        public Group(bool isVertical, params LayoutOption[] options)
+            style.Set<double>(GUIStyleName.CellingSpacingVertical, Const.CellingSpacingVertical);
+            style.Set<double>(GUIStyleName.CellingSpacingHorizontal, Const.CellingSpacingHorizontal);
+        }
+
+        public Group(bool isVertical, params LayoutOption[] options) : this()
         {
             this.isVertical = isVertical;
             base.ApplyOptions(options);
@@ -653,7 +655,7 @@ namespace Test
             }
         }
 
-        public void ShowResult()
+        public void ShowResult([System.Runtime.CompilerServices.CallerMemberName] string memberName = null)
         {
             var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
             var context = new Cairo.Context(surface);
@@ -666,7 +668,7 @@ namespace Test
                 System.IO.Directory.CreateDirectory(outputPath);
             }
 
-            string filePath = outputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + ".png";
+            string filePath = outputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
             surface.WriteToPng(filePath);
             surface.Dispose();
             context.Dispose();

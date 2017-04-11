@@ -10,7 +10,6 @@ namespace ImGui
             if (!chachedContentMap.TryGetValue(id, out content))
             {
                 content = new Content(t);
-                content.TextMesh = new TextMesh();
                 chachedContentMap.Add(id, content);
                 return content;
             }
@@ -32,7 +31,6 @@ namespace ImGui
             if (!chachedContentMap.TryGetValue(id, out content))
             {
                 content = new Content(texture);
-                content.TextMesh = new TextMesh();
                 chachedContentMap.Add(id, content);
             }
             chachedContentMap[id].Image = texture;
@@ -46,7 +44,6 @@ namespace ImGui
             {
                 var texture = GUI.CreateTexture(filePath);
                 content = new Content(texture);
-                content.TextMesh = new TextMesh();
                 chachedContentMap.Add(id, content);
             }
             return content;

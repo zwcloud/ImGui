@@ -19,11 +19,11 @@ namespace ImGui
         public bool IsFixedWidth { get { return MathEx.AmostEqual(this.minWidth, this.maxWidth); } }
         public bool IsFixedHeight { get { return MathEx.AmostEqual(this.minHeight, this.maxHeight); } }
 
-        public Style style;
+        public GUIStyle style;
 
         public LayoutGroup parent;
 
-        public LayoutEntry(Style style, params LayoutOption[] options)
+        public LayoutEntry(GUIStyle style, params LayoutOption[] options)
         {
             if (Utility.CurrentOS.IsAndroid)
             {
@@ -49,19 +49,21 @@ namespace ImGui
                 switch (option.type)
                 {
                     case LayoutOption.Type.fixedWidth:
-                        if ((double)option.value < this.style.PaddingHorizontal + this.style.BorderHorizontal)
+                    double horizontalSpace = this.style.PaddingHorizontal + this.style.BorderHorizontal;
+                    if ((double)option.value < horizontalSpace)
                         {
                             throw new InvalidOperationException(
-                                string.Format("The specified width is too small. It must bigger than the horizontal padding and border size ({0}).", this.style.PaddingHorizontal + this.style.BorderHorizontal));
+                                string.Format("The specified width is too small. It must bigger than the horizontal padding and border size ({0}).", horizontalSpace));
                         }
                         this.minWidth = this.maxWidth = (double)option.value;
                         this.horizontalStretchFactor = 0;
                         break;
                     case LayoutOption.Type.fixedHeight:
-                        if ((double)option.value < this.style.PaddingVertical + this.style.BorderVertical)
+                    double verticalSpace = this.style.PaddingVertical + this.style.BorderVertical;
+                    if ((double)option.value < verticalSpace)
                         {
                             throw new InvalidOperationException(
-                                string.Format("The specified height is too small. It must bigger than the vertical padding and border size ({0}).", this.style.PaddingVertical + this.style.BorderVertical));
+                                string.Format("The specified height is too small. It must bigger than the vertical padding and border size ({0}).", verticalSpace));
                         }
                         this.minHeight = this.maxHeight = (double)option.value;
                         this.verticalStretchFactor = 0;
