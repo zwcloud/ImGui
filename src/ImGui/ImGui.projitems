@@ -192,7 +192,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\List.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\PlatformContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\MathEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Point.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input.cs" />

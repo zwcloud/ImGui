@@ -1,24 +1,15 @@
-﻿namespace ImGui
+﻿//#define DrawPaddingBox
+//#define DrawContentBox
+namespace ImGui
 {
     internal class GUIPrimitive
     {
-        internal void RenderFrame(Point p_min, Point p_max, Color fill_col, bool border, float rounding)
-        {
-            Form window = Form.current;
-            window.DrawList.AddRectFilled(p_min, p_max, fill_col, (int)rounding);
-            if (border)
-            {
-                window.DrawList.AddRect(p_min + new Vector(1, 1), p_max + new Vector(1, 1), Color.Black, rounding);
-                window.DrawList.AddRect(p_min, p_max, Color.Black, rounding);
-            }
-        }
-
         /// <summary>
         /// Draw a box model
         /// </summary>
         /// <param name="g">the Cairo context</param>
-        /// <param name="rect">the rect (of the border-box) in which to draw this box model </param>
-        /// <param name="content">content of the box mode</param>
+        /// <param name="rect">the rect (of the border-box) to draw this box model </param>
+        /// <param name="content">content of the box model</param>
         /// <param name="style">style of the box model</param>
         public static void DrawBoxModel(Rect rect, Content content, GUIStyle style, GUIState state = GUIState.Normal)
         {
@@ -158,6 +149,13 @@
 #endif
         }
 
+        /// <summary>
+        /// Draw a text content
+        /// </summary>
+        /// <param name="rect">the rect (of the text layouting box) to draw this text content</param>
+        /// <param name="content">text content</param>
+        /// <param name="style">style of the box model</param>
+        /// <param name="state">state of the style</param>
         public static void DrawText(Rect rect, Content content, GUIStyle style, GUIState state)
         {
             content.BuildText(rect, style, state);
@@ -167,6 +165,12 @@
             drawList.Append(content.TextMesh);
         }
 
+        /// <summary>
+        /// Draw an image content
+        /// </summary>
+        /// <param name="rect">the rect to draw this image content</param>
+        /// <param name="content">image content</param>
+        /// <param name="style">style of the image content (not used)</param>
         public static void DrawImage(Rect rect, Content content, GUIStyle style)
         {
             var drawList = Form.current.DrawList;
