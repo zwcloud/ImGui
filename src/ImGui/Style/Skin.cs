@@ -131,6 +131,10 @@ namespace ImGui
                 Button.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Normal);
                 //hover
                 var hoverBorderColor = Color.Rgb(122, 122, 122);
+                Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Hover);
                 Button.Set(GUIStyleName.BorderTopColor, hoverBorderColor, GUIState.Hover);
                 Button.Set(GUIStyleName.BorderRightColor, hoverBorderColor, GUIState.Hover);
                 Button.Set(GUIStyleName.BorderBottomColor, hoverBorderColor, GUIState.Hover);
@@ -142,6 +146,10 @@ namespace ImGui
                 Button.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Hover);
                 //active
                 var activeBgColor = Color.Rgb(153, 153, 153);
+                Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Active);
+                Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Active);
+                Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Active);
+                Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.BorderTopColor, hoverBorderColor, GUIState.Active);
                 Button.Set(GUIStyleName.BorderRightColor, hoverBorderColor, GUIState.Active);
                 Button.Set(GUIStyleName.BorderBottomColor, hoverBorderColor, GUIState.Active);
