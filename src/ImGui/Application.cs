@@ -131,8 +131,6 @@ namespace ImGui
                 }
                 detlaTime = Time - frameStartTime;
             }
-
-            //TODO clean up
         }
 
         public static void Init(Form mainForm)

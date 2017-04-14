@@ -316,8 +316,7 @@ namespace ImGui
             }
             return actualSize;
         }
-
-        //TODO implement this in a overriden Equal method maybe more appropriate
+        
         internal static bool IsRebuildTextContextRequired(GUIStyle a, GUIStyle b)
         {
             return//TODO Other features hasn't been implemented by Typography yet.

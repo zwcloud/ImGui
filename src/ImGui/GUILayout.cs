@@ -464,12 +464,12 @@ namespace ImGui
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>The value set by the user.</returns>
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
-        public static double Slider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)//TODO How to auto-gen name?
+        public static double Slider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)
         {
             return DoSlider(size, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], true, id, options);
         }
 
-        internal static double Slider(Size size, double value, double minValue, double maxValue, GUIStyle style, string id, params LayoutOption[] options)//TODO How to auto-gen name?
+        internal static double Slider(Size size, double value, double minValue, double maxValue, GUIStyle style, string id, params LayoutOption[] options)
         {
             return DoSlider(size, value, minValue, maxValue, style, true, id, options);
         }
@@ -485,12 +485,12 @@ namespace ImGui
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>The value set by the user.</returns>
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
-        public static double VSlider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)//TODO How to auto-gen name?
+        public static double VSlider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)
         {
             return DoSlider(size, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], false, id, options);
         }
 
-        internal static double VSlider(Size size, double value, double minValue, double maxValue, GUIStyle style, string id, params LayoutOption[] options)//TODO How to auto-gen name?
+        internal static double VSlider(Size size, double value, double minValue, double maxValue, GUIStyle style, string id, params LayoutOption[] options)
         {
             return DoSlider(size, value, minValue, maxValue, style, false, id, options);
         }

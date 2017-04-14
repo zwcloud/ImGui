@@ -73,7 +73,7 @@ namespace ImGui
             // 1. rect size changed
             // 2. style changed that make the text different looking
             // 3. the content is dirty
-            bool rebuiltNeeded = Dirty || this.rect != rect// TODO If rect size isn't changed, there is no need to rebuild the text mesh from glyphs-offset the mesh is enough.
+            bool rebuiltNeeded = Dirty || this.rect != rect// TODO If rect size isn't changed, there is no need to rebuild the text mesh from glyphs. Offset the mesh is enough.
                 || GUIStyle.IsRebuildTextContextRequired(this.style, style);
             if (!rebuiltNeeded)
             {
