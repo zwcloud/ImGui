@@ -153,6 +153,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Typeface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUILayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\InputState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Style\Alignment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Color.cs" />
@@ -183,8 +184,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Form.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FormState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIPrimitive.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GUIState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)InputState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutGroup.cs" />
