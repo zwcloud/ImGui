@@ -156,7 +156,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\InputState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Style\Alignment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Application.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Color.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Color.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content.Cached.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Control\Box.cs" />
@@ -179,8 +179,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)DrawList\DrawVertex.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DrawList\PointF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DrawList\TextMesh.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Enums.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Error.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Cursor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Error.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Form.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FormState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIPrimitive.cs" />
@@ -194,7 +194,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)PlatformAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MathEx.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Point.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Point.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Input\IInputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Keyboard.cs" />
@@ -230,23 +230,24 @@
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Android\AndroidWindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32Window.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Proxy\Windows\Win32WindowContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Rect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Rect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\DefaultLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\ILogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\Log.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Size.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Size.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StateMachine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StateMachineEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Style\Skin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Style\Style.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Vector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Vector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Common\Primitive\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
   </ItemGroup>
