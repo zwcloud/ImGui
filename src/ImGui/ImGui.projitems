@@ -243,12 +243,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Vector.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)3rd\GLM\readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)3rd\LibTessDotNet\ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Common\Primitive\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Android\" />
     <Folder Include="$(MSBuildThisFileDirectory)Proxy\Windows\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)3rd\Ivony.Logs\LICENSE.txt" />
+    <Content Include="$(MSBuildThisFileDirectory)3rd\Tree2\License.htm" />
+    <Content Include="$(MSBuildThisFileDirectory)3rd\Typography\ReadMe.md" />
   </ItemGroup>
 </Project>
