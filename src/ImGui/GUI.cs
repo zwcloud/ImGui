@@ -241,24 +241,24 @@ namespace ImGui
         /// <param name="rect">position and size of the control</param>
         /// <param name="filePath">file path of the image to display. The path should be relative to current dir or absolute.</param>
         /// <param name="id">the unique id of this control</param>
-        public static void Image(Rect rect, string filePath, string id)
+        public static void Image(Rect rect, string filePath, GUIStyle style, string id)
         {
-            DoImage(rect, Content.CachedTexture(filePath, id), id);
+            DoImage(rect, Content.CachedTexture(filePath, id), style, id);
         }
 
-        internal static void Image(Rect rect, ITexture image, string id)
+        internal static void Image(Rect rect, ITexture image, GUIStyle style, string id)
         {
-            DoImage(rect, Content.Cached(image, id), id);
+            DoImage(rect, Content.Cached(image, id), style, id);
         }
 
-        internal static void Image(Rect rect, Content imageContent, string id)
+        internal static void Image(Rect rect, Content imageContent, GUIStyle style, string id)
         {
-            DoImage(rect, imageContent, id);
+            DoImage(rect, imageContent, style, id);
         }
 
-        private static void DoImage(Rect rect, Content content, string id)
+        private static void DoImage(Rect rect, Content content, GUIStyle style, string id)
         {
-            ImGui.Image.DoControl(rect, content, id);
+            ImGui.Image.DoControl(rect, content, style, id);
         }
 
         #endregion

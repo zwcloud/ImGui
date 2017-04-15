@@ -641,6 +641,11 @@ namespace ImGui
             Image(Content.Cached(texture, id), GUISkin.Instance[GUIControlName.Image], id, options);
         }
 
+        internal static void Image(ITexture texture, GUIStyle style, string id, params LayoutOption[] options)
+        {
+            Image(Content.Cached(texture, id), style, id, options);
+        }
+
         internal static void Image(Content content, string id, params LayoutOption[] options)
         {
             Image(content, GUISkin.Instance[GUIControlName.Image], id, options);
@@ -659,7 +664,7 @@ namespace ImGui
                 contentSize = style.CalcSize(content, GUIState.Normal, options);
             }
             var rect = LayoutUtility.GetRect(contentSize, style, options);
-            GUI.Image(rect, content, id);
+            GUI.Image(rect, content, style, id);
         }
 
         #endregion

@@ -9,11 +9,12 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ImageSharp" Version="1.0.0-alpha1-00099" />
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha5-00071" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
   <Import Project="..\..\src\ImGui\ImGui.projitems" Label="Shared" />

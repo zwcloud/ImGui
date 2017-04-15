@@ -15,11 +15,15 @@ namespace ImGui
         BorderRight,
         BorderBottom,
         BorderLeft,
-
         BorderTopColor,
         BorderRightColor,
         BorderBottomColor,
         BorderLeftColor,
+        BorderImageSource,
+        BorderImageSliceTop,  
+        BorderImageSliceRight,
+        BorderImageSliceBottom,
+        BorderImageSliceLeft,
 
         OutlineWidth,
         OutlineColor,
@@ -96,6 +100,18 @@ namespace ImGui
             [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Normal }] = 0,
             [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Hover  }] = 0,
             [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceTop,     State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceTop,     State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceTop,     State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceRight,   State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceRight,   State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceRight,   State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceBottom,  State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceBottom,  State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceBottom,  State = GUIState.Active }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceLeft,    State = GUIState.Normal }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceLeft,    State = GUIState.Hover  }] = 0,
+            [new NameState { Name = GUIStyleName.BorderImageSliceLeft,    State = GUIState.Active }] = 0,
 
             [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Normal }] = 0,
             [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Hover  }] = 0,
@@ -147,11 +163,16 @@ namespace ImGui
             [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Active    }] = Color.Black,
         };
 
-        private Dictionary<NameState, Image> ImageStyles = new Dictionary<NameState, Image>
+        private Dictionary<NameState, ITexture> ImageStyles = new Dictionary<NameState, ITexture>
         {
-            [new NameState { Name = GUIStyleName.BackgroundImage,   State = GUIState.Normal    }] = null,
-            [new NameState { Name = GUIStyleName.BackgroundImage,   State = GUIState.Hover     }] = null,
-            [new NameState { Name = GUIStyleName.BackgroundImage,   State = GUIState.Active    }] = null,
+            [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
+            [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Hover  }] = null,
+            [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Active }] = null,
+
+            [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Normal }] = null,
+            [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Hover  }] = null,
+            [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Active }] = null,
+
         };
 
         // enum
@@ -340,10 +361,10 @@ namespace ImGui
 
         #region common styles
 
-        public double BorderTop => Get<double>(GUIStyleName.BorderTop);
-        public double BorderRight => Get<double>(GUIStyleName.BorderRight);
+        public double BorderTop    => Get<double>(GUIStyleName.BorderTop);
+        public double BorderRight  => Get<double>(GUIStyleName.BorderRight);
         public double BorderBottom => Get<double>(GUIStyleName.BorderBottom);
-        public double BorderLeft => Get<double>(GUIStyleName.BorderLeft);
+        public double BorderLeft   => Get<double>(GUIStyleName.BorderLeft);
 
         public double PaddingTop => Get<double>(GUIStyleName.PaddingTop);
         public double PaddingRight => Get<double>(GUIStyleName.PaddingRight);
@@ -357,6 +378,29 @@ namespace ImGui
 
         public double PaddingHorizontal => Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
         public double BorderHorizontal => Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
+
+        public ITexture BorderImageSource => Get<ITexture>(GUIStyleName.BorderImageSource);
+
+        public (double, double, double, double) BorderImageSlice
+        {
+            get
+            {
+                var top =    Get<double>(GUIStyleName.BorderImageSliceTop);
+                var right =  Get<double>(GUIStyleName.BorderImageSliceRight);
+                var bottom = Get<double>(GUIStyleName.BorderImageSliceBottom);
+                var left =   Get<double>(GUIStyleName.BorderImageSliceLeft);
+                return (top, right, bottom, left);
+            }
+
+            set
+            {
+                var (top, right, bottom, left) = value;
+                Set<double>(GUIStyleName.BorderImageSliceTop, top);
+                Set<double>(GUIStyleName.BorderImageSliceRight, right);
+                Set<double>(GUIStyleName.BorderImageSliceBottom, bottom);
+                Set<double>(GUIStyleName.BorderImageSliceLeft, left);
+            }
+        }
 
         public double PaddingVertical => Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
         public double BorderVertical => Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);

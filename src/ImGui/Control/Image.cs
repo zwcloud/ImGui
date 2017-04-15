@@ -2,11 +2,11 @@
 {
     internal class Image
     {
-        internal static void DoControl(Rect rect, Content content, string id)
+        internal static void DoControl(Rect rect, Content content, GUIStyle style, string id)
         {
             if (Event.current.type == EventType.Repaint)
             {
-                GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Image]);
+                GUIPrimitive.DrawBoxModel(rect, content, style);
             }
         }
         

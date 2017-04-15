@@ -80,6 +80,7 @@
     <AndroidResource Include="Resources\drawable\Icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
     </None>

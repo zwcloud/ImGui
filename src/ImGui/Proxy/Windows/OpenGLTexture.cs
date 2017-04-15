@@ -26,16 +26,9 @@ namespace ImGui
         public bool LoadImage(string filePath)
         {
             // check file header, save texture data to buffer
-            using (var fileStream = File.Open(filePath, FileMode.Open))
-            using (var binaryReader = new BinaryReader(fileStream))
+            using (FileStream stream = File.OpenRead(filePath))
             {
-                var headEightBytes = binaryReader.ReadBytes(8);
-                var isPngFile = headEightBytes.SequenceEqual(PngHeaderEightBytes);
-                if (!isPngFile)
-                {
-                    throw new NotSupportedException("Only PNG format is supported.");
-                }
-                image = new ImageSharp.Image(fileStream);
+                image = ImageSharp.Image.Load(stream);
                 textureData = image.Pixels;
             }
 
@@ -119,7 +112,7 @@ namespace ImGui
             return (int)textureIdBuffer[0];
         }
 
-        #region Implementation of IDisposable
+#region Implementation of IDisposable
 
         public void Dispose()
         {
@@ -127,6 +120,6 @@ namespace ImGui
             Utility.CheckGLError();
         }
 
-        #endregion
+#endregion
     }
 }
