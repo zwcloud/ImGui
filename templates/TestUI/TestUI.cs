@@ -9,22 +9,18 @@ public class TestUI
     bool toggleOn = false;
     bool a = false;
     string active_id;
+    double widthScale = 0.5f;
+    double heightScale = 0.5f;
+    ITexture image;
 
     public void OnGUI()
     {
-#if false
-        if (GUILayout.Button("Button", "Button"))
+        if(image == null)
         {
-            a ^= true;
-            Event.current.type = EventType.Layout;
+            image = GUI.CreateTexture("Image/trees.jpg");
         }
-        if (a)
-        {
-            GUILayout.Label("Thanks for clicking me!", "ThanksForClickingMe");
-        }
-#else
-        GUILayout.BeginVertical("Box", GUILayout.ExpandHeight(true));
-        if (widgetsOn = GUILayout.ToggleButton("Widgets", widgetsOn, "Widgets"))
+
+        if (widgetsOn = GUILayout.CollapsingHeader("Widgets", "Widgets", widgetsOn))
         {
             GUILayout.BeginHorizontal();
             {
@@ -55,15 +51,25 @@ public class TestUI
                     }
                     GUILayout.EndHorizontal();
 
-
+                    widthScale = GUILayout.Slider("Width Scale", widthScale, 0, 1.0, "SliderA");
+                    GUILayout.BeginHorizontal();
+                    {
+                        heightScale = GUILayout.VSlider("Height Scale", heightScale, 0, 1.0, "SliderB", GUILayout.ExpandWidth(false), GUILayout.Height(image.Height));
+                        var rect = GUILayout.GetRect(new Size(image.Width, image.Height), "Image");
+                        if(Event.current.type != EventType.Layout)
+                        {
+                            rect.Width = image.Width * widthScale;
+                            rect.Height = image.Height * heightScale;
+                        }
+                        GUI.Image(rect, image, "Image0");
+                    }
+                    GUILayout.EndHorizontal();
                 }
 
                 GUILayout.EndVertical();
             }
             GUILayout.EndHorizontal();
         }
-        GUILayout.EndVertical();
-#endif
 
     }
 }

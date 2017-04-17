@@ -31,6 +31,11 @@ namespace ImGui
         int Height { get; }
 
         /// <summary>
+        /// Size of the texture. (Read Only)
+        /// </summary>
+        Size Size { get; }
+
+        /// <summary>
         /// Filtering mode of the texture.
         /// </summary>
         FilterMode FilterMode { get; set; }

@@ -71,6 +71,8 @@ namespace ImGui
             }
         }
 
+        public Size Size => new Size(Width, Height);
+
         /// <summary>
         /// Filtering mode of the texture.
         /// </summary>

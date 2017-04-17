@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "UniversalAppTemplate": {
+      "commandName": "Project",
+      "workingDirectory": "bin\\Debug\\netcoreapp1.1\\"
+    }
+  }
+}

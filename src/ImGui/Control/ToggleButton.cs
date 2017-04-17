@@ -27,18 +27,25 @@
             }
 
             // ui representation
-            var state = GUI.Normal;
-            if (hovered)
+            GUIState state = GUI.Normal;
+            if(result)
             {
-                state = GUI.Hover;
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
+                state = GUI.Active;
+                if (hovered && Input.Mouse.LeftButtonState == InputState.Up)
+                {
+                    state = GUI.Hover;
+                }
+            }
+            else
+            {
+                if (hovered)
+                {
+                    state = GUI.Hover;
+                }
+                if (Input.Mouse.LeftButtonState == InputState.Down)
                 {
                     state = GUI.Active;
                 }
-            }
-            if (result)
-            {
-                state = GUI.Active;
             }
 
             // ui painting

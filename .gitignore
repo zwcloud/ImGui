@@ -4,3 +4,5 @@ obj
 *.user
 project.lock.json
 packages
+/templates/TestUI/Image
+/templates/TestUI/Font

@@ -50,8 +50,8 @@ namespace ImGui
 
         LineColor,
         FillColor,
-
-        A, B, C, D
+        
+        _FieldWidth,
     }
 
     public enum GUIState
@@ -79,7 +79,12 @@ namespace ImGui
 #endif
             ;
 
-        static string DefaultFontFamily => Utility.FontDir + "DroidSans.ttf";
+        static string DefaultFontFamily => Utility.FontDir +
+#if __ANDROID__
+            "DroidSans.ttf";
+#else
+            "msjh.ttf";
+#endif
 
         public static implicit operator GUIStyle(string str)
         {
@@ -126,6 +131,13 @@ namespace ImGui
             [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Hover  }] = 0,
             [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Active }] = 0,
 
+            [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Normal }] = 8,
+            [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Hover  }] = 8,
+            [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Active }] = 8,
+            [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Normal }] = 4,
+            [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Hover  }] = 4,
+            [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Active }] = 4,
+
             [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Normal }] = 0,
             [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Hover  }] = 0,
             [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Active }] = 0,
@@ -154,9 +166,9 @@ namespace ImGui
             [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Hover     }] = Color.Black,
             [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Active    }] = Color.Black,
 
-            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Normal    }] = Color.White,
-            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Hover     }] = Color.White,
-            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Active    }] = Color.White,
+            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Normal    }] = Color.Clear,
+            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Hover     }] = Color.Clear,
+            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Active    }] = Color.Clear,
 
             [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Normal    }] = Color.Black,
             [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Hover     }] = Color.Black,
@@ -216,10 +228,7 @@ namespace ImGui
         {
             var nameState = new NameState { Name = styleName, State = state };
             var dict = GetDict<T>();
-            if (dict.ContainsKey(nameState))
-            {
-                dict[nameState] = value;
-            }
+            dict[nameState] = value;
         }
 
         public T GetDefault<T>(GUIStyleName styleName, GUIState state)
@@ -359,7 +368,7 @@ namespace ImGui
             //    ;
         }
 
-        #region common styles
+#region common styles
 
         public double BorderTop    => Get<double>(GUIStyleName.BorderTop);
         public double BorderRight  => Get<double>(GUIStyleName.BorderRight);
@@ -431,6 +440,6 @@ namespace ImGui
         public Color FontColor => Get<Color>(GUIStyleName.FontColor);
 
 
-        #endregion
+#endregion
     }
 }

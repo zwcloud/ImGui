@@ -29,6 +29,28 @@ namespace ImGui
             return DoGetRect(contentSize, style, options);
         }
 
+        internal static Rect GetLastRect()
+        {
+            EventType type = Event.current.type;
+            Rect last;
+            if (type != EventType.Layout)
+            {
+                if (type != EventType.Used)
+                {
+                    last = current.topGroup.GetLast();
+                }
+                else
+                {
+                    last = Rect.Empty;
+                }
+            }
+            else
+            {
+                last = Rect.Empty;
+            }
+            return last;
+        }
+
         internal static LayoutCache current
         {
             get { return Form.current.LayoutCache;}

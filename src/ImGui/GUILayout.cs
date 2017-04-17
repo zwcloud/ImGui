@@ -10,6 +10,8 @@ namespace ImGui
     {
         #region container
 
+        #region basic
+
         /// <summary>
         /// Begin a horizontal layout group.
         /// </summary>
@@ -70,6 +72,13 @@ namespace ImGui
         public static void EndVertical()
         {
             LayoutUtility.EndLayoutGroup();
+        }
+
+        #endregion
+
+        public static bool CollapsingHeader(string text, string id, bool open)
+        {
+            return ToggleButton((open ? "▼" : "▶") + text, open);
         }
 
         #endregion
@@ -145,6 +154,8 @@ namespace ImGui
         #endregion
 
         #region controls
+
+        #region basic controls
 
         #region Space
 
@@ -636,7 +647,7 @@ namespace ImGui
             Image(Content.CachedTexture(imageFilePath, id), GUISkin.Instance[GUIControlName.Image], id, options);
         }
 
-        internal static void Image(ITexture texture, string id, params LayoutOption[] options)
+        public static void Image(ITexture texture, string id, params LayoutOption[] options)
         {
             Image(Content.Cached(texture, id), GUISkin.Instance[GUIControlName.Image], id, options);
         }
@@ -658,17 +669,77 @@ namespace ImGui
 
         private static void DoImage(Content content, GUIStyle style, string id, params LayoutOption[] options)
         {
-            Size contentSize = Size.Zero;
-            if (Event.current.type == EventType.Layout)
-            {
-                contentSize = style.CalcSize(content, GUIState.Normal, options);
-            }
-            var rect = LayoutUtility.GetRect(contentSize, style, options);
+            Size contentSize = style.CalcSize(content, GUIState.Normal, options);
+            var rect = LayoutUtility.GetRect(contentSize, style,
+                new[] { GUILayout.Width(contentSize.Width), GUILayout.Height(contentSize.Height) });
             GUI.Image(rect, content, style, id);
         }
 
         #endregion
 
         #endregion
+
+        #region combined controls
+
+        public static double Slider(string label, double value, double min, double max, string id)
+        {
+            return Slider(Content.Cached(label, id), value, min, max, GUISkin.Instance[GUIControlName.Slider], id);
+        }
+
+        internal static double Slider(Content content, double value, double min, double max, string id)
+        {
+            return Slider(content, value, min, max, GUISkin.Instance[GUIControlName.Slider], id);
+        }
+
+        internal static double Slider(Content content, double value, double min, double max, GUIStyle style, string id)
+        {
+            GUILayout.BeginHorizontal();
+            {
+                Size textSize = style.CalcSize(content, GUIState.Normal, null);
+                GUILayout.Label(content, style, "SliderLabel" + id, GUILayout.Width(textSize.Width));
+                var labelRect = GUILayout.GetLastRect();
+                Rect rect;
+                rect = LayoutUtility.GetRect(textSize, style, new[] { GUILayout.ExpandWidth(true)});
+                value = GUI.Slider(rect, value, min, max, "Slider" + id);
+            }
+            GUILayout.EndHorizontal();
+            return value;
+        }
+
+        public static double VSlider(string label, double value, double min, double max, string id, params LayoutOption[] options)
+        {
+            return VSlider(Content.Cached(label, id), value, min, max, GUISkin.Instance[GUIControlName.Slider], id, options);
+        }
+
+        internal static double VSlider(Content content, double value, double min, double max, string id, params LayoutOption[] options)
+        {
+            return VSlider(content, value, min, max, GUISkin.Instance[GUIControlName.Slider], id, options);
+        }
+
+        internal static double VSlider(Content content, double value, double min, double max, GUIStyle style, string id, params LayoutOption[] options)
+        {
+            GUILayout.BeginVertical(options);
+            {
+                Size textSize = style.CalcSize(content, GUIState.Normal, null);
+                GUILayout.Label(content, style, "VSliderLabel" + id, GUILayout.Height(textSize.Height), GUILayout.Width(textSize.Width));
+                value = GUILayout.VSlider(new Size(textSize.Width, textSize.Height), value, min, max, "VSlider" + id, GUILayout.Width(30), GUILayout.ExpandHeight(true));
+            }
+            GUILayout.EndVertical();
+            return value;
+        }
+        #endregion
+
+        #endregion
+
+        public static Rect GetRect(Size size, GUIStyle style, params LayoutOption[] options)
+        {
+            return LayoutUtility.GetRect(size, style, options);
+        }
+
+        public static Rect GetLastRect()
+        {
+            return LayoutUtility.GetLastRect();
+        }
+
     }
 }

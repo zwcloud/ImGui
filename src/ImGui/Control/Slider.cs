@@ -138,7 +138,7 @@
                 }
                 g.PathFill(fillColor);
 
-                GUIPrimitive.DrawBoxModel(rect, null, GUISkin.Instance[GUIControlName.Slider]);
+                //GUIPrimitive.DrawBoxModel(rect, null, GUISkin.Instance[GUIControlName.Slider]);
             }
 
             return value;

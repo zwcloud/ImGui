@@ -98,7 +98,7 @@ namespace Typography.Rendering
             glyphLayout.GenerateGlyphPlans(textBuffer, 0, textBuffer.Length, outputGlyphPlans, null);
 
             // render each glyph
-            var scale = CurrentTypeFace.CalculateFromPointToPixelScale(sizeInPoints);
+            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(sizeInPoints);
             pathTranslator.PathBuilder = g;
             for (var i = 0; i < outputGlyphPlans.Count; ++i)
             {
@@ -112,7 +112,7 @@ namespace Typography.Rendering
         public Size Measure(char[] textBuffer, int startAt, int len)
         {
             glyphLayout.Typeface = this.CurrentTypeFace;
-            var scale = CurrentTypeFace.CalculateFromPointToPixelScale(this.FontSizeInPoints);
+            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSizeInPoints);
             MeasuredStringBox strBox;
             glyphLayout.MeasureString(textBuffer, startAt, len, out strBox, scale);
             return new Size(strBox.width, strBox.CalculateLineHeight());

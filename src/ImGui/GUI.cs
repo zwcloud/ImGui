@@ -246,7 +246,12 @@ namespace ImGui
             DoImage(rect, Content.CachedTexture(filePath, id), style, id);
         }
 
-        internal static void Image(Rect rect, ITexture image, GUIStyle style, string id)
+        public static void Image(Rect rect, ITexture image, string id)
+        {
+            DoImage(rect, Content.Cached(image, id), GUISkin.Instance[GUIControlName.Image], id);
+        }
+
+        public static void Image(Rect rect, ITexture image, GUIStyle style, string id)
         {
             DoImage(rect, Content.Cached(image, id), style, id);
         }
@@ -327,7 +332,7 @@ namespace ImGui
 
         #region Helper
 
-        internal static ITexture CreateTexture(string filePath)
+        public static ITexture CreateTexture(string filePath)
         {
             var texture = Application.platformContext.CreateTexture();
             texture.LoadImage(filePath);

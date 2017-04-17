@@ -28,7 +28,7 @@ namespace ImGui
         public static GUISkin Instance { get; private set; }
 
         static GUISkin() { Instance = new GUISkin(); }
-        
+
         public GUIStyle this[GUIControlName name]
         {
             get { return styles[name]; }
@@ -47,10 +47,18 @@ namespace ImGui
 
         private Dictionary<GUIControlName, GUIStyle> styles = new Dictionary<GUIControlName, GUIStyle>();
 
+        private GUIStyle InternalStyle;
+
         private Dictionary<string, GUIControlName> controlNames = new Dictionary<string, GUIControlName>();
 
         private GUISkin()
         {
+            InternalStyle = new GUIStyle();//internal styles
+            {
+                InternalStyle.Set<double>(GUIStyleName._FieldWidth, 100);
+            }
+
+
             GUIStyle Label      = new GUIStyle();//no modification
             GUIStyle Image      = new GUIStyle();
             GUIStyle Box        = new GUIStyle();
@@ -61,7 +69,7 @@ namespace ImGui
             GUIStyle TextBox    = new GUIStyle();
             GUIStyle Slider     = new GUIStyle();
             GUIStyle PolygonButton = new GUIStyle();
-
+            
             styles.Add(GUIControlName.Label        , Label        );
             styles.Add(GUIControlName.Image        , Image        );
             styles.Add(GUIControlName.Box          , Box          );
@@ -85,7 +93,6 @@ namespace ImGui
             controlNames.Add("PolygonButton", GUIControlName.PolygonButton);
 
             //Set default styles for each control
-
             {
                 Image.Set(GUIStyleName.BorderTop, 1.0, GUIState.Normal);
                 Image.Set(GUIStyleName.BorderRight, 1.0, GUIState.Normal);
@@ -112,8 +119,8 @@ namespace ImGui
                 Box.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Normal);
                 Box.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Normal);
                 Box.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Normal);
-                Box.Set(GUIStyleName.CellingSpacingHorizontal, 0.0, GUIState.Normal);
-                Box.Set(GUIStyleName.CellingSpacingVertical, 15.0, GUIState.Normal);
+                //Box.Set(GUIStyleName.CellingSpacingHorizontal, 0.0, GUIState.Normal);
+                //Box.Set(GUIStyleName.CellingSpacingVertical, 15.0, GUIState.Normal);
                 Box.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Normal);
             }
 
@@ -173,7 +180,11 @@ namespace ImGui
                 Slider.Set(GUIStyleName.BackgroundColor, Color.Argb(0xFFAFAFAF), GUIState.Hover);
                 Slider.Set(GUIStyleName.BackgroundColor, Color.Argb(0xFF8F8F8F), GUIState.Active);
                 Slider.Set(GUIStyleName.Slider_LineUsed, Color.DarkBlue, GUIState.Normal);
+                Slider.Set(GUIStyleName.Slider_LineUsed, Color.DarkBlue, GUIState.Hover);
+                Slider.Set(GUIStyleName.Slider_LineUsed, Color.DarkBlue, GUIState.Active);
                 Slider.Set(GUIStyleName.Slider_LineUnused, Color.Black, GUIState.Normal);
+                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Black, GUIState.Hover);
+                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Black, GUIState.Active);
             }
 
             {

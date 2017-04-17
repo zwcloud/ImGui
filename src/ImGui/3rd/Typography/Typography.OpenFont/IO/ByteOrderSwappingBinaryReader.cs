@@ -66,11 +66,13 @@ namespace Typography.OpenFont.IO
         public override uint ReadUInt32() { return SwapBytes(base.ReadUInt32()); }
         public override ulong ReadUInt64() { return SwapBytes(base.ReadUInt64()); }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            Dispose(true);
+
             GC.SuppressFinalize(this);
+            base.Dispose(disposing);
         }
-         
+
+
     }
 }

@@ -91,7 +91,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.GlyphLayout\UserCharToGlyphIndexMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Bounds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\CharacterMap.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\FontCollection\InstalledFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Geometry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Glyph.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\IGlyphTranslator.cs" />

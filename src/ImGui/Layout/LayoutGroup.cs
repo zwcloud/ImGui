@@ -30,6 +30,27 @@ namespace ImGui
             throw new InvalidOperationException();
         }
 
+        public Rect GetLast()
+        {
+            Rect result;
+            if (this.cursor == 0)
+            {
+                Log.Error("No last rect available.");
+                result = Rect.Empty;
+            }
+            else if (this.cursor <= this.entries.Count)
+            {
+                LayoutEntry gUILayoutEntry = this.entries[this.cursor - 1];
+                result = gUILayoutEntry.rect;
+            }
+            else
+            {
+                Log.Error("No last rect available.");// this rarely happens
+                result = Rect.Empty;
+            }
+            return result;
+        }
+
         public void ResetCursor()
         {
             this.cursor = 0;
