@@ -98,21 +98,6 @@ namespace ImGui
             Application.windowContext.HideWindow(this);
         }
 
-        public void Maximize()
-        {
-            Application.windowContext.MaximizeWindow(this);
-        }
-
-        public void Minimize()
-        {
-            Application.windowContext.MinimizeWindow(this);
-        }
-
-        public void Normalize()
-        {
-            Application.windowContext.NormalizeWindow(this);
-        }
-
         public void Show()
         {
             Application.windowContext.ShowWindow(this);

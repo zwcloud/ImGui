@@ -79,12 +79,6 @@ namespace ImGui
             InitGUI();
         }
 
-        internal FormState FormState
-        {
-            get { return formState; }
-            set { formState = value; }
-        }
-        
         internal LayoutCache LayoutCache
         {
             get { return layoutCache; }
@@ -149,25 +143,6 @@ namespace ImGui
             this.renderer.ShutDown();
             window.Close();
             this.Closed = true;
-        }
-
-        internal void Minimize()
-        {
-            Event.current.type = EventType.MinimizeWindow;
-        }
-
-        internal void Maximize()
-        {
-            Event.current.type = EventType.MaximizeWindow;
-        }
-
-        internal void Normalize()
-        {
-            Event.current.type = EventType.NormalizeWindow;
-
-#if implementation
-            var originalWindowRect = new Rect(window.NormalPosition, window.NormalSize);
-#endif
         }
 
         #endregion
@@ -287,30 +262,6 @@ namespace ImGui
                         //Event.current.type = EventType.Used;
                     }
                     break;
-                case EventType.MaximizeWindow:
-                    {
-                        window.Maximize();
-                        FormState = FormState.Maximized;
-
-                        Event.current.type = EventType.Layout;
-                    }
-                    break;
-                case EventType.MinimizeWindow:
-                    BeginGUI(true);
-                    OnGUI();
-                    EndGUI();
-                    window.Minimize();
-                    FormState = FormState.Minimized;
-                    Event.current.type = EventType.Used;
-                    break;
-                case EventType.NormalizeWindow:
-                    {
-                        window.Normalize();
-                        FormState = FormState.Normal;
-
-                        Event.current.type = EventType.Layout;
-                    }
-                    break;
                 default:
                     BeginGUI(true);
                     OnGUI();
@@ -331,8 +282,6 @@ namespace ImGui
             this.renderer.RenderDrawList(this.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
             this.renderer.SwapBuffers();
         }
-
-        private FormState formState = FormState.Normal;
 
         /// <summary>
         /// Call this to initialize GUI

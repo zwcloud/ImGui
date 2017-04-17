@@ -181,7 +181,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\Cursor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Error.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Form.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FormState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIPrimitive.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutCache.cs" />

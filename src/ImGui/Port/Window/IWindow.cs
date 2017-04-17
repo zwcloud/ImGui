@@ -58,21 +58,6 @@ namespace ImGui
         void Close();
 
         /// <summary>
-        /// Minimize the window
-        /// </summary>
-        void Minimize();
-
-        /// <summary>
-        /// Maximize the window
-        /// </summary>
-        void Maximize();
-
-        /// <summary>
-        /// Normalize the window
-        /// </summary>
-        void Normalize();
-
-        /// <summary>
         /// Convert the screen coordinates of a specified point on the screen to client-area (window) coordinates
         /// </summary>
         Point ScreenToClient(Point point);

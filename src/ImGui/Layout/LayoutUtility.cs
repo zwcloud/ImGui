@@ -9,10 +9,6 @@ namespace ImGui
         Layout,
         Repaint,
         Used,
-
-        MaximizeWindow,
-        MinimizeWindow,
-        NormalizeWindow,
     }
 
     public class Event
