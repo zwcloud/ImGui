@@ -1,10 +1,17 @@
 ﻿namespace ImGui
 {
-    internal class UIState
+    internal class GUIContext
     {
         public const string None = "None";
         public const string Unavailable = "Unavailable";
-        
+
+        public bool LogEnabled = true;
+
+        // fps
+        public long lastFPSUpdateTime;
+        public int fps;
+        public int elapsedFrameCount = 0;
+
         private string hoverId;
         private string activeId;
         private bool activeIdIsAlive;

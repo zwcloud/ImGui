@@ -7,7 +7,7 @@
             var hovered = rect.Contains(Form.current.GetMousePos());
             
             //control logic
-            var uiState = Form.current.uiState;
+            var uiState = Form.current.uiContext;
             uiState.KeepAliveId(id);
             if (hovered)
             {
@@ -44,7 +44,7 @@
                 }
                 else//end track
                 {
-                    uiState.SetActiveId(UIState.None);
+                    uiState.SetActiveId(GUIContext.None);
                 }
             }
 

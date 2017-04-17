@@ -12,7 +12,7 @@ namespace ImGui
             textRect.Offset(rect.X, rect.Y);
 
             //control logic
-            var uiState = Form.current.uiState;
+            var uiState = Form.current.uiContext;
             uiState.KeepAliveId(id);
             if (hovered)
             {
@@ -26,7 +26,7 @@ namespace ImGui
                 if (Input.Mouse.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    uiState.SetActiveId(UIState.None);
+                    uiState.SetActiveId(GUIContext.None);
                 }
             }
 

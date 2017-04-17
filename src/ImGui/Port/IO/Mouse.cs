@@ -50,6 +50,11 @@
         /// </summary>
         public bool LeftButtonPressed { get; internal set; } = false;
 
+        public int LeftButtonPressedTimes = 0;
+        public int RightButtonPressedTimes = 0;
+        public int LeftButtonReleasedTimes = 0;
+        public int RightButtonReleasedTimes = 0;
+
         #endregion
 
         #region Right button

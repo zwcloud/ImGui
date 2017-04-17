@@ -5,8 +5,8 @@
         private static Mouse mouse;
         private static Keyboard keyboard;
 
-        public static Mouse Mouse { get => mouse; }
-        public static Keyboard Keyboard { get => keyboard; }
+        public static Mouse Mouse => mouse;
+        public static Keyboard Keyboard => keyboard;
 
         static Input()
         {

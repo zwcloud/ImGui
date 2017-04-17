@@ -229,12 +229,14 @@ namespace ImGui
 
         private static bool DoButton(Content content, GUIStyle style, string name, params LayoutOption[] options)
         {
-            Size contentSize = Size.Zero;
-            if (Event.current.type == EventType.Layout)
-            {
-                contentSize = style.CalcSize(content, GUIState.Normal, options);
-            }
-            var rect = LayoutUtility.GetRect(contentSize, style, options);
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+
+            Point pos = form.drawContext.CurrentPos;
+            Size contentSize = style.CalcSize(content, GUIState.Normal, options);
+
+            Rect rect = new Rect(pos, contentSize);
+
             return GUI.Button(rect, content, name);
         }
 

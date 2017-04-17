@@ -3,6 +3,8 @@ namespace ImGui
 {
     class LayoutEntry
     {
+        public int id;
+
         public Rect rect;//border-box
         public double contentWidth;//exact content width, pre-calculated from content and style
         public double contentHeight;//exact content height, pre-calculated from content and style

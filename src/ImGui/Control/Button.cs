@@ -7,7 +7,9 @@ namespace ImGui
     {
         public static bool DoControl(Rect rect, Content content, string id)
         {
-            var mousePos = Form.current.GetMousePos();
+            Form form = Form.current;
+            var mousePos = form.GetMousePos();
+            GUIContext g = form.uiContext;
 
             if (Utility.CurrentOS.IsAndroid)
             {
@@ -15,31 +17,27 @@ namespace ImGui
                 var inside = rect.Contains(Input.Mouse.MousePos);
 
                 //control logic
-                var uiState = Form.current.uiState;
-                uiState.KeepAliveId(id);
+                g.KeepAliveId(id);
                 if (inside && Input.Mouse.LeftButtonPressed)//start track
                 {
-                    uiState.SetActiveId(id);
+                    g.SetActiveId(id);
                 }
 
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)//end track
+                if (g.ActiveId == id && Input.Mouse.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    uiState.SetActiveId(UIState.None);
+                    g.SetActiveId(GUIContext.None);
                 }
 
                 // ui representation
-                var state = GUIState.Normal;
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
+                var state = GUI.Normal;
+                if (g.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
                 {
-                    state = GUIState.Active;
+                    state = GUI.Active;
                 }
 
                 // ui painting
-                if (Event.current.type == EventType.Repaint)
-                {
-                    GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
-                }
+                GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
                 return clicked;
             }
             else
@@ -48,40 +46,35 @@ namespace ImGui
                 var hovered = rect.Contains(mousePos);
 
                 //control logic
-                var uiState = Form.current.uiState;
-                uiState.KeepAliveId(id);
+                g.KeepAliveId(id);
                 if (hovered)
                 {
-                    uiState.SetHoverId(id);
+                    g.SetHoverId(id);
 
                     if (Input.Mouse.LeftButtonPressed)//start track
                     {
-                        uiState.SetActiveId(id);
+                        g.SetActiveId(id);
                     }
 
                     if (Input.Mouse.LeftButtonReleased)//end track
                     {
                         clicked = true;
-                        uiState.SetActiveId(UIState.None);
+                        g.SetActiveId(GUIContext.None);
                     }
                 }
 
                 // ui representation
-                var state = GUIState.Normal;
+                var state = GUI.Normal;
                 if (hovered)
                 {
-                    state = GUIState.Hover;
-                    if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
+                    state = GUI.Hover;
+                    if (g.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
                     {
-                        state = GUIState.Active;
+                        state = GUI.Active;
                     }
                 }
 
-                // ui painting
-                if (Event.current.type == EventType.Repaint)
-                {
-                    GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
-                }
+                GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
                 return clicked;
             }
         }

@@ -21,7 +21,7 @@ namespace ImGui
             var hovered = rect.Contains(Form.current.GetMousePos());
 
             //control logic
-            var uiState = Form.current.uiState;
+            var uiState = Form.current.uiContext;
             uiState.KeepAliveId(id);
             if (hovered)
             {
@@ -35,7 +35,7 @@ namespace ImGui
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
                 {
                     result = !value;
-                    uiState.SetActiveId(UIState.None);
+                    uiState.SetActiveId(GUIContext.None);
                 }
             }
 
@@ -138,7 +138,7 @@ namespace ImGui
             var hovered = rect.Contains(Form.current.GetMousePos());
 
             //control logic
-            var uiState = Form.current.uiState;
+            var uiState = Form.current.uiContext;
             uiState.KeepAliveId(id);
             if (hovered)
             {
@@ -152,7 +152,7 @@ namespace ImGui
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
                 {
                     result = !value;
-                    uiState.SetActiveId(UIState.None);
+                    uiState.SetActiveId(GUIContext.None);
                 }
             }
 
