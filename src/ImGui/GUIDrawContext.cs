@@ -6,9 +6,14 @@ namespace ImGui
 {
     class GUIDrawContext
     {
-        public Point CurrentPos;
+        public Point CurrentPos = Point.Zero;
 
-        Stack<LayoutEntry> LayoutStack;
-        LayoutEntry Layouts;
+        Stack<LayoutEntry> LayoutStack = new Stack<LayoutEntry>();
+        Dictionary<int, LayoutEntry> Layouts = new Dictionary<int, LayoutEntry>();
+
+        public GUIDrawContext()
+        {
+
+        }
     }
 }

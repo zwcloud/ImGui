@@ -184,7 +184,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Error.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Form.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIPrimitive.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UIState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GUIContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout\LayoutGroup.cs" />
