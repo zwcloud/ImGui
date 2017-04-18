@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
     <Description>ImGui Framework Library</Description>
@@ -8,8 +9,9 @@
     <PackageProjectUrl>https://zwcloud.net/#project/imgui</PackageProjectUrl>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="ImageSharp" Version="1.0.0-alpha5-00071" />
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha6-00065" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
@@ -17,5 +19,19 @@
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
-  <Import Project="..\..\src\ImGui\ImGui.projitems" Label="Shared" />
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Control\tobefixed\**" />
+    <EmbeddedResource Remove="Control\tobefixed\**" />
+    <None Remove="Control\tobefixed\**" />
+  </ItemGroup>
+
 </Project>

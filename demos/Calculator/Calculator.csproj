@@ -10,6 +10,6 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\build\desktop\ImGui.csproj" />
+    <ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
 </Project>
