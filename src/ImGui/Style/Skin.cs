@@ -69,7 +69,7 @@ namespace ImGui
             GUIStyle TextBox    = new GUIStyle();
             GUIStyle Slider     = new GUIStyle();
             GUIStyle PolygonButton = new GUIStyle();
-            
+
             styles.Add(GUIControlName.Label        , Label        );
             styles.Add(GUIControlName.Image        , Image        );
             styles.Add(GUIControlName.Box          , Box          );
@@ -201,7 +201,6 @@ namespace ImGui
                 PolygonButton.Set(GUIStyleName.LineColor, Color.Blue, GUIState.Active);
                 PolygonButton.Set(GUIStyleName.FillColor, Color.Red, GUIState.Active);
             }
-
         }
     }
 }

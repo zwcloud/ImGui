@@ -12,7 +12,7 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            testUI.OnGUI();
+            //testUI.OnGUI();
         }
     }
 }

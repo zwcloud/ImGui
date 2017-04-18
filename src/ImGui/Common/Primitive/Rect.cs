@@ -115,12 +115,20 @@ namespace ImGui
             }
         }
 
-        public Rect(Point center, Size size)
+        public Rect(Point position, Size size)
         {
-            _x = center.X - size.Width / 2;
-            _y = center.Y - size.Height / 2;
+            _x = position.X;
+            _y = position.Y;
             _width = size.Width;
             _height = size.Height;
+        }
+
+        public Rect(Point position, double width, double height)
+        {
+            _x = position.X;
+            _y = position.Y;
+            _width = width;
+            _height = height;
         }
 
         #endregion

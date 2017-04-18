@@ -78,7 +78,14 @@ namespace ImGui
         internal static void InitSysDependencies()
         {
             // create factory: service
-            logger = Utility.Create<ILogger>(Utility.CurrentOS.Platform);
+            if (Application.IsRunningInUnitTest)
+            {
+                logger = new DebugLogger();
+            }
+            else
+            {
+                logger = Utility.Create<ILogger>(Utility.CurrentOS.Platform);
+            }
 
             // load platform context:
             //     platform-dependent implementation
@@ -172,6 +179,8 @@ namespace ImGui
         {
             RequestQuit = true;
         }
+
+        public static bool IsRunningInUnitTest { get; set; } = false;
 
         internal static ILogger logger;
     }

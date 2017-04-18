@@ -81,6 +81,76 @@ namespace ImGui
             return ToggleButton((open ? "▼" : "▶") + text, open);
         }
 
+        public static void Begin(string name, Point position, Size size)
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+
+            Window window = g.FindWindowByName(name);
+            if (window == null)
+            {
+                window = new Window(name, position, size);
+            }
+            
+            int current_frame = g.elapsedFrameCount;
+            bool first_begin_of_the_frame = (window.LastActiveFrame != current_frame);
+
+            // Add to stack
+            Window parentWindow = !g.CurrentWindowStack.Empty() ? g.CurrentWindowStack.Peek() : null;
+            g.CurrentWindowStack.Push(window);
+            g.CurrentWindow = window;
+
+            bool window_was_active = (window.LastActiveFrame == current_frame - 1);
+
+            if (first_begin_of_the_frame)
+            {
+                window.Active = true;
+                window.ClipRect = new Rect(float.MinValue, float.MinValue, float.MaxValue, float.MaxValue);
+                window.LastActiveFrame = current_frame;
+
+                window.DrawList.Clear();
+                Rect fullScreenRect = form.Rect;
+
+                // clip
+                window.ClipRect = fullScreenRect;                
+
+                // Collapse window by double-clicking on title bar
+                Rect titleBarRect = window.TitleBarRect;
+                if(g.HoveredWindow == window && g.IsMouseHoveringRect(titleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
+                {
+                    window.Collapsed = !window.Collapsed;
+                }
+
+                #region size
+
+                #endregion
+
+                #region position
+
+                #endregion
+
+                GUIStyle style = window.Style;
+                GUIStyle headerStyle = window.HeaderStyle;
+                if(window.Collapsed)
+                {
+                    GUIPrimitive.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
+                }
+                else
+                {
+                    GUIPrimitive.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
+                    GUIPrimitive.DrawBoxModel(
+                        new Rect(window.Position + new Vector(0, window.TitleBarHeight), window.Size),
+                        Content.None, style);//background
+                }
+            }
+        }
+
+        public static void End()
+        {
+
+        }
+
         #endregion
 
         #region options

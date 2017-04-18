@@ -150,11 +150,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\TrueTypeInterperter\Interpreter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\TrueTypeInterperter\InvalidFontException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)3rd\Typography\Typography.OpenFont\Typeface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\StackExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Control\Window.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Form.GUI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUIDrawContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GUILayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Port\IO\InputState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Logger\DebugLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Style\Alignment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Primitive\Color.cs" />

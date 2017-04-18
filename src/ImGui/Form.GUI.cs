@@ -12,18 +12,46 @@ namespace ImGui
             GUIContext g = this.uiContext;
 
             // Process input
+
+            #region Mouse left button
             Input.Mouse.LeftButtonPressed = Input.Mouse.LeftButtonState == InputState.Down && Input.Mouse.LeftButtonDownDuration < 0;
             Input.Mouse.LeftButtonReleased = Input.Mouse.LeftButtonState == InputState.Up && Input.Mouse.LeftButtonDownDuration >= 0;
             Input.Mouse.LeftButtonDownDuration = Input.Mouse.LeftButtonState == InputState.Down ? (Input.Mouse.LeftButtonDownDuration < 0 ? 0 : Input.Mouse.LeftButtonDownDuration + Application.DetlaTime) : -1;
+            Input.Mouse.LeftButtonDoubleClicked = false;
+            if (Input.Mouse.LeftButtonPressed)
+            {
+                if(Application.Time - Input.Mouse.LeftButtonClickedTime < Mouse.DoubleClickIntervalTimeSpan)
+                {
+                    if ((Input.Mouse.MousePos - Input.Mouse.LeftButtonPressedPos).LengthSquared < Input.Mouse.DoubleClickMaxDistance * Input.Mouse.DoubleClickMaxDistance)
+                    {
+                        Input.Mouse.LeftButtonDoubleClicked = true;
+                    }
+                    Input.Mouse.LeftButtonClickedTime = long.MinValue; // so the third click isn't turned into a double-click
+                }
+                else
+                {
+                    Input.Mouse.LeftButtonClickedTime = Application.Time;
+                }
+                Input.Mouse.LeftButtonPressedPos = Input.Mouse.MousePos;
+                Input.Mouse.DoubleClickMaxDistance = 0;
+            }
+            else if(Input.Mouse.LeftButtonState == InputState.Down)
+            {
+                Input.Mouse.DragMaxDiatanceSquared = Math.Max(Input.Mouse.DragMaxDiatanceSquared, (Input.Mouse.MousePos - Input.Mouse.LeftButtonPressedPos).LengthSquared);
+            }
+            if (Input.Mouse.LeftButtonPressed) ++Input.Mouse.LeftButtonPressedTimes;
+            if (Input.Mouse.LeftButtonReleased) ++Input.Mouse.LeftButtonReleasedTimes;
+            if(Input.Mouse.LeftButtonDoubleClicked) ++Input.Mouse.LeftButtonDoubleClickedTimes;
+            #endregion
 
+            #region Mouse right button
             Input.Mouse.RightButtonPressed = Input.Mouse.RightButtonState == InputState.Down && Input.Mouse.RightButtonDownDuration < 0;
             Input.Mouse.RightButtonReleased = Input.Mouse.RightButtonState == InputState.Up && Input.Mouse.RightButtonDownDuration >= 0;
             Input.Mouse.RightButtonDownDuration = Input.Mouse.RightButtonState == InputState.Down ? (Input.Mouse.RightButtonDownDuration < 0 ? 0 : Input.Mouse.RightButtonDownDuration + Application.DetlaTime) : -1;
             
-            if (Input.Mouse.LeftButtonPressed) ++Input.Mouse.LeftButtonPressedTimes;
-            if (Input.Mouse.LeftButtonReleased) ++Input.Mouse.LeftButtonReleasedTimes;
             if (Input.Mouse.RightButtonPressed) ++Input.Mouse.RightButtonPressedTimes;
             if (Input.Mouse.RightButtonReleased) ++Input.Mouse.RightButtonReleasedTimes;
+            #endregion
 
             // Calculate fps
             g.elapsedFrameCount++;
@@ -43,6 +71,14 @@ namespace ImGui
             g.ActiveIdPreviousFrame = g.ActiveId;
             g.ActiveIdIsAlive = false;
             g.ActiveIdIsJustActivated = false;
+
+            // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
+            g.HoveredWindow = (g.MovedWindow!=null) ? g.MovedWindow : g.FindHoveredWindow(Input.Mouse.MousePos, false);
+            if (g.HoveredWindow != null)
+                g.HoveredRootWindow = g.HoveredWindow.RootWindow;
+            else
+                g.HoveredRootWindow = (g.MovedWindow != null) ? g.MovedWindow.RootWindow : g.FindHoveredWindow(Input.Mouse.MousePos, true);
+
         }
 
         /// <summary>
@@ -77,23 +113,22 @@ namespace ImGui
 
             if (g.LogEnabled)
             {
-                Application.logger.Clear();
-                Application.logger.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, GetMousePos().ToString(), Application.DetlaTime);
-                Application.logger.Msg("Input");
-                Application.logger.Msg("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
-                Application.logger.Msg("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
-                Application.logger.Msg("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressedTimes);
-                Application.logger.Msg("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleasedTimes);
+                var l = Application.logger;
+                l.Clear();
+                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, GetMousePos().ToString(), Application.DetlaTime);
+                l.Msg("Input");
+                l.Msg("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
+                l.Msg("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
+                l.Msg("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressedTimes);
+                l.Msg("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleasedTimes);
+                l.Msg("    LeftButtonDoubleClicked {0}", Input.Mouse.LeftButtonDoubleClicked);
+                l.Msg("    LeftButtonDoubleClickedTimes {0}", Input.Mouse.LeftButtonDoubleClickedTimes);
 
-                Application.logger.Msg("    RightButtonState {0}", Input.Mouse.RightButtonState);
-                Application.logger.Msg("    RightButtonDownDuration {0}ms", Input.Mouse.RightButtonDownDuration);
-                Application.logger.Msg("    RightButtonPressed {0}, {1} times", Input.Mouse.RightButtonPressed, Input.Mouse.RightButtonPressedTimes);
-                Application.logger.Msg("    RightButtonReleased {0}, {1} times", Input.Mouse.RightButtonReleased, Input.Mouse.RightButtonReleasedTimes);
 
-                Application.logger.Msg("ActiveId: {0}, ActiveIdIsAlive: {1}", g.ActiveId, g.ActiveIdIsAlive);
-                Application.logger.Msg("HoverId: {0}", g.HoverId);
+                l.Msg("ActiveId: {0}, ActiveIdIsAlive: {1}", g.ActiveId, g.ActiveIdIsAlive);
+                l.Msg("HoverId: {0}", g.HoverId);
 
-                Application.logger.Msg("Cursor: {0}", Input.Mouse.Cursor);
+                l.Msg("Cursor: {0}", Input.Mouse.Cursor);
             }
         }
     }

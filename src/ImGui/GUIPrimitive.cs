@@ -13,8 +13,8 @@ namespace ImGui
         /// <param name="style">style of the box model</param>
         public static void DrawBoxModel(Rect rect, Content content, GUIStyle style, GUIState state = GUIState.Normal)
         {
-            Form window = Form.current;
-            var drawList = window.DrawList;
+            Form form = Form.current;
+            var drawList = form.DrawList;
 
             //Widths of border
             var bt = style.Get<double>(GUIStyleName.BorderTop, state);

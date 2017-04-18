@@ -6,14 +6,17 @@
     public class Mouse
     {
         #region Settings
+
         /// <summary>
-        /// Double click interval time span
+        /// Time for a double-click, in seconds.
         /// </summary>
-        /// <remarks>
-        /// if the interval between two mouse click is longer than this value,
-        /// the two clicking action is not considered as a double-click action.
-        /// </remarks>
-        internal const float DoubleClickIntervalTimeSpan = 0.2f;
+        internal const long DoubleClickIntervalTimeSpan = 300;
+
+        /// <summary>
+        /// Distance threshold to stay in to validate a double-click, in pixels.
+        /// </summary>
+        internal double DoubleClickMaxDistance = 6.0;
+
         #endregion
 
         #region Left button
@@ -140,7 +143,13 @@
             get { return Application.inputContext.MouseCursor; }
             set { Application.inputContext.MouseCursor = value; }
         }
+
+        public bool LeftButtonDoubleClicked { get; internal set; }
+        public long LeftButtonClickedTime { get; internal set; }
+        public Point LeftButtonPressedPos { get; internal set; }
+        public double DragMaxDiatance { get; internal set; }
+        public double DragMaxDiatanceSquared { get; internal set; }
+        public int LeftButtonDoubleClickedTimes { get; internal set; }
         #endregion
     }
-
 }
