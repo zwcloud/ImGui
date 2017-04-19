@@ -13,8 +13,16 @@ namespace ImGui
             GUIContext g = this.uiContext;
 
             // Time
-            g.Time += Application.DeltaTime;
+            g.DeltaTime = Application.DeltaTime;
+            g.Time += g.DeltaTime;
             g.FrameCount++;
+            var detlaTime = g.Time - g.lastFPSUpdateTime;
+            if (detlaTime > 1000)
+            {
+                g.fps = (int)g.FrameCount;
+                g.FrameCount = 0;
+                g.lastFPSUpdateTime = g.Time;
+            }
 
             // Process input
             #region mouse position
@@ -30,13 +38,14 @@ namespace ImGui
             #region mouse left button
             Input.Mouse.LeftButtonPressed = Input.Mouse.LeftButtonState == InputState.Down && Input.Mouse.LeftButtonDownDuration < 0;
             Input.Mouse.LeftButtonReleased = Input.Mouse.LeftButtonState == InputState.Up && Input.Mouse.LeftButtonDownDuration >= 0;
-            Input.Mouse.LeftButtonDownDuration = Input.Mouse.LeftButtonState == InputState.Down ? (Input.Mouse.LeftButtonDownDuration < 0 ? 0 : Input.Mouse.LeftButtonDownDuration + Application.DeltaTime) : -1;
+            Input.Mouse.LeftButtonDownDurationPrev = Input.Mouse.LeftButtonDownDuration;
+            Input.Mouse.LeftButtonDownDuration = Input.Mouse.LeftButtonState == InputState.Down ? (Input.Mouse.LeftButtonDownDuration < 0 ? 0 : Input.Mouse.LeftButtonDownDuration + g.DeltaTime) : -1;
             Input.Mouse.LeftButtonDoubleClicked = false;
             if (Input.Mouse.LeftButtonPressed)
             {
                 if (g.Time - Input.Mouse.LeftButtonClickedTime < Mouse.DoubleClickIntervalTimeSpan)
                 {
-                    if ((Input.Mouse.MousePos - Input.Mouse.LeftButtonPressedPos).LengthSquared < Input.Mouse.DoubleClickMaxDistance * Input.Mouse.DoubleClickMaxDistance)
+                    if ((Input.Mouse.MousePos - Input.Mouse.LeftButtonPressedPos).LengthSquared < Mouse.DoubleClickMaxDistance * Mouse.DoubleClickMaxDistance)
                     {
                         Input.Mouse.LeftButtonDoubleClicked = true;
                     }
@@ -61,27 +70,18 @@ namespace ImGui
             #region mouse right button
             Input.Mouse.RightButtonPressed = Input.Mouse.RightButtonState == InputState.Down && Input.Mouse.RightButtonDownDuration < 0;
             Input.Mouse.RightButtonReleased = Input.Mouse.RightButtonState == InputState.Up && Input.Mouse.RightButtonDownDuration >= 0;
-            Input.Mouse.RightButtonDownDuration = Input.Mouse.RightButtonState == InputState.Down ? (Input.Mouse.RightButtonDownDuration < 0 ? 0 : Input.Mouse.RightButtonDownDuration + Application.DeltaTime) : -1;
+            Input.Mouse.RightButtonDownDuration = Input.Mouse.RightButtonState == InputState.Down ? (Input.Mouse.RightButtonDownDuration < 0 ? 0 : Input.Mouse.RightButtonDownDuration + g.DeltaTime) : -1;
             
             if (Input.Mouse.RightButtonPressed) ++Input.Mouse.RightButtonPressedTimes;
             if (Input.Mouse.RightButtonReleased) ++Input.Mouse.RightButtonReleasedTimes;
             #endregion
-
-            // Calculate fps
-            g.FrameCount++;
-            var detlaTime = g.Time - g.lastFPSUpdateTime;
-            if (detlaTime > 1000)
-            {
-                g.fps = (int)g.FrameCount;
-                g.FrameCount = 0;
-                g.lastFPSUpdateTime = g.Time;
-            }
-
-            // Process control hover/active IDs
-            g.HoverIdPreviousFrame = g.HoverId;
+            
+            // Clear reference to active widget if the widget isn't alive anymore
+            g.HoveredIdPreviousFrame = g.HoverId;
             g.HoverId = 0;
+            g.HoveredIdAllowOverlap = false;
             if (!g.ActiveIdIsAlive && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != 0)
-                g.ActiveId = 0;
+                g.SetActiveID(0);
             g.ActiveIdPreviousFrame = g.ActiveId;
             g.ActiveIdIsAlive = false;
             g.ActiveIdIsJustActivated = false;
@@ -139,8 +139,13 @@ namespace ImGui
 
         internal void Render()
         {
+            var g = this.uiContext;
+
             this.renderer.Clear();
-            this.renderer.RenderDrawList(this.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+            foreach (var window in this.uiContext.Windows)
+            {
+                this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+            }
             this.renderer.SwapBuffers();
         }
 
@@ -152,7 +157,7 @@ namespace ImGui
             {
                 var l = Application.logger;
                 l.Clear();
-                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Input.Mouse.MousePos, Application.DeltaTime);
+                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Input.Mouse.MousePos, g.DeltaTime);
                 l.Msg("Input");
                 l.Msg("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
                 l.Msg("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);

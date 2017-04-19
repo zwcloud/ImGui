@@ -4,9 +4,12 @@
     {
         internal static void DoControl(Rect rect, Content content, GUIStyle style, string id)
         {
-            {
-                GUIPrimitive.DrawBoxModel(rect, content, style);
-            }
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+            DrawList d = window.DrawList;
+
+            d.DrawBoxModel(rect, content, style);
         }
         
     }

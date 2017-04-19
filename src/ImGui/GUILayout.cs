@@ -81,18 +81,17 @@ namespace ImGui
             return ToggleButton((open ? "▼" : "▶") + text, open);
         }
 
-        public static void Begin(string name, Point position, Size size)
+        public static void Begin(string name, Point position, Size size, double bg_alpha, WindowFlags flags)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            DrawList d = form.DrawList;
 
             Window window = g.FindWindowByName(name);
             if (window == null)
             {
-                window = new Window(name, position, size);
+                window = new Window(name, position, size, flags);
             }
-            
+
             long current_frame = g.FrameCount;
             bool first_begin_of_the_frame = (window.LastActiveFrame != current_frame);
 
@@ -110,42 +109,115 @@ namespace ImGui
                 window.LastActiveFrame = current_frame;
 
                 window.DrawList.Clear();
-                form.DrawList.Clear();//tmp
                 Rect fullScreenRect = form.Rect;
 
                 // clip
                 window.ClipRect = fullScreenRect;
 
                 // Collapse window by double-clicking on title bar
-                if(g.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
+                if (g.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
                 {
                     window.Collapsed = !window.Collapsed;
                 }
+
                 #region size
+
+                // Apply minimum/maximum window size constraints and final size
+                window.ApplySize(window.FullSize);
+                window.Size = window.Collapsed ? window.TitleBarRect.Size : window.FullSize;
 
                 #endregion
 
                 #region position
 
+                window.Position = new Point((int)window.PosFloat.X, (int)window.PosFloat.Y);
+
                 #endregion
 
+                // Draw window + handle manual resize
                 GUIStyle style = window.Style;
                 GUIStyle headerStyle = window.HeaderStyle;
-                if(window.Collapsed)
+                Rect title_bar_rect = window.TitleBarRect;
+                float window_rounding = 3;
+                if (window.Collapsed)
                 {
-                    GUIPrimitive.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
+                    // Draw title bar only
+                    window.DrawList.RenderFrame(title_bar_rect.TopLeft, title_bar_rect.BottomRight, new Color(0.40f, 0.40f, 0.80f, 0.20f), true, window_rounding);
                 }
                 else
                 {
-                    GUIPrimitive.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
-                    GUIPrimitive.DrawBoxModel(
+                    Color resize_col = Color.Clear;
+                    double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
+                    if (!flags.HasFlag(WindowFlags.AlwaysAutoResize) && !flags.HasFlag(WindowFlags.NoResize))
+                    {
+                        // Manual resize
+                        var br = window.Rect.BottomRight;
+                        Rect resize_rect = new Rect(br - new Vector(resize_corner_size * 0.75f, resize_corner_size * 0.75f), br);
+                        int resize_id = window.GetID("#RESIZE");
+                        bool hovered, held;
+                        ImGui.Button.ButtonBehavior(resize_rect, resize_id, out hovered, out held, ButtonFlags.FlattenChilds);
+                        resize_col =
+                            held ? style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active) :
+                            hovered ? style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover) :
+                            style.Get<Color>(GUIStyleName.ResizeGripColor);
+
+                        if (hovered || held)
+                            Input.Mouse.Cursor = Cursor.NeswResize;
+
+                        if (g.HoveredWindow == window && held && Input.Mouse.LeftButtonDoubleClicked)
+                        {
+                            // Manual auto-fit when double-clicking
+                            //ApplySizeFullWithConstraint(window, size_auto_fit);
+                            //if (!(flags & ImGuiWindowFlags_NoSavedSettings))
+                            //    MarkSettingsDirty();
+                            //SetActiveID(0);
+                        }
+                        else if (held)
+                        {
+                            // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
+                            var t = Input.Mouse.MousePos - g.ActiveIdClickOffset - window.Position;
+                            Size resize_size = new Size(t.X + resize_rect.Width, t.Y + resize_rect.Height);
+                            window.ApplySize(resize_size);
+                        }
+
+                        window.Size = window.FullSize;
+                        title_bar_rect = window.TitleBarRect;
+                    }
+
+
+                    // Window background
+                    // Default alpha
+                    Color bg_color = style.BackgroundColor;
+                    if (bg_alpha >= 0.0f)
+                        bg_color.A = bg_alpha;
+                    if (bg_color.A > 0.0f)
+                        window.DrawList.AddRectFilled(window.Position + new Vector(0, window.TitleBarHeight), window.Rect.BottomRight, bg_color, window_rounding, flags.HasFlag(WindowFlags.NoTitleBar) ? 15 : 4 | 8);
+
+                    // Title bar
+                    if (!flags.HasFlag(WindowFlags.NoTitleBar))
+                    {
+                        window.DrawList.AddRectFilled(title_bar_rect.TopLeft, title_bar_rect.BottomRight,
+                            g.FocusedWindow == window ?
+                            headerStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active) :
+                            headerStyle.Get<Color>(GUIStyleName.BackgroundColor), window_rounding, 1 | 2);
+                    }
+
+                    if (window.Collapsed)
+                    {
+                        window.DrawList.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
+                    }
+                    else
+                    {
+                    }
+                    window.DrawList.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
+                    window.DrawList.DrawBoxModel(
                         new Rect(window.Position + new Vector(0, window.TitleBarHeight), window.Size),
                         Content.None, style);//background
-                }
 
-                // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
-                window.WindowClippedRect = window.Rect;
-                window.WindowClippedRect.Intersect(window.ClipRect);
+                    // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
+                    window.WindowClippedRect = window.Rect;
+                    window.WindowClippedRect.Intersect(window.ClipRect);
+                }
             }
         }
 

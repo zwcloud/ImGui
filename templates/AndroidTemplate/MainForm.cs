@@ -7,7 +7,7 @@ namespace AndroidTemplate
     {
         TestUI testUI = new TestUI();
 
-        public MainForm(Point position, Size size) : base(IntPtr.Zero, position, size) { }
+        public MainForm(Point position, Size size) : base(new Rect(position, size)) { }
 
         protected override void OnGUI()
         {

@@ -445,6 +445,9 @@ namespace ImGui
             get { return new Point(X + 0.5 * Width, Y + 0.5 * Height); }
         }
 
+        public Point Min => Topleft;
+        public Point Max => BottomRight;
+
         /// <summary>
         /// Contains - Returns true if the Point is within the rectangle, inclusive of the edges.
         /// Returns false otherwise.

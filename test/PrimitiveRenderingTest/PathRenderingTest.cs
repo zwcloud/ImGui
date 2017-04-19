@@ -40,10 +40,10 @@ namespace PrimitiveRenderingTest
                 rad += Math.PI * 0.666;
                 var C_ = C + 70 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
 
-                Form.current.DrawList.PathMoveTo(A_);
-                Form.current.DrawList.PathLineTo(B_);
-                Form.current.DrawList.PathLineTo(C_);
-                Form.current.DrawList.PathStroke(Color.Blue, true, 2);
+                //Form.current.DrawList.PathMoveTo(A_);
+                //Form.current.DrawList.PathLineTo(B_);
+                //Form.current.DrawList.PathLineTo(C_);
+                //Form.current.DrawList.PathStroke(Color.Blue, true, 2);
             }));
         }
     }

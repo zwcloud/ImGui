@@ -52,13 +52,16 @@ namespace ImGui
         FillColor,
         
         _FieldWidth,
+        ResizeGripActiveColor,
+        ResizeGripColor,
     }
 
     public enum GUIState
     {
         Normal,
         Hover,
-        Active
+        Active,
+        Disabled,
     }
 
     public class GUIStyle

@@ -8,11 +8,11 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            DrawList d = form.DrawList;
             Window window = g.CurrentWindow;
+            DrawList d = window.DrawList;
 
             int id = window.GetID(str_id);
-            var mousePos = form.GetMousePos();
+            var mousePos = Input.Mouse.MousePos
             var result = false;
             var hovered = rect.Contains(mousePos);
 
@@ -46,7 +46,7 @@ namespace ImGui
 
             // ui painting
             {
-                GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
+                d.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
             }
 
             return result;

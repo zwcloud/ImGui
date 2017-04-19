@@ -2,8 +2,30 @@
 //#define DrawContentBox
 namespace ImGui
 {
-    internal class GUIPrimitive
+    internal static class GUIPrimitive
     {
+        /// <summary>
+        /// Render a rectangle shaped with optional rounding and borders
+        /// </summary>
+        /// <param name="drawList"></param>
+        /// <param name="p_min"></param>
+        /// <param name="p_max"></param>
+        /// <param name="fill_col"></param>
+        /// <param name="border"></param>
+        /// <param name="rounding"></param>
+        public static void RenderFrame(this DrawList drawList, Point p_min, Point p_max, Color fill_col, bool border, float rounding)
+        {
+            GUIContext g = Form.current.uiContext;
+            Window window = g.CurrentWindow;
+
+            window.DrawList.AddRectFilled(p_min, p_max, fill_col, rounding);
+            if (border)
+            {
+                window.DrawList.AddRect(p_min + new Vector(1, 1), p_max + new Vector(1, 1), Color.Black, rounding);
+                window.DrawList.AddRect(p_min, p_max, new Color(0.70f, 0.70f, 0.70f, 0.65f), rounding);
+            }
+        }
+
         /// <summary>
         /// Draw a box model
         /// </summary>
@@ -11,11 +33,8 @@ namespace ImGui
         /// <param name="rect">the rect (of the border-box) to draw this box model </param>
         /// <param name="content">content of the box model</param>
         /// <param name="style">style of the box model</param>
-        public static void DrawBoxModel(Rect rect, Content content, GUIStyle style, GUIState state = GUIState.Normal)
+        public static void DrawBoxModel(this DrawList drawList, Rect rect, Content content, GUIStyle style, GUIState state = GUIState.Normal)
         {
-            Form form = Form.current;
-            var drawList = form.DrawList;
-
             //Widths of border
             var bt = style.Get<double>(GUIStyleName.BorderTop, state);
             var br = style.Get<double>(GUIStyleName.BorderRight, state);
@@ -64,11 +83,11 @@ namespace ImGui
             {
                 if (content.Image != null)
                 {
-                    DrawImage(contentBoxRect, content, style);
+                    drawList.DrawImage(contentBoxRect, content, style);
                 }
                 if (content.Text != null)
                 {
-                    DrawText(contentBoxRect, content, style, state);
+                    drawList.DrawText(contentBoxRect, content, style, state);
                 }
             }
 
@@ -156,12 +175,9 @@ namespace ImGui
         /// <param name="content">text content</param>
         /// <param name="style">style of the box model</param>
         /// <param name="state">state of the style</param>
-        public static void DrawText(Rect rect, Content content, GUIStyle style, GUIState state)
+        public static void DrawText(this DrawList drawList, Rect rect, Content content, GUIStyle style, GUIState state)
         {
             content.BuildText(rect, style, state);
-            Form window = Form.current;
-            var drawList = window.DrawList;
-
             drawList.Append(content.TextMesh);
         }
 
@@ -171,9 +187,8 @@ namespace ImGui
         /// <param name="rect">the rect to draw this image content</param>
         /// <param name="content">image content</param>
         /// <param name="style">style of the image content (not used)</param>
-        public static void DrawImage(Rect rect, Content content, GUIStyle style)
+        public static void DrawImage(this DrawList drawList, Rect rect, Content content, GUIStyle style)
         {
-            var drawList = Form.current.DrawList;
             var (top, right, bottom, left) = style.BorderImageSlice;
 
             var texture = content.Image;

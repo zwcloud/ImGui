@@ -15,7 +15,8 @@
         /// <summary>
         /// Distance threshold to stay in to validate a double-click, in pixels.
         /// </summary>
-        internal double DoubleClickMaxDistance = 6.0;
+        internal const double DoubleClickMaxDistance = 6.0;
+
 
         #endregion
 
@@ -41,6 +42,7 @@
             set { leftButtonState = value; }
         }
 
+        public long LeftButtonDownDurationPrev { get; internal set; } = -1;
         public long LeftButtonDownDuration { get; internal set; } = -1;
 
         /// <summary>

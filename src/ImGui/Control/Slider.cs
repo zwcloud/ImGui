@@ -6,11 +6,11 @@
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            DrawList d = form.DrawList;
             Window window = g.CurrentWindow;
+            DrawList d = window.DrawList;
             int id = window.GetID(str_id);
 
-            var mousePos = form.GetMousePos();
+            var mousePos = Input.Mouse.MousePos
             var hovered = rect.Contains(mousePos);
             
             //control logic
@@ -142,7 +142,7 @@
                 }
                 d.PathFill(fillColor);
 
-                //GUIPrimitive.DrawBoxModel(rect, null, GUISkin.Instance[GUIControlName.Slider]);
+                //d.DrawBoxModel(rect, null, GUISkin.Instance[GUIControlName.Slider]);
             }
 
             return value;

@@ -74,6 +74,10 @@ namespace ImGui
         public Window FocusedWindow { get; private set; }
         public Window ActiveIdWindow { get; private set; }
         public bool ActiveIdAllowOverlap { get; private set; }
+        public Vector ActiveIdClickOffset { get; internal set; }
+        public bool HoveredIdAllowOverlap { get; internal set; }
+        public long DeltaTime { get; internal set; }
+        public int HoveredIdPreviousFrame { get; internal set; }
 
         public void SetHoverId(int id)
         {
@@ -141,6 +145,61 @@ namespace ImGui
                     return window;
             }
             return null;
+        }
+
+        public bool IsHovered(Rect bb, int id, bool flatten_childs)
+        {
+            GUIContext g = this;
+            if (g.HoverId == 0 || g.HoverId == id || g.HoveredIdAllowOverlap)
+            {
+                Window window = g.CurrentWindow;
+                if (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window.RootWindow))
+                    if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
+                        if (IsWindowContentHoverable(g.HoveredRootWindow))
+                            return true;
+            }
+            return false;
+        }
+
+        public bool IsWindowContentHoverable(Window window)
+        {
+            // An active popup disable hovering on other windows (apart from its own children)
+            GUIContext g = this;
+            Window focused_window = g.FocusedWindow;
+            if (focused_window != null)
+            {
+                Window focused_root_window = focused_window.RootWindow;
+                if (focused_root_window!=null)
+                {
+                    if (focused_root_window.Flags.HasFlag(WindowFlags.Popup) && focused_root_window.WasActive && focused_root_window != window.RootWindow)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public bool IsMouseLeftButtonClicked(bool repeat)
+        {
+            GUIContext g = this;
+            long t = Input.Mouse.LeftButtonDownDuration;
+            if (t == 0.0f)
+                return true;
+
+            if (repeat && t > Input.KeyRepeatDelay)
+            {
+                double delay = Input.KeyRepeatDelay, rate = Input.KeyRepeatRate;
+                if (
+                    ((t - delay)%rate) > rate * 0.5f
+                    !=
+                    ((t - delay - g.DeltaTime)% rate) > rate * 0.5f
+                    )
+                    return true;
+            }
+
+            return false;
         }
 
         public void KeepAliveID(int id)

@@ -13,7 +13,7 @@ namespace ImGui
         public WindowFlags Flags;
         public DrawList DrawList;
         public Rect ClipRect;
-
+        public Point PosFloat;
 
         public long LastActiveFrame;
 
@@ -21,6 +21,7 @@ namespace ImGui
         {
             DrawList = new DrawList();
             MoveID = GetID("#MOVE");
+            Active = WasActive = false;
             {
                 var style = new GUIStyle();
                 var bgColor = Color.Rgb(34, 43, 46);
@@ -28,25 +29,32 @@ namespace ImGui
                 style.Set(GUIStyleName.PaddingRight, 1.0);
                 style.Set(GUIStyleName.PaddingBottom, 2.0);
                 style.Set(GUIStyleName.PaddingLeft, 1.0);
-                style.Set(GUIStyleName.BackgroundColor, bgColor);
+                style.Set(GUIStyleName.BackgroundColor, new Color(0.00f, 0.00f, 0.00f, 0.70f));
+                style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
+                style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);
+                style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.90f), GUIState.Active);
                 this.Style = style;
             }
             {
                 var style = new GUIStyle();
                 var bgColor = Color.Rgb(86, 90, 160);
-                style.Set(GUIStyleName.BackgroundColor, bgColor);
+                style.Set(GUIStyleName.BackgroundColor, new Color(0.27f, 0.27f, 0.54f, 0.83f));
+                style.Set(GUIStyleName.BackgroundColor, new Color(0.32f, 0.32f, 0.63f, 0.87f), GUIState.Active);
+                style.Set(GUIStyleName.BackgroundColor, new Color(0.40f, 0.40f, 0.80f, 0.20f), GUIState.Disabled);
                 style.Set(GUIStyleName.FontColor, Color.White);
                 this.HeaderStyle = style;
             }
         }
 
-        public Window(string name, Point position, Size size) : this()
+        public Window(string name, Point position, Size size, WindowFlags Flags) : this()
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
 
             this.ID = name.GetHashCode();
-            this.Position = position;
+            this.Flags = Flags;
+            this.PosFloat = position;
+            this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
             this.Size = this.FullSize = size;
             this.HeaderContent = new Content(name);
 
@@ -60,6 +68,14 @@ namespace ImGui
             hash = hash * 23 + this.ID.GetHashCode();
             hash = hash * 23 + strID.GetHashCode();
             return hash;
+        }
+
+        public void ApplySize(Size new_size)
+        {
+            GUIContext g = Form.current.uiContext;
+            Window window = this;
+            
+            window.FullSize = new_size;
         }
 
         public Rect Rect => new Rect(Position, Size);
@@ -77,14 +93,20 @@ namespace ImGui
         /// </summary>
         public int MoveID { get; internal set; }
         public Rect WindowClippedRect { get; internal set; }
+        public bool WasActive { get; internal set; }
 
         public GUIStyle Style;
         public GUIStyle HeaderStyle;
         public Content HeaderContent;
     }
 
-    enum WindowFlags
+    [Flags]
+    public enum WindowFlags
     {
-        ChildWindow
+        ChildWindow,
+        NoResize,
+        AlwaysAutoResize,
+        Popup,
+        NoTitleBar,
     }
 }

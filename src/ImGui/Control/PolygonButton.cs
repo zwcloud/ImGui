@@ -9,10 +9,10 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            DrawList d = form.DrawList;
             Window window = g.CurrentWindow;
+            DrawList d = window.DrawList;
             int id = window.GetID(str_id);
-            var mousePos = form.GetMousePos();
+            var mousePos = Input.Mouse.MousePos
 
             var clicked = false;
             var hovered = MathEx.IsPointInPolygon(mousePos, points, new Vector(rect.X, rect.Y));
@@ -65,7 +65,7 @@ namespace ImGui
                 }
                 d.PathStroke(style.LineColor, true, 2);
 
-                GUIPrimitive.DrawBoxModel(textRect, content, style, state);
+                d.DrawBoxModel(textRect, content, style, state);
             }
 
             return clicked;
