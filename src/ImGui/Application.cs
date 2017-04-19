@@ -66,13 +66,13 @@ namespace ImGui
         }
 
         private static long frameStartTime = 0;
-        private static long detlaTime = 0;
+        private static long deltaTime = 0;
         /// <summary>
         /// The time in ms it took to complete the last frame
         /// </summary>
-        internal static long DetlaTime
+        internal static long DeltaTime
         {
-            get { return detlaTime; }
+            get { return deltaTime; }
         }
         
         internal static void InitSysDependencies()
@@ -136,7 +136,7 @@ namespace ImGui
                 {
                     break;
                 }
-                detlaTime = Time - frameStartTime;
+                deltaTime = Time - frameStartTime;
             }
         }
 
@@ -168,7 +168,7 @@ namespace ImGui
         {
             frameStartTime = Time;
             windowContext.MainLoop(form.GUILoop);
-            detlaTime = Time - frameStartTime;
+            deltaTime = Time - frameStartTime;
         }
 
 

@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if NET20
 
 namespace System.Numerics
 {
@@ -218,3 +219,5 @@ namespace System.Numerics
         }
     }
 }
+
+#endif

@@ -204,16 +204,16 @@ namespace ImGui
         }
         public void MainLoop(Action guiMethod)
         {
+            // process windows message
             MSG msg = new MSG();
             if (PeekMessage(ref msg, IntPtr.Zero, 0, 0, 0x0001/*PM_REMOVE*/))//handle windows messages
             {
                 TranslateMessage(ref msg);
                 DispatchMessage(ref msg);
             }
-            else//handle imgui logic
-            {
-                guiMethod();
-            }
+
+            //run gui
+            guiMethod();
         }
 
         private IntPtr WindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
@@ -275,7 +275,6 @@ namespace ImGui
                         X = unchecked((short)lParam),
                         Y = unchecked((short)((uint)lParam >> 16))
                     };
-                    ClientToScreen(hWnd, ref p);
                     Input.Mouse.MousePos = new Point(p.X, p.Y);
                     return IntPtr.Zero;
                 #endregion
@@ -299,11 +298,6 @@ namespace ImGui
                     return IntPtr.Zero;
             }
             return DefWindowProc(hWnd, msg, wParam, lParam);
-        }
-
-        public IWindow CreateWindow(IntPtr nativeWindow)
-        {
-            throw new NotSupportedException();
         }
 
         WNDCLASS wndclass; //Forbid GC of the windowProc delegate instance
@@ -364,7 +358,7 @@ namespace ImGui
             //now rc is the rect of the window
 
             IntPtr hwnd = CreateWindowEx(
-                0,
+                0x00000008/*WS_EX_TOPMOST*/,// window style ex //HACK always on top
                 new IntPtr(atom), // window class name
                 "ImGuiWindow~", // window caption
                 (uint)windowStyle, // window style

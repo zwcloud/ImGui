@@ -150,6 +150,8 @@
         public double DragMaxDiatance { get; internal set; }
         public double DragMaxDiatanceSquared { get; internal set; }
         public int LeftButtonDoubleClickedTimes { get; internal set; }
+        public Point MousePosPrev { get; internal set; }
+        public Vector MouseDelta { get; internal set; }
         #endregion
     }
 }

@@ -2,10 +2,18 @@
 {
     internal class ToggleButton
     {
-        public static bool DoControl(Rect rect, Content content, bool value, string id)
+        public static bool DoControl(Rect rect, Content content, bool value, string str_id)
         {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+            Window window = g.CurrentWindow;
+            int id = window.GetID(str_id);
+
+            var mousePos = form.GetMousePos();
+            var hovered = rect.Contains(mousePos);
+
             var result = value;
-            var hovered = rect.Contains(Form.current.GetMousePos());
 
             //control logic
             var uiState = Form.current.uiContext;
@@ -49,7 +57,6 @@
             }
 
             // ui painting
-            if (Event.current.type == EventType.Repaint)
             {
                 GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
             }

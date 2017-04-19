@@ -5,28 +5,34 @@ namespace ImGui
 {
     internal class PolygonButton
     {
-        internal static bool DoControl(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string id)
+        internal static bool DoControl(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string str_id)
         {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+            Window window = g.CurrentWindow;
+            int id = window.GetID(str_id);
+            var mousePos = form.GetMousePos();
+
             var clicked = false;
-            var hovered = MathEx.IsPointInPolygon(Form.current.GetMousePos(), points, new Vector(rect.X, rect.Y));
+            var hovered = MathEx.IsPointInPolygon(mousePos, points, new Vector(rect.X, rect.Y));
             textRect.Offset(rect.X, rect.Y);
 
             //control logic
-            var uiState = Form.current.uiContext;
-            uiState.KeepAliveId(id);
+            g.KeepAliveId(id);
             if (hovered)
             {
-                uiState.SetHoverId(id);
+                g.SetHoverId(id);
 
                 if (Input.Mouse.LeftButtonPressed)//start track
                 {
-                    uiState.SetActiveId(id);
+                    g.SetActiveId(id);
                 }
 
                 if (Input.Mouse.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    uiState.SetActiveId(GUIContext.None);
+                    g.SetActiveId(GUIContext.None);
                 }
             }
 
@@ -35,31 +41,29 @@ namespace ImGui
             if (hovered)
             {
                 state = GUI.Hover;
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
+                if (g.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
                 {
                     state = GUI.Active;
                 }
             }
 
             // ui painting
-            if (Event.current.type == EventType.Repaint)
             {
-                var g = Form.current.DrawList;
                 var style = GUISkin.Instance[GUIControlName.PolygonButton];
                 
-                g.PathClear();
+                d.PathClear();
                 foreach (var point in points)
                 {
-                    g.PathMoveTo(point + new Vector(rect.X, rect.Y));
+                    d.PathMoveTo(point + new Vector(rect.X, rect.Y));
                 }
-                g.PathFill(style.FillColor);
+                d.PathFill(style.FillColor);
 
-                g.PathClear();
+                d.PathClear();
                 foreach (var point in points)
                 {
-                    g.PathMoveTo(point + new Vector(rect.X, rect.Y));
+                    d.PathMoveTo(point + new Vector(rect.X, rect.Y));
                 }
-                g.PathStroke(style.LineColor, true, 2);
+                d.PathStroke(style.LineColor, true, 2);
 
                 GUIPrimitive.DrawBoxModel(textRect, content, style, state);
             }

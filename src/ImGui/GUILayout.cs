@@ -93,7 +93,7 @@ namespace ImGui
                 window = new Window(name, position, size);
             }
             
-            int current_frame = g.elapsedFrameCount;
+            long current_frame = g.FrameCount;
             bool first_begin_of_the_frame = (window.LastActiveFrame != current_frame);
 
             // Add to stack
@@ -110,18 +110,17 @@ namespace ImGui
                 window.LastActiveFrame = current_frame;
 
                 window.DrawList.Clear();
+                form.DrawList.Clear();//tmp
                 Rect fullScreenRect = form.Rect;
 
                 // clip
-                window.ClipRect = fullScreenRect;                
+                window.ClipRect = fullScreenRect;
 
                 // Collapse window by double-clicking on title bar
-                Rect titleBarRect = window.TitleBarRect;
-                if(g.HoveredWindow == window && g.IsMouseHoveringRect(titleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
+                if(g.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
                 {
                     window.Collapsed = !window.Collapsed;
                 }
-
                 #region size
 
                 #endregion
@@ -143,6 +142,10 @@ namespace ImGui
                         new Rect(window.Position + new Vector(0, window.TitleBarHeight), window.Size),
                         Content.None, style);//background
                 }
+
+                // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
+                window.WindowClippedRect = window.Rect;
+                window.WindowClippedRect.Intersect(window.ClipRect);
             }
         }
 

@@ -15,10 +15,18 @@ namespace ImGui
         /// +----+--
         /// | √  |16
         /// +----+--
-        internal static bool DoControl(Rect rect, bool value, string id)
+        internal static bool DoControl(Rect rect, bool value, string str_id)
         {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+            Window window = g.CurrentWindow;
+            int id = window.GetID(str_id);
+
+            var mousePos = form.GetMousePos();
+            var hovered = rect.Contains(mousePos);
+
             var result = value;
-            var hovered = rect.Contains(Form.current.GetMousePos());
 
             //control logic
             var uiState = Form.current.uiContext;
@@ -51,46 +59,44 @@ namespace ImGui
             }
 
             // ui painting
-            if (Event.current.type == EventType.Repaint)
             {
-                var g = Form.current.DrawList;
                 var style = GUISkin.Instance[GUIControlName.Toggle];
                 if (result)
                 {
                     if (state == GUI.Normal)
                     {
                         //□
-                        g.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(0, 120, 215));
+                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(0, 120, 215));
                         //√
-                        var d = rect.Height;
-                        g.PathMoveTo(new Point(0.125f * d + rect.X, 0.50f * d + rect.Y));
-                        g.PathLineTo(new Point(0.333f * d + rect.X, 0.75f * d + rect.Y));
-                        g.PathLineTo(new Point(0.875f * d + rect.X, 0.25f * d + rect.Y));
-                        g.PathStroke(Color.White, false, 2);
+                        var h = rect.Height;
+                        d.PathMoveTo(new Point(0.125f * h + rect.X, 0.50f * h + rect.Y));
+                        d.PathLineTo(new Point(0.333f * h + rect.X, 0.75f * h + rect.Y));
+                        d.PathLineTo(new Point(0.875f * h + rect.X, 0.25f * h + rect.Y));
+                        d.PathStroke(Color.White, false, 2);
                     }
                     else if (state == GUI.Hover)
                     {
                         //□
-                        g.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(0, 120, 215));
+                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(0, 120, 215));
                         //□
-                        g.AddRect(rect.TopLeft, rect.BottomRight, Color.Black, 0, 0, 2);
+                        d.AddRect(rect.TopLeft, rect.BottomRight, Color.Black, 0, 0, 2);
                         //√
-                        var d = rect.Height;
-                        g.PathMoveTo(new Point(0.125f * d + rect.X, 0.50f * d + rect.Y));
-                        g.PathLineTo(new Point(0.333f * d + rect.X, 0.75f * d + rect.Y));
-                        g.PathLineTo(new Point(0.875f * d + rect.X, 0.25f * d + rect.Y));
-                        g.PathStroke(Color.White, false, 2);
+                        var h = rect.Height;
+                        d.PathMoveTo(new Point(0.125f * h + rect.X, 0.50f * h + rect.Y));
+                        d.PathLineTo(new Point(0.333f * h + rect.X, 0.75f * h + rect.Y));
+                        d.PathLineTo(new Point(0.875f * h + rect.X, 0.25f * h + rect.Y));
+                        d.PathStroke(Color.White, false, 2);
                     }
                     else
                     {
                         //□
-                        g.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(51, 51, 51));
+                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(51, 51, 51));
                         //√
-                        var d = rect.Height;
-                        g.PathMoveTo(new Point(0.125f * d + rect.X, 0.50f * d + rect.Y));
-                        g.PathLineTo(new Point(0.333f * d + rect.X, 0.75f * d + rect.Y));
-                        g.PathLineTo(new Point(0.875f * d + rect.X, 0.25f * d + rect.Y));
-                        g.PathStroke(Color.Rgb(102, 102, 102), false, 2);
+                        var h = rect.Height;
+                        d.PathMoveTo(new Point(0.125f * h + rect.X, 0.50f * h + rect.Y));
+                        d.PathLineTo(new Point(0.333f * h + rect.X, 0.75f * h + rect.Y));
+                        d.PathLineTo(new Point(0.875f * h + rect.X, 0.25f * h + rect.Y));
+                        d.PathStroke(Color.Rgb(102, 102, 102), false, 2);
                     }
                 }
                 else
@@ -98,15 +104,15 @@ namespace ImGui
                     //□
                     if (state == GUI.Normal)
                     {
-                        g.AddRect(rect.TopLeft, rect.BottomRight, Color.Rgb(102, 102, 102), 0, 0, 2);
+                        d.AddRect(rect.TopLeft, rect.BottomRight, Color.Rgb(102, 102, 102), 0, 0, 2);
                     }
                     else if (state == GUI.Hover)
                     {
-                        g.AddRect(rect.TopLeft, rect.BottomRight, Color.Black, 0, 0, 2);
+                        d.AddRect(rect.TopLeft, rect.BottomRight, Color.Black, 0, 0, 2);
                     }
                     else
                     {
-                        g.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(102, 102, 102));
+                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(102, 102, 102));
                     }
                 }
             }
@@ -132,11 +138,17 @@ namespace ImGui
         /// +----+               |
         ///      |               |
         ///      +---------------+
-        internal static bool DoControl(Rect rect, Content label, bool value, string id)
+        internal static bool DoControl(Rect rect, Content label, bool value, string str_id)
         {
-            var result = value;
-            var hovered = rect.Contains(Form.current.GetMousePos());
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+            Window window = g.CurrentWindow;
+            int id = window.GetID(str_id);
 
+            var mousePos = form.GetMousePos();
+            var hovered = rect.Contains(mousePos);
+            var result = value;
             //control logic
             var uiState = Form.current.uiContext;
             uiState.KeepAliveId(id);
@@ -168,50 +180,48 @@ namespace ImGui
             }
 
             // ui painting
-            if (Event.current.type == EventType.Repaint)
             {
                 var boxRect = new Rect(rect.X, rect.Y + (rect.Height - 16) / 2, 16, 16);
                 var textRect = new Rect(rect.X + 16, rect.Y, rect.Width - 16, rect.Height);
 
                 // box
-                var g = Form.current.DrawList;
                 var style = GUISkin.Instance[GUIControlName.Toggle];
                 if (result)
                 {
                     if (state == GUI.Normal)
                     {
                         //□
-                        g.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(0, 120, 215));
+                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(0, 120, 215));
                         //√
-                        var d = boxRect.Height;
-                        g.PathMoveTo(new Point(0.125f * d + boxRect.X, 0.50f * d + boxRect.Y));
-                        g.PathLineTo(new Point(0.333f * d + boxRect.X, 0.75f * d + boxRect.Y));
-                        g.PathLineTo(new Point(0.875f * d + boxRect.X, 0.25f * d + boxRect.Y));
-                        g.PathStroke(Color.White, false, 2);
+                        var h = boxRect.Height;
+                        d.PathMoveTo(new Point(0.125f* h+ boxRect.X, 0.50f* h+ boxRect.Y));
+                        d.PathLineTo(new Point(0.333f* h+ boxRect.X, 0.75f* h+ boxRect.Y));
+                        d.PathLineTo(new Point(0.875f* h+ boxRect.X, 0.25f* h+ boxRect.Y));
+                        d.PathStroke(Color.White, false, 2);
                     }
                     else if (state == GUI.Hover)
                     {
                         //□
-                        g.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(0, 120, 215));
+                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(0, 120, 215));
                         //□
-                        g.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Black, 0, 0, 2);
+                        d.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Black, 0, 0, 2);
                         //√
-                        var d = boxRect.Height;
-                        g.PathMoveTo(new Point(0.125f * d + boxRect.X, 0.50f * d + boxRect.Y));
-                        g.PathLineTo(new Point(0.333f * d + boxRect.X, 0.75f * d + boxRect.Y));
-                        g.PathLineTo(new Point(0.875f * d + boxRect.X, 0.25f * d + boxRect.Y));
-                        g.PathStroke(Color.White, false, 2);
+                        var h = boxRect.Height;
+                        d.PathMoveTo(new Point(0.125f* h+ boxRect.X, 0.50f* h+ boxRect.Y));
+                        d.PathLineTo(new Point(0.333f* h+ boxRect.X, 0.75f* h+ boxRect.Y));
+                        d.PathLineTo(new Point(0.875f* h+ boxRect.X, 0.25f* h+ boxRect.Y));
+                        d.PathStroke(Color.White, false, 2);
                     }
                     else
                     {
                         //□
-                        g.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(51, 51, 51));
+                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(51, 51, 51));
                         //√
-                        var d = boxRect.Height;
-                        g.PathMoveTo(new Point(0.125f * d + boxRect.X, 0.50f * d + boxRect.Y));
-                        g.PathLineTo(new Point(0.333f * d + boxRect.X, 0.75f * d + boxRect.Y));
-                        g.PathLineTo(new Point(0.875f * d + boxRect.X, 0.25f * d + boxRect.Y));
-                        g.PathStroke(Color.Rgb(102, 102, 102), false, 2);
+                        var h = boxRect.Height;
+                        d.PathMoveTo(new Point(0.125f* h+ boxRect.X, 0.50f* h+ boxRect.Y));
+                        d.PathLineTo(new Point(0.333f* h+ boxRect.X, 0.75f* h+ boxRect.Y));
+                        d.PathLineTo(new Point(0.875f* h+ boxRect.X, 0.25f* h+ boxRect.Y));
+                        d.PathStroke(Color.Rgb(102, 102, 102), false, 2);
                     }
                 }
                 else
@@ -219,15 +229,15 @@ namespace ImGui
                     //□
                     if (state == GUI.Normal)
                     {
-                        g.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(102, 102, 102), 0, 0, 2);
+                        d.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(102, 102, 102), 0, 0, 2);
                     }
                     else if (state == GUI.Hover)
                     {
-                        g.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Black, 0, 0, 2);
+                        d.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Black, 0, 0, 2);
                     }
                     else
                     {
-                        g.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(102, 102, 102));
+                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(102, 102, 102));
                     }
                 }
                 // label

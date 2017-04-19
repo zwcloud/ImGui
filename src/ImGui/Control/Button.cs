@@ -5,11 +5,15 @@ namespace ImGui
 {
     internal class Button
     {
-        public static bool DoControl(Rect rect, Content content, string id)
+        public static bool DoControl(Rect rect, Content content, string str_id)
         {
             Form form = Form.current;
-            var mousePos = form.GetMousePos();
             GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+            Window window = g.CurrentWindow;
+            int id = window.GetID(str_id);
+
+            var mousePos = form.GetMousePos();
 
             if (Utility.CurrentOS.IsAndroid)
             {
@@ -26,7 +30,7 @@ namespace ImGui
                 if (g.ActiveId == id && Input.Mouse.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    g.SetActiveId(GUIContext.None);
+                    g.SetActiveId(0);
                 }
 
                 // ui representation
@@ -59,7 +63,7 @@ namespace ImGui
                     if (Input.Mouse.LeftButtonReleased)//end track
                     {
                         clicked = true;
-                        g.SetActiveId(GUIContext.None);
+                        g.SetActiveId(0);
                     }
                 }
 

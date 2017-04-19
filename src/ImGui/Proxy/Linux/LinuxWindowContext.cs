@@ -51,6 +51,7 @@ namespace ImGui
         [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
         static extern IntPtr xcb_disconnect(IntPtr connection);
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_screen_t
         {
             public xcb_window_t root;
@@ -75,6 +76,7 @@ namespace ImGui
         [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
         static extern xcb_screen_iterator_t xcb_setup_roots_iterator(IntPtr R);
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_screen_iterator_t
         {
             public IntPtr data;//xcb_screen_t*
@@ -86,6 +88,7 @@ namespace ImGui
         [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
         static extern IntPtr xcb_get_setup(IntPtr connection);
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_setup_t
         {
             byte status;
@@ -148,6 +151,7 @@ namespace ImGui
             UInt32 value_mask,
             UInt32[] value_list);
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_void_cookie_t
         {
             uint sequence;  //Sequence number
@@ -308,6 +312,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             XCB_EVENT_MASK_OWNER_GRAB_BUTTON = 16777216
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_generic_event_t
         {
             public byte response_type;  //Type of the response
@@ -347,6 +352,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
         static extern IntPtr xcb_poll_for_event(IntPtr connection);
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_expose_event_t
         {
             public byte response_type;
@@ -361,6 +367,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             public unsafe fixed byte pad1[2];
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_button_press_event_t
         {
             public byte response_type;
@@ -379,6 +386,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             public byte pad0;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_motion_notify_event_t
         {
             public byte response_type;
@@ -397,6 +405,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             public byte pad0;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_enter_notify_event_t
         {
             public byte response_type;
@@ -415,6 +424,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             public byte same_screen_focus;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         struct xcb_key_press_event_t
         {
             public byte response_type;
@@ -586,6 +596,8 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         }
 
         #endregion
+
+#pragma warning restore 0649
 
         #endregion
 

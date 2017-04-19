@@ -12,6 +12,8 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
+            GUILayout.Begin("Debug", new Point(60, 60), new Size(400, 400));
+            GUILayout.End();
             //testUI.OnGUI();
         }
     }

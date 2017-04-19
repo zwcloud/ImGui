@@ -10,14 +10,17 @@ namespace ImGui
         public Point Position;
         public Size Size;
         public Size FullSize;
+        public WindowFlags Flags;
         public DrawList DrawList;
         public Rect ClipRect;
 
-        public int LastActiveFrame;
+
+        public long LastActiveFrame;
 
         private Window()
         {
             DrawList = new DrawList();
+            MoveID = GetID("#MOVE");
             {
                 var style = new GUIStyle();
                 var bgColor = Color.Rgb(34, 43, 46);
@@ -50,6 +53,15 @@ namespace ImGui
             g.Windows.Add(this);
         }
 
+        public int GetID(string strID)
+        {
+            //http://stackoverflow.com/a/263416/3427520
+            int hash = 17;
+            hash = hash * 23 + this.ID.GetHashCode();
+            hash = hash * 23 + strID.GetHashCode();
+            return hash;
+        }
+
         public Rect Rect => new Rect(Position, Size);
 
         public double TitleBarHeight => HeaderStyle.PaddingVertical + HeaderStyle.PaddingVertical + HeaderStyle.FontSize*96.0/72.0;
@@ -60,8 +72,19 @@ namespace ImGui
         public bool Active { get; internal set; }
         public Window RootWindow { get; internal set; }
 
+        /// <summary>
+        /// == window->GetID("#MOVE")
+        /// </summary>
+        public int MoveID { get; internal set; }
+        public Rect WindowClippedRect { get; internal set; }
+
         public GUIStyle Style;
         public GUIStyle HeaderStyle;
         public Content HeaderContent;
+    }
+
+    enum WindowFlags
+    {
+        ChildWindow
     }
 }

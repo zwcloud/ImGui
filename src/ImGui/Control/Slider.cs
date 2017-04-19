@@ -2,9 +2,16 @@
 {
     internal class Slider
     {
-        internal static double DoControl(Rect rect, double value, double minValue, double maxValue, bool isHorizontal, string id)
+        internal static double DoControl(Rect rect, double value, double minValue, double maxValue, bool isHorizontal, string str_id)
         {
-            var hovered = rect.Contains(Form.current.GetMousePos());
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+            Window window = g.CurrentWindow;
+            int id = window.GetID(str_id);
+
+            var mousePos = form.GetMousePos();
+            var hovered = rect.Contains(mousePos);
             
             //control logic
             var uiState = Form.current.uiContext;
@@ -22,7 +29,6 @@
             {
                 if (Input.Mouse.LeftButtonState == InputState.Down)
                 {
-                    var mousePos = Form.current.GetMousePos();
                     if (isHorizontal)
                     {
                         var leftPoint = new Point(rect.X + 10, rect.Y + rect.Height/2);
@@ -60,9 +66,7 @@
             }
 
             // ui painting
-            if (Event.current.type == EventType.Repaint)
             {
-                var g = Form.current.DrawList;
                 var style = GUISkin.Instance[GUIControlName.Slider];
                 var colorForLineUsed = style.Get<Color>(GUIStyleName.Slider_LineUsed);
                 var colorForLineUnused = style.Get<Color>(GUIStyleName.Slider_LineUnused);
@@ -83,18 +87,18 @@
                     var bottomArcCenter = currentPoint + new Vector(0, -b);
                     var bottomStartPoint = bottomArcCenter + new Vector(-a, 0);
 
-                    g.PathMoveTo(leftPoint);
-                    g.PathLineTo(currentPoint);
-                    g.PathStroke(colorForLineUsed, false, 2);
+                    d.PathMoveTo(leftPoint);
+                    d.PathLineTo(currentPoint);
+                    d.PathStroke(colorForLineUsed, false, 2);
 
-                    g.PathMoveTo(currentPoint);
-                    g.PathLineTo(rightPoint);
-                    g.PathStroke(colorForLineUnused, false, 2);
+                    d.PathMoveTo(currentPoint);
+                    d.PathLineTo(rightPoint);
+                    d.PathStroke(colorForLineUnused, false, 2);
 
-                    g.PathArcToFast(topArcCenter, a, 0, 6);
-                    g.PathLineTo(bottomStartPoint);
-                    g.PathArcToFast(bottomArcCenter, a, 6, 12);
-                    g.PathClose();
+                    d.PathArcToFast(topArcCenter, a, 0, 6);
+                    d.PathLineTo(bottomStartPoint);
+                    d.PathArcToFast(bottomArcCenter, a, 6, 12);
+                    d.PathClose();
                 }
                 else
                 {
@@ -112,19 +116,19 @@
                     var rightArcCenter = currentPoint + new Vector(b, 0);
                     var rightStartPoint = rightArcCenter + new Vector(0, -a);
 
-                    g.PathMoveTo(upPoint);
-                    g.PathLineTo(currentPoint);
-                    g.PathStroke(colorForLineUsed, false, 2);
+                    d.PathMoveTo(upPoint);
+                    d.PathLineTo(currentPoint);
+                    d.PathStroke(colorForLineUsed, false, 2);
 
-                    g.PathMoveTo(currentPoint);
-                    g.PathLineTo(bottomPoint);
-                    g.PathStroke(colorForLineUnused, false, 2);
+                    d.PathMoveTo(currentPoint);
+                    d.PathLineTo(bottomPoint);
+                    d.PathStroke(colorForLineUnused, false, 2);
 
-                    g.PathArcToFast(leftArcCenter, a, 3, 9);
-                    g.PathLineTo(rightStartPoint);
-                    g.PathArcToFast(rightArcCenter, a, 9, 12);
-                    g.PathArcToFast(rightArcCenter, a, 0, 3);
-                    g.PathClose();
+                    d.PathArcToFast(leftArcCenter, a, 3, 9);
+                    d.PathLineTo(rightStartPoint);
+                    d.PathArcToFast(rightArcCenter, a, 9, 12);
+                    d.PathArcToFast(rightArcCenter, a, 0, 3);
+                    d.PathClose();
                 }
 
                 var fillColor = Color.Rgb(204, 204, 204);
@@ -136,7 +140,7 @@
                 {
                     fillColor = Color.Rgb(23, 23, 23);
                 }
-                g.PathFill(fillColor);
+                d.PathFill(fillColor);
 
                 //GUIPrimitive.DrawBoxModel(rect, null, GUISkin.Instance[GUIControlName.Slider]);
             }

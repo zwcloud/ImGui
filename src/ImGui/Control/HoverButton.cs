@@ -4,10 +4,17 @@ namespace ImGui
 {
     class HoverButton
     {
-        public static bool DoControl(Rect rect, Content content, string id)
+        public static bool DoControl(Rect rect, Content content, string str_id)
         {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            DrawList d = form.DrawList;
+            Window window = g.CurrentWindow;
+
+            int id = window.GetID(str_id);
+            var mousePos = form.GetMousePos();
             var result = false;
-            var hovered = rect.Contains(Form.current.GetMousePos());
+            var hovered = rect.Contains(mousePos);
 
             //control logic
             var uiState = Form.current.uiContext;
@@ -38,7 +45,6 @@ namespace ImGui
             }
 
             // ui painting
-            if (Event.current.type == EventType.Repaint)
             {
                 GUIPrimitive.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
             }

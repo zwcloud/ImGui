@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -8,35 +9,35 @@ namespace ImGui
         public bool LogEnabled = true;
 
         // fps
+        public long Time;
+        public long FrameCount = 0;
         public long lastFPSUpdateTime;
         public int fps;
-        public int elapsedFrameCount = 0;
 
         public readonly List<Window> Windows = new List<Window>();
         public Window CurrentWindow;
         public readonly Stack<Window> CurrentWindowStack = new Stack<Window>();
 
-        private string hoverId;
-        private string activeId;
+        private int hoverId;
+        private int activeId;
         private bool activeIdIsAlive;
         private bool activeIdIsJustActivated;
 
-        private string hoverIdPreviousFrame;
-        private string activeIdPreviousFrame;
+        private int hoverIdPreviousFrame;
+        private int activeIdPreviousFrame;
 
 
         //-----
 
-        public const string None = "None";
-        public const string Unavailable = "Unavailable";
+        public const int None = 0;
 
-        public string HoverId
+        public int HoverId
         {
             get { return hoverId; }
             set { hoverId = value; }
         }
 
-        public string ActiveId
+        public int ActiveId
         {
             get { return activeId; }
             set { activeId = value; }
@@ -48,7 +49,7 @@ namespace ImGui
             set { activeIdIsAlive = value; }
         }
 
-        public string ActiveIdPreviousFrame
+        public int ActiveIdPreviousFrame
         {
             get { return activeIdPreviousFrame; }
             set { activeIdPreviousFrame = value; }
@@ -60,7 +61,7 @@ namespace ImGui
             set { activeIdIsJustActivated = value; }
         }
 
-        public string HoverIdPreviousFrame
+        public int HoverIdPreviousFrame
         {
             get { return hoverIdPreviousFrame; }
             set { hoverIdPreviousFrame = value; }
@@ -69,20 +70,24 @@ namespace ImGui
         public Window HoveredWindow { get; internal set; }
         public Window MovedWindow { get; internal set; }
         public Window HoveredRootWindow { get; internal set; }
+        public int MovedWindowMoveId { get; internal set; }
+        public Window FocusedWindow { get; private set; }
+        public Window ActiveIdWindow { get; private set; }
+        public bool ActiveIdAllowOverlap { get; private set; }
 
-        public void SetHoverId(string id)
+        public void SetHoverId(int id)
         {
             HoverId = id;
         }
 
-        public void SetActiveId(string id)
+        public void SetActiveId(int id)
         {
             ActiveId = id;
             ActiveIdIsJustActivated = true;
 
         }
 
-        public void KeepAliveId(string id)
+        public void KeepAliveId(int id)
         {
             if (ActiveId == id)
                 ActiveIdIsAlive = true;
@@ -94,12 +99,12 @@ namespace ImGui
             var g = this;
             Window window = CurrentWindow;
 
-            // Clip
-            Rect rect_clipped = rect;
-            if (clip)
-                rect_clipped.Intersect(window.ClipRect);
+            //// Clip
+            //Rect rect_clipped = rect;
+            //if (clip)
+            //    rect_clipped.Intersect(window.ClipRect);
 
-            return rect_clipped.Contains(Input.Mouse.MousePos);
+            return rect.Contains(Input.Mouse.MousePos);
         }
 
         public bool IsMouseHoveringRect(Point r_min, Point r_max, bool clip = true)
@@ -129,13 +134,49 @@ namespace ImGui
                 Window window = g.Windows[i];
                 if (!window.Active)
                     continue;
-                if (excluding_childs)
+                if (excluding_childs && (window.Flags & WindowFlags.ChildWindow) != 0)
                     continue;
 
-                if (window.Rect.Contains(pos))
+                if (window.WindowClippedRect.Contains(pos))
                     return window;
             }
             return null;
+        }
+
+        public void KeepAliveID(int id)
+        {
+            if (this.ActiveId == id)
+                this.ActiveIdIsAlive = true;
+        }
+
+        public void SetActiveID(int id, Window window = null)
+        {
+            var g = this;
+            g.ActiveId = id;
+            g.ActiveIdAllowOverlap = false;
+            g.ActiveIdIsJustActivated = true;
+            g.ActiveIdWindow = window;
+        }
+
+        public void FocusWindow(Window window)
+        {
+            var g = this;
+
+            // Always mark the window we passed as focused. This is used for keyboard interactions such as tabbing.
+            g.FocusedWindow = window;
+
+            // Passing NULL allow to disable keyboard focus
+            if (window == null) return;
+
+            // And move its root window to the top of the pile
+            if (window.RootWindow != null)
+            {
+                window = window.RootWindow;
+            }
+
+            // Steal focus on active widgets
+            if (this.ActiveId != 0 && (g.ActiveIdWindow!=null) && g.ActiveIdWindow.RootWindow != window)
+                    SetActiveID(0);
         }
     }
 }
