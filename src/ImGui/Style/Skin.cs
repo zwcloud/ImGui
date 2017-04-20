@@ -125,7 +125,7 @@ namespace ImGui
             }
 
             {
-                var bgColor = Color.Rgb(204, 204, 204);
+                var borderColor = Color.Black;
                 //normal
                 Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Normal);
                 Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Normal);
@@ -135,37 +135,37 @@ namespace ImGui
                 Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Normal);
                 Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Normal);
                 Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Normal);
+                Button.Set(GUIStyleName.BackgroundColor, new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);
+                Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Normal, GUIState.Normal);
                 //hover
-                var hoverBorderColor = Color.Rgb(122, 122, 122);
                 Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Hover);
                 Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Hover);
                 Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Hover);
                 Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderTopColor, hoverBorderColor, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderRightColor, hoverBorderColor, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderBottomColor, hoverBorderColor, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderLeftColor, hoverBorderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderTopColor, borderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderRightColor, borderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderBottomColor, borderColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BorderLeftColor, borderColor, GUIState.Hover);
                 Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Hover);
                 Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Hover);
                 Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Hover);
                 Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Hover);
+                Button.Set(GUIStyleName.BackgroundColor, new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
+                Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Normal, GUIState.Hover);
                 //active
-                var activeBgColor = Color.Rgb(153, 153, 153);
                 Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.BorderTopColor, hoverBorderColor, GUIState.Active);
-                Button.Set(GUIStyleName.BorderRightColor, hoverBorderColor, GUIState.Active);
-                Button.Set(GUIStyleName.BorderBottomColor, hoverBorderColor, GUIState.Active);
-                Button.Set(GUIStyleName.BorderLeftColor, hoverBorderColor, GUIState.Active);
+                Button.Set(GUIStyleName.BorderTopColor, borderColor, GUIState.Active);
+                Button.Set(GUIStyleName.BorderRightColor, borderColor, GUIState.Active);
+                Button.Set(GUIStyleName.BorderBottomColor, borderColor, GUIState.Active);
+                Button.Set(GUIStyleName.BorderLeftColor, borderColor, GUIState.Active);
                 Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.BackgroundColor, activeBgColor, GUIState.Active);
+                Button.Set(GUIStyleName.BackgroundColor, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
                 Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Bold, GUIState.Active);
             }
 

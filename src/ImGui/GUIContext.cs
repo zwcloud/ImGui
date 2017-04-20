@@ -5,7 +5,6 @@ namespace ImGui
 {
     internal class GUIContext
     {
-
         public bool LogEnabled = true;
 
         // fps
@@ -40,7 +39,7 @@ namespace ImGui
         public int ActiveId
         {
             get { return activeId; }
-            set { activeId = value; }
+            private set { activeId = value; }
         }
 
         public bool ActiveIdIsAlive
@@ -75,33 +74,41 @@ namespace ImGui
         public Window ActiveIdWindow { get; private set; }
         public bool ActiveIdAllowOverlap { get; private set; }
         public Vector ActiveIdClickOffset { get; internal set; }
-        public bool HoveredIdAllowOverlap { get; internal set; }
+        public bool HoverIdAllowOverlap { get; internal set; }
         public long DeltaTime { get; internal set; }
         public int HoveredIdPreviousFrame { get; internal set; }
+        public bool Initialized { get; internal set; }
+        public long FrameCountEnded { get; internal set; } = -1;
+        public long FrameCountRendered { get; internal set; } = -1;
 
-        public void SetHoverId(int id)
+        public void SetActiveID(int id, Window window = null)
         {
-            HoverId = id;
+            var g = this;
+            g.ActiveId = id;
+            g.ActiveIdAllowOverlap = false;
+            g.ActiveIdIsJustActivated = true;
+            g.ActiveIdWindow = window;
         }
 
-        public void SetActiveId(int id)
+        public void SetHoverID(int id)
         {
-            ActiveId = id;
-            ActiveIdIsJustActivated = true;
-
+            var g = this;
+            g.HoverId = id;
+            g.HoverIdAllowOverlap = false;
         }
 
-        public void KeepAliveId(int id)
+        public void KeepAliveID(int id)
         {
-            if (ActiveId == id)
-                ActiveIdIsAlive = true;
+            var g = this;
+            if (g.ActiveId == id)
+                g.ActiveIdIsAlive = true;
         }
 
 
         public bool IsMouseHoveringRect(Rect rect, bool clip = true)
         {
-            var g = this;
-            Window window = CurrentWindow;
+            //var g = this;
+            //Window window = g.CurrentWindow;
 
             //// Clip
             //Rect rect_clipped = rect;
@@ -115,6 +122,20 @@ namespace ImGui
         {
             Rect rect = new Rect(r_min, r_max);
             return IsMouseHoveringRect(rect, clip);
+        }
+
+        public bool IsHovered(Rect bb, int id, bool flatten_childs)
+        {
+            GUIContext g = this;
+            if (g.HoverId == 0 || g.HoverId == id || g.HoverIdAllowOverlap)
+            {
+                Window window = g.CurrentWindow;
+                if (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window.RootWindow))
+                    if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
+                        if (IsWindowContentHoverable(g.HoveredRootWindow))
+                            return true;
+            }
+            return false;
         }
 
         public Window FindWindowByName(string name)
@@ -138,27 +159,13 @@ namespace ImGui
                 Window window = g.Windows[i];
                 if (!window.Active)
                     continue;
-                if (excluding_childs && (window.Flags & WindowFlags.ChildWindow) != 0)
+                if (excluding_childs && window.Flags.HaveFlag(WindowFlags.ChildWindow))
                     continue;
 
                 if (window.WindowClippedRect.Contains(pos))
                     return window;
             }
             return null;
-        }
-
-        public bool IsHovered(Rect bb, int id, bool flatten_childs)
-        {
-            GUIContext g = this;
-            if (g.HoverId == 0 || g.HoverId == id || g.HoveredIdAllowOverlap)
-            {
-                Window window = g.CurrentWindow;
-                if (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window.RootWindow))
-                    if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
-                        if (IsWindowContentHoverable(g.HoveredRootWindow))
-                            return true;
-            }
-            return false;
         }
 
         public bool IsWindowContentHoverable(Window window)
@@ -171,7 +178,7 @@ namespace ImGui
                 Window focused_root_window = focused_window.RootWindow;
                 if (focused_root_window!=null)
                 {
-                    if (focused_root_window.Flags.HasFlag(WindowFlags.Popup) && focused_root_window.WasActive && focused_root_window != window.RootWindow)
+                    if (focused_root_window.Flags.HaveFlag(WindowFlags.Popup) && focused_root_window.WasActive && focused_root_window != window.RootWindow)
                     {
                         return false;
                     }
@@ -202,21 +209,6 @@ namespace ImGui
             return false;
         }
 
-        public void KeepAliveID(int id)
-        {
-            if (this.ActiveId == id)
-                this.ActiveIdIsAlive = true;
-        }
-
-        public void SetActiveID(int id, Window window = null)
-        {
-            var g = this;
-            g.ActiveId = id;
-            g.ActiveIdAllowOverlap = false;
-            g.ActiveIdIsJustActivated = true;
-            g.ActiveIdWindow = window;
-        }
-
         public void FocusWindow(Window window)
         {
             var g = this;
@@ -234,8 +226,13 @@ namespace ImGui
             }
 
             // Steal focus on active widgets
-            if (this.ActiveId != 0 && (g.ActiveIdWindow!=null) && g.ActiveIdWindow.RootWindow != window)
+            if (window.Flags.HaveFlag(WindowFlags.Popup))
+            {
+                if (this.ActiveId != 0 && (g.ActiveIdWindow!=null) && g.ActiveIdWindow.RootWindow != window)
+                {
                     SetActiveID(0);
+                }
+            }
         }
     }
 }

@@ -445,7 +445,7 @@ namespace ImGui
             get { return new Point(X + 0.5 * Width, Y + 0.5 * Height); }
         }
 
-        public Point Min => Topleft;
+        public Point Min => TopLeft;
         public Point Max => BottomRight;
 
         /// <summary>

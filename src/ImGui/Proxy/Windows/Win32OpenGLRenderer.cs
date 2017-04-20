@@ -231,7 +231,8 @@ void main()
             mImage.Init();
 
             // Other state
-            GL.ClearColor(1, 1, 1, 1);
+            var clearColor = Color.Rgb(114, 144, 154);
+            GL.ClearColor((float)clearColor.R, (float)clearColor.G, (float)clearColor.B, (float)clearColor.A);
 
             Utility.CheckGLError();
         }

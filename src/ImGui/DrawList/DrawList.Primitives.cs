@@ -167,8 +167,8 @@ namespace ImGui
                 return;
             if (rounding > 0.0f)
             {
-                //PathRect(a, b, rounding, rounding_corners);
-                //PathFill(col);
+                PathRect(a, b, rounding, rounding_corners);
+                PathFill(col);
             }
             else
             {

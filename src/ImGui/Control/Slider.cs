@@ -10,19 +10,19 @@
             DrawList d = window.DrawList;
             int id = window.GetID(str_id);
 
-            var mousePos = Input.Mouse.MousePos
+            var mousePos = Input.Mouse.MousePos;
             var hovered = rect.Contains(mousePos);
             
             //control logic
             var uiState = Form.current.uiContext;
-            uiState.KeepAliveId(id);
+            uiState.KeepAliveID(id);
             if (hovered)
             {
-                uiState.SetHoverId(id);
+                uiState.SetHoverID(id);
 
                 if (Input.Mouse.LeftButtonPressed)//start track
                 {
-                    uiState.SetActiveId(id);
+                    uiState.SetActiveID(id);
                 }
             }
             if (uiState.ActiveId == id)
@@ -50,7 +50,7 @@
                 }
                 else//end track
                 {
-                    uiState.SetActiveId(GUIContext.None);
+                    uiState.SetActiveID(GUIContext.None);
                 }
             }
 

@@ -81,7 +81,7 @@ namespace ImGui
             return ToggleButton((open ? "▼" : "▶") + text, open);
         }
 
-        public static void Begin(string name, Point position, Size size, double bg_alpha, WindowFlags flags)
+        public static void Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
@@ -94,6 +94,14 @@ namespace ImGui
 
             long current_frame = g.FrameCount;
             bool first_begin_of_the_frame = (window.LastActiveFrame != current_frame);
+            if (first_begin_of_the_frame)
+            {
+                window.Flags = flags;
+            }
+            else
+            {
+                flags = window.Flags;
+            }
 
             // Add to stack
             Window parentWindow = !g.CurrentWindowStack.Empty() ? g.CurrentWindowStack.Peek() : null;
@@ -148,7 +156,7 @@ namespace ImGui
                 {
                     Color resize_col = Color.Clear;
                     double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
-                    if (!flags.HasFlag(WindowFlags.AlwaysAutoResize) && !flags.HasFlag(WindowFlags.NoResize))
+                    if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
                     {
                         // Manual resize
                         var br = window.Rect.BottomRight;
@@ -186,15 +194,14 @@ namespace ImGui
 
 
                     // Window background
-                    // Default alpha
                     Color bg_color = style.BackgroundColor;
                     if (bg_alpha >= 0.0f)
                         bg_color.A = bg_alpha;
                     if (bg_color.A > 0.0f)
-                        window.DrawList.AddRectFilled(window.Position + new Vector(0, window.TitleBarHeight), window.Rect.BottomRight, bg_color, window_rounding, flags.HasFlag(WindowFlags.NoTitleBar) ? 15 : 4 | 8);
+                        window.DrawList.AddRectFilled(window.Position + new Vector(0, window.TitleBarHeight), window.Rect.BottomRight, bg_color, window_rounding, flags.HaveFlag(WindowFlags.NoTitleBar) ? 15 : 4 | 8);
 
                     // Title bar
-                    if (!flags.HasFlag(WindowFlags.NoTitleBar))
+                    if (!flags.HaveFlag(WindowFlags.NoTitleBar))
                     {
                         window.DrawList.AddRectFilled(title_bar_rect.TopLeft, title_bar_rect.BottomRight,
                             g.FocusedWindow == window ?
@@ -202,23 +209,44 @@ namespace ImGui
                             headerStyle.Get<Color>(GUIStyleName.BackgroundColor), window_rounding, 1 | 2);
                     }
 
-                    if (window.Collapsed)
+                    // Render resize grip
+                    // (after the input handling so we don't have a frame of latency)
+                    if (!flags.HaveFlag(WindowFlags.NoResize))
                     {
-                        window.DrawList.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
+                        Point br = window.Rect.BottomRight;
+                        var borderSize = 4;
+                        window.DrawList.PathLineTo(br + new Vector(-resize_corner_size, -borderSize));
+                        window.DrawList.PathLineTo(br + new Vector(-borderSize, -resize_corner_size));
+                        window.DrawList.PathArcToFast(new Point(br.X - window_rounding - borderSize, br.Y - window_rounding - borderSize), window_rounding, 0, 3);
+                        window.DrawList.PathFill(resize_col);
                     }
-                    else
-                    {
-                    }
-                    window.DrawList.DrawBoxModel(window.TitleBarRect, window.HeaderContent, headerStyle);//title
-                    window.DrawList.DrawBoxModel(
-                        new Rect(window.Position + new Vector(0, window.TitleBarHeight), window.Size),
-                        Content.None, style);//background
 
                     // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
                     window.WindowClippedRect = window.Rect;
                     window.WindowClippedRect.Intersect(window.ClipRect);
                 }
+
+
+                // Title bar
+                if (!flags.HaveFlag(WindowFlags.NoTitleBar))
+                {
+                    //const float pad = 2.0f;
+                    //const float rad = (window.TitleBarHeight - pad * 2.0f) * 0.5f;
+                    //if (CloseButton(window.GetID("#CLOSE"), window.Rect.TopRight + new Vector(-pad - rad, pad + rad), rad))
+                    //    open = false;
+
+                    Size text_size = headerStyle.CalcSize(Content.Cached(name, name), GUIState.Normal, null);
+                    //if (!flags.HaveFlag(WindowFlags.NoCollapse))
+                    //    RenderCollapseTriangle(window->Pos + style.FramePadding, !window.Collapsed, 1.0f, true);
+
+                    Point text_min = window.Position + new Vector(style.PaddingLeft, style.PaddingTop);
+                    Point text_max = window.Position + new Vector(window.Size.Width - style.PaddingHorizontal, style.PaddingVertical * 2 + text_size.Height);
+                    //ImVec2 clip_max = ImVec2(window->Pos.x + window->Size.x - (p_open ? title_bar_rect.GetHeight() - 3 : style.FramePadding.x), text_max.y); // Match the size of CloseWindowButton()
+                    window.DrawList.DrawText(new Rect(text_min, text_max), Content.Cached(name, name), headerStyle, GUIState.Normal);
+                }
+
             }
+            
         }
 
         public static void End()

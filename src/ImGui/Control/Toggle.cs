@@ -23,27 +23,27 @@ namespace ImGui
             DrawList d = window.DrawList;
             int id = window.GetID(str_id);
 
-            var mousePos = Input.Mouse.MousePos
+            var mousePos = Input.Mouse.MousePos;
             var hovered = rect.Contains(mousePos);
 
             var result = value;
 
             //control logic
             var uiState = Form.current.uiContext;
-            uiState.KeepAliveId(id);
+            uiState.KeepAliveID(id);
             if (hovered)
             {
-                uiState.SetHoverId(id);
+                uiState.SetHoverID(id);
 
                 if (Input.Mouse.LeftButtonPressed)
                 {
-                    uiState.ActiveId = id;
+                    uiState.SetActiveID(id);
                 }
 
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
                 {
                     result = !value;
-                    uiState.SetActiveId(GUIContext.None);
+                    uiState.SetActiveID(GUIContext.None);
                 }
             }
 
@@ -146,25 +146,25 @@ namespace ImGui
             DrawList d = window.DrawList;
             int id = window.GetID(str_id);
 
-            var mousePos = Input.Mouse.MousePos
+            var mousePos = Input.Mouse.MousePos;
             var hovered = rect.Contains(mousePos);
             var result = value;
             //control logic
             var uiState = Form.current.uiContext;
-            uiState.KeepAliveId(id);
+            uiState.KeepAliveID(id);
             if (hovered)
             {
-                uiState.SetHoverId(id);
+                uiState.SetHoverID(id);
 
                 if (Input.Mouse.LeftButtonPressed)
                 {
-                    uiState.ActiveId = id;
+                    uiState.SetActiveID(id);
                 }
 
                 if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
                 {
                     result = !value;
-                    uiState.SetActiveId(GUIContext.None);
+                    uiState.SetActiveID(GUIContext.None);
                 }
             }
 

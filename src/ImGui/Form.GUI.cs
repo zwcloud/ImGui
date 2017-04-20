@@ -12,6 +12,12 @@ namespace ImGui
             current = this;
             GUIContext g = this.uiContext;
 
+            if (!g.Initialized)
+            {
+                // Initialize on first frame
+                g.Initialized = true;
+            }
+
             // Time
             g.DeltaTime = Application.DeltaTime;
             g.Time += g.DeltaTime;
@@ -79,7 +85,7 @@ namespace ImGui
             // Clear reference to active widget if the widget isn't alive anymore
             g.HoveredIdPreviousFrame = g.HoverId;
             g.HoverId = 0;
-            g.HoveredIdAllowOverlap = false;
+            g.HoverIdAllowOverlap = false;
             if (!g.ActiveIdIsAlive && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != 0)
                 g.SetActiveID(0);
             g.ActiveIdPreviousFrame = g.ActiveId;
@@ -118,6 +124,56 @@ namespace ImGui
 
         }
 
+        internal void EndFrame()
+        {
+            GUIContext g = Form.current.uiContext;
+            Debug.Assert(g.Initialized);                       // Forgot to call ImGui::NewFrame()
+            Debug.Assert(g.FrameCountEnded != g.FrameCount);   // ImGui::EndFrame() called multiple times, or forgot to call ImGui::NewFrame() again
+
+            // Click to focus window and start moving (after we're done with all our widgets)
+            if (g.ActiveId == 0 && g.HoverId == 0 && Input.Mouse.LeftButtonPressed)
+            {
+                if (!(g.FocusedWindow!=null && !g.FocusedWindow.WasActive && g.FocusedWindow.Active)) // Unless we just made a popup appear
+                {
+                    if (g.HoveredRootWindow != null)
+                    {
+                        g.FocusWindow(g.HoveredWindow);
+                        if (!(g.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
+                        {
+                            g.MovedWindow = g.HoveredWindow;
+                            g.MovedWindowMoveId = g.HoveredRootWindow.MoveID;
+                            g.SetActiveID(g.MovedWindowMoveId, g.HoveredRootWindow);
+                        }
+                    }
+                    else if (g.FocusedWindow != null/* && GetFrontMostModalRootWindow() == NULL*/)
+                    {
+                        // Clicking on void disable focus
+                        g.FocusWindow(null);
+                    }
+                }
+            }
+
+            //// Sort the window list so that all child windows are after their parent
+            //// We cannot do that on FocusWindow() because childs may not exist yet
+            //g.WindowsSortBuffer.resize(0);
+            //g.WindowsSortBuffer.reserve(g.Windows.Size);
+            //for (int i = 0; i != g.Windows.Size; i++)
+            //{
+            //    ImGuiWindow* window = g.Windows[i];
+            //    if (window->Active && (window->Flags & ImGuiWindowFlags_ChildWindow))       // if a child is active its parent will add it
+            //        continue;
+            //    AddWindowToSortedBuffer(g.WindowsSortBuffer, window);
+            //}
+            //IM_ASSERT(g.Windows.Size == g.WindowsSortBuffer.Size);  // we done something wrong
+            //g.Windows.swap(g.WindowsSortBuffer);
+
+            // Clear Input data for next frame
+            Input.Mouse.MouseWheel = 0.0f;
+            //memset(g.IO.InputCharacters, 0, sizeof(g.IO.InputCharacters));
+
+            g.FrameCountEnded = g.FrameCount;
+        }
+
         /// <summary>
         /// GUI Logic. This will be implemented by the user.
         /// </summary>
@@ -140,6 +196,12 @@ namespace ImGui
         internal void Render()
         {
             var g = this.uiContext;
+
+            Debug.Assert(g.Initialized);   // Forgot to call ImGui::NewFrame()
+
+            if (g.FrameCountEnded != g.FrameCount)
+                EndFrame();
+            g.FrameCountRendered = g.FrameCount;
 
             this.renderer.Clear();
             foreach (var window in this.uiContext.Windows)

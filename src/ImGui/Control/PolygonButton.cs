@@ -12,27 +12,27 @@ namespace ImGui
             Window window = g.CurrentWindow;
             DrawList d = window.DrawList;
             int id = window.GetID(str_id);
-            var mousePos = Input.Mouse.MousePos
+            var mousePos = Input.Mouse.MousePos;
 
             var clicked = false;
             var hovered = MathEx.IsPointInPolygon(mousePos, points, new Vector(rect.X, rect.Y));
             textRect.Offset(rect.X, rect.Y);
 
             //control logic
-            g.KeepAliveId(id);
+            g.KeepAliveID(id);
             if (hovered)
             {
-                g.SetHoverId(id);
+                g.SetHoverID(id);
 
                 if (Input.Mouse.LeftButtonPressed)//start track
                 {
-                    g.SetActiveId(id);
+                    g.SetActiveID(id);
                 }
 
                 if (Input.Mouse.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    g.SetActiveId(GUIContext.None);
+                    g.SetActiveID(GUIContext.None);
                 }
             }
 

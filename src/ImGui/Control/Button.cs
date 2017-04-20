@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -10,77 +9,24 @@ namespace ImGui
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
+            if (window.SkipItems)
+                return false;
             DrawList d = window.DrawList;
             int id = window.GetID(str_id);
 
+            GUIStyle style = GUISkin.Instance[GUIControlName.Button];
             var mousePos = Input.Mouse.MousePos;
+            
+            bool hovered, held;
+            bool pressed = ButtonBehavior(rect, id, out hovered, out held, 0);
 
-            if (Utility.CurrentOS.IsAndroid)
-            {
-                var clicked = false;
-                var inside = rect.Contains(mousePos);
+            // Render
+            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+            d.RenderFrame(rect.Min, rect.Max, col, true, 0);
+            d.DrawText(rect, Content.Cached(str_id, str_id), style, state);
 
-                //control logic
-                g.KeepAliveId(id);
-                if (inside && Input.Mouse.LeftButtonPressed)//start track
-                {
-                    g.SetActiveId(id);
-                }
-
-                if (g.ActiveId == id && Input.Mouse.LeftButtonReleased)//end track
-                {
-                    clicked = true;
-                    g.SetActiveId(0);
-                }
-
-                // ui representation
-                var state = GUI.Normal;
-                if (g.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
-                {
-                    state = GUI.Active;
-                }
-
-                // ui painting
-                d.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
-                return clicked;
-            }
-            else
-            {
-                var clicked = false;
-                var hovered = rect.Contains(mousePos);
-
-                //control logic
-                g.KeepAliveId(id);
-                if (hovered)
-                {
-                    g.SetHoverId(id);
-
-                    if (Input.Mouse.LeftButtonPressed)//start track
-                    {
-                        g.SetActiveId(id);
-                    }
-
-                    if (Input.Mouse.LeftButtonReleased)//end track
-                    {
-                        clicked = true;
-                        g.SetActiveId(0);
-                    }
-                }
-
-                // ui representation
-                var state = GUI.Normal;
-                if (hovered)
-                {
-                    state = GUI.Hover;
-                    if (g.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
-                    {
-                        state = GUI.Active;
-                    }
-                }
-
-                d.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Button], state);
-                return clicked;
-            }
+            return pressed;
         }
 
         public static bool ButtonBehavior(Rect bb, int id, out bool out_hovered, out bool out_held, ButtonFlags flags)
@@ -88,7 +34,7 @@ namespace ImGui
             GUIContext g = Form.current.uiContext;
             Window window = g.CurrentWindow;
 
-            if (flags.HasFlag(ButtonFlags.Disabled))
+            if (flags.HaveFlag(ButtonFlags.Disabled))
             {
                 out_hovered = false;
                 out_held = false;
@@ -96,44 +42,44 @@ namespace ImGui
                 return false;
             }
 
-            if (!flags.HasFlag(ButtonFlags.PressedOnClickRelease | ButtonFlags.PressedOnClick | ButtonFlags.PressedOnRelease | ButtonFlags.PressedOnDoubleClick))
+            if (!flags.HaveFlag(ButtonFlags.PressedOnClickRelease | ButtonFlags.PressedOnClick | ButtonFlags.PressedOnRelease | ButtonFlags.PressedOnDoubleClick))
                 flags |= ButtonFlags.PressedOnClickRelease;
 
             bool pressed = false;
-            bool hovered = g.IsHovered(bb, id, flags.HasFlag(ButtonFlags.FlattenChilds));
+            bool hovered = g.IsHovered(bb, id, flags.HaveFlag(ButtonFlags.FlattenChilds));
             if (hovered)
             {
-                g.SetHoverId(id);
-                if (!flags.HasFlag(ButtonFlags.NoKeyModifiers) || (!Input.Keyboard.KeyPressed(Key.LeftControl) && !Input.Keyboard.KeyPressed(Key.LeftShift) && !Input.Keyboard.KeyPressed(Key.LeftAlt)))
+                g.SetHoverID(id);
+                if (!flags.HaveFlag(ButtonFlags.NoKeyModifiers) || (!Input.Keyboard.KeyPressed(Key.LeftControl) && !Input.Keyboard.KeyPressed(Key.LeftShift) && !Input.Keyboard.KeyPressed(Key.LeftAlt)))
                 {
                     //                        | CLICKING        | HOLDING with ButtonFlags.Repeat
                     // PressedOnClickRelease  |  <on release>*  |  <on repeat> <on repeat> .. (NOT on release)  <-- MOST COMMON! (*) only if both click/release were over bounds
                     // PressedOnClick         |  <on click>     |  <on click> <on repeat> <on repeat> ..
                     // PressedOnRelease       |  <on release>   |  <on repeat> <on repeat> .. (NOT on release)
                     // PressedOnDoubleClick   |  <on dclick>    |  <on dclick> <on repeat> <on repeat> ..
-                    if (flags.HasFlag(ButtonFlags.PressedOnClickRelease) && Input.Mouse.LeftButtonPressed)
+                    if (flags.HaveFlag(ButtonFlags.PressedOnClickRelease) && Input.Mouse.LeftButtonPressed)
                     {
                         g.SetActiveID(id, window); // Hold on ID
                         g.FocusWindow(window);
                         g.ActiveIdClickOffset = Input.Mouse.MousePos - bb.Min;
                     }
-                    if (((flags.HasFlag(ButtonFlags.PressedOnClick) && Input.Mouse.LeftButtonPressed)
-                        || (flags.HasFlag(ButtonFlags.PressedOnDoubleClick) && Input.Mouse.LeftButtonDoubleClicked)))
+                    if (((flags.HaveFlag(ButtonFlags.PressedOnClick) && Input.Mouse.LeftButtonPressed)
+                        || (flags.HaveFlag(ButtonFlags.PressedOnDoubleClick) && Input.Mouse.LeftButtonDoubleClicked)))
                     {
                         pressed = true;
                         g.SetActiveID(0);
                         g.FocusWindow(window);
                     }
-                    if (flags.HasFlag(ButtonFlags.PressedOnRelease) && Input.Mouse.LeftButtonReleased)
+                    if (flags.HaveFlag(ButtonFlags.PressedOnRelease) && Input.Mouse.LeftButtonReleased)
                     {
-                        if (!(flags.HasFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Input.KeyRepeatDelay))  // Repeat mode trumps <on release>
+                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Input.KeyRepeatDelay))  // Repeat mode trumps <on release>
                             pressed = true;
                         g.SetActiveID(0);
                     }
 
                     // 'Repeat' mode acts when held regardless of _PressedOn flags (see table above). 
                     // Relies on repeat logic of IsMouseClicked() but we may as well do it ourselves if we end up exposing finer RepeatDelay/RepeatRate settings.
-                    if (flags.HasFlag(ButtonFlags.Repeat) && g.ActiveId == id && Input.Mouse.LeftButtonDownDuration > 0.0f && g.IsMouseLeftButtonClicked(true))
+                    if (flags.HaveFlag(ButtonFlags.Repeat) && g.ActiveId == id && Input.Mouse.LeftButtonDownDuration > 0.0f && g.IsMouseLeftButtonClicked(true))
                         pressed = true;
                 }
             }
@@ -147,15 +93,15 @@ namespace ImGui
                 }
                 else
                 {
-                    if (hovered && flags.HasFlag(ButtonFlags.PressedOnClickRelease))
-                        if (!(flags.HasFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Input.KeyRepeatDelay))  // Repeat mode trumps <on release>
+                    if (hovered && flags.HaveFlag(ButtonFlags.PressedOnClickRelease))
+                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Input.KeyRepeatDelay))  // Repeat mode trumps <on release>
                             pressed = true;
                     g.SetActiveID(0);
                 }
             }
 
             // AllowOverlap mode (rarely used) requires previous frame HoveredId to be null or to match. This allows using patterns where a later submitted widget overlaps a previous one.
-            if (hovered && flags.HasFlag(ButtonFlags.AllowOverlapMode) && (g.HoveredIdPreviousFrame != id && g.HoveredIdPreviousFrame != 0))
+            if (hovered && flags.HaveFlag(ButtonFlags.AllowOverlapMode) && (g.HoveredIdPreviousFrame != id && g.HoveredIdPreviousFrame != 0))
                 hovered = pressed = held = false;
 
             out_hovered = hovered;

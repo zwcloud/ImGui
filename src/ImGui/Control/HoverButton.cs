@@ -12,19 +12,19 @@ namespace ImGui
             DrawList d = window.DrawList;
 
             int id = window.GetID(str_id);
-            var mousePos = Input.Mouse.MousePos
+            var mousePos = Input.Mouse.MousePos;
             var result = false;
             var hovered = rect.Contains(mousePos);
 
             //control logic
             var uiState = Form.current.uiContext;
-            uiState.KeepAliveId(id);
+            uiState.KeepAliveID(id);
             if (hovered)
             {
-                uiState.HoverId = id;
+                uiState.SetHoverID(id);
                 if (uiState.ActiveId == GUIContext.None)
                 {
-                    uiState.SetActiveId(id);
+                    uiState.SetActiveID(id);
                     result = true;
                 }
             }
@@ -32,7 +32,7 @@ namespace ImGui
             {
                 if (uiState.ActiveId == id)
                 {
-                    uiState.SetActiveId(GUIContext.None);
+                    uiState.SetActiveID(GUIContext.None);
                 }
                 result = false;
             }
