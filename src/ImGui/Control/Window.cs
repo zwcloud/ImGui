@@ -99,6 +99,10 @@ namespace ImGui
         public bool WasActive { get; internal set; }
         public bool SkipItems { get; internal set; } = false;
         public GUIDrawContext DC { get; internal set; }
+        public int HiddenFrames { get; internal set; } = 0;
+        public object ParentWindow { get; internal set; }
+        public int BeginCount { get; internal set; }
+        public bool Accessed { get; internal set; }
 
         public GUIStyle Style;
         public GUIStyle HeaderStyle;

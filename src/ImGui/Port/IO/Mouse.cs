@@ -154,6 +154,8 @@
         public int LeftButtonDoubleClickedTimes { get; internal set; }
         public Point MousePosPrev { get; internal set; }
         public Vector MouseDelta { get; internal set; }
+        public bool LeftButtonMouseDownOwned { get; internal set; } = false;
+        public bool WantCaptureMouse { get; internal set; }
         #endregion
     }
 }

@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace ImGui
 {
-    internal static class StackExtensions
+    internal class StackList<T> : Stack<T>
     {
-        public static bool Empty<T>(this Stack<T> stack)
+        public bool Empty => this.Count <= 0;
+
+        public T this[int index]
         {
-            return stack.Count == 0;
+            get => this.ElementAt<T>(index);
         }
     }
 }

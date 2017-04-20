@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ImGui
 {
@@ -81,15 +82,26 @@ namespace ImGui
             return ToggleButton((open ? "▼" : "▶") + text, open);
         }
 
-        public static void Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
+        public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
+            Debug.Assert(name != null);                        // Window name required
+            Debug.Assert(g.Initialized);                       // Forgot to call ImGui::NewFrame()
+            Debug.Assert(g.FrameCountEnded != g.FrameCount);   // Called ImGui::Render() or ImGui::EndFrame() and haven't called ImGui::NewFrame() again yet
 
+            if (flags.HaveFlag(WindowFlags.NoInputs))
+            {
+                flags |= WindowFlags.NoMove | WindowFlags.NoResize;
+            }
+
+            // Find or create
+            bool window_is_new = false;
             Window window = g.FindWindowByName(name);
             if (window == null)
             {
                 window = new Window(name, position, size, flags);
+                window_is_new = true;
             }
 
             long current_frame = g.FrameCount;
@@ -104,12 +116,28 @@ namespace ImGui
             }
 
             // Add to stack
-            Window parentWindow = !g.CurrentWindowStack.Empty() ? g.CurrentWindowStack.Peek() : null;
+            Window parent_window = !g.CurrentWindowStack.Empty ? g.CurrentWindowStack.Peek() : null;
             g.CurrentWindowStack.Push(window);
             g.CurrentWindow = window;
+            //CheckStacksSize(window, true);
+            Debug.Assert(parent_window != null || !(flags.HaveFlag(WindowFlags.ChildWindow)));
 
             bool window_was_active = (window.LastActiveFrame == current_frame - 1);
 
+            bool window_appearing_after_being_hidden = (window.HiddenFrames == 1);
+
+            // Update known root window (if we are a child window, otherwise window == window->RootWindow)
+            int root_idx, root_non_popup_idx;
+            for (root_idx = g.CurrentWindowStack.Count - 1; root_idx > 0; root_idx--)
+                if (!(g.CurrentWindowStack[root_idx].Flags.HaveFlag(WindowFlags.ChildWindow)))
+                    break;
+            for (root_non_popup_idx = root_idx; root_non_popup_idx > 0; root_non_popup_idx--)
+                if (!(g.CurrentWindowStack[root_non_popup_idx].Flags.HaveFlag(WindowFlags.ChildWindow | WindowFlags.Popup)))
+                    break;
+            window.ParentWindow = parent_window;
+            window.RootWindow = g.CurrentWindowStack[root_idx];
+
+            // When reusing window again multiple times a frame, just append content (don't need to setup again)
             if (first_begin_of_the_frame)
             {
                 window.Active = true;
@@ -171,16 +199,8 @@ namespace ImGui
 
                         if (hovered || held)
                             Input.Mouse.Cursor = Cursor.NeswResize;
-
-                        if (g.HoveredWindow == window && held && Input.Mouse.LeftButtonDoubleClicked)
-                        {
-                            // Manual auto-fit when double-clicking
-                            //ApplySizeFullWithConstraint(window, size_auto_fit);
-                            //if (!(flags & ImGuiWindowFlags_NoSavedSettings))
-                            //    MarkSettingsDirty();
-                            //SetActiveID(0);
-                        }
-                        else if (held)
+                        
+                        if (held)
                         {
                             // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
                             var t = Input.Mouse.MousePos - g.ActiveIdClickOffset - window.Position;
@@ -246,7 +266,15 @@ namespace ImGui
                 }
 
             }
-            
+
+            // Clear 'accessed' flag last thing
+            if (first_begin_of_the_frame)
+                window.Accessed = false;
+            window.BeginCount++;
+
+            // Return false if we don't intend to display anything to allow user to perform an early out optimization
+            window.SkipItems = window.Collapsed || !window.Active;
+            return !window.SkipItems;
         }
 
         public static void End()

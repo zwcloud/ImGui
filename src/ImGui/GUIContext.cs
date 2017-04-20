@@ -15,7 +15,7 @@ namespace ImGui
 
         public readonly List<Window> Windows = new List<Window>();
         public Window CurrentWindow;
-        public readonly Stack<Window> CurrentWindowStack = new Stack<Window>();
+        public readonly StackList<Window> CurrentWindowStack = new StackList<Window>();
 
         private int hoverId;
         private int activeId;
@@ -80,6 +80,7 @@ namespace ImGui
         public bool Initialized { get; internal set; }
         public long FrameCountEnded { get; internal set; } = -1;
         public long FrameCountRendered { get; internal set; } = -1;
+        public int CaptureMouseNextFrame { get; internal set; }
 
         public void SetActiveID(int id, Window window = null)
         {

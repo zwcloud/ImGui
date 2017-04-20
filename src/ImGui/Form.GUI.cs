@@ -100,6 +100,10 @@ namespace ImGui
                 Debug.Assert(g.MovedWindow.RootWindow.MoveID == g.MovedWindowMoveId);
                 if (Input.Mouse.LeftButtonState == InputState.Down)
                 {
+                    if (!(g.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove)))
+                    {
+                        g.MovedWindow.PosFloat += Input.Mouse.MouseDelta;
+                    }
                     g.FocusWindow(g.MovedWindow);
                 }
                 else
@@ -117,10 +121,46 @@ namespace ImGui
 
             // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
             g.HoveredWindow = g.MovedWindow ?? g.FindHoveredWindow(Input.Mouse.MousePos, false);
-            if (g.HoveredWindow != null)
+            if (g.HoveredWindow != null && (g.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
                 g.HoveredRootWindow = g.HoveredWindow.RootWindow;
             else
                 g.HoveredRootWindow = (g.MovedWindow != null) ? g.MovedWindow.RootWindow : g.FindHoveredWindow(Input.Mouse.MousePos, true);
+
+            // Are we using inputs? Tell user so they can capture/discard the inputs away from the rest of their application.
+            // When clicking outside of a window we assume the click is owned by the application and won't request capture. We need to track click ownership.
+            int mouse_earliest_button_down = -1;
+            bool mouse_any_down = false;
+            {
+                if (Input.Mouse.LeftButtonPressed)
+                    Input.Mouse.LeftButtonMouseDownOwned = (g.HoveredWindow != null);
+                mouse_any_down = mouse_any_down || (Input.Mouse.LeftButtonState == InputState.Down);
+            }
+            bool mouse_avail_to_imgui = (mouse_earliest_button_down == -1) || Input.Mouse.LeftButtonMouseDownOwned;
+            if (g.CaptureMouseNextFrame != -1)
+                Input.Mouse.WantCaptureMouse = (g.CaptureMouseNextFrame != 0);
+            else
+                Input.Mouse.WantCaptureMouse = (mouse_avail_to_imgui && (g.HoveredWindow != null || mouse_any_down)) || (g.ActiveId != 0);
+            Input.Mouse.Cursor = Cursor.Default;
+            //TODO Keyboard
+            //g.OsImePosRequest = ImVec2(1.0f, 1.0f); // OS Input Method Editor showing on top-left of our window by default
+
+            // If mouse was first clicked outside of ImGui bounds we also cancel out hovering.
+            if (!mouse_avail_to_imgui)
+                g.HoveredWindow = g.HoveredRootWindow = null;
+
+
+            // Mark all windows as not visible
+            for (int i = 0; i != g.Windows.Count; i++)
+            {
+                Window window = g.Windows[i];
+                window.WasActive = window.Active;
+                window.Active = false;
+                window.Accessed = false;
+            }
+
+            // No window should be open at the beginning of the frame.
+            // But in order to allow the user to call NewFrame() multiple times without calling Render(), we are doing an explicit clear.
+            g.CurrentWindowStack.Clear();
 
         }
 
