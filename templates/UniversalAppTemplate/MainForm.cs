@@ -9,19 +9,18 @@ namespace UniversalAppTemplate
         {
         }
 
-        TestUI testUI = new TestUI();
-
-        bool DebugWindowOpen = true;
+        //TestUI testUI = new TestUI();
+        
+        bool DebugWindow1Open = true;
+        bool DebugWindow2Open = true;
 
         protected override void OnGUI()
-        {   
-            GUILayout.Begin("Debug", ref DebugWindowOpen, new Point(60, 60), new Size(400, 400), 1, WindowFlags.Default);
-            //if(GUI.Button(new Rect(65, 70, new Size(34, 27)), "MyButton", "MyButton1"))
-            //{
-            //    Debug.WriteLine("Clicked");
-            //}
+        {
+            GUILayout.Begin("Debug1", ref DebugWindow1Open, new Point(60, 60), new Size(400, 400), 1, WindowFlags.Default);
             GUILayout.End();
-            //testUI.OnGUI();
+
+            GUILayout.Begin("Debug2", ref DebugWindow2Open, new Point(100, 60), new Size(400, 300), 1, WindowFlags.Default);
+            GUILayout.End();
         }
     }
 }

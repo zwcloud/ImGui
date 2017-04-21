@@ -56,15 +56,13 @@ namespace ImGui
 
             static CurrentOS()
             {
-#if __ANDROID__
-                var envars = System.Environment.GetEnvironmentVariables();
+                var envars = Environment.GetEnvironmentVariables();
                 IsAndroid = envars.Contains("ANDROID_PROPERTY_WORKSPACE");
                 if (IsAndroid)
                 {
                     Platform = Platform.Android;
                     return;
                 }
-#else
                 IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
                 if (IsWindows)
                 {
@@ -83,7 +81,6 @@ namespace ImGui
                     Platform = Platform.Linux;
                     return;
                 }
-#endif
                 IsUnknown = true;                
             }
 
@@ -366,20 +363,18 @@ namespace ImGui
             return func;
         }
 
+
         public static System.IO.Stream ReadFile(string filePath)
         {
             Stream stream = null;
             if (CurrentOS.IsAndroid)
             {
-#if __ANDROID__
-                var assets = (Android.Content.Res.AssetManager)Application.AssetManager;
-                var s = assets.Open(filePath, Android.Content.Res.Access.Buffer);
+                var s = Application.FontFileRead(filePath);//TODO unify this
                 using (var ms = new MemoryStream())
                 {
                     s.CopyTo(ms);
                     stream = new MemoryStream(ms.ToArray());
                 }
-#endif
             }
             else
             {

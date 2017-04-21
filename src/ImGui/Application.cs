@@ -109,7 +109,7 @@ namespace ImGui
 
         private static bool RequestQuit;
 
-        public static object AssetManager { get; set; }
+        public static Func<string, System.IO.Stream> FontFileRead;
 
         public static void Init()
         {

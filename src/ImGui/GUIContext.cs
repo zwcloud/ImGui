@@ -210,6 +210,10 @@ namespace ImGui
             return false;
         }
 
+        /// <summary>
+        /// Moving window to front of display (which happens to be back of our sorted list)
+        /// </summary>
+        /// <param name="window"></param>
         public void FocusWindow(Window window)
         {
             var g = this;
@@ -217,7 +221,7 @@ namespace ImGui
             // Always mark the window we passed as focused. This is used for keyboard interactions such as tabbing.
             g.FocusedWindow = window;
 
-            // Passing NULL allow to disable keyboard focus
+            // Passing null allow to disable keyboard focus
             if (window == null) return;
 
             // And move its root window to the top of the pile
@@ -234,6 +238,21 @@ namespace ImGui
                     SetActiveID(0);
                 }
             }
+
+            // Bring to front
+            if ((window.Flags.HaveFlag(WindowFlags.NoBringToFrontOnFocus) || g.Windows[g.Windows.Count-1] == window))
+            {
+                return;
+            }
+            for (int i = 0; i < g.Windows.Count; i++)
+            {
+                if (g.Windows[i] == window)
+                {
+                    g.Windows.RemoveAt(i);
+                    break;
+                }
+            }
+            g.Windows.Add(window);
         }
     }
 }

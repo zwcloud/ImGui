@@ -27,7 +27,8 @@ namespace AndroidTemplate
         {
             base.OnCreate(bundle);
 
-            ImGui.Application.AssetManager = this.Assets;
+            ImGui.Application.FontFileRead = this.Assets.Open;
+
 
             ImGui.Application.Init();
 

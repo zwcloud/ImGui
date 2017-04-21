@@ -130,7 +130,7 @@ namespace ImGui
         AlwaysVerticalScrollbar = 1 << 14,  // Always show vertical scrollbar (even if ContentSize.y < Size.y)
         AlwaysHorizontalScrollbar = 1 << 15,  // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
         AlwaysUseWindowPadding = 1 << 16,  // Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)
-                                           // [Internal]
+        // [Internal]
         ChildWindow = 1 << 20,  // Don't use! For internal use by BeginChild()
         ChildWindowAutoFitX = 1 << 21,  // Don't use! For internal use by BeginChild()
         ChildWindowAutoFitY = 1 << 22,  // Don't use! For internal use by BeginChild()

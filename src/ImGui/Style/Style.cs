@@ -74,20 +74,23 @@ namespace ImGui
 
         public static GUIStyle Default { get; private set; } = new GUIStyle();
 
-        const double DefaultFontSize =
-#if __ANDROID__
-                42
-#else
-                12
-#endif
-            ;
+        private static readonly double DefaultFontSize;
 
-        static string DefaultFontFamily => Utility.FontDir +
-#if __ANDROID__
-            "DroidSans.ttf";
-#else
-            "msjh.ttf";
-#endif
+        private static string DefaultFontFamily;
+
+        static GUIStyle()
+        {
+            if (Utility.CurrentOS.IsAndroid)
+            {
+                DefaultFontSize = 42;
+                DefaultFontFamily = "DroidSans.ttf";
+            }
+            else
+            {
+                DefaultFontSize = 12;
+                DefaultFontFamily = Utility.FontDir + "msjh.ttf";
+            }
+        }
 
         public static implicit operator GUIStyle(string str)
         {
