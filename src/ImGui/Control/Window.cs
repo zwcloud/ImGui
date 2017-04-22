@@ -107,6 +107,13 @@ namespace ImGui
         public GUIStyle Style;
         public GUIStyle HeaderStyle;
         public Content HeaderContent;
+
+        internal void PopClipRect()
+        {
+            this.DrawList.PopClipRect();
+            var clipRectStack = this.DrawList._ClipRectStack;
+            this.ClipRect = clipRectStack[clipRectStack.Count-1];
+        }
     }
 
     [Flags]

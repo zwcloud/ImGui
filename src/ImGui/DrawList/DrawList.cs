@@ -11,6 +11,7 @@ namespace ImGui
         private readonly DrawBuffer bezierBuffer = new DrawBuffer();
         private readonly DrawBuffer imageBuffer = new DrawBuffer();
 
+        internal readonly List<Rect> _ClipRectStack = new List<Rect>();
         /// <summary>
         /// buffer for colored triangles
         /// </summary>

@@ -283,7 +283,16 @@ namespace ImGui
 
         public static void End()
         {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+            
+            window.PopClipRect();   // inner window clip rectangle
 
+            // Pop
+            // NB: we don't clear 'window->RootWindow'. The pointer is allowed to live until the next call to Begin().
+            g.CurrentWindowStack.RemoveAt(g.CurrentWindowStack.Count-1);
+            g.CurrentWindow = ((g.CurrentWindowStack.Count!=0) ? null : g.CurrentWindowStack[g.CurrentWindowStack.Count-1]);
         }
 
         #endregion
