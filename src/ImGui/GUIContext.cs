@@ -15,7 +15,7 @@ namespace ImGui
 
         public readonly List<Window> Windows = new List<Window>();
         public Window CurrentWindow;
-        public readonly StackList<Window> CurrentWindowStack = new StackList<Window>();
+        public readonly List<Window> CurrentWindowStack = new List<Window>();
 
         private int hoverId;
         private int activeId;

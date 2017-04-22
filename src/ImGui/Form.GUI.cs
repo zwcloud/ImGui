@@ -274,6 +274,12 @@ namespace ImGui
 
                 l.Msg("Window:");
                 l.Msg("    HoveredWindow: {0}", (g.HoveredWindow != null) ? g.HoveredWindow.ID.ToString() : "<none>");
+                l.Msg("    Window List:");
+                for (int i = 0; i < g.Windows.Count; i++)
+                {
+                    var window = g.Windows[i];
+                    l.Msg("        [{0}]:{1}", i, window.ID);
+                }
             }
         }
     }

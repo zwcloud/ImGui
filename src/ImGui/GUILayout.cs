@@ -116,8 +116,8 @@ namespace ImGui
             }
 
             // Add to stack
-            Window parent_window = !g.CurrentWindowStack.Empty ? g.CurrentWindowStack.Peek() : null;
-            g.CurrentWindowStack.Push(window);
+            Window parent_window = (!(g.CurrentWindowStack.Count==0)) ? g.CurrentWindowStack[g.CurrentWindowStack.Count-1] : null;
+            g.CurrentWindowStack.Add(window);
             g.CurrentWindow = window;
             //CheckStacksSize(window, true);
             Debug.Assert(parent_window != null || !(flags.HaveFlag(WindowFlags.ChildWindow)));
@@ -129,11 +129,15 @@ namespace ImGui
             // Update known root window (if we are a child window, otherwise window == window->RootWindow)
             int root_idx, root_non_popup_idx;
             for (root_idx = g.CurrentWindowStack.Count - 1; root_idx > 0; root_idx--)
+            {
                 if (!(g.CurrentWindowStack[root_idx].Flags.HaveFlag(WindowFlags.ChildWindow)))
                     break;
+            }
             for (root_non_popup_idx = root_idx; root_non_popup_idx > 0; root_non_popup_idx--)
+            {
                 if (!(g.CurrentWindowStack[root_non_popup_idx].Flags.HaveFlag(WindowFlags.ChildWindow | WindowFlags.Popup)))
                     break;
+            }
             window.ParentWindow = parent_window;
             window.RootWindow = g.CurrentWindowStack[root_idx];
 
