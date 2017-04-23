@@ -12,7 +12,7 @@ namespace ImGui
         public double maxWidth = 9999;//maximum width of content-box
         public double minHeight = 1;//minimum height of content-box
         public double maxHeight = 9999;//maximum height of content-box
-        public int horizontalStretchFactor = 1;//horizontal stretch factor
+        public int horizontalStretchFactor = 0;//horizontal stretch factor
         public int verticalStretchFactor = 0;//vertical stretch factor
 
         public bool HorizontallyStretched { get { return !IsFixedWidth && horizontalStretchFactor > 0; } }
@@ -141,8 +141,9 @@ namespace ImGui
         }
 
 
-        #region Filled layout (not used)
-        public virtual void CalcRect() { }
-        #endregion
+        internal LayoutEntry Clone()
+        {
+            return (LayoutEntry)this.MemberwiseClone();
+        }
     }
 }

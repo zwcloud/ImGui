@@ -9,8 +9,8 @@ namespace ImGui
     {
         public void PopClipRect()
         {
-            System.Diagnostics.Debug.Assert(_ClipRectStack.Count > 0);
-            _ClipRectStack.RemoveAt(_ClipRectStack.Count-1);
+            //System.Diagnostics.Debug.Assert(_ClipRectStack.Count > 0);
+            //_ClipRectStack.RemoveAt(_ClipRectStack.Count-1);
             //UpdateClipRect();
         }
     }

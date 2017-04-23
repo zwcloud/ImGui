@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImGui.Layout;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,11 +18,14 @@ namespace ImGui
 
         public long LastActiveFrame;
 
+        public StackLayout StackLayout { get; set; }
+
         private Window()
         {
             DrawList = new DrawList();
             MoveID = GetID("#MOVE");
             Active = WasActive = false;
+            StackLayout = new StackLayout(this.ID, this.Size);
             {
                 var style = new GUIStyle();
                 var bgColor = Color.Rgb(34, 43, 46);
@@ -57,6 +61,8 @@ namespace ImGui
             this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
             this.Size = this.FullSize = size;
             this.HeaderContent = new Content(name);
+
+            this.DC = new GUIDrawContext();
 
             g.Windows.Add(this);
         }
@@ -110,9 +116,17 @@ namespace ImGui
 
         internal void PopClipRect()
         {
-            this.DrawList.PopClipRect();
-            var clipRectStack = this.DrawList._ClipRectStack;
-            this.ClipRect = clipRectStack[clipRectStack.Count-1];
+            //this.DrawList.PopClipRect();
+            //var clipRectStack = this.DrawList._ClipRectStack;
+            //this.ClipRect = clipRectStack[clipRectStack.Count-1];
+        }
+
+        internal void ProcessLayout()
+        {
+            if (this.StackLayout.Dirty)
+            {
+                this.StackLayout.Layout();
+            }
         }
     }
 

@@ -676,4 +676,110 @@ namespace Test
             Process.Start("rundll32.exe", @"""C:\Program Files\Windows Photo Viewer\PhotoViewer.dll"",ImageView_Fullscreen " + filePath);
         }
     }
+
+    public static class Styles
+    {
+        public static readonly GUIStyle DefaultEntryStyle;
+        public static readonly GUIStyle DefaultGroupStyle;
+
+        static Styles()
+        {
+            {
+                var style = new GUIStyle();
+                style.Set<double>(GUIStyleName.BorderTop, Const.ItemBorderTop);
+                style.Set<double>(GUIStyleName.BorderRight, Const.ItemBorderRight);
+                style.Set<double>(GUIStyleName.BorderBottom, Const.ItemBorderBottom);
+                style.Set<double>(GUIStyleName.BorderLeft, Const.ItemBorderLeft);
+
+                style.Set<double>(GUIStyleName.PaddingTop, Const.ItemPaddingTop);
+                style.Set<double>(GUIStyleName.PaddingRight, Const.ItemPaddingRight);
+                style.Set<double>(GUIStyleName.PaddingBottom, Const.ItemPaddingBottom);
+                style.Set<double>(GUIStyleName.PaddingLeft, Const.ItemPaddingLeft);
+                DefaultEntryStyle = style;
+            }
+
+            {
+                var style = new GUIStyle();
+                style.Set<double>(GUIStyleName.BorderTop, Const.GroupBorderTop);
+                style.Set<double>(GUIStyleName.BorderRight, Const.GroupBorderRight);
+                style.Set<double>(GUIStyleName.BorderBottom, Const.GroupBorderBottom);
+                style.Set<double>(GUIStyleName.BorderLeft, Const.GroupBorderLeft);
+
+                style.Set<double>(GUIStyleName.PaddingTop, Const.GroupPaddingTop);
+                style.Set<double>(GUIStyleName.PaddingRight, Const.GroupPaddingRight);
+                style.Set<double>(GUIStyleName.PaddingBottom, Const.GroupPaddingBottom);
+                style.Set<double>(GUIStyleName.PaddingLeft, Const.GroupPaddingLeft);
+
+                style.Set<double>(GUIStyleName.CellingSpacingVertical, Const.CellingSpacingVertical);
+                style.Set<double>(GUIStyleName.CellingSpacingHorizontal, Const.CellingSpacingHorizontal);
+                DefaultGroupStyle = style;
+            }
+        }
+    }
+
+    internal static class TestExtensions
+    {
+        public static void ShowResult(this LayoutGroup group, [System.Runtime.CompilerServices.CallerMemberName] string memberName = null)
+        {
+            var rect = group.rect;
+            var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
+            var context = new Cairo.Context(surface);
+
+            Draw(group, context, needClip: true);
+
+            string outputPath = "D:\\LayoutTest";
+            if (!System.IO.Directory.Exists(outputPath))
+            {
+                System.IO.Directory.CreateDirectory(outputPath);
+            }
+
+            string filePath = outputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
+            surface.WriteToPng(filePath);
+            surface.Dispose();
+            context.Dispose();
+
+            Process.Start("rundll32.exe", @"""C:\Program Files\Windows Photo Viewer\PhotoViewer.dll"",ImageView_Fullscreen " + filePath);
+        }
+
+        private static void Draw(LayoutGroup group, Cairo.Context context, bool needClip)
+        {
+            if (needClip)
+            {
+                var rect = group.rect;
+                var style = group.style;
+                context.Rectangle(rect.X + style.PaddingLeft + style.BorderLeft, rect.Y + style.PaddingTop + style.BorderTop,
+                    rect.Width - style.PaddingHorizontal - style.BorderHorizontal, rect.Height - style.PaddingVertical - style.BorderVertical);
+                //context.StrokePreserve();
+                context.Clip();
+            }
+            foreach (var entry in group.entries)
+            {
+                if (entry.HorizontallyStretched || entry.VerticallyStretched)
+                {
+                    context.FillRectangle(entry.rect, CairoEx.ColorLightBlue);
+                }
+                else if (entry.IsFixedWidth || entry.IsFixedHeight)
+                {
+                    context.FillRectangle(entry.rect, CairoEx.ColorOrange);
+                }
+                else
+                {
+                    context.FillRectangle(entry.rect, CairoEx.ColorPink);
+                }
+                context.StrokeRectangle(entry.rect, CairoEx.ColorBlack);
+                var innerGroup = entry as LayoutGroup;
+                if (innerGroup != null)
+                {
+                    context.Save();
+                    Draw(innerGroup, context, needClip);
+                    context.Restore();
+                }
+            }
+            if (needClip)
+            {
+                context.ResetClip();
+            }
+        }
+
+    }
 }

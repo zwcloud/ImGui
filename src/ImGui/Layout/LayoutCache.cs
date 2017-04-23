@@ -4,7 +4,7 @@ namespace ImGui
 {
     internal class LayoutCache
     {
-        private Stack<LayoutGroup> groupStack = new Stack<LayoutGroup>();
+        internal Stack<LayoutGroup> groupStack = new Stack<LayoutGroup>();
 
         public LayoutGroup topGroup { get { return this.groupStack.Peek(); } }
 

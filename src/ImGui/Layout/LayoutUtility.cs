@@ -1,7 +1,4 @@
-﻿//#define Use_Fill_Layout
-#define Use_Stretch_Layout
-using System;
-using System.Collections.Generic;
+﻿using System;
 namespace ImGui
 {
     public enum EventType
@@ -27,23 +24,7 @@ namespace ImGui
 
         internal static Rect GetLastRect()
         {
-            EventType type = Event.current.type;
-            Rect last;
-            if (type != EventType.Layout)
-            {
-                if (type != EventType.Used)
-                {
-                    last = current.topGroup.GetLast();
-                }
-                else
-                {
-                    last = Rect.Empty;
-                }
-            }
-            else
-            {
-                last = Rect.Empty;
-            }
+            Rect last = current.topGroup.GetLast();
             return last;
         }
 
@@ -102,14 +83,10 @@ namespace ImGui
         /// </summary>
         internal static void Layout()
         {
-#if Use_Stretch_Layout
             current.topGroup.CalcWidth();
             current.topGroup.CalcHeight();
             current.topGroup.SetX(0);
             current.topGroup.SetY(0);
-#elif Use_Filled_Layout
-            current.topGroup.CalcRect();
-#endif
         }
     }
 }

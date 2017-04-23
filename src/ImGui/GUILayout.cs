@@ -268,7 +268,6 @@ namespace ImGui
                     //ImVec2 clip_max = ImVec2(window->Pos.x + window->Size.x - (p_open ? title_bar_rect.GetHeight() - 3 : style.FramePadding.x), text_max.y); // Match the size of CloseWindowButton()
                     window.DrawList.DrawText(new Rect(text_min, text_max), Content.Cached(name, name), headerStyle, GUIState.Normal);
                 }
-
             }
 
             // Clear 'accessed' flag last thing
@@ -286,15 +285,52 @@ namespace ImGui
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
-            
+
             window.PopClipRect();   // inner window clip rectangle
+
+            window.ProcessLayout();
 
             // Pop
             // NB: we don't clear 'window->RootWindow'. The pointer is allowed to live until the next call to Begin().
             g.CurrentWindowStack.RemoveAt(g.CurrentWindowStack.Count-1);
-            g.CurrentWindow = ((g.CurrentWindowStack.Count!=0) ? null : g.CurrentWindowStack[g.CurrentWindowStack.Count-1]);
+            g.CurrentWindow = ((g.CurrentWindowStack.Count==0) ? null : g.CurrentWindowStack[g.CurrentWindowStack.Count-1]);
         }
 
+        public static void BeginH(int id)
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+
+            window.StackLayout.BeginLayoutGroup(id, false, GUIStyle.Default, null);
+        }
+
+        public static void EndH()
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+
+            window.StackLayout.EndLayoutGroup();
+        }
+
+        public static void BeginV(int id)
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+
+            window.StackLayout.BeginLayoutGroup(id, true, GUIStyle.Default, null);
+        }
+
+        public static void EndV()
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+
+            window.StackLayout.EndLayoutGroup();
+        }
         #endregion
 
         #region options
@@ -445,11 +481,11 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
 
-            Point pos = form.drawContext.CurrentPos;
+            int id = window.GetID(name);
             Size contentSize = style.CalcSize(content, GUIState.Normal, options);
-
-            Rect rect = new Rect(pos, contentSize);
+            Rect rect = window.StackLayout.GetRect(id, contentSize, style, options);
 
             return GUI.Button(rect, content, name);
         }

@@ -10,7 +10,7 @@ namespace Test
         [Fact, Trait("Category", "rect & content size"), Trait("Description", "The size of an entry is correctly calculated")]
         public void TheSizeOfAnEntryIsCorrectlyCalculated()
         {
-            Item item = new Item {contentWidth = 50, contentHeight = 50};
+            LayoutEntry item = new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 50, contentHeight = 50};
 
             item.CalcWidth();
             item.CalcHeight();
@@ -22,7 +22,7 @@ namespace Test
         [Fact, Trait("Category", "rect & content size"), Trait("Description", "The size of an empty vertical group is correctly calculated")]
         public void TheSizeOfAEmptyVerticalGroupIsCorrectlyCalculated()
         {
-            Group group = new Group(true);
+            LayoutGroup group = new LayoutGroup(true, Styles.DefaultGroupStyle);
 
             group.CalcWidth();
             group.CalcHeight();
@@ -34,8 +34,8 @@ namespace Test
         [Fact, Trait("Category", "rect & content size"), Trait("Description", "The size of a vertical group that contains a single entry is correctly calculated")]
         public void TheSizeOfAVerticalGroupThatContainsASingleEntryIsCorrectlyCalculated()
         {
-            Group group = new Group(true);
-            Item item = new Item { contentWidth = 50, contentHeight = 50 };
+            LayoutGroup group = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutEntry item = new LayoutEntry(Styles.DefaultEntryStyle) { contentWidth = 50, contentHeight = 50 };
             group.Add(item);
 
             group.CalcWidth();
@@ -48,14 +48,14 @@ namespace Test
         [Fact, Trait("Category", "rect & content size"), Trait("Description", "The size of a vertical group that contains multiple entries is correctly calculated")]
         public void TheSizeOfAVerticalGroupThatContainsMultipleEntriesIsCorrectlyCalculated()
         {
-            Group group = new Group(true);
-            Item[] items =
+            LayoutGroup group = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutEntry[] items =
             {
-                new Item{contentWidth = 10, contentHeight = 20},
-                new Item{contentWidth = 20, contentHeight = 30},
-                new Item{contentWidth = 30, contentHeight = 40},
-                new Item{contentWidth = 40, contentHeight = 50},
-                new Item{contentWidth = 50, contentHeight = 60},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 10, contentHeight = 20},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 20, contentHeight = 30},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 30, contentHeight = 40},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 40, contentHeight = 50},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 50, contentHeight = 60},
             };
             foreach (var item in items)
             {
@@ -82,8 +82,8 @@ namespace Test
         [Fact, Trait("Category", "rect & content size"), Trait("Description", "The size of a horizontal group that contains a single entry is correctly calculated")]
         public void TheSizeOfAHorizontalGroupThatContainsASingleEntryIsCorrectlyCalculated()
         {
-            Group group = new Group(false);
-            Item item = new Item { contentWidth = 50, contentHeight = 50 };
+            LayoutGroup group = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutEntry item = new LayoutEntry(Styles.DefaultEntryStyle) { contentWidth = 50, contentHeight = 50 };
             group.Add(item);
 
             group.CalcWidth();
@@ -96,14 +96,14 @@ namespace Test
         [Fact, Trait("Category", "rect & content size"), Trait("Description", "The size of a horizontal group that contains multiple entries is correctly calculated")]
         public void TheSizeOfAHorizontalGroupThatContainsMultipleEntriesIsCorrectlyCalculated()
         {
-            Group group = new Group(false);
-            Item[] items =
+            LayoutGroup group = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutEntry[] items =
             {
-                new Item{contentWidth = 10, contentHeight = 20},
-                new Item{contentWidth = 20, contentHeight = 30},
-                new Item{contentWidth = 30, contentHeight = 40},
-                new Item{contentWidth = 40, contentHeight = 50},
-                new Item{contentWidth = 50, contentHeight = 60},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 10, contentHeight = 20},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 20, contentHeight = 30},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 30, contentHeight = 40},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 40, contentHeight = 50},
+                new LayoutEntry(Styles.DefaultEntryStyle) {contentWidth = 50, contentHeight = 60},
             };
             foreach (var item in items)
             {
@@ -131,7 +131,7 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show an empty horizontal group")]
         public void ShowAnEmptyHorizontalGroup()
         {
-            Group group = new Group(false);
+            LayoutGroup group = new LayoutGroup(false, Styles.DefaultGroupStyle);
 
             group.CalcWidth();
             group.CalcHeight();
@@ -144,8 +144,8 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a horizontal group of 1 item")]
         public void ShowAHorizontalGroupOf1Item()
         {
-            Group group = new Group(false);
-            Item item = new Item {contentWidth = 50, contentHeight = 50};
+            LayoutGroup group = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutEntry item= new LayoutEntry(Styles.DefaultEntryStyle)  {contentWidth = 50, contentHeight = 50};
             group.Add(item);
 
             group.CalcWidth();
@@ -159,8 +159,8 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a horizontal group of 3 items")]
         public void ShowAHorizontalGroupOf3Items()
         {
-            Group group = new Group(false);
-            Item item = new Item { contentWidth = 50, contentHeight = 50 };
+            LayoutGroup group = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutEntry item= new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 50, contentHeight = 50 };
             group.Add(item.Clone());
             group.Add(item.Clone());
             group.Add(item.Clone());
@@ -176,7 +176,7 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show an empty vertical group")]
         public void ShowAnEmptyVerticalGroup()
         {
-            Group group = new Group(true);
+            LayoutGroup group = new LayoutGroup(true, Styles.DefaultGroupStyle);
 
             group.CalcWidth();
             group.CalcHeight();
@@ -189,8 +189,8 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a vertical group of 1 items")]
         public void ShowAVerticalGroupOf1Items()
         {
-            Group group = new Group(true);
-            Item item = new Item { contentWidth = 50, contentHeight = 50 };
+            LayoutGroup group = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutEntry item= new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 50, contentHeight = 50 };
             group.Add(item);
 
             group.CalcWidth();
@@ -204,8 +204,8 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a vertical group of 3 items")]
         public void ShowAVerticalGroupOf3Items()
         {
-            Group group = new Group(true);
-            Item item = new Item { contentWidth = 50, contentHeight = 50 };
+            LayoutGroup group = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutEntry item= new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 50, contentHeight = 50 };
             group.Add(item.Clone());
             group.Add(item.Clone());
             group.Add(item.Clone());
@@ -221,11 +221,11 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a group of 3x3 items, outter group is vertical")]
         public void ShowAGroupOf3x3Items_OutterGroupIsVertical()
         {
-            Group outterGroup = new Group(true);
-            Group innerGroup0 = new Group(false);
-            Group innerGroup1 = new Group(false);
-            Group innerGroup2 = new Group(false);
-            Item item = new Item { contentWidth = 50, contentHeight = 50 };
+            LayoutGroup outterGroup = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutGroup innerGroup0 = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutGroup innerGroup1 = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutGroup innerGroup2 = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutEntry item= new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 50, contentHeight = 50 };
             innerGroup0.Add(item.Clone());
             innerGroup0.Add(item.Clone());
             innerGroup0.Add(item.Clone());
@@ -250,11 +250,11 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a group of 3x3 items, outter group is horizontal")]
         public void ShowAGroupOf3x3Items_OutterGroupIsHorizontal()
         {
-            Group outterGroup = new Group(false);
-            Group innerGroup0 = new Group(true);
-            Group innerGroup1 = new Group(true);
-            Group innerGroup2 = new Group(true);
-            Item item = new Item { contentWidth = 50, contentHeight = 50 };
+            LayoutGroup outterGroup = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutGroup innerGroup0 = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutGroup innerGroup1 = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutGroup innerGroup2 = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutEntry item= new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 50, contentHeight = 50 };
             innerGroup0.Add(item.Clone());
             innerGroup0.Add(item.Clone());
             innerGroup0.Add(item.Clone());
@@ -279,15 +279,15 @@ namespace Test
         [Fact, Trait("Category", "layout"), Trait("Description", "Show a 3 layer group")]
         public void ShowA3LayerGroup()
         {
-            Group group1 = new Group(true);
-            Group group2 = new Group(false);
-            Group group3 = new Group(false);
-            Group group4 = new Group(false);
-            Group group5 = new Group(true);
-            Item item1 = new Item { contentWidth = 50, contentHeight = 50 };
-            Item item2 = new Item { contentWidth = 50, contentHeight = 80 };
-            Item item3 = new Item { contentWidth = 80, contentHeight = 50 };
-            Item item4 = new Item { contentWidth = 400, contentHeight = 50 };
+            LayoutGroup group1 = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutGroup group2 = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutGroup group3 = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutGroup group4 = new LayoutGroup(false, Styles.DefaultGroupStyle);
+            LayoutGroup group5 = new LayoutGroup(true, Styles.DefaultGroupStyle);
+            LayoutEntry item1 = new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 50, contentHeight = 50 };
+            LayoutEntry item2 = new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 50, contentHeight = 80 };
+            LayoutEntry item3 = new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 80, contentHeight = 50 };
+            LayoutEntry item4 = new LayoutEntry(Styles.DefaultEntryStyle)  { contentWidth = 400, contentHeight = 50 };
 
             group1.Add(group2);
             group1.Add(group3);
