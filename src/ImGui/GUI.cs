@@ -19,19 +19,19 @@ namespace ImGui
         /// <param name="text">text to display on the button</param>
         /// <param name="id">the unique id of this control</param>
         /// <returns>true when the users clicks the button.</returns>
-        public static bool Button(Rect rect, string text, string id)
+        public static bool Button(Rect rect, string text)
         {
-            return DoButton(rect, Content.Cached(text, id), id);
+            return DoButton(rect, Content.Cached(text));
         }
 
-        internal static bool Button(Rect rect, Content content, string id)
+        internal static bool Button(Rect rect, Content content)
         {
-            return DoButton(rect, content, id);
+            return DoButton(rect, content);
         }
 
-        private static bool DoButton(Rect rect, Content content, string id)
+        private static bool DoButton(Rect rect, Content content)
         {
-            return ImGui.Button.DoControl(rect, content, id);
+            return ImGui.Button.DoControl(rect, content);
         }
 
         #endregion

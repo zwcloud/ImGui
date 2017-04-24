@@ -20,12 +20,22 @@ namespace ImGui
 
         public StackLayout StackLayout { get; set; }
 
-        private Window()
+        public Window(string name, Point position, Size size, WindowFlags Flags)
         {
-            DrawList = new DrawList();
-            MoveID = GetID("#MOVE");
-            Active = WasActive = false;
-            StackLayout = new StackLayout(this.ID, this.Size);
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+
+            this.ID = name.GetHashCode();
+            this.Flags = Flags;
+            this.PosFloat = position;
+            this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
+            this.Size = this.FullSize = size;
+            this.HeaderContent = new Content(name);
+            this.DC = new GUIDrawContext();
+            this.DrawList = new DrawList();
+            this.MoveID = GetID("#MOVE");
+            this.Active = WasActive = false;
+
             {
                 var style = new GUIStyle();
                 var bgColor = Color.Rgb(34, 43, 46);
@@ -48,21 +58,8 @@ namespace ImGui
                 style.Set(GUIStyleName.FontColor, Color.White);
                 this.HeaderStyle = style;
             }
-        }
 
-        public Window(string name, Point position, Size size, WindowFlags Flags) : this()
-        {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-
-            this.ID = name.GetHashCode();
-            this.Flags = Flags;
-            this.PosFloat = position;
-            this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
-            this.Size = this.FullSize = size;
-            this.HeaderContent = new Content(name);
-
-            this.DC = new GUIDrawContext();
+            this.StackLayout = new StackLayout(this.ID, this.Size);
 
             g.Windows.Add(this);
         }
@@ -79,11 +76,37 @@ namespace ImGui
             return id;
         }
 
+        public int GetID(ITexture texture)
+        {
+            int hash = 17;
+            hash = hash * 23 + this.ID.GetHashCode();
+            var id = hash * 23 + texture.GetHashCode();
+
+            GUIContext g = Form.current.uiContext;
+            g.KeepAliveID(id);
+            return id;
+        }
+
+        public int GetID(Content content)
+        {
+            if (content.Text != null)
+            {
+                return GetID(content.Text);
+            }
+            else if(content.Image != null)
+            {
+                return GetID(content.Image);
+            }
+            else
+            {
+                return GetID("#EmptyContent");
+            }
+        }
+
         public void ApplySize(Size new_size)
         {
             GUIContext g = Form.current.uiContext;
             Window window = this;
-            
             window.FullSize = new_size;
         }
 
@@ -92,6 +115,8 @@ namespace ImGui
         public double TitleBarHeight => HeaderStyle.PaddingVertical + HeaderStyle.PaddingVertical + HeaderStyle.FontSize*96.0/72.0;
 
         public Rect TitleBarRect => new Rect(Position, Size.Width, TitleBarHeight);
+
+        public Rect ClientRect { get; internal set; }
 
         public bool Collapsed { get; internal set; } = false;
         public bool Active { get; internal set; }
@@ -121,11 +146,18 @@ namespace ImGui
             //this.ClipRect = clipRectStack[clipRectStack.Count-1];
         }
 
+        internal Rect GetRect(int id, Size size, GUIStyle style, LayoutOption[] options)
+        {
+            var rect = StackLayout.GetRect(id, size, style, options);
+            rect.Offset(this.Position.X, this.TitleBarHeight + this.Position.Y);
+            return rect;
+        }
+
         internal void ProcessLayout()
         {
             if (this.StackLayout.Dirty)
             {
-                this.StackLayout.Layout();
+                this.StackLayout.Layout(this.ClientRect.Size);
             }
         }
     }

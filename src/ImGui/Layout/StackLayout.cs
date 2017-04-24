@@ -12,27 +12,13 @@ namespace ImGui.Layout
 
         public StackLayout(int rootId, Size size)
         {
-            var rootGroup = new LayoutGroup(true, GUIStyle.Default, GUILayout.Width(size.Width), GUILayout.Height(size.Height));
+            var rootGroup = new LayoutGroup(true, GUIStyle.Default, GUILayout.Width(size.Width), GUILayout.Height(size.Height)) { id = rootId };
+            this.Dirty = true;
             rootGroup.id = rootId;
-            Push(rootGroup);
+            this.groupStack.Push(rootGroup);
         }
 
         public LayoutGroup topGroup { get { return this.groupStack.Peek(); } }
-
-        public void Push(LayoutGroup group)
-        {
-            this.groupStack.Push(group);
-        }
-
-        public void Pop()
-        {
-            this.groupStack.Pop();
-        }
-
-        public void Clear()
-        {
-            this.groupStack.Clear();
-        }
 
         internal Rect GetRect(int id, Size contentSize, GUIStyle style, LayoutOption[] options)
         {
@@ -47,19 +33,21 @@ namespace ImGui.Layout
 
         public LayoutGroup FindLayoutGroup(int id)
         {
-            var layoutGroup = topGroup;
-            return FindLayoutGroup(layoutGroup, id);
+            return FindLayoutGroup(topGroup, id);
         }
 
         private LayoutGroup FindLayoutGroup(LayoutGroup layoutGroup, int id)
         {
-            if (layoutGroup.id == id)
-            {
-                return layoutGroup;
-            }
             foreach (var entry in layoutGroup.entries)
             {
-                return FindLayoutGroup((LayoutGroup)entry, id);
+                var group = entry as LayoutGroup;
+                if(group != null)
+                {
+                    if(group.id == id)
+                    {
+                        return group;
+                    }
+                }
             }
             //not found
             return null;
@@ -67,17 +55,17 @@ namespace ImGui.Layout
 
         private LayoutEntry FindLayoutEntry(int id)
         {
-            var layoutGroup = topGroup;
+            return FindLayoutEntry(topGroup, id);
+        }
+
+        private LayoutEntry FindLayoutEntry(LayoutGroup layoutGroup, int id)
+        {
             foreach (var entry in layoutGroup.entries)
             {
                 var group = entry as LayoutGroup;
-                if (group != null)
+                if (group == null)
                 {
-                    return FindLayoutGroup(group, id);
-                }
-                else
-                {
-                    if(entry.id == id)
+                    if (entry.id == id)
                     {
                         return entry;
                     }
@@ -89,31 +77,38 @@ namespace ImGui.Layout
 
         internal LayoutGroup BeginLayoutGroup(int id, bool isVertical, GUIStyle style, LayoutOption[] options)
         {
-            LayoutGroup layoutGroup = FindLayoutGroup(id);
-            if(layoutGroup == null)
+            LayoutGroup group = FindLayoutGroup(id);
+            if(group == null)
             {
-                layoutGroup = new LayoutGroup(isVertical, style, options);
+                group = new LayoutGroup(isVertical, style, options) { id = id};
+                topGroup.Add(group);
                 this.Dirty = true;
             }
-            topGroup.Add(layoutGroup);
-            this.Push(layoutGroup);
-            return layoutGroup;
+            else
+            {
+                group.ResetCursor();
+            }
+            this.groupStack.Push(group);
+            return group;
         }
 
         internal void EndLayoutGroup()
         {
-            this.Pop();
+            this.groupStack.Pop();
         }
 
         private Rect DoGetRect(int id, Size contentZize, GUIStyle style, LayoutOption[] options)
         {
-            var layoutEntry = FindLayoutEntry(id);
+            var layoutEntry = FindLayoutEntry(topGroup, id);
             if (layoutEntry == null)
             {
                 layoutEntry = new LayoutEntry(style, options) { id = id, contentWidth = contentZize.Width, contentHeight = contentZize.Height };
                 this.topGroup.Add(layoutEntry);
+                this.Dirty = true;
                 return new Rect(100,100);
             }
+            //TODO check if layoutEntry' size/style/option changed
+
             return layoutEntry.rect;
         }
 
@@ -125,12 +120,13 @@ namespace ImGui.Layout
         /// <summary>
         /// Calculate positions and sizes of every LayoutGroup and LayoutEntry
         /// </summary>
-        internal void Layout()
+        internal void Layout(Size size)
         {
-            this.topGroup.CalcWidth();
-            this.topGroup.CalcHeight();
+            this.topGroup.CalcWidth(size.Width);
+            this.topGroup.CalcHeight(size.Height);
             this.topGroup.SetX(0);
             this.topGroup.SetY(0);
+            this.Dirty = false;
         }
     }
 }

@@ -27,7 +27,9 @@ namespace ImGui
                 this.cursor++;
                 return result;
             }
-            throw new InvalidOperationException();
+            Debug.WriteLine("Next layout entry does't exist.");
+            return null;
+            throw new InvalidOperationException("Next layout entry does't exist.");
         }
 
         public Rect GetLast()
@@ -57,6 +59,10 @@ namespace ImGui
         }
 
 
+        /// <summary>
+        /// Append child entry to this group
+        /// </summary>
+        /// <param name="item"></param>
         public void Add(LayoutEntry item)
         {
             if (this.IsFixedWidth)

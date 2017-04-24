@@ -250,6 +250,8 @@ namespace ImGui
                     window.WindowClippedRect.Intersect(window.ClipRect);
                 }
 
+                window.ClientRect = new Rect(point1: new Point(window.Position.X, window.Position.Y + window.TitleBarHeight),
+                    point2: window.Rect.BottomRight);
 
                 // Title bar
                 if (!flags.HaveFlag(WindowFlags.NoTitleBar))
@@ -259,14 +261,14 @@ namespace ImGui
                     //if (CloseButton(window.GetID("#CLOSE"), window.Rect.TopRight + new Vector(-pad - rad, pad + rad), rad))
                     //    open = false;
 
-                    Size text_size = headerStyle.CalcSize(Content.Cached(name, name), GUIState.Normal, null);
+                    Size text_size = headerStyle.CalcSize(Content.Cached(name), GUIState.Normal, null);
                     //if (!flags.HaveFlag(WindowFlags.NoCollapse))
                     //    RenderCollapseTriangle(window->Pos + style.FramePadding, !window.Collapsed, 1.0f, true);
 
                     Point text_min = window.Position + new Vector(style.PaddingLeft, style.PaddingTop);
                     Point text_max = window.Position + new Vector(window.Size.Width - style.PaddingHorizontal, style.PaddingVertical * 2 + text_size.Height);
                     //ImVec2 clip_max = ImVec2(window->Pos.x + window->Size.x - (p_open ? title_bar_rect.GetHeight() - 3 : style.FramePadding.x), text_max.y); // Match the size of CloseWindowButton()
-                    window.DrawList.DrawText(new Rect(text_min, text_max), Content.Cached(name, name), headerStyle, GUIState.Normal);
+                    window.DrawList.DrawText(new Rect(text_min, text_max), Content.Cached(name), headerStyle, GUIState.Normal);
                 }
             }
 
@@ -274,6 +276,8 @@ namespace ImGui
             if (first_begin_of_the_frame)
                 window.Accessed = false;
             window.BeginCount++;
+
+            window.StackLayout.Begin();
 
             // Return false if we don't intend to display anything to allow user to perform an early out optimization
             window.SkipItems = window.Collapsed || !window.Active;
@@ -296,13 +300,14 @@ namespace ImGui
             g.CurrentWindow = ((g.CurrentWindowStack.Count==0) ? null : g.CurrentWindowStack[g.CurrentWindowStack.Count-1]);
         }
 
-        public static void BeginH(int id)
+        public static void BeginH(string str_id, GUIStyle style, params LayoutOption[] options)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
 
-            window.StackLayout.BeginLayoutGroup(id, false, GUIStyle.Default, null);
+            int id = window.GetID(str_id);
+            window.StackLayout.BeginLayoutGroup(id, false, GUIStyle.Default, options);
         }
 
         public static void EndH()
@@ -314,12 +319,13 @@ namespace ImGui
             window.StackLayout.EndLayoutGroup();
         }
 
-        public static void BeginV(int id)
+        public static void BeginV(string str_id, GUIStyle style, params LayoutOption[] options)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
 
+            int id = window.GetID(str_id);
             window.StackLayout.BeginLayoutGroup(id, true, GUIStyle.Default, null);
         }
 
@@ -331,6 +337,15 @@ namespace ImGui
 
             window.StackLayout.EndLayoutGroup();
         }
+
+        public static Rect GetWindowClientRect()
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+            return window.ClientRect;
+        }
+
         #endregion
 
         #region options
@@ -440,54 +455,39 @@ namespace ImGui
         /// Create an auto-layout button. When the user click it, something will happen immediately.
         /// </summary>
         /// <param name="text">text to display on the button</param>
-        /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>true when the users clicks the button.</returns>
-        public static bool Button(string text, string id, params LayoutOption[] options)
+        public static bool Button(string text, params LayoutOption[] options)
         {
-            return Button(text, GUISkin.Instance[GUIControlName.Button], id, options);
-        }
-
-        internal static bool Button(string textWithPossibleId, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(textWithPossibleId, out text, out id);
-            return Button(text, GUISkin.Instance[GUIControlName.Button], id, options);
+            return Button(text, GUISkin.Instance[GUIControlName.Button], options);
         }
 
         internal static bool Button(Content content, params LayoutOption[] options)
         {
-            string text, id;
-            Utility.GetId(content.Text, out text, out id);
-            return Button(content, GUISkin.Instance[GUIControlName.Button], id, options);
+            return Button(content, GUISkin.Instance[GUIControlName.Button], options);
         }
 
-        internal static bool Button(Content content, string id, params LayoutOption[] options)
+        internal static bool Button(string text, GUIStyle style, params LayoutOption[] options)
         {
-            return Button(content, GUISkin.Instance[GUIControlName.Button], id, options);
+            return DoButton(Content.Cached(text), style, options);
         }
 
-        internal static bool Button(string text, GUIStyle style, string name, params LayoutOption[] options)
+        internal static bool Button(Content content, GUIStyle style, params LayoutOption[] options)
         {
-            return DoButton(Content.Cached(text, name), style, name, options);
+            return DoButton(content, style, options);
         }
 
-        internal static bool Button(Content content, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            return DoButton(content, style, name);
-        }
-
-        private static bool DoButton(Content content, GUIStyle style, string name, params LayoutOption[] options)
+        private static bool DoButton(Content content, GUIStyle style, params LayoutOption[] options)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
 
-            int id = window.GetID(name);
+            int id = window.GetID(content);
             Size contentSize = style.CalcSize(content, GUIState.Normal, options);
-            Rect rect = window.StackLayout.GetRect(id, contentSize, style, options);
+            Rect rect = window.GetRect(id, contentSize, style, options);
 
-            return GUI.Button(rect, content, name);
+            return GUI.Button(rect, content);
         }
 
         #endregion

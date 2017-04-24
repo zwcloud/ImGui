@@ -22,11 +22,14 @@ namespace ImGui
             g.DeltaTime = Application.DeltaTime;
             g.Time += g.DeltaTime;
             g.FrameCount++;
+
+            //fps
             var detlaTime = g.Time - g.lastFPSUpdateTime;
+            g.lastFrameCount++;
             if (detlaTime > 1000)
             {
-                g.fps = (int)g.FrameCount;
-                g.FrameCount = 0;
+                g.fps = (int)g.lastFrameCount;
+                g.lastFrameCount = 0;
                 g.lastFPSUpdateTime = g.Time;
             }
 

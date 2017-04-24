@@ -4,8 +4,13 @@ namespace ImGui
 {
     internal sealed partial class Content
     {
-        internal static Content Cached(string t, string id)
+        internal static Content Cached(string t, string d) { return null; }//dummy
+        internal static Content Cached(string t)
         {
+            GUIContext g = Form.current.uiContext;
+            Window window = g.CurrentWindow;
+
+            var id = window.GetID(t);
             Content content;
             if (!chachedContentMap.TryGetValue(id, out content))
             {
@@ -25,8 +30,13 @@ namespace ImGui
             return content;
         }
 
-        internal static Content Cached(ITexture texture, string id)
+        internal static Content Cached(ITexture texture, string id) { return null; }//dummy
+        internal static Content Cached(ITexture texture)
         {
+            GUIContext g = Form.current.uiContext;
+            Window window = g.CurrentWindow;
+
+            var id = window.GetID(texture);
             Content content;
             if (!chachedContentMap.TryGetValue(id, out content))
             {
@@ -37,8 +47,13 @@ namespace ImGui
             return content;
         }
 
-        internal static Content CachedTexture(string filePath, string id)
+        internal static Content CachedTexture(string filePath, string id) { return null; }//dummy
+        internal static Content CachedTexture(string filePath)
         {
+            GUIContext g = Form.current.uiContext;
+            Window window = g.CurrentWindow;
+
+            var id = window.GetID(filePath);
             Content content;
             if (!chachedContentMap.TryGetValue(id, out content))
             {
@@ -49,6 +64,8 @@ namespace ImGui
             return content;
         }
 
-        private static readonly Dictionary<string, Content> chachedContentMap = new Dictionary<string, Content>(256);
+        private static Content tempText = new Content();
+
+        private static readonly Dictionary<int, Content> chachedContentMap = new Dictionary<int, Content>(256);
     }
 }

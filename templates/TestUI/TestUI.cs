@@ -29,7 +29,7 @@ public class TestUI
                 {
                     GUILayout.BeginHorizontal();
                     {
-                        if (GUILayout.Button("Button", "Button"))
+                        if (GUILayout.Button("Button"))
                         {
                             a ^= true;
                             Event.current.type = EventType.Layout;

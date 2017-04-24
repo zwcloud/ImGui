@@ -7,9 +7,11 @@ namespace ImGui
     {
         public bool LogEnabled = true;
 
-        // fps
         public long Time;
         public long FrameCount = 0;
+
+        // fps
+        public long lastFrameCount = 0;
         public long lastFPSUpdateTime;
         public int fps;
 

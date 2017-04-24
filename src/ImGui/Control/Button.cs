@@ -4,7 +4,7 @@ namespace ImGui
 {
     internal class Button
     {
-        public static bool DoControl(Rect rect, Content content, string str_id)
+        public static bool DoControl(Rect rect, Content content)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
@@ -12,7 +12,7 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
             DrawList d = window.DrawList;
-            int id = window.GetID(str_id);
+            int id = window.GetID(content);
 
             GUIStyle style = GUISkin.Instance[GUIControlName.Button];
             var mousePos = Input.Mouse.MousePos;
@@ -24,7 +24,7 @@ namespace ImGui
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
             d.RenderFrame(rect.Min, rect.Max, col, true, 0);
-            d.DrawText(rect, Content.Cached(str_id, str_id), style, state);
+            d.DrawText(rect, content, style, state);
 
             return pressed;
         }
