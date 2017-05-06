@@ -12,7 +12,6 @@ namespace ImGui
         private readonly IWindow nativeWindow;
 
         internal IRenderer renderer;
-        internal LayoutCache layoutCache = new LayoutCache();
         internal GUIContext uiContext = new GUIContext();
         internal GUIDrawContext drawContext = new GUIDrawContext();
 
@@ -33,11 +32,6 @@ namespace ImGui
             renderer.Init(this.Pointer);
 
             Input.Mouse.Cursor = Cursor.Default;
-        }
-
-        internal LayoutCache LayoutCache
-        {
-            get { return layoutCache; }
         }
 
         #region window management

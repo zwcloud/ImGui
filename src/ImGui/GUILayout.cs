@@ -9,78 +9,29 @@ namespace ImGui
     /// </summary>
     public class GUILayout
     {
-        #region container
+        #region ID
 
-        #region basic
-
-        /// <summary>
-        /// Begin a horizontal layout group.
-        /// </summary>
-        /// <param name="options"></param>
-        public static void BeginHorizontal(params LayoutOption[] options)
+        public static void PushID(int int_id)
         {
-            GUILayout.BeginHorizontal(Content.None, GUIStyle.Default, options);
+            Window window = GetCurrentWindow();
+            window.IDStack.Push(window.GetID(int_id));
         }
 
-        internal static void BeginHorizontal(GUIStyle style, params LayoutOption[] options)
+        public static void PushID(string str_id)
         {
-            GUILayout.BeginHorizontal(Content.None, style, options);
+            Window window = GetCurrentWindow();
+            window.IDStack.Push(window.GetID(str_id));
         }
 
-        internal static void BeginHorizontal(Content content, GUIStyle style, params LayoutOption[] options)
+        public static void PopID()
         {
-            LayoutGroup layoutGroup = LayoutUtility.BeginLayoutGroup(isVertical: false, style: style, options: options);
-            if (style != GUIStyle.Default || content != Content.None)
-            {
-                GUI.Box(layoutGroup.rect, content, "box_" + layoutGroup.GetHashCode());
-            }
-        }
-
-        /// <summary>
-        /// End a horizontal layout group.
-        /// </summary>
-        public static void EndHorizontal()
-        {
-            LayoutUtility.EndLayoutGroup();
-        }
-
-        /// <summary>
-        /// Begin a vertical layout group.
-        /// </summary>
-        /// <param name="options"></param>
-        public static void BeginVertical(params LayoutOption[] options)
-        {
-            GUILayout.BeginVertical(Content.None, GUIStyle.Default, options);
-        }
-
-        public static void BeginVertical(GUIStyle style, params LayoutOption[] options)
-        {
-            GUILayout.BeginVertical(Content.None, style, options);
-        }
-
-        internal static void BeginVertical(Content content, GUIStyle style, params LayoutOption[] options)
-        {
-            LayoutGroup layoutGroup = LayoutUtility.BeginLayoutGroup(isVertical: true, style: style, options: options);
-            if (style != GUIStyle.Default)
-            {
-                GUI.Box(layoutGroup.rect, content, "box_" + layoutGroup.GetHashCode());
-            }
-        }
-
-        /// <summary>
-        /// End a vertical layout group.
-        /// </summary>
-        public static void EndVertical()
-        {
-            LayoutUtility.EndLayoutGroup();
+            Window window = GetCurrentWindow();
+            window.IDStack.Pop();
         }
 
         #endregion
 
-        public static bool CollapsingHeader(string text, string id, bool open)
-        {
-            return ToggleButton((open ? "▼" : "▶") + text, open);
-        }
+        #region container
 
         public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
         {
@@ -202,8 +153,10 @@ namespace ImGui
                             style.Get<Color>(GUIStyleName.ResizeGripColor);
 
                         if (hovered || held)
+                        {
                             Input.Mouse.Cursor = Cursor.NeswResize;
-                        
+                        }
+
                         if (held)
                         {
                             // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
@@ -295,55 +248,57 @@ namespace ImGui
             window.ProcessLayout();
 
             // Pop
-            // NB: we don't clear 'window->RootWindow'. The pointer is allowed to live until the next call to Begin().
             g.CurrentWindowStack.RemoveAt(g.CurrentWindowStack.Count-1);
             g.CurrentWindow = ((g.CurrentWindowStack.Count==0) ? null : g.CurrentWindowStack[g.CurrentWindowStack.Count-1]);
         }
 
-        public static void BeginH(string str_id, GUIStyle style, params LayoutOption[] options)
+        public static void BeginHorizontal(string str_id, GUIStyle style = null, params LayoutOption[] options)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
-            window.StackLayout.BeginLayoutGroup(id, false, GUIStyle.Default, options);
+            window.StackLayout.BeginLayoutGroup(id, false, style, options);
         }
 
-        public static void EndH()
+        public static void EndHorizontal()
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = GetCurrentWindow();
 
             window.StackLayout.EndLayoutGroup();
         }
 
-        public static void BeginV(string str_id, GUIStyle style, params LayoutOption[] options)
+        public static void BeginVertical(string str_id, GUIStyle style = null, params LayoutOption[] options)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
-            window.StackLayout.BeginLayoutGroup(id, true, GUIStyle.Default, null);
+            window.StackLayout.BeginLayoutGroup(id, true, style, null);
         }
 
-        public static void EndV()
+        public static void EndVertical()
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = GetCurrentWindow();
 
             window.StackLayout.EndLayoutGroup();
+        }
+
+        public static bool CollapsingHeader(string text, string id, bool open)
+        {
+            return ToggleButton((open ? "▼" : "▶") + text, open);
         }
 
         public static Rect GetWindowClientRect()
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = GetCurrentWindow();
             return window.ClientRect;
+        }
+
+        public static Rect GetRect(Size size, string str_id)
+        {
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
+            var rect = window.GetRect(id, size, null, null);
+            return rect;
         }
 
         #endregion
@@ -414,10 +369,6 @@ namespace ImGui
 
         #endregion
 
-        #region Internal Styles
-        internal static double fieldWidth = 50;
-        #endregion
-
         #region controls
 
         #region basic controls
@@ -427,24 +378,35 @@ namespace ImGui
         /// <summary>
         /// Put a fixed-size space inside a layout group.
         /// </summary>
-        /// <param name="pixels">size of the space</param>
-        public static void Space(double pixels)
+        public static void Space(string str_id, double size)
         {
-            LayoutUtility.GetRect(Size.Zero, GUISkin.Instance[GUIControlName.Space],
-                LayoutUtility.current.topGroup.isVertical
-                    ? new[] { GUILayout.Height(pixels) }
-                    : new[] { GUILayout.Width(pixels) });
+            Window window = GetCurrentWindow();
+            var layout = window.StackLayout;
+
+            int id = window.GetID(str_id);
+            window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
+                layout.InsideVerticalGroup ? new[] { GUILayout.Height(size) } : new[] { GUILayout.Width(size) });
+        }
+
+        private static Window GetCurrentWindow()
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+            return window;
         }
 
         /// <summary>
         /// Put a expanded space inside a layout group.
         /// </summary>
-        public static void FlexibleSpace()
+        public static void FlexibleSpace(string str_id)
         {
-            LayoutUtility.GetRect(Size.Zero, GUISkin.Instance[GUIControlName.Space],
-                LayoutUtility.current.topGroup.isVertical
-                    ? new[] { GUILayout.StretchHeight(1) }
-                    : new[] { GUILayout.StretchWidth(1) });
+            Window window = GetCurrentWindow();
+            var layout = window.StackLayout;
+
+            int id = window.GetID(str_id);
+            Rect rect = window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
+                layout.InsideVerticalGroup ? new[] { GUILayout.StretchHeight(1) } : new[] { GUILayout.StretchWidth(1) });
         }
 
         #endregion
@@ -479,9 +441,7 @@ namespace ImGui
 
         private static bool DoButton(Content content, GUIStyle style, params LayoutOption[] options)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = GetCurrentWindow();
 
             int id = window.GetID(content);
             Size contentSize = style.CalcSize(content, GUIState.Normal, options);
@@ -536,12 +496,11 @@ namespace ImGui
 
         private static void DoLabel(Content content, GUIStyle style, string name, params LayoutOption[] options)
         {
-            Size contentSize = Size.Zero;
-            if (Event.current.type == EventType.Layout)
-            {
-                contentSize = style.CalcSize(content, GUIState.Normal, options);
-            }
-            var rect = LayoutUtility.GetRect(contentSize, style, options);
+            Window window = GetCurrentWindow();
+
+            int id = window.GetID(content);
+            Size contentSize = style.CalcSize(content, GUIState.Normal, options);
+            Rect rect = window.GetRect(id, contentSize, style, options);
             GUI.Label(rect, content, name);
         }
 
@@ -590,21 +549,23 @@ namespace ImGui
 
         private static bool DoToggle(Content content, bool value, GUIStyle style, string name, params LayoutOption[] options)
         {
-            var result = GUI.Toggle(GUILayout.GetToggleRect(content, style, options), content, value, name);
+            var result = GUI.Toggle(GUILayout.GetToggleRect(name, content, style, options), content, value, name);
             return result;
         }
 
-        private static Rect GetToggleRect(Content content, GUIStyle style, params LayoutOption[] options)
+        private static Rect GetToggleRect(string str_id,Content content, GUIStyle style, params LayoutOption[] options)
         {
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
             if (content == null)
             {
-                return LayoutUtility.GetRect(new Size(16, 16), style, options);
+                return window.GetRect(id, new Size(16, 16), style, options);
             }
             else
             {
                 var textSize = style.CalcSize(content, GUIState.Normal, null);
                 var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
-                return LayoutUtility.GetRect(size, style, options);
+                return window.GetRect(id, size, style, options);
             }
         }
 
@@ -629,9 +590,12 @@ namespace ImGui
             return DoToggle(value, style, id, options);
         }
 
-        private static bool DoToggle(bool value, GUIStyle style, string id, params LayoutOption[] options)
+        private static bool DoToggle(bool value, GUIStyle style, string str_id, params LayoutOption[] options)
         {
-            return GUI.Toggle(LayoutUtility.GetRect(new Size(16, 16), style, options), value, id);
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
+            var rect = window.GetRect(id, new Size(16, 16), style, options);
+            return GUI.Toggle(rect, value, str_id);//TODO add an overload using int id
         }
 
         #endregion
@@ -701,15 +665,13 @@ namespace ImGui
             return DoHoverButton(content, style, name);
         }
 
-        private static bool DoHoverButton(Content content, GUIStyle style, string name, params LayoutOption[] options)
+        private static bool DoHoverButton(Content content, GUIStyle style, string str_id, params LayoutOption[] options)
         {
-            Size contentSize = Size.Zero;
-            if (Event.current.type == EventType.Layout)
-            {
-                contentSize = style.CalcSize(content, GUIState.Normal, options);
-            }
-            var rect = LayoutUtility.GetRect(contentSize, style, options);
-            return GUI.HoverButton(rect, content, name);
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
+            Size size = style.CalcSize(content, GUIState.Normal, options);
+            var rect = window.GetRect(id, size, style, options);
+            return GUI.HoverButton(rect, content, str_id);
         }
 
         #endregion
@@ -719,50 +681,42 @@ namespace ImGui
         /// <summary>
         /// Create an auto-layout horizontal slider that user can drag to select a value.
         /// </summary>
-        /// <param name="size">size of the slider</param>
+        /// <param name="label">label of the slider</param>
         /// <param name="value">The value the slider shows.</param>
         /// <param name="minValue">The value at the left end of the slider.</param>
         /// <param name="maxValue">The value at the right end of the slider.</param>
         /// <param name="id">the unique id of this control</param>
-        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>The value set by the user.</returns>
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
-        public static double Slider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)
+        public static double Slider(string label, double value, double minValue, double maxValue, string id)
         {
-            return DoSlider(size, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], true, id, options);
-        }
-
-        internal static double Slider(Size size, double value, double minValue, double maxValue, GUIStyle style, string id, params LayoutOption[] options)
-        {
-            return DoSlider(size, value, minValue, maxValue, style, true, id, options);
+            return DoSlider(Content.Cached(label, id), value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], true, id);
         }
 
         /// <summary>
         /// Create an auto-layout vertical slider that user can drag to select a value.
         /// </summary>
-        /// <param name="size">size of the slider</param>
+        /// <param name="label">label of the slider</param>
         /// <param name="value">The value the slider shows.</param>
         /// <param name="minValue">The value at the top end of the slider.</param>
         /// <param name="maxValue">The value at the bottom end of the slider.</param>
         /// <param name="id">the unique id of this control</param>
-        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>The value set by the user.</returns>
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
-        public static double VSlider(Size size, double value, double minValue, double maxValue, string id, params LayoutOption[] options)
+        public static double VSlider(string label, double value, double minValue, double maxValue, string id)
         {
-            return DoSlider(size, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], false, id, options);
+            return DoSlider(Content.Cached(label, id), value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], false, id);
         }
 
-        internal static double VSlider(Size size, double value, double minValue, double maxValue, GUIStyle style, string id, params LayoutOption[] options)
+        private static double DoSlider(Content content, double value, double minValue, double maxValue, GUIStyle style, bool isHorizontal, string str_id)
         {
-            return DoSlider(size, value, minValue, maxValue, style, false, id, options);
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
+            var options = new LayoutOption[] { isHorizontal? GUILayout.ExpandWidth(true): GUILayout.ExpandHeight(true) };
+            Size size = style.CalcSize(content, GUIState.Normal, options);
+            var rect = window.GetRect(id, size, style, options);
+            return GUI.Slider(rect, value, minValue, maxValue, isHorizontal, str_id);
         }
-
-        private static double DoSlider(Size size, double value, double minValue, double maxValue, GUIStyle style, bool isHorizontal, string id, params LayoutOption[] options)
-        {
-            return GUI.Slider(LayoutUtility.GetRect(size, style, options), value, minValue, maxValue, isHorizontal, id);
-        }
-
 
         #endregion
 
@@ -805,15 +759,13 @@ namespace ImGui
             return DoToggleButton(content, value, style, name, options);
         }
 
-        private static bool DoToggleButton(Content content, bool value, GUIStyle style, string name, params LayoutOption[] options)
+        private static bool DoToggleButton(Content content, bool value, GUIStyle style, string str_id, params LayoutOption[] options)
         {
-            Size contentSize = Size.Zero;
-            if (Event.current.type == EventType.Layout)
-            {
-                contentSize = style.CalcSize(content, GUIState.Normal, options);
-            }
-            var rect = LayoutUtility.GetRect(contentSize, style, options);
-            var result = GUI.ToggleButton(rect, content, value, name);
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
+            Size size = style.CalcSize(content, GUIState.Normal, options);
+            var rect = window.GetRect(id, size, style, options);
+            var result = GUI.ToggleButton(rect, content, value, str_id);
             return result;
         }
 
@@ -864,16 +816,18 @@ namespace ImGui
             return DoPolygonButton(points, textRect, content, style, name);
         }
 
-        private static bool DoPolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, GUIStyle style, string id, params LayoutOption[] options)
+        private static bool DoPolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, GUIStyle style, string str_id, params LayoutOption[] options)
         {
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
             var rect = new Rect();
             for (int i = 0; i < points.Count; i++)
             {
                 var point = points[i];
                 rect.Union(point);
             }
-            rect = LayoutUtility.GetRect(rect.Size, style, options);
-            return GUI.PolygonButton(rect, points, textRect, content, id);
+            rect = window.GetRect(id, rect.Size, style, options);
+            return GUI.PolygonButton(rect, points, textRect, content, str_id);
         }
 
 
@@ -919,79 +873,21 @@ namespace ImGui
             DoImage(content, style, id, options);
         }
 
-        private static void DoImage(Content content, GUIStyle style, string id, params LayoutOption[] options)
+        private static void DoImage(Content content, GUIStyle style, string str_id, params LayoutOption[] options)
         {
-            Size contentSize = style.CalcSize(content, GUIState.Normal, options);
-            var rect = LayoutUtility.GetRect(contentSize, style,
-                new[] { GUILayout.Width(contentSize.Width), GUILayout.Height(contentSize.Height) });
-            GUI.Image(rect, content, style, id);
+            Window window = GetCurrentWindow();
+            var id = window.GetID(str_id);
+            Size size = style.CalcSize(content, GUIState.Normal, options);
+            var rect = window.GetRect(id, size, style,
+                new[] { GUILayout.Width(size.Width), GUILayout.Height(size.Height) });
+            GUI.Image(rect, content, style, str_id);
         }
 
         #endregion
 
         #endregion
 
-        #region combined controls
-
-        public static double Slider(string label, double value, double min, double max, string id)
-        {
-            return Slider(Content.Cached(label, id), value, min, max, GUISkin.Instance[GUIControlName.Slider], id);
-        }
-
-        internal static double Slider(Content content, double value, double min, double max, string id)
-        {
-            return Slider(content, value, min, max, GUISkin.Instance[GUIControlName.Slider], id);
-        }
-
-        internal static double Slider(Content content, double value, double min, double max, GUIStyle style, string id)
-        {
-            GUILayout.BeginHorizontal();
-            {
-                Size textSize = style.CalcSize(content, GUIState.Normal, null);
-                GUILayout.Label(content, style, "SliderLabel" + id, GUILayout.Width(textSize.Width));
-                var labelRect = GUILayout.GetLastRect();
-                Rect rect;
-                rect = LayoutUtility.GetRect(textSize, style, new[] { GUILayout.ExpandWidth(true)});
-                value = GUI.Slider(rect, value, min, max, "Slider" + id);
-            }
-            GUILayout.EndHorizontal();
-            return value;
-        }
-
-        public static double VSlider(string label, double value, double min, double max, string id, params LayoutOption[] options)
-        {
-            return VSlider(Content.Cached(label, id), value, min, max, GUISkin.Instance[GUIControlName.Slider], id, options);
-        }
-
-        internal static double VSlider(Content content, double value, double min, double max, string id, params LayoutOption[] options)
-        {
-            return VSlider(content, value, min, max, GUISkin.Instance[GUIControlName.Slider], id, options);
-        }
-
-        internal static double VSlider(Content content, double value, double min, double max, GUIStyle style, string id, params LayoutOption[] options)
-        {
-            GUILayout.BeginVertical(options);
-            {
-                Size textSize = style.CalcSize(content, GUIState.Normal, null);
-                GUILayout.Label(content, style, "VSliderLabel" + id, GUILayout.Height(textSize.Height), GUILayout.Width(textSize.Width));
-                value = GUILayout.VSlider(new Size(textSize.Width, textSize.Height), value, min, max, "VSlider" + id, GUILayout.Width(30), GUILayout.ExpandHeight(true));
-            }
-            GUILayout.EndVertical();
-            return value;
-        }
         #endregion
-
-        #endregion
-
-        public static Rect GetRect(Size size, GUIStyle style, params LayoutOption[] options)
-        {
-            return LayoutUtility.GetRect(size, style, options);
-        }
-
-        public static Rect GetLastRect()
-        {
-            return LayoutUtility.GetLastRect();
-        }
 
     }
 }

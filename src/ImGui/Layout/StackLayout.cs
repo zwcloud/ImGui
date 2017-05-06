@@ -20,15 +20,11 @@ namespace ImGui.Layout
 
         public LayoutGroup topGroup { get { return this.groupStack.Peek(); } }
 
+        public bool InsideVerticalGroup => this.topGroup.isVertical;
+
         internal Rect GetRect(int id, Size contentSize, GUIStyle style, LayoutOption[] options)
         {
             return DoGetRect(id, contentSize, style, options);
-        }
-
-        internal Rect GetLastRect()
-        {
-            Rect last = topGroup.GetLast();
-            return last;
         }
 
         public LayoutGroup FindLayoutGroup(int id)

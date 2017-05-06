@@ -287,9 +287,6 @@ namespace ImGui
                         return IntPtr.Zero;
                     }
                 #endregion
-                case 0x0232://WM_EXITSIZEMOVE
-                    if (Event.current != null) Event.current.type = EventType.Layout;
-                    break;
                 case 0x2://WM_DESTROY
                     PostQuitMessage(0);
                     //DEBUG only begin

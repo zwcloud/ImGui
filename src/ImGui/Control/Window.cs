@@ -20,12 +20,15 @@ namespace ImGui
 
         public StackLayout StackLayout { get; set; }
 
+        public Stack<int> IDStack { get; set; } = new Stack<int>();
+
         public Window(string name, Point position, Size size, WindowFlags Flags)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
 
             this.ID = name.GetHashCode();
+            this.IDStack.Push(this.ID);
             this.Flags = Flags;
             this.PosFloat = position;
             this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
@@ -35,6 +38,7 @@ namespace ImGui
             this.DrawList = new DrawList();
             this.MoveID = GetID("#MOVE");
             this.Active = WasActive = false;
+
 
             {
                 var style = new GUIStyle();
@@ -64,12 +68,18 @@ namespace ImGui
             g.Windows.Add(this);
         }
 
-        public int GetID(string strID)
+        public int GetID(int int_id)
         {
-            //http://stackoverflow.com/a/263416/3427520
-            int hash = 17;
-            hash = hash * 23 + this.ID.GetHashCode();
-            var id = hash * 23 + strID.GetHashCode();
+            int seed = IDStack.Peek();
+            var id = Hash(seed, int_id);
+            return id;
+        }
+
+        public int GetID(string str_id)
+        {
+            int seed = IDStack.Peek();
+            int int_id = str_id.GetHashCode();
+            var id = Hash(seed, int_id);
 
             GUIContext g = Form.current.uiContext;
             g.KeepAliveID(id);
@@ -78,9 +88,9 @@ namespace ImGui
 
         public int GetID(ITexture texture)
         {
-            int hash = 17;
-            hash = hash * 23 + this.ID.GetHashCode();
-            var id = hash * 23 + texture.GetHashCode();
+            int seed = IDStack.Peek();
+            int int_id = texture.GetHashCode();
+            var id = Hash(seed, int_id);
 
             GUIContext g = Form.current.uiContext;
             g.KeepAliveID(id);
@@ -89,18 +99,11 @@ namespace ImGui
 
         public int GetID(Content content)
         {
-            if (content.Text != null)
+            if(content == null)
             {
-                return GetID(content.Text);
+                throw new ArgumentNullException(nameof(content));
             }
-            else if(content.Image != null)
-            {
-                return GetID(content.Image);
-            }
-            else
-            {
-                return GetID("#EmptyContent");
-            }
+            return GetID(content.GetHashCode());
         }
 
         public void ApplySize(Size new_size)
@@ -160,6 +163,15 @@ namespace ImGui
                 this.StackLayout.Layout(this.ClientRect.Size);
             }
         }
+
+        private int Hash(int seed, int int_id)
+        {
+            int hash = seed + 17;
+            hash = hash * 23 + this.ID.GetHashCode();
+            var result = hash * 23 + int_id;
+            return result;
+        }
+
     }
 
     [Flags]

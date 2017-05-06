@@ -217,8 +217,6 @@ namespace ImGui
             File.WriteAllText(filePath, sb.ToString());
         }
 
-#if false //to be moved to unit test
-#endif
         /// <summary>
         /// convert pt to dip
         /// </summary>
@@ -387,27 +385,5 @@ namespace ImGui
         //HACK remove this if font-family in Typography is ready
         public static string FontDir = CurrentOS.IsWindows? @"W:\VS2015\ImGui\templates\TestUI\Font\" : Path.GetDirectoryName(typeof(ImGui.Application).GetTypeInfo().Assembly.Location) + Path.DirectorySeparatorChar + "Font" + Path.DirectorySeparatorChar;
         
-    }
-
-
-    public class Profile
-    {
-        private static string name;
-        private static Stopwatch watch = new Stopwatch();
-
-        [Conditional("DEBUG")]
-        public static void Start(string name)
-        {
-            Profile.name = name;
-            watch.Start();
-        }
-
-        [Conditional("DEBUG")]
-        public static void End()
-        {
-            watch.Stop();
-            Debug.WriteLine("[Profile]{0} {1} ms", name, watch.ElapsedMilliseconds.ToString());
-            watch.Reset();
-        }
     }
 }

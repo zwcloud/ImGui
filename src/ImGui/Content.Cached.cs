@@ -12,19 +12,19 @@ namespace ImGui
 
             var id = window.GetID(t);
             Content content;
-            if (!chachedContentMap.TryGetValue(id, out content))
+            if (!cachedContentMap.TryGetValue(id, out content))
             {
                 content = new Content(t);
-                chachedContentMap.Add(id, content);
+                cachedContentMap.Add(id, content);
                 return content;
             }
             else
             {
                 // existing text
-                if(t != chachedContentMap[id].Text)
+                if(t != cachedContentMap[id].Text)
                 {
-                    chachedContentMap[id].Text = t;
-                    chachedContentMap[id].Dirty = true;
+                    cachedContentMap[id].Text = t;
+                    cachedContentMap[id].Dirty = true;
                 }
             }
             return content;
@@ -38,12 +38,12 @@ namespace ImGui
 
             var id = window.GetID(texture);
             Content content;
-            if (!chachedContentMap.TryGetValue(id, out content))
+            if (!cachedContentMap.TryGetValue(id, out content))
             {
                 content = new Content(texture);
-                chachedContentMap.Add(id, content);
+                cachedContentMap.Add(id, content);
             }
-            chachedContentMap[id].Image = texture;
+            cachedContentMap[id].Image = texture;
             return content;
         }
 
@@ -55,17 +55,17 @@ namespace ImGui
 
             var id = window.GetID(filePath);
             Content content;
-            if (!chachedContentMap.TryGetValue(id, out content))
+            if (!cachedContentMap.TryGetValue(id, out content))
             {
                 var texture = GUI.CreateTexture(filePath);
                 content = new Content(texture);
-                chachedContentMap.Add(id, content);
+                cachedContentMap.Add(id, content);
             }
             return content;
         }
 
         private static Content tempText = new Content();
 
-        private static readonly Dictionary<int, Content> chachedContentMap = new Dictionary<int, Content>(256);
+        private static readonly Dictionary<int, Content> cachedContentMap = new Dictionary<int, Content>(256);
     }
 }

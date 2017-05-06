@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ImGui;
+﻿using ImGui;
 
 public class TestUI
 {
@@ -22,17 +19,16 @@ public class TestUI
 
         if (widgetsOn = GUILayout.CollapsingHeader("Widgets", "Widgets", widgetsOn))
         {
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal("all");
             {
-                GUILayout.Space(30);
-                GUILayout.BeginVertical();
+                GUILayout.Space("HeadSpace",30);
+                GUILayout.BeginVertical("V1");
                 {
-                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal("H1");
                     {
                         if (GUILayout.Button("Button"))
                         {
                             a ^= true;
-                            Event.current.type = EventType.Layout;
                         }
                         if (a)
                         {
@@ -43,7 +39,7 @@ public class TestUI
 
                     toggleOn = GUILayout.Toggle("CheckBox", toggleOn, "Toggle");
 
-                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal("H2");
                     {
                         GUILayout.Radio("Radio 0", ref active_id, "radio_b_0");
                         GUILayout.Radio("Radio 1", ref active_id, "radio_b_1");
@@ -52,15 +48,12 @@ public class TestUI
                     GUILayout.EndHorizontal();
 
                     widthScale = GUILayout.Slider("Width Scale", widthScale, 0, 1.0, "SliderA");
-                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal("H3");
                     {
-                        heightScale = GUILayout.VSlider("Height Scale", heightScale, 0, 1.0, "SliderB", GUILayout.ExpandWidth(false), GUILayout.Height(image.Height));
+                        heightScale = GUILayout.VSlider("Height Scale", heightScale, 0, 1.0, "SliderB");
                         var rect = GUILayout.GetRect(new Size(image.Width, image.Height), "Image");
-                        if(Event.current.type != EventType.Layout)
-                        {
-                            rect.Width = image.Width * widthScale;
-                            rect.Height = image.Height * heightScale;
-                        }
+                        rect.Width = image.Width * widthScale;
+                        rect.Height = image.Height * heightScale;
                         GUI.Image(rect, image, "Image0");
                     }
                     GUILayout.EndHorizontal();
@@ -69,6 +62,7 @@ public class TestUI
                 GUILayout.EndVertical();
             }
             GUILayout.EndHorizontal();
+
         }
 
     }
