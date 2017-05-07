@@ -1,8 +1,41 @@
 ﻿namespace ImGui
 {
-    internal class Slider
+    public partial class GUI
     {
-        internal static double DoControl(Rect rect, string label, double value, double minValue, double maxValue, bool isHorizontal)
+        /// <summary>
+        /// Create a horizontal slider that user can drag to select a value.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="value">The value the slider shows.</param>
+        /// <param name="minValue">The value at the top end of the slider.</param>
+        /// <param name="maxValue">The value at the bottom end of the slider.</param>
+        /// <returns>The value set by the user.</returns>
+        /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
+        public static double Slider(Rect rect, string label, double value, double minValue, double maxValue)
+        {
+            return Slider(rect, label, value, minValue, maxValue, true);
+        }
+
+        /// <summary>
+        /// Create a vertical slider that user can drag to select a value.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="value">The value the slider shows.</param>
+        /// <param name="minValue">The value at the top end of the slider.</param>
+        /// <param name="maxValue">The value at the bottom end of the slider.</param>
+        /// <returns>The value set by the user.</returns>
+        /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
+        public static double VSlider(Rect rect, string label, double value, double minValue, double maxValue)
+        {
+            return Slider(rect, label, value, minValue, maxValue, false);
+        }
+
+        internal static double Slider(Rect rect, string label, double value, double minValue, double maxValue, bool isHorizontal)
+        {
+            return DoSlider(rect, label, value, minValue, maxValue, isHorizontal);
+        }
+
+        internal static double DoSlider(Rect rect, string label, double value, double minValue, double maxValue, bool isHorizontal)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
@@ -147,6 +180,51 @@
 
             return value;
         }
-        
+
+    }
+
+    public partial class GUILayout
+    {
+        /// <summary>
+        /// Create an auto-layout horizontal slider that user can drag to select a value.
+        /// </summary>
+        /// <param name="label">label of the slider</param>
+        /// <param name="value">The value the slider shows.</param>
+        /// <param name="minValue">The value at the left end of the slider.</param>
+        /// <param name="maxValue">The value at the right end of the slider.</param>
+        /// <returns>The value set by the user.</returns>
+        /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
+        public static double Slider(string label, double value, double minValue, double maxValue)
+        {
+            return DoSlider(label, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], true);
+        }
+
+        /// <summary>
+        /// Create an auto-layout vertical slider that user can drag to select a value.
+        /// </summary>
+        /// <param name="label">label of the slider</param>
+        /// <param name="value">The value the slider shows.</param>
+        /// <param name="minValue">The value at the top end of the slider.</param>
+        /// <param name="maxValue">The value at the bottom end of the slider.</param>
+        /// <returns>The value set by the user.</returns>
+        /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
+        public static double VSlider(string label, double value, double minValue, double maxValue)
+        {
+            return DoSlider(label, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], false);
+        }
+
+        private static double DoSlider(string label, double value, double minValue, double maxValue, GUIStyle style, bool isHorizontal)
+        {
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return value;
+
+            var id = window.GetID(label);
+            var options = new LayoutOption[] { isHorizontal ? GUILayout.ExpandWidth(true) : GUILayout.ExpandHeight(true) };
+            Size size = style.CalcSize(label, GUIState.Normal, options);
+            var rect = window.GetRect(id, size, style, options);
+            //FIXME append slider rect
+            return GUI.Slider(rect, label, value, minValue, maxValue, isHorizontal);
+        }
     }
 }

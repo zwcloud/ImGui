@@ -2,9 +2,51 @@
 
 namespace ImGui
 {
-    internal class Button
+    public partial class GUILayout
     {
-        public static bool DoControl(Rect rect, string text)
+        /// <summary>
+        /// Create an auto-layout button. When the user click it, something will happen immediately.
+        /// </summary>
+        /// <param name="text">text to display on the button</param>
+        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
+        /// <returns>true when the users clicks the button.</returns>
+        public static bool Button(string text, params LayoutOption[] options)
+        {
+            return Button(text, GUISkin.Instance[GUIControlName.Button], options);
+        }
+
+        internal static bool Button(string text, GUIStyle style, params LayoutOption[] options)
+        {
+            return DoButton(text, style, options);
+        }
+
+        private static bool DoButton(string text, GUIStyle style, params LayoutOption[] options)
+        {
+            Window window = GetCurrentWindow();
+
+            int id = window.GetID(text);
+            Size size = style.CalcSize(text, GUIState.Normal, options);
+            Rect rect = window.GetRect(id, size, style, options);
+
+            return GUI.Button(rect, text);
+        }
+    }
+
+    public partial class GUI
+    {
+        /// <summary>
+        /// Create a button. When the user click it, something will happen immediately.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="text">text to display on the button</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>true when the users clicks the button.</returns>
+        public static bool Button(Rect rect, string text)
+        {
+            return DoButton(rect, text);
+        }
+
+        internal static bool DoButton(Rect rect, string text)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
@@ -16,9 +58,9 @@ namespace ImGui
 
             GUIStyle style = GUISkin.Instance[GUIControlName.Button];
             var mousePos = Input.Mouse.MousePos;
-            
+
             bool hovered, held;
-            bool pressed = ButtonBehavior(rect, id, out hovered, out held, 0);
+            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
 
             // Render
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
@@ -28,7 +70,10 @@ namespace ImGui
 
             return pressed;
         }
+    }
 
+    partial class GUIBehavior
+    {
         public static bool ButtonBehavior(Rect bb, int id, out bool out_hovered, out bool out_held, ButtonFlags flags)
         {
             GUIContext g = Form.current.uiContext;
@@ -112,7 +157,7 @@ namespace ImGui
     }
 
     [Flags]
-    enum ButtonFlags
+    public enum ButtonFlags
     {
         Repeat = 1 << 0,   // hold to repeat
         PressedOnClickRelease = 1 << 1,   // (default) return pressed on click+release on same item (default if no PressedOn** flag is set)

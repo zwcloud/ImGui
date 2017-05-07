@@ -1,7 +1,7 @@
 ﻿using ImGui.Layout;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 
 namespace ImGui
 {
@@ -161,6 +161,228 @@ namespace ImGui
             return result;
         }
 
+    }
+
+    public partial class GUILayout
+    {
+        public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Debug.Assert(name != null);                        // Window name required
+            Debug.Assert(g.Initialized);                       // Forgot to call ImGui::NewFrame()
+            Debug.Assert(g.FrameCountEnded != g.FrameCount);   // Called ImGui::Render() or ImGui::EndFrame() and haven't called ImGui::NewFrame() again yet
+
+            if (flags.HaveFlag(WindowFlags.NoInputs))
+            {
+                flags |= WindowFlags.NoMove | WindowFlags.NoResize;
+            }
+
+            // Find or create
+            bool window_is_new = false;
+            Window window = g.FindWindowByName(name);
+            if (window == null)
+            {
+                window = new Window(name, position, size, flags);
+                window_is_new = true;
+            }
+
+            long current_frame = g.FrameCount;
+            bool first_begin_of_the_frame = (window.LastActiveFrame != current_frame);
+            if (first_begin_of_the_frame)
+            {
+                window.Flags = flags;
+            }
+            else
+            {
+                flags = window.Flags;
+            }
+
+            // Add to stack
+            Window parent_window = (!(g.CurrentWindowStack.Count == 0)) ? g.CurrentWindowStack[g.CurrentWindowStack.Count - 1] : null;
+            g.CurrentWindowStack.Add(window);
+            g.CurrentWindow = window;
+            //CheckStacksSize(window, true);
+            Debug.Assert(parent_window != null || !(flags.HaveFlag(WindowFlags.ChildWindow)));
+
+            bool window_was_active = (window.LastActiveFrame == current_frame - 1);
+
+            bool window_appearing_after_being_hidden = (window.HiddenFrames == 1);
+
+            // Update known root window (if we are a child window, otherwise window == window->RootWindow)
+            int root_idx, root_non_popup_idx;
+            for (root_idx = g.CurrentWindowStack.Count - 1; root_idx > 0; root_idx--)
+            {
+                if (!(g.CurrentWindowStack[root_idx].Flags.HaveFlag(WindowFlags.ChildWindow)))
+                    break;
+            }
+            for (root_non_popup_idx = root_idx; root_non_popup_idx > 0; root_non_popup_idx--)
+            {
+                if (!(g.CurrentWindowStack[root_non_popup_idx].Flags.HaveFlag(WindowFlags.ChildWindow | WindowFlags.Popup)))
+                    break;
+            }
+            window.ParentWindow = parent_window;
+            window.RootWindow = g.CurrentWindowStack[root_idx];
+
+            // When reusing window again multiple times a frame, just append content (don't need to setup again)
+            if (first_begin_of_the_frame)
+            {
+                window.Active = true;
+                window.ClipRect = new Rect(float.MinValue, float.MinValue, float.MaxValue, float.MaxValue);
+                window.LastActiveFrame = current_frame;
+
+                window.DrawList.Clear();
+                Rect fullScreenRect = form.Rect;
+
+                // clip
+                window.ClipRect = fullScreenRect;
+
+                // Collapse window by double-clicking on title bar
+                if (g.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
+                {
+                    window.Collapsed = !window.Collapsed;
+                }
+
+                #region size
+
+                // Apply minimum/maximum window size constraints and final size
+                window.ApplySize(window.FullSize);
+                window.Size = window.Collapsed ? window.TitleBarRect.Size : window.FullSize;
+
+                #endregion
+
+                #region position
+
+                window.Position = new Point((int)window.PosFloat.X, (int)window.PosFloat.Y);
+
+                #endregion
+
+                // Draw window + handle manual resize
+                GUIStyle style = window.Style;
+                GUIStyle headerStyle = window.HeaderStyle;
+                Rect title_bar_rect = window.TitleBarRect;
+                float window_rounding = 3;
+                if (window.Collapsed)
+                {
+                    // Draw title bar only
+                    window.DrawList.RenderFrame(title_bar_rect.TopLeft, title_bar_rect.BottomRight, new Color(0.40f, 0.40f, 0.80f, 0.20f), true, window_rounding);
+                }
+                else
+                {
+                    Color resize_col = Color.Clear;
+                    double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
+                    if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
+                    {
+                        // Manual resize
+                        var br = window.Rect.BottomRight;
+                        Rect resize_rect = new Rect(br - new Vector(resize_corner_size * 0.75f, resize_corner_size * 0.75f), br);
+                        int resize_id = window.GetID("#RESIZE");
+                        bool hovered, held;
+                        GUIBehavior.ButtonBehavior(resize_rect, resize_id, out hovered, out held, ButtonFlags.FlattenChilds);
+                        resize_col =
+                            held ? style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active) :
+                            hovered ? style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover) :
+                            style.Get<Color>(GUIStyleName.ResizeGripColor);
+
+                        if (hovered || held)
+                        {
+                            Input.Mouse.Cursor = Cursor.NeswResize;
+                        }
+
+                        if (held)
+                        {
+                            // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
+                            var t = Input.Mouse.MousePos - g.ActiveIdClickOffset - window.Position;
+                            Size resize_size = new Size(t.X + resize_rect.Width, t.Y + resize_rect.Height);
+                            window.ApplySize(resize_size);
+                        }
+
+                        window.Size = window.FullSize;
+                        title_bar_rect = window.TitleBarRect;
+                    }
+
+
+                    // Window background
+                    Color bg_color = style.BackgroundColor;
+                    if (bg_alpha >= 0.0f)
+                        bg_color.A = bg_alpha;
+                    if (bg_color.A > 0.0f)
+                        window.DrawList.AddRectFilled(window.Position + new Vector(0, window.TitleBarHeight), window.Rect.BottomRight, bg_color, window_rounding, flags.HaveFlag(WindowFlags.NoTitleBar) ? 15 : 4 | 8);
+
+                    // Title bar
+                    if (!flags.HaveFlag(WindowFlags.NoTitleBar))
+                    {
+                        window.DrawList.AddRectFilled(title_bar_rect.TopLeft, title_bar_rect.BottomRight,
+                            g.FocusedWindow == window ?
+                            headerStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active) :
+                            headerStyle.Get<Color>(GUIStyleName.BackgroundColor), window_rounding, 1 | 2);
+                    }
+
+                    // Render resize grip
+                    // (after the input handling so we don't have a frame of latency)
+                    if (!flags.HaveFlag(WindowFlags.NoResize))
+                    {
+                        Point br = window.Rect.BottomRight;
+                        var borderSize = 4;
+                        window.DrawList.PathLineTo(br + new Vector(-resize_corner_size, -borderSize));
+                        window.DrawList.PathLineTo(br + new Vector(-borderSize, -resize_corner_size));
+                        window.DrawList.PathArcToFast(new Point(br.X - window_rounding - borderSize, br.Y - window_rounding - borderSize), window_rounding, 0, 3);
+                        window.DrawList.PathFill(resize_col);
+                    }
+
+                    // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
+                    window.WindowClippedRect = window.Rect;
+                    window.WindowClippedRect.Intersect(window.ClipRect);
+                }
+
+                window.ClientRect = new Rect(point1: new Point(window.Position.X, window.Position.Y + window.TitleBarHeight),
+                    point2: window.Rect.BottomRight);
+
+                // Title bar
+                if (!flags.HaveFlag(WindowFlags.NoTitleBar))
+                {
+                    //const float pad = 2.0f;
+                    //const float rad = (window.TitleBarHeight - pad * 2.0f) * 0.5f;
+                    //if (CloseButton(window.GetID("#CLOSE"), window.Rect.TopRight + new Vector(-pad - rad, pad + rad), rad))
+                    //    open = false;
+
+                    Size text_size = headerStyle.CalcSize(name, GUIState.Normal, null);
+                    //if (!flags.HaveFlag(WindowFlags.NoCollapse))
+                    //    RenderCollapseTriangle(window->Pos + style.FramePadding, !window.Collapsed, 1.0f, true);
+
+                    Point text_min = window.Position + new Vector(style.PaddingLeft, style.PaddingTop);
+                    Point text_max = window.Position + new Vector(window.Size.Width - style.PaddingHorizontal, style.PaddingVertical * 2 + text_size.Height);
+                    //ImVec2 clip_max = ImVec2(window->Pos.x + window->Size.x - (p_open ? title_bar_rect.GetHeight() - 3 : style.FramePadding.x), text_max.y); // Match the size of CloseWindowButton()
+                    window.DrawList.DrawText(new Rect(text_min, text_max), name, headerStyle, GUIState.Normal);
+                }
+            }
+
+            // Clear 'accessed' flag last thing
+            if (first_begin_of_the_frame)
+                window.Accessed = false;
+            window.BeginCount++;
+
+            window.StackLayout.Begin();
+
+            // Return false if we don't intend to display anything to allow user to perform an early out optimization
+            window.SkipItems = window.Collapsed || !window.Active;
+            return !window.SkipItems;
+        }
+
+        public static void End()
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.CurrentWindow;
+
+            window.PopClipRect();   // inner window clip rectangle
+
+            window.ProcessLayout();
+
+            // Pop
+            g.CurrentWindowStack.RemoveAt(g.CurrentWindowStack.Count - 1);
+            g.CurrentWindow = ((g.CurrentWindowStack.Count == 0) ? null : g.CurrentWindowStack[g.CurrentWindowStack.Count - 1]);
+        }
     }
 
     [Flags]

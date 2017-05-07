@@ -2,14 +2,16 @@
 
 namespace ImGui
 {
-    /// <summary>
-    /// Box
-    /// </summary>
-    /// <remarks>
-    /// The box is a simple control containing an optinal Content.
-    /// </remarks>
-    internal class Box
+    public partial class GUI
     {
+        /// <summary>
+        /// Box
+        /// </summary>
+        internal static void Box(Rect rect, string text)
+        {
+            DoControl(rect, text);
+        }
+
         public static void DoControl(Rect rect, string text)
         {
             Form form = Form.current;

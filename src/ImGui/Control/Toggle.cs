@@ -1,26 +1,20 @@
-﻿using System;
-
-namespace ImGui
+﻿namespace ImGui
 {
-    internal class Toggle
+    public partial class GUI
     {
         /// <summary>
-        /// 
+        /// Create a toggle (check-box) with a label.
         /// </summary>
-        /// <param name="rect"></param>
-        /// <param name="label"></param>
-        /// <param name="value"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// |←16→|
-        /// |    |---------------+
-        /// |    |               |
-        /// +----+               |
-        /// | √  | label         |
-        /// +----+               |
-        ///      |               |
-        ///      +---------------+
-        internal static bool DoControl(Rect rect, string label, bool value)
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="value">Is this toggle checked or unchecked?</param>
+        /// <param name="id">the unique id of this control</param>
+        /// <returns>new value of the toggle</returns>
+        public static bool Toggle(Rect rect, string label, bool value)
+        {
+            return DoToggle(rect, label, value);
+        }
+
+        internal static bool DoToggle(Rect rect, string label, bool value)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
@@ -62,6 +56,14 @@ namespace ImGui
             }
 
             // ui painting
+            /// |←16→|
+            /// |    |---------------+
+            /// |    |               |
+            /// +----+               |
+            /// | √  | label         |
+            /// +----+               |
+            ///      |               |
+            ///      +---------------+
             {
                 var boxRect = new Rect(rect.X, rect.Y + (rect.Height - 16) / 2, 16, 16);
                 var textRect = new Rect(rect.X + 16, rect.Y, rect.Width - 16, rect.Height);
@@ -129,4 +131,40 @@ namespace ImGui
             return result;
         }
     }
+
+    public partial class GUILayout
+    {
+        /// <summary>
+        /// Create an auto-layout toggle (check-box) with an label.
+        /// </summary>
+        /// <param name="text">text to display on the label</param>
+        /// <param name="value">Is this toggle checked or unchecked?</param>
+        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
+        /// <returns>new value of the toggle</returns>
+        public static bool Toggle(string text, bool value, params LayoutOption[] options)
+        {
+            return DoToggle(text, value, GUISkin.Instance[GUIControlName.Toggle], options);
+        }
+
+        private static bool Toggle(string text, bool value, GUIStyle style, params LayoutOption[] options)
+        {
+            return DoToggle(text, value, style, options);
+        }
+
+        private static bool DoToggle(string text, bool value, GUIStyle style, params LayoutOption[] options)
+        {
+            var result = GUI.Toggle(GUILayout.GetToggleRect(text, style, options), text, value);
+            return result;
+        }
+
+        private static Rect GetToggleRect(string text, GUIStyle style, params LayoutOption[] options)
+        {
+            Window window = GetCurrentWindow();
+            var id = window.GetID(text);
+            var textSize = style.CalcSize(text, GUIState.Normal, null);
+            var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
+            return window.GetRect(id, size, style, options);
+        }
+    }
+
 }

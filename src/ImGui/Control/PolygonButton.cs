@@ -1,11 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ImGui
 {
-    internal class PolygonButton
+    public partial class GUI
     {
-        internal static bool DoControl(Rect rect, IReadOnlyList<Point> points, Rect textRect, string text)
+        /// <summary>
+        /// Create a polyon-button.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="points"><see cref="ImGui.Point"/> list of the polygon.</param>
+        /// <param name="textRect">the rect that occupied by the text</param>
+        /// <param name="text">text to display on the button</param>
+        /// <returns>true when the users clicks the button.</returns>
+        public static bool PolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, string text)
+        {
+            return DoPolygonButton(rect, points, textRect, text);
+        }
+
+        internal static bool DoPolygonButton(Rect rect, IReadOnlyList<Point> points, Rect textRect, string text)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
@@ -71,5 +83,40 @@ namespace ImGui
             return clicked;
         }
         
+    }
+
+    public partial class GUILayout
+    {
+        /// <summary>
+        /// Create an auto-layout polyon-button.
+        /// </summary>
+        /// <param name="points"><see cref="ImGui.Point"/> list of the polygon.</param>
+        /// <param name="textRect">the rect that occupied by the text</param>
+        /// <param name="text">text to display on the button</param>
+        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
+        /// <returns>true when the users clicks the button.</returns>
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, params LayoutOption[] options)
+        {
+            return PolygonButton(points, textRect, text, GUISkin.Instance[GUIControlName.Button], options);
+        }
+
+        internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, GUIStyle style, params LayoutOption[] options)
+        {
+            return DoPolygonButton(points, textRect, text, style, options);
+        }
+
+        private static bool DoPolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, GUIStyle style, params LayoutOption[] options)
+        {
+            Window window = GetCurrentWindow();
+            var id = window.GetID(text);
+            var rect = new Rect();
+            for (int i = 0; i < points.Count; i++)
+            {
+                var point = points[i];
+                rect.Union(point);
+            }
+            rect = window.GetRect(id, rect.Size, style, options);
+            return GUI.PolygonButton(rect, points, textRect, text);
+        }
     }
 }
