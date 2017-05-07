@@ -33,11 +33,10 @@ namespace Test
                 {
                     Console.WriteLine("Clicked\n");
                     a ^= true;
-                    Event.current.type = EventType.Layout;// UI elements existence is to be changed, so we need to re-layout.
                 }
                 if (a)
                 {
-                    GUILayout.Label("Thanks for clicking me!", "ThanksForClickingMe");
+                    GUILayout.Label("Thanks for clicking me!");
                 }
             }));
         }

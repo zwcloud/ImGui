@@ -5,14 +5,10 @@ namespace Test
 {
     public static class CairoEx
     {
-        #region basic types
-
         public static Cairo.PointD ToPointD(this Point p)
         {
             return new Cairo.PointD(p.X, p.Y);
         }
-
-        #endregion
 
         /// <summary>
         /// Draw a box model
@@ -21,7 +17,7 @@ namespace Test
         /// <param name="rect">the rect (of the border-box) in which to draw this box model </param>
         /// <param name="content">content of the box mode</param>
         /// <param name="style">style of the box model</param>
-        internal static void DrawBoxModel(this Cairo.Context g, Rect rect, Content content, GUIStyle style)
+        internal static void DrawBoxModel(this Cairo.Context g, Rect rect, string text, GUIStyle style)
         {
             //Widths of border
             var bt = style.BorderTop;
@@ -64,16 +60,9 @@ namespace Test
             //Content-box background(draw as a filled rectangle now)
             g.FillRectangle(rect, style.BackgroundColor);
             //Content-box
-            if (content != null)
+            if (text != null)
             {
-                if (content.Image != null)
-                {
-                    //
-                }
-                if (content.TextContext != null)
-                {
-                    g.DrawText(contentBoxRect, content.TextContext.Text, style.FontSize, style.FontColor);
-                }
+                g.DrawText(contentBoxRect, text, style.FontSize, style.FontColor);
             }
 
             //Border

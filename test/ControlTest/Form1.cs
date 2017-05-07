@@ -11,8 +11,7 @@ namespace ControlTest
 
         protected override void OnGUI()
         {
-            if (this.onGUI != null)
-                this.onGUI();
+            this.onGUI?.Invoke();
         }
     }
 }

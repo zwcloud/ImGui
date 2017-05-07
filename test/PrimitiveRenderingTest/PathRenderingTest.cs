@@ -12,8 +12,7 @@ namespace PrimitiveRenderingTest
 
         protected override void OnGUI()
         {
-            if (this.onGUI != null)
-                this.onGUI();
+            this.onGUI?.Invoke();
         }
     }
     
@@ -31,19 +30,27 @@ namespace PrimitiveRenderingTest
             var B = new Point(600, 200);
             var C = new Point(400, 400);
 
-            Application.Run(new Form1(() => {
-                var normal = (Application.Time % 1000) / 1000f * 2 - 1;
-                var rad = normal * Math.PI;
-                var A_ = A + 50 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
-                rad += Math.PI * 0.333;
-                var B_ = B + 30 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
-                rad += Math.PI * 0.666;
-                var C_ = C + 70 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
+            bool open = true;
 
-                //Form.current.DrawList.PathMoveTo(A_);
-                //Form.current.DrawList.PathLineTo(B_);
-                //Form.current.DrawList.PathLineTo(C_);
-                //Form.current.DrawList.PathStroke(Color.Blue, true, 2);
+            Application.Run(new Form1(() => {
+
+                GUILayout.Begin("PrimitiveRenderingTest", ref open, new Point(43, 256), new Size(400, 300), 1, WindowFlags.Default);
+                {
+                    var normal = (Application.Time % 1000) / 1000f * 2 - 1;
+                    var rad = normal * Math.PI;
+                    var A_ = A + 50 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
+                    rad += Math.PI * 0.333;
+                    var B_ = B + 30 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
+                    rad += Math.PI * 0.666;
+                    var C_ = C + 70 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
+
+                    var d = Form.current.uiContext.CurrentWindow.DrawList;
+                    d.PathMoveTo(A_);
+                    d.PathLineTo(B_);
+                    d.PathLineTo(C_);
+                    d.PathStroke(Color.Blue, true, 2);
+                }
+
             }));
         }
     }

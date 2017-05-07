@@ -26,7 +26,7 @@ namespace PrimitiveRenderingTest
                     image = GUI.CreateTexture(@"D:\My documents\My Pictures\素材\crystal_button.png");
                 }
 
-                GUILayout.Image(image, style, "image0", GUILayout.Width(image.Width+50), GUILayout.Height(image.Height+100));
+                GUILayout.Image(image, style, GUILayout.Width(image.Width+50), GUILayout.Height(image.Height+100));
             }));
         }
     }

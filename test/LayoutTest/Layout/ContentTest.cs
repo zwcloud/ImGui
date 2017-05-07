@@ -2,20 +2,18 @@
 using Cairo;
 using ImGui;
 using System.Diagnostics;
-using Content = ImGui.Content;
 using Xunit;
 
 namespace Test
 {
     public class ContentTest
     {
-        // to be fixed
-        internal void DrawContent(Rect rect, Content content, GUIStyle style)
+        internal void DrawContent(Rect rect, string text, GUIStyle style)
         {
             var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
             var context = new Context(surface);
 
-            context.DrawBoxModel(rect, content, style);
+            context.DrawBoxModel(rect, text, style);
 
             string outputPath = "D:\\ContentTest";
             if (!System.IO.Directory.Exists(outputPath))
@@ -40,49 +38,46 @@ namespace Test
         [Fact]
         public void ShowAnEmptyBox()
         {
-            DrawContent(new Rect(400, 300), Content.None, GUIStyle.Default);
+            DrawContent(new Rect(400, 300), "", GUIStyle.Default);
         }
 
         [Fact]
         public void ShowATextLeadingAligned()
         {
             Rect rect = new Rect(400, 300);
-            Content content = new Content("New Text");
+            string text = "New Text";
             GUIStyle style = "Label";
             style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Leading);
-            content.BuildText(rect, style, GUIState.Normal);
-
-            DrawContent(rect, content, style);
+            TextMeshUtil.GetTextMesh(text, rect, style, GUIState.Normal);
+            DrawContent(rect, text, style);
         }
 
         [Fact]
         public void ShowATextCenterAligned()
         {
             Rect rect = new Rect(400, 300);
-            Content content = new Content("New Text");
+            string text = "New Text";
             GUIStyle style = "Label";
             style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Center);
-            content.BuildText(rect, style, GUIState.Normal);
-
-            DrawContent(rect, content, style);
+            TextMeshUtil.GetTextMesh(text, rect, style, GUIState.Normal);
+            DrawContent(rect, text, style);
         }
 
         [Fact]
         public void ShowATextTrailingAligned()
         {
             Rect rect = new Rect(400, 300);
-            Content content = new Content("New Text");
+            string text = "New Text";
             GUIStyle style = "Label";
             style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Trailing);
-            content.BuildText(rect, style, GUIState.Normal);
-
-            DrawContent(rect, content, style);
+            TextMeshUtil.GetTextMesh(text, rect, style, GUIState.Normal);
+            DrawContent(rect, text, style);
         }
 
         [Fact]
         public void ShowATextAutoSized()
         {
-            Content content = new Content("New Text");
+            string text = "New Text";
 
             GUIStyle style = new GUIStyle();
             style.Set<double>(GUIStyleName.BorderTop, 10);
@@ -94,37 +89,34 @@ namespace Test
             style.Set<double>(GUIStyleName.PaddingRight, 10);
             style.Set<double>(GUIStyleName.PaddingBottom, 10);
             style.Set<double>(GUIStyleName.PaddingLeft, 10);
-            Size size = style.CalcSize(content, GUIState.Normal, new[] { GUILayout.Height(100) });
+            Size size = style.CalcSize(text, GUIState.Normal, new[] { GUILayout.Height(100) });
             Rect rect = new Rect(size);
-            content.BuildText(rect, style, GUIState.Normal);
-            DrawContent(rect, content, style);
-            content.Dispose();
+            TextMeshUtil.GetTextMesh(text, rect, style, GUIState.Normal);
+            DrawContent(rect, text, style);
         }
 
         [Fact]
         public void ShowATextWidthAutoSizedHeightFixed()
         {
-            Content content = new Content("New Text");
+            string text = "New Text";
             GUIStyle style = "Label";
             style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Leading);
-            Size size = style.CalcSize(content, GUIState.Normal, new []{GUILayout.Height(100)});
+            Size size = style.CalcSize(text, GUIState.Normal, new []{GUILayout.Height(100)});
             Rect rect = new Rect(size);
-            content.BuildText(rect, style, GUIState.Normal);
-            DrawContent(rect, content, style);
-            content.Dispose();
+            TextMeshUtil.GetTextMesh(text, rect, style, GUIState.Normal);
+            DrawContent(rect, text, style);
         }
 
         [Fact]
         public void ShowATextWidthFixedHeightAutoSized()
         {
-            Content content = new Content("New Text");
+            string text = "New Text";
             GUIStyle style = "Label";
             style.Set<int>(GUIStyleName.TextAlignment, (int)TextAlignment.Leading);
-            Size size = style.CalcSize(content, GUIState.Normal, new[] { GUILayout.Height(100) });
+            Size size = style.CalcSize(text, GUIState.Normal, new[] { GUILayout.Height(100) });
             Rect rect = new Rect(size);
-            content.BuildText(rect, style, GUIState.Normal);
-            DrawContent(rect, content, style);
-            content.Dispose();
+            TextMeshUtil.GetTextMesh(text, rect, style, GUIState.Normal);
+            DrawContent(rect, text, style);
         }
 
 
