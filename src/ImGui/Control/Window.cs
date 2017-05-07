@@ -33,7 +33,6 @@ namespace ImGui
             this.PosFloat = position;
             this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
             this.Size = this.FullSize = size;
-            this.HeaderContent = new Content(name);
             this.DC = new GUIDrawContext();
             this.DrawList = new DrawList();
             this.MoveID = GetID("#MOVE");
@@ -97,15 +96,6 @@ namespace ImGui
             return id;
         }
 
-        public int GetID(Content content)
-        {
-            if(content == null)
-            {
-                throw new ArgumentNullException(nameof(content));
-            }
-            return GetID(content.GetHashCode());
-        }
-
         public void ApplySize(Size new_size)
         {
             GUIContext g = Form.current.uiContext;
@@ -140,7 +130,6 @@ namespace ImGui
 
         public GUIStyle Style;
         public GUIStyle HeaderStyle;
-        public Content HeaderContent;
 
         internal void PopClipRect()
         {

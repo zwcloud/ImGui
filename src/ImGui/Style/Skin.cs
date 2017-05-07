@@ -58,7 +58,6 @@ namespace ImGui
                 InternalStyle.Set<double>(GUIStyleName._FieldWidth, 100);
             }
 
-
             GUIStyle Label      = new GUIStyle();//no modification
             GUIStyle Image      = new GUIStyle();
             GUIStyle Box        = new GUIStyle();

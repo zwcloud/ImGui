@@ -7,7 +7,7 @@ namespace ImGui
     /// <summary>
     /// The interface for GUI with automatic layout.
     /// </summary>
-    public class GUILayout
+    public partial class GUILayout
     {
         #region ID
 
@@ -214,14 +214,14 @@ namespace ImGui
                     //if (CloseButton(window.GetID("#CLOSE"), window.Rect.TopRight + new Vector(-pad - rad, pad + rad), rad))
                     //    open = false;
 
-                    Size text_size = headerStyle.CalcSize(Content.Cached(name), GUIState.Normal, null);
+                    Size text_size = headerStyle.CalcSize(name, GUIState.Normal, null);
                     //if (!flags.HaveFlag(WindowFlags.NoCollapse))
                     //    RenderCollapseTriangle(window->Pos + style.FramePadding, !window.Collapsed, 1.0f, true);
 
                     Point text_min = window.Position + new Vector(style.PaddingLeft, style.PaddingTop);
                     Point text_max = window.Position + new Vector(window.Size.Width - style.PaddingHorizontal, style.PaddingVertical * 2 + text_size.Height);
                     //ImVec2 clip_max = ImVec2(window->Pos.x + window->Size.x - (p_open ? title_bar_rect.GetHeight() - 3 : style.FramePadding.x), text_max.y); // Match the size of CloseWindowButton()
-                    window.DrawList.DrawText(new Rect(text_min, text_max), Content.Cached(name), headerStyle, GUIState.Normal);
+                    window.DrawList.DrawText(new Rect(text_min, text_max), name, headerStyle, GUIState.Normal);
                 }
             }
 
@@ -282,9 +282,32 @@ namespace ImGui
             window.StackLayout.EndLayoutGroup();
         }
 
-        public static bool CollapsingHeader(string text, string id, bool open)
+        public static bool CollapsingHeader(string text, ref bool open)
         {
-            return ToggleButton((open ? "▼" : "▶") + text, open);
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
+
+            var height = GUIStyle.Default.FontSize;
+            var id = window.GetID(text);
+            GUIStyle style = GUISkin.Instance[GUIControlName.Button];
+            var rect = GetRect(new Size(0, height), text, style, GUILayout.ExpandWidth(true));
+
+            bool hovered, held;
+            bool pressed = ImGui.Button.ButtonBehavior(rect, id, out hovered, out held, ButtonFlags.PressedOnClick);
+            if (pressed)
+            {
+                open = !open;
+            }
+
+            // Render
+            DrawList d = window.DrawList;
+            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+            d.RenderFrame(rect.Min, rect.Max, col, true, 0);
+            d.DrawText(rect, text, style, state);
+
+            return open;
         }
 
         public static Rect GetWindowClientRect()
@@ -293,11 +316,11 @@ namespace ImGui
             return window.ClientRect;
         }
 
-        public static Rect GetRect(Size size, string str_id)
+        public static Rect GetRect(Size size, string str_id, GUIStyle style = null, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
             var id = window.GetID(str_id);
-            var rect = window.GetRect(id, size, null, null);
+            var rect = window.GetRect(id, size, style, options);
             return rect;
         }
 
@@ -371,8 +394,6 @@ namespace ImGui
 
         #region controls
 
-        #region basic controls
-
         #region Space
 
         /// <summary>
@@ -424,30 +445,20 @@ namespace ImGui
             return Button(text, GUISkin.Instance[GUIControlName.Button], options);
         }
 
-        internal static bool Button(Content content, params LayoutOption[] options)
-        {
-            return Button(content, GUISkin.Instance[GUIControlName.Button], options);
-        }
-
         internal static bool Button(string text, GUIStyle style, params LayoutOption[] options)
         {
-            return DoButton(Content.Cached(text), style, options);
+            return DoButton(text, style, options);
         }
 
-        internal static bool Button(Content content, GUIStyle style, params LayoutOption[] options)
-        {
-            return DoButton(content, style, options);
-        }
-
-        private static bool DoButton(Content content, GUIStyle style, params LayoutOption[] options)
+        private static bool DoButton(string text, GUIStyle style, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
 
-            int id = window.GetID(content);
-            Size contentSize = style.CalcSize(content, GUIState.Normal, options);
-            Rect rect = window.GetRect(id, contentSize, style, options);
+            int id = window.GetID(text);
+            Size size = style.CalcSize(text, GUIState.Normal, options);
+            Rect rect = window.GetRect(id, size, style, options);
 
-            return GUI.Button(rect, content);
+            return GUI.Button(rect, text);
         }
 
         #endregion
@@ -460,145 +471,56 @@ namespace ImGui
         /// <param name="text">text to display on the label</param>
         /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
-        public static void Label(string text, string id, params LayoutOption[] options)
+        public static void Label(string text, params LayoutOption[] options)
         {
-            Label(text, GUISkin.Instance[GUIControlName.Label], id, options);
+            DoLabel(text, GUISkin.Instance[GUIControlName.Label], options);
         }
 
-        internal static void Label(string textWithPossibleId, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(textWithPossibleId, out text, out id);
-            Label(text, GUISkin.Instance[GUIControlName.Label], id, options);
-        }
-
-        internal static void Label(Content content, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(content.Text, out text, out id);
-            Label(content, GUISkin.Instance[GUIControlName.Label], id, options);
-        }
-
-        internal static void Label(Content content, string id, params LayoutOption[] options)
-        {
-            Label(content, GUISkin.Instance[GUIControlName.Label], id, options);
-        }
-
-        internal static void Label(string text, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            DoLabel(Content.Cached(text, name), style, name, options);
-        }
-
-        internal static void Label(Content content, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            DoLabel(content, style, name, options);
-        }
-
-        private static void DoLabel(Content content, GUIStyle style, string name, params LayoutOption[] options)
+        private static void DoLabel(string text, GUIStyle style, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
 
-            int id = window.GetID(content);
-            Size contentSize = style.CalcSize(content, GUIState.Normal, options);
+            int id = window.GetID(text);
+            Size contentSize = style.CalcSize(text, GUIState.Normal, options);
             Rect rect = window.GetRect(id, contentSize, style, options);
-            GUI.Label(rect, content, name);
+            GUI.Label(rect, text);
         }
 
         #endregion
 
         #region Toggle
 
-        #region Toggle with label
-
         /// <summary>
         /// Create an auto-layout toggle (check-box) with an label.
         /// </summary>
         /// <param name="text">text to display on the label</param>
         /// <param name="value">Is this toggle checked or unchecked?</param>
-        /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>new value of the toggle</returns>
-        public static bool Toggle(string text, bool value, string id, params LayoutOption[] options)
+        public static bool Toggle(string text, bool value, params LayoutOption[] options)
         {
-            return DoToggle(Content.Cached(text, id), value, GUISkin.Instance[GUIControlName.Toggle], id, options);
+            return DoToggle(text, value, GUISkin.Instance[GUIControlName.Toggle], options);
         }
 
-        internal static bool Toggle(string textWithPossibleId, bool value, params LayoutOption[] options)
+        private static bool Toggle(string text, bool value, GUIStyle style, params LayoutOption[] options)
         {
-            string text, id;
-            Utility.GetId(textWithPossibleId, out text, out id);
-            return DoToggle(Content.Cached(text, id), value, GUISkin.Instance[GUIControlName.Toggle], id, options);
+            return DoToggle(text, value, style, options);
         }
 
-        internal static bool Toggle(string text, bool value, GUIStyle style, string name, params LayoutOption[] options)
+        private static bool DoToggle(string text, bool value, GUIStyle style, params LayoutOption[] options)
         {
-            return DoToggle(Content.Cached(text, name), value, style, name, options);
-        }
-
-        internal static bool Toggle(Content content, bool value, GUIStyle style, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(content.Text, out text, out id);
-            return DoToggle(content, value, style, id, options);
-        }
-
-        internal static bool Toggle(Content content, bool value, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            return DoToggle(content, value, style, name, options);
-        }
-
-        private static bool DoToggle(Content content, bool value, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            var result = GUI.Toggle(GUILayout.GetToggleRect(name, content, style, options), content, value, name);
+            var result = GUI.Toggle(GUILayout.GetToggleRect(text, style, options), text, value);
             return result;
         }
 
-        private static Rect GetToggleRect(string str_id,Content content, GUIStyle style, params LayoutOption[] options)
+        private static Rect GetToggleRect(string text, GUIStyle style, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
-            if (content == null)
-            {
-                return window.GetRect(id, new Size(16, 16), style, options);
-            }
-            else
-            {
-                var textSize = style.CalcSize(content, GUIState.Normal, null);
-                var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
-                return window.GetRect(id, size, style, options);
-            }
+            var id = window.GetID(text);
+            var textSize = style.CalcSize(text, GUIState.Normal, null);
+            var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
+            return window.GetRect(id, size, style, options);
         }
-
-        #endregion
-
-        #region Toggle without label
-
-        /// <summary>
-        /// Create an auto-layout toggle (check-box).
-        /// </summary>
-        /// <param name="value">Is this toggle checked or unchecked?</param>
-        /// <param name="id">the unique id of this control</param>
-        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
-        /// <returns>new value of the toggle</returns>
-        internal static bool Toggle(bool value, string id, params LayoutOption[] options)
-        {
-            return DoToggle(value, GUISkin.Instance[GUIControlName.Toggle], id, options);
-        }
-
-        internal static bool Toggle(bool value, GUIStyle style, string id, params LayoutOption[] options)
-        {
-            return DoToggle(value, style, id, options);
-        }
-
-        private static bool DoToggle(bool value, GUIStyle style, string str_id, params LayoutOption[] options)
-        {
-            Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
-            var rect = window.GetRect(id, new Size(16, 16), style, options);
-            return GUI.Toggle(rect, value, str_id);//TODO add an overload using int id
-        }
-
-        #endregion
 
         #endregion
 
@@ -606,18 +528,8 @@ namespace ImGui
 
         public static bool Radio(string label, ref string active_id, string id)
         {
-            bool pressed = DoRadio(Content.Cached(label, id), id == active_id, GUISkin.Instance[GUIControlName.Label], id);
-            if (pressed)
-            {
-                active_id = id;
-            }
-            return pressed;
-        }
-
-        private static bool DoRadio(Content content, bool value, GUIStyle style, string id)
-        {
-            var result = GUILayout.Toggle(content, value, style, id);
-            return result;
+            return false;
+            throw new NotImplementedException();//TODO implement this with separate logic from Toggle.
         }
 
         #endregion
@@ -628,50 +540,25 @@ namespace ImGui
         /// Create an auto-layout button that will be actived when the mouse is over it.
         /// </summary>
         /// <param name="text">text to display on the button</param>
-        /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>whether it is activated (the mouse is over it)</returns>
-        public static bool HoverButton(string text, string id, params LayoutOption[] options)
+        public static bool HoverButton(string text, params LayoutOption[] options)
         {
-            return HoverButton(text, GUISkin.Instance[GUIControlName.Button], id, options);
+            return HoverButton(text, GUISkin.Instance[GUIControlName.Button], options);
         }
 
-        internal static bool HoverButton(string textWithPossibleId, params LayoutOption[] options)
+        internal static bool HoverButton(string text, GUIStyle style, params LayoutOption[] options)
         {
-            string text, id;
-            Utility.GetId(textWithPossibleId, out text, out id);
-            return HoverButton(text, GUISkin.Instance[GUIControlName.Button], id, options);
+            return DoHoverButton(text, style, options);
         }
 
-        internal static bool HoverButton(Content content, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(content.Text, out text, out id);
-            return HoverButton(content, GUISkin.Instance[GUIControlName.Button], id, options);
-        }
-
-        internal static bool HoverButton(Content content, string id, params LayoutOption[] options)
-        {
-            return HoverButton(content, GUISkin.Instance[GUIControlName.Button], id, options);
-        }
-
-        internal static bool HoverButton(string text, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            return DoHoverButton(Content.Cached(text, name), style, name, options);
-        }
-
-        internal static bool HoverButton(Content content, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            return DoHoverButton(content, style, name);
-        }
-
-        private static bool DoHoverButton(Content content, GUIStyle style, string str_id, params LayoutOption[] options)
+        private static bool DoHoverButton(string text, GUIStyle style, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
-            Size size = style.CalcSize(content, GUIState.Normal, options);
+            var id = window.GetID(text);
+            Size size = style.CalcSize(text, GUIState.Normal, options);
             var rect = window.GetRect(id, size, style, options);
-            return GUI.HoverButton(rect, content, str_id);
+            return GUI.HoverButton(rect, text);
         }
 
         #endregion
@@ -685,12 +572,11 @@ namespace ImGui
         /// <param name="value">The value the slider shows.</param>
         /// <param name="minValue">The value at the left end of the slider.</param>
         /// <param name="maxValue">The value at the right end of the slider.</param>
-        /// <param name="id">the unique id of this control</param>
         /// <returns>The value set by the user.</returns>
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
-        public static double Slider(string label, double value, double minValue, double maxValue, string id)
+        public static double Slider(string label, double value, double minValue, double maxValue)
         {
-            return DoSlider(Content.Cached(label, id), value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], true, id);
+            return DoSlider(label, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], true);
         }
 
         /// <summary>
@@ -700,22 +586,25 @@ namespace ImGui
         /// <param name="value">The value the slider shows.</param>
         /// <param name="minValue">The value at the top end of the slider.</param>
         /// <param name="maxValue">The value at the bottom end of the slider.</param>
-        /// <param name="id">the unique id of this control</param>
         /// <returns>The value set by the user.</returns>
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
-        public static double VSlider(string label, double value, double minValue, double maxValue, string id)
+        public static double VSlider(string label, double value, double minValue, double maxValue)
         {
-            return DoSlider(Content.Cached(label, id), value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], false, id);
+            return DoSlider(label, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], false);
         }
 
-        private static double DoSlider(Content content, double value, double minValue, double maxValue, GUIStyle style, bool isHorizontal, string str_id)
+        private static double DoSlider(string label, double value, double minValue, double maxValue, GUIStyle style, bool isHorizontal)
         {
             Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
+            if (window.SkipItems)
+                return value;
+
+            var id = window.GetID(label);
             var options = new LayoutOption[] { isHorizontal? GUILayout.ExpandWidth(true): GUILayout.ExpandHeight(true) };
-            Size size = style.CalcSize(content, GUIState.Normal, options);
+            Size size = style.CalcSize(label, GUIState.Normal, options);
             var rect = window.GetRect(id, size, style, options);
-            return GUI.Slider(rect, value, minValue, maxValue, isHorizontal, str_id);
+            //FIXME append slider rect
+            return GUI.Slider(rect, label, value, minValue, maxValue, isHorizontal);
         }
 
         #endregion
@@ -727,45 +616,25 @@ namespace ImGui
         /// </summary>
         /// <param name="text">text to display on the button</param>
         /// <param name="value">Is this toggle checked or unchecked?</param>
-        /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>new value of the toggle-button</returns>
-        public static bool ToggleButton(string text, bool value, string id, params LayoutOption[] options)
+        public static bool ToggleButton(string text, bool value, params LayoutOption[] options)
         {
-            return DoToggleButton(Content.Cached(text, id), value, GUISkin.Instance[GUIControlName.Button], id, options);
-        }
-
-        internal static bool ToggleButton(string textWithPossibleId, bool value, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(textWithPossibleId, out text, out id);
-            return DoToggleButton(Content.Cached(text, id), value, GUISkin.Instance[GUIControlName.Button], id, options);
+            return DoToggleButton(text, value, GUISkin.Instance[GUIControlName.Button], options);
         }
 
         internal static bool ToggleButton(string text, bool value, GUIStyle style, string name, params LayoutOption[] options)
         {
-            return DoToggleButton(Content.Cached(text, name), value, style, name, options);
+            return DoToggleButton(text, value, style, options);
         }
 
-        internal static bool ToggleButton(Content content, bool value, GUIStyle style, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(content.Text, out text, out id);
-            return DoToggleButton(content, value, style, id, options);
-        }
-
-        internal static bool ToggleButton(Content content, bool value, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            return DoToggleButton(content, value, style, name, options);
-        }
-
-        private static bool DoToggleButton(Content content, bool value, GUIStyle style, string str_id, params LayoutOption[] options)
+        private static bool DoToggleButton(string text, bool value, GUIStyle style, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
-            Size size = style.CalcSize(content, GUIState.Normal, options);
+            var id = window.GetID(text);
+            Size size = style.CalcSize(text, GUIState.Normal, options);
             var rect = window.GetRect(id, size, style, options);
-            var result = GUI.ToggleButton(rect, content, value, str_id);
+            var result = GUI.ToggleButton(rect, text, value);
             return result;
         }
 
@@ -779,47 +648,22 @@ namespace ImGui
         /// <param name="points"><see cref="ImGui.Point"/> list of the polygon.</param>
         /// <param name="textRect">the rect that occupied by the text</param>
         /// <param name="text">text to display on the button</param>
-        /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>true when the users clicks the button.</returns>
-        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, string id, params LayoutOption[] options)
+        public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, params LayoutOption[] options)
         {
-            return PolygonButton(points, textRect, text, GUISkin.Instance[GUIControlName.Button], id, options);
+            return PolygonButton(points, textRect, text, GUISkin.Instance[GUIControlName.Button], options);
         }
 
-        internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string textWithPossibleId, params LayoutOption[] options)
+        internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, GUIStyle style, params LayoutOption[] options)
         {
-            string text, id;
-            Utility.GetId(textWithPossibleId, out text, out id);
-            return PolygonButton(points, textRect, text, GUISkin.Instance[GUIControlName.Button], id, options);
+            return DoPolygonButton(points, textRect, text, style, options);
         }
 
-        internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, params LayoutOption[] options)
-        {
-            string text, id;
-            Utility.GetId(content.Text, out text, out id);
-            return PolygonButton(points, textRect, content, GUISkin.Instance[GUIControlName.Button], id, options);
-        }
-
-        internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, string name, params LayoutOption[] options)
-        {
-            return PolygonButton(points, textRect, content, GUISkin.Instance[GUIControlName.Button], name, options);
-        }
-
-        internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            return DoPolygonButton(points, textRect, Content.Cached(text, name), style, name, options);
-        }
-
-        internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, GUIStyle style, string name, params LayoutOption[] options)
-        {
-            return DoPolygonButton(points, textRect, content, style, name);
-        }
-
-        private static bool DoPolygonButton(IReadOnlyList<Point> points, Rect textRect, Content content, GUIStyle style, string str_id, params LayoutOption[] options)
+        private static bool DoPolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, GUIStyle style, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
+            var id = window.GetID(text);
             var rect = new Rect();
             for (int i = 0; i < points.Count; i++)
             {
@@ -827,7 +671,7 @@ namespace ImGui
                 rect.Union(point);
             }
             rect = window.GetRect(id, rect.Size, style, options);
-            return GUI.PolygonButton(rect, points, textRect, content, str_id);
+            return GUI.PolygonButton(rect, points, textRect, text);
         }
 
 
@@ -841,49 +685,49 @@ namespace ImGui
         /// <param name="filePath">file path of the image to display. The path should be relative to current dir or absolute.</param>
         /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
-        public static void Image(string filePath, string id, params LayoutOption[] options)
+        public static void Image(string filePath, params LayoutOption[] options)
         {
-            Image(Content.CachedTexture(filePath, id), GUISkin.Instance[GUIControlName.Image], id, options);
+            Image(filePath, GUISkin.Instance[GUIControlName.Image], options);
         }
 
-        internal static void Image(string imageFilePathWithPossibleId, params LayoutOption[] options)
+        public static void Image(string filePath, GUIStyle style, params LayoutOption[] options)
         {
-            string imageFilePath, id;
-            Utility.GetId(imageFilePathWithPossibleId, out imageFilePath, out id);
-            Image(Content.CachedTexture(imageFilePath, id), GUISkin.Instance[GUIControlName.Image], id, options);
+            DoImage(filePath, style, options);//var texture = TextureUtil.GetTexture(filePath);
         }
 
-        public static void Image(ITexture texture, string id, params LayoutOption[] options)
-        {
-            Image(Content.Cached(texture, id), GUISkin.Instance[GUIControlName.Image], id, options);
-        }
-
-        internal static void Image(ITexture texture, GUIStyle style, string id, params LayoutOption[] options)
-        {
-            Image(Content.Cached(texture, id), style, id, options);
-        }
-
-        internal static void Image(Content content, string id, params LayoutOption[] options)
-        {
-            Image(content, GUISkin.Instance[GUIControlName.Image], id, options);
-        }
-
-        internal static void Image(Content content, GUIStyle style, string id, params LayoutOption[] options)
-        {
-            DoImage(content, style, id, options);
-        }
-
-        private static void DoImage(Content content, GUIStyle style, string str_id, params LayoutOption[] options)
+        private static void DoImage(string filePath, GUIStyle style, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
-            Size size = style.CalcSize(content, GUIState.Normal, options);
+            if (window.SkipItems)
+                return;
+
+            var id = window.GetID(filePath);
+            Size size = style.CalcSize(filePath, GUIState.Normal, options);
             var rect = window.GetRect(id, size, style,
                 new[] { GUILayout.Width(size.Width), GUILayout.Height(size.Height) });
-            GUI.Image(rect, content, style, str_id);
+            GUI.Image(rect, filePath, style);
         }
 
-        #endregion
+        internal static void Image(ITexture texture, params LayoutOption[] options)
+        {
+            Image(texture, GUISkin.Instance[GUIControlName.Image], options);
+        }
+
+        internal static void Image(ITexture texture, GUIStyle style, params LayoutOption[] options)
+        {
+            DoImage(texture, style, options);
+        }
+
+        private static void DoImage(ITexture texture, GUIStyle style, params LayoutOption[] options)
+        {
+            Window window = GetCurrentWindow();
+            var id = window.GetID(texture);
+            Size size = style.CalcSize(texture, GUIState.Normal, options);
+            var rect = window.GetRect(id, size, style,
+                new[] { GUILayout.Width(size.Width), GUILayout.Height(size.Height) });
+            GUI.Image(rect, texture, style);
+        }
+
 
         #endregion
 

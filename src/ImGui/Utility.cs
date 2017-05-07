@@ -278,7 +278,7 @@ namespace ImGui
             if (error != GL.GL_NO_ERROR)
             {
                 Debug.WriteLine("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
-                    fileName, lineNumber, error, errorStr, memberName);
+                    fileName, lineNumber, error, errorStr, memberName);//TODO throw an exception instead
             }
         }
 
@@ -323,7 +323,7 @@ namespace ImGui
             if (error != GL.GL_NO_ERROR)
             {
                 Debug.WriteLine("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
-                    fileName, lineNumber, error, errorStr, memberName);
+                    fileName, lineNumber, error, errorStr, memberName);//TODO throw an exception instead
             }
         }
 

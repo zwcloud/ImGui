@@ -365,4 +365,56 @@ namespace ImGui
             this.PathTessPolygon(color);
         }
     }
+
+    class TextMeshUtil
+    {
+        static Dictionary<int, TextMesh> TextMeshCache = new Dictionary<int, TextMesh>();
+
+        static int GetTextMeshId(string text, Size size, GUIStyle style, GUIState state)
+        {
+            int hash = 17;
+            hash = hash * 23 + text.GetHashCode();
+            hash = hash * 23 + size.GetHashCode();
+            hash = hash * 23 + style.GetHashCode();
+            hash = hash * 23 + state.GetHashCode();
+            return hash;
+        }
+
+        /// <summary>
+        /// build the text context against the size and style
+        /// </summary>
+        internal static TextMesh GetTextMesh(string text, Rect rect, GUIStyle style, GUIState state)
+        {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (style == null) throw new ArgumentNullException(nameof(style));
+
+            int textMeshId = GetTextMeshId(text, rect.Size, style, state);
+
+            TextMesh mesh;
+            if (TextMeshCache.TryGetValue(textMeshId, out mesh))
+            {
+                return mesh;
+            }
+            else
+            {
+                // create a TextContent for the text
+                var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
+                var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
+                var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
+                var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
+                var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
+                var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+                var TextContext = Application.platformContext.CreateTextContext(
+                    text,
+                    fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
+                    (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
+                    textAlignment);
+                // create a text mesh
+                mesh = new TextMesh();
+                mesh.Build(rect.TopLeft, style, TextContext);
+            }
+
+            return mesh;
+        }
+    }
 }

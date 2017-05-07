@@ -17,7 +17,7 @@ public class TestUI
             image = GUI.CreateTexture("Image/trees.jpg");
         }
 
-        if (widgetsOn = GUILayout.CollapsingHeader("Widgets", "Widgets", widgetsOn))
+        if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))
         {
             GUILayout.BeginHorizontal("all");
             {
@@ -32,29 +32,29 @@ public class TestUI
                         }
                         if (a)
                         {
-                            GUILayout.Label("Thanks for clicking me!", "ThanksForClickingMe");
+                            GUILayout.Label("Thanks for clicking me!");
                         }
                     }
                     GUILayout.EndHorizontal();
 
-                    toggleOn = GUILayout.Toggle("CheckBox", toggleOn, "Toggle");
+                    toggleOn = GUILayout.Toggle("CheckBox", toggleOn);
 
-                    GUILayout.BeginHorizontal("H2");
-                    {
-                        GUILayout.Radio("Radio 0", ref active_id, "radio_b_0");
-                        GUILayout.Radio("Radio 1", ref active_id, "radio_b_1");
-                        GUILayout.Radio("Radio 2", ref active_id, "radio_b_2");
-                    }
-                    GUILayout.EndHorizontal();
+                    //GUILayout.BeginHorizontal("H2");
+                    //{
+                    //    GUILayout.Radio("Radio 0", ref active_id, "radio_b_0");
+                    //    GUILayout.Radio("Radio 1", ref active_id, "radio_b_1");
+                    //    GUILayout.Radio("Radio 2", ref active_id, "radio_b_2");
+                    //}
+                    //GUILayout.EndHorizontal();
 
-                    widthScale = GUILayout.Slider("Width Scale", widthScale, 0, 1.0, "SliderA");
+                    widthScale = GUILayout.Slider("Width Scale", widthScale, 0, 1.0);
                     GUILayout.BeginHorizontal("H3");
                     {
-                        heightScale = GUILayout.VSlider("Height Scale", heightScale, 0, 1.0, "SliderB");
+                        heightScale = GUILayout.VSlider("Height Scale", heightScale, 0, 1.0);
                         var rect = GUILayout.GetRect(new Size(image.Width, image.Height), "Image");
                         rect.Width = image.Width * widthScale;
                         rect.Height = image.Height * heightScale;
-                        GUI.Image(rect, image, "Image0");
+                        GUI.Image(rect, image);
                     }
                     GUILayout.EndHorizontal();
                 }

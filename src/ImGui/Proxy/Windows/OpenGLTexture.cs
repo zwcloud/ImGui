@@ -9,21 +9,16 @@ namespace ImGui
 {
     internal class OpenGLTexture : ITexture
     {
-        public static readonly byte[] PngHeaderEightBytes =
-        {
-            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
-        };
-
         private ImageSharp.Image image;
         private readonly uint[] textureIdBuffer = {0};
         private ImageSharp.Color[] textureData;
         
-        public bool LoadImage(byte[] data)
+        public void LoadImage(byte[] data)
         {
             throw new NotImplementedException();
         }
 
-        public bool LoadImage(string filePath)
+        public void LoadImage(string filePath)
         {
             // check file header, save texture data to buffer
             using (FileStream stream = File.OpenRead(filePath))
@@ -45,8 +40,6 @@ namespace ImGui
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
             Utility.CheckGLError();
-
-            return true;
         }
 
         /// <summary>

@@ -12,13 +12,13 @@ namespace ImGui
         /// Load image data from byte array into the texture.
         /// </summary>
         /// <returns>succeeded?true:false</returns>
-        bool LoadImage(byte[] data);
+        void LoadImage(byte[] data);
 
         /// <summary>
         /// Load image data from a file into the texture.
         /// </summary>
         /// <returns>succeeded?true:false</returns>
-        bool LoadImage(string filePath);
+        void LoadImage(string filePath);
 
         /// <summary>
         /// Width of the texture in pixels. (Read Only)

@@ -31,7 +31,7 @@ namespace ImGui
             {
                 this.verticalStretchFactor = 1;
             }
-            this.style = style;
+            this.style = style ?? GUIStyle.Default;
             if (options != null)
             {
                 this.ApplyOptions(options);

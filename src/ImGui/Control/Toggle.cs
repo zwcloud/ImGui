@@ -8,124 +8,6 @@ namespace ImGui
         /// 
         /// </summary>
         /// <param name="rect"></param>
-        /// <param name="value"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// |←16→|
-        /// +----+--
-        /// | √  |16
-        /// +----+--
-        internal static bool DoControl(Rect rect, bool value, string str_id)
-        {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
-            DrawList d = window.DrawList;
-            int id = window.GetID(str_id);
-
-            var mousePos = Input.Mouse.MousePos;
-            var hovered = rect.Contains(mousePos);
-
-            var result = value;
-
-            //control logic
-            var uiState = Form.current.uiContext;
-            uiState.KeepAliveID(id);
-            if (hovered)
-            {
-                uiState.SetHoverID(id);
-
-                if (Input.Mouse.LeftButtonPressed)
-                {
-                    uiState.SetActiveID(id);
-                }
-
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
-                {
-                    result = !value;
-                    uiState.SetActiveID(GUIContext.None);
-                }
-            }
-
-            // ui representation
-            var state = GUI.Normal;
-            if (hovered)
-            {
-                state = GUI.Hover;
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
-                {
-                    state = GUI.Active;
-                }
-            }
-
-            // ui painting
-            {
-                var style = GUISkin.Instance[GUIControlName.Toggle];
-                if (result)
-                {
-                    if (state == GUI.Normal)
-                    {
-                        //□
-                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(0, 120, 215));
-                        //√
-                        var h = rect.Height;
-                        d.PathMoveTo(new Point(0.125f * h + rect.X, 0.50f * h + rect.Y));
-                        d.PathLineTo(new Point(0.333f * h + rect.X, 0.75f * h + rect.Y));
-                        d.PathLineTo(new Point(0.875f * h + rect.X, 0.25f * h + rect.Y));
-                        d.PathStroke(Color.White, false, 2);
-                    }
-                    else if (state == GUI.Hover)
-                    {
-                        //□
-                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(0, 120, 215));
-                        //□
-                        d.AddRect(rect.TopLeft, rect.BottomRight, Color.Black, 0, 0, 2);
-                        //√
-                        var h = rect.Height;
-                        d.PathMoveTo(new Point(0.125f * h + rect.X, 0.50f * h + rect.Y));
-                        d.PathLineTo(new Point(0.333f * h + rect.X, 0.75f * h + rect.Y));
-                        d.PathLineTo(new Point(0.875f * h + rect.X, 0.25f * h + rect.Y));
-                        d.PathStroke(Color.White, false, 2);
-                    }
-                    else
-                    {
-                        //□
-                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(51, 51, 51));
-                        //√
-                        var h = rect.Height;
-                        d.PathMoveTo(new Point(0.125f * h + rect.X, 0.50f * h + rect.Y));
-                        d.PathLineTo(new Point(0.333f * h + rect.X, 0.75f * h + rect.Y));
-                        d.PathLineTo(new Point(0.875f * h + rect.X, 0.25f * h + rect.Y));
-                        d.PathStroke(Color.Rgb(102, 102, 102), false, 2);
-                    }
-                }
-                else
-                {
-                    //□
-                    if (state == GUI.Normal)
-                    {
-                        d.AddRect(rect.TopLeft, rect.BottomRight, Color.Rgb(102, 102, 102), 0, 0, 2);
-                    }
-                    else if (state == GUI.Hover)
-                    {
-                        d.AddRect(rect.TopLeft, rect.BottomRight, Color.Black, 0, 0, 2);
-                    }
-                    else
-                    {
-                        d.AddRectFilled(rect.TopLeft, rect.BottomRight, Color.Rgb(102, 102, 102));
-                    }
-                }
-            }
-
-
-
-            return result;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rect"></param>
         /// <param name="label"></param>
         /// <param name="value"></param>
         /// <param name="id"></param>
@@ -138,13 +20,13 @@ namespace ImGui
         /// +----+               |
         ///      |               |
         ///      +---------------+
-        internal static bool DoControl(Rect rect, Content label, bool value, string str_id)
+        internal static bool DoControl(Rect rect, string label, bool value)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
             DrawList d = window.DrawList;
-            int id = window.GetID(str_id);
+            int id = window.GetID(label);
 
             var mousePos = Input.Mouse.MousePos;
             var hovered = rect.Contains(mousePos);

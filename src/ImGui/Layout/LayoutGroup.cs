@@ -27,8 +27,6 @@ namespace ImGui
                 this.cursor++;
                 return result;
             }
-            Debug.WriteLine("Next layout entry does't exist.");
-            return null;
             throw new InvalidOperationException("Next layout entry does't exist.");
         }
 

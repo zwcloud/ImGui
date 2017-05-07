@@ -72,7 +72,7 @@ namespace ImGui
             public GUIState State { get; set; }
         }
 
-        public static GUIStyle Default { get; private set; } = new GUIStyle();
+        public static GUIStyle Default { get; private set; }
 
         private static readonly double DefaultFontSize;
 
@@ -90,6 +90,8 @@ namespace ImGui
                 DefaultFontSize = 12;
                 DefaultFontFamily = Utility.FontDir + "msjh.ttf";
             }
+
+            Default = new GUIStyle();
         }
 
         public static implicit operator GUIStyle(string str)
@@ -97,127 +99,136 @@ namespace ImGui
             return GUISkin.Instance.GetStyle(str);
         }
 
-        private Dictionary<NameState, double> NumberStyles = new Dictionary<NameState, double>
+        public GUIStyle()
         {
-            [new NameState { Name = GUIStyleName.BorderTop,     State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderTop,     State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderTop,     State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.BorderRight,   State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderRight,   State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderRight,   State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.BorderBottom,  State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderBottom,  State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderBottom,  State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderLeft,    State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceTop,     State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceTop,     State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceTop,     State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceRight,   State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceRight,   State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceRight,   State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceBottom,  State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceBottom,  State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceBottom,  State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceLeft,    State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceLeft,    State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.BorderImageSliceLeft,    State = GUIState.Active }] = 0,
+            NumberStyles = new Dictionary<NameState, double>
+            {
+                [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderRight, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderRight, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderRight, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottom, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottom, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottom, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderLeft, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderLeft, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderLeft, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceTop, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceTop, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceTop, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceRight, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceRight, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceRight, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceBottom, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceBottom, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceBottom, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Active }] = 0,
 
-            [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingTop,    State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingRight,  State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingRight,  State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingRight,  State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Active }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.PaddingLeft,   State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingRight, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingRight, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingRight, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingLeft, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingLeft, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingLeft, State = GUIState.Active }] = 0,
 
-            [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Normal }] = 8,
-            [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Hover  }] = 8,
-            [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Active }] = 8,
-            [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Normal }] = 4,
-            [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Hover  }] = 4,
-            [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Active }] = 4,
+                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Normal }] = 8,
+                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Hover }] = 8,
+                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Active }] = 8,
+                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Normal }] = 4,
+                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Hover }] = 4,
+                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Active }] = 4,
 
-            [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Normal }] = 0,
-            [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Hover  }] = 0,
-            [new NameState { Name = GUIStyleName.OutlineWidth,  State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.OutlineWidth, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.OutlineWidth, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.OutlineWidth, State = GUIState.Active }] = 0,
 
-            [new NameState { Name = GUIStyleName.FontSize,      State = GUIState.Normal }] = DefaultFontSize,
-            [new NameState { Name = GUIStyleName.FontSize,      State = GUIState.Hover  }] = DefaultFontSize,
-            [new NameState { Name = GUIStyleName.FontSize,      State = GUIState.Active }] = DefaultFontSize,
+                [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Normal }] = DefaultFontSize,
+                [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Hover }] = DefaultFontSize,
+                [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Active }] = DefaultFontSize,
 
-        };
-        
-        private Dictionary<NameState, Color> ColorStyles = new Dictionary<NameState, Color>
-        {
-            [new NameState { Name = GUIStyleName.BorderTopColor,    State = GUIState.Normal    }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderTopColor,    State = GUIState.Hover     }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderTopColor,    State = GUIState.Active    }] = Color.Black,
+            };
 
-            [new NameState { Name = GUIStyleName.BorderRightColor,  State = GUIState.Normal    }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderRightColor,  State = GUIState.Hover     }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderRightColor,  State = GUIState.Active    }] = Color.Black,
+            ColorStyles = new Dictionary<NameState, Color>
+            {
+                [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Normal }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Hover }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Active }] = Color.Black,
 
-            [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Normal    }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Hover     }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Active    }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderRightColor, State = GUIState.Normal }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderRightColor, State = GUIState.Hover }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderRightColor, State = GUIState.Active }] = Color.Black,
 
-            [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Normal    }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Hover     }] = Color.Black,
-            [new NameState { Name = GUIStyleName.BorderLeftColor,   State = GUIState.Active    }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Normal }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Hover }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Active }] = Color.Black,
 
-            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Normal    }] = Color.Clear,
-            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Hover     }] = Color.Clear,
-            [new NameState { Name = GUIStyleName.BackgroundColor,   State = GUIState.Active    }] = Color.Clear,
+                [new NameState { Name = GUIStyleName.BorderLeftColor, State = GUIState.Normal }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderLeftColor, State = GUIState.Hover }] = Color.Black,
+                [new NameState { Name = GUIStyleName.BorderLeftColor, State = GUIState.Active }] = Color.Black,
 
-            [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Normal    }] = Color.Black,
-            [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Hover     }] = Color.Black,
-            [new NameState { Name = GUIStyleName.FontColor,         State = GUIState.Active    }] = Color.Black,
-        };
+                [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Normal }] = Color.Clear,
+                [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Hover }] = Color.Clear,
+                [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Active }] = Color.Clear,
 
-        private Dictionary<NameState, ITexture> ImageStyles = new Dictionary<NameState, ITexture>
-        {
-            [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
-            [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Hover  }] = null,
-            [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Active }] = null,
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Hover }] = new Color(0.90, 0.90, 0.90),
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = new Color(0.90, 0.90, 0.90),
+            };
 
-            [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Normal }] = null,
-            [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Hover  }] = null,
-            [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Active }] = null,
+            ImageStyles = new Dictionary<NameState, ITexture>
+            {
+                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
+                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Hover }] = null,
+                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Active }] = null,
 
-        };
+                [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Normal }] = null,
+                [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Hover }] = null,
+                [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Active }] = null,
 
-        // enum
-        private Dictionary<NameState, int> EnumStyles = new Dictionary<NameState, int>
-        {
-            [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Normal }] = (int)TextAlignment.Leading,
-            [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Hover  }] = (int)TextAlignment.Leading,
-            [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Active }] = (int)TextAlignment.Leading,
+            };
 
-            [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Normal }] = (int)FontWeight.Normal,
-            [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Hover  }] = (int)FontWeight.Normal,
-            [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Active }] = (int)FontWeight.Normal,
+            EnumStyles = new Dictionary<NameState, int>
+            {
+                [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Normal }] = (int)TextAlignment.Leading,
+                [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Hover }] = (int)TextAlignment.Leading,
+                [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Active }] = (int)TextAlignment.Leading,
 
-            [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Normal }] = (int)Alignment.Start,
-            [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Hover  }] = (int)Alignment.Start,
-            [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Active }] = (int)Alignment.Start,
-            [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Normal }] = (int)Alignment.Start,
-            [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Hover  }] = (int)Alignment.Start,
-            [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Active }] = (int)Alignment.Start,
-        };
+                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Normal }] = (int)FontWeight.Normal,
+                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Hover }] = (int)FontWeight.Normal,
+                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Active }] = (int)FontWeight.Normal,
 
-        private Dictionary<NameState, string> StrStyles = new Dictionary<NameState, string>
-        {
-            [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
-            [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover  }] = DefaultFontFamily,
-            [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Active }] = DefaultFontFamily,
-        };
+                [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Normal }] = (int)Alignment.Start,
+                [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Hover }] = (int)Alignment.Start,
+                [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Active }] = (int)Alignment.Start,
+                [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Normal }] = (int)Alignment.Start,
+                [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Hover }] = (int)Alignment.Start,
+                [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Active }] = (int)Alignment.Start,
+            };
+
+            StrStyles = new Dictionary<NameState, string>
+            {
+                [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
+                [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover }] = DefaultFontFamily,
+                [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Active }] = DefaultFontFamily,
+            };
+
+        }
+
+        private Dictionary<NameState, double> NumberStyles;
+        private Dictionary<NameState, Color> ColorStyles;
+        private Dictionary<NameState, ITexture> ImageStyles;
+        private Dictionary<NameState, int> EnumStyles;
+        private Dictionary<NameState, string> StrStyles;
 
         public T Get<T>(GUIStyleName styleName, GUIState state = GUIState.Normal)
         {
@@ -253,10 +264,12 @@ namespace ImGui
         }
 
         /// <summary>
-        /// Get content's border-box size
+        /// Get border-box size of a segment of text
         /// </summary>
-        internal Size CalcSize(Content content, GUIState state, LayoutOption[] options)
+        internal Size CalcSize(string text, GUIState state, LayoutOption[] options)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+
             var width = -1d;
             var height = -1d;
 
@@ -276,8 +289,7 @@ namespace ImGui
                 }
             }
 
-            // text: apply font and text styles
-            if (content.Text != null)
+            // apply font and text styles
             {
                 var fontFamily = this.Get<string>(GUIStyleName.FontFamily, state);
                 var fontSize = this.Get<double>(GUIStyleName.FontSize, state);
@@ -288,7 +300,7 @@ namespace ImGui
 
                 if (width < 0 && height < 0) // auto-sized text
                 {
-                    var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, content.Text);
+                    var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, text);
                     width = actualSize.Width;
                     height = actualSize.Height;
                 }
@@ -296,26 +308,70 @@ namespace ImGui
                 {
                     if (width < 0) // width-auto-sized text
                     {
-                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, content.Text);
+                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, text);
                         width = actualSize.Width;
                     }
                     else if (height < 0) // height-auto-sized text
                     {
-                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, content.Text);
+                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, text);
                         height = actualSize.Height;
                     }
                 }
             }
-            else if (content.Image != null)//image: apply image styles
+
+            // apply padding and border
+            if (width < 0)
             {
-                width = content.Image.Width;
-                height = content.Image.Height;
+                width = 0;
+            }
+            if (height < 0)
+            {
+                height = 0;
+            }
+            var size = new Size(Math.Ceiling(width), Math.Ceiling(height));
+            var paddingHorizontal = Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
+            var borderHorizontal = Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
+            var paddingVertical = Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
+            var borderVertical = Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
+            size.Width += paddingHorizontal + borderHorizontal;
+            size.Height += paddingVertical + borderVertical;
+
+            return size;
+        }
+
+        /// <summary>
+        /// Get border-box size of a segment of text
+        /// </summary>
+        internal Size CalcSize(ITexture texture, GUIState state, LayoutOption[] options)
+        {
+            if (texture == null) throw new ArgumentNullException(nameof(texture));
+
+            var width = -1d;
+            var height = -1d;
+
+            // apply options
+            if (options != null)
+            {
+                foreach (var option in options)
+                {
+                    if (option.type == LayoutOption.Type.fixedWidth)
+                    {
+                        width = (double)option.value;
+                    }
+                    else if (option.type == LayoutOption.Type.fixedHeight)
+                    {
+                        height = (double)option.value;
+                    }
+                }
             }
 
-            if (width < 0 && height < 0)
+            // apply image size
             {
-                throw new NotImplementedException();
+                width = texture.Width;
+                height = texture.Height;
             }
+
+            // apply padding and border
             if (width < 0)
             {
                 width = 0;
@@ -351,27 +407,6 @@ namespace ImGui
                 actualSize = measureContext.Measure();
             }
             return actualSize;
-        }
-        
-        internal static bool IsRebuildTextContextRequired(GUIStyle a, GUIStyle b)
-        {
-            return//TODO Other features hasn't been implemented by Typography yet.
-                    // font changed
-                a == null ||
-                a.Get<string>(GUIStyleName.FontFamily) != b.Get<string>(GUIStyleName.FontFamily)
-                || a.Get<double>(GUIStyleName.FontSize) != b.Get<double>(GUIStyleName.FontSize);
-            //return
-            //    // font changed
-            //    a.Font.FontFamily != b.Font.FontFamily
-            //    || a.Font.Size != b.Font.Size
-            //    || a.Font.FontStretch != b.Font.FontStretch
-            //    || a.Font.FontStyle != b.Font.FontStyle
-            //    || a.Font.FontWeight != b.Font.FontWeight
-            //    // Text styles changed
-            //    || a.TextStyle.TextAlignment != b.TextStyle.TextAlignment
-            //    || !MathEx.AmostEqual(a.TextStyle.LineSpacing, b.TextStyle.LineSpacing)
-            //    || a.TextStyle.TabSize != b.TextStyle.TabSize
-            //    ;
         }
 
 #region common styles

@@ -5,13 +5,13 @@ namespace ImGui
 {
     internal class PolygonButton
     {
-        internal static bool DoControl(Rect rect, IReadOnlyList<Point> points, Rect textRect, Content content, string str_id)
+        internal static bool DoControl(Rect rect, IReadOnlyList<Point> points, Rect textRect, string text)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
             DrawList d = window.DrawList;
-            int id = window.GetID(str_id);
+            int id = window.GetID(text);
             var mousePos = Input.Mouse.MousePos;
 
             var clicked = false;
@@ -65,7 +65,7 @@ namespace ImGui
                 }
                 d.PathStroke(style.LineColor, true, 2);
 
-                d.DrawBoxModel(textRect, content, style, state);
+                d.DrawBoxModel(textRect, text, style, state);
             }
 
             return clicked;

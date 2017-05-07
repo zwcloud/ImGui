@@ -31,9 +31,9 @@ namespace ImGui
         /// </summary>
         /// <param name="g">the Cairo context</param>
         /// <param name="rect">the rect (of the border-box) to draw this box model </param>
-        /// <param name="content">content of the box model</param>
+        /// <param name="text">text of the box model</param>
         /// <param name="style">style of the box model</param>
-        public static void DrawBoxModel(this DrawList drawList, Rect rect, Content content, GUIStyle style, GUIState state = GUIState.Normal)
+        public static void DrawBoxModel(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state = GUIState.Normal)
         {
             //Widths of border
             var bt = style.Get<double>(GUIStyleName.BorderTop, state);
@@ -68,27 +68,14 @@ namespace ImGui
             var cbl = new Point(pbl.X + pl, pbl.Y - pb);
             var contentBoxRect = new Rect(ctl, cbr);
 
-            /*
-             * Render order ??
-             * 1. from inner to outer: Content, Border, Outline
-             * 2. from background to foreground
-             */
-
             // draw background in padding-box
             drawList.AddRectFilled(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight, style.Get<Color>(GUIStyleName.BackgroundColor, state));
 
             //Content
             //Content-box
-            if (content != null)
+            if (text != null)
             {
-                if (content.Image != null)
-                {
-                    drawList.DrawImage(contentBoxRect, content, style);
-                }
-                if (content.Text != null)
-                {
-                    drawList.DrawText(contentBoxRect, content, style, state);
-                }
+                drawList.DrawText(contentBoxRect, text, style, state);
             }
 
             //Border
@@ -169,29 +156,157 @@ namespace ImGui
         }
 
         /// <summary>
+        /// Draw a box model
+        /// </summary>
+        /// <param name="g">the Cairo context</param>
+        /// <param name="rect">the rect (of the border-box) to draw this box model </param>
+        /// <param name="texture">texture of the box model</param>
+        /// <param name="style">style of the box model</param>
+        public static void DrawBoxModel(this DrawList drawList, Rect rect, ITexture texture, GUIStyle style, GUIState state = GUIState.Normal)
+        {
+            //Widths of border
+            var bt = style.Get<double>(GUIStyleName.BorderTop, state);
+            var br = style.Get<double>(GUIStyleName.BorderRight, state);
+            var bb = style.Get<double>(GUIStyleName.BorderBottom, state);
+            var bl = style.Get<double>(GUIStyleName.BorderLeft, state);
+
+            //Widths of padding
+            var pt = style.Get<double>(GUIStyleName.PaddingTop, state);
+            var pr = style.Get<double>(GUIStyleName.PaddingRight, state);
+            var pb = style.Get<double>(GUIStyleName.PaddingBottom, state);
+            var pl = style.Get<double>(GUIStyleName.PaddingLeft, state);
+
+            //4 corner of the border-box
+            var btl = new Point(rect.Left, rect.Top);
+            var btr = new Point(rect.Right, rect.Top);
+            var bbr = new Point(rect.Right, rect.Bottom);
+            var bbl = new Point(rect.Left, rect.Bottom);
+            var borderBoxRect = new Rect(btl, bbr);
+
+            //4 corner of the padding-box
+            var ptl = new Point(btl.X + bl, btl.Y + bt);
+            var ptr = new Point(btr.X - br, btr.Y + bt);
+            var pbr = new Point(bbr.X - br, bbr.Y - bb);
+            var pbl = new Point(bbl.X + bl, bbl.Y - bb);
+            var paddingBoxRect = new Rect(ptl, pbr);
+
+            //4 corner of the content-box
+            var ctl = new Point(ptl.X + pl, ptl.Y + pt);
+            var ctr = new Point(ptr.X - pr, ptr.Y + pr);
+            var cbr = new Point(pbr.X - pr, pbr.Y - pb);
+            var cbl = new Point(pbl.X + pl, pbl.Y - pb);
+            var contentBoxRect = new Rect(ctl, cbr);
+
+            // draw background in padding-box
+            drawList.AddRectFilled(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight, style.Get<Color>(GUIStyleName.BackgroundColor, state));
+
+            //Content
+            //Content-box
+            if (texture != null)
+            {
+                drawList.DrawImage(contentBoxRect, texture, style);
+            }
+
+            //Border
+            //  Top
+            if (!MathEx.AmostZero(bt))
+            {
+                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor, state);
+                if (!MathEx.AmostZero(borderTopColor.A))
+                {
+                    drawList.PathLineTo(ptl);
+                    drawList.PathLineTo(btl);
+                    drawList.PathLineTo(btr);
+                    drawList.PathLineTo(ptr);
+                    drawList.PathFill(borderTopColor);
+                }
+            }
+            //  Right
+            if (!MathEx.AmostZero(br))
+            {
+                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor, state);
+                if (!MathEx.AmostZero(borderRightColor.A))
+                {
+                    drawList.PathLineTo(ptr);
+                    drawList.PathLineTo(btr);
+                    drawList.PathLineTo(bbr);
+                    drawList.PathLineTo(pbr);
+                    drawList.PathFill(borderRightColor);
+                }
+            }
+            //  Bottom
+            if (!MathEx.AmostZero(bb))
+            {
+                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor, state);
+                if (!MathEx.AmostZero(borderBottomColor.A))
+                {
+                    drawList.PathLineTo(pbr);
+                    drawList.PathLineTo(bbr);
+                    drawList.PathLineTo(bbl);
+                    drawList.PathLineTo(pbl);
+                    drawList.PathFill(borderBottomColor);
+                }
+            }
+            //  Left
+            if (!MathEx.AmostZero(bl))
+            {
+                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor, state);
+                if (!MathEx.AmostZero(borderLeftColor.A))
+                {
+                    drawList.PathLineTo(pbl);
+                    drawList.PathLineTo(bbl);
+                    drawList.PathLineTo(btl);
+                    drawList.PathLineTo(ptl);
+                    drawList.PathFill(borderLeftColor);
+                }
+            }
+
+            //Outline
+            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth, state);
+            if (!MathEx.AmostZero(outlineWidth))
+            {
+                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor, state);
+                if (!MathEx.AmostZero(outlineColor.A))
+                {
+                    drawList.PathRect(btl, bbr);
+                    drawList.PathStroke(outlineColor, true, outlineWidth);
+                }
+            }
+
+#if DrawPaddingBox
+            drawList.PathRect(ptl, pbr);
+            drawList.PathStroke(Color.ColorRgb(0, 100, 100), true, 1);
+#endif
+
+#if DrawContentBox
+            drawList.PathRect(ctl, cbr);
+            drawList.PathStroke(Color.ColorRgb(100, 0, 100), true, 1);
+#endif
+        }
+
+        /// <summary>
         /// Draw a text content
         /// </summary>
         /// <param name="rect">the rect (of the text layouting box) to draw this text content</param>
-        /// <param name="content">text content</param>
+        /// <param name="text">the text</param>
         /// <param name="style">style of the box model</param>
         /// <param name="state">state of the style</param>
-        public static void DrawText(this DrawList drawList, Rect rect, Content content, GUIStyle style, GUIState state)
+        public static void DrawText(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state)
         {
-            content.BuildText(rect, style, state);
-            drawList.Append(content.TextMesh);
+            var textmesh = TextMeshUtil.GetTextMesh(text, rect, style, state);
+            drawList.Append(textmesh);
         }
 
         /// <summary>
         /// Draw an image content
         /// </summary>
         /// <param name="rect">the rect to draw this image content</param>
-        /// <param name="content">image content</param>
+        /// <param name="texture">the texture</param>
         /// <param name="style">style of the image content (not used)</param>
-        public static void DrawImage(this DrawList drawList, Rect rect, Content content, GUIStyle style)
+        public static void DrawImage(this DrawList drawList, Rect rect, ITexture texture, GUIStyle style)
         {
             var (top, right, bottom, left) = style.BorderImageSlice;
 
-            var texture = content.Image;
             if (MathEx.AmostEqual(top, 0)
                 && MathEx.AmostEqual(left, 0)
                 && MathEx.AmostEqual(right, 0)

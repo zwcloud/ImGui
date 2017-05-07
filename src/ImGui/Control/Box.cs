@@ -10,13 +10,13 @@ namespace ImGui
     /// </remarks>
     internal class Box
     {
-        public static void DoControl(Rect rect, Content content, string name)
+        public static void DoControl(Rect rect, string text)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
             DrawList d = window.DrawList;
-            d.DrawBoxModel(rect, content, GUISkin.Instance[GUIControlName.Box]);
+            d.DrawBoxModel(rect, text, GUISkin.Instance[GUIControlName.Box]);
         }
     }
 }
