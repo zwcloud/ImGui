@@ -291,16 +291,10 @@ namespace ImGui
 
             // apply font and text styles
             {
-                var fontFamily = this.Get<string>(GUIStyleName.FontFamily, state);
-                var fontSize = this.Get<double>(GUIStyleName.FontSize, state);
-                var fontStretch = (FontStretch)this.Get<int>(GUIStyleName.FontStretch, state);
-                var fontStyle = (FontStyle)this.Get<int>(GUIStyleName.FontStyle, state);
-                var fontWeight = (FontWeight)this.Get<int>(GUIStyleName.FontWeight, state);
-                var textAlignment = (TextAlignment)this.Get<int>(GUIStyleName.TextAlignment, state);
 
                 if (width < 0 && height < 0) // auto-sized text
                 {
-                    var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, text);
+                    var actualSize = this.MeasureText(state, text);
                     width = actualSize.Width;
                     height = actualSize.Height;
                 }
@@ -308,12 +302,12 @@ namespace ImGui
                 {
                     if (width < 0) // width-auto-sized text
                     {
-                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, text);
+                        var actualSize = this.MeasureText(state, text);
                         width = actualSize.Width;
                     }
                     else if (height < 0) // height-auto-sized text
                     {
-                        var actualSize = MeasureText(fontFamily, fontSize, fontStretch, fontStyle, fontWeight, textAlignment, text);
+                        var actualSize = this.MeasureText(state, text);
                         height = actualSize.Height;
                     }
                 }
@@ -391,13 +385,16 @@ namespace ImGui
             return size;
         }
 
-        private static Size MeasureText(string fontFamily, double fontSize,
-            FontStretch fontStretch, FontStyle fontStyle, FontWeight fontWeight,
-            TextAlignment textAlignment,
-            string text)
+        internal Size MeasureText(GUIState state, string text)
         {
-            Size actualSize;
+            var fontFamily = this.Get<string>(GUIStyleName.FontFamily, state);
+            var fontSize = this.Get<double>(GUIStyleName.FontSize, state);
+            var fontStretch = (FontStretch)this.Get<int>(GUIStyleName.FontStretch, state);
+            var fontStyle = (FontStyle)this.Get<int>(GUIStyleName.FontStyle, state);
+            var fontWeight = (FontWeight)this.Get<int>(GUIStyleName.FontWeight, state);
+            var textAlignment = (TextAlignment)this.Get<int>(GUIStyleName.TextAlignment, state);
 
+            Size actualSize;
             using (var measureContext = Application.platformContext.CreateTextContext(
                 text,
                 fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
@@ -409,12 +406,12 @@ namespace ImGui
             return actualSize;
         }
 
-#region common styles
+        #region common styles
 
-        public double BorderTop    => Get<double>(GUIStyleName.BorderTop);
-        public double BorderRight  => Get<double>(GUIStyleName.BorderRight);
+        public double BorderTop => Get<double>(GUIStyleName.BorderTop);
+        public double BorderRight => Get<double>(GUIStyleName.BorderRight);
         public double BorderBottom => Get<double>(GUIStyleName.BorderBottom);
-        public double BorderLeft   => Get<double>(GUIStyleName.BorderLeft);
+        public double BorderLeft => Get<double>(GUIStyleName.BorderLeft);
 
         public double PaddingTop => Get<double>(GUIStyleName.PaddingTop);
         public double PaddingRight => Get<double>(GUIStyleName.PaddingRight);
@@ -435,10 +432,10 @@ namespace ImGui
         {
             get
             {
-                var top =    Get<double>(GUIStyleName.BorderImageSliceTop);
-                var right =  Get<double>(GUIStyleName.BorderImageSliceRight);
+                var top = Get<double>(GUIStyleName.BorderImageSliceTop);
+                var right = Get<double>(GUIStyleName.BorderImageSliceRight);
                 var bottom = Get<double>(GUIStyleName.BorderImageSliceBottom);
-                var left =   Get<double>(GUIStyleName.BorderImageSliceLeft);
+                var left = Get<double>(GUIStyleName.BorderImageSliceLeft);
                 return (top, right, bottom, left);
             }
 
@@ -477,7 +474,12 @@ namespace ImGui
 
         public Color BackgroundColor => Get<Color>(GUIStyleName.BackgroundColor);
 
-        public double FontSize => Get<double>(GUIStyleName.FontSize);
+        public double FontSize
+        {
+            get => Get<double>(GUIStyleName.FontSize);
+            set => Set<double>(GUIStyleName.FontSize, value);
+        }
+
         public Color FontColor => Get<Color>(GUIStyleName.FontColor);
 
 

@@ -209,10 +209,19 @@ namespace TextRenderingTest
         }
 
         [Fact]
-        public void ShouldRenderAStringInARectangle()
+        public void ShouldRenderAStringInMeasuredRectangle()
         {
+            string text = "ABCDE";
+            GUIStyle style = new GUIStyle();
+            style.FontSize = 20;
+
             Application.Run(new Form1(() => {
-                //TODO
+                GUILayout.Button("dummy");
+                var d = Form.current.uiContext.CurrentWindow.DrawList;
+                var size = style.MeasureText(GUIState.Normal, text);
+                var rect = new Rect(10, 100, size);
+                d.AddRect(rect.Min, rect.Max, Color.Red);
+                d.DrawText(rect, text, style, GUIState.Normal);
             }));
         }
     }
