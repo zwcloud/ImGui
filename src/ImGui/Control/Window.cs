@@ -112,7 +112,11 @@ namespace ImGui
         public Rect ClientRect { get; internal set; }
 
         public bool Collapsed { get; internal set; } = false;
-        public bool Active { get; internal set; }
+        public bool Active
+        {
+            get;
+            internal set;
+        }
         public Window RootWindow { get; internal set; }
 
         /// <summary>
@@ -165,6 +169,11 @@ namespace ImGui
 
     public partial class GUILayout
     {
+        public static bool Begin(string name, ref bool open)
+        {
+            return Begin(name, ref open, Point.Zero, new Size(400, 300), 1, WindowFlags.Default);
+        }
+
         public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
         {
             Form form = Form.current;

@@ -8,6 +8,7 @@
     <Copyright>Copyright (c) 2016-2017 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
     <PackageProjectUrl>https://zwcloud.net/#project/imgui</PackageProjectUrl>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>

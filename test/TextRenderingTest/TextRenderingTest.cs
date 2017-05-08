@@ -207,5 +207,13 @@ namespace TextRenderingTest
                 GUILayout.Label("C");
             }));
         }
+
+        [Fact]
+        public void ShouldRenderAStringInARectangle()
+        {
+            Application.Run(new Form1(() => {
+                //TODO
+            }));
+        }
     }
 }

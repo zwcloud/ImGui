@@ -7,6 +7,8 @@ namespace ImGui
 {
     partial class Form
     {
+        bool debugWindowOpen = true;
+
         internal void NewFrame()
         {
             current = this;
@@ -165,6 +167,8 @@ namespace ImGui
             // But in order to allow the user to call NewFrame() multiple times without calling Render(), we are doing an explicit clear.
             g.CurrentWindowStack.Clear();
 
+            // Create implicit window - we will only render it if the user has added something to it.
+            GUILayout.Begin("Debug", ref debugWindowOpen);
         }
 
         internal void EndFrame()
@@ -172,6 +176,12 @@ namespace ImGui
             GUIContext g = Form.current.uiContext;
             Debug.Assert(g.Initialized);                       // Forgot to call ImGui::NewFrame()
             Debug.Assert(g.FrameCountEnded != g.FrameCount);   // ImGui::EndFrame() called multiple times, or forgot to call ImGui::NewFrame() again
+
+            // Hide implicit "Debug" window if it hasn't been used
+            Debug.Assert(g.CurrentWindowStack.Count == 1);    // Mismatched Begin()/End() calls
+            if (g.CurrentWindow!=null && !g.CurrentWindow.Accessed)
+                g.CurrentWindow.Active = false;
+            GUILayout.End();
 
             // Click to focus window and start moving (after we're done with all our widgets)
             if (g.ActiveId == 0 && g.HoverId == 0 && Input.Mouse.LeftButtonPressed)
@@ -249,7 +259,10 @@ namespace ImGui
             this.renderer.Clear();
             foreach (var window in this.uiContext.Windows)
             {
-                this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+                if(window.Active)
+                {
+                    this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+                }
             }
             this.renderer.SwapBuffers();
         }

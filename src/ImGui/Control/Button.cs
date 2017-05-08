@@ -53,6 +53,7 @@ namespace ImGui
             Window window = g.CurrentWindow;
             if (window.SkipItems)
                 return false;
+
             DrawList d = window.DrawList;
             int id = window.GetID(text);
 
