@@ -45,15 +45,7 @@
             }
 
             // ui representation
-            var state = GUI.Normal;
-            if (hovered)
-            {
-                state = GUI.Hover;
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
-                {
-                    state = GUI.Active;
-                }
-            }
+            // nothing to do
 
             // ui painting
             // |←16→|

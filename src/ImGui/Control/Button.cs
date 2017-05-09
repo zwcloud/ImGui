@@ -39,7 +39,6 @@ namespace ImGui
         /// </summary>
         /// <param name="rect">position and size of the control</param>
         /// <param name="text">text to display on the button</param>
-        /// <param name="id">the unique id of this control</param>
         /// <returns>true when the users clicks the button.</returns>
         public static bool Button(Rect rect, string text)
         {
@@ -58,7 +57,6 @@ namespace ImGui
             int id = window.GetID(text);
 
             GUIStyle style = GUISkin.Instance[GUIControlName.Button];
-            var mousePos = Input.Mouse.MousePos;
 
             bool hovered, held;
             bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
@@ -66,7 +64,7 @@ namespace ImGui
             // Render
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            d.RenderFrame(rect.Min, rect.Max, col, true, 0);
+            d.RenderFrame(rect.Min, rect.Max, col, false, 0);
             d.DrawText(rect, text, style, state);
 
             return pressed;

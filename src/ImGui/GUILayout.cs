@@ -169,7 +169,7 @@ namespace ImGui
             DrawList d = window.DrawList;
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            d.RenderFrame(rect.Min, rect.Max, col, true, 0);
+            d.RenderFrame(rect.Min, rect.Max, col, false, 0);
             d.DrawText(rect, text, style, state);
 
             return open;

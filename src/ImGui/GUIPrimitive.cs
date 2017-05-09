@@ -15,24 +15,22 @@ namespace ImGui
         /// <param name="rounding"></param>
         public static void RenderFrame(this DrawList drawList, Point p_min, Point p_max, Color fill_col, bool border, float rounding)
         {
-            GUIContext g = Form.current.uiContext;
-            Window window = g.CurrentWindow;
-
-            window.DrawList.AddRectFilled(p_min, p_max, fill_col, rounding);
+            drawList.AddRectFilled(p_min, p_max, fill_col, rounding);
             if (border)
             {
-                window.DrawList.AddRect(p_min + new Vector(1, 1), p_max + new Vector(1, 1), Color.Black, rounding);
-                window.DrawList.AddRect(p_min, p_max, new Color(0.70f, 0.70f, 0.70f, 0.65f), rounding);
+                drawList.AddRect(p_min + new Vector(1, 1), p_max + new Vector(1, 1), Color.Black, rounding);
+                drawList.AddRect(p_min, p_max, new Color(0.70f, 0.70f, 0.70f, 0.65f), rounding);
             }
         }
 
         /// <summary>
         /// Draw a box model
         /// </summary>
-        /// <param name="g">the Cairo context</param>
+        /// <param name="drawList"></param>
         /// <param name="rect">the rect (of the border-box) to draw this box model </param>
         /// <param name="text">text of the box model</param>
         /// <param name="style">style of the box model</param>
+        /// <param name="state"></param>
         public static void DrawBoxModel(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state = GUIState.Normal)
         {
             //Widths of border
@@ -158,10 +156,11 @@ namespace ImGui
         /// <summary>
         /// Draw a box model
         /// </summary>
-        /// <param name="g">the Cairo context</param>
+        /// <param name="drawList"></param>
         /// <param name="rect">the rect (of the border-box) to draw this box model </param>
         /// <param name="texture">texture of the box model</param>
         /// <param name="style">style of the box model</param>
+        /// <param name="state"></param>
         public static void DrawBoxModel(this DrawList drawList, Rect rect, ITexture texture, GUIStyle style, GUIState state = GUIState.Normal)
         {
             //Widths of border
@@ -287,6 +286,7 @@ namespace ImGui
         /// <summary>
         /// Draw a text content
         /// </summary>
+        /// <param name="drawList"></param>
         /// <param name="rect">the rect (of the text layouting box) to draw this text content</param>
         /// <param name="text">the text</param>
         /// <param name="style">style of the box model</param>
@@ -300,6 +300,7 @@ namespace ImGui
         /// <summary>
         /// Draw an image content
         /// </summary>
+        /// <param name="drawList"></param>
         /// <param name="rect">the rect to draw this image content</param>
         /// <param name="texture">the texture</param>
         /// <param name="style">style of the image content (not used)</param>
