@@ -206,23 +206,9 @@ namespace ImGui
                 }
             }
 
-            //// Sort the window list so that all child windows are after their parent
-            //// We cannot do that on FocusWindow() because childs may not exist yet
-            //g.WindowsSortBuffer.resize(0);
-            //g.WindowsSortBuffer.reserve(g.Windows.Size);
-            //for (int i = 0; i != g.Windows.Size; i++)
-            //{
-            //    ImGuiWindow* window = g.Windows[i];
-            //    if (window->Active && (window->Flags & ImGuiWindowFlags_ChildWindow))       // if a child is active its parent will add it
-            //        continue;
-            //    AddWindowToSortedBuffer(g.WindowsSortBuffer, window);
-            //}
-            //IM_ASSERT(g.Windows.Size == g.WindowsSortBuffer.Size);  // we done something wrong
-            //g.Windows.swap(g.WindowsSortBuffer);
-
             // Clear Input data for next frame
             Input.Mouse.MouseWheel = 0.0f;
-            //memset(g.IO.InputCharacters, 0, sizeof(g.IO.InputCharacters));
+            Application.ImeBuffer.Clear();
 
             g.FrameCountEnded = g.FrameCount;
         }

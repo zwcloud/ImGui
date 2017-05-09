@@ -50,8 +50,11 @@ namespace ImGui
 
         LineColor,
         FillColor,
-        
-        _FieldWidth,
+
+        _ControlLabelSpacing,
+        _LabelWidth,
+        _LabelHeight,
+
         ResizeGripActiveColor,
         ResizeGripColor,
     }

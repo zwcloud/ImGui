@@ -47,7 +47,7 @@ namespace ImGui
 
         private Dictionary<GUIControlName, GUIStyle> styles = new Dictionary<GUIControlName, GUIStyle>();
 
-        private GUIStyle InternalStyle;
+        public GUIStyle InternalStyle;
 
         private Dictionary<string, GUIControlName> controlNames = new Dictionary<string, GUIControlName>();
 
@@ -55,7 +55,9 @@ namespace ImGui
         {
             InternalStyle = new GUIStyle();//internal styles
             {
-                InternalStyle.Set<double>(GUIStyleName._FieldWidth, 100);
+                InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);
+                InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
+                InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
             }
 
             GUIStyle Label      = new GUIStyle();//no modification
@@ -176,14 +178,12 @@ namespace ImGui
             }
 
             {
-                Slider.Set(GUIStyleName.BackgroundColor, Color.Argb(0xFFAFAFAF), GUIState.Hover);
-                Slider.Set(GUIStyleName.BackgroundColor, Color.Argb(0xFF8F8F8F), GUIState.Active);
-                Slider.Set(GUIStyleName.Slider_LineUsed, Color.DarkBlue, GUIState.Normal);
-                Slider.Set(GUIStyleName.Slider_LineUsed, Color.DarkBlue, GUIState.Hover);
-                Slider.Set(GUIStyleName.Slider_LineUsed, Color.DarkBlue, GUIState.Active);
-                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Black, GUIState.Normal);
-                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Black, GUIState.Hover);
-                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Black, GUIState.Active);
+                Slider.Set(GUIStyleName.Slider_LineUsed, Color.Rgb(0, 151, 167), GUIState.Normal);
+                Slider.Set(GUIStyleName.Slider_LineUsed, Color.Rgb(0, 151, 167), GUIState.Hover);
+                Slider.Set(GUIStyleName.Slider_LineUsed, Color.Rgb(0, 151, 167), GUIState.Active);
+                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Rgb(117, 117, 117), GUIState.Normal);
+                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Rgb(255, 128, 171), GUIState.Hover);
+                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Rgb(255, 128, 171), GUIState.Active);
             }
 
             {

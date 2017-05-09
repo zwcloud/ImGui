@@ -101,7 +101,7 @@ namespace ImGui.Layout
                 layoutEntry = new LayoutEntry(style, options) { id = id, contentWidth = contentZize.Width, contentHeight = contentZize.Height };
                 this.topGroup.Add(layoutEntry);
                 this.Dirty = true;
-                return new Rect(100,100);
+                return new Rect(9999,9999);
             }
             //TODO check if layoutEntry' size/style/option changed
 
