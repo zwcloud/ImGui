@@ -274,7 +274,7 @@ namespace ImGui
                 if (window.Collapsed)
                 {
                     // Draw title bar only
-                    window.DrawList.RenderFrame(title_bar_rect.TopLeft, title_bar_rect.BottomRight, new Color(0.40f, 0.40f, 0.80f, 0.20f), true, window_rounding);
+                    window.DrawList.RenderFrame(title_bar_rect.TopLeft, title_bar_rect.BottomRight, new Color(0.40f, 0.40f, 0.80f, 0.20f));
                 }
                 else
                 {

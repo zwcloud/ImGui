@@ -8,6 +8,7 @@ namespace ControlTest
     {
         public SliderTest()
         {
+            Application.IsRunningInUnitTest = true;
             Application.InitSysDependencies();
         }
 
@@ -34,7 +35,7 @@ namespace ControlTest
 
             Application.Run(new Form1(() => {
                 value0 = GUILayout.Slider("Slider0", value0, min, max);
-                value1 = GUILayout.VSlider("Slider1", value0, min, max);
+                value1 = GUILayout.VSlider("Slider1", value1, min, max);
             }));
         }
     }

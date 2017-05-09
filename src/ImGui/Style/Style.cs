@@ -390,22 +390,8 @@ namespace ImGui
 
         internal Size MeasureText(GUIState state, string text)
         {
-            var fontFamily = this.Get<string>(GUIStyleName.FontFamily, state);
-            var fontSize = this.Get<double>(GUIStyleName.FontSize, state);
-            var fontStretch = (FontStretch)this.Get<int>(GUIStyleName.FontStretch, state);
-            var fontStyle = (FontStyle)this.Get<int>(GUIStyleName.FontStyle, state);
-            var fontWeight = (FontWeight)this.Get<int>(GUIStyleName.FontWeight, state);
-            var textAlignment = (TextAlignment)this.Get<int>(GUIStyleName.TextAlignment, state);
-
-            Size actualSize;
-            using (var measureContext = Application.platformContext.CreateTextContext(
-                text,
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                4096, 4096,
-                textAlignment))
-            {
-                actualSize = measureContext.Measure();
-            }
+            var measureContext = TextMeshUtil.GetTextContext(text, new Size(4096, 4096), this, state);
+            var actualSize = measureContext.Measure();
             return actualSize;
         }
 

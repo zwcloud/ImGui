@@ -4,7 +4,6 @@ namespace ImGui
 {
     internal class StateMachineEx
     {
-#if false
         class Transition
         {
             private readonly string State;
@@ -28,19 +27,19 @@ namespace ImGui
             }
         }
 
-        class Result<T> where T : Control
+        class Result
         {
             public readonly string State;
-            public readonly Action<T> CallBack;
+            public readonly Action<InputTextContext> CallBack;
 
-            public Result(string state, Action<T> callback)
+            public Result(string state, Action<InputTextContext> callback)
             {
                 this.State = state;
                 this.CallBack = callback;
             }
         }
 
-        System.Collections.Generic.Dictionary<Transition, Result<Control>> transitions;
+        System.Collections.Generic.Dictionary<Transition, Result> transitions;
 
         /// <summary>
         /// Current state of the state machine
@@ -48,15 +47,15 @@ namespace ImGui
         /// <remarks>DO NOT Set this property if you are not making a instant state transition!</remarks>
         public string CurrentState { get; set; }
 
-        public StateMachineEx(string initialState, string[] stateTransitions, Action<Control>[] callBacks)
+        public StateMachineEx(string initialState, string[] stateTransitions, Action<InputTextContext>[] callBacks)
         {
             CurrentState = initialState;
-            transitions = new System.Collections.Generic.Dictionary<Transition, Result<Control>>();
+            transitions = new System.Collections.Generic.Dictionary<Transition, Result>();
             for (int i = 0; i < stateTransitions.Length; i+=3)
             {
                 transitions.Add(
                     new Transition(stateTransitions[i], stateTransitions[i + 1]),
-                    new Result<Control>(stateTransitions[i + 2], callBacks[i / 3]));
+                    new Result(stateTransitions[i + 2], callBacks[i / 3]));
             }
         }
 
@@ -64,23 +63,19 @@ namespace ImGui
         /// 根据命令移动状态
         /// </summary>
         /// <param name="command">命令</param>
-        /// <param name="targetControl">目标控件</param>
+        /// <param name="context"></param>
         /// <returns>true:命令有效/false:命令无效</returns>
-        public bool MoveNext(string command, Control targetControl)
+        public bool MoveNext(string command, InputTextContext context)
         {
             Transition transition = new Transition(CurrentState, command);
-            Result<Control> result;
+            Result result;
             if (!transitions.TryGetValue(transition, out result))
             {
                 return false;
             }
             CurrentState = result.State;
-            if(result.CallBack != null)
-            {
-                result.CallBack(targetControl);
-            }
+            result.CallBack?.Invoke(context);
             return true;
         }
-#endif
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -18,6 +17,7 @@ namespace ImGui
         public readonly List<Window> Windows = new List<Window>();
         public Window CurrentWindow;
         public readonly List<Window> CurrentWindowStack = new List<Window>();
+        public InputTextState InputTextState = new InputTextState();
 
         private int hoverId;
         private int activeId;

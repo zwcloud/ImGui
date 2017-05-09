@@ -13,7 +13,8 @@ namespace ImGui
         /// <param name="fill_col"></param>
         /// <param name="border"></param>
         /// <param name="rounding"></param>
-        public static void RenderFrame(this DrawList drawList, Point p_min, Point p_max, Color fill_col, bool border, float rounding)
+        public static void RenderFrame(this DrawList drawList, Point p_min, Point p_max, Color fill_col,
+            bool border = false, float rounding = 15)
         {
             drawList.AddRectFilled(p_min, p_max, fill_col, rounding);
             if (border)
@@ -293,8 +294,8 @@ namespace ImGui
         /// <param name="state">state of the style</param>
         public static void DrawText(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state)
         {
-            var textmesh = TextMeshUtil.GetTextMesh(text, rect, style, state);
-            drawList.Append(textmesh);
+            var textmesh = TextMeshUtil.GetTextMesh(text, rect.Size, style, state);
+            drawList.Append(textmesh, new Vector(rect.X, rect.Y));
         }
 
         /// <summary>

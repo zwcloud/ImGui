@@ -19,15 +19,6 @@ namespace ImGui
                 layout.InsideVerticalGroup ? new[] { GUILayout.Height(size) } : new[] { GUILayout.Width(size) });
         }
 
-        private static Window GetCurrentWindow()
-        {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
-            window.Accessed = true;
-            return window;
-        }
-
         /// <summary>
         /// Put a expanded space inside a layout group.
         /// </summary>

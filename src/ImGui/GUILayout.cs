@@ -31,6 +31,11 @@ namespace ImGui
 
         #endregion
 
+        private static Window GetCurrentWindow()
+        {
+            return Utility.GetCurrentWindow();
+        }
+
         #region stack-layout
 
         public static void BeginHorizontal(string str_id, GUIStyle style = null, params LayoutOption[] options)

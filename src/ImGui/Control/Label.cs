@@ -6,7 +6,6 @@
         /// Create an auto-layout label.
         /// </summary>
         /// <param name="text">text to display on the label</param>
-        /// <param name="id">the unique id of this control</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         public static void Label(string text, params LayoutOption[] options)
         {

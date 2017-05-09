@@ -387,15 +387,47 @@ namespace ImGui
         /// Append a text mesh to this drawlist
         /// </summary>
         /// <param name="textMesh"></param>
-        public void Append(TextMesh textMesh)
+        /// <param name="offset"></param>
+        public void Append(TextMesh textMesh, Vector offset)
         {
             if (textMesh == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(textMesh));
             }
 
             DrawBuffer.Fill(textMesh.IndexBuffer, textMesh.VertexBuffer);
+
+            if (offset.LengthSquared > 0.001)
+            {
+                var vertexBuffer = DrawBuffer.VertexBuffer;
+                var total = textMesh.VertexBuffer.Count;
+                var count = 0;
+                while (count < total)
+                {
+                    var index = vertexBuffer.Count - 1 - count;
+                    var vertex = vertexBuffer[index];
+                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
+                    vertexBuffer[index] = vertex;
+                    count++;
+                }
+            }
+
             BezierBuffer.Fill(textMesh.BezierIndexBuffer, textMesh.BezierVertexBuffer);
+
+            if (offset.LengthSquared > 0.001)
+            {
+                var vertexBuffer = BezierBuffer.VertexBuffer;
+                var total = textMesh.BezierVertexBuffer.Count;
+                var count = 0;
+                while (count < total)
+                {
+                    var index = vertexBuffer.Count - 1 - count;
+                    var vertex = vertexBuffer[index];
+                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
+                    vertexBuffer[index] = vertex;
+                    count++;
+                }
+            }
         }
     }
 }

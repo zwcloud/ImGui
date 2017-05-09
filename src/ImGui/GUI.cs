@@ -8,6 +8,11 @@ namespace ImGui
     /// </summary>
     public partial class GUI
     {
+        private static Window GetCurrentWindow()
+        {
+            return Utility.GetCurrentWindow();
+        }
+
         #region Constant
 
         public const GUIState Normal = GUIState.Normal;

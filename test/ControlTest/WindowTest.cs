@@ -15,9 +15,6 @@ namespace ControlTest
         [Fact]
         public void WindowShouldWork()
         {
-            var value = 0.5;
-            var min = 0.0;
-            var max = 1.0;
             bool open = true;
 
             Application.Run(new Form1(() => {
