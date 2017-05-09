@@ -128,5 +128,53 @@ namespace ImGui
             return Argb(255, v, p, q);
         }
 
+        public void Darken(double amount)
+        {
+            var red = this.R;
+            var green = this.G;
+            var blue = this.B;
+
+            if (amount < 0)
+            {
+                amount = 1 + amount;
+                red *= amount;
+                green *= amount;
+                blue *= amount;
+            }
+            else
+            {
+                red = (255 - red) * amount + red;
+                green = (255 - green) * amount + green;
+                blue = (255 - blue) * amount + blue;
+            }
+
+            this.R = red;
+            this.G = green;
+            this.B = blue;
+        }
+
+        public static Color Darken(Color color, double amount)
+        {
+            var red = color.R;
+            var green = color.G;
+            var blue = color.B;
+
+            if (amount < 0)
+            {
+                amount = 1 + amount;
+                red *= amount;
+                green *= amount;
+                blue *= amount;
+            }
+            else
+            {
+                red = (255 - red) * amount + red;
+                green = (255 - green) * amount + green;
+                blue = (255 - blue) * amount + blue;
+            }
+
+            return new Color(red, green, blue, color.a);
+        }
+
     }
 }

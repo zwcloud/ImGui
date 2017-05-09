@@ -6,8 +6,8 @@
         /// Create a toggle (check-box) with a label.
         /// </summary>
         /// <param name="rect">position and size of the control</param>
+        /// <param name="label">label</param>
         /// <param name="value">Is this toggle checked or unchecked?</param>
-        /// <param name="id">the unique id of this control</param>
         /// <returns>new value of the toggle</returns>
         public static bool Toggle(Rect rect, string label, bool value)
         {
@@ -56,73 +56,32 @@
             }
 
             // ui painting
-            /// |←16→|
-            /// |    |---------------+
-            /// |    |               |
-            /// +----+               |
-            /// | √  | label         |
-            /// +----+               |
-            ///      |               |
-            ///      +---------------+
+            // |←16→|
+            // |    |---------------+
+            // |    |               |
+            // +----+               |
+            // | √  | label         |
+            // +----+               |
+            //      |               |
+            //      +---------------+
             {
+                var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
                 var boxRect = new Rect(rect.X, rect.Y + (rect.Height - 16) / 2, 16, 16);
-                var textRect = new Rect(rect.X + 16, rect.Y, rect.Width - 16, rect.Height);
+                var textRect = new Rect(rect.X + 16 + spacing, rect.Y, rect.Width - 16 - spacing, rect.Height);
 
                 // box
-                var style = GUISkin.Instance[GUIControlName.Toggle];
-                if (result)
+                var filledBoxColor = Color.Rgb(0, 151, 167);
+                var boxBorderColor = Color.White;
+                var tickColor = Color.Rgb(48, 48, 48);
+                d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, filledBoxColor);//□
+                d.AddRect(boxRect.TopLeft, boxRect.BottomRight, boxBorderColor, 0, 0, 2);//□
+                if (result)//√
                 {
-                    if (state == GUI.Normal)
-                    {
-                        //□
-                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(0, 120, 215));
-                        //√
-                        var h = boxRect.Height;
-                        d.PathMoveTo(new Point(0.125f* h+ boxRect.X, 0.50f* h+ boxRect.Y));
-                        d.PathLineTo(new Point(0.333f* h+ boxRect.X, 0.75f* h+ boxRect.Y));
-                        d.PathLineTo(new Point(0.875f* h+ boxRect.X, 0.25f* h+ boxRect.Y));
-                        d.PathStroke(Color.White, false, 2);
-                    }
-                    else if (state == GUI.Hover)
-                    {
-                        //□
-                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(0, 120, 215));
-                        //□
-                        d.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Black, 0, 0, 2);
-                        //√
-                        var h = boxRect.Height;
-                        d.PathMoveTo(new Point(0.125f* h+ boxRect.X, 0.50f* h+ boxRect.Y));
-                        d.PathLineTo(new Point(0.333f* h+ boxRect.X, 0.75f* h+ boxRect.Y));
-                        d.PathLineTo(new Point(0.875f* h+ boxRect.X, 0.25f* h+ boxRect.Y));
-                        d.PathStroke(Color.White, false, 2);
-                    }
-                    else
-                    {
-                        //□
-                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(51, 51, 51));
-                        //√
-                        var h = boxRect.Height;
-                        d.PathMoveTo(new Point(0.125f* h+ boxRect.X, 0.50f* h+ boxRect.Y));
-                        d.PathLineTo(new Point(0.333f* h+ boxRect.X, 0.75f* h+ boxRect.Y));
-                        d.PathLineTo(new Point(0.875f* h+ boxRect.X, 0.25f* h+ boxRect.Y));
-                        d.PathStroke(Color.Rgb(102, 102, 102), false, 2);
-                    }
-                }
-                else
-                {
-                    //□
-                    if (state == GUI.Normal)
-                    {
-                        d.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(102, 102, 102), 0, 0, 2);
-                    }
-                    else if (state == GUI.Hover)
-                    {
-                        d.AddRect(boxRect.TopLeft, boxRect.BottomRight, Color.Black, 0, 0, 2);
-                    }
-                    else
-                    {
-                        d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, Color.Rgb(102, 102, 102));
-                    }
+                    var h = boxRect.Height;
+                    d.PathMoveTo(new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y));
+                    d.PathLineTo(new Point(0.333f * h + boxRect.X, 0.75f * h + boxRect.Y));
+                    d.PathLineTo(new Point(0.875f * h + boxRect.X, 0.25f * h + boxRect.Y));
+                    d.PathStroke(tickColor, false, 2);
                 }
                 // label
                 d.DrawBoxModel(textRect, label, GUISkin.Instance[GUIControlName.Label]);

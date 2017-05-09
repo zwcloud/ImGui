@@ -112,8 +112,8 @@
 
                 var minX = leftPoint.X;
                 var maxX = rightPoint.X;
-                var currentPoint = leftPoint + new Vector((value - minValue) / (maxValue - minValue) * (maxX - minX),
-                                       0);
+                var currentPoint = leftPoint
+                    + new Vector((value - minValue) / (maxValue - minValue) * (maxX - minX), 0);
 
                 var topArcCenter = currentPoint + new Vector(0, b);
                 var bottomArcCenter = currentPoint + new Vector(0, -b);
