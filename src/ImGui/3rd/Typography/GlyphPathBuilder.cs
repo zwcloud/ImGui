@@ -106,7 +106,7 @@ namespace Typography.Rendering
             else
             {
                 //read output from glyph points
-                tx.Read(this._outputGlyphPoints, this._outputContours, sizeInPoints, _recentPixelScale, offsetX, offsetY);
+                tx.Read(this._outputGlyphPoints, this._outputContours, _recentPixelScale, offsetX, offsetY + sizeInPoints);
             }
         }
         public float RecentPixelScale

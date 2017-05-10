@@ -41,6 +41,7 @@ namespace ImGui
         /// text building callbacks used to retrive text rendering data
         /// </summary>
         /// <param name="offset">offset of the text base-point against the rectangle position(bottom-left of the rectangle)</param>
+        /// <param name="textMesh"></param>
         void Build(Point offset, TextMesh textMesh);
 
         /// <summary>
@@ -62,11 +63,11 @@ namespace ImGui
         /// Given a character index and whether the caret is on the leading or trailing edge of that position.
         /// </summary>
         /// <param name="textPosition">character index</param>
-        /// <param name="isTrailingHit">whether the caret is on the leading or trailing edge of that position</param>
+        /// <param name="isTrailing">whether the caret is on the leading or trailing edge of that position</param>
         /// <param name="pointX">position x</param>
         /// <param name="pointY">position y</param>
         /// <param name="height">the height of the text</param>
-        void IndexToXY(uint textPosition, bool isTrailingHit,
+        void IndexToXY(uint textPosition, bool isTrailing,
             out float pointX, out float pointY, out float height);
     }
 }

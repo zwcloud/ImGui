@@ -23,7 +23,7 @@ namespace Typography.Rendering
         {
             FontSizeInPoints = 14;
             ScriptLang = ScriptLangs.Latin;
-        }        
+        }
 
         /// <summary>
         /// Font file path
@@ -33,10 +33,10 @@ namespace Typography.Rendering
             get { return currentFontFile; }
             set
             {
-                if (currentFontFile != value) 
+                if (currentFontFile != value)
                 {
                     currentFontFile = value;
-                    
+
                     using (var fs = Utility.ReadFile(currentFontFile))
                     {
                         var reader = new OpenFontReader();
@@ -117,6 +117,5 @@ namespace Typography.Rendering
             glyphLayout.MeasureString(textBuffer, startAt, len, out strBox, scale);
             return new Size(strBox.width, strBox.CalculateLineHeight());
         }
-
     }
 }
