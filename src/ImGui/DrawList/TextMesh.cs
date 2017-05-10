@@ -368,8 +368,8 @@ namespace ImGui
 
     class TextMeshUtil
     {
-        static Dictionary<int, TextMesh> TextMeshCache = new Dictionary<int, TextMesh>();
-        static Dictionary<int, ITextContext> TextContextCache = new Dictionary<int, ITextContext>();
+        static readonly Dictionary<int, TextMesh> TextMeshCache = new Dictionary<int, TextMesh>();
+        static readonly Dictionary<int, ITextContext> TextContextCache = new Dictionary<int, ITextContext>();
 
         static int GetTextMeshId(string text, Size size, GUIStyle style, GUIState state)
         {

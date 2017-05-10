@@ -23,7 +23,7 @@ namespace ImGui
             TextAlignment alignment)
         {
             return new TypographyTextContext(
-                text, fontFamily, fontSize,//TODO confirm fontSize matters
+                text, fontFamily, fontSize,
                 stretch, style, weight,
                 maxWidth, maxHeight, alignment);
         }

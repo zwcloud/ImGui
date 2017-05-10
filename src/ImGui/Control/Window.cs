@@ -71,6 +71,9 @@ namespace ImGui
         {
             int seed = IDStack.Peek();
             var id = Hash(seed, int_id);
+
+            GUIContext g = Form.current.uiContext;
+            g.KeepAliveID(id);
             return id;
         }
 
@@ -145,6 +148,12 @@ namespace ImGui
         internal Rect GetRect(int id, Size size, GUIStyle style, LayoutOption[] options)
         {
             var rect = StackLayout.GetRect(id, size, style, options);
+            rect.Offset(this.Position.X, this.TitleBarHeight + this.Position.Y);
+            return rect;
+        }
+
+        internal Rect GetRect(Rect rect)
+        {
             rect.Offset(this.Position.X, this.TitleBarHeight + this.Position.Y);
             return rect;
         }

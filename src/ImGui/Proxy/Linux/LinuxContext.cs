@@ -22,9 +22,8 @@ namespace ImGui
             int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
-            var fontSizeInDip = Utility.PointToDip(fontSize);
             return new TypographyTextContext(
-                text, fontFamily, fontSizeInDip,
+                text, fontFamily, fontSize,
                 stretch, style, weight,
                 maxWidth, maxHeight, alignment);
         }

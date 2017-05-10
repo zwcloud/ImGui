@@ -125,7 +125,7 @@ namespace TextRenderingTest
             Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
             Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
 
-            drawList.Append(textMesh);
+            drawList.Append(textMesh, Vector.Zero);
             expectedVertexCount += textMesh.VertexBuffer.Count;
             expectedIndexCount += textMesh.IndexBuffer.Count;
             Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
@@ -143,7 +143,7 @@ namespace TextRenderingTest
             Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
             Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
 
-            drawList.Append(anotherTextMesh);
+            drawList.Append(anotherTextMesh, Vector.Zero);
             expectedVertexCount += anotherTextMesh.VertexBuffer.Count;
             expectedIndexCount += anotherTextMesh.IndexBuffer.Count;
             Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);

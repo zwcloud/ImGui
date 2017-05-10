@@ -9,6 +9,8 @@ namespace ImGui
     {
         public static string Textbox(Rect rect, string label, string text)
         {
+            var window = GetCurrentWindow();
+            rect = window.GetRect(rect);
             return DoTextbox(rect, label, text);
         }
 
@@ -171,13 +173,13 @@ namespace ImGui
                             new Point(pointX, pointY),
                             new Point(selectPointX, selectPointY + caretHeight));
                         selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                        d.AddRectFilled(selectionRect.Min, selectionRect.Max, Color.Argb(100, 100, 100, 100));
+                        d.AddRectFilled(selectionRect.Min, selectionRect.Max, Color.Argb(100, 10, 102, 214));
                     }
 
                     //Draw caret
                     d.PathMoveTo(caretTopPoint);
                     d.PathLineTo(caretBottomPoint);
-                    d.PathStroke(Color.Argb(caretAlpha, 0, 0, 0), false, 2);
+                    d.PathStroke(Color.Argb(caretAlpha, 255, 255, 255), false, 2);
                 }
                 else
                 {

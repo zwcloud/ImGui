@@ -10,7 +10,7 @@ namespace ImGui
         /// <summary>
         /// size of the font in the text
         /// </summary>
-        int FontSize { get; }
+        float FontSize { get; }
 
         /// <summary>
         /// alignment of the text in the rectangle
@@ -18,19 +18,14 @@ namespace ImGui
         TextAlignment Alignment { get; set; }
 
         /// <summary>
-        /// max width of the text
+        /// position of the layout box
         /// </summary>
-        int MaxWidth { get; set; }
+        Point Position { get; }
 
         /// <summary>
-        /// max height of the text
+        /// size of the layout box
         /// </summary>
-        int MaxHeight { get; set; }
-
-        /// <summary>
-        /// the layout box
-        /// </summary>
-        Rect Rect { get; }
+        Size Size { get; }
 
         /// <summary>
         /// the text
@@ -38,11 +33,11 @@ namespace ImGui
         string Text { get; set; }
 
         /// <summary>
-        /// text building callbacks used to retrive text rendering data
+        /// build text glyphs to retrive text rendering data (line segments and bezier curves)
         /// </summary>
         /// <param name="offset">offset of the text base-point against the rectangle position(bottom-left of the rectangle)</param>
-        /// <param name="textMesh"></param>
-        void Build(Point offset, TextMesh textMesh);
+        /// <param name="builder"></param>
+        void Build(Point offset, ITextPathBuilder builder);
 
         /// <summary>
         /// get space that the text occupies

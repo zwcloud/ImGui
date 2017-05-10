@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using Typography.OpenFont;
 using Typography.Rendering;
+using Typography.TextLayout;
 
 namespace ImGui
 {
@@ -9,87 +12,219 @@ namespace ImGui
     /// <remarks>TypographyTextContext is an pure C# implementation of <see cref="ITextContext"/>.</remarks>
     class TypographyTextContext : ITextContext
     {
-        private static TextPrinter thePrinter = new TextPrinter();//use a single and unique text-printer
+        private readonly List<GlyphPlan> glyphPlans = new List<GlyphPlan>();
+        private readonly GlyphLayout glyphLayout = new GlyphLayout();
+        private GlyphTranslatorToPath glyphPathTranslator;
+        private GlyphPathBuilder glyphPathBuilder;
 
-        public TypographyTextContext(string text, string fontFamily, float fontSizeInDip,
+        private char[] textCharacters;
+        private string text;
+        private string fontFamily;
+        private HintTechnique HintTechnique { get; set; }
+        private PositionTechnique PositionTechnique { get; set; }
+        private bool EnableLigature { get; set; }
+        private Typeface CurrentTypeFace { get; set; }
+
+        private static Dictionary<string, Typeface> typefaceCache = new Dictionary<string, Typeface>();
+
+        public TypographyTextContext(string text, string fontFamily, float fontSize,
             FontStretch stretch, FontStyle style, FontWeight weight,
             int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
-            thePrinter.FontFilename = fontFamily;
-
-            this.FontSize = (int)fontSizeInDip;
-            this.Alignment = alignment;
-            this.MaxWidth = maxWidth;
-            this.MaxHeight = maxHeight;
             this.Text = text;
+            this.FontFamily = fontFamily;
+            this.FontSize = fontSize;
+            this.Alignment = alignment;
         }
 
         #region Implementation of ITextContext
 
         //TODO Implement those properties when Typography is ready.
 
-        public int FontSize
+        /// <summary>
+        /// Font file path
+        /// </summary>
+        public string FontFamily
         {
-            get;
-            set;
+            get { return fontFamily; }
+            set
+            {
+                if (fontFamily != value)
+                {
+                    fontFamily = value;
+
+                    Typeface typeFace;
+                    if(!typefaceCache.TryGetValue(fontFamily, out typeFace))
+                    {
+                        using (var fs = Utility.ReadFile(fontFamily))
+                        {
+                            var reader = new OpenFontReader();
+                            Profile.Start("OpenFontReader.Read");
+                            typeFace = reader.Read(fs);
+                            Profile.End();
+                        }
+                        typefaceCache.Add(fontFamily, typeFace);
+                    }
+                    this.CurrentTypeFace = typeFace;
+
+                    //2. glyph builder
+                    glyphPathBuilder = new GlyphPathBuilder(CurrentTypeFace);
+                    glyphPathBuilder.UseTrueTypeInstructions = false; //reset
+                    glyphPathBuilder.UseVerticalHinting = false; //reset
+                    switch (this.HintTechnique)
+                    {
+                        case HintTechnique.TrueTypeInstruction:
+                            glyphPathBuilder.UseTrueTypeInstructions = true;
+                            break;
+                        case HintTechnique.TrueTypeInstruction_VerticalOnly:
+                            glyphPathBuilder.UseTrueTypeInstructions = true;
+                            glyphPathBuilder.UseVerticalHinting = true;
+                            break;
+                        case HintTechnique.CustomAutoFit:
+                            //custom agg autofit 
+                            break;
+                    }
+
+                    //3. glyph translater
+                    glyphPathTranslator = new GlyphTranslatorToPath();
+
+                    //4. Update GlyphLayout
+                    glyphLayout.ScriptLang = ScriptLangs.Latin;
+                    glyphLayout.PositionTechnique = this.PositionTechnique;
+                    glyphLayout.EnableLigature = this.EnableLigature;
+                }
+            }
         }
 
-        public TextAlignment Alignment
-        {
-            get;
-            set;
-        }
+        public float FontSize { get; }
 
-        public int MaxWidth
-        {
-            get;
-            set;
-        }
+        public TextAlignment Alignment { get; set; }
 
-        public int MaxHeight
-        {
-            get;
-            set;
-        }
+        public Point Position { get; private set; }
 
-        public Rect Rect
-        {
-            get;
-            set;
-        }
+        public Size Size { get; private set; }
 
         public string Text
         {
-            get;
-            set;
+            get => text;
+            set
+            {
+                text = value;
+                textCharacters = text.ToCharArray();
+            }
         }
 
-        public void Build(Point offset, TextMesh textMesh)
+        public void Build(Point offset, ITextPathBuilder textMesh)
         {
             //Profile.Start("TypographyTextContext.Build");
-            thePrinter.FontSizeInPoints = this.FontSize;
-            thePrinter.Draw(textMesh, this.Text.ToCharArray(), (float)offset.X, (float)offset.Y);//TODO remove ToCharArray
+            // layout glyphs with selected layout technique
+            this.Position = offset;
+            glyphPlans.Clear();
+            glyphLayout.Typeface = this.CurrentTypeFace;
+            glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, glyphPlans, null);
+
+            // render each glyph
+            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            glyphPathTranslator.PathBuilder = textMesh;
+            for (var i = 0; i < glyphPlans.Count; ++i)
+            {
+                glyphPathTranslator.Reset();
+                var glyphPlan = glyphPlans[i];
+                glyphPathBuilder.BuildFromGlyphIndex(glyphPlan.glyphIndex, this.FontSize);
+                glyphPathBuilder.ReadShapes(glyphPathTranslator, this.FontSize, (float)offset.X + glyphPlan.x * scale, (float)offset.Y + glyphPlan.y * scale);
+            }
+
+            int j = glyphPlans.Count;
+            Typeface currentTypeface = glyphLayout.Typeface;
+            MeasuredStringBox strBox;
+            if (j == 0)
+            {
+                strBox = new MeasuredStringBox(0,
+                    currentTypeface.Ascender * scale,
+                    currentTypeface.Descender * scale,
+                    currentTypeface.LineGap * scale);
+
+            }
+            else
+            {
+                GlyphPlan lastOne = glyphPlans[j - 1];
+                strBox = new MeasuredStringBox((lastOne.x + lastOne.advX) * scale,
+                    currentTypeface.Ascender * scale,
+                    currentTypeface.Descender * scale,
+                    currentTypeface.LineGap * scale);
+            }
+            this.Size = new Size(strBox.width, strBox.CalculateLineHeight());
+
             //Profile.End();
         }
 
         public Size Measure()
         {
             //Profile.Start("TypographyTextContext.Measure");
-            thePrinter.FontSizeInPoints = this.FontSize;
-            var size = thePrinter.Measure(this.Text.ToCharArray(), 0, this.Text.Length);
+            this.Position = Point.Zero;
+            glyphLayout.Typeface = this.CurrentTypeFace;
+            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            MeasuredStringBox strBox;
+            glyphLayout.MeasureString(this.textCharacters, 0, this.Text.Length, out strBox, scale);
+            this.Size = new Size(strBox.width, strBox.CalculateLineHeight());
             //Profile.End();
-            return size;
+            return this.Size;
         }
 
         public uint XyToIndex(float pointX, float pointY, out bool isInside)
         {
-            throw new NotImplementedException();
+            //TODO handle y when Typography is ready
+            var position = this.Position;
+            isInside = false;
+            if (pointX < position.X)
+            {
+                return 0;
+            }
+
+            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            int i = 0;
+            for (i = 0; i < glyphPlans.Count; i++)
+            {
+                var glyph = glyphPlans[i];
+                var minX = position.X + glyph.x * scale;
+                var maxX = minX + glyph.advX * scale;
+                if(minX <= pointX && pointX < maxX)
+                {
+                    isInside = true;
+                    return (uint)i;
+                }
+            }
+            return (uint)i;
         }
 
-        public void IndexToXY(uint textPosition, bool isTrailingHit, out float pointX, out float pointY, out float height)
+        public void IndexToXY(uint charIndex, bool isTrailing, out float pointX, out float pointY, out float height)
         {
-            throw new NotImplementedException();
+            //TODO handle y when Typography is ready
+            height = (float)(this.Size.Height);//TODO use real line height instead of layout-box height
+            pointY = (float)(Position.Y);
+
+            if (glyphPlans.Count == 0)
+            {
+                pointX = (float)(Position.X - height);
+                return;
+            }
+
+            if(charIndex > glyphPlans.Count - 1)
+            {
+                charIndex = (uint)(glyphPlans.Count - 1);
+            }
+            var position = this.Position;
+            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            var lastGlyph = glyphPlans[(int)charIndex];
+            if (isTrailing)
+            {
+                pointX = (float)(Position.X + (lastGlyph.x + lastGlyph.advX) * scale);
+            }
+            else
+            {
+                pointX = (float)(Position.X + lastGlyph.x * scale);
+            }
         }
 
         #endregion
@@ -98,7 +233,7 @@ namespace ImGui
 
         public void Dispose()
         {
-            // nothing: no native res is used.
+            // No native resource is used.
         }
 
         #endregion
