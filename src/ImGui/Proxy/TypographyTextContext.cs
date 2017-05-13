@@ -218,6 +218,10 @@ namespace ImGui
             {
                 return 0;
             }
+            if(pointX > position.X + this.Size.Width)
+            {
+                return (uint)glyphPlans.Count;
+            }
 
             var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
             int i = 0;
@@ -250,6 +254,7 @@ namespace ImGui
             if(charIndex > glyphPlans.Count - 1)
             {
                 charIndex = (uint)(glyphPlans.Count - 1);
+                isTrailing = true;
             }
             var position = this.Position;
             var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
