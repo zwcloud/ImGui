@@ -17,7 +17,7 @@ namespace ControlTest
             var text = "Hello ImGui!你好";
 
             Application.Run(new Form1(() => {
-                text = GUI.Textbox(new Rect(10, 10, 200, 30), "My Name", text);
+                text = GUILayout.Textbox("Name", new Size(200, 30), text);
             }));
         }
     }

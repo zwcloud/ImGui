@@ -58,8 +58,8 @@
             //      +---------------+
             {
                 var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-                var boxRect = new Rect(rect.X, rect.Y + (rect.Height - 16) / 2, 16, 16);
-                var textRect = new Rect(rect.X + 16 + spacing, rect.Y, rect.Width - 16 - spacing, rect.Height);
+                var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
+                var textRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing), rect.Height);
 
                 // box
                 var filledBoxColor = Color.Rgb(0, 151, 167);

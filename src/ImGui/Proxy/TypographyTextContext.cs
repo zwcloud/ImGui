@@ -124,16 +124,7 @@ namespace ImGui
             glyphLayout.Typeface = this.CurrentTypeFace;
             glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, glyphPlans, null);
 
-            // render each glyph
             var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
-            glyphPathTranslator.PathBuilder = textMesh;
-            for (var i = 0; i < glyphPlans.Count; ++i)
-            {
-                glyphPathTranslator.Reset();
-                var glyphPlan = glyphPlans[i];
-                glyphPathBuilder.BuildFromGlyphIndex(glyphPlan.glyphIndex, this.FontSize);
-                glyphPathBuilder.ReadShapes(glyphPathTranslator, this.FontSize, (float)offset.X + glyphPlan.x * scale, (float)offset.Y + glyphPlan.y * scale);
-            }
 
             int j = glyphPlans.Count;
             Typeface currentTypeface = glyphLayout.Typeface;
@@ -144,7 +135,6 @@ namespace ImGui
                     currentTypeface.Ascender * scale,
                     currentTypeface.Descender * scale,
                     currentTypeface.LineGap * scale);
-
             }
             else
             {
@@ -154,7 +144,23 @@ namespace ImGui
                     currentTypeface.Descender * scale,
                     currentTypeface.LineGap * scale);
             }
-            this.Size = new Size(strBox.width, strBox.CalculateLineHeight());
+            var lineHeight = strBox.CalculateLineHeight();
+            this.Size = new Size(strBox.width, lineHeight);
+
+            // render each glyph
+            glyphPathTranslator.PathBuilder = textMesh;
+            for (var i = 0; i < glyphPlans.Count; ++i)
+            {
+                glyphPathTranslator.Reset();
+                var glyphPlan = glyphPlans[i];
+                glyphPathBuilder.BuildFromGlyphIndex(glyphPlan.glyphIndex, this.FontSize);
+                glyphPathBuilder.ReadShapes(
+                    glyphPathTranslator, this.FontSize,
+                    (float)offset.X + glyphPlan.x * scale,
+                    (float)offset.Y + glyphPlan.y * scale
+                        + lineHeight//this extra  offset moves all shapes from (0, 0) to (0, line height)
+                    );
+            }
 
             //Profile.End();
         }
@@ -165,10 +171,41 @@ namespace ImGui
             this.Position = Point.Zero;
             glyphLayout.Typeface = this.CurrentTypeFace;
             var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
-            MeasuredStringBox strBox;
-            glyphLayout.MeasureString(this.textCharacters, 0, this.Text.Length, out strBox, scale);
-            this.Size = new Size(strBox.width, strBox.CalculateLineHeight());
+            if(string.IsNullOrEmpty(this.Text))
+            {
+                this.Size = Size.Zero;
+            }
+            else
+            {
+                if(glyphPlans.Count == 0)
+                {
+                    glyphLayout.Typeface = this.CurrentTypeFace;
+                    glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, glyphPlans, null);
+                }
+
+                int j = glyphPlans.Count;
+                Typeface currentTypeface = glyphLayout.Typeface;
+                MeasuredStringBox strBox;
+                if (j == 0)
+                {
+                    strBox = new MeasuredStringBox(0,
+                        currentTypeface.Ascender * scale,
+                        currentTypeface.Descender * scale,
+                        currentTypeface.LineGap * scale);
+                }
+                else
+                {
+                    GlyphPlan lastOne = glyphPlans[j - 1];
+                    strBox = new MeasuredStringBox((lastOne.x + lastOne.advX) * scale,
+                        currentTypeface.Ascender * scale,
+                        currentTypeface.Descender * scale,
+                        currentTypeface.LineGap * scale);
+                }
+                var lineHeight = strBox.CalculateLineHeight();
+                this.Size = new Size(strBox.width, lineHeight);
+            }
             //Profile.End();
+
             return this.Size;
         }
 

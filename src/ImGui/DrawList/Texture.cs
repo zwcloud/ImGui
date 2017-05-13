@@ -23,6 +23,7 @@ namespace ImGui
             {
                 texture = Application.platformContext.CreateTexture();
                 texture.LoadImage(filePath);
+                TextureCache.Add(id, texture);
             }
 
             return texture;

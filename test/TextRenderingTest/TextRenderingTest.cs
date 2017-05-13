@@ -211,7 +211,7 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldRenderAStringInMeasuredRectangle()
         {
-            string text = "ABCDE";
+            string text = "Hello ImGui!你好";
             GUIStyle style = new GUIStyle();
             style.FontSize = 20;
 

@@ -6,9 +6,10 @@ public class TestUI
     bool toggleOn = false;
     bool a = false;
     string active_id;
-    double widthScale = 0.5f;
-    double heightScale = 0.5f;
+    double hSliderValue = 0.5f;
+    double vSliderValue = 0.5f;
     ITexture image;
+    string text = "ABCDEFGHI";
 
     public void OnGUI()
     {
@@ -37,7 +38,7 @@ public class TestUI
                     }
                     GUILayout.EndHorizontal();
 
-                    toggleOn = GUILayout.Toggle("CheckBox", toggleOn);
+                    toggleOn = GUILayout.Toggle("Toggle", toggleOn);
 
                     //GUILayout.BeginHorizontal("H2");
                     //{
@@ -47,18 +48,14 @@ public class TestUI
                     //}
                     //GUILayout.EndHorizontal();
 
-                    widthScale = GUILayout.Slider("Width Scale", widthScale, 0, 1.0);
-                    GUILayout.BeginHorizontal("H3");
-                    {
-                        heightScale = GUILayout.VSlider("Height Scale", heightScale, 0, 1.0);
-                        var rect = GUILayout.GetRect(new Size(image.Width, image.Height), "Image");
-                        rect.Width = image.Width * widthScale;
-                        rect.Height = image.Height * heightScale;
-                        GUI.Image(rect, image);
-                    }
+                    hSliderValue = GUILayout.Slider("Horizontal Slider", hSliderValue, 0, 1.0);
+                    GUILayout.Image("Image/trees.jpg");
+                    text = GUILayout.Textbox("Text Box", new Size(200, 30), text);
+
+                    GUILayout.BeginHorizontal("Vertical Sliders");
+                    vSliderValue = GUILayout.VSlider("Vertical Slider", vSliderValue, 0, 1.0);
                     GUILayout.EndHorizontal();
                 }
-
                 GUILayout.EndVertical();
             }
             GUILayout.EndHorizontal();

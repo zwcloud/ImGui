@@ -75,10 +75,11 @@
                 return;
 
             var id = window.GetID(filePath);
-            Size size = style.CalcSize(filePath, GUIState.Normal, options);
+            var texture = TextureUtil.GetTexture(filePath);
+            Size size = style.CalcSize(texture, GUIState.Normal, options);
             var rect = window.GetRect(id, size, style,
                 new[] { GUILayout.Width(size.Width), GUILayout.Height(size.Height) });
-            GUI.Image(rect, filePath, style);
+            GUI.DoImage(rect, texture, style);
         }
 
         internal static void Image(ITexture texture, params LayoutOption[] options)
@@ -98,7 +99,7 @@
             Size size = style.CalcSize(texture, GUIState.Normal, options);
             var rect = window.GetRect(id, size, style,
                 new[] { GUILayout.Width(size.Width), GUILayout.Height(size.Height) });
-            GUI.Image(rect, texture, style);
+            GUI.DoImage(rect, texture, style);
         }
     }
 }

@@ -68,30 +68,27 @@ namespace ImGui
             }
             set
             {
-                if (value != mouseCursor)
+                mouseCursor = value;
+                switch (mouseCursor)
                 {
-                    mouseCursor = value;
-                    switch (mouseCursor)
-                    {
-                        case Cursor.Default:
-                            SetCursor(NormalCursurHandle);
-                            break;
-                        case Cursor.Text:
-                            SetCursor(IBeamCursurHandle);
-                            break;
-                        case Cursor.EwResize:
-                            SetCursor(HorizontalResizeCursurHandle);
-                            break;
-                        case Cursor.NsResize:
-                            SetCursor(VerticalResizeCursurHandle);
-                            break;
-                        case Cursor.NeswResize:
-                            SetCursor(MoveCursurHandle);
-                            break;
-                        default:
-                            RevertCursors();
-                            break;
-                    }
+                    case Cursor.Default:
+                        SetCursor(NormalCursurHandle);
+                        break;
+                    case Cursor.Text:
+                        SetCursor(IBeamCursurHandle);
+                        break;
+                    case Cursor.EwResize:
+                        SetCursor(HorizontalResizeCursurHandle);
+                        break;
+                    case Cursor.NsResize:
+                        SetCursor(VerticalResizeCursurHandle);
+                        break;
+                    case Cursor.NeswResize:
+                        SetCursor(MoveCursurHandle);
+                        break;
+                    default:
+                        RevertCursors();
+                        break;
                 }
             }
         }

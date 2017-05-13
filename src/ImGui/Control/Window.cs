@@ -108,7 +108,7 @@ namespace ImGui
 
         public Rect Rect => new Rect(Position, Size);
 
-        public double TitleBarHeight => HeaderStyle.PaddingVertical + HeaderStyle.PaddingVertical + HeaderStyle.FontSize*96.0/72.0;
+        public double TitleBarHeight => HeaderStyle.PaddingVertical + HeaderStyle.PaddingVertical + 32;
 
         public Rect TitleBarRect => new Rect(Position, Size.Width, TitleBarHeight);
 
@@ -283,7 +283,7 @@ namespace ImGui
                 if (window.Collapsed)
                 {
                     // Draw title bar only
-                    window.DrawList.RenderFrame(title_bar_rect.TopLeft, title_bar_rect.BottomRight, new Color(0.40f, 0.40f, 0.80f, 0.20f));
+                    window.DrawList.AddRectFilled(title_bar_rect.Min, title_bar_rect.Max, new Color(0.40f, 0.40f, 0.80f, 0.20f));
                 }
                 else
                 {

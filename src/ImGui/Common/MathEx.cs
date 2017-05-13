@@ -9,6 +9,22 @@ namespace ImGui
     internal class MathEx
     {
         /// <summary>
+        /// Make sure value is greater or equal to zero
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double ClampTo0(double value)
+        {
+            if(value < 0)
+            {
+                return 0;
+            }
+            return value;
+        }
+
+
+        /// <summary>
         /// Clamps a value between a minimum float and maximum double value.
         /// </summary>
         /// <param name="value"></param>

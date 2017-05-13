@@ -5,6 +5,22 @@ using Key = ImGui.Key;
 
 namespace ImGui
 {
+    public partial class GUILayout
+    {
+        public static string Textbox(string label, Size size, string text, params LayoutOption[] options)
+        {
+            return Textbox(label, size, text, GUISkin.Instance[GUIControlName.TextBox], options);
+        }
+        public static string Textbox(string label, Size size, string text, GUIStyle style, params LayoutOption[] options)
+        {
+            Window window = GetCurrentWindow();
+
+            int id = window.GetID(label);
+            Rect rect = window.GetRect(id, size, style, options);
+            return GUI.DoTextbox(rect, label, text);
+        }
+    }
+
     public partial class GUI
     {
         public static string Textbox(Rect rect, string label, string text)
@@ -14,27 +30,31 @@ namespace ImGui
             return DoTextbox(rect, label, text);
         }
 
-        private static string DoTextbox(Rect rect, string label, string text)
+        internal static string DoTextbox(Rect rect, string label, string text)
         {
             var g = Form.current.uiContext;
             var window = GetCurrentWindow();
             var id = window.GetID(label);
 
+            var mousePos = Input.Mouse.MousePos;
+            var hovered = rect.Contains(mousePos);
             // control logic
             var style = GUISkin.Instance[GUIControlName.TextBox];
-            //if (id != g.ActiveId)//not editing
-            //{
-            //    var d = window.DrawList;
-            //    d.DrawText(rect, text, style, GUIState.Normal);
-            //    d.AddRect(rect.Min, rect.Max, Color.White);
-            //    return text;
-            //}
+            var uiState = Form.current.uiContext;
+            uiState.KeepAliveID(id);
+            if (hovered)
+            {
+                uiState.SetHoverID(id);
 
-            //editing
+                if (Input.Mouse.LeftButtonPressed)
+                {
+                    uiState.SetActiveID(id);
+                }
+            }
             if (g.InputTextState.inputTextContext.Id != id)//editing text box changed
             {
                 g.InputTextState.stateMachine.CurrentState = "Normal";//reset state
-                g.InputTextState.inputTextContext = new InputTextContext()//set input text context data
+                g.InputTextState.inputTextContext = new InputTextContext()//reset input text context data
                 {
                     Id = id,
                     CaretIndex = 0,
@@ -46,6 +66,9 @@ namespace ImGui
                     Text = text
                 };
             }
+
+            g.InputTextState.inputTextContext.Rect = rect;
+            g.InputTextState.inputTextContext.Style = style;
 
             var stateMachine = g.InputTextState.stateMachine;
             var context = g.InputTextState.inputTextContext;
@@ -91,6 +114,10 @@ namespace ImGui
                     if (Input.Mouse.LeftButtonPressed)
                     {
                         stateMachine.MoveNext(TextBoxCommand.ExitEditOut, context);
+                        if(g.ActiveId == id)
+                        {
+                            uiState.SetActiveID(0);
+                        }
                     }
                 }
 
@@ -100,8 +127,6 @@ namespace ImGui
                 string.Format("TextBox<{0}> {1}=>{2} CaretIndex: {3}, SelectIndex: {4}",
                     id, A, B, context.CaretIndex, context.SelectIndex));
 #endif
-
-                Input.Mouse.Cursor = insideRect ? Cursor.Text : Cursor.Default;
                 if (stateMachine.CurrentState == TextBoxState.Active)
                 {
                     stateMachine.MoveNext(TextBoxCommand.DoEdit, context);
@@ -112,17 +137,12 @@ namespace ImGui
                 }
                 stateMachine.MoveNext(TextBoxCommand.MoveCaretKeyboard, context);
             }
-            bool active = stateMachine.CurrentState.StartsWith("Active");
-            if (active)
-            {
-                g.SetActiveID(id);
-            }
 
             // ui painting
             {
                 var d = window.DrawList;
                 var contentRect = Utility.GetContentRect(rect, style);
-                if (active)
+                if (g.ActiveId == id)
                 {
                     //Calculate positions and sizes
                     var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, GUIState.Normal);
@@ -138,7 +158,7 @@ namespace ImGui
                     var caretAlpha = (byte)(Application.Time % 1060 / 1060.0f * 255);
                     caretAlpha = (byte)(caretAlpha < 100 ? 0 : 255);
 
-                    //FIXME: This is not working! Check if the caret is outside the rect. If so, move the text rect so the caret is shown.
+                    //FIXME: This is not working! Check if the caret is outside the rect. If so, move the text so the caret is always shown.
                     var textRect = contentRect;
                     var caretX = caretTopPoint.X;
                     if (caretX < textRect.X || caretX > textRect.Right)
