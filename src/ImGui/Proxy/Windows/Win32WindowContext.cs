@@ -79,7 +79,7 @@ namespace ImGui
         static extern IntPtr GetStockObject(int fnObject);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern ushort RegisterClass([In] ref WNDCLASS lpWndClass);
+        static extern ushort RegisterClassW([In] ref WNDCLASS lpWndClass);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr CreateWindowEx(
@@ -268,7 +268,8 @@ namespace ImGui
                     Input.Mouse.RightButtonState = InputState.Up;
                     return IntPtr.Zero;
                 case 0x020A://WM_MOUSEWHEEL
-                    Input.Mouse.MouseWheel += ((wParam.ToUInt32() >> 16) & 0xffff) > 0 ? +1.0f : -1.0f;
+                    //FIXME
+                    //Input.Mouse.MouseWheel += ((wParam.ToUInt32() >> 16) & 0xffff) > 0 ? +1.0f : -1.0f;
                     return IntPtr.Zero;
                 case 0x0200://WM_MOUSEMOVE
                     var p = new POINT {
@@ -279,6 +280,14 @@ namespace ImGui
                     return IntPtr.Zero;
                 #endregion
                 #region ime
+                //http://blog.csdn.net/shuilan0066/article/details/7679825
+                case 0x0286:/*WM_IME_CHAR*/
+                    {
+                        char c = (char)wParam;
+                        if (c > 0 && !char.IsControl(c))
+                            Application.ImeBuffer.Enqueue(c);
+                        return IntPtr.Zero;
+                    }
                 case 0x0102:/*WM_CHAR*/
                     {
                         char c = (char)wParam;
@@ -314,7 +323,7 @@ namespace ImGui
             wndclass.lpszMenuName = null;
             wndclass.lpszClassName = szAppName;
 
-            ushort atom = RegisterClass(ref wndclass);
+            ushort atom = RegisterClassW(ref wndclass);
 
             if (atom == 0)
             {
