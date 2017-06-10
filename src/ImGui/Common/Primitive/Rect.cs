@@ -147,8 +147,8 @@ namespace ImGui
         }
 
         /// <summary>
-        /// Big - a static property which provides a Big rectangle.  X and Y are zero
-        /// and Width and Height are 9999.
+        /// Big - a static property which provides a Big rectangle.  X and Y are -4096
+        /// and Width and Height are 8192.
         /// </summary>
         public static Rect Big { get { return s_big; } }
 
@@ -875,10 +875,10 @@ namespace ImGui
         private static Rect CreateVeryBigRect()
         {
             Rect rect = new Rect();
-            rect._x = 0;
-            rect._y = 0;
-            rect._width = 9999;
-            rect._height = 9999;
+            rect._x = -4096;
+            rect._y = -4096;
+            rect._width = 8192;
+            rect._height = 8192;
             return rect;
         }
 

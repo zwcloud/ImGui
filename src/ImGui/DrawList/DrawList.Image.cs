@@ -2,6 +2,15 @@
 {
     partial class DrawList
     {
+        public void AddImage(ITexture texture, Point a, Point b, Point uv0, Point uv1, Color col)
+        {
+            if (MathEx.AmostZero(col.A))
+                return;
+            this.AddImageDrawCommand(texture);
+            ImageBuffer.PrimReserve(6, 4);
+            AddImageRect(a, b, uv0, uv1, col);
+        }
+
         // textured triangle part, mainly used for rendering images
         void AddImageRect(Point a, Point c, Point uv_a, Point uv_c, Color col)
         {

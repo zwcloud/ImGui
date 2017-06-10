@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define EnableClip
+using System;
 using System.Collections.Generic;
 using CSharpGL;
 using System.Diagnostics;
@@ -261,7 +262,9 @@ void main()
             uint last_enable_blend = GL.IsEnabled(GL.GL_BLEND);
             uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
             uint last_enable_depth_test = GL.IsEnabled(GL.GL_DEPTH_TEST);
-            //uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
+#if EnableClip
+            uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
+#endif
 
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
             GL.Enable(GL.GL_BLEND);
@@ -269,7 +272,9 @@ void main()
             GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             GL.Disable(GL.GL_CULL_FACE);
             GL.Disable(GL.GL_DEPTH_TEST);
-            //GL.Enable(GL.GL_SCISSOR_TEST);
+#if EnableClip
+            GL.Enable(GL.GL_SCISSOR_TEST);
+#endif
 
             // Setup viewport, orthographic projection matrix
             GL.Viewport(0, 0, width, height);
@@ -294,7 +299,9 @@ void main()
                     GL.ActiveTexture(GL.GL_TEXTURE0);
                     GL.BindTexture(GL.GL_TEXTURE_2D, (uint)drawCmd.TextureData.GetNativeTextureId());
                 }
-                //GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
+#if EnableClip
+                GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
+#endif
                 GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
                 indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount*Marshal.SizeOf<DrawIndex>());
             }
@@ -313,7 +320,9 @@ void main()
             if (last_enable_blend == GL.GL_TRUE) GL.Enable(GL.GL_BLEND); else GL.Disable(GL.GL_BLEND);
             if (last_enable_cull_face == GL.GL_TRUE) GL.Enable(GL.GL_CULL_FACE); else GL.Disable(GL.GL_CULL_FACE);
             if (last_enable_depth_test == GL.GL_TRUE) GL.Enable(GL.GL_DEPTH_TEST); else GL.Disable(GL.GL_DEPTH_TEST);
-            //if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
+#if EnableClip
+            if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
+#endif
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
         }
 

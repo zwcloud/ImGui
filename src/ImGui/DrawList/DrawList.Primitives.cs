@@ -177,21 +177,15 @@ namespace ImGui
             }
         }
 
-        public void AddImage(ITexture texture, Point a, Point b, Point uv0, Point uv1, Color col)
+        void AddTriangleFilled(Point a, Point b, Point c, Color col)
         {
             if (MathEx.AmostZero(col.A))
                 return;
-            
-            ImageBuffer.CommandBuffer.Add(
-                new DrawCommand
-                {
-                    ClipRect = new Rect(a, b),
-                    TextureData = texture
-                }
-            );
 
-            ImageBuffer.PrimReserve(6, 4);
-            AddImageRect(a, b, uv0, uv1, col);
+            PathLineTo(a);
+            PathLineTo(b);
+            PathLineTo(c);
+            PathFill(col);
         }
 
         #endregion
@@ -429,5 +423,34 @@ namespace ImGui
                 }
             }
         }
+
+        #region Extra
+        public void RenderCollapseTriangle(Point p_min, bool is_open, double height, Color color, double scale = 1)
+        {
+            GUIContext g = Form.current.uiContext;
+            Window window = Utility.GetCurrentWindow();
+
+            double h = height;
+            double r = h * 0.40f * scale;
+            Point center = p_min + new Vector(h * 0.50f, h * 0.50f * scale);
+
+            Point a, b, c;
+            if (is_open)
+            {
+                center.Y -= r * 0.25f;
+                a = center + new Vector(0, 1) * r;
+                b = center + new Vector(-0.866f, -0.5f) * r;
+                c = center + new Vector(0.866f, -0.5f) * r;
+            }
+            else
+            {
+                a = center + new Vector(1, 0) * r;
+                b = center + new Vector(-0.500f, 0.866f) * r;
+                c = center + new Vector(-0.500f, -0.866f) * r;
+            }
+
+            window.DrawList.AddTriangleFilled(a, b, c, color);
+        }
+        #endregion
     }
 }

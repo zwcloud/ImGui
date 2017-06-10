@@ -236,7 +236,7 @@ namespace ImGui
         {
             var g = this.uiContext;
 
-            Debug.Assert(g.Initialized);   // Forgot to call ImGui::NewFrame()
+            Debug.Assert(g.Initialized);   // Forgot to call NewFrame()
 
             if (g.FrameCountEnded != g.FrameCount)
                 EndFrame();

@@ -138,13 +138,6 @@ namespace ImGui
         public GUIStyle Style;
         public GUIStyle HeaderStyle;
 
-        internal void PopClipRect()
-        {
-            //this.DrawList.PopClipRect();
-            //var clipRectStack = this.DrawList._ClipRectStack;
-            //this.ClipRect = clipRectStack[clipRectStack.Count-1];
-        }
-
         internal Rect GetRect(int id, Size size, GUIStyle style, LayoutOption[] options)
         {
             var rect = StackLayout.GetRect(id, size, style, options);
@@ -246,11 +239,16 @@ namespace ImGui
             if (first_begin_of_the_frame)
             {
                 window.Active = true;
-                window.ClipRect = new Rect(float.MinValue, float.MinValue, float.MaxValue, float.MaxValue);
+                window.ClipRect = Rect.Big;
                 window.LastActiveFrame = current_frame;
 
                 window.DrawList.Clear();
-                Rect fullScreenRect = form.Rect;
+                window.DrawList.Init();
+                Rect fullScreenRect = new Rect(0, 0, form.Rect.Size);
+                if ((flags & WindowFlags.ChildWindow)!=0 && !((flags & (WindowFlags.ComboBox | WindowFlags.Popup))!=0))
+                    window.DrawList.PushClipRect(parent_window.ClipRect);
+                else
+                    window.DrawList.PushClipRect(fullScreenRect);
 
                 // clip
                 window.ClipRect = fullScreenRect;
@@ -375,6 +373,22 @@ namespace ImGui
                 }
             }
 
+            // Inner clipping rectangle
+            {
+                // We set this up after processing the resize grip so that our clip rectangle doesn't lag by a frame
+                // Note that if our window is collapsed we will end up with a null clipping rectangle which is the correct behavior.
+                Rect title_bar_rect = window.TitleBarRect;
+                const float border_size = 0;
+                Rect clip_rect = new Rect(); // Force round to ensure that e.g. (int)(max.x-min.x) in user's render code produce correct result.
+                var paddingHorizontal = window.Style.PaddingHorizontal;
+                clip_rect = new Rect(
+                    new Point(Math.Floor(0.5f + title_bar_rect.Min.X + Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
+                              Math.Floor(0.5f + title_bar_rect.Max.Y + border_size)),
+                    new Point(Math.Floor(0.5f + window.Position.X + window.Size.Width - Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
+                              Math.Floor(0.5f + window.Position.Y + window.Size.Height - border_size)));
+                window.DrawList.PushClipRect(clip_rect);
+            }
+
             // Clear 'accessed' flag last thing
             if (first_begin_of_the_frame)
                 window.Accessed = false;
@@ -393,8 +407,7 @@ namespace ImGui
             GUIContext g = form.uiContext;
             Window window = g.CurrentWindow;
 
-            window.PopClipRect();   // inner window clip rectangle
-
+            window.DrawList.PopClipRect();
             window.ProcessLayout();
 
             // Pop

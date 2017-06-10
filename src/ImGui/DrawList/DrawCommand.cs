@@ -9,7 +9,7 @@
         /// <summary>
         /// Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee DrawList's vtx_buffer[] array, indices in idx_buffer[].
         /// </summary>
-        /// <remarks>Added when calling <see cref="ImGui.DrawBuffer.PrimReserve"/></remarks>
+        /// <remarks>Added when calling <see cref="ImGui.Mesh.PrimReserve"/></remarks>
         public int ElemCount
         {
             get { return elemCount; }

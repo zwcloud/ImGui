@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -18,6 +19,7 @@ namespace ImGui
         public Window CurrentWindow;
         public readonly List<Window> CurrentWindowStack = new List<Window>();
         public InputTextState InputTextState = new InputTextState();
+        public Window PopupWindow;
 
         private int hoverId;
         private int activeId;
@@ -79,7 +81,9 @@ namespace ImGui
         public bool HoverIdAllowOverlap { get; internal set; }
         public long DeltaTime { get; internal set; }
         public int HoveredIdPreviousFrame { get; internal set; }
+
         public bool Initialized { get; internal set; }
+
         public long FrameCountEnded { get; internal set; } = -1;
         public long FrameCountRendered { get; internal set; } = -1;
         public int CaptureMouseNextFrame { get; internal set; }

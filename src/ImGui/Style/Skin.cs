@@ -201,5 +201,23 @@ namespace ImGui
                 PolygonButton.Set(GUIStyleName.FillColor, Color.Red, GUIState.Active);
             }
         }
+
+        #region Global Styles
+        public double LabelWidth
+        {
+            get => InternalStyle.Get<double>(GUIStyleName._LabelWidth);
+            set => InternalStyle.Set<double>(GUIStyleName._LabelWidth, value);
+        }
+        public double LabelHeight
+        {
+            get => InternalStyle.Get<double>(GUIStyleName._LabelHeight);
+            set => InternalStyle.Set<double>(GUIStyleName._LabelHeight, value);
+        }
+        public double ControlLabelSpacing
+        {
+            get => InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+            set => InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, value);
+        }
+        #endregion
     }
 }

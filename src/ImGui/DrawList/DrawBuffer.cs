@@ -1,8 +1,7 @@
 ﻿using ImGui.Internal;
-
 namespace ImGui
 {
-    class DrawBuffer
+    class Mesh
     {
         private readonly List<DrawCommand> commandBuffer = new List<DrawCommand>();
         private readonly List<DrawIndex> indexBuffer = new List<DrawIndex>();
@@ -15,6 +14,7 @@ namespace ImGui
         /// <summary>
         /// Commands. Typically 1 command = 1 gpu draw call.
         /// </summary>
+        /// <remarks>Every command corresponds to 1 sub-mesh.</remarks>
         public List<DrawCommand> CommandBuffer
         {
             get { return commandBuffer; }
@@ -67,17 +67,9 @@ namespace ImGui
                 return;
             }
 
-            if (CommandBuffer.Count == 0)
-            {
-                CommandBuffer.Add(
-                    new DrawCommand
-                    {
-                        //ClipRect = new Rect(Form.current.Size)
-                    });
-            }
-            DrawCommand newDrawCommand = this.CommandBuffer[CommandBuffer.Count - 1];
-            newDrawCommand.ElemCount += idx_count;
-            this.CommandBuffer[CommandBuffer.Count - 1] = newDrawCommand;
+            DrawCommand drawCommand = this.CommandBuffer[CommandBuffer.Count - 1];
+            drawCommand.ElemCount += idx_count;
+            this.CommandBuffer[CommandBuffer.Count - 1] = drawCommand;
 
             int vtx_buffer_size = this.VertexBuffer.Count;
             this._vtxWritePosition = vtx_buffer_size;
@@ -105,24 +97,20 @@ namespace ImGui
             this._currentIdx = 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="indexBuffer"></param>
+        /// <param name="vertexBuffer"></param>
         public void Fill(List<DrawIndex> indexBuffer, List<DrawVertex> vertexBuffer)
         {
-            // TODO This is a temp hack, need to be moved to a suitable place.
-            if (this.CommandBuffer.Count == 0)
-            {
-                this.CommandBuffer.Add(
-                    new DrawCommand
-                    {
-                        //ClipRect = new Rect(Form.current.Size)
-                    });
-            }
-            DrawCommand newDrawCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
+            DrawCommand drawCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
             var idx_count = indexBuffer.Count;
             var vtx_count = vertexBuffer.Count;
             if (idx_count != 0 && vtx_count != 0)
             {
-                newDrawCommand.ElemCount += idx_count;
-                this.CommandBuffer[this.CommandBuffer.Count - 1] = newDrawCommand;
+                drawCommand.ElemCount += idx_count;
+                this.CommandBuffer[this.CommandBuffer.Count - 1] = drawCommand;
 
                 var vertexCountBefore = this.VertexBuffer.Count;
 
@@ -150,5 +138,6 @@ namespace ImGui
                 this._currentIdx += vtx_count;
             }
         }
+
     }
 }
