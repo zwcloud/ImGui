@@ -1,0 +1,115 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace ImGui
+{
+    class WindowManager
+    {
+        public readonly List<Window> Windows = new List<Window>();
+        public Window CurrentWindow;
+        public readonly List<Window> CurrentWindowStack = new List<Window>();
+        public Window PopupWindow;
+
+        public Window HoveredWindow { get; internal set; }
+        public Window MovedWindow { get; internal set; }
+        public Window HoveredRootWindow { get; internal set; }
+        public int MovedWindowMoveId { get; internal set; }
+        public Window FocusedWindow { get; private set; }
+        public Window ActiveIdWindow { get; internal set; }
+
+        public bool IsWindowContentHoverable(Window window)
+        {
+            // An active popup disable hovering on other windows (apart from its own children)
+            GUIContext g = Form.current.uiContext;
+            Window focused_window = this.FocusedWindow;
+            if (focused_window != null)
+            {
+                Window focused_root_window = focused_window.RootWindow;
+                if (focused_root_window != null)
+                {
+                    if (focused_root_window.Flags.HaveFlag(WindowFlags.Popup) && focused_root_window.WasActive && focused_root_window != window.RootWindow)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public Window FindWindowByName(string name)
+        {
+            var g = this;
+            for (int i = 0; i < g.Windows.Count; i++)
+            {
+                if (g.Windows[i].ID == name.GetHashCode())
+                {
+                    return g.Windows[i];
+                }
+            }
+            return null;
+        }
+
+        public Window FindHoveredWindow(Point pos, bool excluding_childs)
+        {
+            var g = this;
+            for (int i = g.Windows.Count - 1; i >= 0; i--)
+            {
+                Window window = g.Windows[i];
+                if (!window.Active)
+                    continue;
+                if (excluding_childs && window.Flags.HaveFlag(WindowFlags.ChildWindow))
+                    continue;
+
+                if (window.WindowClippedRect.Contains(pos))
+                    return window;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Moving window to front of display (which happens to be back of our sorted list)
+        /// </summary>
+        /// <param name="window"></param>
+        public void FocusWindow(Window window)
+        {
+            var g = Form.current.uiContext;
+
+            // Always mark the window we passed as focused. This is used for keyboard interactions such as tabbing.
+            this.FocusedWindow = window;
+
+            // Passing null allow to disable keyboard focus
+            if (window == null) return;
+
+            // And move its root window to the top of the pile
+            if (window.RootWindow != null)
+            {
+                window = window.RootWindow;
+            }
+
+            // Steal focus on active widgets
+            if (window.Flags.HaveFlag(WindowFlags.Popup))
+            {
+                if (g.ActiveId != 0 && (this.ActiveIdWindow != null) && this.ActiveIdWindow.RootWindow != window)
+                {
+                    g.SetActiveID(0);
+                }
+            }
+
+            // Bring to front
+            if ((window.Flags.HaveFlag(WindowFlags.NoBringToFrontOnFocus) || this.Windows[this.Windows.Count - 1] == window))
+            {
+                return;
+            }
+            for (int i = 0; i < this.Windows.Count; i++)
+            {
+                if (this.Windows[i] == window)
+                {
+                    this.Windows.RemoveAt(i);
+                    break;
+                }
+            }
+            this.Windows.Add(window);
+        }
+    }
+}

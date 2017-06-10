@@ -13,6 +13,7 @@ namespace ImGui
         {
             current = this;
             GUIContext g = this.uiContext;
+            WindowManager w = g.WindowManager;
 
             if (!g.Initialized)
             {
@@ -98,38 +99,38 @@ namespace ImGui
             g.ActiveIdIsJustActivated = false;
 
             // Handle user moving window (at the beginning of the frame to avoid input lag or sheering). Only valid for root windows.
-            if (g.MovedWindowMoveId!=0 && g.MovedWindowMoveId == g.ActiveId)
+            if (w.MovedWindowMoveId!=0 && w.MovedWindowMoveId == g.ActiveId)
             {
-                g.KeepAliveID(g.MovedWindowMoveId);
-                Debug.Assert(g.MovedWindow!=null && g.MovedWindow.RootWindow!=null);
-                Debug.Assert(g.MovedWindow.RootWindow.MoveID == g.MovedWindowMoveId);
+                g.KeepAliveID(w.MovedWindowMoveId);
+                Debug.Assert(w.MovedWindow!=null && w.MovedWindow.RootWindow!=null);
+                Debug.Assert(w.MovedWindow.RootWindow.MoveID == w.MovedWindowMoveId);
                 if (Input.Mouse.LeftButtonState == InputState.Down)
                 {
-                    if (!(g.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove)))
+                    if (!(w.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove)))
                     {
-                        g.MovedWindow.PosFloat += Input.Mouse.MouseDelta;
+                        w.MovedWindow.PosFloat += Input.Mouse.MouseDelta;
                     }
-                    g.FocusWindow(g.MovedWindow);
+                    w.FocusWindow(w.MovedWindow);
                 }
                 else
                 {
                     g.SetActiveID(0);
-                    g.MovedWindow = null;
-                    g.MovedWindowMoveId = 0;
+                    w.MovedWindow = null;
+                    w.MovedWindowMoveId = 0;
                 }
             }
             else
             {
-                g.MovedWindow = null;
-                g.MovedWindowMoveId = 0;
+                w.MovedWindow = null;
+                w.MovedWindowMoveId = 0;
             }
 
             // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
-            g.HoveredWindow = g.MovedWindow ?? g.FindHoveredWindow(Input.Mouse.MousePos, false);
-            if (g.HoveredWindow != null && (g.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
-                g.HoveredRootWindow = g.HoveredWindow.RootWindow;
+            w.HoveredWindow = w.MovedWindow ?? w.FindHoveredWindow(Input.Mouse.MousePos, false);
+            if (w.HoveredWindow != null && (w.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
+                w.HoveredRootWindow = w.HoveredWindow.RootWindow;
             else
-                g.HoveredRootWindow = (g.MovedWindow != null) ? g.MovedWindow.RootWindow : g.FindHoveredWindow(Input.Mouse.MousePos, true);
+                w.HoveredRootWindow = (w.MovedWindow != null) ? w.MovedWindow.RootWindow : w.FindHoveredWindow(Input.Mouse.MousePos, true);
 
             // Are we using inputs? Tell user so they can capture/discard the inputs away from the rest of their application.
             // When clicking outside of a window we assume the click is owned by the application and won't request capture. We need to track click ownership.
@@ -137,27 +138,27 @@ namespace ImGui
             bool mouse_any_down = false;
             {
                 if (Input.Mouse.LeftButtonPressed)
-                    Input.Mouse.LeftButtonMouseDownOwned = (g.HoveredWindow != null);
+                    Input.Mouse.LeftButtonMouseDownOwned = (w.HoveredWindow != null);
                 mouse_any_down = mouse_any_down || (Input.Mouse.LeftButtonState == InputState.Down);
             }
             bool mouse_avail_to_imgui = (mouse_earliest_button_down == -1) || Input.Mouse.LeftButtonMouseDownOwned;
             if (g.CaptureMouseNextFrame != -1)
                 Input.Mouse.WantCaptureMouse = (g.CaptureMouseNextFrame != 0);
             else
-                Input.Mouse.WantCaptureMouse = (mouse_avail_to_imgui && (g.HoveredWindow != null || mouse_any_down)) || (g.ActiveId != 0);
+                Input.Mouse.WantCaptureMouse = (mouse_avail_to_imgui && (w.HoveredWindow != null || mouse_any_down)) || (g.ActiveId != 0);
             Input.Mouse.Cursor = Cursor.Default;
             //TODO Keyboard
             //g.OsImePosRequest = ImVec2(1.0f, 1.0f); // OS Input Method Editor showing on top-left of our window by default
 
             // If mouse was first clicked outside of ImGui bounds we also cancel out hovering.
             if (!mouse_avail_to_imgui)
-                g.HoveredWindow = g.HoveredRootWindow = null;
+                w.HoveredWindow = w.HoveredRootWindow = null;
 
 
             // Mark all windows as not visible
-            for (int i = 0; i != g.Windows.Count; i++)
+            for (int i = 0; i != w.Windows.Count; i++)
             {
-                Window window = g.Windows[i];
+                Window window = w.Windows[i];
                 window.WasActive = window.Active;
                 window.Active = false;
                 window.Accessed = false;
@@ -165,7 +166,7 @@ namespace ImGui
 
             // No window should be open at the beginning of the frame.
             // But in order to allow the user to call NewFrame() multiple times without calling Render(), we are doing an explicit clear.
-            g.CurrentWindowStack.Clear();
+            w.CurrentWindowStack.Clear();
 
             // Create implicit window - we will only render it if the user has added something to it.
             GUILayout.Begin("Debug", ref debugWindowOpen);
@@ -174,34 +175,35 @@ namespace ImGui
         internal void EndFrame()
         {
             GUIContext g = Form.current.uiContext;
+            WindowManager w = g.WindowManager;
             Debug.Assert(g.Initialized);                       // Forgot to call ImGui::NewFrame()
             Debug.Assert(g.FrameCountEnded != g.FrameCount);   // ImGui::EndFrame() called multiple times, or forgot to call ImGui::NewFrame() again
 
             // Hide implicit "Debug" window if it hasn't been used
-            Debug.Assert(g.CurrentWindowStack.Count == 1);    // Mismatched Begin()/End() calls
-            if (g.CurrentWindow!=null && !g.CurrentWindow.Accessed)
-                g.CurrentWindow.Active = false;
+            Debug.Assert(w.CurrentWindowStack.Count == 1);    // Mismatched Begin()/End() calls
+            if (w.CurrentWindow!=null && !w.CurrentWindow.Accessed)
+                w.CurrentWindow.Active = false;
             GUILayout.End();
 
             // Click to focus window and start moving (after we're done with all our widgets)
             if (g.ActiveId == 0 && g.HoverId == 0 && Input.Mouse.LeftButtonPressed)
             {
-                if (!(g.FocusedWindow!=null && !g.FocusedWindow.WasActive && g.FocusedWindow.Active)) // Unless we just made a popup appear
+                if (!(w.FocusedWindow!=null && !w.FocusedWindow.WasActive && w.FocusedWindow.Active)) // Unless we just made a popup appear
                 {
-                    if (g.HoveredRootWindow != null)
+                    if (w.HoveredRootWindow != null)
                     {
-                        g.FocusWindow(g.HoveredWindow);
-                        if (!(g.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
+                        w.FocusWindow(w.HoveredWindow);
+                        if (!(w.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
                         {
-                            g.MovedWindow = g.HoveredWindow;
-                            g.MovedWindowMoveId = g.HoveredRootWindow.MoveID;
-                            g.SetActiveID(g.MovedWindowMoveId, g.HoveredRootWindow);
+                            w.MovedWindow = w.HoveredWindow;
+                            w.MovedWindowMoveId = w.HoveredRootWindow.MoveID;
+                            g.SetActiveID(w.MovedWindowMoveId, w.HoveredRootWindow);
                         }
                     }
-                    else if (g.FocusedWindow != null/* && GetFrontMostModalRootWindow() == NULL*/)
+                    else if (w.FocusedWindow != null/* && GetFrontMostModalRootWindow() == NULL*/)
                     {
                         // Clicking on void disable focus
-                        g.FocusWindow(null);
+                        w.FocusWindow(null);
                     }
                 }
             }
@@ -234,7 +236,8 @@ namespace ImGui
 
         internal void Render()
         {
-            var g = this.uiContext;
+            GUIContext g = this.uiContext;
+            WindowManager w = g.WindowManager;
 
             Debug.Assert(g.Initialized);   // Forgot to call NewFrame()
 
@@ -243,7 +246,7 @@ namespace ImGui
             g.FrameCountRendered = g.FrameCount;
 
             this.renderer.Clear();
-            foreach (var window in this.uiContext.Windows)
+            foreach (var window in w.Windows)
             {
                 if(window.Active)
                 {
@@ -260,6 +263,7 @@ namespace ImGui
             if (g.LogEnabled)
             {
                 var l = Application.logger;
+                WindowManager w = g.WindowManager;
                 l.Clear();
                 l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Input.Mouse.MousePos, g.DeltaTime);
                 l.Msg("Input");
@@ -275,11 +279,11 @@ namespace ImGui
                 l.Msg("Cursor: {0}", Input.Mouse.Cursor);
 
                 l.Msg("Window:");
-                l.Msg("    HoveredWindow: {0}", (g.HoveredWindow != null) ? g.HoveredWindow.ID.ToString() : "<none>");
+                l.Msg("    HoveredWindow: {0}", (w.HoveredWindow != null) ? w.HoveredWindow.ID.ToString() : "<none>");
                 l.Msg("    Window List:");
-                for (int i = 0; i < g.Windows.Count; i++)
+                for (int i = 0; i < w.Windows.Count; i++)
                 {
-                    var window = g.Windows[i];
+                    var window = w.Windows[i];
                     l.Msg("        [{0}]:{1}", i, window.ID);
                 }
             }

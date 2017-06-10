@@ -49,7 +49,7 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = g.WindowManager.CurrentWindow;
             if (window.SkipItems)
                 return false;
 
@@ -76,7 +76,9 @@ namespace ImGui
         public static bool ButtonBehavior(Rect bb, int id, out bool out_hovered, out bool out_held, ButtonFlags flags)
         {
             GUIContext g = Form.current.uiContext;
-            Window window = g.CurrentWindow;
+            WindowManager w = g.WindowManager;
+            Window window = w.CurrentWindow;
+
 
             if (flags.HaveFlag(ButtonFlags.Disabled))
             {
@@ -104,7 +106,7 @@ namespace ImGui
                     if (flags.HaveFlag(ButtonFlags.PressedOnClickRelease) && Input.Mouse.LeftButtonPressed)
                     {
                         g.SetActiveID(id, window); // Hold on ID
-                        g.FocusWindow(window);
+                        w.FocusWindow(window);
                         g.ActiveIdClickOffset = Input.Mouse.MousePos - bb.Min;
                     }
                     if (((flags.HaveFlag(ButtonFlags.PressedOnClick) && Input.Mouse.LeftButtonPressed)
@@ -112,7 +114,7 @@ namespace ImGui
                     {
                         pressed = true;
                         g.SetActiveID(0);
-                        g.FocusWindow(window);
+                        w.FocusWindow(window);
                     }
                     if (flags.HaveFlag(ButtonFlags.PressedOnRelease) && Input.Mouse.LeftButtonReleased)
                     {

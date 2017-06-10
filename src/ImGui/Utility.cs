@@ -17,7 +17,7 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = g.WindowManager.CurrentWindow;
             window.Accessed = true;
             return window;
         }

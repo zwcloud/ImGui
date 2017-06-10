@@ -16,7 +16,7 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = g.WindowManager.CurrentWindow;
             DrawList d = window.DrawList;
             d.DrawBoxModel(rect, text, GUISkin.Instance[GUIControlName.Box]);
         }

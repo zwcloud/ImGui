@@ -21,7 +21,7 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            Window window = g.WindowManager.CurrentWindow;
             DrawList d = window.DrawList;
             int id = window.GetID(text);
             var mousePos = Input.Mouse.MousePos;

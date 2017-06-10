@@ -26,6 +26,7 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
+            WindowManager w = g.WindowManager;
 
             this.ID = name.GetHashCode();
             this.IDStack.Push(this.ID);
@@ -37,7 +38,6 @@ namespace ImGui
             this.DrawList = new DrawList();
             this.MoveID = GetID("#MOVE");
             this.Active = WasActive = false;
-
 
             {
                 var style = new GUIStyle();
@@ -64,7 +64,7 @@ namespace ImGui
 
             this.StackLayout = new StackLayout(this.ID, this.Size);
 
-            g.Windows.Add(this);
+            w.Windows.Add(this);
         }
 
         public int GetID(int int_id)
@@ -180,9 +180,10 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
+            WindowManager w = g.WindowManager;
             Debug.Assert(name != null);                        // Window name required
-            Debug.Assert(g.Initialized);                       // Forgot to call ImGui::NewFrame()
-            Debug.Assert(g.FrameCountEnded != g.FrameCount);   // Called ImGui::Render() or ImGui::EndFrame() and haven't called ImGui::NewFrame() again yet
+            Debug.Assert(g.Initialized);                       // Forgot to call NewFrame()
+            Debug.Assert(g.FrameCountEnded != g.FrameCount);   // Called Render() or EndFrame() and haven't called NewFrame() again yet
 
             if (flags.HaveFlag(WindowFlags.NoInputs))
             {
@@ -191,7 +192,7 @@ namespace ImGui
 
             // Find or create
             bool window_is_new = false;
-            Window window = g.FindWindowByName(name);
+            Window window = g.WindowManager.FindWindowByName(name);
             if (window == null)
             {
                 window = new Window(name, position, size, flags);
@@ -210,9 +211,9 @@ namespace ImGui
             }
 
             // Add to stack
-            Window parent_window = (!(g.CurrentWindowStack.Count == 0)) ? g.CurrentWindowStack[g.CurrentWindowStack.Count - 1] : null;
-            g.CurrentWindowStack.Add(window);
-            g.CurrentWindow = window;
+            Window parent_window = (!(w.CurrentWindowStack.Count == 0)) ? w.CurrentWindowStack[w.CurrentWindowStack.Count - 1] : null;
+            w.CurrentWindowStack.Add(window);
+            w.CurrentWindow = window;
             //CheckStacksSize(window, true);
             Debug.Assert(parent_window != null || !(flags.HaveFlag(WindowFlags.ChildWindow)));
 
@@ -222,18 +223,17 @@ namespace ImGui
 
             // Update known root window (if we are a child window, otherwise window == window->RootWindow)
             int root_idx, root_non_popup_idx;
-            for (root_idx = g.CurrentWindowStack.Count - 1; root_idx > 0; root_idx--)
+            for (root_idx = w.CurrentWindowStack.Count - 1; root_idx > 0; root_idx--)
             {
-                if (!(g.CurrentWindowStack[root_idx].Flags.HaveFlag(WindowFlags.ChildWindow)))
+                if (!(w.CurrentWindowStack[root_idx].Flags.HaveFlag(WindowFlags.ChildWindow)))
                     break;
             }
             for (root_non_popup_idx = root_idx; root_non_popup_idx > 0; root_non_popup_idx--)
             {
-                if (!(g.CurrentWindowStack[root_non_popup_idx].Flags.HaveFlag(WindowFlags.ChildWindow | WindowFlags.Popup)))
+                if (!(w.CurrentWindowStack[root_non_popup_idx].Flags.HaveFlag(WindowFlags.ChildWindow | WindowFlags.Popup)))
                     break;
             }
-            window.ParentWindow = parent_window;
-            window.RootWindow = g.CurrentWindowStack[root_idx];
+            window.RootWindow = w.CurrentWindowStack[root_idx];
 
             // When reusing window again multiple times a frame, just append content (don't need to setup again)
             if (first_begin_of_the_frame)
@@ -254,7 +254,7 @@ namespace ImGui
                 window.ClipRect = fullScreenRect;
 
                 // Collapse window by double-clicking on title bar
-                if (g.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
+                if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
                 {
                     window.Collapsed = !window.Collapsed;
                 }
@@ -329,7 +329,7 @@ namespace ImGui
                     if (!flags.HaveFlag(WindowFlags.NoTitleBar))
                     {
                         window.DrawList.AddRectFilled(title_bar_rect.TopLeft, title_bar_rect.BottomRight,
-                            g.FocusedWindow == window ?
+                            w.FocusedWindow == window ?
                             headerStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active) :
                             headerStyle.Get<Color>(GUIStyleName.BackgroundColor), window_rounding, 1 | 2);
                     }
@@ -405,14 +405,15 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            Window window = g.CurrentWindow;
+            WindowManager w = g.WindowManager;
+            Window window = w.CurrentWindow;
 
             window.DrawList.PopClipRect();
             window.ProcessLayout();
 
             // Pop
-            g.CurrentWindowStack.RemoveAt(g.CurrentWindowStack.Count - 1);
-            g.CurrentWindow = ((g.CurrentWindowStack.Count == 0) ? null : g.CurrentWindowStack[g.CurrentWindowStack.Count - 1]);
+            w.CurrentWindowStack.RemoveAt(w.CurrentWindowStack.Count - 1);
+            w.CurrentWindow = ((w.CurrentWindowStack.Count == 0) ? null : w.CurrentWindowStack[w.CurrentWindowStack.Count - 1]);
         }
     }
 
