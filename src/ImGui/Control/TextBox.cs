@@ -142,6 +142,7 @@ namespace ImGui
             {
                 var d = window.DrawList;
                 var contentRect = Utility.GetContentRect(rect, style);
+                d.PushClipRect(rect, true);
                 if (g.ActiveId == id)
                 {
                     //Calculate positions and sizes
@@ -172,15 +173,6 @@ namespace ImGui
                     //Draw the box
                     d.AddRect(rect.Min, rect.Max, Color.White);
 
-                    //TODO Clip the text
-                    //d.PathMoveTo(rect.TopLeft);
-                    //d.PathLineTo(rect.TopRight);
-                    //d.PathLineTo(rect.BottomRight);
-                    //d.PathLineTo(rect.BottomLeft);
-                    //d.PathLineTo(rect.TopLeft);
-                    //d.Clip();
-                    //d.ResetClip();
-
                     //Draw text
                     d.DrawText(textRect, text, style, GUIState.Normal);
 
@@ -206,6 +198,7 @@ namespace ImGui
                     d.DrawText(contentRect, text, style, GUIState.Normal);
                     d.AddRect(rect.Min, rect.Max, Color.White);
                 }
+                d.PopClipRect();
             }
 
             return context.Text;

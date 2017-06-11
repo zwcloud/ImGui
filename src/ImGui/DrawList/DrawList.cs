@@ -96,8 +96,13 @@ namespace ImGui
             ImageBuffer.CommandBuffer.Add(draw_cmd);
         }
 
-        public void PushClipRect(Rect rect)
+        public void PushClipRect(Rect rect, bool intersectWithCurrentClipRect = false)
         {
+            if (intersectWithCurrentClipRect && this.clipRectStack.Count > 0)
+            {
+                Rect currentClipRect = clipRectStack[this.clipRectStack.Count - 1];
+                rect.Intersect(currentClipRect);
+            }
             clipRectStack.Add(rect);
             UpdateClipRect();
         }

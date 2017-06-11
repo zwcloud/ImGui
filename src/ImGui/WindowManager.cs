@@ -6,21 +6,24 @@ namespace ImGui
     class WindowManager
     {
         public readonly List<Window> Windows = new List<Window>();
-        public Window CurrentWindow;
-        public readonly List<Window> CurrentWindowStack = new List<Window>();
-        public Window PopupWindow;
 
+        public readonly List<Window> WindowStack = new List<Window>();
+
+        public Window CurrentWindow;
+        public Window PopupWindow;
         public Window HoveredWindow { get; internal set; }
-        public Window MovedWindow { get; internal set; }
         public Window HoveredRootWindow { get; internal set; }
+
+        public Window MovedWindow { get; internal set; }
         public int MovedWindowMoveId { get; internal set; }
+
         public Window FocusedWindow { get; private set; }
+
         public Window ActiveIdWindow { get; internal set; }
 
         public bool IsWindowContentHoverable(Window window)
         {
             // An active popup disable hovering on other windows (apart from its own children)
-            GUIContext g = Form.current.uiContext;
             Window focused_window = this.FocusedWindow;
             if (focused_window != null)
             {
@@ -39,12 +42,11 @@ namespace ImGui
 
         public Window FindWindowByName(string name)
         {
-            var g = this;
-            for (int i = 0; i < g.Windows.Count; i++)
+            for (int i = 0; i < this.Windows.Count; i++)
             {
-                if (g.Windows[i].ID == name.GetHashCode())
+                if (this.Windows[i].ID == name.GetHashCode())
                 {
-                    return g.Windows[i];
+                    return this.Windows[i];
                 }
             }
             return null;
@@ -52,10 +54,9 @@ namespace ImGui
 
         public Window FindHoveredWindow(Point pos, bool excluding_childs)
         {
-            var g = this;
-            for (int i = g.Windows.Count - 1; i >= 0; i--)
+            for (int i = this.Windows.Count - 1; i >= 0; i--)
             {
-                Window window = g.Windows[i];
+                Window window = this.Windows[i];
                 if (!window.Active)
                     continue;
                 if (excluding_childs && window.Flags.HaveFlag(WindowFlags.ChildWindow))
@@ -110,6 +111,11 @@ namespace ImGui
                 }
             }
             this.Windows.Add(window);
+        }
+
+        internal Window CreateWindow(string name, Point position, Size size, WindowFlags flags)
+        {
+            return new Window(name, position, size, flags);
         }
     }
 }

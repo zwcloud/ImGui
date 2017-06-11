@@ -166,7 +166,7 @@ namespace ImGui
 
             // No window should be open at the beginning of the frame.
             // But in order to allow the user to call NewFrame() multiple times without calling Render(), we are doing an explicit clear.
-            w.CurrentWindowStack.Clear();
+            w.WindowStack.Clear();
 
             // Create implicit window - we will only render it if the user has added something to it.
             GUILayout.Begin("Debug", ref debugWindowOpen);
@@ -180,7 +180,7 @@ namespace ImGui
             Debug.Assert(g.FrameCountEnded != g.FrameCount);   // ImGui::EndFrame() called multiple times, or forgot to call ImGui::NewFrame() again
 
             // Hide implicit "Debug" window if it hasn't been used
-            Debug.Assert(w.CurrentWindowStack.Count == 1);    // Mismatched Begin()/End() calls
+            Debug.Assert(w.WindowStack.Count == 1);    // Mismatched Begin()/End() calls
             if (w.CurrentWindow!=null && !w.CurrentWindow.Accessed)
                 w.CurrentWindow.Active = false;
             GUILayout.End();
