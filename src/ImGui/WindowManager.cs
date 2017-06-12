@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ImGui
 {
@@ -116,6 +117,82 @@ namespace ImGui
         internal Window CreateWindow(string name, Point position, Size size, WindowFlags flags)
         {
             return new Window(name, position, size, flags);
+        }
+
+        public void NewFrame(GUIContext g)
+        {
+            // Handle user moving window (at the beginning of the frame to avoid input lag or sheering). Only valid for root windows.
+            if (this.MovedWindowMoveId != 0 && this.MovedWindowMoveId == g.ActiveId)
+            {
+                g.KeepAliveID(this.MovedWindowMoveId);
+                Debug.Assert(this.MovedWindow != null && this.MovedWindow.RootWindow != null);
+                Debug.Assert(this.MovedWindow.RootWindow.MoveID == this.MovedWindowMoveId);
+                if (Input.Mouse.LeftButtonState == InputState.Down)
+                {
+                    if (!this.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove))
+                    {
+                        this.MovedWindow.PosFloat += Input.Mouse.MouseDelta;
+                    }
+                    this.FocusWindow(this.MovedWindow);
+                }
+                else
+                {
+                    g.SetActiveID(0);
+                    this.MovedWindow = null;
+                    this.MovedWindowMoveId = 0;
+                }
+            }
+            else
+            {
+                this.MovedWindow = null;
+                this.MovedWindowMoveId = 0;
+            }
+
+            // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
+            this.HoveredWindow = this.MovedWindow ?? this.FindHoveredWindow(Input.Mouse.MousePos, false);
+            if (this.HoveredWindow != null && (this.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
+                this.HoveredRootWindow = this.HoveredWindow.RootWindow;
+            else
+                this.HoveredRootWindow = (this.MovedWindow != null) ? this.MovedWindow.RootWindow : this.FindHoveredWindow(Input.Mouse.MousePos, true);
+
+            // Mark all windows as not visible
+            for (int i = 0; i != this.Windows.Count; i++)
+            {
+                Window window = this.Windows[i];
+                window.WasActive = window.Active;
+                window.Active = false;
+                window.Accessed = false;
+            }
+
+            // No window should be open at the beginning of the frame.
+            // But in order to allow the user to call NewFrame() multiple times without calling Render(), we are doing an explicit clear.
+            this.WindowStack.Clear();
+        }
+
+        public void EndFrame(GUIContext g)
+        {
+            // Click to focus window and start moving (after we're done with all our widgets)
+            if (g.ActiveId == 0 && g.HoverId == 0 && Input.Mouse.LeftButtonPressed)
+            {
+                if (!(this.FocusedWindow != null && !this.FocusedWindow.WasActive && this.FocusedWindow.Active)) // Unless we just made a popup appear
+                {
+                    if (this.HoveredRootWindow != null)
+                    {
+                        this.FocusWindow(this.HoveredWindow);
+                        if (!(this.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
+                        {
+                            this.MovedWindow = this.HoveredWindow;
+                            this.MovedWindowMoveId = this.HoveredRootWindow.MoveID;
+                            g.SetActiveID(this.MovedWindowMoveId, this.HoveredRootWindow);
+                        }
+                    }
+                    else if (this.FocusedWindow != null)
+                    {
+                        // Clicking on void disable focus
+                        this.FocusWindow(null);
+                    }
+                }
+            }
         }
     }
 }

@@ -36,6 +36,7 @@ namespace ImGui
                 g.lastFPSUpdateTime = g.Time;
             }
 
+            #region Input
             // Process input
             #region mouse position
             if (Input.Mouse.MousePos.X < 0 && Input.Mouse.MousePos.Y < 0)
@@ -87,7 +88,9 @@ namespace ImGui
             if (Input.Mouse.RightButtonPressed) ++Input.Mouse.RightButtonPressedTimes;
             if (Input.Mouse.RightButtonReleased) ++Input.Mouse.RightButtonReleasedTimes;
             #endregion
-            
+
+            #endregion
+
             // Clear reference to active widget if the widget isn't alive anymore
             g.HoveredIdPreviousFrame = g.HoverId;
             g.HoverId = 0;
@@ -98,75 +101,9 @@ namespace ImGui
             g.ActiveIdIsAlive = false;
             g.ActiveIdIsJustActivated = false;
 
-            // Handle user moving window (at the beginning of the frame to avoid input lag or sheering). Only valid for root windows.
-            if (w.MovedWindowMoveId!=0 && w.MovedWindowMoveId == g.ActiveId)
-            {
-                g.KeepAliveID(w.MovedWindowMoveId);
-                Debug.Assert(w.MovedWindow!=null && w.MovedWindow.RootWindow!=null);
-                Debug.Assert(w.MovedWindow.RootWindow.MoveID == w.MovedWindowMoveId);
-                if (Input.Mouse.LeftButtonState == InputState.Down)
-                {
-                    if (!(w.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove)))
-                    {
-                        w.MovedWindow.PosFloat += Input.Mouse.MouseDelta;
-                    }
-                    w.FocusWindow(w.MovedWindow);
-                }
-                else
-                {
-                    g.SetActiveID(0);
-                    w.MovedWindow = null;
-                    w.MovedWindowMoveId = 0;
-                }
-            }
-            else
-            {
-                w.MovedWindow = null;
-                w.MovedWindowMoveId = 0;
-            }
+            w.NewFrame(g);
 
-            // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
-            w.HoveredWindow = w.MovedWindow ?? w.FindHoveredWindow(Input.Mouse.MousePos, false);
-            if (w.HoveredWindow != null && (w.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
-                w.HoveredRootWindow = w.HoveredWindow.RootWindow;
-            else
-                w.HoveredRootWindow = (w.MovedWindow != null) ? w.MovedWindow.RootWindow : w.FindHoveredWindow(Input.Mouse.MousePos, true);
-
-            // Are we using inputs? Tell user so they can capture/discard the inputs away from the rest of their application.
-            // When clicking outside of a window we assume the click is owned by the application and won't request capture. We need to track click ownership.
-            int mouse_earliest_button_down = -1;
-            bool mouse_any_down = false;
-            {
-                if (Input.Mouse.LeftButtonPressed)
-                    Input.Mouse.LeftButtonMouseDownOwned = (w.HoveredWindow != null);
-                mouse_any_down = mouse_any_down || (Input.Mouse.LeftButtonState == InputState.Down);
-            }
-            bool mouse_avail_to_imgui = (mouse_earliest_button_down == -1) || Input.Mouse.LeftButtonMouseDownOwned;
-            if (g.CaptureMouseNextFrame != -1)
-                Input.Mouse.WantCaptureMouse = (g.CaptureMouseNextFrame != 0);
-            else
-                Input.Mouse.WantCaptureMouse = (mouse_avail_to_imgui && (w.HoveredWindow != null || mouse_any_down)) || (g.ActiveId != 0);
             Input.Mouse.Cursor = Cursor.Default;
-            //TODO Keyboard
-            //g.OsImePosRequest = ImVec2(1.0f, 1.0f); // OS Input Method Editor showing on top-left of our window by default
-
-            // If mouse was first clicked outside of ImGui bounds we also cancel out hovering.
-            if (!mouse_avail_to_imgui)
-                w.HoveredWindow = w.HoveredRootWindow = null;
-
-
-            // Mark all windows as not visible
-            for (int i = 0; i != w.Windows.Count; i++)
-            {
-                Window window = w.Windows[i];
-                window.WasActive = window.Active;
-                window.Active = false;
-                window.Accessed = false;
-            }
-
-            // No window should be open at the beginning of the frame.
-            // But in order to allow the user to call NewFrame() multiple times without calling Render(), we are doing an explicit clear.
-            w.WindowStack.Clear();
 
             // Create implicit window - we will only render it if the user has added something to it.
             GUILayout.Begin("Debug", ref debugWindowOpen);
@@ -185,28 +122,7 @@ namespace ImGui
                 w.CurrentWindow.Active = false;
             GUILayout.End();
 
-            // Click to focus window and start moving (after we're done with all our widgets)
-            if (g.ActiveId == 0 && g.HoverId == 0 && Input.Mouse.LeftButtonPressed)
-            {
-                if (!(w.FocusedWindow!=null && !w.FocusedWindow.WasActive && w.FocusedWindow.Active)) // Unless we just made a popup appear
-                {
-                    if (w.HoveredRootWindow != null)
-                    {
-                        w.FocusWindow(w.HoveredWindow);
-                        if (!(w.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
-                        {
-                            w.MovedWindow = w.HoveredWindow;
-                            w.MovedWindowMoveId = w.HoveredRootWindow.MoveID;
-                            g.SetActiveID(w.MovedWindowMoveId, w.HoveredRootWindow);
-                        }
-                    }
-                    else if (w.FocusedWindow != null/* && GetFrontMostModalRootWindow() == NULL*/)
-                    {
-                        // Clicking on void disable focus
-                        w.FocusWindow(null);
-                    }
-                }
-            }
+            w.EndFrame(g);
 
             // Clear Input data for next frame
             Input.Mouse.MouseWheel = 0.0f;
