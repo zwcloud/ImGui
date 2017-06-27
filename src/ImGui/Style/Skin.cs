@@ -200,6 +200,24 @@ namespace ImGui
                 PolygonButton.Set(GUIStyleName.LineColor, Color.Blue, GUIState.Active);
                 PolygonButton.Set(GUIStyleName.FillColor, Color.Red, GUIState.Active);
             }
+
+            {
+                TextBox.Set<double>(GUIStyleName.PaddingLeft,   5, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.PaddingLeft,   5, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.PaddingLeft,   5, GUIState.Active);
+                TextBox.Set<double>(GUIStyleName.PaddingTop,    5, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.PaddingTop,    5, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.PaddingTop,    5, GUIState.Active);
+                TextBox.Set<double>(GUIStyleName.PaddingRight,  5, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.PaddingRight,  5, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.PaddingRight,  5, GUIState.Active);
+                TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Active);
+                TextBox.Set<double>(GUIStyleName.FontSize, 32, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.FontSize, 32, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.FontSize, 32, GUIState.Active);
+            }
         }
 
         #region Global Styles
