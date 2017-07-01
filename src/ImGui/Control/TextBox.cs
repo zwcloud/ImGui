@@ -146,7 +146,7 @@ namespace ImGui
                 if (g.ActiveId == id)
                 {
                     //Calculate positions and sizes
-                    var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, GUIState.Normal);
+                    var textContext = TextMeshUtil.GetTextContext(context.Text, rect.Size, style, GUIState.Normal);
                     var offsetOfTextRect = contentRect.TopLeft;
                     float pointX, pointY;
                     float caretHeight;
@@ -172,7 +172,7 @@ namespace ImGui
                     d.AddRect(rect.Min, rect.Max, Color.White);
 
                     //Draw text
-                    d.DrawText(contentRect, text, style, GUIState.Normal);
+                    d.DrawText(contentRect, context.Text, style, GUIState.Normal);
 
                     //Draw selection rect
                     if (context.SelectIndex != context.CaretIndex)
@@ -193,7 +193,7 @@ namespace ImGui
                 }
                 else
                 {
-                    d.DrawText(contentRect, text, style, GUIState.Normal);
+                    d.DrawText(contentRect, context.Text, style, GUIState.Normal);
                     d.AddRect(rect.Min, rect.Max, Color.White);
                 }
                 d.PopClipRect();
