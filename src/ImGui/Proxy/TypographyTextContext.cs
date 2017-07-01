@@ -233,6 +233,12 @@ namespace ImGui
                     var lastGlyph = glyphPlans[glyphPlans.Count - 1];
                     LineWidthList.Add((lastGlyph.x + lastGlyph.advX) * scale - back);
                     LineCharacterCountList.Add((uint)(i - backCharCount));
+                    if(lastGlyph.glyphIndex == 0)//last glyph is '\n', add an additional empty line
+                    {
+                        LineWidthList.Add(0);
+                        LineCharacterCountList.Add(0);
+                        lineCount++;
+                    }
                 }
                 if(LineWidthList.Count == 0)
                 {
@@ -286,21 +292,19 @@ namespace ImGui
             //                      ↓↓↓
             // ^CONTENT_OF_THIS_LINE$
             float currentLineWidth = LineWidthList[LineIndex];
-            float currentLineWidthWithoutLineBreak = currentLineWidth - lineBreakWidth;
             uint currentLineCharacterCount = LineCharacterCountList[LineIndex];
-            uint currentLineCharacterCountWithoutLineBreak = currentLineCharacterCount;
-            if (currentLineCharacterCountWithoutLineBreak > 0)
+            if (pointX > position.X + currentLineWidth)//last index of this line
             {
-                currentLineCharacterCountWithoutLineBreak--;
-            }
-            if (pointX > position.X + currentLineWidthWithoutLineBreak)//last index of this line
-            {
-                result += currentLineCharacterCountWithoutLineBreak;
+                result += currentLineCharacterCount;
+                if (result > 0 && currentLineCharacterCount != 0 && glyphPlans[(int)result - 1].glyphIndex == 0)
+                {
+                    result -= 1;
+                }
                 return result;
             }
 
-            //  ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-            // ^CONTENT_OF_THIS_LINE$
+            //  ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+            // ^CONTENT_OF_THIS_LINE\n$
             var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);//TODO cache scale
             uint characterCountBeforeThisLine = 0;
             for (i = 0; i < LineIndex; i++)
