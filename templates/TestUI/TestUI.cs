@@ -9,7 +9,7 @@ public class TestUI
     double hSliderValue = 0.5f;
     double vSliderValue = 0.5f;
     ITexture image;
-    string text = "ABCDEFGHI";
+    string text = "ABCD\nEFGHI";
 
     public void OnGUI()
     {
@@ -20,6 +20,8 @@ public class TestUI
 
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))
         {
+            text = GUILayout.Textbox("Text Box", new Size(120, 200), text);
+
             GUILayout.BeginHorizontal("all");
             {
                 GUILayout.Space("HeadSpace",30);
@@ -50,7 +52,6 @@ public class TestUI
 
                     hSliderValue = GUILayout.Slider("Horizontal Slider", hSliderValue, 0, 1.0);
                     GUILayout.Image("Image/trees.jpg");
-                    text = GUILayout.Textbox("Text Box", new Size(200, 30), text);
 
                     GUILayout.BeginHorizontal("Vertical Sliders");
                     vSliderValue = GUILayout.VSlider("Vertical Slider", vSliderValue, 0, 1.0);

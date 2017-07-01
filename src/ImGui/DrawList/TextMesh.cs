@@ -371,7 +371,7 @@ namespace ImGui
         static readonly Dictionary<int, TextMesh> TextMeshCache = new Dictionary<int, TextMesh>();
         static readonly Dictionary<int, ITextContext> TextContextCache = new Dictionary<int, ITextContext>();
 
-        static int GetTextMeshId(string text, Size size, GUIStyle style, GUIState state)
+        static int GetTextId(string text, Size size, GUIStyle style, GUIState state)
         {
             int hash = 17;
             hash = hash * 23 + text.GetHashCode();
@@ -389,7 +389,9 @@ namespace ImGui
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (style == null) throw new ArgumentNullException(nameof(style));
 
-            int textMeshId = GetTextMeshId(text, size, style, state);
+            //TODO re-think text mesh caching method and when to rebuild
+
+            int textMeshId = GetTextId(text, size, style, state);
 
             TextMesh mesh;
             if (TextMeshCache.TryGetValue(textMeshId, out mesh))
@@ -413,7 +415,7 @@ namespace ImGui
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (style == null) throw new ArgumentNullException(nameof(style));
 
-            int textMeshId = GetTextMeshId(text, size, style, state);
+            int textMeshId = GetTextId(text, size, style, state);
 
             ITextContext textContext;
             if (TextContextCache.TryGetValue(textMeshId, out textContext))
@@ -434,6 +436,7 @@ namespace ImGui
                     fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                     (int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height),
                     textAlignment);
+                textContext.Build(Point.Zero, null);
                 TextContextCache.Add(textMeshId, textContext);
             }
             return textContext;

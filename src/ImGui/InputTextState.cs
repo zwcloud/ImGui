@@ -57,10 +57,6 @@ namespace ImGui
             caretIndex = textContext.XyToIndex(
                 (float)(mousePos.X - offsetOfTextRect.X),
                 (float)(mousePos.Y - offsetOfTextRect.Y), out isInside);
-            if (!isInside && caretIndex == Text.Length - 1)
-            {
-                ++caretIndex;
-            }
             textBox.SelectIndex = textBox.CaretIndex = caretIndex;
         }
 
@@ -113,10 +109,6 @@ namespace ImGui
             caretIndex = textContext.XyToIndex(
                 (float)(mousePos.X - offsetOfTextRect.X),
                 (float)(mousePos.Y - offsetOfTextRect.Y), out isInside);
-            if (!isInside && caretIndex == text.Length - 1)
-            {
-                ++caretIndex;
-            }
             textBox.CaretIndex = caretIndex;
         }
 
@@ -235,6 +227,7 @@ namespace ImGui
             {
                 if (value != caretIndex)
                 {
+                    HoldAlpha = true;
                     caretIndex = value;
                 }
             }
@@ -256,5 +249,26 @@ namespace ImGui
         {
             this.CaretIndex = this.SelectIndex = index;
         }
+
+        public byte CaretAlpha
+        {
+            get
+            {
+                if (HoldAlpha && holdingTime < 100)
+                {
+                    holdingTime += Application.DeltaTime;
+                    return 255;
+                }
+
+                HoldAlpha = false;
+                holdingTime = 0;
+                var result = (byte)(Application.Time % 1060 / 1060.0f * 255);
+                result = (byte)(result < 100 ? 0 : 255);
+                return result;
+            }
+        }
+
+        private bool HoldAlpha { get; set; }
+        private double holdingTime;
     }
 }

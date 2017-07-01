@@ -230,6 +230,12 @@ namespace ImGui
                             Input.Keyboard.keyStates[keyCode] = InputState.Down;
                         }
 
+                        if (keyCode == (int)Key.Enter)
+                        {
+                            Application.ImeBuffer.Enqueue('\n');
+                            return new IntPtr(1);
+                        }
+
                         //DEBUG only begin
                         if(keyCode == (int)Key.Escape)
                         {
@@ -364,7 +370,7 @@ namespace ImGui
             //now rc is the rect of the window
 
             IntPtr hwnd = CreateWindowEx(
-                0x00000008/*WS_EX_TOPMOST*/,// window style ex //HACK always on top
+                0/*0x00000008*//*WS_EX_TOPMOST*/,// window style ex //HACK always on top
                 new IntPtr(atom), // window class name
                 "ImGuiWindow~", // window caption
                 (uint)windowStyle, // window style

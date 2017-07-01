@@ -357,9 +357,9 @@ namespace ImGui
                 // Note that if our window is collapsed we will end up with a null clipping rectangle which is the correct behavior.
                 Rect title_bar_rect = window.TitleBarRect;
                 const float border_size = 0;
-                Rect clip_rect = new Rect(); // Force round to ensure that e.g. (int)(max.x-min.x) in user's render code produce correct result.
                 var paddingHorizontal = window.Style.PaddingHorizontal;
-                clip_rect = new Rect(
+                // Force round to ensure that e.g. (int)(max.x-min.x) in user's render code produce correct result.
+                Rect clip_rect = new Rect(
                     new Point(Math.Floor(0.5f + title_bar_rect.Min.X + Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
                               Math.Floor(0.5f + title_bar_rect.Max.Y + border_size)),
                     new Point(Math.Floor(0.5f + window.Position.X + window.Size.Width - Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
@@ -391,7 +391,7 @@ namespace ImGui
 
             // Pop
             w.WindowStack.RemoveAt(w.WindowStack.Count - 1);
-            w.CurrentWindow = ((w.WindowStack.Count == 0) ? null : w.WindowStack[w.WindowStack.Count - 1]);
+            w.CurrentWindow = (w.WindowStack.Count == 0) ? null : w.WindowStack[w.WindowStack.Count - 1];
         }
     }
 

@@ -114,7 +114,7 @@ namespace ImGui
                     if (Input.Mouse.LeftButtonPressed)
                     {
                         stateMachine.MoveNext(TextBoxCommand.ExitEditOut, context);
-                        if(g.ActiveId == id)
+                        if (g.ActiveId == id)
                         {
                             uiState.SetActiveID(0);
                         }
@@ -156,16 +156,14 @@ namespace ImGui
                     caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
                     caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
 
-                    var caretAlpha = (byte)(Application.Time % 1060 / 1060.0f * 255);
-                    caretAlpha = (byte)(caretAlpha < 100 ? 0 : 255);
+                    byte caretAlpha = context.CaretAlpha;
 
-                    //FIXME: This is not working! Check if the caret is outside the rect. If so, move the text so the caret is always shown.
-                    var textRect = contentRect;
+                    // Check if the caret is outside the rect. If so, move the text so the caret is always shown.
                     var caretX = caretTopPoint.X;
-                    if (caretX < textRect.X || caretX > textRect.Right)
+                    if (caretX < contentRect.X || caretX > contentRect.Right)
                     {
-                        var offsetX = -(caretX - textRect.Width - rect.X);
-                        textRect.Offset(offsetX, 0);
+                        var offsetX = -(caretX - contentRect.Width - rect.X);
+                        contentRect.Offset(offsetX, 0);
                         caretTopPoint.Offset(offsetX, 0);
                         caretBottomPoint.Offset(offsetX, 0);
                     }
@@ -174,7 +172,7 @@ namespace ImGui
                     d.AddRect(rect.Min, rect.Max, Color.White);
 
                     //Draw text
-                    d.DrawText(textRect, text, style, GUIState.Normal);
+                    d.DrawText(contentRect, text, style, GUIState.Normal);
 
                     //Draw selection rect
                     if (context.SelectIndex != context.CaretIndex)
@@ -200,9 +198,16 @@ namespace ImGui
                 }
                 d.PopClipRect();
             }
-
+            TextBoxDebug.CaretIndex = context.CaretIndex;
             return context.Text;
         }
+
+
+    }
+
+    public static class TextBoxDebug
+    {
+        public static uint CaretIndex;
     }
 
     internal static class TextBoxState

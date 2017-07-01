@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace ImGui
 {
-    class WindowManager
+    internal class WindowManager
     {
         public readonly List<Window> Windows = new List<Window>();
 
