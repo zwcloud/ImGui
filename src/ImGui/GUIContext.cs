@@ -68,7 +68,7 @@ namespace ImGui
         }
 
 
-        public bool ActiveIdAllowOverlap { get; private set; }
+        public bool ActiveIdAllowOverlap { get; internal set; }
         public Vector ActiveIdClickOffset { get; internal set; }
         public bool HoverIdAllowOverlap { get; internal set; }
         public long DeltaTime { get; internal set; }
@@ -123,7 +123,7 @@ namespace ImGui
             return IsMouseHoveringRect(rect, clip);
         }
 
-        public bool IsHovered(Rect bb, int id, bool flatten_childs)
+        public bool IsHovered(Rect bb, int id, bool flatten_childs = false)
         {
             GUIContext g = this;
             if (g.HoverId == 0 || g.HoverId == id || g.HoverIdAllowOverlap)

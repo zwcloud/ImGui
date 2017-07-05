@@ -36,12 +36,10 @@ namespace ImGui
             var window = GetCurrentWindow();
             var id = window.GetID(label);
 
-            var mousePos = Input.Mouse.MousePos;
-            var hovered = rect.Contains(mousePos);
+            var hovered = g.IsHovered(rect, id);
             // control logic
             var style = GUISkin.Instance[GUIControlName.TextBox];
             var uiState = Form.current.uiContext;
-            uiState.KeepAliveID(id);
             if (hovered)
             {
                 uiState.SetHoverID(id);
@@ -51,9 +49,20 @@ namespace ImGui
                     uiState.SetActiveID(id);
                 }
             }
-            if (g.InputTextState.inputTextContext.Id != id)//editing text box changed
+            else
             {
-                g.InputTextState.stateMachine.CurrentState = "Normal";//reset state
+                if (Input.Mouse.LeftButtonPressed)
+                {
+                    if (g.ActiveId == id)
+                    {
+                        uiState.SetActiveID(0);
+                    }
+                }
+            }
+
+            if (g.ActiveId == id && g.InputTextState.inputTextContext.Id != id)//editing text box changed
+            {
+                g.InputTextState.stateMachine.CurrentState = "Active";//reset state
                 g.InputTextState.inputTextContext = new InputTextContext()//reset input text context data
                 {
                     Id = id,
@@ -67,66 +76,38 @@ namespace ImGui
                 };
             }
 
-            g.InputTextState.inputTextContext.Rect = rect;
-            g.InputTextState.inputTextContext.Style = style;
-
-            var stateMachine = g.InputTextState.stateMachine;
-            var context = g.InputTextState.inputTextContext;
+            StateMachineEx stateMachine = null;
+            InputTextContext context = null;
+            if (g.ActiveId == id)
             {
+                stateMachine = g.InputTextState.stateMachine;
+                context = g.InputTextState.inputTextContext;
+                context.Rect = rect;
+                context.Style = style;
+
+                // Although we are active we don't prevent mouse from hovering other elements unless we are interacting right now with the widget.
+                // Down the line we should have a cleaner library-wide concept of Selected vs Active.
+                g.ActiveIdAllowOverlap = !Input.Mouse.LeftButtonPressed;
+
 #if INSPECT_STATE
             var A = stateMachine.CurrentState;
 #endif
-                bool insideRectLast = rect.Contains(Input.Mouse.LastMousePos);
-                bool insideRectCurrent = rect.Contains(Input.Mouse.MousePos);
-                bool insideRect = insideRectCurrent;
-
-                //Execute state commands
-                if (!insideRectLast && insideRectCurrent)
+                if (Input.Mouse.LeftButtonPressed)
                 {
-                    stateMachine.MoveNext(TextBoxCommand.MoveIn, context);
-                }
-                if (insideRectLast && !insideRectCurrent)
-                {
-                    stateMachine.MoveNext(TextBoxCommand.MoveOut, context);
-                }
-                if (insideRectCurrent)
-                {
-                    if (Input.Mouse.LeftButtonPressed)
-                    {
-                        stateMachine.MoveNext(TextBoxCommand.EnterEdit, context);
-                        stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
-                    }
-                    else
-                    {
-                        if (Input.Mouse.LeftButtonState == InputState.Down && stateMachine.CurrentState != TextBoxState.ActiveSelecting)
-                        {
-                            stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
-                            stateMachine.MoveNext(TextBoxCommand.BeginSelect, context);
-                        }
-                        if (Input.Mouse.LeftButtonState == InputState.Up)
-                        {
-                            stateMachine.MoveNext(TextBoxCommand.EndSelect, context);
-                        }
-                    }
-                }
-                else
-                {
-                    if (Input.Mouse.LeftButtonPressed)
-                    {
-                        stateMachine.MoveNext(TextBoxCommand.ExitEditOut, context);
-                        if (g.ActiveId == id)
-                        {
-                            uiState.SetActiveID(0);
-                        }
-                    }
+                    stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
                 }
 
-#if INSPECT_STATE
-            var B = stateMachine.CurrentState;
-            Debug.WriteLineIf(A != B,
-                string.Format("TextBox<{0}> {1}=>{2} CaretIndex: {3}, SelectIndex: {4}",
-                    id, A, B, context.CaretIndex, context.SelectIndex));
-#endif
+                if (hovered && Input.Mouse.LeftButtonState == InputState.Down && stateMachine.CurrentState != TextBoxState.ActiveSelecting)
+                {
+                    stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
+                    stateMachine.MoveNext(TextBoxCommand.BeginSelect, context);
+                }
+
+                if (hovered && Input.Mouse.LeftButtonState == InputState.Up)
+                {
+                    stateMachine.MoveNext(TextBoxCommand.EndSelect, context);
+                }
+
                 if (stateMachine.CurrentState == TextBoxState.Active)
                 {
                     stateMachine.MoveNext(TextBoxCommand.DoEdit, context);
@@ -136,6 +117,13 @@ namespace ImGui
                     stateMachine.MoveNext(TextBoxCommand.DoSelect, context);
                 }
                 stateMachine.MoveNext(TextBoxCommand.MoveCaretKeyboard, context);
+#if INSPECT_STATE
+            var B = stateMachine.CurrentState;
+            Debug.WriteLineIf(A != B,
+                string.Format("TextBox<{0}> {1}=>{2} CaretIndex: {3}, SelectIndex: {4}",
+                    id, A, B, context.CaretIndex, context.SelectIndex));
+#endif
+                text = context.Text;
             }
 
             // ui painting
@@ -168,7 +156,7 @@ namespace ImGui
                         caretBottomPoint.Offset(offsetX, 0);
                     }
 
-                    //Draw the box
+                    //Draw the box //TODO draw selection line blocks
                     d.AddRect(rect.Min, rect.Max, Color.White);
 
                     //Draw text
@@ -193,16 +181,20 @@ namespace ImGui
                 }
                 else
                 {
-                    d.DrawText(contentRect, context.Text, style, GUIState.Normal);
+                    d.DrawText(contentRect, text, style, GUIState.Normal);
                     d.AddRect(rect.Min, rect.Max, Color.White);
                 }
                 d.PopClipRect();
             }
-            TextBoxDebug.CaretIndex = context.CaretIndex;
-            return context.Text;
+
+            if (g.ActiveId == id)
+            {
+                TextBoxDebug.CaretIndex = context.CaretIndex;
+                //Debug.WriteLine(stateMachine.CurrentState);
+            }
+
+            return text;
         }
-
-
     }
 
     public static class TextBoxDebug

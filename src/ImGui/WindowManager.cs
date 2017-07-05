@@ -174,23 +174,20 @@ namespace ImGui
             // Click to focus window and start moving (after we're done with all our widgets)
             if (g.ActiveId == 0 && g.HoverId == 0 && Input.Mouse.LeftButtonPressed)
             {
-                if (!(this.FocusedWindow != null && !this.FocusedWindow.WasActive && this.FocusedWindow.Active)) // Unless we just made a popup appear
+                if (this.HoveredRootWindow != null)
                 {
-                    if (this.HoveredRootWindow != null)
+                    this.FocusWindow(this.HoveredWindow);
+                    if (!(this.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
                     {
-                        this.FocusWindow(this.HoveredWindow);
-                        if (!(this.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
-                        {
-                            this.MovedWindow = this.HoveredWindow;
-                            this.MovedWindowMoveId = this.HoveredRootWindow.MoveID;
-                            g.SetActiveID(this.MovedWindowMoveId, this.HoveredRootWindow);
-                        }
+                        this.MovedWindow = this.HoveredWindow;
+                        this.MovedWindowMoveId = this.HoveredRootWindow.MoveID;
+                        g.SetActiveID(this.MovedWindowMoveId, this.HoveredRootWindow);
                     }
-                    else if (this.FocusedWindow != null)
-                    {
-                        // Clicking on void disable focus
-                        this.FocusWindow(null);
-                    }
+                }
+                else if (this.FocusedWindow != null)
+                {
+                    // Clicking on void disable focus
+                    this.FocusWindow(null);
                 }
             }
         }
