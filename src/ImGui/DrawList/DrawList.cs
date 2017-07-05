@@ -77,6 +77,10 @@ namespace ImGui
             }
             draw_cmd.TextureData = null;
 
+            if(draw_cmd.ClipRect.IsEmpty)
+            {
+                return;
+            }
             DrawBuffer.CommandBuffer.Add(draw_cmd);
             BezierBuffer.CommandBuffer.Add(draw_cmd);
         }
@@ -92,6 +96,12 @@ namespace ImGui
             {
                 draw_cmd.ClipRect = Rect.Big;
             }
+
+            if (draw_cmd.ClipRect.IsEmpty)
+            {
+                return;
+            }
+
             draw_cmd.TextureData = texture;
             ImageBuffer.CommandBuffer.Add(draw_cmd);
         }
