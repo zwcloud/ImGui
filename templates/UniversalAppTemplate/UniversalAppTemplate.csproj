@@ -20,7 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
-
-  <Import Project="..\TestUI\TestUI.projitems" Label="Shared" />
+  
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
 
 </Project>
