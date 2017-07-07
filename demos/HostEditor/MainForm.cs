@@ -23,7 +23,7 @@ namespace HostEditor
             }
             for (int i = 0; i < fileLines.Count; i++)
             {
-                fileLines[i] = GUILayout.Textbox("hostline"+i, new Size(400, 30), fileLines[i]);
+                fileLines[i] = GUILayout.Textbox("hostline"+i, new Size(400, 20), fileLines[i]);
             }
             GUILayout.End();
         }

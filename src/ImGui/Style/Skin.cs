@@ -202,9 +202,9 @@ namespace ImGui
             }
 
             {
-                TextBox.Set<double>(GUIStyleName.PaddingLeft,   30, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.PaddingLeft,   30, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.PaddingLeft,   30, GUIState.Active);
+                TextBox.Set<double>(GUIStyleName.PaddingLeft,   5, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.PaddingLeft,   5, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.PaddingLeft,   5, GUIState.Active);
                 TextBox.Set<double>(GUIStyleName.PaddingTop,    5, GUIState.Normal);
                 TextBox.Set<double>(GUIStyleName.PaddingTop,    5, GUIState.Hover);
                 TextBox.Set<double>(GUIStyleName.PaddingTop,    5, GUIState.Active);
@@ -214,9 +214,9 @@ namespace ImGui
                 TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Normal);
                 TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Hover);
                 TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Active);
-                TextBox.Set<double>(GUIStyleName.FontSize, 24, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.FontSize, 24, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.FontSize, 24, GUIState.Active);
+                TextBox.Set<double>(GUIStyleName.FontSize, 13, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.FontSize, 13, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.FontSize, 13, GUIState.Active);
             }
         }
 
