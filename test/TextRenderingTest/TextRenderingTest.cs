@@ -49,7 +49,7 @@ namespace TextRenderingTest
             var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
             Application.Run(new Form1(() => {
-                var d = Form.current.uiContext.CurrentWindow.DrawList;
+                var d = Form.current.OverlayDrawList;
                 d.AddBezier(p0, c0, p, Color.Blue);
                 d.AddBezier(p, c1, p1, Color.Red);
             }));
@@ -217,7 +217,7 @@ namespace TextRenderingTest
 
             Application.Run(new Form1(() => {
                 GUILayout.Button("dummy");
-                var d = Form.current.uiContext.CurrentWindow.DrawList;
+                var d = Form.current.OverlayDrawList;
                 var size = style.MeasureText(GUIState.Normal, text);
                 var rect = new Rect(10, 100, size);
                 d.AddRect(rect.Min, rect.Max, Color.Red);

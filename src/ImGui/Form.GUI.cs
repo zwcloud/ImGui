@@ -167,6 +167,12 @@ namespace ImGui
                     this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
                 }
             }
+
+            if (OverlayDrawList.DrawBuffer.CommandBuffer.Count != 0)
+            {
+                this.renderer.RenderDrawList(OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+            }
+
             this.renderer.SwapBuffers();
         }
 
