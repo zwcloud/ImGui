@@ -15,7 +15,6 @@ namespace ImGui
         private readonly List<GlyphPlan> glyphPlans = new List<GlyphPlan>();
         private readonly GlyphLayout glyphLayout = new GlyphLayout();
         private GlyphTranslatorToPath glyphPathTranslator;
-        private GlyphPathBuilder glyphPathBuilder;
 
         private char[] textCharacters;
         private string text;
@@ -25,7 +24,7 @@ namespace ImGui
         private bool EnableLigature { get; set; }
         private Typeface CurrentTypeFace { get; set; }
 
-        private static Dictionary<string, Typeface> typefaceCache = new Dictionary<string, Typeface>();
+        private static readonly Dictionary<string, Typeface> typefaceCache = new Dictionary<string, Typeface>();
 
         public TypographyTextContext(string text, string fontFamily, float fontSize,
             FontStretch stretch, FontStyle style, FontWeight weight,
@@ -68,28 +67,10 @@ namespace ImGui
                     }
                     this.CurrentTypeFace = typeFace;
 
-                    //2. glyph builder
-                    glyphPathBuilder = new GlyphPathBuilder(CurrentTypeFace);
-                    glyphPathBuilder.UseTrueTypeInstructions = false; //reset
-                    glyphPathBuilder.UseVerticalHinting = false; //reset
-                    switch (this.HintTechnique)
-                    {
-                        case HintTechnique.TrueTypeInstruction:
-                            glyphPathBuilder.UseTrueTypeInstructions = true;
-                            break;
-                        case HintTechnique.TrueTypeInstruction_VerticalOnly:
-                            glyphPathBuilder.UseTrueTypeInstructions = true;
-                            glyphPathBuilder.UseVerticalHinting = true;
-                            break;
-                        case HintTechnique.CustomAutoFit:
-                            //custom agg autofit 
-                            break;
-                    }
-
-                    //3. glyph translater
+                    //2. glyph translater
                     glyphPathTranslator = new GlyphTranslatorToPath();
 
-                    //4. Update GlyphLayout
+                    //3. Update GlyphLayout
                     glyphLayout.ScriptLang = ScriptLangs.Latin;
                     glyphLayout.PositionTechnique = this.PositionTechnique;
                     glyphLayout.EnableLigature = this.EnableLigature;
@@ -144,7 +125,7 @@ namespace ImGui
                 }
 
                 int j = glyphPlans.Count;
-                Typeface currentTypeface = glyphLayout.Typeface;
+                Typeface currentTypeface = this.CurrentTypeFace;
                 MeasuredStringBox strBox;
                 if (j == 0)
                 {
@@ -169,7 +150,7 @@ namespace ImGui
             return this.Size;
         }
 
-        public void Build(Point offset, ITextPathBuilder pathBuilder)
+        public void Build(Point offset, ITextPathBuilder pathBuilder, Color color = new Color())
         {
             //Profile.Start("TypographyTextContext.Build");
             // layout glyphs with selected layout technique
@@ -179,33 +160,35 @@ namespace ImGui
             glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, glyphPlans, null);
 
             int j = glyphPlans.Count;
-            Typeface currentTypeface = glyphLayout.Typeface;
-            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
-            lineHeight = (currentTypeface.Ascender - currentTypeface.Descender + currentTypeface.LineGap)*scale;
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            lineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender + this.CurrentTypeFace.LineGap)*scale;
 
             if (pathBuilder != null)
             {
                 // render each glyph
                 glyphPathTranslator.PathBuilder = pathBuilder;
+                glyphPathTranslator.Color = color;
                 lineCount = 1;
                 float back = 0;
                 for (int i = 0; i < glyphPlans.Count; ++i)
                 {
-                    glyphPathTranslator.Reset();
                     var glyphPlan = glyphPlans[i];
-                    glyphPathBuilder.BuildFromGlyphIndex(glyphPlan.glyphIndex, this.FontSize);
+                    Glyph glyph = this.CurrentTypeFace.GetGlyphByIndex(glyphPlan.glyphIndex);
+
+                    //1. start with original points/contours from glyph
                     if (glyphPlan.glyphIndex == 0)
                     {
                         lineCount++;
                         back = (glyphPlan.x + glyphPlan.advX) * scale;
                         continue;
                     }
-                    glyphPathBuilder.ReadShapes(
-                        glyphPathTranslator, this.FontSize,
-                        (float)glyphPlan.x * scale - back,//minus total width of previous lines
-                        (float)glyphPlan.y * scale
-                            + lineCount * lineHeight//this extra  offset moves all shapes from (0, 0) to (0, line height)
-                        );
+
+                    //read output from glyph points
+                    glyphPathTranslator.Read(glyph.GlyphPoints,
+                        glyph.EndPoints,
+                        scale,
+                        (float)glyphPlan.x * scale - back,
+                        (float)glyphPlan.y * scale + lineCount * lineHeight);
                 }
             }
 

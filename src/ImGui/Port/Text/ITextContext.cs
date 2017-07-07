@@ -37,7 +37,8 @@ namespace ImGui
         /// </summary>
         /// <param name="offset">offset of the text base-point against the rectangle position(bottom-left of the rectangle)</param>
         /// <param name="builder"></param>
-        void Build(Point offset, ITextPathBuilder builder);
+        /// <param name="color"></param>
+        void Build(Point offset, ITextPathBuilder builder, Color color = new Color());
 
         /// <summary>
         /// get space that the text occupies

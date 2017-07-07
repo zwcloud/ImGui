@@ -52,6 +52,10 @@ namespace TextRenderingTest
                 var d = Form.current.OverlayDrawList;
                 d.AddBezier(p0, c0, p, Color.Blue);
                 d.AddBezier(p, c1, p1, Color.Red);
+                d.PathMoveTo(p0);
+                d.PathLineTo(p);
+                d.PathLineTo(p1);
+                d.PathFill(Color.Black);
             }));
         }
 
@@ -158,7 +162,18 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldRenderABigGlyph()
         {
+            //var t = new TypographyTextContext("D", Utility.FontDir + "msjh.ttf", 400,
+            //    FontStretch.Normal, FontStyle.Normal, FontWeight.Normal, 1000, 1000, TextAlignment.Leading);
+            //using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, 2000, 2000))
+            //using (Cairo.Context g = new Cairo.Context(surface))
+            //{
+            //    var builder = new CairoPathBuilder(g, 0, 0, 1);
+            //    t.Build(Point.Zero, builder);
+            //    surface.WriteToPng("D:\\ShouldRenderABigGlyph.png");
+            //}
+
             Application.Run(new Form1(()=> {
+                var d = Form.current.OverlayDrawList;
 
                 GUIStyle labelStyle = "Label";
                 labelStyle.Set<double>(GUIStyleName.FontSize, 400);

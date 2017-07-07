@@ -52,7 +52,7 @@ namespace Typography.OpenFont
         /// <param name="y1">end point y</param>
         void LineTo(float x1, float y1);
         /// <summary>
-        /// add Quadratic Bézier curve,begin from CURRENT pen pos, to (x2,y2), then set (x2,y2) as CURRENT pen pos
+        /// add Quadratic(2) Bézier curve,begin from CURRENT pen pos, to (x2,y2), then set (x2,y2) as CURRENT pen pos
         /// </summary>
         /// <param name="x1">x of 1st control point</param>
         /// <param name="y1">y of 1st control point</param>
@@ -60,7 +60,7 @@ namespace Typography.OpenFont
         /// <param name="y2">end point y</param>
         void Curve3(float x1, float y1, float x2, float y2);
         /// <summary>
-        /// add Cubic Bézier curve,begin from CURRENT pen pos, to (x3,y3), then set (x3,y3) as CURRENT pen pos
+        /// add Cubic(3) Bézier curve,begin from CURRENT pen pos, to (x3,y3), then set (x3,y3) as CURRENT pen pos
         /// </summary>
         /// <param name="x1">x of 1st control point</param>
         /// <param name="y1">y of 1st control point</param>
@@ -122,8 +122,6 @@ namespace Typography.OpenFont
                 //eg. glyph '2' in Century font starts with 'OFF-CURVE' point, and ends with 'OFF-CURVE'
                 //-------------------------------------------------------------------
 
-
-
                 for (; cpoint_index < nextCntBeginAtIndex; ++cpoint_index)
                 {    //for each point in this contour
 
@@ -132,11 +130,6 @@ namespace Typography.OpenFont
                     float p_y = p.Y * -scale;
                     p_x += offsetX;
                     p_y += offsetY;
-
-                    //int vtag = (int)flags[cpoint_index] & 0x1;
-                    //bool has_dropout = (((vtag >> 2) & 0x1) != 0);
-                    //int dropoutMode = vtag >> 3;
-
 
                     if (p.onCurve)
                     {
@@ -159,23 +152,14 @@ namespace Typography.OpenFont
 
                         if (offCurveMode)
                         {
-                            //as describe above [B.1] ,...
-
+                            //as describe above [B.1]
                             switch (curveControlPointCount)
                             {
                                 case 1:
-
-                                    tx.Curve3(
-                                        c1.X, c1.Y,
-                                        p_x, p_y);
-
+                                    tx.Curve3(c1.X, c1.Y, p_x, p_y);
                                     break;
                                 default:
-
-                                    //for TrueType font 
-                                    //we should not be here?
                                     throw new NotSupportedException();
-
                             }
 
                             //reset curve control point count
@@ -186,8 +170,7 @@ namespace Typography.OpenFont
                         else
                         {
                             // p is ON CURVE, but now we are in OFF-CURVE mode.
-                            //
-                            //as describe above [B.2] ,... 
+                            //as describe above [B.2]
                             if (isFirstOnCurvePoint)
                             {
                                 //special treament for first point
@@ -199,7 +182,6 @@ namespace Typography.OpenFont
                                         tx.MoveTo(latest_moveto_x = p_x, latest_moveto_y = p_y);
                                         break;
                                     case 1:
-
                                         //describe above, see [A.2]
                                         c_begin = c1;
                                         has_c_begin = true;
@@ -210,28 +192,19 @@ namespace Typography.OpenFont
                                         tx.MoveTo(latest_moveto_x = p_x, latest_moveto_y = p_y);
                                         curveControlPointCount--;
                                         break;
-                                    default: throw new NotSupportedException();
+                                    default:
+                                        throw new NotSupportedException();
                                 }
                             }
                             else
                             {
                                 tx.LineTo(p_x, p_y);
                             }
-
-                            //if (has_dropout)
-                            //{
-                            //    //printf("[%d] on,dropoutMode=%d: %d,y:%d \n", mm, dropoutMode, vpoint.x, vpoint.y);
-                            //}
-                            //else
-                            //{
-                            //    //printf("[%d] on,x: %d,y:%d \n", mm, vpoint.x, vpoint.y);
-                            //}
                         }
                     }
                     else
                     {
                         //p is OFF-CURVE point (this is curve control point)
-                        //
                         switch (curveControlPointCount)
                         {
 
@@ -239,9 +212,9 @@ namespace Typography.OpenFont
                                 c1 = new Vector2(p_x, p_y);
                                 if (!isFirstOnCurvePoint)
                                 {
-                                    //this point is curve control point***
+                                    //this point is curve control point
                                     //so set curve mode = true 
-                                    //check number if existing curve control   
+                                    //check number if existing curve control
                                     offCurveMode = true;
                                 }
                                 else
@@ -254,10 +227,10 @@ namespace Typography.OpenFont
                                     //we already have previous 1st control point (c1)
                                     //------------------------------------- 
                                     //please note that TrueType font
-                                    //compose of Quadractic Bezier Curve (Curve3) *** 
+                                    //compose of Quadractic Bezier Curve (Curve3)
                                     //------------------------------------- 
                                     //in this case, this is NOT Cubic,
-                                    //this is 2 CONNECTED Quadractic Bezier Curves***
+                                    //this is 2 CONNECTED Quadractic Bezier Curves
                                     //
                                     //we must create 'end point' of the first curve
                                     //and set it as 'begin point of the second curve.
@@ -265,20 +238,13 @@ namespace Typography.OpenFont
                                     //this is done by ...
                                     //1. calculate mid point between c1 and the latest point (p_x,p_y)
                                     Vector2 mid = GetMidPoint(c1, p_x, p_y);
-                                    //----------
                                     //2. generate curve3 ***
-                                    tx.Curve3(
-                                        c1.X, c1.Y,
-                                        mid.X, mid.Y);
-                                    //------------------------
-                                    //3. so curve control point number is reduce by 1***
+                                    tx.Curve3(c1.X, c1.Y, mid.X, mid.Y);
+                                    //3. so curve control point number is reduce by 1
                                     curveControlPointCount--;
-                                    //------------------------
                                     //4. and set (p_x,p_y) as 1st control point for the new curve
                                     c1 = new Vector2(p_x, p_y);
                                     offCurveMode = true;
-                                    //
-                                    //printf("[%d] bzc2nd,  x: %d,y:%d \n", mm, vpoint.x, vpoint.y); 
                                 }
                                 break;
                             default:
@@ -288,9 +254,7 @@ namespace Typography.OpenFont
                         curveControlPointCount++;
                     }
                 }
-                //--------
-                //when finish,                 
-                //ensure that the contour is closed.
+                //when finish, ensure that the contour is closed.
                 if (offCurveMode)
                 {
                     switch (curveControlPointCount)
@@ -298,21 +262,14 @@ namespace Typography.OpenFont
                         case 0: break;
                         case 1:
                             {
-
                                 if (has_c_begin)
                                 {
                                     Vector2 mid = GetMidPoint(c1, c_begin.X, c_begin.Y);
-                                    //----------
-                                    //2. generate curve3 ***
-                                    tx.Curve3(
-                                        c1.X, c1.Y,
-                                        mid.X, mid.Y);
-                                    //------------------------
-                                    //3. so curve control point number is reduce by 1***
+                                    //2. generate curve3
+                                    tx.Curve3(c1.X, c1.Y, mid.X, mid.Y);
+                                    //3. so curve control point number is reduce by 1
                                     curveControlPointCount--;
-                                    //------------------------
-                                    tx.Curve3(
-                                         c_begin.X, c_begin.Y,
+                                    tx.Curve3(c_begin.X, c_begin.Y,
                                          latest_moveto_x, latest_moveto_y);
                                 }
                                 else
@@ -324,8 +281,7 @@ namespace Typography.OpenFont
                             }
                             break;
                         default:
-                            {//for TrueType font 
-                                //we should not be here? 
+                            {
                                 throw new NotSupportedException();
                             }
                     }
@@ -334,12 +290,9 @@ namespace Typography.OpenFont
                     curveControlPointCount = 0;
                 }
 
-                //--------      
-                tx.CloseContour(); //***                            
+                tx.CloseContour();
                 startContour++;
-                //--------   
                 todoContourCount--;
-                //--------      
             }
             //finish
             tx.EndRead();
@@ -353,45 +306,5 @@ namespace Typography.OpenFont
                 ((v0.Y + y1) / 2f));
         }
     }
-
-    //static int s_POINTS_PER_INCH = 72; //default value, 
-    //static int s_PIXELS_PER_INCH = 96; //default value
-    //public static float ConvEmSizeInPointsToPixels(float emsizeInPoint)
-    //{
-    //    return (int)(((float)emsizeInPoint / (float)s_POINTS_PER_INCH) * (float)s_PIXELS_PER_INCH);
-    //}
-
-    ////from http://www.w3schools.com/tags/ref_pxtoemconversion.asp
-    ////set default
-    //// 16px = 1 em
-    ////-------------------
-    ////1. conv font design unit to em
-    //// em = designUnit / unit_per_Em       
-    ////2. conv font design unit to pixels 
-    //// float scale = (float)(size * resolution) / (pointsPerInch * _typeface.UnitsPerEm);
-
-    ////-------------------
-    ////https://www.microsoft.com/typography/otspec/TTCH01.htm
-    ////Converting FUnits to pixels
-    ////Values in the em square are converted to values in the pixel coordinate system by multiplying them by a scale. This scale is:
-    ////pointSize * resolution / ( 72 points per inch * units_per_em )
-    ////where pointSize is the size at which the glyph is to be displayed, and resolution is the resolution of the output device.
-    ////The 72 in the denominator reflects the number of points per inch.
-    ////For example, assume that a glyph feature is 550 FUnits in length on a 72 dpi screen at 18 point. 
-    ////There are 2048 units per em. The following calculation reveals that the feature is 4.83 pixels long.
-    ////550 * 18 * 72 / ( 72 * 2048 ) = 4.83
-    ////-------------------
-    //public static float ConvFUnitToPixels(ushort reqFUnit, float fontSizeInPoint, ushort unitPerEm)
-    //{
-    //    //reqFUnit * scale             
-    //    return reqFUnit * GetFUnitToPixelsScale(fontSizeInPoint, unitPerEm);
-    //}
-    //public static float GetFUnitToPixelsScale(float fontSizeInPoint, ushort unitPerEm)
-    //{
-    //    //reqFUnit * scale             
-    //    return ((fontSizeInPoint * s_PIXELS_PER_INCH) / (s_POINTS_PER_INCH * unitPerEm));
-    //}
-
-
 
 }

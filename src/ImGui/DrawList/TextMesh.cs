@@ -278,7 +278,7 @@ namespace ImGui
                         });
                     }
 
-                    // add this bezier to bezier buffer
+                    // add this quadratic bezier curve to bezier buffer
                     AddBezier(start, control, end, color);
                 }
                 else//not control point of a bezier
@@ -361,7 +361,7 @@ namespace ImGui
         internal void Build(Point position, GUIStyle style, ITextContext textContext)
         {
             var color = style.Get<Color>(GUIStyleName.FontColor);
-            textContext.Build(position, this);
+            textContext.Build(position, this, color);
             this.PathTessPolygon(color);
         }
     }
@@ -436,7 +436,7 @@ namespace ImGui
                     fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                     (int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height),
                     textAlignment);
-                textContext.Build(Point.Zero, null);
+                textContext.Build(Point.Zero, null, Color.Clear);
                 TextContextCache.Add(textMeshId, textContext);
             }
             return textContext;

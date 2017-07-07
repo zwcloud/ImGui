@@ -44,7 +44,7 @@ namespace PrimitiveRenderingTest
                     rad += Math.PI * 0.666;
                     var C_ = C + 70 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
 
-                    var d = Form.current.uiContext.CurrentWindow.DrawList;
+                    var d = Form.current.OverlayDrawList;
                     d.PathMoveTo(A_);
                     d.PathLineTo(B_);
                     d.PathLineTo(C_);

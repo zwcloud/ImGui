@@ -51,6 +51,9 @@ namespace TextRenderingTest
             PathLineTo(start);
             PathLineTo(control);
             PathLineTo(end);
+
+            g.CurveTo(start.ToPointD(), control.ToPointD(), end.ToPointD());
+
             builder.AppendLine("bezier end");
         }
 
@@ -66,6 +69,15 @@ namespace TextRenderingTest
         internal string Result
         {
             get { return builder.ToString(); }
+        }
+
+    }
+
+    public static class Ex
+    {
+        public static Cairo.PointD ToPointD(this Point p)
+        {
+            return new Cairo.PointD(p.X, p.Y);
         }
     }
 }

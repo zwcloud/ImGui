@@ -24,7 +24,7 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGetCorrectOutline()
         {
-            var textContext = new TypographyTextContext(
+            ITextContext textContext = new TypographyTextContext(
                 "0123456", FontFile, 36,
                 FontStretch.Normal, FontStyle.Normal, FontWeight.Normal,
                 1000, 100,

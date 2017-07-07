@@ -91,7 +91,7 @@ namespace ImGui
             else
             {
                 DefaultFontSize = 12;
-                DefaultFontFamily = Utility.FontDir + "msjh.ttf";
+                DefaultFontFamily = Utility.FontDir + "Helvetica.ttf";
             }
 
             Default = new GUIStyle();
