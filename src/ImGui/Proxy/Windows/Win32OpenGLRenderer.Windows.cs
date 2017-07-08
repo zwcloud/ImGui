@@ -103,6 +103,9 @@ namespace ImGui
         public static extern bool SetPixelFormat(IntPtr hdc, int iPixelFormat, ref PIXELFORMATDESCRIPTOR ppfd);
 
         [DllImport("opengl32.dll", SetLastError = true)]
+        public static extern IntPtr wglCreateContextAttribsARB(IntPtr hdc, IntPtr hShareContext, int[] attribList);
+
+        [DllImport("opengl32.dll", SetLastError = true)]
         public static extern IntPtr wglCreateContext(IntPtr hDC);
 
         [DllImport("opengl32.dll", SetLastError = true)]
@@ -140,6 +143,134 @@ namespace ImGui
             return str;
         }
 
+        class Wgl
+        {
+            [DllImport("OPENGL32.DLL", EntryPoint = "wglGetProcAddress", ExactSpelling = true, SetLastError = true)]
+            internal static extern IntPtr GetProcAddress(string lpszProc);
+
+            [DllImport("OPENGL32.DLL", EntryPoint = "wglGetCurrentContext", ExactSpelling = true, SetLastError = true)]
+            internal static extern IntPtr GetCurrentContext();
+
+            [DllImport("OPENGL32.DLL", EntryPoint = "wglCreateContext", ExactSpelling = true, SetLastError = true)]
+            internal static extern IntPtr CreateContext(IntPtr hDc);
+
+            [DllImport("OPENGL32.DLL", EntryPoint = "wglMakeCurrent", ExactSpelling = true, SetLastError = true)]
+            internal static extern bool MakeCurrent(IntPtr hDc, IntPtr newContext);
+
+            [DllImport("OPENGL32.DLL", EntryPoint = "wglDeleteContext", ExactSpelling = true, SetLastError = true)]
+            internal static extern bool DeleteContext(IntPtr oldContext);
+
+            private static string[] EntryPointNames;
+
+            private static IntPtr[] EntryPoints;
+
+            static Wgl()
+            {
+                Wgl.EntryPointNames = new string[]
+                {
+                    "wglCreateContextAttribsARB",
+                    "wglGetExtensionsStringARB",
+                    "wglGetPixelFormatAttribivARB",
+                    "wglGetPixelFormatAttribfvARB",
+                    "wglChoosePixelFormatARB",//4
+                    "wglMakeContextCurrentARB",
+                    "wglGetCurrentReadDCARB",
+                    "wglCreatePbufferARB",
+                    "wglGetPbufferDCARB",
+                    "wglReleasePbufferDCARB",
+                    "wglDestroyPbufferARB",
+                    "wglQueryPbufferARB",
+                    "wglBindTexImageARB",
+                    "wglReleaseTexImageARB",
+                    "wglSetPbufferAttribARB",
+                    "wglGetExtensionsStringEXT",
+                    "wglSwapIntervalEXT",
+                    "wglGetSwapIntervalEXT"
+                };
+                Wgl.EntryPoints = new IntPtr[Wgl.EntryPointNames.Length];
+            }
+
+            private static bool IsValid(IntPtr address)
+            {
+                long a = address.ToInt64();
+                return a < -1L || a > 3L;
+            }
+
+            private IntPtr GetAddress(string function_string)
+            {
+                IntPtr address = Wgl.GetProcAddress(function_string);
+                if (!Wgl.IsValid(address))
+                {
+                    address = Win32.GetProcAddress(function_string);
+                }
+                return address;
+            }
+            internal void LoadEntryPoints(IntPtr hdc)
+            {
+                for (int i = 0; i < Wgl.EntryPointNames.Length; i++)
+                {
+                    Wgl.EntryPoints[i] = GetAddress(Wgl.EntryPointNames[i]);
+                }
+            }
+
+            //  Delegates
+            delegate bool wglChoosePixelFormatARB(IntPtr hdc, int[] piAttribIList, Single[] pfAttribFList, UInt32 nMaxFormats, [Out] out int piFormats, [Out] out UInt32 nNumFormats);
+
+            internal static bool ChoosePixelFormatARB(IntPtr hdc, int[] piAttribIList, Single[] pfAttribFList, UInt32 nMaxFormats, [Out] out int piFormats, [Out] out UInt32 nNumFormats)
+            {
+                return Marshal.GetDelegateForFunctionPointer<wglChoosePixelFormatARB>(Wgl.EntryPoints[4])(hdc, piAttribIList, pfAttribFList, nMaxFormats, out piFormats, out nNumFormats);
+            }
+        }
+
+        private IntPtr TempWindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
+        {
+            return DefWindowProc(hWnd, msg, wParam, lParam);
+        }
+        delegate IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam);
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct WNDCLASS
+        {
+            public uint style;
+            [MarshalAs(UnmanagedType.FunctionPtr)]
+            public WndProc lpfnWndProc;
+            public int cbClsExtra;
+            public int cbWndExtra;
+            public IntPtr hInstance;
+            public IntPtr hIcon;
+            public IntPtr hCursor;
+            public IntPtr hbrBackground;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpszMenuName;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string lpszClassName;
+        }
+
+        [DllImport("user32.dll")]
+        static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern ushort RegisterClassW([In] ref WNDCLASS lpWndClass);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr CreateWindowEx(
+            uint dwExStyle,
+            IntPtr lpClassName,
+            string lpWindowName,
+            uint dwStyle,
+            int x,
+            int y,
+            int nWidth,
+            int nHeight,
+            IntPtr hWndParent,
+            IntPtr hMenu,
+            IntPtr hInstance,
+            IntPtr lpParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool DestroyWindow(IntPtr hwnd);
+
         #endregion
 
         #endregion
@@ -148,34 +279,175 @@ namespace ImGui
         IntPtr hglrc;
         IntPtr hwnd;
 
-        private void InitGLEW()
+        enum WGL
         {
-            uint err = glewInit();
-            if (0/* GLEW_OK */ != err)
-            {
-                throw new Exception("Error: " + glewGetErrorString(err));
-            }
+            //WGL_ARB_pixel_format
+            WGL_NUMBER_PIXEL_FORMATS_ARB = 0x2000,
+            WGL_DRAW_TO_WINDOW_ARB = 0x2001,
+            WGL_DRAW_TO_BITMAP_ARB = 0x2002,
+            WGL_ACCELERATION_ARB = 0x2003,
+            WGL_NEED_PALETTE_ARB = 0x2004,
+            WGL_NEED_SYSTEM_PALETTE_ARB = 0x2005,
+            WGL_SWAP_LAYER_BUFFERS_ARB = 0x2006,
+            WGL_SWAP_METHOD_ARB = 0x2007,
+            WGL_NUMBER_OVERLAYS_ARB = 0x2008,
+            WGL_NUMBER_UNDERLAYS_ARB = 0x2009,
+            WGL_TRANSPARENT_ARB = 0x200A,
+            WGL_SHARE_DEPTH_ARB = 0x200C,
+            WGL_SHARE_STENCIL_ARB = 0x200D,
+            WGL_SHARE_ACCUM_ARB = 0x200E,
+            WGL_SUPPORT_GDI_ARB = 0x200F,
+            WGL_SUPPORT_OPENGL_ARB = 0x2010,
+            WGL_DOUBLE_BUFFER_ARB = 0x2011,
+            WGL_STEREO_ARB = 0x2012,
+            WGL_PIXEL_TYPE_ARB = 0x2013,
+            WGL_COLOR_BITS_ARB = 0x2014,
+            WGL_RED_BITS_ARB = 0x2015,
+            WGL_RED_SHIFT_ARB = 0x2016,
+            WGL_GREEN_BITS_ARB = 0x2017,
+            WGL_GREEN_SHIFT_ARB = 0x2018,
+            WGL_BLUE_BITS_ARB = 0x2019,
+            WGL_BLUE_SHIFT_ARB = 0x201A,
+            WGL_ALPHA_BITS_ARB = 0x201B,
+            WGL_ALPHA_SHIFT_ARB = 0x201C,
+            WGL_ACCUM_BITS_ARB = 0x201D,
+            WGL_ACCUM_RED_BITS_ARB = 0x201E,
+            WGL_ACCUM_GREEN_BITS_ARB = 0x201F,
+            WGL_ACCUM_BLUE_BITS_ARB = 0x2020,
+            WGL_ACCUM_ALPHA_BITS_ARB = 0x2021,
+            WGL_DEPTH_BITS_ARB = 0x2022,
+            WGL_STENCIL_BITS_ARB = 0x2023,
+            WGL_AUX_BUFFERS_ARB = 0x2024,
+            WGL_NO_ACCELERATION_ARB = 0x2025,
+            WGL_GENERIC_ACCELERATION_ARB = 0x2026,
+            WGL_FULL_ACCELERATION_ARB = 0x2027,
+            WGL_SWAP_EXCHANGE_ARB = 0x2028,
+            WGL_SWAP_COPY_ARB = 0x2029,
+            WGL_SWAP_UNDEFINED_ARB = 0x202A,
+            WGL_TYPE_RGBA_ARB = 0x202B,
+            WGL_TYPE_COLORINDEX_ARB = 0x202C,
+            WGL_TRANSPARENT_RED_VALUE_ARB = 0x2037,
+            WGL_TRANSPARENT_GREEN_VALUE_ARB = 0x2038,
+            WGL_TRANSPARENT_BLUE_VALUE_ARB = 0x2039,
+            WGL_TRANSPARENT_ALPHA_VALUE_ARB = 0x203A,
+            WGL_TRANSPARENT_INDEX_VALUE_ARB = 0x203B,
 
-            Debug.WriteLine(string.Format("Status: Using GLEW {0}", glewGetString(1/* GLEW_VERSION */)));
+            //WGL_ARB_multisample
+            WGL_SAMPLE_BUFFERS_ARB = 0x2041,
+            WGL_SAMPLES_ARB = 0x2042
         }
 
         private void CreateOpenGLContext(IntPtr hwnd)
         {
             this.hwnd = hwnd;
-
             hDC = GetDC(hwnd);
+
+            IntPtr tempContext = IntPtr.Zero;
+            IntPtr tempHwnd = IntPtr.Zero;
+            //Create temporary window
+            IntPtr hInstance = Process.GetCurrentProcess().SafeHandle.DangerousGetHandle();
+            string szClassName = "tmpWindow~";
+
+            WNDCLASS wndclass;
+            wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/;
+            wndclass.lpfnWndProc = TempWindowProc;
+            wndclass.cbClsExtra = 0;
+            wndclass.cbWndExtra = 0;
+            wndclass.hInstance = hInstance;
+            wndclass.hIcon = IntPtr.Zero;
+            wndclass.hCursor = IntPtr.Zero;
+            wndclass.hbrBackground = IntPtr.Zero;
+            wndclass.lpszMenuName = null;
+            wndclass.lpszClassName = szClassName;
+
+            ushort atom = RegisterClassW(ref wndclass);
+            if (atom == 0)
+            {
+                throw new WindowCreateException(string.Format("RegisterClass error: {0}", Marshal.GetLastWin32Error()));
+            }
+
+            tempHwnd = CreateWindowEx(
+                0,
+                new IntPtr(atom),
+                "tmpWindow~",
+                (uint)(WindowStyles.WS_VISIBLE | WindowStyles.WS_CHILD),
+                0, 0, 10, 10, hwnd, IntPtr.Zero,
+                hInstance,
+                IntPtr.Zero);
+
+            if (tempHwnd == IntPtr.Zero)
+            {
+                throw new WindowCreateException(string.Format("CreateWindowEx for tempContext error: {0}", Marshal.GetLastWin32Error()));
+            }
+
+            IntPtr tempHdc = GetDC(tempHwnd);
 
             var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
             pixelformatdescriptor.Init();
 
-            var pixelFormat = ChoosePixelFormat(hDC, ref pixelformatdescriptor);
-            if (!SetPixelFormat(hDC, pixelFormat, ref pixelformatdescriptor))
+            if(!SetPixelFormat(tempHdc, 1, ref pixelformatdescriptor))
+            {
                 throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+            }
+
+            tempContext = Wgl.CreateContext(tempHdc);//Crate temp context to load entry points
+            if(tempContext == IntPtr.Zero)
+            {
+                throw new Exception(string.Format("wglCreateContext for tempHdc failed: error {0}", Marshal.GetLastWin32Error()));
+            }
+
+            if (!Wgl.MakeCurrent(tempHdc, tempContext))
+            {
+                throw new Exception(string.Format("wglMakeCurrent for tempContext failed: error {0}", Marshal.GetLastWin32Error()));
+            }
+
+            //load wgl entry points for wglXXXARB functions
+            new Wgl().LoadEntryPoints(tempHdc);
+
+            //Init glew
+            uint err = glewInit();
+            if (0/* GLEW_OK */ != err)
+            {
+                throw new Exception("Error: " + glewGetErrorString(err));
+            }
+            Debug.WriteLine(string.Format("Status: Using GLEW {0}", glewGetString(1/* GLEW_VERSION */)));
+
+            //Destroy temp window and temp WGL context
+            Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+            DestroyWindow(tempHwnd);
+            Wgl.DeleteContext(tempContext);
+
+            int[] iPixAttribs = {
+                (int)WGL.WGL_SUPPORT_OPENGL_ARB, 1,
+                (int)WGL.WGL_DRAW_TO_WINDOW_ARB, 1,
+                (int)WGL.WGL_ACCELERATION_ARB,   (int)WGL.WGL_FULL_ACCELERATION_ARB,
+                (int)WGL.WGL_COLOR_BITS_ARB,     32,
+                (int)WGL.WGL_DEPTH_BITS_ARB,     24,
+                (int)WGL.WGL_DOUBLE_BUFFER_ARB,(int)GL.GL_TRUE,
+                (int)WGL.WGL_PIXEL_TYPE_ARB,      (int)WGL.WGL_TYPE_RGBA_ARB,
+                (int)WGL.WGL_STENCIL_BITS_ARB, 8,
+                (int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MXAA
+                (int)WGL.WGL_SAMPLES_ARB,        8,
+            0};
+
+            int pixelFormat;
+            uint numFormats;
+            if(!Wgl.ChoosePixelFormatARB(hDC, iPixAttribs, null, 1, out pixelFormat, out numFormats))
+            {
+                throw new Exception(string.Format("wglChoosePixelFormatARB failed: error {0}", Marshal.GetLastWin32Error()));
+            }
+
+            if (!SetPixelFormat(hDC, pixelFormat, ref pixelformatdescriptor))
+            {
+                throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+            }
 
             if ((hglrc = wglCreateContext(hDC)) == IntPtr.Zero)
-                throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+            {
+                throw new Exception(string.Format("wglCreateContext failed: error {0}", Marshal.GetLastWin32Error()));
+            }
 
-            if(!wglMakeCurrent(hDC, hglrc))
+            if (!wglMakeCurrent(hDC, hglrc))
             {
                 throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
             }

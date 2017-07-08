@@ -225,7 +225,8 @@ void main()
         public void Init(object windowHandle)
         {
             CreateOpenGLContext((IntPtr)windowHandle);
-            InitGLEW();
+
+            GL.Enable(GL.GL_MULTISAMPLE);
 
             m.Init();
             mExtra.Init();
@@ -272,6 +273,7 @@ void main()
             GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             GL.Disable(GL.GL_CULL_FACE);
             GL.Disable(GL.GL_DEPTH_TEST);
+
 #if EnableClip
             GL.Enable(GL.GL_SCISSOR_TEST);
 #endif

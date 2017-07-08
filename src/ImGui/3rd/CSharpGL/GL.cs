@@ -29,7 +29,7 @@ namespace CSharpGL
         private static T GetDelegateFor<T>() where T : class
         {
             //  Get the type of the extension function.
-            Type delegateType = typeof(T);
+            Type delegateType = typeof(T);//This is slow!!! FIXME right now
 
             //  Get the name of the extension function.
             string name = delegateType.Name;
