@@ -43,7 +43,7 @@ namespace ImGui
                 var style = new GUIStyle();
                 style.Set(GUIStyleName.PaddingTop, 1.0);
                 style.Set(GUIStyleName.PaddingRight, 1.0);
-                style.Set(GUIStyleName.PaddingBottom, 2.0);
+                style.Set(GUIStyleName.PaddingBottom, 1.0);
                 style.Set(GUIStyleName.PaddingLeft, 1.0);
                 style.Set(GUIStyleName.BackgroundColor, new Color(0.30f, 0.30f, 0.30f, 0.70f));
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
@@ -137,7 +137,7 @@ namespace ImGui
         internal Rect GetRect(int id, Size size, GUIStyle style, LayoutOption[] options)
         {
             var rect = StackLayout.GetRect(id, size, style, options);
-            rect.Offset(this.Position.X, this.TitleBarHeight + this.Position.Y);
+            rect.Offset(this.Position.X + this.Style.PaddingLeft, this.TitleBarHeight + this.Position.Y + this.Style.PaddingTop);
             return rect;
         }
 
