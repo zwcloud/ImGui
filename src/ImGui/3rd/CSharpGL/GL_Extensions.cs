@@ -7,7 +7,80 @@ namespace CSharpGL
 {
     public static partial class GL
     {
+        static GL()
+        {
+            //pre-load all native opengl functions that will be used
 
+            _glBlendEquation = GetDelegateFor<glBlendEquation>();
+            _glBindVertexArray = GetDelegateFor<glBindVertexArray>();
+            _glBindBuffer = GetDelegateFor<glBindBuffer>();
+            _glBufferData = GetDelegateFor<glBufferData>();
+            _glActiveTexture = GetDelegateFor<glActiveTexture>();
+            _glBlendEquationSeparate = GetDelegateFor<glBlendEquationSeparate>();
+
+            _glAttachShader = GetDelegateFor<glAttachShader>();
+            _glCreateShader = GetDelegateFor<glCreateShader>();
+            _glShaderSource = GetDelegateFor<glShaderSource>();
+            _glCompileShader = GetDelegateFor<glCompileShader>();
+            _glCreateProgram = GetDelegateFor<glCreateProgram>();
+            _glDeleteProgram = GetDelegateFor<glDeleteProgram>();
+            _glDeleteShader = GetDelegateFor<glDeleteShader>();
+            _glDetachShader = GetDelegateFor<glDetachShader>();
+            _glGetShaderiv = GetDelegateFor<glGetShaderiv>();
+            _glGetShaderInfoLog = GetDelegateFor<glGetShaderInfoLog>();
+            _glBindAttribLocation = GetDelegateFor<glBindAttribLocation>();
+            _glLinkProgram = GetDelegateFor<glLinkProgram>();
+            _glGetProgramiv = GetDelegateFor<glGetProgramiv>();
+            _glGetProgramInfoLog = GetDelegateFor<glGetProgramInfoLog>();
+            _glGetAttribLocation = GetDelegateFor<glGetAttribLocation>();
+            _glUseProgram = GetDelegateFor<glUseProgram>();
+            _glGetUniformLocation = GetDelegateFor<glGetUniformLocation>();
+            _glUniformMatrix4fv = GetDelegateFor<glUniformMatrix4fv>();
+
+            _glGenVertexArrays = GetDelegateFor<glGenVertexArrays>();
+            _glDeleteVertexArrays = GetDelegateFor<glDeleteVertexArrays>();
+            _glEnableVertexAttribArray = GetDelegateFor<glEnableVertexAttribArray>();
+            _glDisableVertexAttribArray = GetDelegateFor<glDisableVertexAttribArray>();
+            _glVertexAttribPointer = GetDelegateFor<glVertexAttribPointer>();
+
+            _glDeleteBuffers = GetDelegateFor<glDeleteBuffers>();
+            _glGenBuffers = GetDelegateFor<glGenBuffers>();
+        }
+
+        private static glBlendEquation _glBlendEquation;
+        private static glBindVertexArray _glBindVertexArray;
+        private static glBindBuffer _glBindBuffer;
+        private static glBufferData _glBufferData;
+        private static glActiveTexture _glActiveTexture;
+        private static glUseProgram _glUseProgram;
+        private static glBlendEquationSeparate _glBlendEquationSeparate;
+
+        private static glAttachShader _glAttachShader;
+        private static glCreateShader _glCreateShader;
+        private static glShaderSource _glShaderSource;
+        private static glCompileShader _glCompileShader;
+        private static glCreateProgram _glCreateProgram;
+        private static glDeleteProgram _glDeleteProgram;
+        private static glDeleteShader _glDeleteShader;
+        private static glDetachShader _glDetachShader;
+        private static glGetShaderiv _glGetShaderiv;
+        private static glGetShaderInfoLog _glGetShaderInfoLog;
+        private static glBindAttribLocation _glBindAttribLocation;
+        private static glLinkProgram _glLinkProgram;
+        private static glGetProgramiv _glGetProgramiv;
+        private static glGetProgramInfoLog _glGetProgramInfoLog;
+        private static glGetAttribLocation _glGetAttribLocation;
+        private static glGetUniformLocation _glGetUniformLocation;
+        private static glUniformMatrix4fv _glUniformMatrix4fv;
+
+        private static glGenVertexArrays _glGenVertexArrays;
+        private static glDeleteVertexArrays _glDeleteVertexArrays;
+        private static glEnableVertexAttribArray _glEnableVertexAttribArray;
+        private static glDisableVertexAttribArray _glDisableVertexAttribArray;
+        private static glVertexAttribPointer _glVertexAttribPointer;
+
+        private static glDeleteBuffers _glDeleteBuffers;
+        private static glGenBuffers _glGenBuffers;
         #region OpenGL 1.2
 
         //  Methods
@@ -17,7 +90,7 @@ namespace CSharpGL
         }
         public static void BlendEquation(uint mode)
         {
-            GetDelegateFor<glBlendEquation>()(mode);
+            _glBlendEquation(mode);
         }
         public static void DrawRangeElements(uint mode, uint start, uint end, int count, uint type, IntPtr indices)
         {
@@ -285,7 +358,7 @@ namespace CSharpGL
 
         public static void ActiveTexture(uint texture)
         {
-            GetDelegateFor<glActiveTexture>()(texture);
+            _glActiveTexture(texture);
         }
         public static void SampleCoverage(float value, bool invert)
         {
@@ -947,19 +1020,15 @@ namespace CSharpGL
         }
         public static void BindBuffer(uint target, uint buffer)
         {
-            GetDelegateFor<glBindBuffer>()(target, buffer);
+            _glBindBuffer(target, buffer);
         }
         public static void DeleteBuffers(int n, uint[] buffers)
         {
-            IntPtr context = Win32.wglGetCurrentContext();
-            if (context != IntPtr.Zero)
-            {
-                GetDelegateFor<glDeleteBuffers>()(n, buffers);
-            }
+            _glDeleteBuffers(n, buffers);
         }
         public static void GenBuffers(int n, uint[] buffers)
         {
-            GetDelegateFor<glGenBuffers>()(n, buffers);
+            _glGenBuffers(n, buffers);
         }
         public static bool IsBuffer(uint buffer)
         {
@@ -967,25 +1036,8 @@ namespace CSharpGL
         }
         public static void BufferData(uint target, int byteLength, IntPtr data, uint usage)
         {
-            GetDelegateFor<glBufferData>()(target, byteLength, data, usage);
+            _glBufferData(target, byteLength, data, usage);
         }
-        //public static void BufferData(uint target, float[] data, uint usage)
-        //{
-        //    IntPtr p = Marshal.AllocHGlobal(data.Length * sizeof(float));
-        //    Marshal.Copy(data, 0, p, data.Length);
-        //    GetDelegateFor<glBufferData>()(target, data.Length * sizeof(float), p, usage);
-        //    Marshal.FreeHGlobal(p);
-        //}
-        //public static void BufferData(uint target, ushort[] data, uint usage)
-        //{
-        //    var dataSize = data.Length * sizeof(ushort);
-        //    IntPtr p = Marshal.AllocHGlobal(dataSize);
-        //    var shortData = new short[data.Length];
-        //    Buffer.BlockCopy(data, 0, shortData, 0, dataSize);
-        //    Marshal.Copy(shortData, 0, p, data.Length);
-        //    GetDelegateFor<glBufferData>()(target, dataSize, p, usage);
-        //    Marshal.FreeHGlobal(p);
-        //}
         public static void BufferSubData(uint target, int offset, int size, IntPtr data)
         {
             GetDelegateFor<glBufferSubData>()(target, offset, size, data);
@@ -1073,7 +1125,7 @@ namespace CSharpGL
         //  Methods
         public static void BlendEquationSeparate(uint modeRGB, uint modeAlpha)
         {
-            GetDelegateFor<glBlendEquationSeparate>()(modeRGB, modeAlpha);
+            _glBlendEquationSeparate(modeRGB, modeAlpha);
         }
         public static void DrawBuffers(int n, uint[] bufs)
         {
@@ -1093,11 +1145,11 @@ namespace CSharpGL
         }
         public static void AttachShader(uint program, uint shader)
         {
-            GetDelegateFor<glAttachShader>()(program, shader);
+            _glAttachShader(program, shader);
         }
         public static void BindAttribLocation(uint program, uint index, string name)
         {
-            GetDelegateFor<glBindAttribLocation>()(program, index, name);
+            _glBindAttribLocation(program, index, name);
         }
         /// <summary>
         /// Compile a shader object
@@ -1105,11 +1157,11 @@ namespace CSharpGL
         /// <param name="shader">Specifies the shader object to be compiled.</param>
         public static void CompileShader(uint shader)
         {
-            GetDelegateFor<glCompileShader>()(shader);
+            _glCompileShader(shader);
         }
         public static uint CreateProgram()
         {
-            return GetDelegateFor<glCreateProgram>()();
+            return _glCreateProgram();
         }
         /// <summary>
         /// Create a shader object
@@ -1118,27 +1170,27 @@ namespace CSharpGL
         /// <returns>This function returns 0 if an error occurs creating the shader object. Otherwise the shader id is returned.</returns>
         public static uint CreateShader(uint type)
         {
-            return GetDelegateFor<glCreateShader>()(type);
+            return _glCreateShader(type);
         }
         public static void DeleteProgram(uint program)
         {
-            GetDelegateFor<glDeleteProgram>()(program);
+            _glDeleteProgram(program);
         }
         public static void DeleteShader(uint shader)
         {
-            GetDelegateFor<glDeleteShader>()(shader);
+            _glDeleteShader(shader);
         }
         public static void DetachShader(uint program, uint shader)
         {
-            GetDelegateFor<glDetachShader>()(program, shader);
+            _glDetachShader(program, shader);
         }
         public static void DisableVertexAttribArray(uint index)
         {
-            GetDelegateFor<glDisableVertexAttribArray>()(index);
+            _glDisableVertexAttribArray(index);
         }
         public static void EnableVertexAttribArray(uint index)
         {
-            GetDelegateFor<glEnableVertexAttribArray>()(index);
+            _glEnableVertexAttribArray(index);
         }
 
 
@@ -1184,24 +1236,23 @@ namespace CSharpGL
         }
         public static int GetAttribLocation(uint program, string name)
         {
-            return GetDelegateFor<glGetAttribLocation>()(program, name);
+            return _glGetAttribLocation(program, name);
         }
         public static void GetProgram(uint program, uint pname, int[] parameters)
         {
-            GetDelegateFor<glGetProgramiv>()(program, pname, parameters);
+            _glGetProgramiv(program, pname, parameters);
         }
         public static void GetProgramInfoLog(uint program, int bufSize, IntPtr length, StringBuilder infoLog)
         {
-            GetDelegateFor<glGetProgramInfoLog>()(program, bufSize, length, infoLog);
+            _glGetProgramInfoLog(program, bufSize, length, infoLog);
         }
         public static void GetShader(uint shader, uint pname, int[] parameters)
         {
-            GetDelegateFor<glGetShaderiv>()(shader, pname, parameters);
+            _glGetShaderiv(shader, pname, parameters);
         }
         public static void GetShaderInfoLog(uint shader, int bufSize, IntPtr length, StringBuilder infoLog)
         {
-            GetDelegateFor<glGetShaderInfoLog>()(shader, bufSize, length, infoLog);
-
+            _glGetShaderInfoLog(shader, bufSize, length, infoLog);
         }
         public static void GetShaderSource(uint shader, int bufSize, IntPtr length, StringBuilder source)
         {
@@ -1215,7 +1266,7 @@ namespace CSharpGL
         /// <returns></returns>
         public static int GetUniformLocation(uint program, string name)
         {
-            return GetDelegateFor<glGetUniformLocation>()(program, name);
+            return _glGetUniformLocation(program, name);
         }
         public static void GetUniform(uint program, int location, float[] parameters)
         {
@@ -1251,7 +1302,7 @@ namespace CSharpGL
         }
         public static void LinkProgram(uint program)
         {
-            GetDelegateFor<glLinkProgram>()(program);
+            _glLinkProgram(program);
         }
 
         /// <summary>
@@ -1262,7 +1313,7 @@ namespace CSharpGL
         public static void ShaderSource(uint shader, string source)
         {
             //  Remember, the function takes an array of strings but concatenates them, so we should NOT split into lines!
-            GetDelegateFor<glShaderSource>()(shader, 1, new[] { source }, new[] { source.Length });
+            _glShaderSource(shader, 1, new[] { source }, new[] { source.Length });
         }
 
         public static IntPtr StringToPtrAnsi(string str)
@@ -1278,7 +1329,7 @@ namespace CSharpGL
         }
         public static void UseProgram(uint program)
         {
-            GetDelegateFor<glUseProgram>()(program);
+            _glUseProgram(program);
         }
         public static void Uniform1(int location, float v0)
         {
@@ -1354,7 +1405,7 @@ namespace CSharpGL
         }
         public static void UniformMatrix4(int location, int count, bool transpose, float[] value)
         {
-            GetDelegateFor<glUniformMatrix4fv>()(location, count, transpose, value);
+            _glUniformMatrix4fv(location, count, transpose, value);
         }
         public static void ValidateProgram(uint program)
         {
@@ -1506,7 +1557,7 @@ namespace CSharpGL
         }
         public static void VertexAttribPointer(uint index, int size, uint type, bool normalized, int stride, IntPtr pointer)
         {
-            GetDelegateFor<glVertexAttribPointer>()(index, size, type, normalized, stride, pointer);
+            _glVertexAttribPointer(index, size, type, normalized, stride, pointer);
         }
 
         //  Delegates
@@ -4735,19 +4786,15 @@ namespace CSharpGL
         //  Methods
         public static void BindVertexArray(uint array)
         {
-            GetDelegateFor<glBindVertexArray>()(array);
+            _glBindVertexArray(array);
         }
         public static void DeleteVertexArrays(int n, uint[] arrays)
         {
-            IntPtr ptr = Win32.wglGetCurrentContext();
-            if (ptr != IntPtr.Zero)
-            {
-                GetDelegateFor<glDeleteVertexArrays>()(n, arrays);
-            }
+            _glDeleteVertexArrays(n, arrays);
         }
         public static void GenVertexArrays(int n, uint[] arrays)
         {
-            GetDelegateFor<glGenVertexArrays>()(n, arrays);
+            _glGenVertexArrays(n, arrays);
         }
         public static bool IsVertexArray(uint array)
         {
