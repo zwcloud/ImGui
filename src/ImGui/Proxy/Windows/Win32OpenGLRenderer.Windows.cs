@@ -427,7 +427,7 @@ namespace ImGui
                 (int)WGL.WGL_PIXEL_TYPE_ARB,      (int)WGL.WGL_TYPE_RGBA_ARB,
                 (int)WGL.WGL_STENCIL_BITS_ARB, 8,
                 (int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MXAA
-                (int)WGL.WGL_SAMPLES_ARB,        8,
+                (int)WGL.WGL_SAMPLES_ARB,        16,
             0};
 
             int pixelFormat;
