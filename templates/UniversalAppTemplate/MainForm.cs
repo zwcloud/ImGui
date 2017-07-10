@@ -10,11 +10,14 @@ namespace UniversalAppTemplate
 
         bool open = true;
 
+        string texta = "aaaaaa";
+        string textb = "bbbbbbbbb";
+
         protected override void OnGUI()
         {
             GUILayout.Begin("UnnamedWindow", ref open);
-            GUILayout.Textbox("a", new Size(200, 40), "aaaaaa");
-            GUILayout.Textbox("b", new Size(200, 40), "bbbbbbbbb");
+            texta = GUILayout.Textbox("a", 200, texta);
+            textb = GUILayout.Textbox("b", 200, textb);
             GUILayout.Button("TestB");
             GUILayout.End();
         }

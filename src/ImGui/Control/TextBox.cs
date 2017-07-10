@@ -19,6 +19,12 @@ namespace ImGui
             Rect rect = window.GetRect(id, size, style, options);
             return GUI.DoTextbox(rect, label, text);
         }
+
+        public static string Textbox(string label, double width, string text, params LayoutOption[] options)
+        {
+            var height = GUISkin.Instance.GetStyle("TextBox").FontSize;
+            return Textbox(label, new Size(width, height), text, GUISkin.Instance[GUIControlName.TextBox], options);
+        }
     }
 
     public partial class GUI
@@ -60,7 +66,7 @@ namespace ImGui
                 }
             }
 
-            if (g.ActiveId == id && g.InputTextState.inputTextContext.Id != id)//editing text box changed
+            if (g.ActiveId == id && g.InputTextState.inputTextContext.Id != id)//editing text box changed to TextBox<id>
             {
                 g.InputTextState.stateMachine.CurrentState = "Active";//reset state
                 g.InputTextState.inputTextContext = new InputTextContext()//reset input text context data
