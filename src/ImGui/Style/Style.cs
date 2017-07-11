@@ -57,6 +57,8 @@ namespace ImGui
 
         ResizeGripActiveColor,
         ResizeGripColor,
+        WindowBorderColor,
+        WindowBorderShadowColor,
     }
 
     public enum GUIState

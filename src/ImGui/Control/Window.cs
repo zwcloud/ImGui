@@ -41,10 +41,16 @@ namespace ImGui
 
             {
                 var style = new GUIStyle();
+                style.Set(GUIStyleName.BorderTop, 1.0);
+                style.Set(GUIStyleName.BorderRight, 1.0);
+                style.Set(GUIStyleName.BorderBottom, 1.0);
+                style.Set(GUIStyleName.BorderLeft, 1.0);
                 style.Set(GUIStyleName.PaddingTop, 1.0);
                 style.Set(GUIStyleName.PaddingRight, 1.0);
                 style.Set(GUIStyleName.PaddingBottom, 1.0);
                 style.Set(GUIStyleName.PaddingLeft, 1.0);
+                style.Set(GUIStyleName.WindowBorderColor, new Color(0.70f, 0.70f, 0.70f, 0.65f));
+                style.Set(GUIStyleName.WindowBorderShadowColor, new Color(0.00f, 0.00f, 0.00f, 0.00f));
                 style.Set(GUIStyleName.BackgroundColor, new Color(0.30f, 0.30f, 0.30f, 0.70f));
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);
@@ -137,7 +143,7 @@ namespace ImGui
         internal Rect GetRect(int id, Size size, GUIStyle style, LayoutOption[] options)
         {
             var rect = StackLayout.GetRect(id, size, style, options);
-            rect.Offset(this.Position.X + this.Style.PaddingLeft, this.TitleBarHeight + this.Position.Y + this.Style.PaddingTop);
+            rect.Offset(this.Position.X + this.Style.BorderLeft + this.Style.PaddingLeft, this.TitleBarHeight + this.Position.Y + this.Style.BorderTop + this.Style.PaddingTop);
             return rect;
         }
 
@@ -325,10 +331,11 @@ namespace ImGui
                     if (!flags.HaveFlag(WindowFlags.NoResize))
                     {
                         Point br = window.Rect.BottomRight;
-                        var borderSize = 4;
-                        window.DrawList.PathLineTo(br + new Vector(-resize_corner_size, -borderSize));
-                        window.DrawList.PathLineTo(br + new Vector(-borderSize, -resize_corner_size));
-                        window.DrawList.PathArcToFast(new Point(br.X - window_rounding - borderSize, br.Y - window_rounding - borderSize), window_rounding, 0, 3);
+                        var borderBottom = window.Style.BorderBottom;
+                        var borderRight = window.Style.BorderRight;
+                        window.DrawList.PathLineTo(br + new Vector(-resize_corner_size, -borderBottom));
+                        window.DrawList.PathLineTo(br + new Vector(-borderRight, -resize_corner_size));
+                        window.DrawList.PathArcToFast(new Point(br.X - window_rounding - borderRight, br.Y - window_rounding - borderBottom), window_rounding, 0, 3);
                         window.DrawList.PathFill(resize_col);
                     }
 
@@ -348,6 +355,22 @@ namespace ImGui
                     Point text_min = window.Position + new Vector(style.PaddingLeft, style.PaddingTop);
                     Point text_max = window.Position + new Vector(window.Size.Width - style.PaddingHorizontal, style.PaddingVertical * 2 + text_size.Height);
                     window.DrawList.DrawText(new Rect(text_min, text_max), name, headerStyle, GUIState.Normal);
+                }
+
+                // Borders
+                if (flags.HaveFlag(WindowFlags.ShowBorders))
+                {
+                    var borderColor = window.Style.Get<Color>(GUIStyleName.WindowBorderColor);
+                    var borderShadowColor = window.Style.Get<Color>(GUIStyleName.WindowBorderShadowColor);
+                    window.DrawList.AddRect(window.Position + new Vector(1, 1),
+                        window.Position + new Vector(window.Size.Width, window.Size.Height) + new Vector(1, 1),
+                        borderShadowColor, window_rounding);
+                    window.DrawList.AddRect(window.Position, window.Position + new Vector(window.Size.Width, window.Size.Height),
+                        borderColor, window_rounding);
+                    if (!(flags.HaveFlag(WindowFlags.NoTitleBar)))
+                    {
+                        window.DrawList.AddLine(title_bar_rect.BottomLeft + new Vector(1, 0), title_bar_rect.BottomRight - new Vector(1, 0), borderColor);
+                    }
                 }
             }
 

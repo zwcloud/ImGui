@@ -25,6 +25,16 @@ namespace ImGui
         private List<Point> _Path = new List<Point>();
 
         //primitives part
+
+        public void AddLine(Point a, Point b, Color col, double thickness = 1.0)
+        {
+            if (MathEx.AmostZero(col.A))
+                return;
+            PathLineTo(a + new Vector(0.5, 0.5));
+            PathLineTo(b + new Vector(0.5, 0.5));
+            PathStroke(col, false, thickness);
+        }
+
         public void AddPolyline(IList<Point> points, Color col, bool closed, double thickness, bool anti_aliased = false)
         {
             var points_count = points.Count;
@@ -152,6 +162,10 @@ namespace ImGui
 
             DrawBuffer._currentIdx += 4;
         }
+
+
+
+
         // a: upper-left, b: lower-right. we don't render 1 px sized rectangles properly.
         public void AddRect(Point a, Point b, Color col, float rounding = 0.0f, int rounding_corners = 0x0F, float thickness = 1.0f)
         {

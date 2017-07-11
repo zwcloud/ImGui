@@ -8,18 +8,21 @@ namespace UniversalAppTemplate
         {
         }
 
-        bool open = true;
+        bool openA = true;
+        bool openB = true;
 
         string texta = "aaaaaa";
         string textb = "bbbbbbbbb";
 
         protected override void OnGUI()
         {
-            GUILayout.Begin("UnnamedWindow", ref open);
-            texta = GUILayout.Textbox("a", 200, texta);
-            textb = GUILayout.Textbox("b", 200, textb);
-            GUILayout.Button("TestB");
-            GUILayout.End();
+            GUILayout.Begin("window A", ref openA, Point.Zero, new Size(400, 300), 1, WindowFlags.ShowBorders);
+GUILayout.Textbox("textBoxA", 100, "TextBox A.");
+GUILayout.End();
+
+GUILayout.Begin("window B", ref openB);
+GUILayout.Textbox("textBoxB", 120, "TextBox B.");
+GUILayout.End();
         }
     }
 }
