@@ -282,7 +282,7 @@ void main()
             GL.Viewport(0, 0, width, height);
             GLM.mat4 ortho_projection = GLM.glm.ortho(0.0f, width, height, 0.0f, -5.0f, 5.0f);
             material.program.Bind();
-            material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME GLM.mat4.to_array() will generate new array on the heap! This should not be done
+            material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
 
             // Send vertex and index data
             GL.BindVertexArray(material.vaoHandle);

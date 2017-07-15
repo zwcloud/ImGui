@@ -135,7 +135,7 @@
             get { return mousePos != lastMousePos; }
         }
 
-        public float MouseWheel { get; set; }
+        public short MouseWheel { get; set; }
 
         #endregion
 

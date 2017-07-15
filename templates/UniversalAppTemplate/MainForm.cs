@@ -16,13 +16,12 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            GUILayout.Begin("window A", ref openA, Point.Zero, new Size(400, 300), 1, WindowFlags.ShowBorders);
-GUILayout.Textbox("textBoxA", 100, "TextBox A.");
-GUILayout.End();
-
-GUILayout.Begin("window B", ref openB);
-GUILayout.Textbox("textBoxB", 120, "TextBox B.");
-GUILayout.End();
+            GUILayout.Begin("window A", ref openA, Point.Zero, new Size(400, 300), 1, WindowFlags.ShowBorders | WindowFlags.AlwaysVerticalScrollbar);
+            for (int i = 0; i < 12; i++)
+            {
+                GUILayout.Textbox("textBoxA"+i, 100, "TextBox A.");
+            }
+            GUILayout.End();
         }
     }
 }

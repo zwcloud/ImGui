@@ -15,6 +15,7 @@ namespace ImGui
         public DrawList DrawList;
         public Rect ClipRect;
         public Point PosFloat;
+        public Vector Scroll;
 
         public long LastActiveFrame;
 
@@ -55,6 +56,7 @@ namespace ImGui
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.90f), GUIState.Active);
+                style.Set(GUIStyleName.WindowRounding, 3);
                 this.Style = style;
             }
             {
@@ -122,6 +124,10 @@ namespace ImGui
             get;
             internal set;
         }
+
+        public Rect ContentRect { get;
+            set; } = Rect.Zero;
+
         public Window RootWindow { get; internal set; }
 
         /// <summary>
@@ -143,13 +149,27 @@ namespace ImGui
         internal Rect GetRect(int id, Size size, GUIStyle style, LayoutOption[] options)
         {
             var rect = StackLayout.GetRect(id, size, style, options);
+
+            //Apply window position, style(border and padding) and Titlebar
             rect.Offset(this.Position.X + this.Style.BorderLeft + this.Style.PaddingLeft, this.TitleBarHeight + this.Position.Y + this.Style.BorderTop + this.Style.PaddingTop);
+
+            Rect newContentRect = ContentRect;
+            newContentRect.Union(rect);
+            ContentRect = newContentRect;
+
+            rect.Offset(-this.Scroll);
+
             return rect;
         }
 
         internal Rect GetRect(Rect rect)
         {
             rect.Offset(this.Position.X, this.TitleBarHeight + this.Position.Y);
+
+            Rect newContentRect = ContentRect;
+            newContentRect.Union(rect);
+            ContentRect = newContentRect;
+
             return rect;
         }
 
@@ -159,6 +179,11 @@ namespace ImGui
             {
                 this.StackLayout.Layout(this.ClientRect.Size);
             }
+        }
+
+        internal void SetWindowScrollY(double new_scroll_y)
+        {
+            this.Scroll.Y = new_scroll_y;
         }
 
         private int Hash(int seed, int int_id)
@@ -269,7 +294,7 @@ namespace ImGui
                 GUIStyle style = window.Style;
                 GUIStyle headerStyle = window.HeaderStyle;
                 Rect title_bar_rect = window.TitleBarRect;
-                float window_rounding = 3;
+                float window_rounding = (float)style.Get<double>(GUIStyleName.WindowRounding);
                 if (window.Collapsed)
                 {
                     // Draw title bar only
@@ -342,6 +367,53 @@ namespace ImGui
                     // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
                     window.WindowClippedRect = window.Rect;
                     window.WindowClippedRect.Intersect(window.ClipRect);
+
+                    // Scroll bar
+                    if (flags.HaveFlag(WindowFlags.AlwaysVerticalScrollbar))
+                    {
+                        //get content size without clip
+                        var contentPosition = window.ContentRect.TopLeft;
+                        var contentSize = window.ContentRect.Size;
+                        if (contentSize != Size.Zero)
+                        {
+                            //Draw vertical scroll bar
+                            double scrollBarWidth = 10;
+                            Point scroll_TopLeft = new Point(
+                                window.Rect.Right - scrollBarWidth - window.Style.BorderRight - window.Style.PaddingRight,
+                                window.Rect.Top + window.TitleBarHeight + window.Style.BorderTop + window.Style.PaddingTop);
+                            Point scroll_BottomRight = new Point(
+                                window.Rect.Right - window.Style.BorderRight - window.Style.PaddingRight,
+                                window.Rect.Bottom - resize_corner_size + window.Style.BorderBottom - window.Style.PaddingBottom);
+                            Rect bgRect = new Rect(scroll_TopLeft, scroll_BottomRight);
+
+                            var scrollBarHeight = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical- resize_corner_size;
+                            var visibleH = scrollBarHeight;
+
+                            //Draw vertical scroll bar button
+                            var cH = contentSize.Height;
+                            var k1 = window.Scroll.Y / cH;
+                            var k2 = visibleH / cH;
+
+                            var top = visibleH * k1;
+                            var height = visibleH * k2;
+
+                            if(k2 >= 1)
+                            {
+                                window.DrawList.AddRectFilled(scroll_TopLeft + new Vector(-10, 0), scroll_BottomRight, Color.LightBlue);
+                            }
+                            else
+                            {
+                                Point scrollButton_TopLeft = scroll_TopLeft + new Vector(0, top);
+                                Point scrllButton_BottomRight = scrollButton_TopLeft + new Vector(scrollBarWidth, height);
+                                Rect buttonRect = new Rect(scrollButton_TopLeft, scrllButton_BottomRight);
+
+                                window.DrawList.AddRectFilled(bgRect.TopLeft, buttonRect.TopRight, Color.Metal);
+                                window.DrawList.AddRectFilled(buttonRect.TopLeft, buttonRect.BottomRight, Color.LightBlue);
+                                window.DrawList.AddRectFilled(buttonRect.BottomLeft, bgRect.BottomRight, Color.Metal);
+                            }
+                        }
+                    }
+                    window.ContentRect = Rect.Zero;
                 }
 
                 window.ClientRect = new Rect(

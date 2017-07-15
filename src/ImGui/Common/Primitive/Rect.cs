@@ -19,7 +19,7 @@ namespace ImGui
         /// <param name="height">rect height</param>
         public Rect(double width, double height)
         {
-            if (width <= 0 || height <= 0)
+            if (width < 0 || height < 0)
             {
                 this = s_empty;
             }

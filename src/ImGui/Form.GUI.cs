@@ -123,7 +123,7 @@ namespace ImGui
             w.EndFrame(g);
 
             // Clear Input data for next frame
-            Input.Mouse.MouseWheel = 0.0f;
+            Input.Mouse.MouseWheel = 0;
             Application.ImeBuffer.Clear();
 
             g.FrameCountEnded = g.FrameCount;

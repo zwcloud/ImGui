@@ -19,17 +19,12 @@ namespace ImGui
             {
                 nSize = (ushort)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>();
                 nVersion = 1;
-                dwFlags = PFD_FLAGS.PFD_DRAW_TO_WINDOW | PFD_FLAGS.PFD_SUPPORT_OPENGL | PFD_FLAGS.PFD_DOUBLEBUFFER | PFD_FLAGS.PFD_SUPPORT_COMPOSITION;
+                dwFlags = PFD_FLAGS.PFD_DRAW_TO_WINDOW | PFD_FLAGS.PFD_SUPPORT_OPENGL | PFD_FLAGS.PFD_DOUBLEBUFFER;
                 iPixelType = PFD_PIXEL_TYPE.PFD_TYPE_RGBA;
                 cColorBits = 24;
-                cRedBits = cRedShift = cGreenBits = cGreenShift = cBlueBits = cBlueShift = 0;
-                cAlphaBits = cAlphaShift = 0;
-                cAccumBits = cAccumRedBits = cAccumGreenBits = cAccumBlueBits = cAccumAlphaBits = 0;
-                cDepthBits = 32;
-                cStencilBits = cAuxBuffers = 0;
+                cDepthBits = 24;
+                cStencilBits = 8;
                 iLayerType = PFD_LAYER_TYPES.PFD_MAIN_PLANE;
-                bReserved = 0;
-                dwLayerMask = dwVisibleMask = dwDamageMask = 0;
             }
             ushort nSize;
             ushort nVersion;
@@ -100,10 +95,10 @@ namespace ImGui
         public static extern int ChoosePixelFormat(IntPtr hdc, [In] ref PIXELFORMATDESCRIPTOR ppfd);
 
         [DllImport("gdi32.dll", SetLastError = true, ExactSpelling = true)]
-        public static extern bool SetPixelFormat(IntPtr hdc, int iPixelFormat, ref PIXELFORMATDESCRIPTOR ppfd);
+        public static extern bool SetPixelFormat(IntPtr hdc, int iPixelFormat, [In] ref PIXELFORMATDESCRIPTOR ppfd);
 
-        [DllImport("opengl32.dll", SetLastError = true)]
-        public static extern IntPtr wglCreateContextAttribsARB(IntPtr hdc, IntPtr hShareContext, int[] attribList);
+        [DllImport("gdi32.dll", SetLastError = true, ExactSpelling = true)]
+        public static extern bool DescribePixelFormat(IntPtr hdc, int iPixelFormat, uint nBytes, ref PIXELFORMATDESCRIPTOR ppfd);
 
         [DllImport("opengl32.dll", SetLastError = true)]
         public static extern IntPtr wglCreateContext(IntPtr hDC);
@@ -168,7 +163,7 @@ namespace ImGui
             {
                 Wgl.EntryPointNames = new string[]
                 {
-                    "wglCreateContextAttribsARB",
+                    "wglCreateContextAttribsARB",//0
                     "wglGetExtensionsStringARB",
                     "wglGetPixelFormatAttribivARB",
                     "wglGetPixelFormatAttribfvARB",
@@ -214,11 +209,21 @@ namespace ImGui
             }
 
             //  Delegates
-            delegate bool wglChoosePixelFormatARB(IntPtr hdc, int[] piAttribIList, Single[] pfAttribFList, UInt32 nMaxFormats, [Out] out int piFormats, [Out] out UInt32 nNumFormats);
+            [UnmanagedFunctionPointer(CallingConvention.Winapi)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            delegate bool wglChoosePixelFormatARB(IntPtr hdc, [In] int[] piAttribIList, [In] Single[] pfAttribFList, UInt32 nMaxFormats, [Out] out int piFormats, [Out] out UInt32 nNumFormats);
+
+            [UnmanagedFunctionPointer(CallingConvention.Winapi)]
+            delegate IntPtr wglCreateContextAttribsARB(IntPtr hdc, IntPtr hShareContext, [In] int[] attribList);
 
             internal static bool ChoosePixelFormatARB(IntPtr hdc, int[] piAttribIList, Single[] pfAttribFList, UInt32 nMaxFormats, [Out] out int piFormats, [Out] out UInt32 nNumFormats)
             {
                 return Marshal.GetDelegateForFunctionPointer<wglChoosePixelFormatARB>(Wgl.EntryPoints[4])(hdc, piAttribIList, pfAttribFList, nMaxFormats, out piFormats, out nNumFormats);
+            }
+
+            internal static IntPtr CreateContextAttribsARB(IntPtr hdc, IntPtr hShareContext, [In] int[] attribList)
+            {
+                return Marshal.GetDelegateForFunctionPointer<wglCreateContextAttribsARB>(Wgl.EntryPoints[0])(hdc, hShareContext, attribList);
             }
         }
 
@@ -334,13 +339,24 @@ namespace ImGui
 
             //WGL_ARB_multisample
             WGL_SAMPLE_BUFFERS_ARB = 0x2041,
-            WGL_SAMPLES_ARB = 0x2042
+            WGL_SAMPLES_ARB = 0x2042,
+
+            //WGL_CONTEXT attributes
+            WGL_CONTEXT_MAJOR_VERSION_ARB = 0x2091,
+            WGL_CONTEXT_MINOR_VERSION_ARB = 0x2092,
+            WGL_CONTEXT_LAYER_PLANE_ARB = 0x2093,
+            WGL_CONTEXT_FLAGS_ARB = 0x2094,
+            WGL_CONTEXT_PROFILE_MASK_ARB = 0x9126,
         }
+
 
         private void CreateOpenGLContext(IntPtr hwnd)
         {
             this.hwnd = hwnd;
             hDC = GetDC(hwnd);
+
+            var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
+            pixelformatdescriptor.Init();
 
             IntPtr tempContext = IntPtr.Zero;
             IntPtr tempHwnd = IntPtr.Zero;
@@ -371,7 +387,7 @@ namespace ImGui
                 new IntPtr(atom),
                 "tmpWindow~",
                 (uint)(WindowStyles.WS_VISIBLE | WindowStyles.WS_CHILD),
-                0, 0, 10, 10, hwnd, IntPtr.Zero,
+                0, 0, 1, 1, hwnd, IntPtr.Zero,
                 hInstance,
                 IntPtr.Zero);
 
@@ -382,16 +398,13 @@ namespace ImGui
 
             IntPtr tempHdc = GetDC(tempHwnd);
 
-            var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
-            pixelformatdescriptor.Init();
-
-            if(!SetPixelFormat(tempHdc, 1, ref pixelformatdescriptor))
+            if (!SetPixelFormat(tempHdc, 1, ref pixelformatdescriptor))
             {
                 throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
             tempContext = Wgl.CreateContext(tempHdc);//Crate temp context to load entry points
-            if(tempContext == IntPtr.Zero)
+            if (tempContext == IntPtr.Zero)
             {
                 throw new Exception(string.Format("wglCreateContext for tempHdc failed: error {0}", Marshal.GetLastWin32Error()));
             }
@@ -401,7 +414,7 @@ namespace ImGui
                 throw new Exception(string.Format("wglMakeCurrent for tempContext failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
-            //load wgl entry points for wglXXXARB functions
+            //load wgl entry points for wglChoosePixelFormatARB
             new Wgl().LoadEntryPoints(tempHdc);
 
             //Init glew
@@ -412,27 +425,23 @@ namespace ImGui
             }
             Debug.WriteLine(string.Format("Status: Using GLEW {0}", glewGetString(1/* GLEW_VERSION */)));
 
-            //Destroy temp window and temp WGL context
-            Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
-            DestroyWindow(tempHwnd);
-            Wgl.DeleteContext(tempContext);
-
             int[] iPixAttribs = {
-                (int)WGL.WGL_SUPPORT_OPENGL_ARB, 1,
-                (int)WGL.WGL_DRAW_TO_WINDOW_ARB, 1,
+                (int)WGL.WGL_SUPPORT_OPENGL_ARB, (int)GL.GL_TRUE,
+                (int)WGL.WGL_DRAW_TO_WINDOW_ARB, (int)GL.GL_TRUE,
+                (int)WGL.WGL_DOUBLE_BUFFER_ARB,  (int)GL.GL_TRUE,
+                (int)WGL.WGL_PIXEL_TYPE_ARB,     (int)WGL.WGL_TYPE_RGBA_ARB,
                 (int)WGL.WGL_ACCELERATION_ARB,   (int)WGL.WGL_FULL_ACCELERATION_ARB,
                 (int)WGL.WGL_COLOR_BITS_ARB,     32,
                 (int)WGL.WGL_DEPTH_BITS_ARB,     24,
-                (int)WGL.WGL_DOUBLE_BUFFER_ARB,(int)GL.GL_TRUE,
-                (int)WGL.WGL_PIXEL_TYPE_ARB,      (int)WGL.WGL_TYPE_RGBA_ARB,
-                (int)WGL.WGL_STENCIL_BITS_ARB, 8,
+                (int)WGL.WGL_STENCIL_BITS_ARB,   8,
                 (int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MXAA
                 (int)WGL.WGL_SAMPLES_ARB,        16,
             0};
 
             int pixelFormat;
             uint numFormats;
-            if(!Wgl.ChoosePixelFormatARB(hDC, iPixAttribs, null, 1, out pixelFormat, out numFormats))
+            var result = Wgl.ChoosePixelFormatARB(hDC, iPixAttribs, null, 1, out pixelFormat, out numFormats);
+            if (result == false || numFormats == 0)
             {
                 throw new Exception(string.Format("wglChoosePixelFormatARB failed: error {0}", Marshal.GetLastWin32Error()));
             }
@@ -447,6 +456,11 @@ namespace ImGui
                 throw new Exception(string.Format("wglCreateContext failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
+            Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+            Wgl.DeleteContext(tempContext);
+            ReleaseDC(tempHwnd, tempHdc);
+            DestroyWindow(tempHwnd);
+
             if (!wglMakeCurrent(hDC, hglrc))
             {
                 throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
@@ -457,10 +471,10 @@ namespace ImGui
 
         private void PrintGraphicInfo()
         {
-            string version = GL.GetString(CSharpGL.GL.GL_VERSION);
+            string version = GL.GetString(GL.GL_VERSION);
             Debug.WriteLine("OpenGL version info: " + version);
             int[] tmp = { 0 };
-            GL.GetIntegerv(CSharpGL.GL.GL_MAX_TEXTURE_SIZE, tmp);
+            GL.GetIntegerv(GL.GL_MAX_TEXTURE_SIZE, tmp);
             int max_texture_size = tmp[0];
             Debug.WriteLine("Max texture size: " + max_texture_size);
         }

@@ -155,6 +155,31 @@ namespace ImGui
             else
                 this.HoveredRootWindow = (this.MovedWindow != null) ? this.MovedWindow.RootWindow : this.FindHoveredWindow(Input.Mouse.MousePos, true);
 
+
+            // Scale & Scrolling
+            if (this.HoveredWindow!=null && Input.Mouse.MouseWheel != 0.0 && !this.HoveredWindow.Collapsed)
+            {
+                Window window = this.HoveredWindow;
+                if (Input.Keyboard.KeyDown(Key.LeftControl))
+                {
+                    //Scale
+                    //TODO
+                }
+                else
+                {
+                    // Scroll
+                    if (!(window.Flags.HaveFlag(WindowFlags.NoScrollWithMouse)))
+                    {
+                        var newScrollY = window.Scroll.Y - Math.Sign(Input.Mouse.MouseWheel) * 20/*scroll step*/;
+                        float window_rounding = (float)window.Style.Get<double>(GUIStyleName.WindowRounding);
+                        double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
+                        var scrollBarHeight = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical - resize_corner_size;
+                        newScrollY = MathEx.Clamp(newScrollY, 0, window.ContentRect.Height - scrollBarHeight);
+                        window.SetWindowScrollY(newScrollY);
+                    }
+                }
+            }
+
             // Mark all windows as not visible
             for (int i = 0; i != this.Windows.Count; i++)
             {

@@ -274,8 +274,7 @@ namespace ImGui
                     Input.Mouse.RightButtonState = InputState.Up;
                     return IntPtr.Zero;
                 case 0x020A://WM_MOUSEWHEEL
-                    //FIXME
-                    //Input.Mouse.MouseWheel += ((wParam.ToUInt32() >> 16) & 0xffff) > 0 ? +1.0f : -1.0f;
+                    Input.Mouse.MouseWheel = ((short)(wParam.ToUInt64() >> 16));
                     return IntPtr.Zero;
                 case 0x0200://WM_MOUSEMOVE
                     var p = new POINT {
