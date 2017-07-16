@@ -56,7 +56,12 @@ namespace ImGui
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.90f), GUIState.Active);
-                style.Set(GUIStyleName.WindowRounding, 3);
+                style.Set(GUIStyleName.WindowRounding, 3.0);
+                style.Set(GUIStyleName.ScrollBarWidth, 10.0);
+                style.Set(GUIStyleName.ScrollBarBackgroundColor, Color.Metal);
+                style.Set(GUIStyleName.ScrollBarButtonColor, new Color(0.40f, 0.40f, 0.80f, 0.30f), GUIState.Normal);
+                style.Set(GUIStyleName.ScrollBarButtonColor, new Color(0.40f, 0.40f, 0.80f, 0.40f), GUIState.Hover);
+                style.Set(GUIStyleName.ScrollBarButtonColor, new Color(0.80f, 0.50f, 0.50f, 0.40f), GUIState.Active);
                 this.Style = style;
             }
             {
@@ -150,13 +155,12 @@ namespace ImGui
         {
             var rect = StackLayout.GetRect(id, size, style, options);
 
-            //Apply window position, style(border and padding) and Titlebar
-            rect.Offset(this.Position.X + this.Style.BorderLeft + this.Style.PaddingLeft, this.TitleBarHeight + this.Position.Y + this.Style.BorderTop + this.Style.PaddingTop);
-
             Rect newContentRect = ContentRect;
             newContentRect.Union(rect);
             ContentRect = newContentRect;
 
+            //Apply window position, style(border and padding) and Titlebar
+            rect.Offset(this.Position.X + this.Style.BorderLeft + this.Style.PaddingLeft, this.Position.Y + this.TitleBarHeight + this.Style.BorderTop + this.Style.PaddingTop);
             rect.Offset(-this.Scroll);
 
             return rect;
@@ -164,12 +168,12 @@ namespace ImGui
 
         internal Rect GetRect(Rect rect)
         {
-            rect.Offset(this.Position.X, this.TitleBarHeight + this.Position.Y);
-
             Rect newContentRect = ContentRect;
             newContentRect.Union(rect);
             ContentRect = newContentRect;
 
+            rect.Offset(this.Position.X, this.Position.Y + this.TitleBarHeight);
+            rect.Offset(-this.Scroll);
             return rect;
         }
 
@@ -200,7 +204,7 @@ namespace ImGui
     {
         public static bool Begin(string name, ref bool open)
         {
-            return Begin(name, ref open, Point.Zero, new Size(400, 300), 1, WindowFlags.Default);
+            return Begin(name, ref open, Point.Zero, new Size(400, 300), 1, WindowFlags.VerticalScrollbar);
         }
 
         public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
@@ -369,48 +373,62 @@ namespace ImGui
                     window.WindowClippedRect.Intersect(window.ClipRect);
 
                     // Scroll bar
-                    if (flags.HaveFlag(WindowFlags.AlwaysVerticalScrollbar))
+                    if (flags.HaveFlag(WindowFlags.VerticalScrollbar))
                     {
                         //get content size without clip
                         var contentPosition = window.ContentRect.TopLeft;
                         var contentSize = window.ContentRect.Size;
                         if (contentSize != Size.Zero)
                         {
-                            //Draw vertical scroll bar
-                            double scrollBarWidth = 10;
+                            int id = window.GetID("#SCROLLY");
+
+                            double scrollBarWidth = window.Style.Get<double>(GUIStyleName.ScrollBarWidth);
                             Point scroll_TopLeft = new Point(
                                 window.Rect.Right - scrollBarWidth - window.Style.BorderRight - window.Style.PaddingRight,
                                 window.Rect.Top + window.TitleBarHeight + window.Style.BorderTop + window.Style.PaddingTop);
-                            Point scroll_BottomRight = new Point(
-                                window.Rect.Right - window.Style.BorderRight - window.Style.PaddingRight,
-                                window.Rect.Bottom - resize_corner_size + window.Style.BorderBottom - window.Style.PaddingBottom);
+                            var sH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical- resize_corner_size;
+                            var vH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical;
+                            Point scroll_BottomRight = scroll_TopLeft + new Vector(scrollBarWidth, sH);
                             Rect bgRect = new Rect(scroll_TopLeft, scroll_BottomRight);
 
-                            var scrollBarHeight = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical- resize_corner_size;
-                            var visibleH = scrollBarHeight;
-
-                            //Draw vertical scroll bar button
                             var cH = contentSize.Height;
-                            var k1 = window.Scroll.Y / cH;
-                            var k2 = visibleH / cH;
+                            var top = window.Scroll.Y * sH / cH;
+                            var height = sH * vH / cH;
 
-                            var top = visibleH * k1;
-                            var height = visibleH * k2;
+                            if(height < sH)
+                            {
+                                // handle mouse click/drag
+                                bool held = false;
+                                bool hovered = false;
+                                bool previously_held = (g.ActiveId == id);
+                                GUIBehavior.ButtonBehavior(bgRect, id, out hovered, out held);
+                                if (held)
+                                {
+                                    top = Input.Mouse.MousePos.Y - bgRect.Y - 0.5 * height;
+                                    top = MathEx.Clamp(top, 0, sH - height);
+                                    var targetScrollY = top * cH / sH;
+                                    window.SetWindowScrollY(targetScrollY);
+                                }
 
-                            if(k2 >= 1)
-                            {
-                                window.DrawList.AddRectFilled(scroll_TopLeft + new Vector(-10, 0), scroll_BottomRight, Color.LightBlue);
-                            }
-                            else
-                            {
                                 Point scrollButton_TopLeft = scroll_TopLeft + new Vector(0, top);
                                 Point scrllButton_BottomRight = scrollButton_TopLeft + new Vector(scrollBarWidth, height);
                                 Rect buttonRect = new Rect(scrollButton_TopLeft, scrllButton_BottomRight);
 
-                                window.DrawList.AddRectFilled(bgRect.TopLeft, buttonRect.TopRight, Color.Metal);
-                                window.DrawList.AddRectFilled(buttonRect.TopLeft, buttonRect.BottomRight, Color.LightBlue);
-                                window.DrawList.AddRectFilled(buttonRect.BottomLeft, bgRect.BottomRight, Color.Metal);
+                                //Draw vertical scroll bar and button
+                                {
+                                    var bgColor = window.Style.Get<Color>(GUIStyleName.ScrollBarBackgroundColor);
+                                    var buttonColor = window.Style.Get<Color>(GUIStyleName.ScrollBarButtonColor, held ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal);
+                                    window.DrawList.AddRectFilled(bgRect.TopLeft, buttonRect.TopRight, bgColor);
+                                    window.DrawList.AddRectFilled(buttonRect.TopLeft, buttonRect.BottomRight, buttonColor);
+                                    window.DrawList.AddRectFilled(buttonRect.BottomLeft, bgRect.BottomRight, bgColor);
+                                }
                             }
+                            else
+                            {
+                                var bgColor = window.Style.Get<Color>(GUIStyleName.ScrollBarBackgroundColor);
+                                window.DrawList.AddRectFilled(bgRect.TopLeft, bgRect.BottomRight, bgColor);
+                            }
+
                         }
                     }
                     window.ContentRect = Rect.Zero;
@@ -511,6 +529,9 @@ namespace ImGui
         AlwaysVerticalScrollbar = 1 << 14,  // Always show vertical scrollbar (even if ContentSize.y < Size.y)
         AlwaysHorizontalScrollbar = 1 << 15,  // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
         AlwaysUseWindowPadding = 1 << 16,  // Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)
+
+        VerticalScrollbar = 1 << 17,
+
         // [Internal]
         ChildWindow = 1 << 20,  // Don't use! For internal use by BeginChild()
         ChildWindowAutoFitX = 1 << 21,  // Don't use! For internal use by BeginChild()

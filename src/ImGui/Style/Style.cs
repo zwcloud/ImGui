@@ -60,6 +60,10 @@ namespace ImGui
         ResizeGripColor,
         WindowBorderColor,
         WindowBorderShadowColor,
+
+        ScrollBarWidth,
+        ScrollBarBackgroundColor,
+        ScrollBarButtonColor,
     }
 
     public enum GUIState

@@ -173,8 +173,14 @@ namespace ImGui
                         var newScrollY = window.Scroll.Y - Math.Sign(Input.Mouse.MouseWheel) * 20/*scroll step*/;
                         float window_rounding = (float)window.Style.Get<double>(GUIStyleName.WindowRounding);
                         double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
-                        var scrollBarHeight = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical - resize_corner_size;
-                        newScrollY = MathEx.Clamp(newScrollY, 0, window.ContentRect.Height - scrollBarHeight);
+                        var sH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical - resize_corner_size;
+                        var vH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical;
+
+                        var contentSize = window.ContentRect.Size;
+                        var cH = contentSize.Height;
+                        var height = sH * vH / cH;
+
+                        newScrollY = MathEx.Clamp(newScrollY, 0, cH - vH);
                         window.SetWindowScrollY(newScrollY);
                     }
                 }

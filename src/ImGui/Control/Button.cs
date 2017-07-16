@@ -73,7 +73,7 @@ namespace ImGui
 
     partial class GUIBehavior
     {
-        public static bool ButtonBehavior(Rect bb, int id, out bool out_hovered, out bool out_held, ButtonFlags flags)
+        public static bool ButtonBehavior(Rect bb, int id, out bool out_hovered, out bool out_held, ButtonFlags flags = 0)
         {
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
