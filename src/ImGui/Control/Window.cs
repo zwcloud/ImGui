@@ -127,7 +127,7 @@ namespace ImGui
 
                         if (hovered || held)
                         {
-                            Input.Mouse.Cursor = Cursor.NeswResize;
+                            //Input.Mouse.Cursor = Cursor.NeswResize;
                         }
 
                         if (held)
@@ -136,6 +136,20 @@ namespace ImGui
                             var t = Input.Mouse.MousePos - g.ActiveIdClickOffset - window.Position;
                             Size resize_size = new Size(t.X + resize_rect.Width, t.Y + resize_rect.Height);
                             window.ApplySize(resize_size);
+
+                            // adjust scroll parameters
+                            var contentSize = window.ContentRect.Size;
+                            if (contentSize != Size.Zero)
+                            {
+                                var vH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical;
+                                var cH = contentSize.Height;
+                                if(cH > vH)
+                                {
+                                    var oldScrollY = window.Scroll.Y;
+                                    oldScrollY = MathEx.Clamp(oldScrollY, 0, cH - vH);
+                                    window.Scroll.Y = oldScrollY;
+                                }
+                            }
                         }
 
                         window.Size = window.FullSize;
