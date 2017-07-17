@@ -35,4 +35,10 @@
     <None Remove="Control\tobefixed\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Control\Window.*.cs">
+      <DependentUpon>Control\Window.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
