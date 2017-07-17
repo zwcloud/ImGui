@@ -6,7 +6,7 @@ namespace ImGui.Layout
 {
     class StackLayout
     {
-        public bool Dirty = false;
+        private bool Dirty = false;
 
         internal Stack<LayoutGroup> groupStack = new Stack<LayoutGroup>();
 
@@ -118,6 +118,7 @@ namespace ImGui.Layout
         /// </summary>
         internal void Layout(Size size)
         {
+            if (!Dirty) return;
             this.topGroup.CalcWidth(size.Width);
             this.topGroup.CalcHeight(size.Height);
             this.topGroup.SetX(0);
