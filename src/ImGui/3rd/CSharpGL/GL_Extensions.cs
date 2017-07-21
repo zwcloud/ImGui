@@ -7,6 +7,8 @@ namespace CSharpGL
 {
     public static partial class GL
     {
+        private static bool allFunctionsLoaded = false;
+
         static GL()
         {
             //pre-load all native opengl functions that will be used
@@ -45,6 +47,8 @@ namespace CSharpGL
 
             _glDeleteBuffers = GetDelegateFor<glDeleteBuffers>();
             _glGenBuffers = GetDelegateFor<glGenBuffers>();
+
+            allFunctionsLoaded = true;
         }
 
         private static glBlendEquation _glBlendEquation;
@@ -81,6 +85,7 @@ namespace CSharpGL
 
         private static glDeleteBuffers _glDeleteBuffers;
         private static glGenBuffers _glGenBuffers;
+
         #region OpenGL 1.2
 
         //  Methods
