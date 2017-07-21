@@ -150,34 +150,38 @@ namespace ImGui
                     return;
                 }
 
-                var currentDrawCmd = drawCmdBuffer[drawCmdBuffer.Count - 1];
-                var currentBezierCmd = bezierCmdBuffer[bezierCmdBuffer.Count - 1];
-                if (currentDrawCmd.ElemCount != 0 && currentDrawCmd.ClipRect != currentClipRect)
+                var newDrawCmd = drawCmdBuffer[drawCmdBuffer.Count - 1];
+                var newBezierCmd = bezierCmdBuffer[bezierCmdBuffer.Count - 1];
                 {
-                    AddDrawCommand();
-                    return;
-                }
-
-                // Try to merge with previous command if it matches, else use current command
-                if (drawCmdBuffer.Count > 1)
-                {
-                    var previousCmd = drawCmdBuffer[drawCmdBuffer.Count - 2];
-                    if (previousCmd.ClipRect == currentClipRect)
+                    if (newDrawCmd.ElemCount != 0 && newDrawCmd.ClipRect != currentClipRect)
                     {
-                        drawCmdBuffer.RemoveAt(drawCmdBuffer.Count - 1);
-                        bezierCmdBuffer.RemoveAt(bezierCmdBuffer.Count - 1);
+                        AddDrawCommand();
+                        return;
+                    }
+
+                    // Try to merge with previous command if it matches, else use current command
+                    if (drawCmdBuffer.Count > 1)
+                    {
+                        var previousCmd = drawCmdBuffer[drawCmdBuffer.Count - 2];
+                        if (previousCmd.ClipRect == currentClipRect)
+                        {
+                            drawCmdBuffer.RemoveAt(drawCmdBuffer.Count - 1);
+                            bezierCmdBuffer.RemoveAt(bezierCmdBuffer.Count - 1);
+                        }
+                        else
+                        {
+                            newDrawCmd.ClipRect = currentClipRect;
+                            newBezierCmd.ClipRect = currentClipRect;
+                        }
                     }
                     else
                     {
-                        currentDrawCmd.ClipRect = currentClipRect;
-                        currentBezierCmd.ClipRect = currentClipRect;
+                        newDrawCmd.ClipRect = currentClipRect;
+                        newBezierCmd.ClipRect = currentClipRect;
                     }
                 }
-                else
-                {
-                    currentDrawCmd.ClipRect = currentClipRect;
-                    currentBezierCmd.ClipRect = currentClipRect;
-                }
+                drawCmdBuffer[drawCmdBuffer.Count - 1] = newDrawCmd;
+                bezierCmdBuffer[bezierCmdBuffer.Count - 1] = newBezierCmd;
             }
         }
 
