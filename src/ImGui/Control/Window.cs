@@ -47,15 +47,10 @@ namespace ImGui
             Debug.Assert(parent_window != null || !flags.HaveFlag(WindowFlags.ChildWindow));
 
             // Update known root window (if we are a child window, otherwise window == window->RootWindow)
-            int root_idx, root_non_popup_idx;
+            int root_idx;
             for (root_idx = w.WindowStack.Count - 1; root_idx > 0; root_idx--)
             {
                 if (!(w.WindowStack[root_idx].Flags.HaveFlag(WindowFlags.ChildWindow)))
-                    break;
-            }
-            for (root_non_popup_idx = root_idx; root_non_popup_idx > 0; root_non_popup_idx--)
-            {
-                if (!(w.WindowStack[root_non_popup_idx].Flags.HaveFlag(WindowFlags.ChildWindow | WindowFlags.Popup)))
                     break;
             }
             window.RootWindow = w.WindowStack[root_idx];
@@ -86,9 +81,15 @@ namespace ImGui
 
                 #region size
 
-                // Apply minimum/maximum window size constraints and final size
                 window.ApplySize(window.FullSize);
                 window.Size = window.Collapsed ? window.TitleBarRect.Size : window.FullSize;
+
+                if (flags.HaveFlag(WindowFlags.ChildWindow))
+                {
+                    window.Position = window.PosFloat = position;
+                    window.Size = window.FullSize = size; // 'size' as provided by user passed via BeginChild()->Begin().
+                }
+
 
                 #endregion
 

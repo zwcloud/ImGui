@@ -273,6 +273,7 @@ void main()
             GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             GL.Disable(GL.GL_CULL_FACE);
             GL.Disable(GL.GL_DEPTH_TEST);
+            GL.DepthFunc(GL.GL_NEVER);
 
 #if EnableClip
             GL.Enable(GL.GL_SCISSOR_TEST);

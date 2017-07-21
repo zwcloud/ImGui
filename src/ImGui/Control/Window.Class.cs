@@ -11,6 +11,11 @@ namespace ImGui
         public int ID;
 
         /// <summary>
+        /// Name/Title
+        /// </summary>
+        public string Name;
+
+        /// <summary>
         /// Position (rounded-up to nearest pixel)
         /// </summary>
         /// <remarks>Top-left point relative to the form.</remarks>
@@ -29,7 +34,7 @@ namespace ImGui
         /// <summary>
         /// Size when the window is not collapsed.
         /// </summary>
-        public Size FullSize { get; private set; }
+        public Size FullSize { get; set; }
 
         /// <summary>
         /// Window flags. See <see cref="WindowFlags"/>.
@@ -77,9 +82,9 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
-            WindowManager w = g.WindowManager;
 
             this.ID = name.GetHashCode();
+            this.Name = name;
             this.IDStack.Push(this.ID);
             this.Flags = Flags;
             this.PosFloat = position;
@@ -126,8 +131,6 @@ namespace ImGui
             }
 
             this.StackLayout = new StackLayout(this.ID, this.Size);
-
-            w.Windows.Add(this);
         }
 
         /// <summary>

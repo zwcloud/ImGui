@@ -116,7 +116,9 @@ namespace ImGui
 
         internal Window CreateWindow(string name, Point position, Size size, WindowFlags flags)
         {
-            return new Window(name, position, size, flags);
+            var window = new Window(name, position, size, flags);
+            this.Windows.Add(window);
+            return window;
         }
 
         public void NewFrame(GUIContext g)
@@ -199,6 +201,8 @@ namespace ImGui
             this.WindowStack.Clear();
         }
 
+        private List<Window> windowSwapBuffer = new List<Window>();
+        private List<Window> childWindows = new List<Window>();
         public void EndFrame(GUIContext g)
         {
             // Click to focus window and start moving (after we're done with all our widgets)
@@ -220,6 +224,37 @@ namespace ImGui
                     this.FocusWindow(null);
                 }
             }
+
+            // Sort windows so child windows always rendered after its parent TODO optimize this
+            windowSwapBuffer.Clear();
+            childWindows.Clear();
+            for (int i = 0; i < Windows.Count; i++)
+            {
+                var window = Windows[i];
+                if (window.Flags.HaveFlag(WindowFlags.ChildWindow))
+                {
+                    childWindows.Add(window);
+                }
+                else
+                {
+                    windowSwapBuffer.Add(window);
+                }
+            }
+
+            foreach (var childWindow in childWindows)
+            {
+                var parentWindowIndex = windowSwapBuffer.FindIndex(win => win == childWindow.RootWindow);
+                if (parentWindowIndex < 0)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                windowSwapBuffer.Insert(parentWindowIndex + 1, childWindow);
+            }
+
+            Debug.Assert(windowSwapBuffer.Count == Windows.Count);
+
+            Windows.Clear();
+            Windows.AddRange(windowSwapBuffer);
         }
     }
 }
