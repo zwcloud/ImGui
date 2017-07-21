@@ -65,13 +65,18 @@ namespace ImGui
                 window.DrawList.Clear();
                 window.DrawList.Init();
                 Rect fullScreenRect = new Rect(0, 0, form.Rect.Size);
-                if ((flags & WindowFlags.ChildWindow)!=0 && !((flags & (WindowFlags.ComboBox | WindowFlags.Popup))!=0))
-                    window.DrawList.PushClipRect(parent_window.ClipRect);
+                if (flags.HaveFlag(WindowFlags.ChildWindow) && !flags.HaveFlag(WindowFlags.ComboBox | WindowFlags.Popup))
+                {
+                    window.DrawList.PushClipRect(parent_window.ClipRect, true);
+                    window.ClipRect = parent_window.ClipRect;
+                }
                 else
-                    window.DrawList.PushClipRect(fullScreenRect);
+                {
+                    window.DrawList.PushClipRect(fullScreenRect, true);
+                    window.ClipRect = fullScreenRect;
+                }
 
-                // clip
-                window.ClipRect = fullScreenRect;
+                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Blue);
 
                 // Collapse window by double-clicking on title bar
                 if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
@@ -296,7 +301,9 @@ namespace ImGui
                               Math.Floor(0.5f + title_bar_rect.Max.Y + border_size)),
                     new Point(Math.Floor(0.5f + window.Position.X + window.Size.Width - Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
                               Math.Floor(0.5f + window.Position.Y + window.Size.Height - border_size)));
-                window.DrawList.PushClipRect(clip_rect);
+                window.DrawList.PushClipRect(clip_rect, true);
+                window.ClipRect = clip_rect;
+                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Red);
             }
 
             // Clear 'accessed' flag last thing

@@ -10,12 +10,13 @@ namespace ImGui
         public static bool BeginChild(string str_id, Size size, bool border, WindowFlags extra_flags)
         {
             var window = GetCurrentWindow();
+            WindowFlags flags = WindowFlags.NoTitleBar | WindowFlags.NoResize | WindowFlags.ChildWindow | WindowFlags.VerticalScrollbar;
 
             string name = string.Format("{0}.{1}", window.Name, str_id);
             int id = window.GetID(name);
             var rect = window.GetRect(id, size, GUIStyle.Default, null);
             bool open = true;//dummy
-            return GUILayout.Begin(name, ref open, rect.TopLeft, rect.Size, 1.0, WindowFlags.ChildWindow | extra_flags);
+            return GUILayout.Begin(name, ref open, rect.TopLeft, rect.Size, 1.0, flags | extra_flags);
         }
 
         public static bool BeginChild(int id, Size size, bool border, WindowFlags extra_flags)

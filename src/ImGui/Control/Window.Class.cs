@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using ImGui.Layout;
+using System.Diagnostics;
 
 namespace ImGui
 {
+    [DebuggerDisplay("{Name}:[{ID}]")]
     internal class Window
     {
         /// <summary>
