@@ -6,6 +6,7 @@ namespace ImGui
     /// <summary>
     /// Size - A value type which defined a size in terms of non-negative width and height
     /// </summary>
+    [System.Diagnostics.DebuggerStepThrough]
     [Serializable]
     public struct Size : IFormattable
     {
