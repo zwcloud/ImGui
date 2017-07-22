@@ -115,28 +115,7 @@ namespace ImGui
         [DllImport("user32.dll")]
         static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
-        #region glew
-
-        [DllImport("glew32.dll")]
-        static extern uint glewInit();
-
-        [DllImport("glew32.dll", EntryPoint = "glewGetErrorString")]
-        static extern IntPtr _glewGetErrorString(uint error);
-        public static string glewGetErrorString(uint error)
-        {
-            IntPtr pStr = _glewGetErrorString(error);
-            var str = Marshal.PtrToStringAnsi(pStr);
-            return str;
-        }
-
-        [DllImport("glew32.dll", EntryPoint = "glewGetString")]
-        static extern IntPtr _glewGetString(uint name);
-        public static string glewGetString(uint name)
-        {
-            IntPtr pStr = _glewGetString(name);
-            var str = Marshal.PtrToStringAnsi(pStr);
-            return str;
-        }
+        #region Wgl
 
         class Wgl
         {
@@ -227,10 +206,6 @@ namespace ImGui
             }
         }
 
-        private IntPtr TempWindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
-        {
-            return DefWindowProc(hWnd, msg, wParam, lParam);
-        }
         delegate IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam);
 
         [StructLayout(LayoutKind.Sequential)]
@@ -275,14 +250,6 @@ namespace ImGui
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool DestroyWindow(IntPtr hwnd);
-
-        #endregion
-
-        #endregion
-
-        IntPtr hDC;
-        IntPtr hglrc;
-        IntPtr hwnd;
 
         enum WGL
         {
@@ -349,7 +316,13 @@ namespace ImGui
             WGL_CONTEXT_PROFILE_MASK_ARB = 0x9126,
         }
 
+        #endregion
 
+        #endregion
+
+        IntPtr hDC;
+        IntPtr hglrc;
+        IntPtr hwnd;
         private void CreateOpenGLContext(IntPtr hwnd)
         {
             this.hwnd = hwnd;
@@ -362,20 +335,14 @@ namespace ImGui
             IntPtr tempHwnd = IntPtr.Zero;
             //Create temporary window
             IntPtr hInstance = Process.GetCurrentProcess().SafeHandle.DangerousGetHandle();
-            string szClassName = "tmpWindow~";
 
-            WNDCLASS wndclass;
-            wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/;
-            wndclass.lpfnWndProc = TempWindowProc;
-            wndclass.cbClsExtra = 0;
-            wndclass.cbWndExtra = 0;
-            wndclass.hInstance = hInstance;
-            wndclass.hIcon = IntPtr.Zero;
-            wndclass.hCursor = IntPtr.Zero;
-            wndclass.hbrBackground = IntPtr.Zero;
-            wndclass.lpszMenuName = null;
-            wndclass.lpszClassName = szClassName;
-
+            WNDCLASS wndclass = new WNDCLASS()
+            {
+                style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/,
+                lpfnWndProc = (hWnd, msg, wParam, lParam) => DefWindowProc(hWnd, msg, wParam, lParam),
+                hInstance = hInstance,
+                lpszClassName = "tmpWindow~"
+            };
             ushort atom = RegisterClassW(ref wndclass);
             if (atom == 0)
             {
@@ -386,11 +353,10 @@ namespace ImGui
                 0,
                 new IntPtr(atom),
                 "tmpWindow~",
-                (uint)(WindowStyles.WS_VISIBLE | WindowStyles.WS_CHILD),
+                (uint)(WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN),
                 0, 0, 1, 1, hwnd, IntPtr.Zero,
                 hInstance,
                 IntPtr.Zero);
-
             if (tempHwnd == IntPtr.Zero)
             {
                 throw new WindowCreateException(string.Format("CreateWindowEx for tempContext error: {0}", Marshal.GetLastWin32Error()));
@@ -398,7 +364,13 @@ namespace ImGui
 
             IntPtr tempHdc = GetDC(tempHwnd);
 
-            if (!SetPixelFormat(tempHdc, 1, ref pixelformatdescriptor))
+            var tempPixelFormat = ChoosePixelFormat(tempHdc, ref pixelformatdescriptor);
+            if(tempPixelFormat == 0)
+            {
+                throw new Exception(string.Format("ChoosePixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+            }
+
+            if (!SetPixelFormat(tempHdc, tempPixelFormat, ref pixelformatdescriptor))
             {
                 throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
             }
@@ -416,14 +388,6 @@ namespace ImGui
 
             //load wgl entry points for wglChoosePixelFormatARB
             new Wgl().LoadEntryPoints(tempHdc);
-
-            //Init glew
-            uint err = glewInit();
-            if (0/* GLEW_OK */ != err)
-            {
-                throw new Exception("Error: " + glewGetErrorString(err));
-            }
-            Debug.WriteLine(string.Format("Status: Using GLEW {0}", glewGetString(1/* GLEW_VERSION */)));
 
             int[] iPixAttribs = {
                 (int)WGL.WGL_SUPPORT_OPENGL_ARB, (int)GL.GL_TRUE,

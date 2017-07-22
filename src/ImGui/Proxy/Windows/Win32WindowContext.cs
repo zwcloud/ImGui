@@ -317,7 +317,7 @@ namespace ImGui
             IntPtr hInstance = processHandle.DangerousGetHandle();
             string szAppName = "ImGuiApplication~";
 
-            wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/;
+            wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/;
             wndclass.lpfnWndProc = WindowProc;
             wndclass.cbClsExtra = 0;
             wndclass.cbWndExtra = 0;
