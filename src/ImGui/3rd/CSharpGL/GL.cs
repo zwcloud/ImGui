@@ -14,6 +14,15 @@ namespace CSharpGL
         [DllImport("libGL.so", EntryPoint = "glXGetProcAddress")]
         internal static extern IntPtr glxGetProcAddress(string s);
 
+
+        /// <summary>
+        /// Gets a proc address.
+        /// </summary>
+        /// <param name="name">The name of the function.</param>
+        /// <returns>The address of the function.</returns>
+        [DllImport(OpenGL32, SetLastError = true)]
+        public static extern IntPtr wglGetProcAddress(string name);
+
         #endregion
 
         /// <summary>
@@ -38,7 +47,7 @@ namespace CSharpGL
             if(ImGui.Utility.CurrentOS.IsWindows)
             {
                 // check https://www.opengl.org/wiki/Load_OpenGL_Functions
-                proc = Win32.wglGetProcAddress(name);
+                proc = wglGetProcAddress(name);
                 var pointer = proc.ToInt64();
                 if (-1 <= pointer && pointer <= 3)
                 {
@@ -60,7 +69,7 @@ namespace CSharpGL
             }
             else if(ImGui.Utility.CurrentOS.IsMac)
             {
-                throw new NotImplementedException("Binding for macOS hasn't not implemented yet.");
+                throw new NotImplementedException("Binding for macOS hasn't been implemented.");
             }
             else
             {

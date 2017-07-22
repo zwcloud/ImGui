@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
-using System.Linq;
 
 namespace ImGui
 {
@@ -150,16 +148,11 @@ namespace ImGui
 
             //Time
             stopwatch.Start();
-            var sw = new Stopwatch();
-            sw.Start();
 
             Forms.Add(mainForm);
 
             //Show main form
             mainForm.Show();
-
-            Debug.WriteLine("Init {0:F1}ms", sw.ElapsedTicks * 1000d / Stopwatch.Frequency);
-            sw.Restart();
 
             frameStartTime = Time;
         }
