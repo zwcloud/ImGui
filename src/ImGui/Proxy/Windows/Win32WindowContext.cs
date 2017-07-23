@@ -323,7 +323,7 @@ namespace ImGui
             wndclass.cbWndExtra = 0;
             wndclass.hInstance = hInstance;
             wndclass.hIcon = LoadIcon(IntPtr.Zero, new IntPtr(32512/*IDI_APPLICATION*/));
-            wndclass.hCursor = IntPtr.Zero;//LoadCursor(IntPtr.Zero, 32512/*IDC_ARROW*/);
+            wndclass.hCursor = LoadCursor(IntPtr.Zero, 32512/*IDC_ARROW*/);
             wndclass.hbrBackground = IntPtr.Zero;// GetStockObject(0);
             wndclass.lpszMenuName = null;
             wndclass.lpszClassName = szAppName;

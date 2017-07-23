@@ -101,8 +101,6 @@ namespace ImGui
 
             w.NewFrame(g);
 
-            Input.Mouse.Cursor = Cursor.Default;
-
             // Create implicit window - we will only render it if the user has added something to it.
             GUILayout.Begin("Debug", ref debugWindowOpen);
         }
@@ -195,8 +193,6 @@ namespace ImGui
 
                 l.Msg("ActiveId: {0}, ActiveIdIsAlive: {1}", g.ActiveId, g.ActiveIdIsAlive);
                 l.Msg("HoverId: {0}", g.HoverId);
-
-                l.Msg("Cursor: {0}", Input.Mouse.Cursor);
 
                 l.Msg("Window:");
                 l.Msg("    HoveredWindow: {0}", (w.HoveredWindow != null) ? w.HoveredWindow.ID.ToString() : "<none>");

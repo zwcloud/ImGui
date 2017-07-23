@@ -28,12 +28,12 @@ namespace ImGui
             this.nativeWindow = Application.windowContext.CreateWindow(position, size, WindowTypes.Regular);
             this.nativeWindow.Title = Title;
 
+            Profile.Start("CreateRenderer");
             renderer = Application.platformContext.CreateRenderer();
             renderer.Init(this.Pointer);
+            Profile.End();
 
             OverlayDrawList.Init();
-
-            Input.Mouse.Cursor = Cursor.Default;
         }
 
         #region window management
