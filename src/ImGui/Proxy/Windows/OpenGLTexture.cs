@@ -23,7 +23,7 @@ namespace ImGui
             // check file header, save texture data to buffer
             using (FileStream stream = File.OpenRead(filePath))
             {
-                image = ImageSharp.Image.Load(stream);
+                image = new ImageSharp.Image(stream);
                 textureData = image.Pixels;
             }
 

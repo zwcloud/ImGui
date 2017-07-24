@@ -49,9 +49,9 @@ namespace ImGui
         public GUIStyle Style;
 
         /// <summary>
-        /// Style of the header
+        /// Style of the title bar
         /// </summary>
-        public GUIStyle HeaderStyle;
+        public GUIStyle TitleBarStyle;
 
         /// <summary>
         /// Draw list
@@ -110,6 +110,7 @@ namespace ImGui
                 style.Set(GUIStyleName.WindowBorderColor, new Color(0.70f, 0.70f, 0.70f, 0.65f));
                 style.Set(GUIStyleName.WindowBorderShadowColor, new Color(0.00f, 0.00f, 0.00f, 0.00f));
                 style.Set(GUIStyleName.BackgroundColor, new Color(0.30f, 0.30f, 0.30f, 0.70f));
+                style.Set(GUIStyleName.ResizeGripSize, 20.0);
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.90f), GUIState.Active);
@@ -128,9 +129,16 @@ namespace ImGui
                 style.Set(GUIStyleName.BackgroundColor, new Color(0.27f, 0.27f, 0.54f, 0.83f));
                 style.Set(GUIStyleName.BackgroundColor, new Color(0.32f, 0.32f, 0.63f, 0.87f), GUIState.Active);
                 style.Set(GUIStyleName.BackgroundColor, new Color(0.40f, 0.40f, 0.80f, 0.20f), GUIState.Disabled);
+                style.Set(GUIStyleName.PaddingTop, 8.0);
+                style.Set(GUIStyleName.PaddingRight, 8.0);
+                style.Set(GUIStyleName.PaddingBottom, 8.0);
+                style.Set(GUIStyleName.PaddingLeft, 8.0);
                 style.Set(GUIStyleName.FontColor, Color.White);
-                this.HeaderStyle = style;
+                style.FontSize = 20.0;
+                this.TitleBarStyle = style;
             }
+
+            this.TitleBarHeight = TitleBarStyle.PaddingVertical + 30;
 
             this.StackLayout = new StackLayout(this.ID, this.Size);
         }
@@ -143,7 +151,7 @@ namespace ImGui
         /// <summary>
         /// Gets the height of the title bar
         /// </summary>
-        public double TitleBarHeight => HeaderStyle.PaddingVertical + HeaderStyle.PaddingVertical + 32;
+        public double TitleBarHeight { get; }
 
         /// <summary>
         /// Gets the rect of the title bar

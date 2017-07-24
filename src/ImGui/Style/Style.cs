@@ -56,7 +56,7 @@ namespace ImGui
         _LabelHeight,
 
         WindowRounding,
-        ResizeGripActiveColor,
+        ResizeGripSize,
         ResizeGripColor,
         WindowBorderColor,
         WindowBorderShadowColor,
@@ -90,14 +90,13 @@ namespace ImGui
 
         static GUIStyle()
         {
+            DefaultFontSize = 12;
             if (CurrentOS.IsAndroid)
             {
-                DefaultFontSize = 42;
                 DefaultFontFamily = "DroidSans.ttf";
             }
             else
             {
-                DefaultFontSize = 12;
                 DefaultFontFamily = Utility.FontDir + "Helvetica.ttf";
             }
 

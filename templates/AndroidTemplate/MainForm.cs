@@ -10,7 +10,7 @@ namespace AndroidTemplate
         public MainForm(Point position, Size size) : base(new Rect(position, size)) { }
 
         private bool open = true;
-        private string text = "123";
+        private string text = "123XD";
 
         protected override void OnGUI()
         {

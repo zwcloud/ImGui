@@ -41,6 +41,7 @@ namespace AndroidTemplate
             try
             {
                 base.CreateFrameBuffer();// if you don't call this, the context won't be created
+                this.GraphicsMode = new GraphicsMode(new ColorFormat(32), 24, 8, 8);
                 return;
             }
             catch (Exception ex)

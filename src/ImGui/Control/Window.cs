@@ -110,7 +110,7 @@ namespace ImGui
 
                 // Draw window + handle manual resize
                 GUIStyle style = window.Style;
-                GUIStyle headerStyle = window.HeaderStyle;
+                GUIStyle titleBarStyle = window.TitleBarStyle;
                 Rect title_bar_rect = window.TitleBarRect;
                 float window_rounding = (float)style.Get<double>(GUIStyleName.WindowRounding);
                 if (window.Collapsed)
@@ -121,7 +121,8 @@ namespace ImGui
                 else
                 {
                     Color resize_col = Color.Clear;
-                    double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
+                    double rezie_size = window.Style.Get<double>(GUIStyleName.ResizeGripSize);
+                    double resize_corner_size = Math.Max(rezie_size * 1.35, window_rounding + 1.0 + rezie_size * 0.2);
                     if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
                     {
                         // Manual resize
@@ -179,8 +180,8 @@ namespace ImGui
                     {
                         window.DrawList.AddRectFilled(title_bar_rect.TopLeft, title_bar_rect.BottomRight,
                             w.FocusedWindow == window ?
-                            headerStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active) :
-                            headerStyle.Get<Color>(GUIStyleName.BackgroundColor), window_rounding, 1 | 2);
+                            titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active) :
+                            titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor), window_rounding, 1 | 2);
                     }
 
                     // Render resize grip
@@ -269,10 +270,7 @@ namespace ImGui
                 // Title bar
                 if (!flags.HaveFlag(WindowFlags.NoTitleBar))
                 {
-                    Size text_size = headerStyle.CalcSize(name, GUIState.Normal, null);
-                    Point text_min = window.Position + new Vector(style.PaddingLeft, style.PaddingTop);
-                    Point text_max = window.Position + new Vector(window.Size.Width - style.PaddingHorizontal, style.PaddingVertical * 2 + text_size.Height);
-                    window.DrawList.DrawText(new Rect(text_min, text_max), name, headerStyle, GUIState.Normal);
+                    window.DrawList.DrawBoxModel(title_bar_rect, name, titleBarStyle);
                 }
 
                 // Borders

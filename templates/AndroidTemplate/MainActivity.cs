@@ -2,13 +2,10 @@
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
 using Android.Content.PM;
-using Android.Util;
-using Android.Views.InputMethods;
 using ImGui;
 
 namespace AndroidTemplate
@@ -35,6 +32,8 @@ namespace AndroidTemplate
             ImGui.Application.FontFileRead = this.Assets.Open;
             ImGui.Application.Init();
 
+            // Set up callback to show keyboard and get input from it.
+            //https://github.com/MonoGame/MonoGame/tree/7c3d6870a38f8a5e479e64d935d692f2610e1cda/MonoGame.Framework/Input#L24
             ImGui.Keyboard.ShowCallback = (text) =>
             {
                 tcs = new TaskCompletionSource<string>();
@@ -58,13 +57,13 @@ namespace AndroidTemplate
                     alert.SetButton((int)DialogButtonType.Negative, "Cancel", (sender, args) =>
                     {
                         if (!tcs.Task.IsCompleted)
-                            tcs.SetResult(null);
+                            tcs.SetResult(text);
                     });
 
                     alert.CancelEvent += (sender, args) =>
                     {
                         if (!tcs.Task.IsCompleted)
-                            tcs.SetResult(null);
+                            tcs.SetResult(text);
                     };
 
                     alert.Show();
