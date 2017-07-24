@@ -214,9 +214,9 @@ namespace ImGui
                 TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Normal);
                 TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Hover);
                 TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Active);
-                TextBox.Set<double>(GUIStyleName.FontSize, 13, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.FontSize, 13, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.FontSize, 13, GUIState.Active);
+                TextBox.Set<double>(GUIStyleName.FontSize, CurrentOS.IsAndroid ? 32 : 13, GUIState.Normal);
+                TextBox.Set<double>(GUIStyleName.FontSize, CurrentOS.IsAndroid ? 32 : 13, GUIState.Hover);
+                TextBox.Set<double>(GUIStyleName.FontSize, CurrentOS.IsAndroid ? 32 : 13, GUIState.Active);
             }
         }
 

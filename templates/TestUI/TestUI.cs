@@ -15,7 +15,7 @@ public class TestUI
     {
         if(image == null)
         {
-            image = GUI.CreateTexture("Image/trees.jpg");
+            image = GUI.CreateTexture("./Image/trees.jpg");
         }
 
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))

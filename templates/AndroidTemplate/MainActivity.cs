@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Runtime;
@@ -7,6 +8,7 @@ using Android.Widget;
 using Android.OS;
 using Android.Content.PM;
 using Android.Util;
+using Android.Views.InputMethods;
 using ImGui;
 
 namespace AndroidTemplate
@@ -14,7 +16,7 @@ namespace AndroidTemplate
     [Activity(Label = "AndroidTemplate",
         MainLauncher = true,
         Icon = "@drawable/icon",
-        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.KeyboardHidden
+        ConfigurationChanges = ConfigChanges.Orientation
 #if __ANDROID_11__
 		,HardwareAccelerated=false
 #endif
@@ -23,14 +25,53 @@ namespace AndroidTemplate
     {
         MainView view;
 
+        private static TaskCompletionSource<string> tcs;
+        private static AlertDialog alert;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             ImGui.Application.FontFileRead = this.Assets.Open;
-
-
             ImGui.Application.Init();
+
+            ImGui.Keyboard.ShowCallback = (text) =>
+            {
+                tcs = new TaskCompletionSource<string>();
+
+                RunOnUiThread(() =>
+                {
+                    alert = new AlertDialog.Builder(this).Create();
+
+                    alert.SetTitle("Input");
+
+                    var input = new EditText(this) { Text = text };
+
+                    alert.SetView(input);
+
+                    alert.SetButton((int)DialogButtonType.Positive, "Ok", (sender, args) =>
+                    {
+                        if (!tcs.Task.IsCompleted)
+                            tcs.SetResult(input.Text);
+                    });
+
+                    alert.SetButton((int)DialogButtonType.Negative, "Cancel", (sender, args) =>
+                    {
+                        if (!tcs.Task.IsCompleted)
+                            tcs.SetResult(null);
+                    });
+
+                    alert.CancelEvent += (sender, args) =>
+                    {
+                        if (!tcs.Task.IsCompleted)
+                            tcs.SetResult(null);
+                    };
+
+                    alert.Show();
+                });
+
+                return tcs.Task;
+            };
 
             // Create our OpenGL view, and display it
             view = new MainView(this);

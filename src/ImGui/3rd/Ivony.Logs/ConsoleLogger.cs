@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImGui;
 
 namespace Ivony.Logs
 {
@@ -88,7 +89,7 @@ namespace Ivony.Logs
     /// </summary>
     public void Clear()
     {
-      if (ImGui.Utility.CurrentOS.IsAndroid) return;
+      if (CurrentOS.IsAndroid) return;
       Console.Clear();
     }
 

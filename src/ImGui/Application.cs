@@ -67,20 +67,20 @@ namespace ImGui
             }
             else
             {
-                logger = Utility.Create<ILogger>(Utility.CurrentOS.Platform);
+                logger = Utility.Create<ILogger>(CurrentOS.Platform);
             }
 
             // load platform context:
             //     platform-dependent implementation
-            if (Utility.CurrentOS.IsAndroid)
+            if (CurrentOS.IsAndroid)
             {
                 platformContext = AndroidContext.MapFactory();
             }
-            else if(Utility.CurrentOS.IsWindows)
+            else if(CurrentOS.IsWindows)
             {
                 platformContext = WindowsContext.MapFactory();
             }
-            else if(Utility.CurrentOS.IsLinux)
+            else if(CurrentOS.IsLinux)
             {
                 platformContext = LinuxContext.MapFactory();
             }

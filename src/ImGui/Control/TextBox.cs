@@ -1,7 +1,6 @@
 ﻿//#define INSPECT_STATE
 using System;
 using System.Diagnostics;
-using Key = ImGui.Key;
 
 namespace ImGui
 {
@@ -82,11 +81,10 @@ namespace ImGui
                 };
             }
 
-            StateMachineEx stateMachine = null;
             InputTextContext context = null;
             if (g.ActiveId == id)
             {
-                stateMachine = g.InputTextState.stateMachine;
+                var stateMachine = g.InputTextState.stateMachine;
                 context = g.InputTextState.inputTextContext;
                 context.Rect = rect;
                 context.Style = style;
@@ -117,6 +115,7 @@ namespace ImGui
                 if (stateMachine.CurrentState == TextBoxState.Active)
                 {
                     stateMachine.MoveNext(TextBoxCommand.DoEdit, context);
+
                 }
                 if (stateMachine.CurrentState == TextBoxState.ActiveSelecting)
                 {
@@ -193,19 +192,8 @@ namespace ImGui
                 d.PopClipRect();
             }
 
-            if (g.ActiveId == id)
-            {
-                TextBoxDebug.CaretIndex = context.CaretIndex;
-                //Debug.WriteLine(stateMachine.CurrentState);
-            }
-
             return text;
         }
-    }
-
-    public static class TextBoxDebug
-    {
-        public static uint CaretIndex;
     }
 
     internal static class TextBoxState

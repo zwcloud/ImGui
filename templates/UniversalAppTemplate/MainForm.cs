@@ -8,23 +8,31 @@ namespace UniversalAppTemplate
         {
         }
 
-        bool openA = true;
-        bool openB = true;
+        bool openDemo = true;
+        TestUI demoUI = new TestUI();
 
-        string texta = "aaaaaa";
-        string textb = "bbbbbbbbb";
+        bool openA = true;
 
         protected override void OnGUI()
         {
-            GUILayout.Begin("window A", ref openA);
+            //GUILayout.Begin("ImGui Demo", ref openDemo);
+            //demoUI.OnGUI();
+            //GUILayout.End();
 
-            GUILayout.Label("Textboxes:");
-            GUILayout.BeginChild("textboxes", new Size(200, 300), true, WindowFlags.Default);
-            for (int i = 0; i < 12; i++)
-            {
-                GUILayout.Textbox("textBoxA"+i, 100, "TextBox A." + i);
-            }
-            GUILayout.EndChild();
+            GUILayout.Begin("window A", ref openA);
+            GUILayout.BeginVertical("GroupA");
+            GUILayout.Label("AAAA");
+            GUILayout.Label("BBBB");
+            GUILayout.Label("CCCC");
+            GUILayout.Label("DDDD");
+            GUILayout.EndVertical();
+
+            GUILayout.BeginHorizontal("GroupB");
+            GUILayout.Label("BAAAA");
+            GUILayout.Label("BBBBB");
+            GUILayout.Label("BCCCC");
+            GUILayout.Label("BDDDD");
+            GUILayout.EndHorizontal();
             GUILayout.End();
         }
     }

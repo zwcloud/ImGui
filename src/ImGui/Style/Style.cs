@@ -90,7 +90,7 @@ namespace ImGui
 
         static GUIStyle()
         {
-            if (Utility.CurrentOS.IsAndroid)
+            if (CurrentOS.IsAndroid)
             {
                 DefaultFontSize = 42;
                 DefaultFontFamily = "DroidSans.ttf";

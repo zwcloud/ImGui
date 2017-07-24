@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using CSharpGL;
 using System.Linq;
@@ -55,60 +54,6 @@ namespace ImGui
             var cbr = new Point(pbr.X - pr, pbr.Y - pb);
             var contentBoxRect = new Rect(ctl, cbr);
             return contentBoxRect;
-        }
-
-        // Detects the current OS (Windows, Linux, MacOS)
-        internal static class CurrentOS
-        {
-            public static Platform Platform {get; private set;}
-
-            static CurrentOS()
-            {
-                var envars = Environment.GetEnvironmentVariables();
-                IsAndroid = envars.Contains("ANDROID_PROPERTY_WORKSPACE");
-                if (IsAndroid)
-                {
-                    Platform = Platform.Android;
-                    return;
-                }
-                IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                if (IsWindows)
-                {
-                    Platform = Platform.Windows;
-                    return;
-                }
-                IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-                if (IsMac)
-                {
-                    Platform = Platform.Mac;
-                    return;
-                }
-                IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-                if (IsLinux)
-                {
-                    Platform = Platform.Linux;
-                    return;
-                }
-                IsUnknown = true;                
-            }
-
-            public static bool IsWindows { get; private set; }
-            public static bool IsMac { get; private set; }
-            public static bool IsLinux { get; private set; }
-
-            public static bool IsAndroid { get; private set; }
-
-            public static bool IsUnknown { get; private set; }
-
-            public static bool Is64BitProcess
-            {
-                get { return (IntPtr.Size == 8); }
-            }
-
-            public static bool Is32BitProcess
-            {
-                get { return (IntPtr.Size == 4); }
-            }
         }
         
         public static void GetId(string t, out string text, out string id)

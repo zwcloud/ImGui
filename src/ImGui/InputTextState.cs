@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ImGui
 {
@@ -111,86 +111,110 @@ namespace ImGui
             textBox.CaretIndex = caretIndex;
         }
 
+        private static Task<string> keyboardTask;
         private static void DoEditCallBack(InputTextContext textBox)
         {
-            var CaretIndex = textBox.CaretIndex;
-            var SelectIndex = textBox.SelectIndex;
-
-            string textBeforeCaret;
-            //Input characters
-            if (Input.ImeBuffer.Count != 0)
+            if(CurrentOS.IsDesktopPlatform)
             {
-                var inputText = new string(Input.ImeBuffer.ToArray());
-                if (CaretIndex != SelectIndex) //Replace selected text with inputText
-                {
-                    //TODO check whether convert int and uint back and forth is appropriate
-                    var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
-                    var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
+                var CaretIndex = textBox.CaretIndex;
+                var SelectIndex = textBox.SelectIndex;
 
-                    textBox.Text = textBox.Text.Substring(0, minIndex) + inputText + textBox.Text.Substring(maxIndex);
-                    textBox.MoveCaret((uint)minIndex);
-                    textBeforeCaret = textBox.Text.Substring(0, minIndex) + inputText;
-                }
-                else //Insert inputText into caret position
+                string textBeforeCaret;
+                //Input characters
+                if (Input.ImeBuffer.Count != 0)
                 {
-                    if (textBox.Text.Length == 0)
+                    var inputText = new string(Input.ImeBuffer.ToArray());
+                    if (CaretIndex != SelectIndex) //Replace selected text with inputText
                     {
+                        //TODO check whether convert int and uint back and forth is appropriate
+                        var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
+                        var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
+
+                        textBox.Text = textBox.Text.Substring(0, minIndex) + inputText + textBox.Text.Substring(maxIndex);
+                        textBox.MoveCaret((uint)minIndex);
+                        textBeforeCaret = textBox.Text.Substring(0, minIndex) + inputText;
+                    }
+                    else //Insert inputText into caret position
+                    {
+                        if (textBox.Text.Length == 0)
+                        {
+                            textBox.Text = inputText;
+                            textBeforeCaret = textBox.Text;
+                        }
+                        else
+                        {
+                            textBox.Text = textBox.Text.Substring(0, (int)CaretIndex) + inputText + textBox.Text.Substring((int)CaretIndex);
+                            textBeforeCaret = textBox.Text.Substring(0, (int)CaretIndex) + inputText;
+                        }
+                    }
+                    textBox.MoveCaret((uint)textBeforeCaret.Length);
+                    Input.ImeBuffer.Clear();
+                }
+                //Backspace, delete one character before the caret
+                else if (Input.Keyboard.KeyPressed(Key.Back, true))
+                {
+                    if (CaretIndex != SelectIndex)
+                    {
+                        var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
+                        var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
+
+                        textBox.Text = textBox.Text.Substring(0, minIndex) + textBox.Text.Substring(maxIndex);
+                        textBox.MoveCaret((uint)minIndex);
+                        textBeforeCaret = textBox.Text.Substring(0, minIndex);
+                        textBox.MoveCaret((uint)textBeforeCaret.Length);
+                    }
+                    else if (CaretIndex > 0)
+                    {
+                        var newText = textBox.Text.Remove((int)(CaretIndex - 1), 1);
+                        if (CaretIndex == 0)
+                        {
+                            textBeforeCaret = "";
+                        }
+                        else
+                        {
+                            textBeforeCaret = textBox.Text.Substring(0, (int)(CaretIndex - 1));
+                        }
+                        textBox.MoveCaret((uint)textBeforeCaret.Length);
+                        textBox.Text = newText;
+                    }
+                }
+                //Delete, delete one character after the caret
+                else if (Input.Keyboard.KeyPressed(Key.Delete, true))
+                {
+                    if (CaretIndex != SelectIndex)
+                    {
+                        var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
+                        var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
+
+                        textBox.Text = textBox.Text.Substring(0, minIndex) + textBox.Text.Substring(maxIndex);
+                        textBox.MoveCaret((uint)minIndex);
+                        textBeforeCaret = textBox.Text.Substring(0, minIndex);
+                        textBox.MoveCaret((uint)textBeforeCaret.Length);
+                    }
+                    else if (CaretIndex < textBox.Text.Length)
+                    {
+                        textBox.Text = textBox.Text.Remove((int)CaretIndex, 1);
+                    }
+                }
+            }
+            else
+            {
+                if (keyboardTask == null)
+                {
+                    keyboardTask = Keyboard.Show(textBox.Text);
+                }
+                else
+                {
+                    if (keyboardTask.IsCompleted)
+                    {
+                        var inputText = keyboardTask.Result;
                         textBox.Text = inputText;
-                        textBeforeCaret = textBox.Text;
-                    }
-                    else
-                    {
-                        textBox.Text = textBox.Text.Substring(0, (int)CaretIndex) + inputText + textBox.Text.Substring((int)CaretIndex);
-                        textBeforeCaret = textBox.Text.Substring(0, (int)CaretIndex) + inputText;
-                    }
-                }
-                textBox.MoveCaret((uint)textBeforeCaret.Length);
-                Input.ImeBuffer.Clear();
-            }
-            //Backspace, delete one character before the caret
-            else if (Input.Keyboard.KeyPressed(Key.Back, true))
-            {
-                if (CaretIndex != SelectIndex)
-                {
-                    var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
-                    var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
+                        keyboardTask = null;
 
-                    textBox.Text = textBox.Text.Substring(0, minIndex) + textBox.Text.Substring(maxIndex);
-                    textBox.MoveCaret((uint)minIndex);
-                    textBeforeCaret = textBox.Text.Substring(0, minIndex);
-                    textBox.MoveCaret((uint)textBeforeCaret.Length);
-                }
-                else if (CaretIndex > 0)
-                {
-                    var newText = textBox.Text.Remove((int)(CaretIndex - 1), 1);
-                    if (CaretIndex == 0)
-                    {
-                        textBeforeCaret = "";
+                        // deactive the textbox we are editing
+                        var g = Form.current.uiContext;
+                        g.SetActiveID(0);
                     }
-                    else
-                    {
-                        textBeforeCaret = textBox.Text.Substring(0, (int)(CaretIndex - 1));
-                    }
-                    textBox.MoveCaret((uint)textBeforeCaret.Length);
-                    textBox.Text = newText;
-                }
-            }
-            //Delete, delete one character after the caret
-            else if (Input.Keyboard.KeyPressed(Key.Delete, true))
-            {
-                if (CaretIndex != SelectIndex)
-                {
-                    var minIndex = (int)Math.Min(CaretIndex, SelectIndex);
-                    var maxIndex = (int)Math.Max(CaretIndex, SelectIndex);
-
-                    textBox.Text = textBox.Text.Substring(0, minIndex) + textBox.Text.Substring(maxIndex);
-                    textBox.MoveCaret((uint)minIndex);
-                    textBeforeCaret = textBox.Text.Substring(0, minIndex);
-                    textBox.MoveCaret((uint)textBeforeCaret.Length);
-                }
-                else if (CaretIndex < textBox.Text.Length)
-                {
-                    textBox.Text = textBox.Text.Remove((int)CaretIndex, 1);
                 }
             }
         }

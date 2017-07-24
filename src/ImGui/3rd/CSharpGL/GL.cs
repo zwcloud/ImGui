@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using ImGui;
 
 namespace CSharpGL
 {
@@ -44,7 +45,7 @@ namespace CSharpGL
             string name = delegateType.Name;
 
             IntPtr proc = IntPtr.Zero;
-            if(ImGui.Utility.CurrentOS.IsWindows)
+            if(CurrentOS.IsWindows)
             {
                 // check https://www.opengl.org/wiki/Load_OpenGL_Functions
                 proc = wglGetProcAddress(name);
@@ -59,7 +60,7 @@ namespace CSharpGL
                     }
                 }
             }
-            else if(ImGui.Utility.CurrentOS.IsLinux)
+            else if(CurrentOS.IsLinux)
             {
                 proc = glxGetProcAddress(name);
                 if(proc == IntPtr.Zero)
@@ -67,7 +68,7 @@ namespace CSharpGL
                     throw new NotSupportedException("Extension function " + name + " not supported.");
                 }
             }
-            else if(ImGui.Utility.CurrentOS.IsMac)
+            else if(CurrentOS.IsMac)
             {
                 throw new NotImplementedException("Binding for macOS hasn't been implemented.");
             }

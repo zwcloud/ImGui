@@ -292,6 +292,8 @@ void main()
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
+            Utility.CheckGLError();
+
             // Draw
             var indexBufferOffset = IntPtr.Zero;
             foreach (var drawCmd in commandBuffer)
@@ -307,9 +309,9 @@ void main()
 #endif
                 GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
                 indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount*Marshal.SizeOf<DrawIndex>());
-            }
 
-            Utility.CheckGLError();
+                Utility.CheckGLError();
+            }
 
             // Restore modified GL state
             GL.UseProgram((uint)last_program);

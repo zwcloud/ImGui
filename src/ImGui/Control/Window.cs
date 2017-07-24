@@ -76,7 +76,7 @@ namespace ImGui
                     window.ClipRect = fullScreenRect;
                 }
 
-                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Blue);
+                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Blue);//test only
 
                 // Collapse window by double-clicking on title bar
                 if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
@@ -303,7 +303,7 @@ namespace ImGui
                               Math.Floor(0.5f + window.Position.Y + window.Size.Height - border_size)));
                 window.DrawList.PushClipRect(clip_rect, true);
                 window.ClipRect = clip_rect;
-                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Red);
+                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Red);//test only
             }
 
             // Clear 'accessed' flag last thing
