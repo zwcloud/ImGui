@@ -37,7 +37,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HostEditor", "demos\HostEdi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidTemplate", "templates\AndroidTemplate\AndroidTemplate.csproj", "{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGui.UnitTest", "test\ImGui.UnitTest\ImGui.UnitTest.csproj", "{B8087E73-4140-49B1-88CA-95528264CDB6}"
+EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		templates\TestUI\TestUI.projitems*{2af7f9f5-8001-40bf-8c60-c4852ceaa299}*SharedItemsImports = 13
 	EndGlobalSection
@@ -188,6 +193,18 @@ Global
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}.Release|x86.ActiveCfg = Release|Any CPU
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}.Release|x86.Build.0 = Release|Any CPU
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}.Release|x86.Deploy.0 = Release|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Debug|x64.Build.0 = Debug|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Debug|x86.Build.0 = Debug|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|x64.ActiveCfg = Release|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|x64.Build.0 = Release|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|x86.ActiveCfg = Release|Any CPU
+		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,6 +223,10 @@ Global
 		{BD7603BF-6E5C-48E3-A1C3-56C8D65F3FAC} = {5F2276E6-BDAC-489C-A620-7C14D78B4BEB}
 		{B8EE6600-33B7-4604-9951-608641DA0D98} = {DD39D4D9-52B4-47A7-86BF-ECB8D136D767}
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A} = {593C5B50-52E6-436D-9BF2-93E220984E45}
+		{B8087E73-4140-49B1-88CA-95528264CDB6} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

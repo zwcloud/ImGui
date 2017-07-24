@@ -22,7 +22,7 @@ namespace ImGui.Layout
 
         public bool InsideVerticalGroup => this.topGroup.isVertical;
 
-        internal Rect GetRect(int id, Size contentSize, GUIStyle style, LayoutOption[] options)
+        public Rect GetRect(int id, Size contentSize, GUIStyle style, LayoutOption[] options)
         {
             return DoGetRect(id, contentSize, style, options);
         }
@@ -71,7 +71,7 @@ namespace ImGui.Layout
             return null;
         }
 
-        internal LayoutGroup BeginLayoutGroup(int id, bool isVertical, GUIStyle style, LayoutOption[] options)
+        public LayoutGroup BeginLayoutGroup(int id, bool isVertical, GUIStyle style, LayoutOption[] options)
         {
             LayoutGroup group = FindLayoutGroup(id);
             if(group == null)
@@ -88,7 +88,7 @@ namespace ImGui.Layout
             return group;
         }
 
-        internal void EndLayoutGroup()
+        public void EndLayoutGroup()
         {
             this.groupStack.Pop();
         }
@@ -108,7 +108,7 @@ namespace ImGui.Layout
             return layoutEntry.rect;
         }
 
-        internal void Begin()
+        public void Begin()
         {
             this.topGroup.ResetCursor();
         }
@@ -116,11 +116,11 @@ namespace ImGui.Layout
         /// <summary>
         /// Calculate positions and sizes of every LayoutGroup and LayoutEntry
         /// </summary>
-        internal void Layout(Size size)
+        public void Layout(Size size)
         {
             if (!Dirty) return;
-            this.topGroup.CalcWidth(size.Width);
-            this.topGroup.CalcHeight(size.Height);
+            this.topGroup.CalcWidth();
+            this.topGroup.CalcHeight();
             this.topGroup.SetX(0);
             this.topGroup.SetY(0);
             this.Dirty = false;
