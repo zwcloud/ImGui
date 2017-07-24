@@ -6,3 +6,5 @@ project.lock.json
 packages
 /templates/TestUI/Image
 /templates/TestUI/Font
+/templates/UniversalAppTemplate/Font
+/templates/UniversalAppTemplate/Image
