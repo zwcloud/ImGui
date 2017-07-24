@@ -47,8 +47,7 @@ namespace ImGui
             var rect = textBox.Rect;
             var style = textBox.Style;
             ITextContext textContext = TextMeshUtil.GetTextContext(textBox.Text, rect.Size, style, GUIState.Normal);
-            var Text = textBox.Text;
-            
+
             var contentRect = Utility.GetContentRect(rect, style);
             var mousePos = Input.Mouse.MousePos;
             var offsetOfTextRect = contentRect.TopLeft;
@@ -119,9 +118,9 @@ namespace ImGui
 
             string textBeforeCaret;
             //Input characters
-            if (Application.ImeBuffer.Count != 0)
+            if (Input.ImeBuffer.Count != 0)
             {
-                var inputText = new string(Application.ImeBuffer.ToArray());
+                var inputText = new string(Input.ImeBuffer.ToArray());
                 if (CaretIndex != SelectIndex) //Replace selected text with inputText
                 {
                     //TODO check whether convert int and uint back and forth is appropriate
@@ -146,7 +145,7 @@ namespace ImGui
                     }
                 }
                 textBox.MoveCaret((uint)textBeforeCaret.Length);
-                Application.ImeBuffer.Clear();
+                Input.ImeBuffer.Clear();
             }
             //Backspace, delete one character before the caret
             else if (Input.Keyboard.KeyPressed(Key.Back, true))

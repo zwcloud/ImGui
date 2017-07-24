@@ -1,4 +1,7 @@
-﻿namespace ImGui
+﻿using System;
+using System.Threading.Tasks;
+
+namespace ImGui
 {
     /// <summary>
     /// Key codes
@@ -654,6 +657,11 @@
 
     public class Keyboard
     {
+        public static Func<string, Task<string>> ShowCallback;
+        public static Task<string> Show(string text)
+        {
+            return ShowCallback?.Invoke(text);
+        }
 
         public Keyboard()
         {

@@ -1,4 +1,6 @@
-﻿namespace ImGui
+﻿using System.Collections.Generic;
+
+namespace ImGui
 {
     public static class Input
     {
@@ -15,5 +17,19 @@
             mouse = new Mouse();
             keyboard = new Keyboard();
         }
+
+        /// <summary>
+        /// The character buffer for input from IME
+        /// </summary>
+        public static Queue<char> ImeBuffer
+        {
+            get { return imeBuffer; }
+            set { imeBuffer = value; }
+        }
+
+        /// <summary>
+        /// The character buffer for input from IME
+        /// </summary>
+        internal static Queue<char> imeBuffer = new Queue<char>();
     }
 }

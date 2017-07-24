@@ -232,7 +232,7 @@ namespace ImGui
 
                         if (keyCode == (int)Key.Enter)
                         {
-                            Application.ImeBuffer.Enqueue('\n');
+                            Input.ImeBuffer.Enqueue('\n');
                             return new IntPtr(1);
                         }
 
@@ -290,14 +290,14 @@ namespace ImGui
                     {
                         char c = (char)wParam;
                         if (c > 0 && !char.IsControl(c))
-                            Application.ImeBuffer.Enqueue(c);
+                            Input.ImeBuffer.Enqueue(c);
                         return IntPtr.Zero;
                     }
                 case 0x0102:/*WM_CHAR*/
                     {
                         char c = (char)wParam;
                         if (c > 0 && !char.IsControl(c))
-                            Application.ImeBuffer.Enqueue(c);
+                            Input.ImeBuffer.Enqueue(c);
                         return IntPtr.Zero;
                     }
                 #endregion

@@ -25,27 +25,12 @@ namespace ImGui
     /// </remarks>
     public static class Application
     {
-        /// <summary>
-        /// The character buffer for input from IME
-        /// </summary>
-        internal static Queue<char> imeBuffer = new Queue<char>();
-
         internal static List<Form> Forms = new List<Form>();
         internal static PlatformContext platformContext;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
         internal static IWindowContext windowContext;
         internal static IInputContext inputContext;
-
-
-        /// <summary>
-        /// The character buffer for input from IME
-        /// </summary>
-        internal static Queue<char> ImeBuffer
-        {
-            get { return imeBuffer; }
-            set { imeBuffer = value; }
-        }
 
         /// <summary>
         /// The time in ms since the application started.
