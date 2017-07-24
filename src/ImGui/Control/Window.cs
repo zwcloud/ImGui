@@ -6,6 +6,10 @@ namespace ImGui
 {
     public partial class GUILayout
     {
+    }
+
+    public partial class GUI
+    {
         public static bool Begin(string name, ref bool open)
         {
             return Begin(name, ref open, Point.Zero, new Size(400, 300), 1, WindowFlags.VerticalScrollbar);
@@ -149,7 +153,7 @@ namespace ImGui
                             {
                                 var vH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical;
                                 var cH = contentSize.Height;
-                                if(cH > vH)
+                                if (cH > vH)
                                 {
                                     var oldScrollY = window.Scroll.Y;
                                     oldScrollY = MathEx.Clamp(oldScrollY, 0, cH - vH);
@@ -210,7 +214,7 @@ namespace ImGui
                             Point scroll_TopLeft = new Point(
                                 window.Rect.Right - scrollBarWidth - window.Style.BorderRight - window.Style.PaddingRight,
                                 window.Rect.Top + window.TitleBarHeight + window.Style.BorderTop + window.Style.PaddingTop);
-                            var sH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical- resize_corner_size;
+                            var sH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical - resize_corner_size;
                             var vH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical;
                             Point scroll_BottomRight = scroll_TopLeft + new Vector(scrollBarWidth, sH);
                             Rect bgRect = new Rect(scroll_TopLeft, scroll_BottomRight);
@@ -219,7 +223,7 @@ namespace ImGui
                             var top = window.Scroll.Y * sH / cH;
                             var height = sH * vH / cH;
 
-                            if(height < sH)
+                            if (height < sH)
                             {
                                 // handle mouse click/drag
                                 bool held = false;

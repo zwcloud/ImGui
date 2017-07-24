@@ -14,9 +14,9 @@ namespace AndroidTemplate
 
         protected override void OnGUI()
         {
-            GUILayout.Begin("Demo", ref open, new Point(60, 60), new Size(400, 400), 1, WindowFlags.Default);
+            GUI.Begin("Demo", ref open, new Point(60, 60), new Size(400, 400), 1, WindowFlags.Default);
             text = GUILayout.Textbox("MyTextBox", new Size(400, 600), text);
-            GUILayout.End();
+            GUI.End();
         }
     }
 }

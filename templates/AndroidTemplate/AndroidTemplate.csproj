@@ -76,7 +76,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ImGuiInputConnection.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainView.cs" />

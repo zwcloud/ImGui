@@ -16,7 +16,7 @@ namespace ImGui
             int id = window.GetID(name);
             var rect = window.GetRect(id, size, GUIStyle.Default, null);
             bool open = true;//dummy
-            return GUILayout.Begin(name, ref open, rect.TopLeft, rect.Size, 1.0, flags | extra_flags);
+            return GUI.Begin(name, ref open, rect.TopLeft, rect.Size, 1.0, flags | extra_flags);
         }
 
         public static bool BeginChild(int id, Size size, bool border, WindowFlags extra_flags)
@@ -30,7 +30,7 @@ namespace ImGui
         {
             var window = GetCurrentWindow();
             Debug.Assert(window.Flags.HaveFlag(WindowFlags.ChildWindow));//check mismatched BeginChild/EndChild
-            GUILayout.End();
+            GUI.End();
         }
     }
 

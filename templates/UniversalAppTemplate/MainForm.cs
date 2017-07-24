@@ -15,11 +15,11 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            //GUILayout.Begin("ImGui Demo", ref openDemo);
+            //GUI.Begin("ImGui Demo", ref openDemo);
             //demoUI.OnGUI();
-            //GUILayout.End();
+            //GUI.End();
 
-            GUILayout.Begin("window A", ref openA);
+            GUI.Begin("window A", ref openA);
             GUILayout.BeginVertical("GroupA");
             GUILayout.Label("AAAA");
             GUILayout.Label("BBBB");
@@ -33,7 +33,7 @@ namespace UniversalAppTemplate
             GUILayout.Label("BCCCC");
             GUILayout.Label("BDDDD");
             GUILayout.EndHorizontal();
-            GUILayout.End();
+            GUI.End();
         }
     }
 }

@@ -102,7 +102,7 @@ namespace ImGui
             w.NewFrame(g);
 
             // Create implicit window - we will only render it if the user has added something to it.
-            GUILayout.Begin("Debug", ref debugWindowOpen);
+            GUI.Begin("Debug", ref debugWindowOpen);
         }
 
         internal void EndFrame()
@@ -116,7 +116,7 @@ namespace ImGui
             Debug.Assert(w.WindowStack.Count == 1);    // Mismatched Begin()/End() calls
             if (w.CurrentWindow!=null && !w.CurrentWindow.Accessed)
                 w.CurrentWindow.Active = false;
-            GUILayout.End();
+            GUI.End();
 
             w.EndFrame(g);
 
