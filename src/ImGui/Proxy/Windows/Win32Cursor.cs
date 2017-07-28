@@ -3,21 +3,21 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    class Win32InputContext : IInputContext
+    internal class Win32Cursor
     {
         #region Native
 
         [DllImport("user32.dll")]
-        static extern IntPtr SetCursor(IntPtr hCursor);
+        private static extern IntPtr SetCursor(IntPtr hCursor);
 
         [DllImport("user32.dll")]
-        static extern IntPtr LoadCursor(IntPtr hInstance, uint lpCursorName);
+        private static extern IntPtr LoadCursor(IntPtr hInstance, uint lpCursorName);
 
         [DllImport("user32.dll")]
         private static extern Int32 SystemParametersInfo(UInt32 uiAction,
             UInt32 uiParam, String pvParam, UInt32 fWinIni);
 
-        enum IDC_STANDARD_CURSORS
+        private enum IDC_STANDARD_CURSORS
         {
             IDC_ARROW = 32512,
             IDC_IBEAM = 32513,
@@ -43,7 +43,7 @@ namespace ImGui
         private static IntPtr VerticalResizeCursurHandle;
         private static IntPtr MoveCursurHandle;
 
-        internal static void LoadCursors()//called by windowcontext
+        private static void LoadCursors()//called by windowcontext
         {
             NormalCursurHandle = LoadCursor(IntPtr.Zero, (uint)IDC_STANDARD_CURSORS.IDC_ARROW);
             IBeamCursurHandle = LoadCursor(IntPtr.Zero, (uint)IDC_STANDARD_CURSORS.IDC_IBEAM);
@@ -52,49 +52,39 @@ namespace ImGui
             MoveCursurHandle = LoadCursor(IntPtr.Zero, (uint)IDC_STANDARD_CURSORS.IDC_SIZEALL);
         }
 
-        static public void RevertCursors()
+        private static void RevertCursors()
         {
             SystemParametersInfo(0x0057, 0, null, 0);
         }
         #endregion
 
-        Cursor mouseCursor = Cursor.Default;
-
-        public Cursor MouseCursor
+        static Win32Cursor()
         {
-            get
-            {
-                return mouseCursor;
-            }
-            set
-            {
-                if(value == mouseCursor)
-                {
-                    return;
-                }
+            LoadCursors();
+        }
 
-                mouseCursor = value;
-                switch (mouseCursor)
-                {
-                    case Cursor.Default:
-                        SetCursor(NormalCursurHandle);
-                        break;
-                    case Cursor.Text:
-                        SetCursor(IBeamCursurHandle);
-                        break;
-                    case Cursor.EwResize:
-                        SetCursor(HorizontalResizeCursurHandle);
-                        break;
-                    case Cursor.NsResize:
-                        SetCursor(VerticalResizeCursurHandle);
-                        break;
-                    case Cursor.NeswResize:
-                        SetCursor(MoveCursurHandle);
-                        break;
-                    default:
-                        RevertCursors();
-                        break;
-                }
+        public static void ChangeCursor(Cursor cursor)
+        {
+            switch (cursor)
+            {
+                case Cursor.Default:
+                    SetCursor(NormalCursurHandle);
+                    break;
+                case Cursor.Text:
+                    SetCursor(IBeamCursurHandle);
+                    break;
+                case Cursor.EwResize:
+                    SetCursor(HorizontalResizeCursurHandle);
+                    break;
+                case Cursor.NsResize:
+                    SetCursor(VerticalResizeCursurHandle);
+                    break;
+                case Cursor.NeswResize:
+                    SetCursor(MoveCursurHandle);
+                    break;
+                default:
+                    RevertCursors();
+                    break;
             }
         }
     }

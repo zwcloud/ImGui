@@ -4,40 +4,22 @@ namespace ImGui
 {
     class AndroidWindow : IWindow
     {
-        private static AndroidWindow instance;
-
-        public static AndroidWindow Instance
+        public void Init()
         {
-            get
-            {
-                return instance;
-            }
-        }
-
-        private readonly IntPtr nativeWindow;
-
-        private AndroidWindow(Point position, Size size, IntPtr nativeWindow)
-        {
-            this.nativeWindow = nativeWindow;
-            this.size = size;
-        }
-
-        public static AndroidWindow CreateAndroidWindow(Point position, Size size, IntPtr nativeWindow)
-        {
-            if(instance == null) instance = new AndroidWindow(position, size, nativeWindow);
-            return instance;
+            this.Position = Point.Zero;
+            //dummy
         }
 
         #region Implementation of IWindow
 
         public object Handle
         {
-            get { return nativeWindow; }
+            get { return IntPtr.Zero; }//dummy
         }
 
         public IntPtr Pointer
         {
-            get { return nativeWindow; }
+            get { return IntPtr.Zero; }//dummy
         }
 
         public Point Position
@@ -55,70 +37,65 @@ namespace ImGui
 
         public Size Size
         {
-            get
-            {
-                return this.size;
-            }
-
-            set
-            {
-                this.size = value;
-            }
+            get; set;//dummy
         }
 
         public string Title
         {
             get
             {
-                return Application.windowContext.GetWindowTitle(this);
+                return "dummy";
             }
 
             set
             {
-                Application.windowContext.SetWindowTitle(this, value);
+                ;//dummy
             }
         }
 
         public Point ClientPosition
         {
-            get => this.Position;
-            set => this.Position = value;
+            get => Point.Zero;
+            set { throw new NotSupportedException("Cannot change client area position on Android. It is fixed to (0,0)."); }
         }
 
         public Size ClientSize
         {
-            get => this.size;
-            set => this.size = value; //dummy
+            get => this.Size;
+            set { throw new NotSupportedException("Cannot change client area size on Android. It is fixed to screen size."); }
         }
 
 
         public void Close()
         {
-            Application.windowContext.CloseWindow(this);
+            //dummy
         }
 
         public void Hide()
         {
-            Application.windowContext.HideWindow(this);
+            //dummy
         }
 
         public void Show()
         {
-            Application.windowContext.ShowWindow(this);
+            //dummy
         }
 
         public Point ScreenToClient(Point point)
         {
-            return Application.windowContext.ScreenToClient(this, point);
+            return point;
         }
 
         public Point ClientToScreen(Point point)
         {
-            return Application.windowContext.ClientToScreen(this, point);
+            return point;
+        }
+
+        public void MainLoop(Action guiMethod)
+        {
+            guiMethod();
         }
 
         #endregion
-
-        private Size size;
     }
 }

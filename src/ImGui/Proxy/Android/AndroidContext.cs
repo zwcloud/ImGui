@@ -9,8 +9,8 @@ namespace ImGui
             return new AndroidContext
             {
                 CreateTextContext = CTextContext,
-                CreateWindowContext = CWindowContext,
-                CreateInputContext = CInputContext,
+                CreateWindow = CWindow,
+                ChangeCursor = DoChangeCursor,
                 CreateRenderer = CRenderer,
                 CreateTexture = CTexture,
             };
@@ -28,14 +28,16 @@ namespace ImGui
                 maxWidth, maxHeight, alignment);
         }
 
-        private static IWindowContext CWindowContext()
+        private static IWindow CWindow(Point point, Size size, WindowTypes windowType)
         {
-            return new AndroidWindowContext();
+            AndroidWindow window = new AndroidWindow();
+            window.Init();
+            return window;
         }
 
-        private static IInputContext CInputContext()
+        private static void DoChangeCursor(Cursor cursor)
         {
-            return new AndroidInputContext();
+            //nothing to do
         }
 
         private static IRenderer CRenderer()

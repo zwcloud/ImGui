@@ -138,10 +138,18 @@ namespace ImGui
 
         #region Cursor
 
+        private Cursor cursor = Cursor.Default;
         public Cursor Cursor
         {
-            get { return Application.inputContext.MouseCursor; }
-            set { Application.inputContext.MouseCursor = value; }
+            get { return cursor; }
+            set
+            {
+                if(cursor!=value)
+                {
+                    Application.platformContext.ChangeCursor(value);
+                    cursor = value;
+                }
+            }
         }
 
         #endregion

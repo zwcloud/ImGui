@@ -7,8 +7,8 @@
             return new WindowsContext
             {
                 CreateTextContext = CTextContext,
-                CreateWindowContext = CWindowContext,
-                CreateInputContext = CInputContext,
+                CreateWindow = CWindow,
+                ChangeCursor = DoChangeCursor,
                 CreateRenderer = CRenderer,
                 CreateTexture = CTexture,
             };
@@ -26,14 +26,16 @@
                 maxWidth, maxHeight, alignment);
         }
 
-        private static IWindowContext CWindowContext()
+        private static IWindow CWindow(Point position, Size size, WindowTypes windowType)
         {
-            return new Win32WindowContext();
+            Win32Window window = new Win32Window();
+            window.Init(position, size, windowType);
+            return window;
         }
 
-        private static IInputContext CInputContext()
+        private static void DoChangeCursor(Cursor cursor)
         {
-            return new Win32InputContext();
+            Win32Cursor.ChangeCursor(cursor);
         }
 
         private static IRenderer CRenderer()

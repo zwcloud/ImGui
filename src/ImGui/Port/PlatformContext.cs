@@ -11,8 +11,8 @@ namespace ImGui
     abstract class PlatformContext
     {
         public CTextContext CreateTextContext;
-        public Func<IWindowContext> CreateWindowContext;
-        public Func<IInputContext> CreateInputContext;
+        public Func<Point, Size, WindowTypes, IWindow> CreateWindow;
+        public Action<Cursor> ChangeCursor;
         public Func<IRenderer> CreateRenderer;
         public Func<ITexture> CreateTexture;
     }

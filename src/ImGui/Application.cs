@@ -29,9 +29,6 @@ namespace ImGui
         internal static PlatformContext platformContext;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
-        internal static IWindowContext windowContext;
-        internal static IInputContext inputContext;
-
         /// <summary>
         /// The time in ms since the application started.
         /// </summary>
@@ -81,10 +78,6 @@ namespace ImGui
             {
                 platformContext = LinuxContext.MapFactory();
             }
-
-            // load the implementation into delegate instances
-            windowContext = platformContext.CreateWindowContext();
-            inputContext = platformContext.CreateInputContext();
         }
 
         private static bool RequestQuit;
@@ -111,7 +104,7 @@ namespace ImGui
 
                 foreach (Form childForm in Forms)
                 {
-                    windowContext.MainLoop(childForm.GUILoop);
+                    childForm.MainLoop(childForm.GUILoop);
                 }
                 if (RequestQuit)
                 {
@@ -143,7 +136,7 @@ namespace ImGui
         public static void RunLoop(Form form)
         {
             frameStartTime = Time;
-            windowContext.MainLoop(form.GUILoop);
+            form.MainLoop(form.GUILoop);
             deltaTime = Time - frameStartTime;
         }
 

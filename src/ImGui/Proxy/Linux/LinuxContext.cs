@@ -9,8 +9,8 @@ namespace ImGui
             return new LinuxContext
             {
                 CreateTextContext = CTextContext,
-                CreateWindowContext = CWindowContext,
-                CreateInputContext = CInputContext,
+                CreateWindow = CWindow,
+                ChangeCursor = DoChangeCursor,
                 CreateRenderer = CRenderer,
                 CreateTexture = CTexture,
             };
@@ -28,14 +28,16 @@ namespace ImGui
                 maxWidth, maxHeight, alignment);
         }
         
-        private static IWindowContext CWindowContext()
+        private static IWindow CWindow(Point position, Size size, WindowTypes windowType)
         {
-            return new LinuxWindowContext();
+            LinuxWindow window = new LinuxWindow();
+            window.Init(position, size, windowType);
+            return window;
         }
 
-        private static IInputContext CInputContext()
+        private static void DoChangeCursor(Cursor cursor)
         {
-            return new LinuxInputContext();
+            throw new NotImplementedException();
         }
 
         private static IRenderer CRenderer()

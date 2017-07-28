@@ -23,9 +23,9 @@ namespace ImGui
         {
         }
 
-        internal Form(Point position, Size size, string Title = "<unnamed>")
+        internal Form(Point position, Size size, string Title = "ImGui Form")
         {
-            this.nativeWindow = Application.windowContext.CreateWindow(position, size, WindowTypes.Regular);
+            this.nativeWindow = Application.platformContext.CreateWindow(position, size, WindowTypes.Regular);
             this.nativeWindow.Title = Title;
 
             Profile.Start("CreateRenderer");
@@ -34,6 +34,11 @@ namespace ImGui
             Profile.End();
 
             OverlayDrawList.Init();
+        }
+
+        internal void MainLoop(Action guiMethod)
+        {
+            nativeWindow.MainLoop(guiMethod);
         }
 
         #region window management

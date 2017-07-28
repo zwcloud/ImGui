@@ -48,6 +48,11 @@ namespace ImGui
         void Show();
 
         /// <summary>
+        /// main loop (only once)
+        /// </summary>
+        void MainLoop(Action guiMethod);
+
+        /// <summary>
         /// Hide the window
         /// </summary>
         void Hide();
@@ -66,7 +71,6 @@ namespace ImGui
         /// Convert the client-area (window) coordinates of a specified point to screen coordinates.
         /// </summary>
         Point ClientToScreen(Point point);
-
 
     }
 }
