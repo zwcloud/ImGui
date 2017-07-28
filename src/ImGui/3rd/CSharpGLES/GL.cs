@@ -13,6 +13,9 @@ namespace CSharpGLES
         [DllImport(GLESv2, EntryPoint = "glBindBuffer")]
         public static extern void BindBuffer(uint target, uint buffer);
 
+        [DllImport(GLESv2, EntryPoint = "glScissor")]
+        public static extern void Scissor(int x, int y, int width, int height);
+
         [DllImport(GLESv2, EntryPoint = "glGenVertexArrays")]
         public static extern void GenVertexArrays(int n, uint[] arrays);
 

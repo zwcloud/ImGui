@@ -80,7 +80,7 @@ namespace ImGui
         public static void SaveToObjFile(string path, IList<DrawVertex> vertexes, IList<DrawIndex> indexes)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("# MTE");
+            sb.Append("# ImGui Test");
             sb.AppendLine();
 
             for (int i = 0; i < vertexes.Count; i++)
@@ -112,7 +112,7 @@ namespace ImGui
         public static void SaveToObjFile(IList<DrawVertex> vertexes, IList<DrawIndex> indexes)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("# MTE");
+            sb.Append("# ImGui Test");
             sb.AppendLine();
 
             for (int i = 0; i < vertexes.Count; i++)

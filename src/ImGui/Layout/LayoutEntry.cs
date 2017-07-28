@@ -27,10 +27,6 @@ namespace ImGui
 
         public LayoutEntry(GUIStyle style, params LayoutOption[] options)
         {
-            if (CurrentOS.IsAndroid)//FIXME tmp hack
-            {
-                this.verticalStretchFactor = 1;
-            }
             this.style = style ?? GUIStyle.Default;
             if (options != null)
             {

@@ -12,53 +12,6 @@ namespace ImGui
         const string libEGL = "libEGL.so.1";
         const int EGL_NONE = 0x3038;
 
-        /*
-EGL_SUCCESS
-The last function succeeded without error.
-
-EGL_NOT_INITIALIZED
-EGL is not initialized, or could not be initialized, for the specified EGL display connection.
-
-EGL_BAD_ACCESS
-EGL cannot access a requested resource (for example a context is bound in another thread).
-
-EGL_BAD_ALLOC
-EGL failed to allocate resources for the requested operation.
-
-EGL_BAD_ATTRIBUTE
-An unrecognized attribute or attribute value was passed in the attribute list.
-
-EGL_BAD_CONTEXT
-An EGLContext argument does not name a valid EGL rendering context.
-
-EGL_BAD_CONFIG
-An EGLConfig argument does not name a valid EGL frame buffer configuration.
-
-EGL_BAD_CURRENT_SURFACE
-The current surface of the calling thread is a window, pixel buffer or pixmap that is no longer valid.
-
-EGL_BAD_DISPLAY
-An EGLDisplay argument does not name a valid EGL display connection.
-
-EGL_BAD_SURFACE
-An EGLSurface argument does not name a valid surface (window, pixel buffer or pixmap) configured for GL rendering.
-
-EGL_BAD_MATCH
-Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
-
-EGL_BAD_PARAMETER
-One or more argument values are invalid.
-
-EGL_BAD_NATIVE_PIXMAP
-A NativePixmapType argument does not refer to a valid native pixmap.
-
-EGL_BAD_NATIVE_WINDOW
-A NativeWindowType argument does not refer to a valid native window.
-
-EGL_CONTEXT_LOST
-A power management event has occurred. The application must destroy all contexts and reinitialise OpenGL ES state and objects to continue rendering.
-*/
-
         enum EGL_ERROR
         {
             EGL_SUCCESS = 0x3000,
@@ -189,6 +142,7 @@ A power management event has occurred. The application must destroy all contexts
                 0x3025/*EGL_DEPTH_SIZE*/, 24,
                 0x3033/*EGL_SURFACE_TYPE*/, 0x0004/*EGL_WINDOW_BIT*/,
                 0x3040/*EGL_RENDERABLE_TYPE*/, 0x00000040/*EGL_OPENGL_ES3_BIT*/,
+                //0x3031/*EGL_SAMPLES*/, 16,//MSAA, 16 samples
                 EGL_NONE };
 
             IntPtr num_config = IntPtr.Zero;

@@ -6,11 +6,7 @@ namespace ImGui
     {
         public void SwapBuffers()
         {
-            if(CurrentOS.IsAndroid)
-            {
-                // No need to do this on android devices, because Xamarin did this later.
-
-            }
+            // No need to do this on android devices, because Xamarin did this later.
         }
     }
 }

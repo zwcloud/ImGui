@@ -221,8 +221,8 @@ void main()
 
         public void Init(object windowHandle)
         {
-            //CreateOpenGLContext((IntPtr)windowHandle);//done in android
-            //InitGLEW();//done in android
+            //CreateOpenGLContext((IntPtr)windowHandle);//done in Xamarin.Android
+            //InitGLEW();//done in Xamarin.Android
 
             m.Init();
             mExtra.Init();
@@ -312,7 +312,7 @@ void main()
                     GL.ActiveTexture(GL.GL_TEXTURE0);
                     GL.BindTexture(GL.GL_TEXTURE_2D, (uint)drawCmd.TextureData.GetNativeTextureId());
                 }
-                //GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
+                GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                 GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
                 indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
             }
