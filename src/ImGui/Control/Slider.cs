@@ -49,7 +49,7 @@
             DrawList d = window.DrawList;
             int id = window.GetID(label);
 
-            var mousePos = Input.Mouse.MousePos;
+            var mousePos = Input.Mouse.Position;
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
             var labelWidth = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
             var sliderRect = new Rect(rect.X, rect.Y,
@@ -152,7 +152,7 @@
             DrawList d = window.DrawList;
             int id = window.GetID(label);
 
-            var mousePos = Input.Mouse.MousePos;
+            var mousePos = Input.Mouse.Position;
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
             var labelHeight = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
             var sliderRect = new Rect(rect.X, rect.Y,

@@ -107,7 +107,7 @@ namespace ImGui
                     {
                         g.SetActiveID(id, window); // Hold on ID
                         w.FocusWindow(window);
-                        g.ActiveIdClickOffset = Input.Mouse.MousePos - bb.Min;
+                        g.ActiveIdClickOffset = Input.Mouse.Position - bb.Min;
                     }
                     if (((flags.HaveFlag(ButtonFlags.PressedOnClick) && Input.Mouse.LeftButtonPressed)
                         || (flags.HaveFlag(ButtonFlags.PressedOnDoubleClick) && Input.Mouse.LeftButtonDoubleClicked)))

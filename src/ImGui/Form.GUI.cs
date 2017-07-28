@@ -37,13 +37,13 @@ namespace ImGui
             #region Input
             // Process input
             #region mouse position
-            if (Input.Mouse.MousePos.X < 0 && Input.Mouse.MousePos.Y < 0)
-                Input.Mouse.MousePos = new Point(-9999.0f, -9999.0f);
-            if ((Input.Mouse.MousePos.X < 0 && Input.Mouse.MousePos.Y < 0) || (Input.Mouse.MousePosPrev.X < 0 && Input.Mouse.MousePosPrev.Y < 0))   // if mouse just appeared or disappeared (negative coordinate) we cancel out movement in MouseDelta
+            if (Input.Mouse.Position.X < 0 && Input.Mouse.Position.Y < 0)
+                Input.Mouse.Position = new Point(-9999.0f, -9999.0f);
+            if ((Input.Mouse.Position.X < 0 && Input.Mouse.Position.Y < 0) || (Input.Mouse.LastPosition.X < 0 && Input.Mouse.LastPosition.Y < 0))   // if mouse just appeared or disappeared (negative coordinate) we cancel out movement in MouseDelta
                 Input.Mouse.MouseDelta = Vector.Zero;
             else
-                Input.Mouse.MouseDelta = Input.Mouse.MousePos - Input.Mouse.MousePosPrev;
-            Input.Mouse.MousePosPrev = Input.Mouse.MousePos;
+                Input.Mouse.MouseDelta = Input.Mouse.Position - Input.Mouse.LastPosition;
+            Input.Mouse.LastPosition = Input.Mouse.Position;
             #endregion
 
             #region mouse left button
@@ -56,7 +56,7 @@ namespace ImGui
             {
                 if (g.Time - Input.Mouse.LeftButtonClickedTime < Mouse.DoubleClickIntervalTimeSpan)
                 {
-                    if ((Input.Mouse.MousePos - Input.Mouse.LeftButtonPressedPos).LengthSquared < Mouse.DoubleClickMaxDistance * Mouse.DoubleClickMaxDistance)
+                    if ((Input.Mouse.Position - Input.Mouse.LeftButtonPressedPos).LengthSquared < Mouse.DoubleClickMaxDistance * Mouse.DoubleClickMaxDistance)
                     {
                         Input.Mouse.LeftButtonDoubleClicked = true;
                     }
@@ -66,12 +66,12 @@ namespace ImGui
                 {
                     Input.Mouse.LeftButtonClickedTime = g.Time;
                 }
-                Input.Mouse.LeftButtonPressedPos = Input.Mouse.MousePos;
+                Input.Mouse.LeftButtonPressedPos = Input.Mouse.Position;
                 Input.Mouse.DragMaxDiatanceSquared = 0;
             }
             else if(Input.Mouse.LeftButtonState == InputState.Down)
             {
-                Input.Mouse.DragMaxDiatanceSquared = Math.Max(Input.Mouse.DragMaxDiatanceSquared, (Input.Mouse.MousePos - Input.Mouse.LeftButtonPressedPos).LengthSquared);
+                Input.Mouse.DragMaxDiatanceSquared = Math.Max(Input.Mouse.DragMaxDiatanceSquared, (Input.Mouse.Position - Input.Mouse.LeftButtonPressedPos).LengthSquared);
             }
             if (Input.Mouse.LeftButtonPressed) ++Input.Mouse.LeftButtonPressedTimes;
             if (Input.Mouse.LeftButtonReleased) ++Input.Mouse.LeftButtonReleasedTimes;
@@ -183,7 +183,7 @@ namespace ImGui
                 var l = Application.logger;
                 WindowManager w = g.WindowManager;
                 l.Clear();
-                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Input.Mouse.MousePos, g.DeltaTime);
+                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Input.Mouse.Position, g.DeltaTime);
                 l.Msg("Input");
                 l.Msg("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
                 l.Msg("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);

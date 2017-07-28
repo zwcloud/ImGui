@@ -23,7 +23,7 @@ namespace ImGui
             DrawList d = window.DrawList;
 
             int id = window.GetID(text);
-            var mousePos = Input.Mouse.MousePos;
+            var mousePos = Input.Mouse.Position;
             var result = false;
             var hovered = rect.Contains(mousePos);
 

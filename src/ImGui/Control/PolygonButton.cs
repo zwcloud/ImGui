@@ -24,7 +24,7 @@ namespace ImGui
             Window window = g.WindowManager.CurrentWindow;
             DrawList d = window.DrawList;
             int id = window.GetID(text);
-            var mousePos = Input.Mouse.MousePos;
+            var mousePos = Input.Mouse.Position;
 
             var clicked = false;
             var hovered = MathEx.IsPointInPolygon(mousePos, points, new Vector(rect.X, rect.Y));

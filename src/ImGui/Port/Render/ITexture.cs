@@ -36,16 +36,6 @@ namespace ImGui
         Size Size { get; }
 
         /// <summary>
-        /// Filtering mode of the texture.
-        /// </summary>
-        FilterMode FilterMode { get; set; }
-
-        /// <summary>
-        /// Wrap mode (Repeat or Clamp) of the texture.
-        /// </summary>
-        TextureWrapMode WrapMode { get; set; }
-
-        /// <summary>
         /// Retrieve a native (underlying graphics API) pointer to the texture resource.
         /// </summary>
         /// <returns>

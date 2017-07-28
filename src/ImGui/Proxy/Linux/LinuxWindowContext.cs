@@ -862,7 +862,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
                     //Debug.WriteLine("Mouse moved in window {0}, at coordinates ({1},{2})",
                     //        motion->_event, motion->event_x, motion->event_y);
-                    Input.Mouse.MousePos = new Point(motion->event_x, motion->event_y);
+                    Input.Mouse.Position = new Point(motion->event_x, motion->event_y);
                     break;
                 }
                 case 7:/*XCB_ENTER_NOTIFY*/

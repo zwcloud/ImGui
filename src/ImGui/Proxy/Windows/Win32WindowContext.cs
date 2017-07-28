@@ -281,7 +281,7 @@ namespace ImGui
                         X = unchecked((short)lParam),
                         Y = unchecked((short)((uint)lParam >> 16))
                     };
-                    Input.Mouse.MousePos = new Point(p.X, p.Y);
+                    Input.Mouse.Position = new Point(p.X, p.Y);
                     return IntPtr.Zero;
                 #endregion
                 #region ime

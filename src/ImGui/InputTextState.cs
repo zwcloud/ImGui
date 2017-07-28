@@ -49,7 +49,7 @@ namespace ImGui
             ITextContext textContext = TextMeshUtil.GetTextContext(textBox.Text, rect.Size, style, GUIState.Normal);
 
             var contentRect = Utility.GetContentRect(rect, style);
-            var mousePos = Input.Mouse.MousePos;
+            var mousePos = Input.Mouse.Position;
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;
             bool isInside;
@@ -101,7 +101,7 @@ namespace ImGui
             var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, GUIState.Normal);
 
             var contentRect = Utility.GetContentRect(rect, style);
-            var mousePos = Input.Mouse.MousePos;
+            var mousePos = Input.Mouse.Position;
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;
             bool isInside;

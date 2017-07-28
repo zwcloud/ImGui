@@ -389,7 +389,7 @@ namespace ImGui
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (style == null) throw new ArgumentNullException(nameof(style));
 
-            //TODO re-think text mesh caching method and when to rebuild
+            //TODO re-think text mesh caching method and when to rebuild and remove unused text mesh
 
             int textMeshId = GetTextId(text, size, style, state);
 

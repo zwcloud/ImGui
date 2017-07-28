@@ -1,7 +1,9 @@
-﻿namespace ImGui
+﻿using System;
+
+namespace ImGui
 {
     /// <summary>
-    /// input
+    /// Mouse
     /// </summary>
     public class Mouse
     {
@@ -17,145 +19,131 @@
         /// </summary>
         internal const double DoubleClickMaxDistance = 6.0;
 
-
         #endregion
 
         #region Left button
 
         /// <summary>
-        /// Left button state
+        /// Button state of left mouse button (readonly)
         /// </summary>
-        private InputState leftButtonState = InputState.Up;
+        public InputState LeftButtonState { get; internal set; } = InputState.Up;
 
         /// <summary>
-        /// Last recorded left mouse button state
-        /// </summary>
-        /// <remarks>for detecting left mouse button state' changes</remarks>
-        public InputState LastLeftButtonState { get; internal set; } = InputState.Up;
-
-        /// <summary>
-        /// Button state of left mouse button(readonly)
-        /// </summary>
-        public InputState LeftButtonState
-        {
-            get { return leftButtonState; }
-            set { leftButtonState = value; }
-        }
-
-        public long LeftButtonDownDurationPrev { get; internal set; } = -1;
-        public long LeftButtonDownDuration { get; internal set; } = -1;
-
-        /// <summary>
-        /// Is left mouse button released?(readonly)
+        /// Is left mouse button released? (readonly)
         /// </summary>
         public bool LeftButtonReleased { get; internal set; } = false;
 
         /// <summary>
-        /// Is left mouse button clicked?(readonly)
+        /// Is left mouse button pressed? (readonly)
         /// </summary>
         public bool LeftButtonPressed { get; internal set; } = false;
 
-        public int LeftButtonPressedTimes = 0;
-        public int RightButtonPressedTimes = 0;
-        public int LeftButtonReleasedTimes = 0;
-        public int RightButtonReleasedTimes = 0;
+        /// <summary>
+        /// Is left mouse button double-clicked? (readonly)
+        /// </summary>
+        public bool LeftButtonDoubleClicked { get; internal set; } = false;
+
+        /// <summary>
+        /// How long are left button being pressed until now? unit: ms
+        /// </summary>
+        public long LeftButtonDownDuration { get; internal set; } = -1;
+
+        #region internal
+        internal long LeftButtonDownDurationPrev { get; set; } = -1;
+        internal int LeftButtonPressedTimes = 0;
+        internal int LeftButtonReleasedTimes = 0;
+        internal long LeftButtonClickedTime { get; set; }
+        internal Point LeftButtonPressedPos { get; set; }
+        internal double DragMaxDiatanceSquared { get; set; }
+        internal int LeftButtonDoubleClickedTimes { get; set; }
+        #endregion
 
         #endregion
 
         #region Right button
-        /// <summary>
-        /// Last recorded right mouse button state
-        /// </summary>
-        public InputState LastRightButtonState { get; internal set; } = InputState.Up;
-
-        /// <summary>
-        /// Right button state
-        /// </summary>
-        InputState rightButtonState = InputState.Up;
 
         /// <summary>
         /// Button state of the right mouse button(readonly)
         /// </summary>
-        public InputState RightButtonState
-        {
-            get { return rightButtonState; }
-            set { rightButtonState = value; }
-        }
-
-        public long RightButtonDownDuration { get; internal set; } = -1;
+        public InputState RightButtonState { get; internal set; } = InputState.Up;
 
         /// <summary>
-        /// Is right mouse button released?(readonly)
+        /// Is right mouse button released? (readonly)
         /// </summary>
         public bool RightButtonReleased { get; internal set; } = false;
 
         /// <summary>
-        /// Check if the right mouse button is pressed(readonly)
+        /// Check if the right mouse button is pressed (readonly)
         /// </summary>
         public bool RightButtonPressed { get; internal set; } = false;
+
+        /// <summary>
+        /// Check if the right mouse button is double-clicked (readonly)
+        /// </summary>
+        public bool RightButtonDoubleClicked { get; internal set; } = false;
+
+        /// <summary>
+        /// How long are right button being pressed until now? unit: ms
+        /// </summary>
+        public long RightButtonDownDuration { get; internal set; } = -1;
+
+        #region internal
+        internal int RightButtonPressedTimes = 0;
+        internal int RightButtonReleasedTimes = 0;
+        #endregion
+
         #endregion
 
         #region Position
-        /// <summary>
-        /// Mouse position
-        /// </summary>
-        static Point lastMousePos;
+
+        private static Point position;
 
         /// <summary>
-        /// Mouse position
+        /// mouse position at last frame (readonly)
         /// </summary>
-        static Point mousePos;
+        public Point LastPosition { get; internal set; }
 
         /// <summary>
-        /// Last mouse position in screen (readonly)
+        /// mouse position (readonly)
         /// </summary>
-        public Point LastMousePos
+        public Point Position
         {
-            get { return lastMousePos; }
-        }
-
-        /// <summary>
-        /// Mouse position in screen (readonly)
-        /// </summary>
-        public Point MousePos
-        {
-            get { return mousePos; }
+            get { return position; }
             set
             {
-                lastMousePos = mousePos;
-                mousePos = value;
+                LastPosition = position;
+                position = value;
             }
         }
 
         /// <summary>
         /// Is mouse moving?
         /// </summary>
-        public bool MouseMoving
+        public bool Moving
         {
-            get { return mousePos != lastMousePos; }
+            get { return Position != LastPosition; }
         }
 
-        public short MouseWheel { get; set; }
+        /// <summary>
+        /// Offset of mouse compared to last frame
+        /// </summary>
+        public Vector MouseDelta { get; internal set; }
+
+        /// <summary>
+        /// mouse wheel scrolling value
+        /// </summary>
+        public short MouseWheel { get; internal set; }
 
         #endregion
 
         #region Cursor
+
         public Cursor Cursor
         {
             get { return Application.inputContext.MouseCursor; }
             set { Application.inputContext.MouseCursor = value; }
         }
 
-        public bool LeftButtonDoubleClicked { get; internal set; }
-        public long LeftButtonClickedTime { get; internal set; }
-        public Point LeftButtonPressedPos { get; internal set; }
-        public double DragMaxDiatance { get; internal set; }
-        public double DragMaxDiatanceSquared { get; internal set; }
-        public int LeftButtonDoubleClickedTimes { get; internal set; }
-        public Point MousePosPrev { get; internal set; }
-        public Vector MouseDelta { get; internal set; }
-        public bool LeftButtonMouseDownOwned { get; internal set; } = false;
-        public bool WantCaptureMouse { get; internal set; }
         #endregion
     }
 }

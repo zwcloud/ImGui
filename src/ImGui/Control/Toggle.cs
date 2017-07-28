@@ -22,7 +22,7 @@
             DrawList d = window.DrawList;
             int id = window.GetID(label);
 
-            var mousePos = Input.Mouse.MousePos;
+            var mousePos = Input.Mouse.Position;
             var hovered = rect.Contains(mousePos);
             var result = value;
             //control logic

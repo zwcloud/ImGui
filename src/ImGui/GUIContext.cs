@@ -114,7 +114,7 @@ namespace ImGui
             if (clip)
                 rect_clipped.Intersect(window.ClipRect);
 
-            return rect_clipped.Contains(Input.Mouse.MousePos);
+            return rect_clipped.Contains(Input.Mouse.Position);
         }
 
         public bool IsMouseHoveringRect(Point r_min, Point r_max, bool clip = true)

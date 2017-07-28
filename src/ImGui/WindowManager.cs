@@ -151,11 +151,11 @@ namespace ImGui
             }
 
             // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
-            this.HoveredWindow = this.MovedWindow ?? this.FindHoveredWindow(Input.Mouse.MousePos, false);
+            this.HoveredWindow = this.MovedWindow ?? this.FindHoveredWindow(Input.Mouse.Position, false);
             if (this.HoveredWindow != null && (this.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
                 this.HoveredRootWindow = this.HoveredWindow.RootWindow;
             else
-                this.HoveredRootWindow = (this.MovedWindow != null) ? this.MovedWindow.RootWindow : this.FindHoveredWindow(Input.Mouse.MousePos, true);
+                this.HoveredRootWindow = (this.MovedWindow != null) ? this.MovedWindow.RootWindow : this.FindHoveredWindow(Input.Mouse.Position, true);
 
 
             // Scale & Scrolling

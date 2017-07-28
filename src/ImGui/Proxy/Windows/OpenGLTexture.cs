@@ -67,24 +67,6 @@ namespace ImGui
         public Size Size => new Size(Width, Height);
 
         /// <summary>
-        /// Filtering mode of the texture.
-        /// </summary>
-        public FilterMode FilterMode
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Wrap mode (Repeat or Clamp) of the texture.
-        /// </summary>
-        public TextureWrapMode WrapMode
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Retrieve a native (underlying graphics API) pointer to the texture resource.
         /// </summary>
         /// <returns>
