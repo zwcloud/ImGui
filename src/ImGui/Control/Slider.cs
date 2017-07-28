@@ -71,7 +71,7 @@
             }
             if (uiState.ActiveId == id)
             {
-                if (Input.Mouse.LeftButtonState == InputState.Down)
+                if (Input.Mouse.LeftButtonState == KeyState.Down)
                 {
                     var leftPoint = new Point(sliderRect.X + 10, sliderRect.Y + sliderRect.Height / 2);
                     var rightPoint = new Point(sliderRect.Right - 10, sliderRect.Y + sliderRect.Height / 2);
@@ -92,7 +92,7 @@
             {
                 state = GUI.Hover;
             }
-            if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
+            if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == KeyState.Down)
             {
                 state = GUI.Active;
             }
@@ -174,7 +174,7 @@
             }
             if (uiState.ActiveId == id)
             {
-                if (Input.Mouse.LeftButtonState == InputState.Down)
+                if (Input.Mouse.LeftButtonState == KeyState.Down)
                 {
                     var upPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Y + 10);
                     var bottomPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Bottom - 10);
@@ -195,7 +195,7 @@
             {
                 state = GUI.Hover;
             }
-            if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
+            if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == KeyState.Down)
             {
                 state = GUI.Active;
             }

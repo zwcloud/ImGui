@@ -68,6 +68,11 @@ namespace ImGui
             }
             set
             {
+                if(value == mouseCursor)
+                {
+                    return;
+                }
+
                 mouseCursor = value;
                 switch (mouseCursor)
                 {

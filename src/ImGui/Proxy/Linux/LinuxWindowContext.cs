@@ -834,7 +834,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
                         if (((ushort)xcb_button_mask_t.XCB_BUTTON_MASK_1 | bp->state) != 0)//this should be left button
                         {
-                            Input.Mouse.LeftButtonState = InputState.Down;
+                            Input.Mouse.LeftButtonState = KeyState.Down;
                         }
                         //TODO process other buttons
                         break;
@@ -851,7 +851,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     //        br->detail, br->_event, br->event_x, br->event_y);
                     if (((ushort)xcb_button_mask_t.XCB_BUTTON_MASK_1 | br->state) != 0)//this should be left button
                     {
-                        Input.Mouse.LeftButtonState = InputState.Up;
+                        Input.Mouse.LeftButtonState = KeyState.Up;
                     }
                     //TODO process other buttons
                     break;
@@ -890,7 +890,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     //Debug.WriteLine("Key <{0}> pressed in window {1}", kp->detail, kp->_event);
                     var keyCode = kp->detail;
                     Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                    Input.Keyboard.keyStates[keyCode] = InputState.Down;
+                    Input.Keyboard.keyStates[keyCode] = KeyState.Down;
 
                     break;
                 }
@@ -903,7 +903,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     //Debug.WriteLine("Key <{0}> released in window {1}", kr->detail, kr->_event);
                     var keyCode = kr->detail;
                     Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                    Input.Keyboard.keyStates[keyCode] = InputState.Up;
+                    Input.Keyboard.keyStates[keyCode] = KeyState.Up;
                     break;
                 }
                 default:

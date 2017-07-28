@@ -2,34 +2,30 @@
 
 namespace ImGui
 {
+    /// <summary>
+    /// Input APIs
+    /// </summary>
     public static class Input
     {
-        internal const double KeyRepeatDelay = 250; // When holding a key/button, time before it starts repeating, in ms (for buttons in Repeat mode, etc.).
-        internal const double KeyRepeatRate = 200f; // When holding a key/button, rate at which it repeats, in ms.
-        private static Mouse mouse;
-        private static Keyboard keyboard;
+        /// <summary>
+        /// Mouse
+        /// </summary>
+        public static Mouse Mouse { get; }
 
-        public static Mouse Mouse => mouse;
-        public static Keyboard Keyboard => keyboard;
+        /// <summary>
+        /// Keyboard
+        /// </summary>
+        public static Keyboard Keyboard { get; }
 
         static Input()
         {
-            mouse = new Mouse();
-            keyboard = new Keyboard();
+            Mouse = new Mouse();
+            Keyboard = new Keyboard();
         }
 
         /// <summary>
-        /// The character buffer for input from IME
+        /// Character buffer for IME
         /// </summary>
-        public static Queue<char> ImeBuffer
-        {
-            get { return imeBuffer; }
-            set { imeBuffer = value; }
-        }
-
-        /// <summary>
-        /// The character buffer for input from IME
-        /// </summary>
-        internal static Queue<char> imeBuffer = new Queue<char>();
+        internal static Queue<char> ImeBuffer { get; set; } = new Queue<char>(16);
     }
 }

@@ -118,7 +118,7 @@ namespace ImGui
                     }
                     if (flags.HaveFlag(ButtonFlags.PressedOnRelease) && Input.Mouse.LeftButtonReleased)
                     {
-                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Input.KeyRepeatDelay))  // Repeat mode trumps <on release>
+                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Keyboard.KeyRepeatDelay))  // Repeat mode trumps <on release>
                             pressed = true;
                         g.SetActiveID(0);
                     }
@@ -133,14 +133,14 @@ namespace ImGui
             bool held = false;
             if (g.ActiveId == id)
             {
-                if (Input.Mouse.LeftButtonState == InputState.Down)
+                if (Input.Mouse.LeftButtonState == KeyState.Down)
                 {
                     held = true;
                 }
                 else
                 {
                     if (hovered && flags.HaveFlag(ButtonFlags.PressedOnClickRelease))
-                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Input.KeyRepeatDelay))  // Repeat mode trumps <on release>
+                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Keyboard.KeyRepeatDelay))  // Repeat mode trumps <on release>
                             pressed = true;
                     g.SetActiveID(0);
                 }

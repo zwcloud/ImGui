@@ -144,9 +144,9 @@ namespace ImGui
             if (t == 0.0f)
                 return true;
 
-            if (repeat && t > Input.KeyRepeatDelay)
+            if (repeat && t > Keyboard.KeyRepeatDelay)
             {
-                double delay = Input.KeyRepeatDelay, rate = Input.KeyRepeatRate;
+                double delay = Keyboard.KeyRepeatDelay, rate = Keyboard.KeyRepeatRate;
                 if (
                     ((t - delay)%rate) > rate * 0.5f
                     !=

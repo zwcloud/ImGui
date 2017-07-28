@@ -51,7 +51,7 @@
             if(result)
             {
                 state = GUI.Active;
-                if (hovered && Input.Mouse.LeftButtonState == InputState.Up)
+                if (hovered && Input.Mouse.LeftButtonState == KeyState.Up)
                 {
                     state = GUI.Hover;
                 }
@@ -62,7 +62,7 @@
                 {
                     state = GUI.Hover;
                 }
-                if (Input.Mouse.LeftButtonState == InputState.Down)
+                if (Input.Mouse.LeftButtonState == KeyState.Down)
                 {
                     state = GUI.Active;
                 }

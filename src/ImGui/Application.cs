@@ -53,11 +53,8 @@ namespace ImGui
         /// <summary>
         /// The time in ms it took to complete the last frame
         /// </summary>
-        internal static long DeltaTime
-        {
-            get { return deltaTime; }
-        }
-        
+        internal static long DeltaTime => deltaTime;
+
         internal static void InitSysDependencies()
         {
             // create factory: service
@@ -92,6 +89,7 @@ namespace ImGui
 
         private static bool RequestQuit;
 
+        // HACK for Android
         public static Func<string, System.IO.Stream> FontFileRead;
 
         public static void Init()

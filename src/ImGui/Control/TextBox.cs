@@ -101,13 +101,13 @@ namespace ImGui
                     stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
                 }
 
-                if (hovered && Input.Mouse.LeftButtonState == InputState.Down && stateMachine.CurrentState != TextBoxState.ActiveSelecting)
+                if (hovered && Input.Mouse.LeftButtonState == KeyState.Down && stateMachine.CurrentState != TextBoxState.ActiveSelecting)
                 {
                     stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
                     stateMachine.MoveNext(TextBoxCommand.BeginSelect, context);
                 }
 
-                if (hovered && Input.Mouse.LeftButtonState == InputState.Up)
+                if (hovered && Input.Mouse.LeftButtonState == KeyState.Up)
                 {
                     stateMachine.MoveNext(TextBoxCommand.EndSelect, context);
                 }

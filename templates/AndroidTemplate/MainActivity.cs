@@ -99,7 +99,7 @@ namespace AndroidTemplate
                         var x = e.RawX;
                         var y = e.RawY;
                         Input.Mouse.Position = new Point(x, y);
-                        Input.Mouse.LeftButtonState = InputState.Down;
+                        Input.Mouse.LeftButtonState = KeyState.Down;
                     }
                     break;
                 case MotionEventActions.Move:
@@ -116,7 +116,7 @@ namespace AndroidTemplate
                         var x = e.RawX;
                         var y = e.RawY;
                         Input.Mouse.Position = new Point(x, y);
-                        Input.Mouse.LeftButtonState = InputState.Up;
+                        Input.Mouse.LeftButtonState = KeyState.Up;
                     }
                     break;
             }

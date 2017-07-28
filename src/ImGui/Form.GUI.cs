@@ -47,10 +47,10 @@ namespace ImGui
             #endregion
 
             #region mouse left button
-            Input.Mouse.LeftButtonPressed = Input.Mouse.LeftButtonState == InputState.Down && Input.Mouse.LeftButtonDownDuration < 0;
-            Input.Mouse.LeftButtonReleased = Input.Mouse.LeftButtonState == InputState.Up && Input.Mouse.LeftButtonDownDuration >= 0;
+            Input.Mouse.LeftButtonPressed = Input.Mouse.LeftButtonState == KeyState.Down && Input.Mouse.LeftButtonDownDuration < 0;
+            Input.Mouse.LeftButtonReleased = Input.Mouse.LeftButtonState == KeyState.Up && Input.Mouse.LeftButtonDownDuration >= 0;
             Input.Mouse.LeftButtonDownDurationPrev = Input.Mouse.LeftButtonDownDuration;
-            Input.Mouse.LeftButtonDownDuration = Input.Mouse.LeftButtonState == InputState.Down ? (Input.Mouse.LeftButtonDownDuration < 0 ? 0 : Input.Mouse.LeftButtonDownDuration + g.DeltaTime) : -1;
+            Input.Mouse.LeftButtonDownDuration = Input.Mouse.LeftButtonState == KeyState.Down ? (Input.Mouse.LeftButtonDownDuration < 0 ? 0 : Input.Mouse.LeftButtonDownDuration + g.DeltaTime) : -1;
             Input.Mouse.LeftButtonDoubleClicked = false;
             if (Input.Mouse.LeftButtonPressed)
             {
@@ -69,7 +69,7 @@ namespace ImGui
                 Input.Mouse.LeftButtonPressedPos = Input.Mouse.Position;
                 Input.Mouse.DragMaxDiatanceSquared = 0;
             }
-            else if(Input.Mouse.LeftButtonState == InputState.Down)
+            else if(Input.Mouse.LeftButtonState == KeyState.Down)
             {
                 Input.Mouse.DragMaxDiatanceSquared = Math.Max(Input.Mouse.DragMaxDiatanceSquared, (Input.Mouse.Position - Input.Mouse.LeftButtonPressedPos).LengthSquared);
             }
@@ -79,9 +79,9 @@ namespace ImGui
             #endregion
 
             #region mouse right button
-            Input.Mouse.RightButtonPressed = Input.Mouse.RightButtonState == InputState.Down && Input.Mouse.RightButtonDownDuration < 0;
-            Input.Mouse.RightButtonReleased = Input.Mouse.RightButtonState == InputState.Up && Input.Mouse.RightButtonDownDuration >= 0;
-            Input.Mouse.RightButtonDownDuration = Input.Mouse.RightButtonState == InputState.Down ? (Input.Mouse.RightButtonDownDuration < 0 ? 0 : Input.Mouse.RightButtonDownDuration + g.DeltaTime) : -1;
+            Input.Mouse.RightButtonPressed = Input.Mouse.RightButtonState == KeyState.Down && Input.Mouse.RightButtonDownDuration < 0;
+            Input.Mouse.RightButtonReleased = Input.Mouse.RightButtonState == KeyState.Up && Input.Mouse.RightButtonDownDuration >= 0;
+            Input.Mouse.RightButtonDownDuration = Input.Mouse.RightButtonState == KeyState.Down ? (Input.Mouse.RightButtonDownDuration < 0 ? 0 : Input.Mouse.RightButtonDownDuration + g.DeltaTime) : -1;
             
             if (Input.Mouse.RightButtonPressed) ++Input.Mouse.RightButtonPressedTimes;
             if (Input.Mouse.RightButtonReleased) ++Input.Mouse.RightButtonReleasedTimes;

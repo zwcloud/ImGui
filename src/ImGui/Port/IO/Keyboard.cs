@@ -3,8 +3,26 @@ using System.Threading.Tasks;
 
 namespace ImGui
 {
+    /// <summary>
+    /// Keyboard status and operations
+    /// </summary>
     public class Keyboard
     {
+        #region Settings
+
+        /// <summary>
+        /// When holding a key/button, time before it starts repeating, in ms (for buttons in Repeat mode, etc.).
+        /// </summary>
+        internal const double KeyRepeatDelay = 250;
+
+        /// <summary>
+        /// When holding a key/button, rate at which it repeats, in ms.
+        /// </summary>
+        internal const double KeyRepeatRate = 200f;
+
+        #endregion
+
+        // HACK for android
         public static Func<string, Task<string>> ShowCallback;
         public static Task<string> Show(string text)
         {
@@ -13,8 +31,8 @@ namespace ImGui
 
         public Keyboard()
         {
-            keyStates = new InputState[(int)Key.KeyCount];
-            lastKeyStates = new InputState[(int)Key.KeyCount];
+            keyStates = new KeyState[(int)Key.KeyCount];
+            lastKeyStates = new KeyState[(int)Key.KeyCount];
             lastKeyPressedTime = new long[(int)Key.KeyCount];
             isRepeatingKey = new bool[(int)Key.KeyCount];
         }
@@ -23,12 +41,12 @@ namespace ImGui
         /// Last recorded key states
         /// </summary>
         /// <remarks>for detecting keystates' changes</remarks>
-        internal InputState[] lastKeyStates;
+        internal KeyState[] lastKeyStates;
 
         /// <summary>
         /// Key states of all keys
         /// </summary>
-        internal InputState[] keyStates;
+        internal KeyState[] keyStates;
         
         /// <summary>
         /// check if a single key is being pressing
@@ -37,7 +55,7 @@ namespace ImGui
         /// <returns>true: pressing; false: released</returns>
         public bool KeyDown(Key key)
         {
-            return keyStates[(int)key] == InputState.Down;
+            return keyStates[(int)key] == KeyState.Down;
         }
 
         /// <summary>
@@ -47,12 +65,12 @@ namespace ImGui
         /// <returns>true: pressed; false: not pressed yet</returns>
         public bool KeyPressed(Key key)
         {
-            return lastKeyStates[(int)key] == InputState.Down && keyStates[(int)key] == InputState.Up;
+            return lastKeyStates[(int)key] == KeyState.Down && keyStates[(int)key] == KeyState.Up;
         }
 
         public bool KeyOn(Key key)
         {
-            return keyStates[(int)key] == InputState.On;
+            return keyStates[(int)key] == KeyState.On;
         }
 
         private static long[] lastKeyPressedTime;
@@ -67,7 +85,7 @@ namespace ImGui
         /// <remarks>time unit is millisecond</remarks>
         public bool KeyPressed(Key key, bool isRepeat)
         {
-            bool isKeydownThisMoment = keyStates[(int)key] == InputState.Down;
+            bool isKeydownThisMoment = keyStates[(int)key] == KeyState.Down;
             if (isKeydownThisMoment)
             {
                 if (lastKeyPressedTime[(int)key] == 0)

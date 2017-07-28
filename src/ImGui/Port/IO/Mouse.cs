@@ -3,7 +3,7 @@
 namespace ImGui
 {
     /// <summary>
-    /// Mouse
+    /// Mouse status and operations
     /// </summary>
     public class Mouse
     {
@@ -26,7 +26,7 @@ namespace ImGui
         /// <summary>
         /// Button state of left mouse button (readonly)
         /// </summary>
-        public InputState LeftButtonState { get; internal set; } = InputState.Up;
+        public KeyState LeftButtonState { get; internal set; } = KeyState.Up;
 
         /// <summary>
         /// Is left mouse button released? (readonly)
@@ -65,7 +65,7 @@ namespace ImGui
         /// <summary>
         /// Button state of the right mouse button(readonly)
         /// </summary>
-        public InputState RightButtonState { get; internal set; } = InputState.Up;
+        public KeyState RightButtonState { get; internal set; } = KeyState.Up;
 
         /// <summary>
         /// Is right mouse button released? (readonly)

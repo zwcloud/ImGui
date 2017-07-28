@@ -129,7 +129,7 @@ namespace ImGui
                 g.KeepAliveID(this.MovedWindowMoveId);
                 Debug.Assert(this.MovedWindow != null && this.MovedWindow.RootWindow != null);
                 Debug.Assert(this.MovedWindow.RootWindow.MoveID == this.MovedWindowMoveId);
-                if (Input.Mouse.LeftButtonState == InputState.Down)
+                if (Input.Mouse.LeftButtonState == KeyState.Down)
                 {
                     if (!this.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove))
                     {

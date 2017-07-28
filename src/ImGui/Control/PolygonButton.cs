@@ -53,7 +53,7 @@ namespace ImGui
             if (hovered)
             {
                 state = GUI.Hover;
-                if (g.ActiveId == id && Input.Mouse.LeftButtonState == InputState.Down)
+                if (g.ActiveId == id && Input.Mouse.LeftButtonState == KeyState.Down)
                 {
                     state = GUI.Active;
                 }

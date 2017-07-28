@@ -227,7 +227,7 @@ namespace ImGui
                         if (wParam.ToUInt64() < 256)
                         {
                             Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                            Input.Keyboard.keyStates[keyCode] = InputState.Down;
+                            Input.Keyboard.keyStates[keyCode] = KeyState.Down;
                         }
 
                         if (keyCode == (int)Key.Enter)
@@ -251,27 +251,27 @@ namespace ImGui
                         if (wParam.ToUInt64() < 256)
                         {
                             Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                            Input.Keyboard.keyStates[keyCode] = InputState.Up;
+                            Input.Keyboard.keyStates[keyCode] = KeyState.Up;
                         }
                         return IntPtr.Zero;
                     }
                 #endregion
                 #region mouse
                 case 0x0201://WM_LBUTTONDOWN
-                    Input.Mouse.LeftButtonState = InputState.Down;
+                    Input.Mouse.LeftButtonState = KeyState.Down;
                     return IntPtr.Zero;
                 case 0x0202://WM_LBUTTONUP
-                    Input.Mouse.LeftButtonState = InputState.Up;
+                    Input.Mouse.LeftButtonState = KeyState.Up;
                     return IntPtr.Zero;
                 case 0x0203://WM_LBUTTONDBLCLK
                     return IntPtr.Zero;
                 case 0x0206://WM_RBUTTONDBLCLK
                     return IntPtr.Zero;
                 case 0x0204://WM_RBUTTONDOWN
-                    Input.Mouse.RightButtonState = InputState.Down;
+                    Input.Mouse.RightButtonState = KeyState.Down;
                     return IntPtr.Zero;
                 case 0x0205://WM_RBUTTONUP
-                    Input.Mouse.RightButtonState = InputState.Up;
+                    Input.Mouse.RightButtonState = KeyState.Up;
                     return IntPtr.Zero;
                 case 0x020A://WM_MOUSEWHEEL
                     Input.Mouse.MouseWheel = ((short)(wParam.ToUInt64() >> 16));
