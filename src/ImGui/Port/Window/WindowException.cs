@@ -2,22 +2,22 @@
 
 namespace ImGui
 {
-    abstract class WindowException : Exception
+    internal abstract class WindowException : Exception
     {
-        public WindowException()
+        protected WindowException()
         {
         }
 
-        public WindowException(string message) : base(message)
+        protected WindowException(string message) : base(message)
         {
         }
 
-        public WindowException(string message, Exception inner) : base(message, inner)
+        protected WindowException(string message, Exception inner) : base(message, inner)
         {
         }
     }
 
-    class WindowCreateException : WindowException
+    internal class WindowCreateException : WindowException
     {
         public WindowCreateException()
         {
@@ -32,7 +32,7 @@ namespace ImGui
         }
     }
 
-    class WindowUpdateException : WindowException
+    internal class WindowUpdateException : WindowException
     {
         public WindowUpdateException()
         {

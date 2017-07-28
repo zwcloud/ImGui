@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace ImGui
 {
-    internal static partial class Utility
+    internal static class Utility
     {
         public static Window GetCurrentWindow()
         {
