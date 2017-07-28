@@ -12,7 +12,6 @@ namespace Typography.OpenFont.Tables
 
     class BASE : TableEntry
     {
-        long baseTableStartAt;
         public override string Name
         {
             get { return "BASE"; }

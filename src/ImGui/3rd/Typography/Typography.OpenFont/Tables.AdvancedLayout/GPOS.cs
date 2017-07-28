@@ -580,7 +580,6 @@ namespace Typography.OpenFont.Tables
                                 //TODO: impl more
                                 throw new NotImplementedException();
                             }
-                            break;
                     }
                 }
             }
@@ -612,7 +611,6 @@ namespace Typography.OpenFont.Tables
                 {
                     int xpos = 0;
                     //find marker
-                    int x = 0;
                     int j = inputGlyphs.Count;
                     for (int i = 1; i < j; ++i) //start at 1
                     {

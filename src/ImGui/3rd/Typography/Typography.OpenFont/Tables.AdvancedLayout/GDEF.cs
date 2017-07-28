@@ -142,7 +142,6 @@ namespace Typography.OpenFont.Tables
             {
                 //not support
                 throw new NotSupportedException();
-                reader.BaseStream.Seek(this.Header.Offset + itemVarStoreOffset, SeekOrigin.Begin);
             }
         }
         public int MajorVersion { get; private set; }

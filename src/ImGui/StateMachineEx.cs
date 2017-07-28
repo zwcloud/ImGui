@@ -60,11 +60,11 @@ namespace ImGui
         }
 
         /// <summary>
-        /// 根据命令移动状态
+        /// Move state according to the command
         /// </summary>
-        /// <param name="command">命令</param>
-        /// <param name="context"></param>
-        /// <returns>true:命令有效/false:命令无效</returns>
+        /// <param name="command">command</param>
+        /// <param name="context">context</param>
+        /// <returns>true:valid command/false:invalid command</returns>
         public bool MoveNext(string command, InputTextContext context)
         {
             Transition transition = new Transition(CurrentState, command);
