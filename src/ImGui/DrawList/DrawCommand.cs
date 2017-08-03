@@ -5,6 +5,7 @@
         int elemCount;
         Rect clipRect;
         ITexture textureData;
+        PrimitiveType primativeType;
 
         /// <summary>
         /// Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee DrawList's vtx_buffer[] array, indices in idx_buffer[].
@@ -32,6 +33,15 @@
         {
             get { return textureData; }
             set { textureData = value; }
+        }
+
+        /// <summary>
+        /// primitive type
+        /// </summary>
+        public PrimitiveType PrimitiveType
+        {
+            get { return primativeType; }
+            set { primativeType = value; }
         }
     }
 }

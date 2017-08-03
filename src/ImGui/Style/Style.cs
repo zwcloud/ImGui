@@ -97,7 +97,7 @@ namespace ImGui
             }
             else
             {
-                DefaultFontFamily = Utility.FontDir + "Helvetica.ttf";
+                DefaultFontFamily = Utility.FontDir + "msjh.ttf";
             }
 
             Default = new GUIStyle();

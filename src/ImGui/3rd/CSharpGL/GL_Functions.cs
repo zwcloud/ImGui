@@ -172,7 +172,7 @@ namespace CSharpGL
         /// <param name="blue">Blue component mask.</param>
         /// <param name="alpha">Alpha component mask.</param>
         [DllImport(OpenGL32, EntryPoint = "glColorMask", SetLastError = true)]
-        public static extern void ColorMask(byte red, byte green, byte blue, byte alpha);
+        public static extern void ColorMask(bool red, bool green, bool blue, bool alpha);
 
         /// <summary>
         /// Cause a material color to track the current color.

@@ -107,12 +107,12 @@ namespace CSharpGL
         //  BlendingFactorDest
         public const uint GL_ZERO = 0;
         public const uint GL_ONE = 1;
-        public const uint GL_SRC_COLOR = 0x0300;
-        public const uint GL_ONE_MINUS_SRC_COLOR = 0x0301;
-        public const uint GL_SRC_ALPHA = 0x0302;
-        public const uint GL_ONE_MINUS_SRC_ALPHA = 0x0303;
-        public const uint GL_DST_ALPHA = 0x0304;
-        public const uint GL_ONE_MINUS_DST_ALPHA = 0x0305;
+        public const uint GL_SRC_COLOR = 0x0300;//768
+        public const uint GL_ONE_MINUS_SRC_COLOR = 0x0301;//769
+        public const uint GL_SRC_ALPHA = 0x0302;//770
+        public const uint GL_ONE_MINUS_SRC_ALPHA = 0x0303;//771
+        public const uint GL_DST_ALPHA = 0x0304;//772
+        public const uint GL_ONE_MINUS_DST_ALPHA = 0x0305;//773
 
         //  BlendingFactorSrc
         public const uint GL_DST_COLOR = 0x0306;
@@ -554,8 +554,8 @@ namespace CSharpGL
         public const uint GL_EYE_PLANE = 0x2502;
 
         //   TextureMagFilter
-        public const uint GL_NEAREST = 0x2600;
-        public const uint GL_LINEAR = 0x2601;
+        public const int GL_NEAREST = 0x2600;
+        public const int GL_LINEAR = 0x2601;
 
         //   TextureMinFilter 
         public const uint GL_NEAREST_MIPMAP_NEAREST = 0x2700;

@@ -14,7 +14,7 @@
             };
         }
 
-        private static ITextContext CTextContext(
+        internal static ITextContext CTextContext(
             string text, string fontFamily, int fontSize,
             FontStretch stretch, FontStyle style, FontWeight weight,
             int maxWidth, int maxHeight,

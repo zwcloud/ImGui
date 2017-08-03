@@ -1,45 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using LibTessDotNet;
 
 namespace ImGui
 {
-    interface ITextPathBuilder
-    {
-        void PathClear();
-        void PathMoveTo(Point point);
-        void PathLineTo(Point pos);
-        void PathClose();
-        void PathAddBezier(Point start, Point control, Point end);
-
-        /// <summary>
-        /// Append contour
-        /// </summary>
-        /// <param name="color"></param>
-        void AddContour(Color color);
-    }
-
     /// <summary>
     /// Text mesh
     /// </summary>
     /// <remarks>
     /// A text mesh contains two parts:
-    ///   1. triangles: generated from glyph contours (line segment part)
-    ///   2. bezier segments: generated from glyph bezier curves
+    ///   1. triangle strip: generated from glyph contours
+    ///   2. quadratic bezier segments: generated from glyph bezier curves
     /// </remarks>
-    class TextMesh : ITextPathBuilder
+    class TextMesh
     {
-        ImGui.Internal.List<DrawIndex> indexBuffer = new ImGui.Internal.List<DrawIndex>();
+        // triangle strip will be rendered as triangle strip
         ImGui.Internal.List<DrawVertex> vertexBuffer = new ImGui.Internal.List<DrawVertex>();
+        ImGui.Internal.List<DrawIndex> indexBuffer = new ImGui.Internal.List<DrawIndex>();
 
-        ImGui.Internal.List<DrawIndex> bezierIndexBuffer = new ImGui.Internal.List<DrawIndex>();
+        // quadratic bezier segments will be rendered as triangle list
         ImGui.Internal.List<DrawVertex> bezierVertexBuffer = new ImGui.Internal.List<DrawVertex>();
+        ImGui.Internal.List<DrawIndex> bezierIndexBuffer = new ImGui.Internal.List<DrawIndex>();
 
+        DrawCommand triangleStripCommand = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleStrip };
+        DrawCommand segmentCommand = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleList };
+
+        public int _vtxWritePosition;
+        public int _idxWritePosition;
+        public int _currentIdx;
         private int _bezier_vtxWritePosition;
         private int _bezier_idxWritePosition;
         private int _bezier_currentIdx;
-
-        private List<int> _BezierControlPointIndex = new List<int>();
 
         private void AppendBezierVertex(DrawVertex vertex)
         {
@@ -53,55 +43,24 @@ namespace ImGui
             _bezier_idxWritePosition++;
         }
 
-        public void PrimBezierReserve(int idx_count, int vtx_count)
+        public void PrimBezierReserve(int segment_point_count)
         {
-            if (idx_count == 0)
+            if (segment_point_count == 0)
             {
                 return;
             }
 
             int vtx_buffer_size = this.BezierVertexBuffer.Count;
             this._bezier_vtxWritePosition = vtx_buffer_size;
-            this.BezierVertexBuffer.Resize(vtx_buffer_size + vtx_count);
+            this.BezierVertexBuffer.Resize(vtx_buffer_size + segment_point_count);
 
             int idx_buffer_size = this.BezierIndexBuffer.Count;
             this._bezier_idxWritePosition = idx_buffer_size;
-            this.BezierIndexBuffer.Resize(idx_buffer_size + idx_count);
-        }
+            this.BezierIndexBuffer.Resize(idx_buffer_size + segment_point_count);
 
-        public void AddBezier(Point start, Point control, Point end, Color col)
-        {
-            int idx_count = 3;
-            int vtx_count = 3;
-            PrimBezierReserve(idx_count, vtx_count);
-
-            var uv0 = new PointF(0, 0);
-            var uv1 = new PointF(0.5, 0);
-            var uv2 = new PointF(1, 1);
-
-            var p0 = start;
-            var p1 = control;
-            var p2 = end;
-
-            AppendBezierVertex(new DrawVertex { pos = (PointF)p0, uv = uv0, color = (ColorF)col });
-            AppendBezierVertex(new DrawVertex { pos = (PointF)p1, uv = uv1, color = (ColorF)col });
-            AppendBezierVertex(new DrawVertex { pos = (PointF)p2, uv = uv2, color = (ColorF)col });
-
-            AppendBezierIndex(0);
-            AppendBezierIndex(1);
-            AppendBezierIndex(2);
-
-            _bezier_currentIdx += 3;
-        }
-
-
-        /// <summary>
-        /// Index buffer. Each command consume DrawCommand.ElemCount of those
-        /// </summary>
-        public ImGui.Internal.List<DrawIndex> IndexBuffer
-        {
-            get { return indexBuffer; }
-            set { indexBuffer = value; }
+            var command = Command1;
+            triangleStripCommand.ElemCount += segment_point_count;
+            Command1 = command;
         }
 
         /// <summary>
@@ -113,6 +72,12 @@ namespace ImGui
             set { vertexBuffer = value; }
         }
 
+        public ImGui.Internal.List<DrawIndex> IndexBuffer
+        {
+            get { return indexBuffer; }
+            set { indexBuffer = value; }
+        }
+        
         /// <summary>
         /// Index buffer for bezier curves
         /// </summary>
@@ -130,34 +95,37 @@ namespace ImGui
             get { return bezierVertexBuffer; }
         }
 
+        public DrawCommand Command0
+        {
+            get => triangleStripCommand;
+            set => triangleStripCommand = value;
+        }
+        public DrawCommand Command1
+        {
+            get => segmentCommand;
+            set => segmentCommand = value;
+        }
+
         public void Clear()
         {
-            // triangles
-            this.IndexBuffer.Clear();
-            this.VertexBuffer.Clear();
-
-            _vtxWritePosition = 0;
-            _idxWritePosition = 0;
-            _currentIdx = 0;
-
             _Path.Clear();
 
-            // beziers
+            // triangles
+            this.VertexBuffer.Clear();
+            this.IndexBuffer.Clear();
+            this._vtxWritePosition = 0;
+            this._idxWritePosition = 0;
+            _currentIdx = 0;
+            Command0 = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleStrip };
+
+            // bezier segments
             this.BezierIndexBuffer.Clear();
             this.BezierVertexBuffer.Clear();
-
             _bezier_vtxWritePosition = 0;
             _bezier_idxWritePosition = 0;
             _bezier_currentIdx = 0;
-
-            _BezierControlPointIndex.Clear();
+            Command1 = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleList };
         }
-
-        #region buffer writing
-
-        private int _vtxWritePosition;
-        private int _idxWritePosition;
-        private int _currentIdx;
 
         private void AppendVertex(DrawVertex vertex)
         {
@@ -165,15 +133,19 @@ namespace ImGui
             _vtxWritePosition++;
         }
 
-        private void AppendIndex(int offsetToCurrentIndex)
+        /// <summary>
+        /// Append an index to the IndexBuffer
+        /// </summary>
+        /// <remarks>The value to insert is `_currentIdx + offsetToCurrentIndex`.</remarks>
+        public void AppendIndex(int offsetToCurrentIndex)
         {
             indexBuffer[_idxWritePosition] = new DrawIndex { Index = _currentIdx + offsetToCurrentIndex };
             _idxWritePosition++;
         }
 
-        public void PrimReserve(int idx_count, int vtx_count)
+        public void PrimReserve(int vtx_count, int idx_count)
         {
-            if (idx_count == 0)
+            if (vtx_count == 0)
             {
                 return;
             }
@@ -185,15 +157,13 @@ namespace ImGui
             int idx_buffer_size = this.IndexBuffer.Count;
             this._idxWritePosition = idx_buffer_size;
             this.IndexBuffer.Resize(idx_buffer_size + idx_count);
-        }
-        #endregion
 
-        #region primitives
+            var command = this.Command0;
+            command.ElemCount += vtx_count;
+            this.Command0 = command;
+        }
 
         private static readonly List<Point> _Path = new List<Point>();
-
-
-        #endregion
 
         public void PathClear()
         {
@@ -205,7 +175,6 @@ namespace ImGui
             _Path.Add(point);
         }
 
-        //inline
         public void PathLineTo(Point pos)
         {
             _Path.Add(pos);
@@ -216,153 +185,122 @@ namespace ImGui
             _Path.Add(_Path[0]);
         }
 
-        #region filled bezier curve
-
         public void PathAddBezier(Point start, Point control, Point end)
         {
             _Path.Add(start);
-
             _Path.Add(control);
-            _BezierControlPointIndex.Add(_Path.Count - 1);
-
             _Path.Add(end);
         }
 
-        #endregion
-
-        #region polygon tessellation
-
-        /// <summary>
-        /// Append contour
-        /// </summary>
-        /// <param name="color"></param>
-        public void AddContour(Color color)
+        public void AddTriangle(Point a, Point b, Point c, Color color)
         {
-            // determine the winding of the path
-            //var pathIsClockwise = IsClockwise(_Path);//no need
-
-            var contour = new List<LibTessDotNet.ContourVertex>();
-
-            int j = 0;
-            for (int i = 0; i < _Path.Count; i++)
-            {
-                var p = _Path[i];
-
-                //check if p is a control point of a quadratic bezier curve
-                bool isControlPoint = false;
-                if (j <= _BezierControlPointIndex.Count - 1 && i == _BezierControlPointIndex[j])
-                {
-                    j++;
-                    isControlPoint = true;
-                }
-
-                if (isControlPoint)
-                {
-                    var start = _Path[i - 1];
-                    var control = p;
-                    var end = _Path[i + 1];
-
-                    var bezierIsClockwise = IsClockwise(start, control, end);
-
-                    if (bezierIsClockwise)//bezier 'triangle' is clockwise
-                    {
-                        //[picture]
-                        contour.Add(new LibTessDotNet.ContourVertex
-                        {
-                            Position = new LibTessDotNet.Vec3
-                            {
-                                X = (float)control.X,
-                                Y = (float)control.Y,
-                                Z = 0.0f
-                            }
-                        });
-                    }
-
-                    // add this quadratic bezier curve to bezier buffer
-                    AddBezier(start, control, end, color);
-                }
-                else//not control point of a bezier
-                {
-                    contour.Add(new LibTessDotNet.ContourVertex
-                    {
-                        Position = new LibTessDotNet.Vec3
-                        {
-                            X = (float)p.X,
-                            Y = (float)p.Y,
-                            Z = 0.0f
-                        }
-                    });
-                }
-
-            }
-            _BezierControlPointIndex.Clear();
-            // Add the contour with a specific orientation, use "Original" if you want to keep the input orientation.
-            tess.AddContour(contour.ToArray()/* TODO remove this copy here!!  */, LibTessDotNet.ContourOrientation.Original);
-            
+            PrimReserve(3, 3);
+            AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)color });
+            AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)color });
+            AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)color });
+            AppendIndex(0);
+            AppendIndex(1);
+            AppendIndex(2);
+            _currentIdx += 3;
         }
 
-        static LibTessDotNet.Tess tess = new LibTessDotNet.Tess();// Create an instance of the tessellator. Can be reused.
-
-        public void PathTessPolygon(Color color)
+        public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color)
         {
-            tess.Tessellate(LibTessDotNet.WindingRule.EvenOdd, LibTessDotNet.ElementType.Polygons, 3, null);
-            if (tess.Elements == null || tess.Elements.Length == 0)
+            PrimBezierReserve(segments.Count * 3);
+            for (int i = 0; i < segments.Count; i++)
             {
-                return;
+                var segment = segments[i];
+                var startPoint = segment.Item1;
+                var controlPoint = segment.Item2;
+                var endPoint = segment.Item3;
+                var uv0 = new PointF(0, 0);
+                var uv1 = new PointF(0.5, 0);
+                var uv2 = new PointF(1, 1);
+                AppendBezierVertex(new DrawVertex { pos = (PointF)startPoint, uv = uv0, color = (ColorF)color });
+                AppendBezierVertex(new DrawVertex { pos = (PointF)controlPoint, uv = uv1, color = (ColorF)color });
+                AppendBezierVertex(new DrawVertex { pos = (PointF)endPoint, uv = uv2, color = (ColorF)color });
+                AppendBezierIndex(new DrawIndex { Index = 0 });
+                AppendBezierIndex(new DrawIndex { Index = 1 });
+                AppendBezierIndex(new DrawIndex { Index = 2 });
+                _bezier_currentIdx += 3;
             }
-            int numTriangles = tess.ElementCount;
-            int idx_count = numTriangles * 3;
-            int vtx_count = numTriangles * 3;
-            PrimReserve(idx_count, vtx_count);
-            for (int i = 0; i < numTriangles; i++)
-            {
-                var index0 = tess.Elements[i * 3];
-                var index1 = tess.Elements[i * 3 + 1];
-                var index2 = tess.Elements[i * 3 + 2];
-                var v0 = tess.Vertices[index0].Position;
-                var v1 = tess.Vertices[index1].Position;
-                var v2 = tess.Vertices[index2].Position;
-
-                AppendVertex(new DrawVertex { pos = new PointF(v0.X, v0.Y), uv = PointF.Zero, color = (ColorF)color });
-                AppendVertex(new DrawVertex { pos = new PointF(v1.X, v1.Y), uv = PointF.Zero, color = (ColorF)color });
-                AppendVertex(new DrawVertex { pos = new PointF(v2.X, v2.Y), uv = PointF.Zero, color = (ColorF)color });
-                AppendIndex(0);
-                AppendIndex(1);
-                AppendIndex(2);
-                _currentIdx += 3;
-            }
-            
         }
 
-        // unused
-        private static bool IsClockwise(IList<Point> vertices)
-        {
-            double sum = 0.0;
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                Point v1 = vertices[i];
-                Point v2 = vertices[(i + 1) % vertices.Count]; // % is the modulo operator
-                sum += (v2.X - v1.X) * (v2.Y + v1.Y);
-            }
-            return sum > 0.0;
-        }
-
-        private static bool IsClockwise(Point v0, Point v1, Point v2)
-        {
-            var vA = v1 - v0; // .normalize()
-            var vB = v2 - v1;
-            var z = vA.X * vB.Y - vA.Y * vB.X; // z component of cross Production
-            var wind = z < 0; // clockwise/anticlock wind
-            return wind;
-        }
-
-        #endregion
-
+        TextGeometryContainer textGeometryContainer = new TextGeometryContainer();
         internal void Build(Point position, GUIStyle style, ITextContext textContext)
         {
             var color = style.Get<Color>(GUIStyleName.FontColor);
-            textContext.Build(position, this, color);
-            this.PathTessPolygon(color);
+            textContext.Build(position, color, textGeometryContainer);
+
+            // create mesh data
+
+            // triangles
+            Color _color = new Color(1.01 / 255, 0, 0, 1);
+            foreach (var polygon in textGeometryContainer.Polygons)
+            {
+                if (polygon == null || polygon.Count < 3) { continue; }
+                for (int i = 0; i < polygon.Count-1; i++)
+                {
+                    AddTriangle(polygon[0], polygon[i], polygon[i + 1], _color);
+                }
+            }
+            // bezier segments
+            AddBezierSegments(textGeometryContainer.CurveSegments, _color);
+        }
+
+        public void Append(TextMesh textMesh, Vector offset)
+        {
+            var oldVertexCount = this.VertexBuffer.Count;
+            var oldIndexCount = this.IndexBuffer.Count;
+            var oldBezierVertexCount = this.BezierVertexBuffer.Count;
+            var oldBezierIndexCount = this.BezierIndexBuffer.Count;
+
+            // Append mesh data
+            {
+                this.VertexBuffer.AddRange(textMesh.VertexBuffer);
+                this.IndexBuffer.AddRange(textMesh.IndexBuffer);
+                var newIndexCount = this.IndexBuffer.Count;
+                for (int i = oldIndexCount; i < newIndexCount; i++)
+                {
+                    var index = this.IndexBuffer[i].Index;
+                    index += oldVertexCount;
+                    this.IndexBuffer[i] = new DrawIndex { Index = index };
+                }
+                var command = this.Command0;
+                command.ElemCount = this.IndexBuffer.Count;
+                this.Command0 = command;
+            }
+            {
+                this.BezierVertexBuffer.AddRange(textMesh.BezierVertexBuffer);
+                this.BezierIndexBuffer.AddRange(textMesh.BezierIndexBuffer);
+                var newBezierIndexCount = this.BezierIndexBuffer.Count;
+                for (int i = oldBezierIndexCount; i < newBezierIndexCount; i++)
+                {
+                    var index = this.BezierIndexBuffer[i].Index;
+                    index += oldBezierVertexCount;
+                    this.BezierIndexBuffer[i] = new DrawIndex { Index = index };
+                }
+                var command = this.Command1;
+                command.ElemCount = bezierIndexBuffer.Count;
+                this.Command1 = command;
+            }
+
+            // Apply offset to appended part
+            if (!MathEx.AmostZero(offset.X) || !MathEx.AmostZero(offset.Y))
+            {
+                for (int i = oldVertexCount; i < this.VertexBuffer.Count; i++)
+                {
+                    var vertex = this.vertexBuffer[i];
+                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
+                    this.vertexBuffer[i] = vertex;
+                }
+                for (int i = oldBezierVertexCount; i < this.BezierVertexBuffer.Count; i++)
+                {
+                    var vertex = this.bezierVertexBuffer[i];
+                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
+                    this.bezierVertexBuffer[i] = vertex;
+                }
+            }
         }
     }
 
@@ -436,7 +374,7 @@ namespace ImGui
                     fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                     (int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height),
                     textAlignment);
-                textContext.Build(Point.Zero, null, Color.Clear);
+                textContext.Build(Point.Zero, Color.Clear, null);
                 TextContextCache.Add(textMeshId, textContext);
             }
             return textContext;

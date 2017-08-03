@@ -9,9 +9,9 @@ namespace ImGui
 {
     internal class OpenGLTexture : ITexture
     {
-        private ImageSharp.Image image;
+        private ImageSharp.Image<ImageSharp.Rgba32> image;
         private readonly uint[] textureIdBuffer = {0};
-        private ImageSharp.Color[] textureData;
+        private ImageSharp.Rgba32[] textureData;
         
         public void LoadImage(byte[] data)
         {
@@ -23,8 +23,8 @@ namespace ImGui
             // check file header, save texture data to buffer
             using (FileStream stream = File.OpenRead(filePath))
             {
-                image = new ImageSharp.Image(stream);
-                textureData = image.Pixels;
+                image = ImageSharp.Image.Load<ImageSharp.Rgba32>(stream);
+                textureData = image.Pixels.ToArray();
             }
 
             // create opengl texture object

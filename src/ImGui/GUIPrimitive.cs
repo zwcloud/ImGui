@@ -295,7 +295,7 @@ namespace ImGui
         public static void DrawText(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state)
         {
             var textmesh = TextMeshUtil.GetTextMesh(text, rect.Size, style, state);
-            drawList.Append(textmesh, new Vector(rect.X, rect.Y));
+            drawList.AppendTextMesh(textmesh, new Vector(rect.X, rect.Y));
         }
 
         /// <summary>

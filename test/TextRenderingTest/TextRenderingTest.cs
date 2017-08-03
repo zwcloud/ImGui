@@ -60,6 +60,30 @@ namespace TextRenderingTest
         }
 
         [Fact]
+        public void ShouldRenderAFilledCubicBezierCurve2()
+        {
+            // (625,1549) (1040,1508) (1444, 1168) (1442,794)
+            // * 0.1
+            var p0 = new Point(62.5, 154.9);// start point
+            var c0 = new Point(104.0, 150.8);// control point 0
+            var c1 = new Point(144.4, 116.8);// control point 1
+            var p1 = new Point(144.2, 79.4);// end point
+
+            var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
+
+            Application.Run(new Form1(() => {
+                var d = Form.current.OverlayDrawList;
+                d.AddBezier(p0, c0, p, Color.Blue);
+                d.AddBezier(p, c1, p1, Color.Red);
+                d.PathMoveTo(p0);
+                d.PathLineTo(p);
+                d.PathLineTo(p1);
+                d.PathFill(Color.Black);
+            }));
+        }
+
+
+        [Fact]
         public void ShouldGenerateARightTexMesh()
         {
             var style = GUIStyle.Default;
@@ -167,7 +191,7 @@ namespace TextRenderingTest
 
                 GUIStyle labelStyle = "Label";
                 labelStyle.Set<double>(GUIStyleName.FontSize, 400);
-
+                labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + "msjh.ttf");
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
 
             }));

@@ -44,6 +44,8 @@ namespace ImGui
                 flags = window.Flags;
             }
 
+            //flags |= WindowFlags.NoTitleBar;
+
             // Add to stack
             Window parent_window = w.WindowStack.Count != 0 ? w.WindowStack[w.WindowStack.Count - 1] : null;
             w.WindowStack.Add(window);

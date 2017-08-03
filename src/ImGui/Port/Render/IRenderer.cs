@@ -1,4 +1,6 @@
-﻿namespace ImGui
+﻿using System;
+
+namespace ImGui
 {
     /// <summary>
     /// Renderer-related functions
@@ -10,7 +12,8 @@
         /// Initialize the renderer
         /// </summary>
         /// <param name="windowHandle">window handle, this could be some context info needed by the renderer. e.g. win32 HWND</param>
-        void Init(object windowHandle);
+        /// <param name="size">size of default framebuffer</param>
+        void Init(IntPtr windowHandle, Size size);
 
         /// <summary>
         /// Clear the rendered data
@@ -24,6 +27,7 @@
         /// <param name="width">width of the rendering rectangle</param>
         /// <param name="height">height of the rendering rectangle</param>
         void RenderDrawList(DrawList drawList, int width, int height);
+
 
         /// <summary>
         /// swap front(what is on the screen) and back(what is rendered by the renderer) buffer

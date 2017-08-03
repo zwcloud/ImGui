@@ -37,12 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HostEditor", "demos\HostEdi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidTemplate", "templates\AndroidTemplate\AndroidTemplate.csproj", "{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGui.UnitTest", "test\ImGui.UnitTest\ImGui.UnitTest.csproj", "{B8087E73-4140-49B1-88CA-95528264CDB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui.UnitTest", "test\ImGui.UnitTest\ImGui.UnitTest.csproj", "{B8087E73-4140-49B1-88CA-95528264CDB6}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		templates\TestUI\TestUI.projitems*{2af7f9f5-8001-40bf-8c60-c4852ceaa299}*SharedItemsImports = 13
 	EndGlobalSection
@@ -224,6 +221,9 @@ Global
 		{B8EE6600-33B7-4604-9951-608641DA0D98} = {DD39D4D9-52B4-47A7-86BF-ECB8D136D767}
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A} = {593C5B50-52E6-436D-9BF2-93E220984E45}
 		{B8087E73-4140-49B1-88CA-95528264CDB6} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

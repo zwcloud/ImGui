@@ -36,9 +36,9 @@ namespace ImGui
         /// build text glyphs to retrive text rendering data (line segments and bezier curves)
         /// </summary>
         /// <param name="offset">offset of the text base-point against the rectangle position(bottom-left of the rectangle)</param>
-        /// <param name="builder"></param>
         /// <param name="color"></param>
-        void Build(Point offset, ITextPathBuilder builder, Color color = new Color());
+        /// <param name="container"></param>
+        void Build(Point offset, Color color, ITextGeometryContainer container);
 
         /// <summary>
         /// get space that the text occupies

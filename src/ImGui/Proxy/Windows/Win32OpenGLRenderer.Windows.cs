@@ -433,6 +433,7 @@ namespace ImGui
                 (int)WGL.WGL_COLOR_BITS_ARB,     32,
                 (int)WGL.WGL_DEPTH_BITS_ARB,     24,
                 (int)WGL.WGL_STENCIL_BITS_ARB,   8,
+                (int)WGL.WGL_SWAP_METHOD_ARB, (int)WGL.WGL_SWAP_EXCHANGE_ARB,
                 (int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MSAA
                 (int)WGL.WGL_SAMPLES_ARB,        16,
             0};
@@ -465,6 +466,7 @@ namespace ImGui
                 throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
+            Utility.CheckGLError();
             PrintGraphicInfo();
         }
 
@@ -488,7 +490,10 @@ namespace ImGui
 
         public void SwapBuffers()
         {
-            SwapBuffers(hDC);
+            if(!SwapBuffers(hDC))
+            {
+                throw new Exception(string.Format("SwapBuffers failed: error {0}", Marshal.GetLastWin32Error()));
+            }
         }
 
         private void DeleteOpenGLContext()

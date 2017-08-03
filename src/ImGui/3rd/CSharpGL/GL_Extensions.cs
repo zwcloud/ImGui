@@ -19,6 +19,7 @@ namespace CSharpGL
             _glBufferData = GetDelegateFor<glBufferData>();
             _glActiveTexture = GetDelegateFor<glActiveTexture>();
             _glBlendEquationSeparate = GetDelegateFor<glBlendEquationSeparate>();
+            _glBlendFuncSeparate = GetDelegateFor<glBlendFuncSeparate>();
 
             _glAttachShader = GetDelegateFor<glAttachShader>();
             _glCreateShader = GetDelegateFor<glCreateShader>();
@@ -48,6 +49,12 @@ namespace CSharpGL
             _glDeleteBuffers = GetDelegateFor<glDeleteBuffers>();
             _glGenBuffers = GetDelegateFor<glGenBuffers>();
 
+            _glGenFramebuffersEXT = GetDelegateFor<glGenFramebuffersEXT>();
+            _glBindFramebufferEXT = GetDelegateFor<glBindFramebufferEXT>();
+            _glFramebufferTexture = GetDelegateFor<glFramebufferTexture>();
+            _glDrawBuffers = GetDelegateFor<glDrawBuffers>();
+            _glCheckFramebufferStatusEXT = GetDelegateFor<glCheckFramebufferStatusEXT>();
+
             allFunctionsLoaded = true;
         }
 
@@ -58,6 +65,7 @@ namespace CSharpGL
         private static glActiveTexture _glActiveTexture;
         private static glUseProgram _glUseProgram;
         private static glBlendEquationSeparate _glBlendEquationSeparate;
+        private static glBlendFuncSeparate _glBlendFuncSeparate;
 
         private static glAttachShader _glAttachShader;
         private static glCreateShader _glCreateShader;
@@ -85,6 +93,12 @@ namespace CSharpGL
 
         private static glDeleteBuffers _glDeleteBuffers;
         private static glGenBuffers _glGenBuffers;
+
+        private static glGenFramebuffersEXT _glGenFramebuffersEXT;
+        private static glBindFramebufferEXT _glBindFramebufferEXT;
+        private static glFramebufferTexture _glFramebufferTexture;
+        private static glDrawBuffers _glDrawBuffers;
+        private static glCheckFramebufferStatusEXT _glCheckFramebufferStatusEXT;
 
         #region OpenGL 1.2
 
@@ -702,7 +716,7 @@ namespace CSharpGL
         //  Methods
         public static void BlendFuncSeparate(uint sfactorRGB, uint dfactorRGB, uint sfactorAlpha, uint dfactorAlpha)
         {
-            GetDelegateFor<glBlendFuncSeparate>()(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
+            _glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
         }
         public static void MultiDrawArrays(uint mode, int[] first, int[] count, int primcount)
         {
@@ -1134,7 +1148,7 @@ namespace CSharpGL
         }
         public static void DrawBuffers(int n, uint[] bufs)
         {
-            GetDelegateFor<glDrawBuffers>()(n, bufs);
+            _glDrawBuffers(n, bufs);
         }
         public static void StencilOpSeparate(uint face, uint sfail, uint dpfail, uint dppass)
         {
@@ -2306,7 +2320,7 @@ namespace CSharpGL
         }
         public static void FramebufferTexture(uint target, uint attachment, uint texture, int level)
         {
-            GetDelegateFor<glFramebufferTexture>()(target, attachment, texture, level);
+            _glFramebufferTexture(target, attachment, texture, level);
         }
 
         //  Delegates
@@ -4628,7 +4642,7 @@ namespace CSharpGL
 
         public static void BindFramebufferEXT(uint target, uint framebuffer)
         {
-            GetDelegateFor<glBindFramebufferEXT>()(target, framebuffer);
+            _glBindFramebufferEXT(target, framebuffer);
         }
 
         public static void DeleteFramebuffersEXT(uint n, uint[] framebuffers)
@@ -4638,12 +4652,12 @@ namespace CSharpGL
 
         public static void GenFramebuffersEXT(uint n, uint[] framebuffers)
         {
-            GetDelegateFor<glGenFramebuffersEXT>()(n, framebuffers);
+            _glGenFramebuffersEXT(n, framebuffers);
         }
 
         public static uint CheckFramebufferStatusEXT(uint target)
         {
-            return GetDelegateFor<glCheckFramebufferStatusEXT>()(target);
+            return _glCheckFramebufferStatusEXT(target);
         }
 
         public static void FramebufferTexture1DEXT(uint target, uint attachment, uint textarget, uint texture, int level)

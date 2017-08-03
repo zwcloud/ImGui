@@ -1,22 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    internal delegate void PathClearer();
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    internal delegate void PointAdder(float x, float y);
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    internal delegate void BezierAdder(float x0, float y0, float x1, float y1, float x2, float y2);
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    internal delegate void PathCloser();
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    internal delegate void FigureBeginner(float x, float y);
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    internal delegate void FigureEnder();
-
     internal partial class DrawList
     {
 
@@ -357,7 +343,6 @@ namespace ImGui
             _Path.Add(start);
 
             _Path.Add(control);
-            _BezierControlPointIndex.Add(_Path.Count - 1);
 
             _Path.Add(end);
         }
@@ -396,46 +381,14 @@ namespace ImGui
         /// </summary>
         /// <param name="textMesh"></param>
         /// <param name="offset"></param>
-        public void Append(TextMesh textMesh, Vector offset)
+        public void AppendTextMesh(TextMesh textMesh, Vector offset)
         {
             if (textMesh == null)
             {
                 throw new ArgumentNullException(nameof(textMesh));
             }
 
-            DrawBuffer.Fill(textMesh.IndexBuffer, textMesh.VertexBuffer);
-
-            if (offset.LengthSquared > 0.001)
-            {
-                var vertexBuffer = DrawBuffer.VertexBuffer;
-                var total = textMesh.VertexBuffer.Count;
-                var count = 0;
-                while (count < total)
-                {
-                    var index = vertexBuffer.Count - 1 - count;
-                    var vertex = vertexBuffer[index];
-                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
-                    vertexBuffer[index] = vertex;
-                    count++;
-                }
-            }
-
-            BezierBuffer.Fill(textMesh.BezierIndexBuffer, textMesh.BezierVertexBuffer);
-
-            if (offset.LengthSquared > 0.001)
-            {
-                var vertexBuffer = BezierBuffer.VertexBuffer;
-                var total = textMesh.BezierVertexBuffer.Count;
-                var count = 0;
-                while (count < total)
-                {
-                    var index = vertexBuffer.Count - 1 - count;
-                    var vertex = vertexBuffer[index];
-                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
-                    vertexBuffer[index] = vertex;
-                    count++;
-                }
-            }
+            this.TextMesh.Append(textMesh, offset);
         }
 
         #region Extra

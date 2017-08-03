@@ -14,7 +14,6 @@ namespace ImGui
     {
         private readonly List<GlyphPlan> glyphPlans = new List<GlyphPlan>();
         private readonly GlyphLayout glyphLayout = new GlyphLayout();
-        private GlyphTranslatorToPath glyphPathTranslator;
 
         private char[] textCharacters;
         private string text;
@@ -67,10 +66,7 @@ namespace ImGui
                     }
                     this.CurrentTypeFace = typeFace;
 
-                    //2. glyph translater
-                    glyphPathTranslator = new GlyphTranslatorToPath();
-
-                    //3. Update GlyphLayout
+                    //2. Update GlyphLayout
                     glyphLayout.ScriptLang = ScriptLangs.Latin;
                     glyphLayout.PositionTechnique = this.PositionTechnique;
                     glyphLayout.EnableLigature = this.EnableLigature;
@@ -150,7 +146,7 @@ namespace ImGui
             return this.Size;
         }
 
-        public void Build(Point offset, ITextPathBuilder pathBuilder, Color color = new Color())
+        public void Build(Point offset, Color color, ITextGeometryContainer container)
         {
             //Profile.Start("TypographyTextContext.Build");
             // layout glyphs with selected layout technique
@@ -163,11 +159,9 @@ namespace ImGui
             var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
             lineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender + this.CurrentTypeFace.LineGap)*scale;
 
-            if (pathBuilder != null)
+            if (container != null)
             {
                 // render each glyph
-                glyphPathTranslator.PathBuilder = pathBuilder;
-                glyphPathTranslator.Color = color;
                 lineCount = 1;
                 float back = 0;
                 for (int i = 0; i < glyphPlans.Count; ++i)
@@ -183,12 +177,24 @@ namespace ImGui
                         continue;
                     }
 
-                    //read output from glyph points
-                    glyphPathTranslator.Read(glyph.GlyphPoints,
-                        glyph.EndPoints,
-                        scale,
-                        (float)glyphPlan.x * scale - back,
-                        (float)glyphPlan.y * scale + lineCount * lineHeight);
+                    var offsetX = glyphPlan.x * scale - back;
+                    var offsetY = glyphPlan.y * scale + lineCount * lineHeight;
+
+                    var points = glyph.GlyphPoints;
+                    var endPoints = glyph.EndPoints;
+
+                    // read polygons and bezier segments
+                    var polygons = new List<List<Point>>();
+                    var bezierSegments = new List<(Point, Point, Point)>();
+                    GlyphReader.Read(points, endPoints, offsetX, offsetY, scale, out polygons, out bezierSegments);
+                    foreach (var polygon in polygons)
+                    {
+                        container.AddContour(polygon);
+                    }
+                    foreach (var segment in bezierSegments)
+                    {
+                        container.AddBezier(segment);
+                    }
                 }
             }
 

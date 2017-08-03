@@ -122,7 +122,7 @@ namespace GLM
         }
 
         /// <summary>
-        /// 归一化向量
+        /// Normalize
         /// </summary>
         /// <param name="vector"></param>
         /// <returns></returns>
@@ -139,7 +139,6 @@ namespace GLM
         public override string ToString()
         {
             return string.Format("{0:0.00},{1:0.00},{2:0.00},{3:0.00}", x, y, z, w);
-            //return base.ToString();
         }
     }
 }

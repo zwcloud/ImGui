@@ -80,7 +80,7 @@ namespace ImGui
             }
         }
 
-        private static bool RequestQuit;
+        internal static bool RequestQuit;
 
         // HACK for Android
         public static Func<string, System.IO.Stream> FontFileRead;

@@ -226,7 +226,7 @@ void main()
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
 
-        public void Init(object windowHandle)
+        public void Init(IntPtr windowHandle, Size size)
         {
             if (!CreateEGLContext())
             {
@@ -234,7 +234,7 @@ void main()
                 return;
             }
 
-            var nativeWindow = (IntPtr)windowHandle;
+            var nativeWindow = windowHandle;
             if (!CreateEGLSurface(nativeWindow))
             {
                 Debug.WriteLine("Failed to create EGL surface.");
@@ -356,7 +356,7 @@ void main()
         public void RenderDrawList(DrawList drawList, int width, int height)
         {
             DoRender(m, drawList.DrawBuffer.CommandBuffer, drawList.DrawBuffer.IndexBuffer, drawList.DrawBuffer.VertexBuffer, width, height);
-            DoRender(mExtra, drawList.BezierBuffer.CommandBuffer, drawList.BezierBuffer.IndexBuffer, drawList.BezierBuffer.VertexBuffer, width, height);
+            //DoRender(mExtra, drawList.BezierBuffer.CommandBuffer, drawList.BezierBuffer.IndexBuffer, drawList.BezierBuffer.VertexBuffer, width, height);
             DoRender(mImage, drawList.ImageBuffer.CommandBuffer, drawList.ImageBuffer.IndexBuffer, drawList.ImageBuffer.VertexBuffer, width, height);
         }
 

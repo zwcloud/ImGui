@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
+using CSharpGL;
 namespace ImGui
 {
     partial class Form
@@ -145,7 +146,6 @@ namespace ImGui
 
             Log();
         }
-
         internal void Render()
         {
             GUIContext g = this.uiContext;
@@ -164,11 +164,6 @@ namespace ImGui
                 {
                     this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
                 }
-            }
-
-            if (OverlayDrawList.DrawBuffer.CommandBuffer.Count != 0)
-            {
-                this.renderer.RenderDrawList(OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
             }
 
             this.renderer.SwapBuffers();

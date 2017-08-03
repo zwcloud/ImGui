@@ -8,7 +8,7 @@ namespace ImGui
     internal partial class DrawList
     {
         private readonly Mesh drawBuffer = new Mesh();
-        private readonly Mesh bezierBuffer = new Mesh();
+        private readonly TextMesh textMesh = new TextMesh();
         private readonly Mesh imageBuffer = new Mesh();
 
         public System.Collections.Generic.List<Rect> clipRectStack = new System.Collections.Generic.List<Rect>(2);
@@ -22,11 +22,11 @@ namespace ImGui
         }
 
         /// <summary>
-        /// Bezier Mesh (filled bezier curves)
+        /// Text mesh
         /// </summary>
-        public Mesh BezierBuffer
+        public TextMesh TextMesh
         {
-            get { return bezierBuffer; }
+            get { return textMesh; }
         }
 
         /// <summary>
@@ -47,9 +47,8 @@ namespace ImGui
             // triangles
             DrawBuffer.Clear();
 
-            // filled bezier curves
-            BezierBuffer.Clear();
-            _BezierControlPointIndex.Clear();
+            // text mesh
+            TextMesh.Clear();
 
             // images
             ImageBuffer.Clear();
@@ -81,8 +80,8 @@ namespace ImGui
             {
                 return;
             }
+            draw_cmd.PrimitiveType = PrimitiveType.TriangleList;
             DrawBuffer.CommandBuffer.Add(draw_cmd);
-            BezierBuffer.CommandBuffer.Add(draw_cmd);
         }
 
         public void AddImageDrawCommand(ITexture texture)
@@ -101,6 +100,8 @@ namespace ImGui
             {
                 return;
             }
+
+            draw_cmd.PrimitiveType = PrimitiveType.TriangleList;
 
             draw_cmd.TextureData = texture;
             ImageBuffer.CommandBuffer.Add(draw_cmd);
@@ -142,7 +143,6 @@ namespace ImGui
             }
 
             var drawCmdBuffer = DrawBuffer.CommandBuffer;
-            var bezierCmdBuffer = BezierBuffer.CommandBuffer;
             {
                 if (drawCmdBuffer.Count == 0)
                 {
@@ -151,7 +151,6 @@ namespace ImGui
                 }
 
                 var newDrawCmd = drawCmdBuffer[drawCmdBuffer.Count - 1];
-                var newBezierCmd = bezierCmdBuffer[bezierCmdBuffer.Count - 1];
                 {
                     if (newDrawCmd.ElemCount != 0 && newDrawCmd.ClipRect != currentClipRect)
                     {
@@ -166,23 +165,21 @@ namespace ImGui
                         if (previousCmd.ClipRect == currentClipRect)
                         {
                             drawCmdBuffer.RemoveAt(drawCmdBuffer.Count - 1);
-                            bezierCmdBuffer.RemoveAt(bezierCmdBuffer.Count - 1);
                         }
                         else
                         {
                             newDrawCmd.ClipRect = currentClipRect;
-                            newBezierCmd.ClipRect = currentClipRect;
                         }
                     }
                     else
                     {
                         newDrawCmd.ClipRect = currentClipRect;
-                        newBezierCmd.ClipRect = currentClipRect;
                     }
                 }
                 drawCmdBuffer[drawCmdBuffer.Count - 1] = newDrawCmd;
-                bezierCmdBuffer[bezierCmdBuffer.Count - 1] = newBezierCmd;
             }
+
+            // TODO Update textmesh clip rect?
         }
 
     }

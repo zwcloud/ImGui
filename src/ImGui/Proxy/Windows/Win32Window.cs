@@ -532,9 +532,12 @@ namespace ImGui
             }
         }
 
+        public bool Closed { get; private set; } = false;
+
         public void Close()
         {
             DestroyWindow(this.Pointer);
+            this.Closed = true;
         }
 
         public void Hide()
@@ -574,7 +577,7 @@ namespace ImGui
             }
 
             //run gui
-            guiMethod();
+            guiMethod?.Invoke();
         }
         #endregion
     }
