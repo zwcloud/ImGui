@@ -44,7 +44,7 @@ namespace ImGui
                 // Non Anti-aliased Stroke
                 int idx_count = count*6;
                 int vtx_count = count*4;      // FIXME-OPT: Not sharing edges
-                DrawBuffer.PrimReserve(idx_count, vtx_count);
+                ShapeMesh.PrimReserve(idx_count, vtx_count);
 
                 for (int i1 = 0; i1 < count; i1++)
                 {
@@ -60,19 +60,19 @@ namespace ImGui
                     var vertex1 = new DrawVertex { pos = new PointF(p2.X + dy, p2.Y - dx), uv = PointF.Zero, color = (ColorF)col };
                     var vertex2 = new DrawVertex { pos = new PointF(p2.X - dy, p2.Y + dx), uv = PointF.Zero, color = (ColorF)col };
                     var vertex3 = new DrawVertex { pos = new PointF(p1.X - dy, p1.Y + dx), uv = PointF.Zero, color = (ColorF)col };
-                    DrawBuffer.AppendVertex(vertex0);
-                    DrawBuffer.AppendVertex(vertex1);
-                    DrawBuffer.AppendVertex(vertex2);
-                    DrawBuffer.AppendVertex(vertex3);
+                    ShapeMesh.AppendVertex(vertex0);
+                    ShapeMesh.AppendVertex(vertex1);
+                    ShapeMesh.AppendVertex(vertex2);
+                    ShapeMesh.AppendVertex(vertex3);
 
-                    DrawBuffer.AppendIndex(0);
-                    DrawBuffer.AppendIndex(1);
-                    DrawBuffer.AppendIndex(2);
-                    DrawBuffer.AppendIndex(0);
-                    DrawBuffer.AppendIndex(2);
-                    DrawBuffer.AppendIndex(3);
+                    ShapeMesh.AppendIndex(0);
+                    ShapeMesh.AppendIndex(1);
+                    ShapeMesh.AppendIndex(2);
+                    ShapeMesh.AppendIndex(0);
+                    ShapeMesh.AppendIndex(2);
+                    ShapeMesh.AppendIndex(3);
 
-                    DrawBuffer._currentIdx += 4;
+                    ShapeMesh._currentIdx += 4;
                 }
             }
         }
@@ -92,18 +92,18 @@ namespace ImGui
                 // Non Anti-aliased Fill
                 int idx_count = (points_count-2)*3;
                 int vtx_count = points_count;
-                DrawBuffer.PrimReserve(idx_count, vtx_count);
+                ShapeMesh.PrimReserve(idx_count, vtx_count);
                 for (int i = 0; i < vtx_count; i++)
                 {
-                    DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)points[i], uv = PointF.Zero, color = (ColorF)col });
+                    ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)points[i], uv = PointF.Zero, color = (ColorF)col });
                 }
                 for (int i = 2; i < points_count; i++)
                 {
-                    DrawBuffer.AppendIndex(0);
-                    DrawBuffer.AppendIndex(i-1);
-                    DrawBuffer.AppendIndex(i);
+                    ShapeMesh.AppendIndex(0);
+                    ShapeMesh.AppendIndex(i-1);
+                    ShapeMesh.AppendIndex(i);
                 }
-                DrawBuffer._currentIdx += vtx_count;
+                ShapeMesh._currentIdx += vtx_count;
             }
         }
         
@@ -114,19 +114,19 @@ namespace ImGui
             Point d = new Point(a.X, c.Y);
             Point uv = Point.Zero;
 
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)col });
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)col });
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)col });
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)d, uv = PointF.Zero, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = PointF.Zero, color = (ColorF)col });
 
-            DrawBuffer.AppendIndex(0);
-            DrawBuffer.AppendIndex(1);
-            DrawBuffer.AppendIndex(2);
-            DrawBuffer.AppendIndex(0);
-            DrawBuffer.AppendIndex(2);
-            DrawBuffer.AppendIndex(3);
+            ShapeMesh.AppendIndex(0);
+            ShapeMesh.AppendIndex(1);
+            ShapeMesh.AppendIndex(2);
+            ShapeMesh.AppendIndex(0);
+            ShapeMesh.AppendIndex(2);
+            ShapeMesh.AppendIndex(3);
 
-            DrawBuffer._currentIdx += 4;
+            ShapeMesh._currentIdx += 4;
         }
 
         void PrimRectUV(Point a, Point c, Point uv_a, Point uv_c, Color col)
@@ -136,19 +136,19 @@ namespace ImGui
             Point uv_b = new Point(uv_c.X, uv_a.Y);
             Point uv_d = new Point(uv_a.X, uv_c.Y);
 
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uv_a, color = (ColorF)col });
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uv_b, color = (ColorF)col });
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uv_c, color = (ColorF)col });
-            DrawBuffer.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uv_d, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uv_a, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uv_b, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uv_c, color = (ColorF)col });
+            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uv_d, color = (ColorF)col });
 
-            DrawBuffer.AppendIndex(0);
-            DrawBuffer.AppendIndex(1);
-            DrawBuffer.AppendIndex(2);
-            DrawBuffer.AppendIndex(0);
-            DrawBuffer.AppendIndex(2);
-            DrawBuffer.AppendIndex(3);
+            ShapeMesh.AppendIndex(0);
+            ShapeMesh.AppendIndex(1);
+            ShapeMesh.AppendIndex(2);
+            ShapeMesh.AppendIndex(0);
+            ShapeMesh.AppendIndex(2);
+            ShapeMesh.AppendIndex(3);
 
-            DrawBuffer._currentIdx += 4;
+            ShapeMesh._currentIdx += 4;
         }
 
 
@@ -174,7 +174,7 @@ namespace ImGui
             }
             else
             {
-                DrawBuffer.PrimReserve(6, 4);
+                ShapeMesh.PrimReserve(6, 4);
                 PrimRect(a, b, col);
             }
         }

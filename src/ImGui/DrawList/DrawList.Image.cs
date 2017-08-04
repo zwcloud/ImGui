@@ -10,7 +10,7 @@ namespace ImGui
             if (MathEx.AmostZero(col.A))
                 return;
             this.AddImageDrawCommand(texture);
-            ImageBuffer.PrimReserve(6, 4);
+            ImageMesh.PrimReserve(6, 4);
             AddImageRect(a, b, uv0, uv1, col);
         }
 
@@ -22,17 +22,17 @@ namespace ImGui
             Point uv_b = new Point(uv_c.X, uv_a.Y);
             Point uv_d = new Point(uv_a.X, uv_c.Y);
 
-            ImageBuffer.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uv_a, color = (ColorF)col });
-            ImageBuffer.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uv_b, color = (ColorF)col });
-            ImageBuffer.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uv_c, color = (ColorF)col });
-            ImageBuffer.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uv_d, color = (ColorF)col });
-            ImageBuffer.AppendIndex(0);
-            ImageBuffer.AppendIndex(1);
-            ImageBuffer.AppendIndex(2);
-            ImageBuffer.AppendIndex(0);
-            ImageBuffer.AppendIndex(2);
-            ImageBuffer.AppendIndex(3);
-            ImageBuffer._currentIdx += 4;
+            ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uv_a, color = (ColorF)col });
+            ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uv_b, color = (ColorF)col });
+            ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uv_c, color = (ColorF)col });
+            ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uv_d, color = (ColorF)col });
+            ImageMesh.AppendIndex(0);
+            ImageMesh.AppendIndex(1);
+            ImageMesh.AppendIndex(2);
+            ImageMesh.AppendIndex(0);
+            ImageMesh.AppendIndex(2);
+            ImageMesh.AppendIndex(3);
+            ImageMesh._currentIdx += 4;
         }
 
     }

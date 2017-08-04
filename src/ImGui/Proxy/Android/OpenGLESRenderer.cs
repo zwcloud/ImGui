@@ -340,9 +340,9 @@ void main()
 
         public void RenderDrawList(DrawList drawList, int width, int height)
         {
-            DoRender(m, drawList.DrawBuffer.CommandBuffer, drawList.DrawBuffer.IndexBuffer, drawList.DrawBuffer.VertexBuffer, width, height);
+            DoRender(m, drawList.ShapeMesh.CommandBuffer, drawList.ShapeMesh.IndexBuffer, drawList.ShapeMesh.VertexBuffer, width, height);
             //DoRender(mExtra, drawList.BezierBuffer.CommandBuffer, drawList.BezierBuffer.IndexBuffer, drawList.BezierBuffer.VertexBuffer, width, height);
-            DoRender(mImage, drawList.ImageBuffer.CommandBuffer, drawList.ImageBuffer.IndexBuffer, drawList.ImageBuffer.VertexBuffer, width, height);
+            DoRender(mImage, drawList.ImageMesh.CommandBuffer, drawList.ImageMesh.IndexBuffer, drawList.ImageMesh.VertexBuffer, width, height);
         }
 
         public void ShutDown()
