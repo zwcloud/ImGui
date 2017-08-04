@@ -178,8 +178,8 @@ void main()
         private static readonly uint[] UIntBuffer = { 0, 0, 0, 0 };
         uint renderedTexture;
         uint TextFrameBuffer;
-        ImGui.Internal.List<DrawVertex> QuadVertices = new ImGui.Internal.List<DrawVertex>(4);
-        ImGui.Internal.List<DrawIndex> QuadIndices = new ImGui.Internal.List<DrawIndex>(6);
+        ImGui.Internal.UnsafeList<DrawVertex> QuadVertices = new ImGui.Internal.UnsafeList<DrawVertex>(4);
+        ImGui.Internal.UnsafeList<DrawIndex> QuadIndices = new ImGui.Internal.UnsafeList<DrawIndex>(6);
         //#END
 
         public void Init(IntPtr windowHandle, Size size)
@@ -264,7 +264,7 @@ void main()
         }
 
         private static void DoRender(OpenGLMaterial material,
-            ImGui.Internal.List<DrawCommand> commandBuffer, ImGui.Internal.List<DrawIndex> indexBuffer, ImGui.Internal.List<DrawVertex> vertexBuffer,
+            ImGui.Internal.UnsafeList<DrawCommand> commandBuffer, ImGui.Internal.UnsafeList<DrawIndex> indexBuffer, ImGui.Internal.UnsafeList<DrawVertex> vertexBuffer,
             int width, int height)
         {
             // Backup GL state

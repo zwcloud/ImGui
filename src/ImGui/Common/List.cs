@@ -7,15 +7,14 @@ using System.Runtime.InteropServices;
 
 namespace ImGui.Internal
 {
-    // Implements a variable-size List that uses an array of objects to store the
-    // elements. A List has a capacity, which is the allocated length
-    // of the internal array. As elements are added to a List, the capacity
-    // of the List is automatically increased as required by reallocating the
-    // internal array.
-    // 
+    /// <summary>
+    /// Modified System.Collections.Generic.List so we can get an unsafe pointer to list items.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    [DebuggerStepThrough]
     [DebuggerDisplay("Count = {Count}")]
     [Serializable]
-    internal class List<T> : IList<T>, System.Collections.IList, IReadOnlyList<T>
+    internal class UnsafeList<T> : IList<T>, System.Collections.IList, IReadOnlyList<T>
     {
         private const int _defaultCapacity = 4;
 
@@ -32,7 +31,7 @@ namespace ImGui.Internal
         // of zero. Upon adding the first element to the list the capacity is
         // increased to _defaultCapacity, and then increased in multiples of two
         // as required.
-        public List()
+        public UnsafeList()
         {
             _items = _emptyArray;
         }
@@ -41,7 +40,7 @@ namespace ImGui.Internal
         // initially empty, but will have room for the given number of elements
         // before any reallocations are required.
         // 
-        public List(int capacity)
+        public UnsafeList(int capacity)
         {
             if (capacity < 0) throw new ArgumentOutOfRangeException("capacity", "capacity cannot be negative");
             Contract.EndContractBlock();
@@ -56,7 +55,7 @@ namespace ImGui.Internal
         // size and capacity of the new list will both be equal to the size of the
         // given collection.
         // 
-        public List(IEnumerable<T> collection)
+        public UnsafeList(IEnumerable<T> collection)
         {
             if (collection == null)
                 throw new ArgumentNullException("collection");
@@ -472,7 +471,7 @@ namespace ImGui.Internal
             return default(T);
         }
 
-        public List<T> FindAll(Predicate<T> match)
+        public UnsafeList<T> FindAll(Predicate<T> match)
         {
             if (match == null)
             {
@@ -480,7 +479,7 @@ namespace ImGui.Internal
             }
             Contract.EndContractBlock();
 
-            List<T> list = new List<T>();
+            UnsafeList<T> list = new UnsafeList<T>();
             for (int i = 0; i < _size; i++)
             {
                 if (match(_items[i]))
@@ -653,7 +652,7 @@ namespace ImGui.Internal
             return new Enumerator(this);
         }
 
-        public List<T> GetRange(int index, int count)
+        public UnsafeList<T> GetRange(int index, int count)
         {
             if (index < 0)
             {
@@ -669,10 +668,10 @@ namespace ImGui.Internal
             {
                 throw new ArgumentException("Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
             }
-            Contract.Ensures(Contract.Result<List<T>>() != null);
+            Contract.Ensures(Contract.Result<UnsafeList<T>>() != null);
             Contract.EndContractBlock();
 
-            List<T> list = new List<T>(count);
+            UnsafeList<T> list = new UnsafeList<T>(count);
             Array.Copy(_items, index, list._items, 0, count);
             list._size = count;
             return list;
@@ -1178,12 +1177,12 @@ namespace ImGui.Internal
         [Serializable]
         public struct Enumerator : IEnumerator<T>, System.Collections.IEnumerator
         {
-            private List<T> list;
+            private UnsafeList<T> list;
             private int index;
             private int version;
             private T current;
 
-            internal Enumerator(List<T> list)
+            internal Enumerator(UnsafeList<T> list)
             {
                 this.list = list;
                 index = 0;
@@ -1198,7 +1197,7 @@ namespace ImGui.Internal
             public bool MoveNext()
             {
 
-                List<T> localList = list;
+                UnsafeList<T> localList = list;
 
                 if (version == localList._version && ((uint)index < (uint)localList._size))
                 {

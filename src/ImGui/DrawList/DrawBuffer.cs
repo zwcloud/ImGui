@@ -3,9 +3,9 @@ namespace ImGui
 {
     class Mesh
     {
-        private readonly List<DrawCommand> commandBuffer = new List<DrawCommand>();
-        private readonly List<DrawIndex> indexBuffer = new List<DrawIndex>();
-        private readonly List<DrawVertex> vertexBuffer = new List<DrawVertex>();
+        private readonly UnsafeList<DrawCommand> commandBuffer = new UnsafeList<DrawCommand>();
+        private readonly UnsafeList<DrawIndex> indexBuffer = new UnsafeList<DrawIndex>();
+        private readonly UnsafeList<DrawVertex> vertexBuffer = new UnsafeList<DrawVertex>();
 
         public int _vtxWritePosition;
         public int _idxWritePosition;
@@ -15,7 +15,7 @@ namespace ImGui
         /// Commands. Typically 1 command = 1 gpu draw call.
         /// </summary>
         /// <remarks>Every command corresponds to 1 sub-mesh.</remarks>
-        public List<DrawCommand> CommandBuffer
+        public UnsafeList<DrawCommand> CommandBuffer
         {
             get { return commandBuffer; }
         }
@@ -23,7 +23,7 @@ namespace ImGui
         /// <summary>
         /// Index buffer. Each command consume DrawCommand.ElemCount of those
         /// </summary>
-        public List<DrawIndex> IndexBuffer
+        public UnsafeList<DrawIndex> IndexBuffer
         {
             get { return indexBuffer; }
         }
@@ -31,7 +31,7 @@ namespace ImGui
         /// <summary>
         /// Vertex buffer
         /// </summary>
-        public List<DrawVertex> VertexBuffer
+        public UnsafeList<DrawVertex> VertexBuffer
         {
             get { return vertexBuffer; }
         }
@@ -102,7 +102,7 @@ namespace ImGui
         /// </summary>
         /// <param name="indexBuffer"></param>
         /// <param name="vertexBuffer"></param>
-        public void Fill(List<DrawIndex> indexBuffer, List<DrawVertex> vertexBuffer)
+        public void Fill(UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer)
         {
             DrawCommand drawCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
             var idx_count = indexBuffer.Count;

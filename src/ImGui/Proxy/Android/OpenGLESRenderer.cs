@@ -241,7 +241,7 @@ void main()
         }
 
         private static void DoRender(Material material,
-            ImGui.Internal.List<DrawCommand> commandBuffer, ImGui.Internal.List<DrawIndex> indexBuffer, ImGui.Internal.List<DrawVertex> vertexBuffer,
+            ImGui.Internal.UnsafeList<DrawCommand> commandBuffer, ImGui.Internal.UnsafeList<DrawIndex> indexBuffer, ImGui.Internal.UnsafeList<DrawVertex> vertexBuffer,
             int width, int height)
         {
             // Backup GL state
