@@ -1,4 +1,5 @@
-﻿using ImGui.Common.Primitive;
+﻿using ImGui.Common;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {

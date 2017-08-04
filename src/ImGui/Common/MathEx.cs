@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ImGui.Common.Primitive;
 
-namespace ImGui
+namespace ImGui.Common
 {
     /// <summary>
     /// Extended class for System.Math

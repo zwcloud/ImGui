@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ImGui
+namespace ImGui.Common
 {
     public class Profile
     {

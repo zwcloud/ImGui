@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ImGui.Common;
 using Typography.OpenFont;
 using Xunit;
 using Xunit.Abstractions;
