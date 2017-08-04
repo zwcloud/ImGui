@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGLES;
+using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui
@@ -258,7 +259,7 @@ void main()
         }
 
         private static void DoRender(Material material,
-            ImGui.Internal.UnsafeList<DrawCommand> commandBuffer, ImGui.Internal.UnsafeList<DrawIndex> indexBuffer, ImGui.Internal.UnsafeList<DrawVertex> vertexBuffer,
+            UnsafeList<DrawCommand> commandBuffer, UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer,
             int width, int height)
         {
             // Backup GL state

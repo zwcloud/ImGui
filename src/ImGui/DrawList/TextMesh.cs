@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui
@@ -15,12 +16,12 @@ namespace ImGui
     class TextMesh
     {
         // triangle strip will be rendered as triangle strip
-        ImGui.Internal.UnsafeList<DrawVertex> vertexBuffer = new ImGui.Internal.UnsafeList<DrawVertex>();
-        ImGui.Internal.UnsafeList<DrawIndex> indexBuffer = new ImGui.Internal.UnsafeList<DrawIndex>();
+        UnsafeList<DrawVertex> vertexBuffer = new UnsafeList<DrawVertex>();
+        UnsafeList<DrawIndex> indexBuffer = new UnsafeList<DrawIndex>();
 
         // quadratic bezier segments will be rendered as triangle list
-        ImGui.Internal.UnsafeList<DrawVertex> bezierVertexBuffer = new ImGui.Internal.UnsafeList<DrawVertex>();
-        ImGui.Internal.UnsafeList<DrawIndex> bezierIndexBuffer = new ImGui.Internal.UnsafeList<DrawIndex>();
+        UnsafeList<DrawVertex> bezierVertexBuffer = new UnsafeList<DrawVertex>();
+        UnsafeList<DrawIndex> bezierIndexBuffer = new UnsafeList<DrawIndex>();
 
         DrawCommand triangleStripCommand = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleStrip };
         DrawCommand segmentCommand = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleList };
@@ -67,13 +68,13 @@ namespace ImGui
         /// <summary>
         /// Vertex buffer
         /// </summary>
-        public ImGui.Internal.UnsafeList<DrawVertex> VertexBuffer
+        public UnsafeList<DrawVertex> VertexBuffer
         {
             get { return vertexBuffer; }
             set { vertexBuffer = value; }
         }
 
-        public ImGui.Internal.UnsafeList<DrawIndex> IndexBuffer
+        public UnsafeList<DrawIndex> IndexBuffer
         {
             get { return indexBuffer; }
             set { indexBuffer = value; }
@@ -82,7 +83,7 @@ namespace ImGui
         /// <summary>
         /// Index buffer for bezier curves
         /// </summary>
-        public ImGui.Internal.UnsafeList<DrawIndex> BezierIndexBuffer
+        public UnsafeList<DrawIndex> BezierIndexBuffer
         {
             get { return bezierIndexBuffer; }
             set { bezierIndexBuffer = value; }
@@ -91,7 +92,7 @@ namespace ImGui
         /// <summary>
         /// Vertex buffer for beziers curves
         /// </summary>
-        public ImGui.Internal.UnsafeList<DrawVertex> BezierVertexBuffer
+        public UnsafeList<DrawVertex> BezierVertexBuffer
         {
             get { return bezierVertexBuffer; }
         }

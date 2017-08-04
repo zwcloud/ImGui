@@ -1,8 +1,7 @@
 ﻿using System;
 using CSharpGL;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui
@@ -178,8 +177,8 @@ void main()
         private static readonly uint[] UIntBuffer = { 0, 0, 0, 0 };
         uint renderedTexture;
         uint TextFrameBuffer;
-        ImGui.Internal.UnsafeList<DrawVertex> QuadVertices = new ImGui.Internal.UnsafeList<DrawVertex>(4);
-        ImGui.Internal.UnsafeList<DrawIndex> QuadIndices = new ImGui.Internal.UnsafeList<DrawIndex>(6);
+        UnsafeList<DrawVertex> QuadVertices = new UnsafeList<DrawVertex>(4);
+        UnsafeList<DrawIndex> QuadIndices = new UnsafeList<DrawIndex>(6);
         //#END
 
         public void Init(IntPtr windowHandle, Size size)
@@ -264,7 +263,7 @@ void main()
         }
 
         private static void DoRender(OpenGLMaterial material,
-            ImGui.Internal.UnsafeList<DrawCommand> commandBuffer, ImGui.Internal.UnsafeList<DrawIndex> indexBuffer, ImGui.Internal.UnsafeList<DrawVertex> vertexBuffer,
+            UnsafeList<DrawCommand> commandBuffer, UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer,
             int width, int height)
         {
             // Backup GL state

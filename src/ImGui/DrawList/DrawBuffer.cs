@@ -1,4 +1,5 @@
-﻿using ImGui.Internal;
+﻿using ImGui.Common;
+
 namespace ImGui
 {
     class Mesh

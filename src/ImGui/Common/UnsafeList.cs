@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace ImGui.Internal
+namespace ImGui.Common
 {
     /// <summary>
     /// Modified System.Collections.Generic.List so we can get an unsafe pointer to list items.
