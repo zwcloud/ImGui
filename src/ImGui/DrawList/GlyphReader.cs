@@ -8,16 +8,6 @@ namespace Typography.OpenFont
 {
     internal static class GlyphReader
     {
-        private static GlyphPointF LoopGet(this GlyphPointF[] points, int index, int firstIndex, int lastIndex)
-        {
-            if(index > lastIndex)
-            {
-                index -= lastIndex;
-            }
-            index = index % points.Length;
-            return points[index];
-        }
-
         public static void Read(GlyphPointF[] points, ushort[] endPoints, float offsetX, float offsetY, float scale,
             out List<List<Point>> polygons,
             out List<(Point, Point, Point)> bezierSegments,

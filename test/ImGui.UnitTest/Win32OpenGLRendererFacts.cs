@@ -28,7 +28,7 @@ namespace ImGui.UnitTest
             }
 
             [Theory]
-            [InlineData("msjh.ttf", "D", 400)]
+            [InlineData("msjh.ttf", "A", 400)]
             [InlineData("Helvetica.ttf", "A", 400)]
             [InlineData("unifont-9.0.06.ttf", "A", 400)]
             public void RenderAGlyph(string fontName, string text, int fontSize)
