@@ -9,34 +9,25 @@ namespace ImGui
     internal partial class DrawList
     {
         private readonly Mesh drawBuffer = new Mesh();
-        private readonly TextMesh textMesh = new TextMesh();
         private readonly Mesh imageBuffer = new Mesh();
+        private readonly TextMesh textMesh = new TextMesh();
 
-        public System.Collections.Generic.List<Rect> clipRectStack = new System.Collections.Generic.List<Rect>(2);
+        public List<Rect> clipRectStack = new List<Rect>(2);
 
         /// <summary>
         /// Mesh (colored triangles)
         /// </summary>
-        public Mesh DrawBuffer
-        {
-            get { return drawBuffer; }
-        }
+        public Mesh DrawBuffer => drawBuffer;
 
         /// <summary>
         /// Text mesh
         /// </summary>
-        public TextMesh TextMesh
-        {
-            get { return textMesh; }
-        }
+        public TextMesh TextMesh => textMesh;
 
         /// <summary>
         /// Mesh (textured triangles)
         /// </summary>
-        public Mesh ImageBuffer
-        {
-            get { return imageBuffer; }
-        }
+        public Mesh ImageBuffer => imageBuffer;
 
         /// <summary>
         /// Clear the drawlist
@@ -54,7 +45,7 @@ namespace ImGui
             // images
             ImageBuffer.Clear();
 
-            this.clipRectStack.Clear();
+            clipRectStack.Clear();
         }
 
         public void Init()
@@ -67,9 +58,9 @@ namespace ImGui
         public void AddDrawCommand()
         {
             DrawCommand draw_cmd = new DrawCommand();
-            if (this.clipRectStack.Count > 0)
+            if (clipRectStack.Count > 0)
             {
-                draw_cmd.ClipRect = clipRectStack[this.clipRectStack.Count - 1];
+                draw_cmd.ClipRect = clipRectStack[clipRectStack.Count - 1];
             }
             else
             {
@@ -81,16 +72,15 @@ namespace ImGui
             {
                 return;
             }
-            draw_cmd.PrimitiveType = PrimitiveType.TriangleList;
             DrawBuffer.CommandBuffer.Add(draw_cmd);
         }
 
         public void AddImageDrawCommand(ITexture texture)
         {
             DrawCommand draw_cmd = new DrawCommand();
-            if (this.clipRectStack.Count > 0)
+            if (clipRectStack.Count > 0)
             {
-                draw_cmd.ClipRect = clipRectStack[this.clipRectStack.Count - 1];
+                draw_cmd.ClipRect = clipRectStack[clipRectStack.Count - 1];
             }
             else
             {
@@ -102,17 +92,15 @@ namespace ImGui
                 return;
             }
 
-            draw_cmd.PrimitiveType = PrimitiveType.TriangleList;
-
             draw_cmd.TextureData = texture;
             ImageBuffer.CommandBuffer.Add(draw_cmd);
         }
 
         public void PushClipRect(Rect rect, bool intersectWithCurrentClipRect = false)
         {
-            if (intersectWithCurrentClipRect && this.clipRectStack.Count > 0)
+            if (intersectWithCurrentClipRect && clipRectStack.Count > 0)
             {
-                Rect currentClipRect = clipRectStack[this.clipRectStack.Count - 1];
+                Rect currentClipRect = clipRectStack[clipRectStack.Count - 1];
                 rect.Intersect(currentClipRect);
             }
             clipRectStack.Add(rect);
@@ -134,9 +122,9 @@ namespace ImGui
             // If current command is used with different settings we need to add a new command
             // Get current clip rect
             Rect currentClipRect;
-            if (this.clipRectStack.Count > 0)
+            if (clipRectStack.Count > 0)
             {
-                currentClipRect = clipRectStack[this.clipRectStack.Count - 1];
+                currentClipRect = clipRectStack[clipRectStack.Count - 1];
             }
             else
             {

@@ -23,8 +23,8 @@ namespace ImGui
         UnsafeList<DrawVertex> bezierVertexBuffer = new UnsafeList<DrawVertex>();
         UnsafeList<DrawIndex> bezierIndexBuffer = new UnsafeList<DrawIndex>();
 
-        DrawCommand triangleStripCommand = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleStrip };
-        DrawCommand segmentCommand = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleList };
+        DrawCommand triangleStripCommand = new DrawCommand { ClipRect = Rect.Big };
+        DrawCommand segmentCommand = new DrawCommand { ClipRect = Rect.Big };
 
         public int _vtxWritePosition;
         public int _idxWritePosition;
@@ -118,7 +118,7 @@ namespace ImGui
             this._vtxWritePosition = 0;
             this._idxWritePosition = 0;
             _currentIdx = 0;
-            Command0 = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleStrip };
+            Command0 = new DrawCommand { ClipRect = Rect.Big };
 
             // bezier segments
             this.BezierIndexBuffer.Clear();
@@ -126,7 +126,7 @@ namespace ImGui
             _bezier_vtxWritePosition = 0;
             _bezier_idxWritePosition = 0;
             _bezier_currentIdx = 0;
-            Command1 = new DrawCommand { ClipRect = Rect.Big, PrimitiveType = PrimitiveType.TriangleList };
+            Command1 = new DrawCommand { ClipRect = Rect.Big };
         }
 
         private void AppendVertex(DrawVertex vertex)
