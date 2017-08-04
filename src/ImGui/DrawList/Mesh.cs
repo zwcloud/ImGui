@@ -6,7 +6,7 @@ namespace ImGui
     {
         private int vtxWritePosition;
         private int idxWritePosition;
-        private int currentIdx;
+        public int currentIdx;
 
         /// <summary>
         /// Commands. Typically 1 command = 1 gpu draw call.

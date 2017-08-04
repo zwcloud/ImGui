@@ -72,7 +72,7 @@ namespace ImGui
                     ShapeMesh.AppendIndex(2);
                     ShapeMesh.AppendIndex(3);
 
-                    ShapeMesh._currentIdx += 4;
+                    ShapeMesh.currentIdx += 4;
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace ImGui
                     ShapeMesh.AppendIndex(i-1);
                     ShapeMesh.AppendIndex(i);
                 }
-                ShapeMesh._currentIdx += vtx_count;
+                ShapeMesh.currentIdx += vtx_count;
             }
         }
         
@@ -126,7 +126,7 @@ namespace ImGui
             ShapeMesh.AppendIndex(2);
             ShapeMesh.AppendIndex(3);
 
-            ShapeMesh._currentIdx += 4;
+            ShapeMesh.currentIdx += 4;
         }
 
         void PrimRectUV(Point a, Point c, Point uv_a, Point uv_c, Color col)
@@ -148,7 +148,7 @@ namespace ImGui
             ShapeMesh.AppendIndex(2);
             ShapeMesh.AppendIndex(3);
 
-            ShapeMesh._currentIdx += 4;
+            ShapeMesh.currentIdx += 4;
         }
 
 

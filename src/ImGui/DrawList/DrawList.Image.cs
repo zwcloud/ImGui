@@ -32,7 +32,7 @@ namespace ImGui
             ImageMesh.AppendIndex(0);
             ImageMesh.AppendIndex(2);
             ImageMesh.AppendIndex(3);
-            ImageMesh._currentIdx += 4;
+            ImageMesh.currentIdx += 4;
         }
 
     }
