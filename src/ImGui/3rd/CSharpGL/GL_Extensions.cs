@@ -52,8 +52,11 @@ namespace CSharpGL
             _glGenFramebuffersEXT = GetDelegateFor<glGenFramebuffersEXT>();
             _glBindFramebufferEXT = GetDelegateFor<glBindFramebufferEXT>();
             _glFramebufferTexture = GetDelegateFor<glFramebufferTexture>();
+            _glFramebufferTexture2DEXT = GetDelegateFor<glFramebufferTexture2DEXT>();
             _glDrawBuffers = GetDelegateFor<glDrawBuffers>();
             _glCheckFramebufferStatusEXT = GetDelegateFor<glCheckFramebufferStatusEXT>();
+
+            _glTexImage2DMultisample = GetDelegateFor<glTexImage2DMultisample>();
 
             allFunctionsLoaded = true;
         }
@@ -99,6 +102,9 @@ namespace CSharpGL
         private static glFramebufferTexture _glFramebufferTexture;
         private static glDrawBuffers _glDrawBuffers;
         private static glCheckFramebufferStatusEXT _glCheckFramebufferStatusEXT;
+
+        private static glFramebufferTexture2DEXT _glFramebufferTexture2DEXT;
+        private static glTexImage2DMultisample _glTexImage2DMultisample;
 
         #region OpenGL 1.2
 
@@ -4667,7 +4673,7 @@ namespace CSharpGL
 
         public static void FramebufferTexture2DEXT(uint target, uint attachment, uint textarget, uint texture, int level)
         {
-            GetDelegateFor<glFramebufferTexture2DEXT>()(target, attachment, textarget, texture, level);
+            _glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
         }
 
         public static void FramebufferTexture3DEXT(uint target, uint attachment, uint textarget, uint texture, int level, int zoffset)
@@ -6146,5 +6152,11 @@ namespace CSharpGL
         public const uint GL_TEXTURE_SWIZZLE_A = 0x8E45;
         public const uint GL_TEXTURE_SWIZZLE_RGBA = 0x8E46;
 
+
+        public static void TexImage2DMultisample(uint target, int samples, uint internalformat, int width, int height, uint fixedsamplelocations)
+        {
+            _glTexImage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
+        }
+        private delegate void glTexImage2DMultisample(uint target, int samples, uint internalformat, int width, int height, uint fixedsamplelocations);
     }
 }

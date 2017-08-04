@@ -206,7 +206,7 @@ namespace ImGui
 
         public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color)
         {
-            PrimBezierReserve(segments.Count * 3);
+            PrimReserve(segments.Count * 3, segments.Count * 3);
             for (int i = 0; i < segments.Count; i++)
             {
                 var segment = segments[i];
@@ -216,13 +216,14 @@ namespace ImGui
                 var uv0 = new PointF(0, 0);
                 var uv1 = new PointF(0.5, 0);
                 var uv2 = new PointF(1, 1);
-                AppendBezierVertex(new DrawVertex { pos = (PointF)startPoint, uv = uv0, color = (ColorF)color });
-                AppendBezierVertex(new DrawVertex { pos = (PointF)controlPoint, uv = uv1, color = (ColorF)color });
-                AppendBezierVertex(new DrawVertex { pos = (PointF)endPoint, uv = uv2, color = (ColorF)color });
-                AppendBezierIndex(new DrawIndex { Index = 0 });
-                AppendBezierIndex(new DrawIndex { Index = 1 });
-                AppendBezierIndex(new DrawIndex { Index = 2 });
-                _bezier_currentIdx += 3;
+                AppendVertex(new DrawVertex { pos = (PointF)startPoint, uv = uv0, color = (ColorF)color });
+                AppendVertex(new DrawVertex { pos = (PointF)controlPoint, uv = uv1, color = (ColorF)color });
+                AppendVertex(new DrawVertex { pos = (PointF)endPoint, uv = uv2, color = (ColorF)color });
+
+                AppendIndex(0);
+                AppendIndex(1);
+                AppendIndex(2);
+                _currentIdx += 3;
             }
         }
 

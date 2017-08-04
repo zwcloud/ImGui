@@ -235,6 +235,40 @@ void main()
 	}
 }
 "
+// MSAA fragment shader, should be used together with multi-sampled framebuffer
+/*
+    #version 330
+    #extension GL_ARB_texture_multisample : enable
+    uniform sampler2DMS Texture;
+    in vec2 Frag_UV;
+    in vec4 Frag_Color;
+    out vec4 Out_Color;
+
+    int samples = 4;
+    float div = 1.0/samples;
+
+    void main()
+    {
+        int count = 0;
+        ivec2 texcoord = ivec2(textureSize(Texture) * Frag_UV); // used to fetch msaa texel location
+        for (int i=0;i<samples;i++)
+        {
+            float r = texelFetch(Texture, texcoord, i).r;
+            int m = int(mod(r*255, 2));
+            if(m == 1)
+            {
+                count = count + 1;
+            }
+        }
+
+        if(count == 0)
+        {
+            discard;
+        }
+
+        Out_Color = vec4(0,0,0,count * div);
+    }
+*/
     );
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
@@ -309,6 +343,8 @@ void main()
 
                 // restore to default framebuffer
                 GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
+                // unbind texture
+                GL.BindTexture(GL.GL_TEXTURE_2D, 0);
             }
 
             // Other state
@@ -487,6 +523,7 @@ void main()
                 Utility.CheckGLError();
 
                 // Draw quadratic bezier segments
+#if (false)
                 {
                     var material = GlyphMaterial;
                     var vertexBuffer = textMesh.BezierVertexBuffer;
@@ -507,6 +544,7 @@ void main()
                     GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
                     GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);
                 }
+#endif
 
                 // TODO combine two drawcalls, and actually triangles and bezier segments can be saved in one vertexbuffer and indexbuffer
             }
@@ -523,7 +561,8 @@ void main()
 
                 GL.Enable(GL.GL_BLEND);
                 GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
-                GL.BlendFunc(GL.GL_ONE, GL.GL_ZERO);
+                //GL.BlendFunc(GL.GL_ONE, GL.GL_ZERO);
+                GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
                 Material material = TextMaterial;
                 material.program.Bind();
