@@ -413,7 +413,7 @@ void main()
                     GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
                     GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
-                    var drawCmd = textMesh.Command0;
+                    var drawCmd = textMesh.Command;
                     var clipRect = drawCmd.ClipRect;
                     GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
                     GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);

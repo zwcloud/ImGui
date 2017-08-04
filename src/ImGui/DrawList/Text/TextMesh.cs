@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 
@@ -15,124 +14,42 @@ namespace ImGui
     /// </remarks>
     class TextMesh
     {
-        // triangle strip will be rendered as triangle strip
-        UnsafeList<DrawVertex> vertexBuffer = new UnsafeList<DrawVertex>();
-        UnsafeList<DrawIndex> indexBuffer = new UnsafeList<DrawIndex>();
-
-        // quadratic bezier segments will be rendered as triangle list
-        UnsafeList<DrawVertex> bezierVertexBuffer = new UnsafeList<DrawVertex>();
-        UnsafeList<DrawIndex> bezierIndexBuffer = new UnsafeList<DrawIndex>();
-
-        DrawCommand triangleStripCommand = new DrawCommand { ClipRect = Rect.Big };
-        DrawCommand segmentCommand = new DrawCommand { ClipRect = Rect.Big };
-
-        public int _vtxWritePosition;
-        public int _idxWritePosition;
-        public int _currentIdx;
-        private int _bezier_vtxWritePosition;
-        private int _bezier_idxWritePosition;
-        private int _bezier_currentIdx;
-
-        private void AppendBezierVertex(DrawVertex vertex)
-        {
-            bezierVertexBuffer[_bezier_vtxWritePosition] = vertex;
-            _bezier_vtxWritePosition++;
-        }
-
-        private void AppendBezierIndex(int offsetToCurrentIndex)
-        {
-            bezierIndexBuffer[_bezier_idxWritePosition] = new DrawIndex { Index = _bezier_currentIdx + offsetToCurrentIndex };
-            _bezier_idxWritePosition++;
-        }
-
-        public void PrimBezierReserve(int segment_point_count)
-        {
-            if (segment_point_count == 0)
-            {
-                return;
-            }
-
-            int vtx_buffer_size = this.BezierVertexBuffer.Count;
-            this._bezier_vtxWritePosition = vtx_buffer_size;
-            this.BezierVertexBuffer.Resize(vtx_buffer_size + segment_point_count);
-
-            int idx_buffer_size = this.BezierIndexBuffer.Count;
-            this._bezier_idxWritePosition = idx_buffer_size;
-            this.BezierIndexBuffer.Resize(idx_buffer_size + segment_point_count);
-
-            var command = Command1;
-            triangleStripCommand.ElemCount += segment_point_count;
-            Command1 = command;
-        }
+        private int vtxWritePosition;
+        private int idxWritePosition;
+        private int currentIdx;
 
         /// <summary>
-        /// Vertex buffer
+        /// vertex buffer
         /// </summary>
-        public UnsafeList<DrawVertex> VertexBuffer
-        {
-            get { return vertexBuffer; }
-            set { vertexBuffer = value; }
-        }
-
-        public UnsafeList<DrawIndex> IndexBuffer
-        {
-            get { return indexBuffer; }
-            set { indexBuffer = value; }
-        }
-        
-        /// <summary>
-        /// Index buffer for bezier curves
-        /// </summary>
-        public UnsafeList<DrawIndex> BezierIndexBuffer
-        {
-            get { return bezierIndexBuffer; }
-            set { bezierIndexBuffer = value; }
-        }
+        public UnsafeList<DrawVertex> VertexBuffer { get; set; } = new UnsafeList<DrawVertex>();
 
         /// <summary>
-        /// Vertex buffer for beziers curves
+        /// index buffer
         /// </summary>
-        public UnsafeList<DrawVertex> BezierVertexBuffer
-        {
-            get { return bezierVertexBuffer; }
-        }
+        public UnsafeList<DrawIndex> IndexBuffer { get; set; } = new UnsafeList<DrawIndex>();
 
-        public DrawCommand Command0
-        {
-            get => triangleStripCommand;
-            set => triangleStripCommand = value;
-        }
-        public DrawCommand Command1
-        {
-            get => segmentCommand;
-            set => segmentCommand = value;
-        }
+        /// <summary>
+        /// draw command
+        /// </summary>
+        public DrawCommand Command { get; set; } = new DrawCommand { ClipRect = Rect.Big };
 
         public void Clear()
         {
-            _Path.Clear();
+            Path.Clear();
 
-            // triangles
             this.VertexBuffer.Clear();
             this.IndexBuffer.Clear();
-            this._vtxWritePosition = 0;
-            this._idxWritePosition = 0;
-            _currentIdx = 0;
-            Command0 = new DrawCommand { ClipRect = Rect.Big };
+            this.vtxWritePosition = 0;
+            this.idxWritePosition = 0;
+            this.currentIdx = 0;
 
-            // bezier segments
-            this.BezierIndexBuffer.Clear();
-            this.BezierVertexBuffer.Clear();
-            _bezier_vtxWritePosition = 0;
-            _bezier_idxWritePosition = 0;
-            _bezier_currentIdx = 0;
-            Command1 = new DrawCommand { ClipRect = Rect.Big };
+            this.Command = new DrawCommand { ClipRect = Rect.Big };
         }
 
         private void AppendVertex(DrawVertex vertex)
         {
-            vertexBuffer[_vtxWritePosition] = vertex;
-            _vtxWritePosition++;
+            this.VertexBuffer[this.vtxWritePosition] = vertex;
+            this.vtxWritePosition++;
         }
 
         /// <summary>
@@ -141,57 +58,57 @@ namespace ImGui
         /// <remarks>The value to insert is `_currentIdx + offsetToCurrentIndex`.</remarks>
         public void AppendIndex(int offsetToCurrentIndex)
         {
-            indexBuffer[_idxWritePosition] = new DrawIndex { Index = _currentIdx + offsetToCurrentIndex };
-            _idxWritePosition++;
+            this.IndexBuffer[this.idxWritePosition] = new DrawIndex { Index = this.currentIdx + offsetToCurrentIndex };
+            this.idxWritePosition++;
         }
 
-        public void PrimReserve(int vtx_count, int idx_count)
+        public void PrimReserve(int vtxCount, int idxCount)
         {
-            if (vtx_count == 0)
+            if (vtxCount == 0)
             {
                 return;
             }
 
-            int vtx_buffer_size = this.VertexBuffer.Count;
-            this._vtxWritePosition = vtx_buffer_size;
-            this.VertexBuffer.Resize(vtx_buffer_size + vtx_count);
+            int vtxBufferSize = this.VertexBuffer.Count;
+            this.vtxWritePosition = vtxBufferSize;
+            this.VertexBuffer.Resize(vtxBufferSize + vtxCount);
 
-            int idx_buffer_size = this.IndexBuffer.Count;
-            this._idxWritePosition = idx_buffer_size;
-            this.IndexBuffer.Resize(idx_buffer_size + idx_count);
+            int idxBufferSize = this.IndexBuffer.Count;
+            this.idxWritePosition = idxBufferSize;
+            this.IndexBuffer.Resize(idxBufferSize + idxCount);
 
-            var command = this.Command0;
-            command.ElemCount += vtx_count;
-            this.Command0 = command;
+            var command = this.Command;
+            command.ElemCount += vtxCount;
+            this.Command = command;
         }
 
-        private static readonly List<Point> _Path = new List<Point>();
+        private static readonly List<Point> Path = new List<Point>();
 
         public void PathClear()
         {
-            _Path.Clear();
+            Path.Clear();
         }
 
         public void PathMoveTo(Point point)
         {
-            _Path.Add(point);
+            Path.Add(point);
         }
 
         public void PathLineTo(Point pos)
         {
-            _Path.Add(pos);
+            Path.Add(pos);
         }
 
         public void PathClose()
         {
-            _Path.Add(_Path[0]);
+            Path.Add(Path[0]);
         }
 
         public void PathAddBezier(Point start, Point control, Point end)
         {
-            _Path.Add(start);
-            _Path.Add(control);
-            _Path.Add(end);
+            Path.Add(start);
+            Path.Add(control);
+            Path.Add(end);
         }
 
         public void AddTriangle(Point a, Point b, Point c, Color color)
@@ -203,7 +120,7 @@ namespace ImGui
             AppendIndex(0);
             AppendIndex(1);
             AppendIndex(2);
-            _currentIdx += 3;
+            this.currentIdx += 3;
         }
 
         public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color)
@@ -225,38 +142,39 @@ namespace ImGui
                 AppendIndex(0);
                 AppendIndex(1);
                 AppendIndex(2);
-                _currentIdx += 3;
+                this.currentIdx += 3;
             }
         }
 
-        TextGeometryContainer textGeometryContainer = new TextGeometryContainer();
+        private readonly TextGeometryContainer textGeometryContainer = new TextGeometryContainer();
         internal void Build(Point position, GUIStyle style, ITextContext textContext)
         {
             var color = style.Get<Color>(GUIStyleName.FontColor);
-            textContext.Build(position, color, textGeometryContainer);
+            this.textGeometryContainer.Clear();
+            textContext.Build(position, color, this.textGeometryContainer);
 
             // create mesh data
 
+            //FIXME Apply text color.
+
             // triangles
-            Color _color = new Color(1.01 / 255, 0, 0, 1);
-            foreach (var polygon in textGeometryContainer.Polygons)
+            Color tmpColor = new Color(1.01 / 255, 0, 0, 1);
+            foreach (var polygon in this.textGeometryContainer.Polygons)
             {
                 if (polygon == null || polygon.Count < 3) { continue; }
                 for (int i = 0; i < polygon.Count-1; i++)
                 {
-                    AddTriangle(polygon[0], polygon[i], polygon[i + 1], _color);
+                    AddTriangle(polygon[0], polygon[i], polygon[i + 1], tmpColor);
                 }
             }
             // bezier segments
-            AddBezierSegments(textGeometryContainer.CurveSegments, _color);
+            AddBezierSegments(this.textGeometryContainer.CurveSegments, tmpColor);
         }
 
         public void Append(TextMesh textMesh, Vector offset)
         {
             var oldVertexCount = this.VertexBuffer.Count;
             var oldIndexCount = this.IndexBuffer.Count;
-            var oldBezierVertexCount = this.BezierVertexBuffer.Count;
-            var oldBezierIndexCount = this.BezierIndexBuffer.Count;
 
             // Append mesh data
             {
@@ -269,23 +187,9 @@ namespace ImGui
                     index += oldVertexCount;
                     this.IndexBuffer[i] = new DrawIndex { Index = index };
                 }
-                var command = this.Command0;
+                var command = this.Command;
                 command.ElemCount = this.IndexBuffer.Count;
-                this.Command0 = command;
-            }
-            {
-                this.BezierVertexBuffer.AddRange(textMesh.BezierVertexBuffer);
-                this.BezierIndexBuffer.AddRange(textMesh.BezierIndexBuffer);
-                var newBezierIndexCount = this.BezierIndexBuffer.Count;
-                for (int i = oldBezierIndexCount; i < newBezierIndexCount; i++)
-                {
-                    var index = this.BezierIndexBuffer[i].Index;
-                    index += oldBezierVertexCount;
-                    this.BezierIndexBuffer[i] = new DrawIndex { Index = index };
-                }
-                var command = this.Command1;
-                command.ElemCount = bezierIndexBuffer.Count;
-                this.Command1 = command;
+                this.Command = command;
             }
 
             // Apply offset to appended part
@@ -293,94 +197,11 @@ namespace ImGui
             {
                 for (int i = oldVertexCount; i < this.VertexBuffer.Count; i++)
                 {
-                    var vertex = this.vertexBuffer[i];
+                    var vertex = this.VertexBuffer[i];
                     vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
-                    this.vertexBuffer[i] = vertex;
-                }
-                for (int i = oldBezierVertexCount; i < this.BezierVertexBuffer.Count; i++)
-                {
-                    var vertex = this.bezierVertexBuffer[i];
-                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
-                    this.bezierVertexBuffer[i] = vertex;
+                    this.VertexBuffer[i] = vertex;
                 }
             }
-        }
-    }
-
-    class TextMeshUtil
-    {
-        static readonly Dictionary<int, TextMesh> TextMeshCache = new Dictionary<int, TextMesh>();
-        static readonly Dictionary<int, ITextContext> TextContextCache = new Dictionary<int, ITextContext>();
-
-        static int GetTextId(string text, Size size, GUIStyle style, GUIState state)
-        {
-            int hash = 17;
-            hash = hash * 23 + text.GetHashCode();
-            hash = hash * 23 + size.GetHashCode();
-            hash = hash * 23 + style.GetHashCode();
-            hash = hash * 23 + state.GetHashCode();
-            return hash;
-        }
-
-        /// <summary>
-        /// build the text context against the size and style
-        /// </summary>
-        internal static TextMesh GetTextMesh(string text, Size size, GUIStyle style, GUIState state)
-        {
-            if (text == null) throw new ArgumentNullException(nameof(text));
-            if (style == null) throw new ArgumentNullException(nameof(style));
-
-            //TODO re-think text mesh caching method and when to rebuild and remove unused text mesh
-
-            int textMeshId = GetTextId(text, size, style, state);
-
-            TextMesh mesh;
-            if (TextMeshCache.TryGetValue(textMeshId, out mesh))
-            {
-                return mesh;
-            }
-            else
-            {
-                // create a text mesh
-                ITextContext textContext = GetTextContext(text, size, style, state);
-                mesh = new TextMesh();
-                mesh.Build(Point.Zero, style, textContext);
-                TextMeshCache.Add(textMeshId, mesh);
-            }
-
-            return mesh;
-        }
-
-        internal static ITextContext GetTextContext(string text, Size size, GUIStyle style, GUIState state)
-        {
-            if (text == null) throw new ArgumentNullException(nameof(text));
-            if (style == null) throw new ArgumentNullException(nameof(style));
-
-            int textMeshId = GetTextId(text, size, style, state);
-
-            ITextContext textContext;
-            if (TextContextCache.TryGetValue(textMeshId, out textContext))
-            {
-                return textContext;
-            }
-            else
-            {
-                // create a TextContent for the text
-                var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
-                var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
-                var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
-                var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
-                var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
-                var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-                textContext = Application.platformContext.CreateTextContext(
-                    text,
-                    fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                    (int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height),
-                    textAlignment);
-                textContext.Build(Point.Zero, Color.Clear, null);
-                TextContextCache.Add(textMeshId, textContext);
-            }
-            return textContext;
         }
     }
 }

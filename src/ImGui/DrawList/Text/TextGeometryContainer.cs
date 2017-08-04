@@ -20,5 +20,11 @@ namespace ImGui
         {
             polygons.Add(points);
         }
+
+        public void Clear()
+        {
+            quadraticCurveSegments.Clear();
+            polygons.Clear();
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace ImGui
     {
         void AddContour(List<Point> points);
         void AddBezier((Point,Point,Point) segments);
+        void Clear();
     }
 }
