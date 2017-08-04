@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace ImGui.Common
 {
     /// <summary>
-    /// Modified System.Collections.Generic.List so we can get an unsafe pointer to list items.
+    /// a modified <see cref="List{T}"/>  so we can get an unsafe pointer to list items.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [DebuggerStepThrough]

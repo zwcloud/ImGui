@@ -4,46 +4,33 @@ namespace ImGui
 {
     internal class Mesh
     {
-        private readonly UnsafeList<DrawCommand> commandBuffer = new UnsafeList<DrawCommand>();
-        private readonly UnsafeList<DrawIndex> indexBuffer = new UnsafeList<DrawIndex>();
-        private readonly UnsafeList<DrawVertex> vertexBuffer = new UnsafeList<DrawVertex>();
-
-        public int _vtxWritePosition;
-        public int _idxWritePosition;
-        public int _currentIdx;
+        private int vtxWritePosition;
+        private int idxWritePosition;
+        private int currentIdx;
 
         /// <summary>
         /// Commands. Typically 1 command = 1 gpu draw call.
         /// </summary>
         /// <remarks>Every command corresponds to 1 sub-mesh.</remarks>
-        public UnsafeList<DrawCommand> CommandBuffer
-        {
-            get { return commandBuffer; }
-        }
+        public UnsafeList<DrawCommand> CommandBuffer { get; } = new UnsafeList<DrawCommand>();
 
         /// <summary>
         /// Index buffer. Each command consume DrawCommand.ElemCount of those
         /// </summary>
-        public UnsafeList<DrawIndex> IndexBuffer
-        {
-            get { return indexBuffer; }
-        }
+        public UnsafeList<DrawIndex> IndexBuffer { get; } = new UnsafeList<DrawIndex>();
 
         /// <summary>
         /// Vertex buffer
         /// </summary>
-        public UnsafeList<DrawVertex> VertexBuffer
-        {
-            get { return vertexBuffer; }
-        }
+        public UnsafeList<DrawVertex> VertexBuffer { get; } = new UnsafeList<DrawVertex>();
 
         /// <summary>
         /// Append a vertex to the VertexBuffer
         /// </summary>
         public void AppendVertex(DrawVertex vertex)
         {
-            vertexBuffer[_vtxWritePosition] = vertex;
-            _vtxWritePosition++;
+            this.VertexBuffer[this.vtxWritePosition] = vertex;
+            this.vtxWritePosition++;
         }
 
         /// <summary>
@@ -52,33 +39,33 @@ namespace ImGui
         /// <remarks>The value to insert is `_currentIdx + offsetToCurrentIndex`.</remarks>
         public void AppendIndex(int offsetToCurrentIndex)
         {
-            indexBuffer[_idxWritePosition] = new DrawIndex { Index = _currentIdx + offsetToCurrentIndex };
-            _idxWritePosition++;
+            this.IndexBuffer[this.idxWritePosition] = new DrawIndex { Index = this.currentIdx + offsetToCurrentIndex };
+            this.idxWritePosition++;
         }
 
         /// <summary>
         /// Pre-allocate space for a number of indexes and vertexes.
         /// </summary>
-        /// <param name="idx_count">the number of indexes to add</param>
-        /// <param name="vtx_count">the number of vertexes to add</param>
-        public void PrimReserve(int idx_count, int vtx_count)
+        /// <param name="idxCount">the number of indexes to add</param>
+        /// <param name="vtxCount">the number of vertexes to add</param>
+        public void PrimReserve(int idxCount, int vtxCount)
         {
-            if (idx_count == 0)
+            if (idxCount == 0)
             {
                 return;
             }
 
-            DrawCommand drawCommand = this.CommandBuffer[CommandBuffer.Count - 1];
-            drawCommand.ElemCount += idx_count;
-            this.CommandBuffer[CommandBuffer.Count - 1] = drawCommand;
+            DrawCommand drawCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
+            drawCommand.ElemCount += idxCount;
+            this.CommandBuffer[this.CommandBuffer.Count - 1] = drawCommand;
 
-            int vtx_buffer_size = this.VertexBuffer.Count;
-            this._vtxWritePosition = vtx_buffer_size;
-            this.VertexBuffer.Resize(vtx_buffer_size + vtx_count);
+            int vtxBufferSize = this.VertexBuffer.Count;
+            this.vtxWritePosition = vtxBufferSize;
+            this.VertexBuffer.Resize(vtxBufferSize + vtxCount);
 
-            int idx_buffer_size = this.IndexBuffer.Count;
-            this._idxWritePosition = idx_buffer_size;
-            this.IndexBuffer.Resize(idx_buffer_size + idx_count);
+            int idxBufferSize = this.IndexBuffer.Count;
+            this.idxWritePosition = idxBufferSize;
+            this.IndexBuffer.Resize(idxBufferSize + idxCount);
         }
 
         /// <summary>
@@ -93,34 +80,36 @@ namespace ImGui
             this.CommandBuffer.Clear();
             this.IndexBuffer.Clear();
             this.VertexBuffer.Clear();
-            this._vtxWritePosition = 0;
-            this._idxWritePosition = 0;
-            this._currentIdx = 0;
+            this.vtxWritePosition = 0;
+            this.idxWritePosition = 0;
+            this.currentIdx = 0;
         }
 
         /// <summary>
-        /// 
+        /// Append a mesh to this mesh
         /// </summary>
-        /// <param name="indexBuffer"></param>
-        /// <param name="vertexBuffer"></param>
-        public void Fill(UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer)
+        /// <param name="mesh"></param>
+        public void Append(Mesh mesh)
         {
+            UnsafeList<DrawVertex> vertexBuffer = mesh.VertexBuffer;
+            UnsafeList<DrawIndex> indexBuffer = mesh.IndexBuffer;
+
             DrawCommand drawCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
-            var idx_count = indexBuffer.Count;
-            var vtx_count = vertexBuffer.Count;
-            if (idx_count != 0 && vtx_count != 0)
+            var idxCount = indexBuffer.Count;
+            var vtxCount = vertexBuffer.Count;
+            if (idxCount != 0 && vtxCount != 0)
             {
-                drawCommand.ElemCount += idx_count;
+                drawCommand.ElemCount += idxCount;
                 this.CommandBuffer[this.CommandBuffer.Count - 1] = drawCommand;
 
                 var vertexCountBefore = this.VertexBuffer.Count;
 
-                int vtx_buffer_size = this.VertexBuffer.Count;
-                this._vtxWritePosition = vtx_buffer_size + vtx_count;
+                int vtxBufferSize = this.VertexBuffer.Count;
+                this.vtxWritePosition = vtxBufferSize + vtxCount;
                 this.VertexBuffer.AddRange(vertexBuffer);
 
-                int idx_buffer_size = this.IndexBuffer.Count;
-                this._idxWritePosition = idx_buffer_size + idx_count;
+                int idxBufferSize = this.IndexBuffer.Count;
+                this.idxWritePosition = idxBufferSize + idxCount;
 
                 var sizeBefore = this.IndexBuffer.Count;
                 this.IndexBuffer.AddRange(indexBuffer);
@@ -136,7 +125,7 @@ namespace ImGui
                         };
                     }
                 }
-                this._currentIdx += vtx_count;
+                this.currentIdx += vtxCount;
             }
         }
 

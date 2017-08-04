@@ -21,7 +21,7 @@ namespace ImGui
 
         public override string ToString()
         {
-            return string.Format("(r:{0},g:{1},b:{2},a:{3})", r, g, b, a);
+            return string.Format("(r:{0}, g:{1}, b:{2}, a:{3})", this.r, this.g, this.b, this.a);
         }
     }
 }

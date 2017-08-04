@@ -2,29 +2,22 @@
 
 namespace ImGui
 {
-    struct PointF
+    internal struct PointF
     {
-        public float x, y;
+        public float X { get; }
 
-        public float X
-        {
-            get { return x; }
-        }
-
-        public float Y
-        {
-            get { return y; }
-        }
+        public float Y { get; }
 
         public PointF(float x, float y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
+
         public PointF(double x, double y)
         {
-            this.x = (float)x;
-            this.y = (float)y;
+            this.X = (float)x;
+            this.Y = (float)y;
         }
 
         public static PointF Zero = new PointF(0f, 0f);
@@ -46,7 +39,7 @@ namespace ImGui
 
         public override string ToString()
         {
-            return string.Format("({0:0.00},{1:0.00})", this.x, this.y);
+            return string.Format("({0:0.00}, {1:0.00})", this.X, this.Y);
         }
     }
 }

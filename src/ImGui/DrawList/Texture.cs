@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    class TextureUtil
+    internal class TextureUtil
     {
-        static Dictionary<int, ITexture> TextureCache = new Dictionary<int, ITexture>();
+        private static readonly Dictionary<int, ITexture> TextureCache = new Dictionary<int, ITexture>();
 
-        static int GetTextureHash(string path)
+        private static int GetTextureHash(string path)
         {
             int hash = 17;
             hash = hash * 23 + path.GetHashCode();
             return hash;
         }
 
-        internal static ITexture GetTexture(string filePath)
+        public static ITexture GetTexture(string filePath)
         {
             int id = GetTextureHash(filePath);
 

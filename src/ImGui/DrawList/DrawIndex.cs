@@ -5,13 +5,7 @@ namespace ImGui
     [DebuggerDisplay("{Index}")]
     internal struct DrawIndex
     {
-        int index;
-
-        public int Index
-        {
-            get { return index; }
-            set { this.index = value; }
-        }
+        public int Index { get; set; }
 
         public static implicit operator int(DrawIndex v)
         {

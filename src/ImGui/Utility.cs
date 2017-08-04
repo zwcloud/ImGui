@@ -87,7 +87,7 @@ namespace ImGui
             for (int i = 0; i < vertexes.Count; i++)
             {
                 var position = vertexes[i].pos;
-                sb.AppendFormat("v {0} {1} {2}", -position.x, position.y, 0);
+                sb.AppendFormat("v {0} {1} {2}", -position.X, position.Y, 0);
                 sb.AppendLine();
             }
 
@@ -119,14 +119,14 @@ namespace ImGui
             for (int i = 0; i < vertexes.Count; i++)
             {
                 var position = vertexes[i].pos;
-                sb.AppendFormat("v {0} {1} {2}", -position.x, position.y, 0);
+                sb.AppendFormat("v {0} {1} {2}", -position.X, position.Y, 0);
                 sb.AppendLine();
             }
 
             for (int i = 0; i < vertexes.Count; i++)
             {
                 var uv = vertexes[i].uv;
-                sb.AppendFormat("vt {0} {1}", uv.x, uv.y);
+                sb.AppendFormat("vt {0} {1}", uv.X, uv.Y);
                 sb.AppendLine();
             }
 
