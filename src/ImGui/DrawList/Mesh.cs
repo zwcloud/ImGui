@@ -2,7 +2,7 @@
 
 namespace ImGui
 {
-    class Mesh
+    internal class Mesh
     {
         private readonly UnsafeList<DrawCommand> commandBuffer = new UnsafeList<DrawCommand>();
         private readonly UnsafeList<DrawIndex> indexBuffer = new UnsafeList<DrawIndex>();
