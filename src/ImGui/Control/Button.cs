@@ -1,4 +1,5 @@
 ﻿using System;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {
@@ -171,5 +172,13 @@ namespace ImGui
         AlignTextBaseLine = 1 << 8,   // vertically align button to match text baseline - ButtonEx() only
         NoKeyModifiers = 1 << 9,   // disable interaction if a key modifier is held
         AllowOverlapMode = 1 << 10   // require previous frame HoveredId to either match id or be null before being usable
-    };
+    }
+
+    internal static class ButtonFlagsExtension
+    {
+        public static bool HaveFlag(this ButtonFlags value, ButtonFlags flag)
+        {
+            return (value & flag) != 0;
+        }
+    }
 }

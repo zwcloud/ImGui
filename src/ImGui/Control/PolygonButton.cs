@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {
@@ -8,7 +9,7 @@ namespace ImGui
         /// Create a polyon-button.
         /// </summary>
         /// <param name="rect">position and size of the control</param>
-        /// <param name="points"><see cref="ImGui.Point"/> list of the polygon.</param>
+        /// <param name="points"><see cref="Point"/> list of the polygon.</param>
         /// <param name="textRect">the rect that occupied by the text</param>
         /// <param name="text">text to display on the button</param>
         /// <returns>true when the users clicks the button.</returns>
@@ -90,7 +91,7 @@ namespace ImGui
         /// <summary>
         /// Create an auto-layout polyon-button.
         /// </summary>
-        /// <param name="points"><see cref="ImGui.Point"/> list of the polygon.</param>
+        /// <param name="points"><see cref="Point"/> list of the polygon.</param>
         /// <param name="textRect">the rect that occupied by the text</param>
         /// <param name="text">text to display on the button</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>

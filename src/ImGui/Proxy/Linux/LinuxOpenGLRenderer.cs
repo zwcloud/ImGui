@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGLES;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {

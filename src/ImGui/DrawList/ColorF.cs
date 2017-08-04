@@ -1,4 +1,6 @@
-﻿namespace ImGui
+﻿using ImGui.Common.Primitive;
+
+namespace ImGui
 {
     internal struct ColorF
     {

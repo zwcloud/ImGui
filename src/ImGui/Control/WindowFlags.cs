@@ -36,4 +36,12 @@ namespace ImGui
         Modal = 1 << 26,  // Don't use! For internal use by BeginPopupModal()
         ChildMenu = 1 << 27   // Don't use! For internal use by BeginMenu()
     };
+
+    internal static class WindowFlagsExtension
+    {
+        public static bool HaveFlag(this WindowFlags value, WindowFlags flag)
+        {
+            return (value & flag) != 0;
+        }
+    }
 }

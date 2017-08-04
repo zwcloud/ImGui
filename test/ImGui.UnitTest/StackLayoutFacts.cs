@@ -1,6 +1,7 @@
 using System;
 using Xunit;
 using ImGui;
+using ImGui.Common.Primitive;
 using ImGui.Layout;
 
 namespace ImGui.UnitTest

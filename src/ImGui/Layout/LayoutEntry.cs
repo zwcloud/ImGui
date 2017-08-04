@@ -1,4 +1,6 @@
 ﻿using System;
+using ImGui.Common.Primitive;
+
 namespace ImGui
 {
     class LayoutEntry

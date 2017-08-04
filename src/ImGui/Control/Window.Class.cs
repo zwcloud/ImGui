@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ImGui.Layout;
 using System.Diagnostics;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {

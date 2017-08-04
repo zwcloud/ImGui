@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using CSharpGL;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {

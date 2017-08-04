@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Numerics;
 using ImGui;
+using ImGui.Common.Primitive;
 
 namespace Typography.OpenFont
 {

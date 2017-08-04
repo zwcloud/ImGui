@@ -7,6 +7,8 @@ using OpenTK.Platform.Android;
 using Android.Views;
 using Android.Content;
 using Android.Util;
+using ImGui.Common.Primitive;
+using Size = ImGui.Common.Primitive.Size;
 
 namespace AndroidTemplate
 {
@@ -24,7 +26,7 @@ namespace AndroidTemplate
             base.OnLoad(e);
             
             //Create form
-            mainForm = new MainForm(ImGui.Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width, this.Size.Height));
+            mainForm = new MainForm(Point.Zero/*dummy*/, new Size(this.Size.Width, this.Size.Height));
             ImGui.Application.Init(mainForm);
             
             Run();// Run the render loop

@@ -1,7 +1,8 @@
 using System;
+
 // These types are aliased to match the unamanaged names used in interop
 
-namespace ImGui
+namespace ImGui.Common.Primitive
 {
     /// <summary>
     /// Size - A value type which defined a size in terms of non-negative width and height
@@ -21,7 +22,7 @@ namespace ImGui
         {
             if (width < 0 || height < 0)
             {
-                throw new System.ArgumentException(Error.Get(ErrorId.Size_WidthAndHeightCannotBeNegative));
+                throw new System.ArgumentException("Size width and height can not be negative");
             }
 
             _width = width;
@@ -80,12 +81,12 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    throw new System.InvalidOperationException(Error.Get(ErrorId.Size_CannotModifyEmptySize));
+                    throw new System.InvalidOperationException("Size can not modify empty size");
                 }
 
                 if (value < 0)
                 {
-                    throw new System.ArgumentException(Error.Get(ErrorId.Size_WidthCannotBeNegative));
+                    throw new System.ArgumentException("Size width can not be negative");
                 }
 
                 _width = value;
@@ -105,12 +106,12 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    throw new System.InvalidOperationException(Error.Get(ErrorId.Size_CannotModifyEmptySize));
+                    throw new System.InvalidOperationException("Size can not modify empty size");
                 }
 
                 if (value < 0)
                 {
-                    throw new System.ArgumentException(Error.Get(ErrorId.Size_HeightCannotBeNegative));
+                    throw new System.ArgumentException("Size height can not be negative");
                 }
 
                 _height = value;

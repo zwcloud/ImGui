@@ -1,6 +1,6 @@
 using System;
 
-namespace ImGui
+namespace ImGui.Common.Primitive
 {
     /// <summary>
     /// Vector - A value type which defined a vector in terms of X and Y

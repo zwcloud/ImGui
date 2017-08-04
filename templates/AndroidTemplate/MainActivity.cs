@@ -7,6 +7,7 @@ using Android.Widget;
 using Android.OS;
 using Android.Content.PM;
 using ImGui;
+using ImGui.Common.Primitive;
 
 namespace AndroidTemplate
 {

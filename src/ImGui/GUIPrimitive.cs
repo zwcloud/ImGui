@@ -1,5 +1,8 @@
 ﻿//#define DrawPaddingBox
 //#define DrawContentBox
+
+using ImGui.Common.Primitive;
+
 namespace ImGui
 {
     internal static class GUIPrimitive

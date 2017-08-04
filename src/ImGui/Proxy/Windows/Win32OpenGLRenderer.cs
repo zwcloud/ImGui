@@ -3,6 +3,7 @@ using CSharpGL;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {

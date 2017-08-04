@@ -4,6 +4,7 @@ using System.Text;
 using Typography.OpenFont;
 using Xunit;
 using System.Diagnostics;
+using ImGui.Common.Primitive;
 using Xunit.Abstractions;
 
 namespace ImGui.UnitTest

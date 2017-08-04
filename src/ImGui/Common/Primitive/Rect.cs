@@ -1,6 +1,6 @@
 using System;
 
-namespace ImGui
+namespace ImGui.Common.Primitive
 {
     /// <summary>
     /// Rect - The primitive which represents a rectangle.  Rects are stored as
@@ -65,7 +65,7 @@ namespace ImGui
         {
             if (width < 0 || height < 0)
             {
-                throw new ArgumentException(Error.Get(ErrorId.Size_WidthAndHeightCannotBeNegative));
+                throw new ArgumentException("Size width and height can not be negative");
             }
 
             _x = x;
@@ -198,7 +198,7 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotModifyEmptyRect));
+                    throw new InvalidOperationException("Cannot modify empty rect.");
                 }
 
                 _x = value._x;
@@ -227,7 +227,7 @@ namespace ImGui
                 {
                     if (IsEmpty)
                     {
-                        throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotModifyEmptyRect));
+                        throw new InvalidOperationException("Cannot modify empty rect.");
                     }
 
                     _width = value._width;
@@ -251,7 +251,7 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotModifyEmptyRect));
+                    throw new InvalidOperationException("Cannot modify empty rect.");
                 }
 
                 _x = value;
@@ -274,7 +274,7 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotModifyEmptyRect));
+                    throw new InvalidOperationException("Cannot modify empty rect.");
                 }
 
                 _y = value;
@@ -296,12 +296,12 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotModifyEmptyRect));
+                    throw new InvalidOperationException("Cannot modify empty rect.");
                 }
 
                 if (value < 0)
                 {
-                    throw new ArgumentException(Error.Get(ErrorId.Size_WidthCannotBeNegative));
+                    throw new ArgumentException("Size width can not be negative");
                 }
 
                 _width = value;
@@ -323,12 +323,12 @@ namespace ImGui
             {
                 if (IsEmpty)
                 {
-                    throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotModifyEmptyRect));
+                    throw new InvalidOperationException("Cannot modify empty rect.");
                 }
 
                 if (value < 0)
                 {
-                    throw new ArgumentException(Error.Get(ErrorId.Size_HeightCannotBeNegative));
+                    throw new ArgumentException("Size height can not be negative");
                 }
 
                 _height = value;
@@ -638,7 +638,7 @@ namespace ImGui
         {
             if (IsEmpty)
             {
-                throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotCallMethod));
+                throw new InvalidOperationException("Cannot call method");
             }
 
             _x += offsetVector._x;
@@ -653,7 +653,7 @@ namespace ImGui
         {
             if (IsEmpty)
             {
-                throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotCallMethod));
+                throw new InvalidOperationException("Cannot call method");
             }
 
             _x += offsetX;
@@ -698,7 +698,7 @@ namespace ImGui
         {
             if (IsEmpty)
             {
-                throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotCallMethod));
+                throw new InvalidOperationException("Cannot call method");
             }
 
             _x -= width;
@@ -732,7 +732,7 @@ namespace ImGui
         {
             if (IsEmpty)
             {
-                throw new InvalidOperationException(Error.Get(ErrorId.Rect_CannotCallMethod));
+                throw new InvalidOperationException("Cannot call method");
             }
 
             if (top < 0 || right < 0 || bottom < 0 || left < 0)

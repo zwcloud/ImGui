@@ -1,4 +1,6 @@
-﻿namespace ImGui
+﻿using ImGui.Common.Primitive;
+
+namespace ImGui
 {
     public partial class GUILayout
     {

@@ -2,6 +2,8 @@
 using System.Diagnostics;
 
 using CSharpGL;
+using ImGui.Common.Primitive;
+
 namespace ImGui
 {
     partial class Form

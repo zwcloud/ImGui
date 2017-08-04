@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImGui
+namespace ImGui.Common.Primitive
 {
     [System.Diagnostics.DebuggerDisplay("R:{R} G:{G} B:{B}  A:{A}")]
     [System.Diagnostics.DebuggerStepThrough]
