@@ -7,194 +7,228 @@ namespace ImGui
 {
     internal partial class DrawList
     {
-
         #region primitives
 
-        private List<Point> _Path = new List<Point>();
+        private static readonly List<Point> Path = new List<Point>();
 
-        //primitives part
-
-        public void AddLine(Point a, Point b, Color col, double thickness = 1.0)
+        /// <summary>
+        /// Add a line segment.
+        /// </summary>
+        /// <param name="start">start point</param>
+        /// <param name="end">end point</param>
+        /// <param name="color">color</param>
+        /// <param name="thickness">thickness</param>
+        public void AddLine(Point start, Point end, Color color, double thickness = 1.0)
         {
-            if (MathEx.AmostZero(col.A))
+            if (MathEx.AmostZero(color.A))
                 return;
-            PathLineTo(a + new Vector(0.5, 0.5));
-            PathLineTo(b + new Vector(0.5, 0.5));
-            PathStroke(col, false, thickness);
+            PathLineTo(start + new Vector(0.5, 0.5));
+            PathLineTo(end + new Vector(0.5, 0.5));
+            PathStroke(color, false, thickness);
         }
 
-        public void AddPolyline(IList<Point> points, Color col, bool closed, double thickness, bool anti_aliased = false)
+        /// <summary>
+        /// Add a poly line.
+        /// </summary>
+        /// <param name="points">points</param>
+        /// <param name="color">color</param>
+        /// <param name="close">Should this method close the polyline for you? A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public void AddPolyline(IList<Point> points, Color color, bool close, double thickness, bool antiAliased = false)
         {
-            var points_count = points.Count;
-            if (points_count < 2)
+            var pointsCount = points.Count;
+            if (pointsCount < 2)
                 return;
 
-            int count = points_count;
-            if (!closed)
-                count = points_count - 1;
+            int count = pointsCount;
+            if (!close)
+                count = pointsCount - 1;
 
-            bool thick_line = thickness > 1.0f;
-
-            if (anti_aliased)
+            if (antiAliased)
             {
-
+                throw new NotImplementedException();
             }
             else
             {
                 // Non Anti-aliased Stroke
-                int idx_count = count*6;
-                int vtx_count = count*4;      // FIXME-OPT: Not sharing edges
-                ShapeMesh.PrimReserve(idx_count, vtx_count);
+                int idxCount = count * 6;
+                int vtxCount = count * 4; // FIXME: Not sharing edges
+                this.ShapeMesh.PrimReserve(idxCount, vtxCount);
 
                 for (int i1 = 0; i1 < count; i1++)
                 {
-                    int i2 = (i1+1) == points_count ? 0 : i1+1;
+                    int i2 = (i1 + 1) == pointsCount ? 0 : i1 + 1;
                     Point p1 = points[i1];
                     Point p2 = points[i2];
                     Vector diff = p2 - p1;
                     diff *= MathEx.InverseLength(diff, 1.0f);
-                
+
                     float dx = (float)(diff.X * (thickness * 0.5f));
                     float dy = (float)(diff.Y * (thickness * 0.5f));
-                    var vertex0 = new DrawVertex { pos = new PointF(p1.X + dy, p1.Y - dx), uv = PointF.Zero, color = (ColorF)col };
-                    var vertex1 = new DrawVertex { pos = new PointF(p2.X + dy, p2.Y - dx), uv = PointF.Zero, color = (ColorF)col };
-                    var vertex2 = new DrawVertex { pos = new PointF(p2.X - dy, p2.Y + dx), uv = PointF.Zero, color = (ColorF)col };
-                    var vertex3 = new DrawVertex { pos = new PointF(p1.X - dy, p1.Y + dx), uv = PointF.Zero, color = (ColorF)col };
-                    ShapeMesh.AppendVertex(vertex0);
-                    ShapeMesh.AppendVertex(vertex1);
-                    ShapeMesh.AppendVertex(vertex2);
-                    ShapeMesh.AppendVertex(vertex3);
+                    var vertex0 = new DrawVertex { pos = new PointF(p1.X + dy, p1.Y - dx), uv = PointF.Zero, color = (ColorF)color };
+                    var vertex1 = new DrawVertex { pos = new PointF(p2.X + dy, p2.Y - dx), uv = PointF.Zero, color = (ColorF)color };
+                    var vertex2 = new DrawVertex { pos = new PointF(p2.X - dy, p2.Y + dx), uv = PointF.Zero, color = (ColorF)color };
+                    var vertex3 = new DrawVertex { pos = new PointF(p1.X - dy, p1.Y + dx), uv = PointF.Zero, color = (ColorF)color };
+                    this.ShapeMesh.AppendVertex(vertex0);
+                    this.ShapeMesh.AppendVertex(vertex1);
+                    this.ShapeMesh.AppendVertex(vertex2);
+                    this.ShapeMesh.AppendVertex(vertex3);
 
-                    ShapeMesh.AppendIndex(0);
-                    ShapeMesh.AppendIndex(1);
-                    ShapeMesh.AppendIndex(2);
-                    ShapeMesh.AppendIndex(0);
-                    ShapeMesh.AppendIndex(2);
-                    ShapeMesh.AppendIndex(3);
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(1);
+                    this.ShapeMesh.AppendIndex(2);
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(2);
+                    this.ShapeMesh.AppendIndex(3);
 
-                    ShapeMesh.currentIdx += 4;
+                    this.ShapeMesh.currentIdx += 4;
                 }
             }
         }
-        
-        public void AddConvexPolyFilled(IList<Point> points, Color col, bool anti_aliased)
+
+        /// <summary>
+        /// Add a filled convex polygon.
+        /// </summary>
+        /// <param name="points">points</param>
+        /// <param name="color">color</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public void AddConvexPolyFilled(IList<Point> points, Color color, bool antiAliased)
         {
-            var points_count = points.Count;
-            anti_aliased = false;
-            //if (.KeyCtrl) anti_aliased = false; // Debug
+            antiAliased = false;//TODO remove this when antiAliased branch is implemented
 
-            if (anti_aliased)
+            var pointsCount = points.Count;
+            if (antiAliased)
             {
-
+                throw new NotImplementedException();
             }
             else
             {
                 // Non Anti-aliased Fill
-                int idx_count = (points_count-2)*3;
-                int vtx_count = points_count;
-                ShapeMesh.PrimReserve(idx_count, vtx_count);
-                for (int i = 0; i < vtx_count; i++)
+                int idxCount = (pointsCount - 2) * 3;
+                int vtxCount = pointsCount;
+                this.ShapeMesh.PrimReserve(idxCount, vtxCount);
+                for (int i = 0; i < vtxCount; i++)
                 {
-                    ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)points[i], uv = PointF.Zero, color = (ColorF)col });
+                    this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)points[i], uv = PointF.Zero, color = (ColorF)color });
                 }
-                for (int i = 2; i < points_count; i++)
+                for (int i = 2; i < pointsCount; i++)
                 {
-                    ShapeMesh.AppendIndex(0);
-                    ShapeMesh.AppendIndex(i-1);
-                    ShapeMesh.AppendIndex(i);
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(i - 1);
+                    this.ShapeMesh.AppendIndex(i);
                 }
-                ShapeMesh.currentIdx += vtx_count;
+                this.ShapeMesh.currentIdx += vtxCount;
             }
         }
-        
-        // Fully unrolled with inline call to keep our debug builds decently fast.
-        public void PrimRect(Point a, Point c, Color col)
+
+        private void PrimRect(Point a, Point c, Color color)
         {
             Point b = new Point(c.X, a.Y);
             Point d = new Point(a.X, c.Y);
             Point uv = Point.Zero;
 
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)col });
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)col });
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)col });
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = PointF.Zero, color = (ColorF)col });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = PointF.Zero, color = (ColorF)color });
 
-            ShapeMesh.AppendIndex(0);
-            ShapeMesh.AppendIndex(1);
-            ShapeMesh.AppendIndex(2);
-            ShapeMesh.AppendIndex(0);
-            ShapeMesh.AppendIndex(2);
-            ShapeMesh.AppendIndex(3);
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(1);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(3);
 
-            ShapeMesh.currentIdx += 4;
+            this.ShapeMesh.currentIdx += 4;
         }
 
-        void PrimRectUV(Point a, Point c, Point uv_a, Point uv_c, Color col)
+        private void PrimRectUV(Point a, Point c, Point uvA, Point uvC, Color color)
         {
             Point b = new Point(c.X, a.Y);
             Point d = new Point(a.X, c.Y);
-            Point uv_b = new Point(uv_c.X, uv_a.Y);
-            Point uv_d = new Point(uv_a.X, uv_c.Y);
+            Point uvB = new Point(uvC.X, uvA.Y);
+            Point uvD = new Point(uvA.X, uvC.Y);
 
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uv_a, color = (ColorF)col });
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uv_b, color = (ColorF)col });
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uv_c, color = (ColorF)col });
-            ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uv_d, color = (ColorF)col });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uvA, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uvB, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uvC, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uvD, color = (ColorF)color });
 
-            ShapeMesh.AppendIndex(0);
-            ShapeMesh.AppendIndex(1);
-            ShapeMesh.AppendIndex(2);
-            ShapeMesh.AppendIndex(0);
-            ShapeMesh.AppendIndex(2);
-            ShapeMesh.AppendIndex(3);
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(1);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(3);
 
-            ShapeMesh.currentIdx += 4;
+            this.ShapeMesh.currentIdx += 4;
         }
 
-
-
-
-        // a: upper-left, b: lower-right. we don't render 1 px sized rectangles properly.
-        public void AddRect(Point a, Point b, Color col, float rounding = 0.0f, int rounding_corners = 0x0F, float thickness = 1.0f)
+        /// <summary>
+        /// Add a rectangle. Note 1 px sized rectangles won't be rendered properly.
+        /// </summary>
+        /// <param name="a">upper-left point</param>
+        /// <param name="b">lower-right point</param>
+        /// <param name="color">color</param>
+        /// <param name="rounding">radius of rounded corners</param>
+        /// <param name="roundingCorners">which corner(s) will be rounded</param> TODO finish this documentation on how to use roundingCorners
+        /// <param name="thickness">thickness</param>
+        public void AddRect(Point a, Point b, Color color, float rounding = 0.0f, int roundingCorners = 0x0F, float thickness = 1.0f)
         {
-            if (MathEx.AmostZero(col.A))
+            if (MathEx.AmostZero(color.A))
                 return;
-            PathRect(a + new Vector(0.5f,0.5f), b - new Vector(0.5f,0.5f), rounding, rounding_corners);
-            PathStroke(col, true, thickness);
+            PathRect(a + new Vector(0.5f, 0.5f), b - new Vector(0.5f, 0.5f), rounding, roundingCorners);
+            PathStroke(color, true, thickness);
         }
 
-        public void AddRectFilled(Point a, Point b, Color col, float rounding = 0.0f, int rounding_corners = 0x0F)
+        /// <summary>
+        /// Add a filled rectangle. Note 1 px sized rectangles won't be rendered properly.
+        /// </summary>
+        /// <param name="a">top-left point</param>
+        /// <param name="b">bottom-right point</param>
+        /// <param name="color">color</param>
+        /// <param name="rounding">radius of rounded corners</param>
+        /// <param name="roundingCorners">which corner(s) will be rounded</param> TODO finish this documentation on how to use roundingCorners
+        public void AddRectFilled(Point a, Point b, Color color, float rounding = 0.0f, int roundingCorners = 0x0F)
         {
-            if (MathEx.AmostZero(col.A))
+            if (MathEx.AmostZero(color.A))
                 return;
             if (rounding > 0.0f)
             {
-                PathRect(a, b, rounding, rounding_corners);
-                PathFill(col);
+                PathRect(a, b, rounding, roundingCorners);
+                PathFill(color);
             }
             else
             {
-                ShapeMesh.PrimReserve(6, 4);
-                PrimRect(a, b, col);
+                this.ShapeMesh.PrimReserve(6, 4);
+                PrimRect(a, b, color);
             }
         }
 
-        void AddTriangleFilled(Point a, Point b, Point c, Color col)
+        /// <summary>
+        /// Add a filled triangle. Make sure the points a->b->c is clockwise.
+        /// </summary>
+        /// <param name="a">point A</param>
+        /// <param name="b">point B</param>
+        /// <param name="c">point C</param>
+        /// <param name="color"></param>
+        public void AddTriangleFilled(Point a, Point b, Point c, Color color)
         {
-            if (MathEx.AmostZero(col.A))
+            if (MathEx.AmostZero(color.A))
                 return;
 
             PathLineTo(a);
             PathLineTo(b);
             PathLineTo(c);
-            PathFill(col);
+            PathFill(color);
         }
 
         #endregion
 
         #region stateful path constructing methods
 
-        static void PathBezierToCasteljau(IList<Point> path, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double tess_tol, int level)
+        private static void PathBezierToCasteljau(IList<Point> path, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double tessTol, int level)
         {
             double dx = x4 - x1;
             double dy = y4 - y1;
@@ -202,7 +236,7 @@ namespace ImGui
             double d3 = ((x3 - x4) * dy - (y3 - y4) * dx);
             d2 = (d2 >= 0) ? d2 : -d2;
             d3 = (d3 >= 0) ? d3 : -d3;
-            if ((d2 + d3) * (d2 + d3) < tess_tol * (dx * dx + dy * dy))
+            if ((d2 + d3) * (d2 + d3) < tessTol * (dx * dx + dy * dy))
             {
                 path.Add(new Point(x4, y4));
             }
@@ -215,166 +249,177 @@ namespace ImGui
                 double x234 = (x23 + x34) * 0.5f, y234 = (y23 + y34) * 0.5f;
                 double x1234 = (x123 + x234) * 0.5f, y1234 = (y123 + y234) * 0.5f;
 
-                DrawList.PathBezierToCasteljau(path, x1, y1, x12, y12, x123, y123, x1234, y1234, tess_tol, level + 1);
-                DrawList.PathBezierToCasteljau(path, x1234, y1234, x234, y234, x34, y34, x4, y4, tess_tol, level + 1);
+                PathBezierToCasteljau(path, x1, y1, x12, y12, x123, y123, x1234, y1234, tessTol, level + 1);
+                PathBezierToCasteljau(path, x1234, y1234, x234, y234, x34, y34, x4, y4, tessTol, level + 1);
             }
         }
+        private const double CurveTessellationTol = 1.25;
 
-        const double CurveTessellationTol = 1.25;
-        void PathBezierCurveTo(Point p2, Point p3, Point p4, int num_segments = 0)
+        /// <summary>
+        /// Adds a cubic Bézier spline to the path from the current point to position end, using c1 and c2 as the control points.
+        /// </summary>
+        /// <param name="c1">first control point</param>
+        /// <param name="c2">second control point</param>
+        /// <param name="end">end point</param>
+        /// <param name="numSegments">number of segments used when tessellating the curve. Use 0 to do automatic tessellation.</param>
+        public static void PathBezierCurveTo(Point c1, Point c2, Point end, int numSegments = 0)
         {
-            Point p1 = _Path[_Path.Count-1];
-            if (num_segments == 0)
+            Point p1 = Path[Path.Count - 1];
+            if (numSegments == 0)
             {
                 // Auto-tessellated
-                PathBezierToCasteljau(_Path, p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y, CurveTessellationTol, 0);
+                PathBezierToCasteljau(Path, p1.X, p1.Y, c1.X, c1.Y, c2.X, c2.Y, end.X, end.Y, CurveTessellationTol, 0);
             }
             else
             {
-                float t_step = 1.0f / (float)num_segments;
-                for (int i_step = 1; i_step <= num_segments; i_step++)
+                float tStep = 1.0f / (float)numSegments;
+                for (int iStep = 1; iStep <= numSegments; iStep++)
                 {
-                    float t = t_step * i_step;
+                    float t = tStep * iStep;
                     float u = 1.0f - t;
                     float w1 = u * u * u;
                     float w2 = 3 * u * u * t;
                     float w3 = 3 * u * t * t;
                     float w4 = t * t * t;
-                    _Path.Add(new Point(w1* p1.X + w2* p2.X + w3* p3.X + w4* p4.X, w1* p1.Y + w2* p2.Y + w3* p3.Y + w4* p4.Y));
+                    Path.Add(new Point(w1 * p1.X + w2 * c1.X + w3 * c2.X + w4 * end.X, w1 * p1.Y + w2 * c1.Y + w3 * c2.Y + w4 * end.Y));
                 }
             }
         }
 
-        public void PathRect(Point rect_min, Point rect_max, float rounding = 0.0f, int rounding_corners = 0x0F)
+        /// <summary>
+        /// Adds a rectangle to the path.
+        /// </summary>
+        /// <param name="a">top-left corner</param>
+        /// <param name="b">bottom-right point</param>
+        /// <param name="rounding">radius of rounded corners</param>
+        /// <param name="roundingCorners">which corner(s) will be rounded</param> TODO finish this documentation on how to use roundingCorners
+        public void PathRect(Point a, Point b, float rounding = 0.0f, int roundingCorners = 0x0F)
         {
             double r = rounding;
-            r = System.Math.Min(r, System.Math.Abs(rect_max.X-rect_min.X) * ( ((rounding_corners&(1|2))==(1|2)) || ((rounding_corners&(4|8))==(4|8)) ? 0.5f : 1.0f ) - 1.0f);
-            r = System.Math.Min(r, System.Math.Abs(rect_max.Y-rect_min.Y) * ( ((rounding_corners&(1|8))==(1|8)) || ((rounding_corners&(2|4))==(2|4)) ? 0.5f : 1.0f ) - 1.0f);
+            r = Math.Min(r, Math.Abs(b.X - a.X) * (((roundingCorners & (1 | 2)) == (1 | 2)) || ((roundingCorners & (4 | 8)) == (4 | 8)) ? 0.5f : 1.0f) - 1.0f);
+            r = Math.Min(r, Math.Abs(b.Y - a.Y) * (((roundingCorners & (1 | 8)) == (1 | 8)) || ((roundingCorners & (2 | 4)) == (2 | 4)) ? 0.5f : 1.0f) - 1.0f);
 
-            if (r <= 0.0f || rounding_corners == 0)
+            if (r <= 0.0f || roundingCorners == 0)
             {
-                PathLineTo(rect_min);
-                PathLineTo(new Point(rect_max.X, rect_min.Y));
-                PathLineTo(rect_max);
-                PathLineTo(new Point(rect_min.X, rect_max.Y));
+                PathLineTo(a);
+                PathLineTo(new Point(b.X, a.Y));
+                PathLineTo(b);
+                PathLineTo(new Point(a.X, b.Y));
             }
             else
             {
-                var r0 = (rounding_corners & 1) != 0 ? r : 0.0f;
-                var r1 = (rounding_corners & 2) != 0 ? r : 0.0f;
-                var r2 = (rounding_corners & 4) != 0 ? r : 0.0f;
-                var r3 = (rounding_corners & 8) != 0 ? r : 0.0f;
-                PathArcToFast(new Point(rect_min.X+r0, rect_min.Y+r0), r0, 6, 9);
-                PathArcToFast(new Point(rect_max.X-r1, rect_min.Y+r1), r1, 9, 12);
-                PathArcToFast(new Point(rect_max.X-r2, rect_max.Y-r2), r2, 0, 3);
-                PathArcToFast(new Point(rect_min.X+r3, rect_max.Y-r3), r3, 3, 6);
+                var r0 = (roundingCorners & 1) != 0 ? r : 0.0f;
+                var r1 = (roundingCorners & 2) != 0 ? r : 0.0f;
+                var r2 = (roundingCorners & 4) != 0 ? r : 0.0f;
+                var r3 = (roundingCorners & 8) != 0 ? r : 0.0f;
+                PathArcToFast(new Point(a.X + r0, a.Y + r0), r0, 6, 9);
+                PathArcToFast(new Point(b.X - r1, a.Y + r1), r1, 9, 12);
+                PathArcToFast(new Point(b.X - r2, b.Y - r2), r2, 0, 3);
+                PathArcToFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
             }
         }
-        
-        //inline
-        public void PathStroke(Color col, bool closed, double thickness = 1)
+
+        /// <summary>
+        /// Strokes the current path.
+        /// </summary>
+        /// <param name="color">color</param>
+        /// <param name="close">Set to true if you want the path be closed. A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        public void PathStroke(Color color, bool close, double thickness = 1)
         {
-            AddPolyline(_Path, col, closed, thickness);
+            AddPolyline(Path, color, close, thickness);
             PathClear();
         }
 
-        //inline
-        public void PathFill(Color col)
+        /// <summary>
+        /// Fills the current path.
+        /// </summary>
+        /// <param name="color">fill color</param>
+        public void PathFill(Color color)
         {
-            AddConvexPolyFilled(_Path, col, true);
+            AddConvexPolyFilled(Path, color, true);
             PathClear();
         }
 
+        /// <summary>
+        /// Clears the current path.
+        /// </summary>
         public void PathClear()
         {
-            _Path.Clear();
+            Path.Clear();
         }
 
+        /// <summary>
+        /// Moves the current point of the current path.
+        /// </summary>
+        /// <param name="point">position that current point will be moved to</param>
         public void PathMoveTo(Point point)
         {
-            _Path.Add(point);
+            if (Path.Count == 0)
+            {
+                Path.Add(point);
+            }
+            else
+            {
+                Path[Path.Count - 1] = point;
+            }
         }
 
-        //inline
-        public void PathLineTo(Point pos)
+        /// <summary>
+        /// Adds a line to the path from the current point to position p.
+        /// </summary>
+        /// <param name="p">next point</param>
+        public void PathLineTo(Point p)
         {
-            _Path.Add(pos);
+            Path.Add(p);
         }
 
-        private static readonly Point[] circle_vtx = InitCircleVtx();
+        private static readonly Point[] CirclePoints = InitCirclePoints();
 
-        private static Point[] InitCircleVtx()
+        private static Point[] InitCirclePoints()
         {
             Point[] result = new Point[12];
             for (int i = 0; i < 12; i++)
             {
-                var a = (float) i/12*2*Math.PI;
+                var a = (float)i / 12 * 2 * Math.PI;
                 result[i].X = Math.Cos(a);
                 result[i].Y = Math.Sin(a);
             }
             return result;
         }
 
+        /// <summary>
+        /// (Fast) adds an arc from angle1 to angle2 to the current path.
+        /// </summary>
+        /// <param name="center">the center of the arc</param>
+        /// <param name="radius">the radius of the arc</param>
+        /// <param name="amin">angle1 = amin * π * 1/12</param>
+        /// <param name="amax">angle1 = amax * π * 1/12</param>
         public void PathArcToFast(Point center, double radius, int amin, int amax)
         {
             if (amin > amax) return;
             if (MathEx.AmostZero(radius))
             {
-                _Path.Add(center);
+                Path.Add(center);
             }
             else
             {
-                _Path.Capacity = _Path.Count + amax - amin + 1;
+                Path.Capacity = Path.Count + amax - amin + 1;
                 for (int a = amin; a <= amax; a++)
                 {
-                    Point c = circle_vtx[a % circle_vtx.Length];
-                    _Path.Add(new Point(center.X + c.X* radius, center.Y + c.Y* radius));
+                    Point c = CirclePoints[a % CirclePoints.Length];
+                    Path.Add(new Point(center.X + c.X * radius, center.Y + c.Y * radius));
                 }
             }
         }
 
+        /// <summary>
+        /// Closes the current path.
+        /// </summary>
         public void PathClose()
         {
-            _Path.Add(_Path[0]);
+            Path.Add(Path[0]);
         }
-
-        #region filled bezier curve
-
-        public void PathAddBezier(Point start, Point control, Point end)
-        {
-            _Path.Add(start);
-
-            _Path.Add(control);
-
-            _Path.Add(end);
-        }
-
-        #endregion
-
-        #endregion
-
-        #region TODO data-based path api
-
-#if false
-        struct Path
-        {
-            PathData[] data;
-        }
-
-        struct PathData
-        {
-            public PathType type;
-        }
-
-        enum PathType
-        {
-            MoveTo,
-            LineTo,
-            Close,
-            AddBezier,
-            Clear,
-        }
-#endif
 
         #endregion
 
@@ -393,18 +438,19 @@ namespace ImGui
             this.TextMesh.Append(textMesh, offset);
         }
 
+        //TODO move this to corresponding control.
         #region Extra
-        public void RenderCollapseTriangle(Point p_min, bool is_open, double height, Color color, double scale = 1)
+        public void RenderCollapseTriangle(Point pMin, bool isOpen, double height, Color color, double scale = 1)
         {
             GUIContext g = Form.current.uiContext;
             Window window = Utility.GetCurrentWindow();
 
             double h = height;
             double r = h * 0.40f * scale;
-            Point center = p_min + new Vector(h * 0.50f, h * 0.50f * scale);
+            Point center = pMin + new Vector(h * 0.50f, h * 0.50f * scale);
 
             Point a, b, c;
-            if (is_open)
+            if (isOpen)
             {
                 center.Y -= r * 0.25f;
                 a = center + new Vector(0, 1) * r;

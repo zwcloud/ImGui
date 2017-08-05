@@ -30,13 +30,13 @@ namespace ImGui
         /// </summary>
         public void Clear()
         {
-            _Path.Clear();
+            Path.Clear();
 
-            ShapeMesh.Clear();
-            TextMesh.Clear();
-            ImageMesh.Clear();
+            this.ShapeMesh.Clear();
+            this.TextMesh.Clear();
+            this.ImageMesh.Clear();
 
-            clipRectStack.Clear();
+            this.clipRectStack.Clear();
         }
 
         public void Init()
@@ -49,9 +49,9 @@ namespace ImGui
         public void AddDrawCommand()
         {
             DrawCommand cmd = new DrawCommand();
-            if (clipRectStack.Count > 0)
+            if (this.clipRectStack.Count > 0)
             {
-                cmd.ClipRect = clipRectStack[clipRectStack.Count - 1];
+                cmd.ClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
             }
             else
             {
@@ -63,15 +63,15 @@ namespace ImGui
             {
                 return;
             }
-            ShapeMesh.CommandBuffer.Add(cmd);
+            this.ShapeMesh.CommandBuffer.Add(cmd);
         }
 
         public void AddImageDrawCommand(ITexture texture)
         {
             DrawCommand cmd = new DrawCommand();
-            if (clipRectStack.Count > 0)
+            if (this.clipRectStack.Count > 0)
             {
-                cmd.ClipRect = clipRectStack[clipRectStack.Count - 1];
+                cmd.ClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
             }
             else
             {
@@ -84,27 +84,27 @@ namespace ImGui
             }
 
             cmd.TextureData = texture;
-            ImageMesh.CommandBuffer.Add(cmd);
+            this.ImageMesh.CommandBuffer.Add(cmd);
         }
 
         public void PushClipRect(Rect rect, bool intersectWithCurrentClipRect = false)
         {
-            if (intersectWithCurrentClipRect && clipRectStack.Count > 0)
+            if (intersectWithCurrentClipRect && this.clipRectStack.Count > 0)
             {
-                Rect currentClipRect = clipRectStack[clipRectStack.Count - 1];
+                Rect currentClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
                 rect.Intersect(currentClipRect);
             }
-            clipRectStack.Add(rect);
+            this.clipRectStack.Add(rect);
             UpdateClipRect();
         }
 
         public void PopClipRect()
         {
-            if (clipRectStack.Count == 0)
+            if (this.clipRectStack.Count == 0)
             {
                 throw new System.InvalidOperationException("Clip stack is empty.");
             }
-            clipRectStack.RemoveAt(clipRectStack.Count - 1);
+            this.clipRectStack.RemoveAt(this.clipRectStack.Count - 1);
             UpdateClipRect();
         }
 
@@ -113,16 +113,16 @@ namespace ImGui
             // If current command is used with different settings we need to add a new command
             // Get current clip rect
             Rect currentClipRect;
-            if (clipRectStack.Count > 0)
+            if (this.clipRectStack.Count > 0)
             {
-                currentClipRect = clipRectStack[clipRectStack.Count - 1];
+                currentClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
             }
             else
             {
                 currentClipRect = Rect.Big;
             }
 
-            var drawCmdBuffer = ShapeMesh.CommandBuffer;
+            var drawCmdBuffer = this.ShapeMesh.CommandBuffer;
             {
                 if (drawCmdBuffer.Count == 0)
                 {
