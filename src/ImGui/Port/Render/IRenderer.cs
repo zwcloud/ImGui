@@ -7,7 +7,7 @@ namespace ImGui
     /// Renderer-related functions
     /// </summary>
     /// <remarks>Renderers should implement this.</remarks>
-    interface IRenderer
+    internal interface IRenderer
     {
         /// <summary>
         /// Initialize the renderer
@@ -28,7 +28,6 @@ namespace ImGui
         /// <param name="width">width of the rendering rectangle</param>
         /// <param name="height">height of the rendering rectangle</param>
         void RenderDrawList(DrawList drawList, int width, int height);
-
 
         /// <summary>
         /// swap front(what is on the screen) and back(what is rendered by the renderer) buffer

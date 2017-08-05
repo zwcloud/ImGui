@@ -4,101 +4,110 @@ using System.Runtime.InteropServices;
 
 namespace ImGui
 {
-    internal partial class Win32OpenGLRenderer : IRenderer
+    internal partial class Win32OpenGLRenderer
     {
-        class OpenGLMaterial
+        private class OpenGLMaterial
         {
-            string vertexShaderSource;
-            string fragmentShaderSource;
+            private readonly string vertexShaderSource;
+            private readonly string fragmentShaderSource;
 
-            public readonly uint[] buffers = { 0, 0 };
-            public uint positionVboHandle/*buffers[0]*/, elementsHandle/*buffers[1]*/;
+            private readonly uint[] buffers = { 0, 0 };
+            private uint vboHandle;/*buffers[0]*/
+            private uint eboHandle;/*buffers[1]*/
 
-            public readonly uint[] vertexArray = { 0 };
-            public uint vaoHandle;
+            private readonly uint[] vertexArray = { 0 };
+            private uint vaoHandle;
 
-            public uint attributePositon, attributeUV, attributeColor;
+            private uint attributePositon;
+            private uint attributeUV;
+            private uint attributeColor;
 
             public CSharpGL.Objects.Shaders.ShaderProgram program;
-            public Dictionary<uint, string> attributeMap;
+            private Dictionary<uint, string> attributeMap;
 
-            public readonly uint[] textures = { 0 };
-            
             public OpenGLMaterial(string vertexShader, string fragmentShader)
             {
                 this.vertexShaderSource = vertexShader;
                 this.fragmentShaderSource = fragmentShader;
             }
 
+            public uint VboHandle => this.vboHandle;
+
+            public uint EboHandle => this.eboHandle;
+
+            public uint VaoHandle => this.vaoHandle;
+
             public void Init()
             {
-                this.CreateShaders();
-                this.CreateVBOs();
+                CreateShaders();
+                CreateObjects();
             }
 
             public void ShutDown()
             {
-                this.DeleteShaders();
-                this.DeleteVBOs();
+                DeleteShaders();
+                DeleteObjects();
             }
 
             private void CreateShaders()
             {
-                program = new CSharpGL.Objects.Shaders.ShaderProgram();
-                attributePositon = 0;
-                attributeUV = 1;
-                attributeColor = 2;
-                attributeMap = new Dictionary<uint, string>
+                this.program = new CSharpGL.Objects.Shaders.ShaderProgram();
+                this.attributePositon = 0;
+                this.attributeUV = 1;
+                this.attributeColor = 2;
+                this.attributeMap = new Dictionary<uint, string>
                 {
                     {0, "Position"},
                     {1, "UV"},
                     {2, "Color" }
                 };
-                program.Create(vertexShaderSource, fragmentShaderSource, attributeMap);
+                this.program.Create(this.vertexShaderSource, this.fragmentShaderSource, this.attributeMap);
 
                 Utility.CheckGLError();
             }
 
-            private void CreateVBOs()
+            private void CreateObjects()
             {
-                GL.GenBuffers(2, buffers);
-                positionVboHandle = buffers[0];
-                elementsHandle = buffers[1];
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
-                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, elementsHandle);
+                GL.GenBuffers(2, this.buffers);
+                this.vboHandle = this.buffers[0];
+                this.eboHandle = this.buffers[1];
+                GL.BindBuffer(GL.GL_ARRAY_BUFFER, this.VboHandle);
+                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.EboHandle);
 
-                GL.GenVertexArrays(1, vertexArray);
-                vaoHandle = vertexArray[0];
-                GL.BindVertexArray(vaoHandle);
+                GL.GenVertexArrays(1, this.vertexArray);
+                this.vaoHandle = this.vertexArray[0];
+                GL.BindVertexArray(this.VaoHandle);
 
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
+                GL.BindBuffer(GL.GL_ARRAY_BUFFER, this.VboHandle);
 
-                GL.EnableVertexAttribArray(attributePositon);
-                GL.EnableVertexAttribArray(attributeUV);
-                GL.EnableVertexAttribArray(attributeColor);
+                GL.EnableVertexAttribArray(this.attributePositon);
+                GL.EnableVertexAttribArray(this.attributeUV);
+                GL.EnableVertexAttribArray(this.attributeColor);
 
-                GL.VertexAttribPointer(attributePositon, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("pos"));
-                GL.VertexAttribPointer(attributeUV, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("uv"));
-                GL.VertexAttribPointer(attributeColor, 4, GL.GL_FLOAT, true, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("color"));
+                GL.VertexAttribPointer(this.attributePositon, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("pos"));
+                GL.VertexAttribPointer(this.attributeUV, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("uv"));
+                GL.VertexAttribPointer(this.attributeColor, 4, GL.GL_FLOAT, true, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("color"));
+
+                GL.BindVertexArray(0);
 
                 Utility.CheckGLError();
             }
 
             private void DeleteShaders()
             {
-                if (program != null)
+                if (this.program != null)
                 {
-                    program.Unbind();
+                    this.program.Unbind();
                     Utility.CheckGLError();
-                    program.Delete();
+                    this.program.Delete();
                     Utility.CheckGLError();
-                    program = null;
+                    this.program = null;
                 }
             }
 
-            private void DeleteVBOs()
+            private void DeleteObjects()
             {
-                GL.DeleteBuffers(1, buffers);
+                GL.DeleteBuffers(2, this.buffers);
                 Utility.CheckGLError();
 
                 GL.BindBuffer(GL.GL_ARRAY_BUFFER, 0);

@@ -9,8 +9,7 @@ namespace ImGui
 {
     internal partial class Win32OpenGLRenderer : IRenderer
     {
-
-        OpenGLMaterial m = new OpenGLMaterial(
+        private readonly OpenGLMaterial shapeMaterial = new OpenGLMaterial(
             vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -39,7 +38,7 @@ void main()
 "
             );
 
-        OpenGLMaterial mImage = new OpenGLMaterial(
+        private readonly OpenGLMaterial imageMaterial = new OpenGLMaterial(
             vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -68,7 +67,7 @@ void main()
 "
             );
 
-        OpenGLMaterial GlyphMaterial = new OpenGLMaterial(
+        private readonly OpenGLMaterial glyphMaterial = new OpenGLMaterial(
     vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -99,7 +98,8 @@ void main()
 }
 "
     );
-        OpenGLMaterial TextMaterial = new OpenGLMaterial(
+
+        private readonly OpenGLMaterial textMaterial = new OpenGLMaterial(
     vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -173,52 +173,50 @@ void main()
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
         private static readonly float[] FloatBuffer = { 0, 0, 0, 0 };
+        private static readonly uint[] UIntBuffer = { 0, 0, 0, 0 };
 
         //#START
-        private static readonly uint[] UIntBuffer = { 0, 0, 0, 0 };
-        uint renderedTexture;
-        uint TextFrameBuffer;
-        UnsafeList<DrawVertex> QuadVertices = new UnsafeList<DrawVertex>(4);
-        UnsafeList<DrawIndex> QuadIndices = new UnsafeList<DrawIndex>(6);
+        private uint renderedTexture;
+        private uint textFrameBuffer;
+        private readonly UnsafeList<DrawVertex> quadVertices = new UnsafeList<DrawVertex>(4);
+        private readonly UnsafeList<DrawIndex> quadIndices = new UnsafeList<DrawIndex>(6);
         //#END
 
         public void Init(IntPtr windowHandle, Size size)
         {
             CreateOpenGLContext((IntPtr)windowHandle);
 
-            GL.Enable(GL.GL_MULTISAMPLE);
-
-            m.Init();
-            mImage.Init();
-            GlyphMaterial.Init();
-            TextMaterial.Init();
+            this.shapeMaterial.Init();
+            this.imageMaterial.Init();
+            this.glyphMaterial.Init();
+            this.textMaterial.Init();
             {
-                QuadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 0), color = (ColorF)Color.Black });
-                QuadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 1), color = (ColorF)Color.Black });
-                QuadVertices.Add(new DrawVertex { pos = (0, 0), uv = (1, 1), color = (ColorF)Color.Black });
-                QuadVertices.Add(new DrawVertex { pos = (0, 0), uv = (1, 0), color = (ColorF)Color.Black });
+                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 0), color = (ColorF)Color.Black });
+                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 1), color = (ColorF)Color.Black });
+                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (1, 1), color = (ColorF)Color.Black });
+                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (1, 0), color = (ColorF)Color.Black });
 
-                QuadIndices.Add(new DrawIndex { Index = 0 });
-                QuadIndices.Add(new DrawIndex { Index = 1 });
-                QuadIndices.Add(new DrawIndex { Index = 2 });
-                QuadIndices.Add(new DrawIndex { Index = 2 });
-                QuadIndices.Add(new DrawIndex { Index = 3 });
-                QuadIndices.Add(new DrawIndex { Index = 0 });
+                this.quadIndices.Add(new DrawIndex { Index = 0 });
+                this.quadIndices.Add(new DrawIndex { Index = 1 });
+                this.quadIndices.Add(new DrawIndex { Index = 2 });
+                this.quadIndices.Add(new DrawIndex { Index = 2 });
+                this.quadIndices.Add(new DrawIndex { Index = 3 });
+                this.quadIndices.Add(new DrawIndex { Index = 0 });
             }
 
             // render target
             {
                 GL.GenFramebuffersEXT(1, UIntBuffer);
-                TextFrameBuffer = UIntBuffer[0];
-                GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, TextFrameBuffer);
+                this.textFrameBuffer = UIntBuffer[0];
+                GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, this.textFrameBuffer);
 
                 //create the texture which will contain the RGB output of our shader.
                 // The texture we're going to render to
                 GL.GenTextures(1, UIntBuffer);
-                renderedTexture = UIntBuffer[0];
+                this.renderedTexture = UIntBuffer[0];
 
                 // "Bind" the newly created texture : all future texture functions will modify this texture
-                GL.BindTexture(GL.GL_TEXTURE_2D, renderedTexture);
+                GL.BindTexture(GL.GL_TEXTURE_2D, this.renderedTexture);
 
                 // Give an empty image to OpenGL ( the last "0" )
                 GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int)size.Width, (int)size.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntPtr.Zero);
@@ -229,11 +227,11 @@ void main()
 
                 // configure our framebuffer
                 // Set "renderedTexture" as our colour attachement #0
-                GL.FramebufferTexture(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, renderedTexture, 0);
+                GL.FramebufferTexture(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, this.renderedTexture, 0);
 
                 // Set the list of draw buffers.
-                uint[] DrawBuffers = { GL.GL_COLOR_ATTACHMENT0_EXT };
-                GL.DrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+                UIntBuffer[0] = GL.GL_COLOR_ATTACHMENT0_EXT;//DrawBuffers
+                GL.DrawBuffers(1, UIntBuffer); // "1" is the size of DrawBuffers
 
                 // check that our framebuffer is ok
                 if (GL.CheckFramebufferStatusEXT(GL.GL_FRAMEBUFFER_EXT) != GL.GL_FRAMEBUFFER_COMPLETE_EXT)
@@ -248,6 +246,7 @@ void main()
             }
 
             // Other state
+            GL.Enable(GL.GL_MULTISAMPLE);
             GL.Disable(GL.GL_CULL_FACE);
             GL.Disable(GL.GL_DEPTH_TEST);
             GL.DepthFunc(GL.GL_NEVER);
@@ -263,10 +262,20 @@ void main()
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         }
 
-        private static void DoRender(OpenGLMaterial material,
-            List<DrawCommand> commandBuffer, UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer,
-            int width, int height)
+        public void RenderDrawList(DrawList drawList, int width, int height)
         {
+            DrawMesh(this.shapeMaterial, drawList.ShapeMesh, width, height);
+            DrawMesh(this.imageMaterial, drawList.ImageMesh, width, height);
+
+            DrawTextMesh(drawList.TextMesh, width, height);
+        }
+
+        private static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
+        {
+            List<DrawCommand> commandBuffer = mesh.CommandBuffer;
+            UnsafeList<DrawVertex> vertexBuffer = mesh.VertexBuffer;
+            UnsafeList<DrawIndex> indexBuffer = mesh.IndexBuffer;
+
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
             GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
@@ -300,10 +309,10 @@ void main()
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
 
             // Send vertex and index data
-            GL.BindVertexArray(material.vaoHandle);
-            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
+            GL.BindVertexArray(material.VaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
             GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
             Utility.CheckGLError();
@@ -341,21 +350,12 @@ void main()
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
         }
 
-        public void RenderDrawList(DrawList drawList, int width, int height)
-        {
-            DoRender(m, drawList.ShapeMesh.CommandBuffer, drawList.ShapeMesh.IndexBuffer, drawList.ShapeMesh.VertexBuffer, width, height);
-            DoRender(mImage, drawList.ImageMesh.CommandBuffer, drawList.ImageMesh.IndexBuffer, drawList.ImageMesh.VertexBuffer, width, height);
+        bool CompositeText = true;//TEST ONLY
 
-            DrawTextMesh(drawList.TextMesh, width, height);
-        }
-        bool CompositeText = true;
         /// <summary>
         /// Draw text mesh (to text framebuffer)
         /// </summary>
-        /// <param name="textMesh"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        public void DrawTextMesh(TextMesh textMesh, int width, int height)
+        private void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
             // Backup GL state
             GL.GetIntegerv(GL.GL_FRAMEBUFFER_BINDING_EXT, IntBuffer); int last_framebuffer_binding = IntBuffer[0];
@@ -385,9 +385,9 @@ void main()
 
             // Draw text mesh
             {
-                if(CompositeText)
+                if(this.CompositeText)
                 {
-                    GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, TextFrameBuffer);// Render to text framebuffer
+                    GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, this.textFrameBuffer);// Render to text framebuffer
                 }
                 GL.ClearColor(0, 0, 0, 0);//Clear framebuffer to Color.Clear
                 GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT); //clear text framebuffer to Color.Clear
@@ -400,7 +400,7 @@ void main()
 
                 // Draw triangles
                 {
-                    var material = GlyphMaterial;
+                    var material = this.glyphMaterial;
                     var vertexBuffer = textMesh.VertexBuffer;
                     var indexBuffer = textMesh.IndexBuffer;
 
@@ -408,10 +408,10 @@ void main()
                     material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
 
                     // Send vertex data
-                    GL.BindVertexArray(material.vaoHandle);
-                    GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
+                    GL.BindVertexArray(material.VaoHandle);
+                    GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
                     GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-                    GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
+                    GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
                     GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
                     var drawCmd = textMesh.Command;
@@ -421,32 +421,6 @@ void main()
                 }
 
                 Utility.CheckGLError();
-
-                // Draw quadratic bezier segments
-#if (false)
-                {
-                    var material = GlyphMaterial;
-                    var vertexBuffer = textMesh.BezierVertexBuffer;
-                    var indexBuffer = textMesh.BezierIndexBuffer;
-
-                    material.program.Bind();
-                    material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
-
-                    // Send vertex data
-                    GL.BindVertexArray(material.vaoHandle);
-                    GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
-                    GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-                    GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
-                    GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
-
-                    var drawCmd = textMesh.Command1;
-                    var clipRect = drawCmd.ClipRect;
-                    GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
-                    GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);
-                }
-#endif
-
-                // TODO combine two drawcalls, and actually triangles and bezier segments can be saved in one vertexbuffer and indexbuffer
             }
 
             //byte[] pixels = new byte[4 * width * height];
@@ -455,7 +429,7 @@ void main()
             //img.Save("D:\\1.png");
 
             // Composite text framebuffer to the default framebuffer
-            if (CompositeText)
+            if (this.CompositeText)
             {
                 GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
 
@@ -464,38 +438,38 @@ void main()
                 //GL.BlendFunc(GL.GL_ONE, GL.GL_ZERO);
                 GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
-                OpenGLMaterial material = TextMaterial;
+                OpenGLMaterial material = this.textMaterial;
                 material.program.Bind();
                 material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
 
                 // create vertex and index data that fills the screen
-                QuadVertices[0] = new DrawVertex { pos = (0, 0), uv = (0, 1), color = (ColorF)Color.Clear };
-                QuadVertices[1] = new DrawVertex { pos = (0, height), uv = (0, 0), color = (ColorF)Color.Clear };
-                QuadVertices[2] = new DrawVertex { pos = (width, height), uv = (1, 0), color = (ColorF)Color.Clear };
-                QuadVertices[3] = new DrawVertex { pos = (width, 0), uv = (1, 1), color = (ColorF)Color.Clear };
+                this.quadVertices[0] = new DrawVertex { pos = (0, 0), uv = (0, 1), color = (ColorF)Color.Clear };
+                this.quadVertices[1] = new DrawVertex { pos = (0, height), uv = (0, 0), color = (ColorF)Color.Clear };
+                this.quadVertices[2] = new DrawVertex { pos = (width, height), uv = (1, 0), color = (ColorF)Color.Clear };
+                this.quadVertices[3] = new DrawVertex { pos = (width, 0), uv = (1, 1), color = (ColorF)Color.Clear };
 
-                QuadIndices[0] = new DrawIndex { Index = 0 };
-                QuadIndices[1] = new DrawIndex { Index = 1 };
-                QuadIndices[2] = new DrawIndex { Index = 2 };
-                QuadIndices[3] = new DrawIndex { Index = 2 };
-                QuadIndices[4] = new DrawIndex { Index = 3 };
-                QuadIndices[5] = new DrawIndex { Index = 0 };
+                this.quadIndices[0] = new DrawIndex { Index = 0 };
+                this.quadIndices[1] = new DrawIndex { Index = 1 };
+                this.quadIndices[2] = new DrawIndex { Index = 2 };
+                this.quadIndices[3] = new DrawIndex { Index = 2 };
+                this.quadIndices[4] = new DrawIndex { Index = 3 };
+                this.quadIndices[5] = new DrawIndex { Index = 0 };
 
                 // Send vertex and index data
-                GL.BindVertexArray(material.vaoHandle);
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
-                GL.BufferData(GL.GL_ARRAY_BUFFER, QuadVertices.Count * Marshal.SizeOf<DrawVertex>(), QuadVertices.Pointer, GL.GL_STREAM_DRAW);
-                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
-                GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, QuadIndices.Count * Marshal.SizeOf<DrawIndex>(), QuadIndices.Pointer, GL.GL_STREAM_DRAW);
+                GL.BindVertexArray(material.VaoHandle);
+                GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
+                GL.BufferData(GL.GL_ARRAY_BUFFER, this.quadVertices.Count * Marshal.SizeOf<DrawVertex>(), this.quadVertices.Pointer, GL.GL_STREAM_DRAW);
+                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
+                GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, this.quadIndices.Count * Marshal.SizeOf<DrawIndex>(), this.quadIndices.Pointer, GL.GL_STREAM_DRAW);
 
                 Utility.CheckGLError();
 
                 // Draw
                 var indexBufferOffset = IntPtr.Zero;
                 GL.ActiveTexture(GL.GL_TEXTURE0);
-                GL.BindTexture(GL.GL_TEXTURE_2D, renderedTexture);
-                GL.DrawElements(GL.GL_TRIANGLES, QuadIndices.Count, GL.GL_UNSIGNED_INT, indexBufferOffset);
-                indexBufferOffset = IntPtr.Add(indexBufferOffset, QuadIndices.Count * Marshal.SizeOf<DrawIndex>());
+                GL.BindTexture(GL.GL_TEXTURE_2D, this.renderedTexture);
+                GL.DrawElements(GL.GL_TRIANGLES, this.quadIndices.Count, GL.GL_UNSIGNED_INT, indexBufferOffset);
+                indexBufferOffset = IntPtr.Add(indexBufferOffset, this.quadIndices.Count * Marshal.SizeOf<DrawIndex>());
 
                 Utility.CheckGLError();
             }
@@ -520,10 +494,12 @@ void main()
 
         public void ShutDown()
         {
-            m.ShutDown();
-            mImage.ShutDown();
-            GlyphMaterial.ShutDown();
-            TextMaterial.ShutDown();
+            this.shapeMaterial.ShutDown();
+            this.imageMaterial.ShutDown();
+            this.glyphMaterial.ShutDown();
+            this.textMaterial.ShutDown();
+
+            //TODO release frame buffer
         }
     }
 }
