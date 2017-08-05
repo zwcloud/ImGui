@@ -158,7 +158,7 @@ namespace ImGui
             //FIXME Apply text color.
 
             // triangles
-            Color tmpColor = new Color(1.01 / 255, 0, 0, 1);
+            Color tmpColor = color;// new Color(1.01 / 255, 0, 0, 1);
             foreach (var polygon in this.textGeometryContainer.Polygons)
             {
                 if (polygon == null || polygon.Count < 3) { continue; }

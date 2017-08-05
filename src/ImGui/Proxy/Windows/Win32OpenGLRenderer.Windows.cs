@@ -21,7 +21,8 @@ namespace ImGui
                 nVersion = 1;
                 dwFlags = PFD_FLAGS.PFD_DRAW_TO_WINDOW | PFD_FLAGS.PFD_SUPPORT_OPENGL | PFD_FLAGS.PFD_DOUBLEBUFFER;
                 iPixelType = PFD_PIXEL_TYPE.PFD_TYPE_RGBA;
-                cColorBits = 24;
+                cColorBits = 32;
+                cAlphaBits = 8;
                 cDepthBits = 24;
                 cStencilBits = 8;
                 iLayerType = PFD_LAYER_TYPES.PFD_MAIN_PLANE;
@@ -446,6 +447,11 @@ namespace ImGui
                 throw new Exception(string.Format("wglChoosePixelFormatARB failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
+            if(!DescribePixelFormat(hDC, pixelFormat, (uint)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), ref pixelformatdescriptor))
+            {
+                throw new Exception(string.Format("DescribePixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+            }
+
             if (!SetPixelFormat(hDC, pixelFormat, ref pixelformatdescriptor))
             {
                 throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
@@ -467,6 +473,13 @@ namespace ImGui
             }
 
             Utility.CheckGLError();
+
+            GL.GetIntegerv(GL.GL_STENCIL_BITS, IntBuffer);
+            var stencilBits = IntBuffer[0];
+            if (stencilBits != 8)
+            {
+                throw new Exception("Failed to set stencilBits to 9.");
+            }
             PrintGraphicInfo();
         }
 

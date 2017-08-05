@@ -38,35 +38,36 @@ namespace ImGui.UnitTest
                     GUIStyle labelStyle = "Label";
                     labelStyle.Set<double>(GUIStyleName.FontSize, fontSize);
                     labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + fontName);
+                    labelStyle.Set<Color>(GUIStyleName.FontColor, Color.Rgb(253, 79, 10));
                     GUILayout.Label(text, GUILayout.Height(410), GUILayout.Width(410));
                 }));
             }
 
             [Theory]
-            [InlineData("msjh.ttf", "ImGui", 100)]
-            [InlineData("msjh.ttf", "立即模式GUI", 40)]
-            [InlineData("msjh.ttf", "Debug your test", 20)]
+            [InlineData("msjh.ttf", "文本渲染", 100)]
+            [InlineData("msjh.ttf", "文本渲染", 60)]
+            [InlineData("msjh.ttf", "文本渲染", 20)]
+            [InlineData("msjh.ttf", "文本渲染", 12)]
             public void RenderText(string fontName, string text, int fontSize)
             {
                 Application.Run(new Form1(() => {
                     GUIStyle labelStyle = "Label";
                     labelStyle.Set<double>(GUIStyleName.FontSize, fontSize);
                     labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + fontName);
+                    labelStyle.Set<Color>(GUIStyleName.FontColor, Color.Rgb(253, 79, 10));
                     GUILayout.Label(text, GUILayout.Height(410), GUILayout.Width(410));
                 }));
             }
 
             [Theory]
-            [InlineData("msjh.ttf", "D", 60)]
+            [InlineData("msjh.ttf", "D", 400)]
             public void RenderTexts(string fontName, string text, int fontSize)
             {
                 Application.Run(new Form1(() => {
                     GUIStyle labelStyle = "Label";
                     labelStyle.Set<double>(GUIStyleName.FontSize, fontSize);
                     labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + fontName);
-                    GUILayout.Label("D0", GUILayout.Height(60), GUILayout.Width(410));
-                    GUILayout.Label("D1", GUILayout.Height(60), GUILayout.Width(410));
-                    //GUI.Label(new Rect(0, 41, 200, 40), "D1");
+                    GUILayout.Label(text, GUILayout.Height(60), GUILayout.Width(410));
                 }));
             }
 

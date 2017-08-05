@@ -98,78 +98,6 @@ void main()
 }
 "
     );
-
-        private readonly OpenGLMaterial textMaterial = new OpenGLMaterial(
-    vertexShader: @"
-#version 330
-uniform mat4 ProjMtx;
-in vec2 Position;
-in vec2 UV;
-in vec4 Color;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-    fragmentShader: @"
-#version 330
-uniform sampler2D Texture;
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-out vec4 Out_Color;
-void main()
-{
-	vec4 color = texture(Texture, Frag_UV.st);
-	int m = int(mod(color.r*255, 2));
-	if(m == 1)
-	{
-		Out_Color = vec4(0,0,0,1);
-	}
-	else
-	{
-		discard;
-	}
-}
-"
-// MSAA fragment shader, should be used together with multi-sampled framebuffer
-/*
-    #version 330
-    #extension GL_ARB_texture_multisample : enable
-    uniform sampler2DMS Texture;
-    in vec2 Frag_UV;
-    in vec4 Frag_Color;
-    out vec4 Out_Color;
-
-    int samples = 4;
-    float div = 1.0/samples;
-
-    void main()
-    {
-        int count = 0;
-        ivec2 texcoord = ivec2(textureSize(Texture) * Frag_UV); // used to fetch msaa texel location
-        for (int i=0;i<samples;i++)
-        {
-            float r = texelFetch(Texture, texcoord, i).r;
-            int m = int(mod(r*255, 2));
-            if(m == 1)
-            {
-                count = count + 1;
-            }
-        }
-
-        if(count == 0)
-        {
-            discard;
-        }
-
-        Out_Color = vec4(0,0,0,count * div);
-    }
-*/
-    );
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
         private static readonly float[] FloatBuffer = { 0, 0, 0, 0 };
@@ -189,7 +117,6 @@ void main()
             this.shapeMaterial.Init();
             this.imageMaterial.Init();
             this.glyphMaterial.Init();
-            this.textMaterial.Init();
             {
                 this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 0), color = (ColorF)Color.Black });
                 this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 1), color = (ColorF)Color.Black });
@@ -259,7 +186,7 @@ void main()
 
         public void Clear()
         {
-            GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+            GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
         }
 
         public void RenderDrawList(DrawList drawList, int width, int height)
@@ -350,10 +277,8 @@ void main()
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
         }
 
-        bool CompositeText = true;//TEST ONLY
-
         /// <summary>
-        /// Draw text mesh (to text framebuffer)
+        /// Draw text mesh
         /// </summary>
         private void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
@@ -383,96 +308,45 @@ void main()
             GLM.mat4 ortho_projection = GLM.glm.ortho(0.0f, width, height, 0.0f, -5.0f, 5.0f);
             GL.Viewport(0, 0, width, height);
 
-            // Draw text mesh
+            GL.Enable(GL.GL_STENCIL_TEST);
+            GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_INVERT);
+            GL.StencilFunc(GL.GL_ALWAYS, 1, 1);
+
+            GL.ColorMask(false, false, false, false);//only draw to stencil buffer
+            GL.Clear(GL.GL_STENCIL_BUFFER_BIT); //clear stencil buffer to 0
+
+            Utility.CheckGLError();
+
             {
-                if(this.CompositeText)
-                {
-                    GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, this.textFrameBuffer);// Render to text framebuffer
-                }
-                GL.ClearColor(0, 0, 0, 0);//Clear framebuffer to Color.Clear
-                GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT); //clear text framebuffer to Color.Clear
+                // Draw text mesh to stencil buffer
+                var material = this.glyphMaterial;
+                var vertexBuffer = textMesh.VertexBuffer;
+                var indexBuffer = textMesh.IndexBuffer;
 
-                GL.Enable(GL.GL_BLEND);
-                GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
-                GL.BlendFunc(GL.GL_ONE, GL.GL_ONE);
-
-                Utility.CheckGLError();
-
-                // Draw triangles
-                {
-                    var material = this.glyphMaterial;
-                    var vertexBuffer = textMesh.VertexBuffer;
-                    var indexBuffer = textMesh.IndexBuffer;
-
-                    material.program.Bind();
-                    material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
-
-                    // Send vertex data
-                    GL.BindVertexArray(material.VaoHandle);
-                    GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
-                    GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-                    GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
-                    GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
-
-                    var drawCmd = textMesh.Command;
-                    var clipRect = drawCmd.ClipRect;
-                    GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
-                    GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);
-                }
-
-                Utility.CheckGLError();
-            }
-
-            //byte[] pixels = new byte[4 * width * height];
-            //GL.ReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels);
-            //var img = ImageSharp.Image.LoadPixelData<ImageSharp.Rgba32>(pixels, width, height);
-            //img.Save("D:\\1.png");
-
-            // Composite text framebuffer to the default framebuffer
-            if (this.CompositeText)
-            {
-                GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
-
-                GL.Enable(GL.GL_BLEND);
-                GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
-                //GL.BlendFunc(GL.GL_ONE, GL.GL_ZERO);
-                GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-
-                OpenGLMaterial material = this.textMaterial;
                 material.program.Bind();
                 material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
 
-                // create vertex and index data that fills the screen
-                this.quadVertices[0] = new DrawVertex { pos = (0, 0), uv = (0, 1), color = (ColorF)Color.Clear };
-                this.quadVertices[1] = new DrawVertex { pos = (0, height), uv = (0, 0), color = (ColorF)Color.Clear };
-                this.quadVertices[2] = new DrawVertex { pos = (width, height), uv = (1, 0), color = (ColorF)Color.Clear };
-                this.quadVertices[3] = new DrawVertex { pos = (width, 0), uv = (1, 1), color = (ColorF)Color.Clear };
-
-                this.quadIndices[0] = new DrawIndex { Index = 0 };
-                this.quadIndices[1] = new DrawIndex { Index = 1 };
-                this.quadIndices[2] = new DrawIndex { Index = 2 };
-                this.quadIndices[3] = new DrawIndex { Index = 2 };
-                this.quadIndices[4] = new DrawIndex { Index = 3 };
-                this.quadIndices[5] = new DrawIndex { Index = 0 };
-
-                // Send vertex and index data
+                // Send vertex data
                 GL.BindVertexArray(material.VaoHandle);
                 GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
-                GL.BufferData(GL.GL_ARRAY_BUFFER, this.quadVertices.Count * Marshal.SizeOf<DrawVertex>(), this.quadVertices.Pointer, GL.GL_STREAM_DRAW);
+                GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
                 GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
-                GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, this.quadIndices.Count * Marshal.SizeOf<DrawIndex>(), this.quadIndices.Pointer, GL.GL_STREAM_DRAW);
+                GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
+
+                var drawCmd = textMesh.Command;
+                var clipRect = drawCmd.ClipRect;
+                GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
+                GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);
 
                 Utility.CheckGLError();
 
-                // Draw
-                var indexBufferOffset = IntPtr.Zero;
-                GL.ActiveTexture(GL.GL_TEXTURE0);
-                GL.BindTexture(GL.GL_TEXTURE_2D, this.renderedTexture);
-                GL.DrawElements(GL.GL_TRIANGLES, this.quadIndices.Count, GL.GL_UNSIGNED_INT, indexBufferOffset);
-                indexBufferOffset = IntPtr.Add(indexBufferOffset, this.quadIndices.Count * Marshal.SizeOf<DrawIndex>());
-
-                Utility.CheckGLError();
+                GL.StencilFunc(GL.GL_EQUAL, 1, 1);
+                GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
+                GL.ColorMask(true, true, true, true);
+                // Draw text mesh againest stencil buffer
+                GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);
             }
+            GL.Disable(GL.GL_STENCIL_TEST);
 
             // Restore modified GL state
             GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, (uint)last_framebuffer_binding);
@@ -497,7 +371,6 @@ void main()
             this.shapeMaterial.ShutDown();
             this.imageMaterial.ShutDown();
             this.glyphMaterial.ShutDown();
-            this.textMaterial.ShutDown();
 
             //TODO release frame buffer
         }
