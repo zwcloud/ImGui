@@ -1,4 +1,5 @@
-﻿using ImGui.Common;
+﻿using System.Collections.Generic;
+using ImGui.Common;
 
 namespace ImGui
 {
@@ -12,7 +13,7 @@ namespace ImGui
         /// Commands. Typically 1 command = 1 gpu draw call.
         /// </summary>
         /// <remarks>Every command corresponds to 1 sub-mesh.</remarks>
-        public UnsafeList<DrawCommand> CommandBuffer { get; } = new UnsafeList<DrawCommand>();
+        public List<DrawCommand> CommandBuffer { get; } = new List<DrawCommand>();
 
         /// <summary>
         /// Index buffer. Each command consume DrawCommand.ElemCount of those

@@ -159,7 +159,11 @@ namespace ImGui
                 drawCmdBuffer[drawCmdBuffer.Count - 1] = newDrawCmd;
             }
 
-            // TODO Update textmesh clip rect?
+            // TODO TextMesh should also have CommandBuffer
+            {
+                var newDrawCmd = this.TextMesh.Command;
+                newDrawCmd.ClipRect = currentClipRect;
+            }
         }
 
     }

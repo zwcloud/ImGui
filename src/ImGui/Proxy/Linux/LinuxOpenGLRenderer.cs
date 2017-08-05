@@ -259,7 +259,7 @@ void main()
         }
 
         private static void DoRender(Material material,
-            UnsafeList<DrawCommand> commandBuffer, UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer,
+            List<DrawCommand> commandBuffer, UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer,
             int width, int height)
         {
             // Backup GL state
