@@ -18,29 +18,28 @@ namespace ImGui.UnitTest
                 o = output;
             }
 
-            [Fact]
-            public void GetGlyphPoints()
+            [Theory]
+            [InlineData("msjh.ttf", 'D')]
+            public void GetGlyphPoints(string fontFile, char character)
             {
                 Typeface typeFace;
-                using (var fs = Utility.ReadFile(Utility.FontDir + "msjh.ttf"))
+                using (var fs = Utility.ReadFile(Utility.FontDir + fontFile))
                 {
                     var reader = new OpenFontReader();
-                    Profile.Start("OpenFontReader.Read");
                     typeFace = reader.Read(fs);
-                    Profile.End();
                 }
 
-                // character 'D'
-                Glyph glyph = typeFace.GetGlyphByIndex(8000);
+                Glyph glyph = typeFace.Lookup(character);
+
+                o.WriteLine("GlyphPoints of '{0}':", character);
                 var glyphPoints = glyph.GlyphPoints;
-                o.WriteLine("GlyphPoints of 'D':");
                 foreach(var p in glyphPoints)
                 {
                     o.WriteLine("{0}, {1}", p.X, p.Y);
                 }
 
+                o.WriteLine("EndPoints of '{0}':", character);
                 var endPoints = glyph.EndPoints;
-                o.WriteLine("endPoints of 'D':");
                 foreach (var end in endPoints)
                 {
                     o.WriteLine(end.ToString());

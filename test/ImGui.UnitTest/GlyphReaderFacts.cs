@@ -11,7 +11,6 @@ namespace ImGui.UnitTest
 {
     public class GlyphReaderFacts
     {
-
         public class TheReadMethod
         {
             private readonly ITestOutputHelper o;
@@ -46,6 +45,7 @@ namespace ImGui.UnitTest
                 var bezierSegments = new List<(Point, Point, Point)>();
                 GlyphReader.Read(points, endPoints, offsetX, offsetY, 1, out polygons, out bezierSegments, flipY: false);
 
+                //print to test output
                 for (int i = 0; i < polygons.Count; i++)
                 {
                     o.WriteLine("Polygon " + i);
@@ -67,11 +67,10 @@ namespace ImGui.UnitTest
 
                 o.WriteLine("");
 
-                // draw these
+                // draw to an image
                 using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, 2000, 2000))
                 using (Cairo.Context g = new Cairo.Context(surface))
                 {
-                    //draw filled contour
                     for (int i = 0; i < polygons.Count; i++)
                     {
                         var polygon = polygons[i];
@@ -99,9 +98,14 @@ namespace ImGui.UnitTest
                     g.SetSourceColor(new Cairo.Color(0.5, 0.5, 0));
                     g.Stroke();
 
-                    surface.WriteToPng(
-                        string.Format("D:\\ImGui.UnitTest\\GlyphReaderFacts+TheReadMethod.Read{0}_{1}_{2}.png",
-                        fontFileName, character, fontSize));
+                    var path = string.Format("D:\\ImGui.UnitTest\\GlyphReaderFacts+TheReadMethod.Read{0}_{1}_{2}.png",
+                        fontFileName, character, fontSize);
+                    surface.WriteToPng(path);
+
+                    Util.OpenImage(path);
+
+                    // Now inspect the image to check whether the glyph is correct
+                    // TODO Are there a better way to do such kind of unit-test?
                 }
             }
         }

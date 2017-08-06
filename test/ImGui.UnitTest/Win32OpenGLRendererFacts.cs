@@ -19,6 +19,8 @@ namespace ImGui.UnitTest
         }
     }
 
+    //TODO make these tests standalone without Application and Form.
+
     public class Win32OpenGLRendererFacts
     {
         public class DrawTextMeshFacts
@@ -60,14 +62,17 @@ namespace ImGui.UnitTest
             }
 
             [Theory]
-            [InlineData("msjh.ttf", "D", 400)]
-            public void RenderTexts(string fontName, string text, int fontSize)
+            [InlineData("msjh.ttf", new[] {"D1","D2"}, 100)]
+            public void RenderTextSegments(string fontName, string[] textSegments, int fontSize)
             {
                 Application.Run(new Form1(() => {
                     GUIStyle labelStyle = "Label";
                     labelStyle.Set<double>(GUIStyleName.FontSize, fontSize);
                     labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + fontName);
-                    GUILayout.Label(text, GUILayout.Height(60), GUILayout.Width(410));
+                    for (int i = 0; i < textSegments.Length; i++)
+                    {
+                        GUILayout.Label(textSegments[i], GUILayout.Height(60), GUILayout.Width(410));
+                    }
                 }));
             }
 
