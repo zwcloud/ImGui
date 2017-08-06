@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -843,7 +844,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
                                 if (((ushort)xcb_button_mask_t.XCB_BUTTON_MASK_1 | bp->state) != 0)//this should be left button
                                 {
-                                    Input.Mouse.LeftButtonState = KeyState.Down;
+                                    Mouse.Instance.LeftButtonState = KeyState.Down;
                                 }
                                 //TODO process other buttons
                                 break;
@@ -860,7 +861,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                         //        br->detail, br->_event, br->event_x, br->event_y);
                         if (((ushort)xcb_button_mask_t.XCB_BUTTON_MASK_1 | br->state) != 0)//this should be left button
                         {
-                            Input.Mouse.LeftButtonState = KeyState.Up;
+                            Mouse.Instance.LeftButtonState = KeyState.Up;
                         }
                         //TODO process other buttons
                         break;
@@ -871,7 +872,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
                         //Debug.WriteLine("Mouse moved in window {0}, at coordinates ({1},{2})",
                         //        motion->_event, motion->event_x, motion->event_y);
-                        Input.Mouse.Position = new Point(motion->event_x, motion->event_y);
+                        Mouse.Instance.Position = new Point(motion->event_x, motion->event_y);
                         break;
                     }
                 case 7:/*XCB_ENTER_NOTIFY*/
@@ -898,8 +899,8 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
                         //Debug.WriteLine("Key <{0}> pressed in window {1}", kp->detail, kp->_event);
                         var keyCode = kp->detail;
-                        Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                        Input.Keyboard.keyStates[keyCode] = KeyState.Down;
+                        Keyboard.Instance.lastKeyStates[keyCode] = Keyboard.Instance.keyStates[keyCode];
+                        Keyboard.Instance.keyStates[keyCode] = KeyState.Down;
 
                         break;
                     }
@@ -911,8 +912,8 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
                         //Debug.WriteLine("Key <{0}> released in window {1}", kr->detail, kr->_event);
                         var keyCode = kr->detail;
-                        Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                        Input.Keyboard.keyStates[keyCode] = KeyState.Up;
+                        Keyboard.Instance.lastKeyStates[keyCode] = Keyboard.Instance.keyStates[keyCode];
+                        Keyboard.Instance.keyStates[keyCode] = KeyState.Up;
                         break;
                     }
                 default:

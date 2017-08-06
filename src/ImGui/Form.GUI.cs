@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 using CSharpGL;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -40,54 +41,54 @@ namespace ImGui
             #region Input
             // Process input
             #region mouse position
-            if (Input.Mouse.Position.X < 0 && Input.Mouse.Position.Y < 0)
-                Input.Mouse.Position = new Point(-9999.0f, -9999.0f);
-            if ((Input.Mouse.Position.X < 0 && Input.Mouse.Position.Y < 0) || (Input.Mouse.LastPosition.X < 0 && Input.Mouse.LastPosition.Y < 0))   // if mouse just appeared or disappeared (negative coordinate) we cancel out movement in MouseDelta
-                Input.Mouse.MouseDelta = Vector.Zero;
+            if (Mouse.Instance.Position.X < 0 && Mouse.Instance.Position.Y < 0)
+                Mouse.Instance.Position = new Point(-9999.0f, -9999.0f);
+            if ((Mouse.Instance.Position.X < 0 && Mouse.Instance.Position.Y < 0) || (Mouse.Instance.LastPosition.X < 0 && Mouse.Instance.LastPosition.Y < 0))   // if mouse just appeared or disappeared (negative coordinate) we cancel out movement in MouseDelta
+                Mouse.Instance.MouseDelta = Vector.Zero;
             else
-                Input.Mouse.MouseDelta = Input.Mouse.Position - Input.Mouse.LastPosition;
-            Input.Mouse.LastPosition = Input.Mouse.Position;
+                Mouse.Instance.MouseDelta = Mouse.Instance.Position - Mouse.Instance.LastPosition;
+            Mouse.Instance.LastPosition = Mouse.Instance.Position;
             #endregion
 
             #region mouse left button
-            Input.Mouse.LeftButtonPressed = Input.Mouse.LeftButtonState == KeyState.Down && Input.Mouse.LeftButtonDownDuration < 0;
-            Input.Mouse.LeftButtonReleased = Input.Mouse.LeftButtonState == KeyState.Up && Input.Mouse.LeftButtonDownDuration >= 0;
-            Input.Mouse.LeftButtonDownDurationPrev = Input.Mouse.LeftButtonDownDuration;
-            Input.Mouse.LeftButtonDownDuration = Input.Mouse.LeftButtonState == KeyState.Down ? (Input.Mouse.LeftButtonDownDuration < 0 ? 0 : Input.Mouse.LeftButtonDownDuration + g.DeltaTime) : -1;
-            Input.Mouse.LeftButtonDoubleClicked = false;
-            if (Input.Mouse.LeftButtonPressed)
+            Mouse.Instance.LeftButtonPressed = Mouse.Instance.LeftButtonState == KeyState.Down && Mouse.Instance.LeftButtonDownDuration < 0;
+            Mouse.Instance.LeftButtonReleased = Mouse.Instance.LeftButtonState == KeyState.Up && Mouse.Instance.LeftButtonDownDuration >= 0;
+            Mouse.Instance.LeftButtonDownDurationPrev = Mouse.Instance.LeftButtonDownDuration;
+            Mouse.Instance.LeftButtonDownDuration = Mouse.Instance.LeftButtonState == KeyState.Down ? (Mouse.Instance.LeftButtonDownDuration < 0 ? 0 : Mouse.Instance.LeftButtonDownDuration + g.DeltaTime) : -1;
+            Mouse.Instance.LeftButtonDoubleClicked = false;
+            if (Mouse.Instance.LeftButtonPressed)
             {
-                if (g.Time - Input.Mouse.LeftButtonClickedTime < Mouse.DoubleClickIntervalTimeSpan)
+                if (g.Time - Mouse.Instance.LeftButtonClickedTime < Mouse.DoubleClickIntervalTimeSpan)
                 {
-                    if ((Input.Mouse.Position - Input.Mouse.LeftButtonPressedPos).LengthSquared < Mouse.DoubleClickMaxDistance * Mouse.DoubleClickMaxDistance)
+                    if ((Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPos).LengthSquared < Mouse.DoubleClickMaxDistance * Mouse.DoubleClickMaxDistance)
                     {
-                        Input.Mouse.LeftButtonDoubleClicked = true;
+                        Mouse.Instance.LeftButtonDoubleClicked = true;
                     }
-                    Input.Mouse.LeftButtonClickedTime = -99999; // so the third click isn't turned into a double-click
+                    Mouse.Instance.LeftButtonClickedTime = -99999; // so the third click isn't turned into a double-click
                 }
                 else
                 {
-                    Input.Mouse.LeftButtonClickedTime = g.Time;
+                    Mouse.Instance.LeftButtonClickedTime = g.Time;
                 }
-                Input.Mouse.LeftButtonPressedPos = Input.Mouse.Position;
-                Input.Mouse.DragMaxDiatanceSquared = 0;
+                Mouse.Instance.LeftButtonPressedPos = Mouse.Instance.Position;
+                Mouse.Instance.DragMaxDiatanceSquared = 0;
             }
-            else if(Input.Mouse.LeftButtonState == KeyState.Down)
+            else if(Mouse.Instance.LeftButtonState == KeyState.Down)
             {
-                Input.Mouse.DragMaxDiatanceSquared = Math.Max(Input.Mouse.DragMaxDiatanceSquared, (Input.Mouse.Position - Input.Mouse.LeftButtonPressedPos).LengthSquared);
+                Mouse.Instance.DragMaxDiatanceSquared = Math.Max(Mouse.Instance.DragMaxDiatanceSquared, (Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPos).LengthSquared);
             }
-            if (Input.Mouse.LeftButtonPressed) ++Input.Mouse.LeftButtonPressedTimes;
-            if (Input.Mouse.LeftButtonReleased) ++Input.Mouse.LeftButtonReleasedTimes;
-            if(Input.Mouse.LeftButtonDoubleClicked) ++Input.Mouse.LeftButtonDoubleClickedTimes;
+            if (Mouse.Instance.LeftButtonPressed) ++Mouse.Instance.LeftButtonPressedTimes;
+            if (Mouse.Instance.LeftButtonReleased) ++Mouse.Instance.LeftButtonReleasedTimes;
+            if(Mouse.Instance.LeftButtonDoubleClicked) ++Mouse.Instance.LeftButtonDoubleClickedTimes;
             #endregion
 
             #region mouse right button
-            Input.Mouse.RightButtonPressed = Input.Mouse.RightButtonState == KeyState.Down && Input.Mouse.RightButtonDownDuration < 0;
-            Input.Mouse.RightButtonReleased = Input.Mouse.RightButtonState == KeyState.Up && Input.Mouse.RightButtonDownDuration >= 0;
-            Input.Mouse.RightButtonDownDuration = Input.Mouse.RightButtonState == KeyState.Down ? (Input.Mouse.RightButtonDownDuration < 0 ? 0 : Input.Mouse.RightButtonDownDuration + g.DeltaTime) : -1;
+            Mouse.Instance.RightButtonPressed = Mouse.Instance.RightButtonState == KeyState.Down && Mouse.Instance.RightButtonDownDuration < 0;
+            Mouse.Instance.RightButtonReleased = Mouse.Instance.RightButtonState == KeyState.Up && Mouse.Instance.RightButtonDownDuration >= 0;
+            Mouse.Instance.RightButtonDownDuration = Mouse.Instance.RightButtonState == KeyState.Down ? (Mouse.Instance.RightButtonDownDuration < 0 ? 0 : Mouse.Instance.RightButtonDownDuration + g.DeltaTime) : -1;
             
-            if (Input.Mouse.RightButtonPressed) ++Input.Mouse.RightButtonPressedTimes;
-            if (Input.Mouse.RightButtonReleased) ++Input.Mouse.RightButtonReleasedTimes;
+            if (Mouse.Instance.RightButtonPressed) ++Mouse.Instance.RightButtonPressedTimes;
+            if (Mouse.Instance.RightButtonReleased) ++Mouse.Instance.RightButtonReleasedTimes;
             #endregion
 
             #endregion
@@ -124,8 +125,8 @@ namespace ImGui
             w.EndFrame(g);
 
             // Clear Input data for next frame
-            Input.Mouse.MouseWheel = 0;
-            Input.ImeBuffer.Clear();
+            Mouse.Instance.MouseWheel = 0;
+            Ime.ImeBuffer.Clear();
 
             g.FrameCountEnded = g.FrameCount;
         }
@@ -180,13 +181,13 @@ namespace ImGui
                 var l = Application.logger;
                 WindowManager w = g.WindowManager;
                 l.Clear();
-                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Input.Mouse.Position, g.DeltaTime);
+                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
                 l.Msg("Input");
-                l.Msg("    LeftButtonState {0}", Input.Mouse.LeftButtonState);
-                l.Msg("    LeftButtonDownDuration {0}ms", Input.Mouse.LeftButtonDownDuration);
-                l.Msg("    LeftButtonPressed {0}, {1} times", Input.Mouse.LeftButtonPressed, Input.Mouse.LeftButtonPressedTimes);
-                l.Msg("    LeftButtonReleased {0}, {1} times", Input.Mouse.LeftButtonReleased, Input.Mouse.LeftButtonReleasedTimes);
-                l.Msg("    LeftButtonDoubleClicked {0}, {1} times", Input.Mouse.LeftButtonDoubleClicked, Input.Mouse.LeftButtonDoubleClickedTimes);
+                l.Msg("    LeftButtonState {0}", Mouse.Instance.LeftButtonState);
+                l.Msg("    LeftButtonDownDuration {0}ms", Mouse.Instance.LeftButtonDownDuration);
+                l.Msg("    LeftButtonPressed {0}, {1} times", Mouse.Instance.LeftButtonPressed, Mouse.Instance.LeftButtonPressedTimes);
+                l.Msg("    LeftButtonReleased {0}, {1} times", Mouse.Instance.LeftButtonReleased, Mouse.Instance.LeftButtonReleasedTimes);
+                l.Msg("    LeftButtonDoubleClicked {0}, {1} times", Mouse.Instance.LeftButtonDoubleClicked, Mouse.Instance.LeftButtonDoubleClickedTimes);
 
                 l.Msg("ActiveId: {0}, ActiveIdIsAlive: {1}", g.ActiveId, g.ActiveIdIsAlive);
                 l.Msg("HoverId: {0}", g.HoverId);

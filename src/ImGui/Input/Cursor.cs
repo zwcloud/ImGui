@@ -1,5 +1,4 @@
-﻿
-namespace ImGui
+﻿namespace ImGui.Input
 {
     /// <summary>
     /// Cursor types

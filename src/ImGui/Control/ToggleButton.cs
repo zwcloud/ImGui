@@ -1,4 +1,5 @@
 ﻿using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -24,7 +25,7 @@ namespace ImGui
             DrawList d = window.DrawList;
             int id = window.GetID(text);
 
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
             var hovered = rect.Contains(mousePos);
 
             var result = value;
@@ -36,12 +37,12 @@ namespace ImGui
             {
                 uiState.SetHoverID(id);
 
-                if (Input.Mouse.LeftButtonPressed)
+                if (Mouse.Instance.LeftButtonPressed)
                 {
                     uiState.SetActiveID(id);
                 }
 
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
+                if (uiState.ActiveId == id && Mouse.Instance.LeftButtonReleased)
                 {
                     result = !value;
                     uiState.SetActiveID(GUIContext.None);
@@ -53,7 +54,7 @@ namespace ImGui
             if(result)
             {
                 state = GUI.Active;
-                if (hovered && Input.Mouse.LeftButtonState == KeyState.Up)
+                if (hovered && Mouse.Instance.LeftButtonState == KeyState.Up)
                 {
                     state = GUI.Hover;
                 }
@@ -64,7 +65,7 @@ namespace ImGui
                 {
                     state = GUI.Hover;
                 }
-                if (Input.Mouse.LeftButtonState == KeyState.Down)
+                if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
                     state = GUI.Active;
                 }

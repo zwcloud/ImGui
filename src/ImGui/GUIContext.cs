@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -115,7 +116,7 @@ namespace ImGui
             if (clip)
                 rect_clipped.Intersect(window.ClipRect);
 
-            return rect_clipped.Contains(Input.Mouse.Position);
+            return rect_clipped.Contains(Mouse.Instance.Position);
         }
 
         public bool IsMouseHoveringRect(Point r_min, Point r_max, bool clip = true)
@@ -141,7 +142,7 @@ namespace ImGui
         public bool IsMouseLeftButtonClicked(bool repeat)
         {
             GUIContext g = this;
-            long t = Input.Mouse.LeftButtonDownDuration;
+            long t = Mouse.Instance.LeftButtonDownDuration;
             if (t == 0.0f)
                 return true;
 

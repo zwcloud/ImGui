@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -213,13 +214,13 @@ namespace ImGui
                         var keyCode = wParam.ToUInt32();
                         if (wParam.ToUInt64() < 256)
                         {
-                            Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                            Input.Keyboard.keyStates[keyCode] = KeyState.Down;
+                            Keyboard.Instance.lastKeyStates[keyCode] = Keyboard.Instance.keyStates[keyCode];
+                            Keyboard.Instance.keyStates[keyCode] = KeyState.Down;
                         }
 
                         if (keyCode == (int)Key.Enter)
                         {
-                            Input.ImeBuffer.Enqueue('\n');
+                            Ime.ImeBuffer.Enqueue('\n');
                             return new IntPtr(1);
                         }
 
@@ -237,31 +238,31 @@ namespace ImGui
                         var keyCode = wParam.ToUInt32();
                         if (wParam.ToUInt64() < 256)
                         {
-                            Input.Keyboard.lastKeyStates[keyCode] = Input.Keyboard.keyStates[keyCode];
-                            Input.Keyboard.keyStates[keyCode] = KeyState.Up;
+                            Keyboard.Instance.lastKeyStates[keyCode] = Keyboard.Instance.keyStates[keyCode];
+                            Keyboard.Instance.keyStates[keyCode] = KeyState.Up;
                         }
                         return IntPtr.Zero;
                     }
                 #endregion
                 #region mouse
                 case 0x0201://WM_LBUTTONDOWN
-                    Input.Mouse.LeftButtonState = KeyState.Down;
+                    Mouse.Instance.LeftButtonState = KeyState.Down;
                     return IntPtr.Zero;
                 case 0x0202://WM_LBUTTONUP
-                    Input.Mouse.LeftButtonState = KeyState.Up;
+                    Mouse.Instance.LeftButtonState = KeyState.Up;
                     return IntPtr.Zero;
                 case 0x0203://WM_LBUTTONDBLCLK
                     return IntPtr.Zero;
                 case 0x0206://WM_RBUTTONDBLCLK
                     return IntPtr.Zero;
                 case 0x0204://WM_RBUTTONDOWN
-                    Input.Mouse.RightButtonState = KeyState.Down;
+                    Mouse.Instance.RightButtonState = KeyState.Down;
                     return IntPtr.Zero;
                 case 0x0205://WM_RBUTTONUP
-                    Input.Mouse.RightButtonState = KeyState.Up;
+                    Mouse.Instance.RightButtonState = KeyState.Up;
                     return IntPtr.Zero;
                 case 0x020A://WM_MOUSEWHEEL
-                    Input.Mouse.MouseWheel = ((short)(wParam.ToUInt64() >> 16));
+                    Mouse.Instance.MouseWheel = ((short)(wParam.ToUInt64() >> 16));
                     return IntPtr.Zero;
                 case 0x0200://WM_MOUSEMOVE
                     var p = new POINT
@@ -269,7 +270,7 @@ namespace ImGui
                         X = unchecked((short)lParam),
                         Y = unchecked((short)((uint)lParam >> 16))
                     };
-                    Input.Mouse.Position = new Point(p.X, p.Y);
+                    Mouse.Instance.Position = new Point(p.X, p.Y);
                     return IntPtr.Zero;
                 #endregion
                 #region ime
@@ -278,14 +279,14 @@ namespace ImGui
                     {
                         char c = (char)wParam;
                         if (c > 0 && !char.IsControl(c))
-                            Input.ImeBuffer.Enqueue(c);
+                            Ime.ImeBuffer.Enqueue(c);
                         return IntPtr.Zero;
                     }
                 case 0x0102:/*WM_CHAR*/
                     {
                         char c = (char)wParam;
                         if (c > 0 && !char.IsControl(c))
-                            Input.ImeBuffer.Enqueue(c);
+                            Ime.ImeBuffer.Enqueue(c);
                         return IntPtr.Zero;
                     }
                 #endregion

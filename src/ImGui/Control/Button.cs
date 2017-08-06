@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -97,36 +98,36 @@ namespace ImGui
             if (hovered)
             {
                 g.SetHoverID(id);
-                if (!flags.HaveFlag(ButtonFlags.NoKeyModifiers) || (!Input.Keyboard.KeyPressed(Key.LeftControl) && !Input.Keyboard.KeyPressed(Key.LeftShift) && !Input.Keyboard.KeyPressed(Key.LeftAlt)))
+                if (!flags.HaveFlag(ButtonFlags.NoKeyModifiers) || (!Keyboard.Instance.KeyPressed(Key.LeftControl) && !Keyboard.Instance.KeyPressed(Key.LeftShift) && !Keyboard.Instance.KeyPressed(Key.LeftAlt)))
                 {
                     //                        | CLICKING        | HOLDING with ButtonFlags.Repeat
                     // PressedOnClickRelease  |  <on release>*  |  <on repeat> <on repeat> .. (NOT on release)  <-- MOST COMMON! (*) only if both click/release were over bounds
                     // PressedOnClick         |  <on click>     |  <on click> <on repeat> <on repeat> ..
                     // PressedOnRelease       |  <on release>   |  <on repeat> <on repeat> .. (NOT on release)
                     // PressedOnDoubleClick   |  <on dclick>    |  <on dclick> <on repeat> <on repeat> ..
-                    if (flags.HaveFlag(ButtonFlags.PressedOnClickRelease) && Input.Mouse.LeftButtonPressed)
+                    if (flags.HaveFlag(ButtonFlags.PressedOnClickRelease) && Mouse.Instance.LeftButtonPressed)
                     {
                         g.SetActiveID(id, window); // Hold on ID
                         w.FocusWindow(window);
-                        g.ActiveIdClickOffset = Input.Mouse.Position - bb.Min;
+                        g.ActiveIdClickOffset = Mouse.Instance.Position - bb.Min;
                     }
-                    if (((flags.HaveFlag(ButtonFlags.PressedOnClick) && Input.Mouse.LeftButtonPressed)
-                        || (flags.HaveFlag(ButtonFlags.PressedOnDoubleClick) && Input.Mouse.LeftButtonDoubleClicked)))
+                    if (((flags.HaveFlag(ButtonFlags.PressedOnClick) && Mouse.Instance.LeftButtonPressed)
+                        || (flags.HaveFlag(ButtonFlags.PressedOnDoubleClick) && Mouse.Instance.LeftButtonDoubleClicked)))
                     {
                         pressed = true;
                         g.SetActiveID(0);
                         w.FocusWindow(window);
                     }
-                    if (flags.HaveFlag(ButtonFlags.PressedOnRelease) && Input.Mouse.LeftButtonReleased)
+                    if (flags.HaveFlag(ButtonFlags.PressedOnRelease) && Mouse.Instance.LeftButtonReleased)
                     {
-                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Keyboard.KeyRepeatDelay))  // Repeat mode trumps <on release>
+                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Mouse.Instance.LeftButtonDownDurationPrev >= Keyboard.KeyRepeatDelay))  // Repeat mode trumps <on release>
                             pressed = true;
                         g.SetActiveID(0);
                     }
 
                     // 'Repeat' mode acts when held regardless of _PressedOn flags (see table above). 
                     // Relies on repeat logic of IsMouseClicked() but we may as well do it ourselves if we end up exposing finer RepeatDelay/RepeatRate settings.
-                    if (flags.HaveFlag(ButtonFlags.Repeat) && g.ActiveId == id && Input.Mouse.LeftButtonDownDuration > 0.0f && g.IsMouseLeftButtonClicked(true))
+                    if (flags.HaveFlag(ButtonFlags.Repeat) && g.ActiveId == id && Mouse.Instance.LeftButtonDownDuration > 0.0f && g.IsMouseLeftButtonClicked(true))
                         pressed = true;
                 }
             }
@@ -134,14 +135,14 @@ namespace ImGui
             bool held = false;
             if (g.ActiveId == id)
             {
-                if (Input.Mouse.LeftButtonState == KeyState.Down)
+                if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
                     held = true;
                 }
                 else
                 {
                     if (hovered && flags.HaveFlag(ButtonFlags.PressedOnClickRelease))
-                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Input.Mouse.LeftButtonDownDurationPrev >= Keyboard.KeyRepeatDelay))  // Repeat mode trumps <on release>
+                        if (!(flags.HaveFlag(ButtonFlags.Repeat) && Mouse.Instance.LeftButtonDownDurationPrev >= Keyboard.KeyRepeatDelay))  // Repeat mode trumps <on release>
                             pressed = true;
                     g.SetActiveID(0);
                 }

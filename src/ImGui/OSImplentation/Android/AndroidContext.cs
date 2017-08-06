@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {

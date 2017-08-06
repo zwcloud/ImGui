@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Content.PM;
 using ImGui;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace AndroidTemplate
 {
@@ -35,7 +36,7 @@ namespace AndroidTemplate
 
             // Set up callback to show keyboard and get input from it.
             //https://github.com/MonoGame/MonoGame/tree/7c3d6870a38f8a5e479e64d935d692f2610e1cda/MonoGame.Framework/Input#L24
-            ImGui.Keyboard.ShowCallback = (text) =>
+            Keyboard.ShowCallback = (text) =>
             {
                 tcs = new TaskCompletionSource<string>();
 
@@ -99,15 +100,15 @@ namespace AndroidTemplate
                     {
                         var x = e.RawX;
                         var y = e.RawY;
-                        Input.Mouse.Position = new Point(x, y);
-                        Input.Mouse.LeftButtonState = KeyState.Down;
+                        Mouse.Instance.Position = new Point(x, y);
+                        Mouse.Instance.LeftButtonState = KeyState.Down;
                     }
                     break;
                 case MotionEventActions.Move:
                     {
                         var x = e.RawX;
                         var y = e.RawY;
-                        Input.Mouse.Position = new Point(x, y);
+                        Mouse.Instance.Position = new Point(x, y);
                     }
                     break;
                 case MotionEventActions.Up:
@@ -116,8 +117,8 @@ namespace AndroidTemplate
                     {
                         var x = e.RawX;
                         var y = e.RawY;
-                        Input.Mouse.Position = new Point(x, y);
-                        Input.Mouse.LeftButtonState = KeyState.Up;
+                        Mouse.Instance.Position = new Point(x, y);
+                        Mouse.Instance.LeftButtonState = KeyState.Up;
                     }
                     break;
             }

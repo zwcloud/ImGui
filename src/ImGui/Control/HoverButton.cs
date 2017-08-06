@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -24,7 +25,7 @@ namespace ImGui
             DrawList d = window.DrawList;
 
             int id = window.GetID(text);
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
             var result = false;
             var hovered = rect.Contains(mousePos);
 

@@ -136,20 +136,20 @@ namespace ImGui
             }
 
             //Execute state commands
-            var containMousePosition = Rect.Contains(Form.current.ScreenToClient(Input.Mouse.MousePos));
-            if (!Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && containMousePosition)
+            var containMousePosition = Rect.Contains(Form.current.ScreenToClient(Mouse.Instance.MousePos));
+            if (!Rect.Contains(Form.current.ScreenToClient(Mouse.Instance.LastMousePos)) && containMousePosition)
             {
                 stateMachine.MoveNext(ComboBoxCommand.MoveIn);
             }
-            if (Rect.Contains(Form.current.ScreenToClient(Input.Mouse.LastMousePos)) && !containMousePosition)
+            if (Rect.Contains(Form.current.ScreenToClient(Mouse.Instance.LastMousePos)) && !containMousePosition)
             {
                 stateMachine.MoveNext(ComboBoxCommand.MoveOut);
             }
-            if (Input.Mouse.stateMachine.CurrentState == Input.Mouse.MouseState.Pressed && containMousePosition && Form.Focused)
+            if (Mouse.Instance.stateMachine.CurrentState == Mouse.Instance.MouseState.Pressed && containMousePosition && Form.Focused)
             {
                 if (stateMachine.MoveNext(ComboBoxCommand.MousePress))
                 {
-                    Input.Mouse.stateMachine.MoveNext(Input.Mouse.MouseCommand.Fetch);
+                    Mouse.Instance.stateMachine.MoveNext(Mouse.Instance.MouseCommand.Fetch);
                 }
             }
             if(stateMachine.CurrentState == ComboBoxState.Active)//instant transition of state

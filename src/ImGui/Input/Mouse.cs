@@ -1,13 +1,19 @@
-﻿using System;
-using ImGui.Common.Primitive;
+﻿using ImGui.Common.Primitive;
 
-namespace ImGui
+namespace ImGui.Input
 {
     /// <summary>
     /// Mouse status and operations
     /// </summary>
     public class Mouse
     {
+        public static Mouse Instance { get; }
+
+        static Mouse()
+        {
+            Instance = new Mouse();
+        }
+
         #region Settings
 
         /// <summary>
@@ -27,7 +33,7 @@ namespace ImGui
         /// <summary>
         /// Button state of left mouse button (readonly)
         /// </summary>
-        public KeyState LeftButtonState { get; internal set; } = KeyState.Up;
+        public KeyState LeftButtonState { get; set; } = KeyState.Up;
 
         /// <summary>
         /// Is left mouse button released? (readonly)
@@ -97,7 +103,7 @@ namespace ImGui
 
         #region Position
 
-        private static Point position;
+        private static Point _position;
 
         /// <summary>
         /// mouse position at last frame (readonly)
@@ -109,21 +115,18 @@ namespace ImGui
         /// </summary>
         public Point Position
         {
-            get { return position; }
+            get => _position;
             set
             {
-                LastPosition = position;
-                position = value;
+                this.LastPosition = _position;
+                _position = value;
             }
         }
 
         /// <summary>
         /// Is mouse moving?
         /// </summary>
-        public bool Moving
-        {
-            get { return Position != LastPosition; }
-        }
+        public bool Moving => this.Position != this.LastPosition;
 
         /// <summary>
         /// Offset of mouse compared to last frame
@@ -140,15 +143,15 @@ namespace ImGui
         #region Cursor
 
         private Cursor cursor = Cursor.Default;
-        public Cursor Cursor
+        public Cursor Cursor//TODO make this a data-driven operation
         {
-            get { return cursor; }
+            get => this.cursor;
             set
             {
-                if(cursor!=value)
+                if(this.cursor!=value)
                 {
                     Application.platformContext.ChangeCursor(value);
-                    cursor = value;
+                    this.cursor = value;
                 }
             }
         }

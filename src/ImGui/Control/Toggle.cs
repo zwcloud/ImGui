@@ -1,5 +1,6 @@
 ﻿using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -25,7 +26,7 @@ namespace ImGui
             DrawList d = window.DrawList;
             int id = window.GetID(label);
 
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
             var hovered = rect.Contains(mousePos);
             var result = value;
             //control logic
@@ -35,12 +36,12 @@ namespace ImGui
             {
                 uiState.SetHoverID(id);
 
-                if (Input.Mouse.LeftButtonPressed)
+                if (Mouse.Instance.LeftButtonPressed)
                 {
                     uiState.SetActiveID(id);
                 }
 
-                if (uiState.ActiveId == id && Input.Mouse.LeftButtonReleased)
+                if (uiState.ActiveId == id && Mouse.Instance.LeftButtonReleased)
                 {
                     result = !value;
                     uiState.SetActiveID(GUIContext.None);

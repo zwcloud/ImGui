@@ -91,7 +91,7 @@ namespace ImGui
 
         public override void Show()
         {
-            this.Position = Input.Mouse.MousePos;
+            this.Position = Mouse.Instance.MousePos;
             base.Show();
             timer.Start();
         }

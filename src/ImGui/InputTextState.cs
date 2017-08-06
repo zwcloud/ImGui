@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -50,7 +51,7 @@ namespace ImGui
             ITextContext textContext = TextMeshUtil.GetTextContext(textBox.Text, rect.Size, style, GUIState.Normal);
 
             var contentRect = Utility.GetContentRect(rect, style);
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;
             bool isInside;
@@ -62,32 +63,32 @@ namespace ImGui
 
         private static void MoveCaretKeyboardCallBack(InputTextContext textBox)
         {
-            if (Input.Keyboard.KeyDown(Key.Home))
+            if (Keyboard.Instance.KeyDown(Key.Home))
             {
                 textBox.SelectIndex = textBox.CaretIndex = 0;
             }
-            if (Input.Keyboard.KeyDown(Key.End))
+            if (Keyboard.Instance.KeyDown(Key.End))
             {
                 textBox.SelectIndex = textBox.CaretIndex = (uint)textBox.Text.Length;
             }
-            if (Input.Keyboard.KeyPressed(Key.Left, true))
+            if (Keyboard.Instance.KeyPressed(Key.Left, true))
             {
                 if (textBox.CaretIndex > 0)
                 {
                     textBox.CaretIndex -= 1;
                 }
-                if (!Input.Keyboard.KeyDown(Key.LeftShift))
+                if (!Keyboard.Instance.KeyDown(Key.LeftShift))
                 {
                     textBox.SelectIndex = textBox.CaretIndex;
                 }
             }
-            else if (Input.Keyboard.KeyPressed(Key.Right, true))
+            else if (Keyboard.Instance.KeyPressed(Key.Right, true))
             {
                 if (textBox.CaretIndex < textBox.Text.Length)
                 {
                     textBox.CaretIndex += 1;
                 }
-                if (!Input.Keyboard.KeyDown(Key.LeftShift))
+                if (!Keyboard.Instance.KeyDown(Key.LeftShift))
                 {
                     textBox.SelectIndex = textBox.CaretIndex;
                 }
@@ -102,7 +103,7 @@ namespace ImGui
             var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, GUIState.Normal);
 
             var contentRect = Utility.GetContentRect(rect, style);
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;
             bool isInside;
@@ -122,9 +123,9 @@ namespace ImGui
 
                 string textBeforeCaret;
                 //Input characters
-                if (Input.ImeBuffer.Count != 0)
+                if (Ime.ImeBuffer.Count != 0)
                 {
-                    var inputText = new string(Input.ImeBuffer.ToArray());
+                    var inputText = new string(Ime.ImeBuffer.ToArray());
                     if (CaretIndex != SelectIndex) //Replace selected text with inputText
                     {
                         //TODO check whether convert int and uint back and forth is appropriate
@@ -149,10 +150,10 @@ namespace ImGui
                         }
                     }
                     textBox.MoveCaret((uint)textBeforeCaret.Length);
-                    Input.ImeBuffer.Clear();
+                    Ime.ImeBuffer.Clear();
                 }
                 //Backspace, delete one character before the caret
-                else if (Input.Keyboard.KeyPressed(Key.Back, true))
+                else if (Keyboard.Instance.KeyPressed(Key.Back, true))
                 {
                     if (CaretIndex != SelectIndex)
                     {
@@ -180,7 +181,7 @@ namespace ImGui
                     }
                 }
                 //Delete, delete one character after the caret
-                else if (Input.Keyboard.KeyPressed(Key.Delete, true))
+                else if (Keyboard.Instance.KeyPressed(Key.Delete, true))
                 {
                     if (CaretIndex != SelectIndex)
                     {

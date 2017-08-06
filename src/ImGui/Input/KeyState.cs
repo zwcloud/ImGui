@@ -1,4 +1,4 @@
-﻿namespace ImGui
+﻿namespace ImGui.Input
 {
     /// <summary>
     /// Key state

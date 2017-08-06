@@ -1,5 +1,6 @@
 ﻿using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -52,7 +53,7 @@ namespace ImGui
             DrawList d = window.DrawList;
             int id = window.GetID(label);
 
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
             var labelWidth = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
             var sliderRect = new Rect(rect.X, rect.Y,
@@ -67,14 +68,14 @@ namespace ImGui
             {
                 uiState.SetHoverID(id);
 
-                if (Input.Mouse.LeftButtonPressed)//start track
+                if (Mouse.Instance.LeftButtonPressed)//start track
                 {
                     uiState.SetActiveID(id);
                 }
             }
             if (uiState.ActiveId == id)
             {
-                if (Input.Mouse.LeftButtonState == KeyState.Down)
+                if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
                     var leftPoint = new Point(sliderRect.X + 10, sliderRect.Y + sliderRect.Height / 2);
                     var rightPoint = new Point(sliderRect.Right - 10, sliderRect.Y + sliderRect.Height / 2);
@@ -95,7 +96,7 @@ namespace ImGui
             {
                 state = GUI.Hover;
             }
-            if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == KeyState.Down)
+            if (uiState.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
             {
                 state = GUI.Active;
             }
@@ -155,7 +156,7 @@ namespace ImGui
             DrawList d = window.DrawList;
             int id = window.GetID(label);
 
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
             var labelHeight = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
             var sliderRect = new Rect(rect.X, rect.Y,
@@ -170,14 +171,14 @@ namespace ImGui
             {
                 uiState.SetHoverID(id);
 
-                if (Input.Mouse.LeftButtonPressed)//start track
+                if (Mouse.Instance.LeftButtonPressed)//start track
                 {
                     uiState.SetActiveID(id);
                 }
             }
             if (uiState.ActiveId == id)
             {
-                if (Input.Mouse.LeftButtonState == KeyState.Down)
+                if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
                     var upPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Y + 10);
                     var bottomPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Bottom - 10);
@@ -198,7 +199,7 @@ namespace ImGui
             {
                 state = GUI.Hover;
             }
-            if (uiState.ActiveId == id && Input.Mouse.LeftButtonState == KeyState.Down)
+            if (uiState.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
             {
                 state = GUI.Active;
             }

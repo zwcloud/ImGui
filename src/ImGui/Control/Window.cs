@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -87,7 +88,7 @@ namespace ImGui
                 window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Blue);//test only
 
                 // Collapse window by double-clicking on title bar
-                if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Input.Mouse.LeftButtonDoubleClicked)
+                if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Mouse.Instance.LeftButtonDoubleClicked)
                 {
                     window.Collapsed = !window.Collapsed;
                 }
@@ -142,13 +143,13 @@ namespace ImGui
 
                         if (hovered || held)
                         {
-                            //Input.Mouse.Cursor = Cursor.NeswResize;
+                            //Mouse.Instance.Cursor = Cursor.NeswResize;
                         }
 
                         if (held)
                         {
                             // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
-                            var t = Input.Mouse.Position - g.ActiveIdClickOffset - window.Position;
+                            var t = Mouse.Instance.Position - g.ActiveIdClickOffset - window.Position;
                             Size resize_size = new Size(t.X + resize_rect.Width, t.Y + resize_rect.Height);
                             window.ApplySize(resize_size);
 
@@ -237,7 +238,7 @@ namespace ImGui
                                 GUIBehavior.ButtonBehavior(bgRect, id, out hovered, out held);
                                 if (held)
                                 {
-                                    top = Input.Mouse.Position.Y - bgRect.Y - 0.5 * height;
+                                    top = Mouse.Instance.Position.Y - bgRect.Y - 0.5 * height;
                                     top = MathEx.Clamp(top, 0, sH - height);
                                     var targetScrollY = top * cH / sH;
                                     window.SetWindowScrollY(targetScrollY);

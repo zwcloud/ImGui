@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace ImGui
+namespace ImGui.Input
 {
     /// <summary>
     /// Keyboard status and operations
     /// </summary>
     public class Keyboard
     {
+        public static Keyboard Instance { get; }
+
+        static Keyboard()
+        {
+            Instance = new Keyboard();
+        }
+
         #region Settings
 
         /// <summary>
@@ -23,7 +30,7 @@ namespace ImGui
         #endregion
 
         // HACK for android
-        public static Func<string, Task<string>> ShowCallback;
+        public static Func<string, Task<string>> ShowCallback { get; set; }
         public static Task<string> Show(string text)
         {
             return ShowCallback?.Invoke(text);
@@ -31,10 +38,10 @@ namespace ImGui
 
         public Keyboard()
         {
-            keyStates = new KeyState[(int)Key.KeyCount];
-            lastKeyStates = new KeyState[(int)Key.KeyCount];
-            lastKeyPressedTime = new long[(int)Key.KeyCount];
-            isRepeatingKey = new bool[(int)Key.KeyCount];
+            this.keyStates = new KeyState[(int)Key.KeyCount];
+            this.lastKeyStates = new KeyState[(int)Key.KeyCount];
+            this.lastKeyPressedTime = new long[(int)Key.KeyCount];
+            this.isRepeatingKey = new bool[(int)Key.KeyCount];
         }
 
         /// <summary>
@@ -55,7 +62,7 @@ namespace ImGui
         /// <returns>true: pressing; false: released</returns>
         public bool KeyDown(Key key)
         {
-            return keyStates[(int)key] == KeyState.Down;
+            return this.keyStates[(int)key] == KeyState.Down;
         }
 
         /// <summary>
@@ -65,16 +72,16 @@ namespace ImGui
         /// <returns>true: pressed; false: not pressed yet</returns>
         public bool KeyPressed(Key key)
         {
-            return lastKeyStates[(int)key] == KeyState.Down && keyStates[(int)key] == KeyState.Up;
+            return this.lastKeyStates[(int)key] == KeyState.Down && this.keyStates[(int)key] == KeyState.Up;
         }
 
         public bool KeyOn(Key key)
         {
-            return keyStates[(int)key] == KeyState.On;
+            return this.keyStates[(int)key] == KeyState.On;
         }
 
-        private static long[] lastKeyPressedTime;
-        private static bool[] isRepeatingKey;
+        private readonly long[] lastKeyPressedTime;
+        private readonly bool[] isRepeatingKey;
 
         /// <summary>
         /// check if a single key is being pressing with interval time
@@ -85,40 +92,40 @@ namespace ImGui
         /// <remarks>time unit is millisecond</remarks>
         public bool KeyPressed(Key key, bool isRepeat)
         {
-            bool isKeydownThisMoment = keyStates[(int)key] == KeyState.Down;
+            bool isKeydownThisMoment = this.keyStates[(int)key] == KeyState.Down;
             if (isKeydownThisMoment)
             {
-                if (lastKeyPressedTime[(int)key] == 0)
+                if (this.lastKeyPressedTime[(int)key] == 0)
                 {
-                    lastKeyPressedTime[(int)key] = Application.Time;
+                    this.lastKeyPressedTime[(int)key] = Application.Time;
                     return true;
                 }
 
                 const float delay = 300;
-                var t = lastKeyPressedTime[(int)key];
-                if (!isRepeatingKey[(int)key])
+                var t = this.lastKeyPressedTime[(int)key];
+                if (!this.isRepeatingKey[(int)key])
                 {
                     if (isRepeat && Application.Time - t > delay)
                     {
-                        isRepeatingKey[(int)key] = true;
-                        lastKeyPressedTime[(int)key] = Application.Time;
+                        this.isRepeatingKey[(int)key] = true;
+                        this.lastKeyPressedTime[(int)key] = Application.Time;
                         return true;
                     }
                 }
                 else
                 {
                     const float interval = 50;
-                    if (Application.Time - lastKeyPressedTime[(int)key] > interval)
+                    if (Application.Time - this.lastKeyPressedTime[(int)key] > interval)
                     {
-                        lastKeyPressedTime[(int) key] = Application.Time;
+                        this.lastKeyPressedTime[(int) key] = Application.Time;
                         return true;
                     }
                 }
             }
             else
             {
-                isRepeatingKey[(int)key] = false;
-                lastKeyPressedTime[(int)key] = 0;
+                this.isRepeatingKey[(int)key] = false;
+                this.lastKeyPressedTime[(int)key] = 0;
             }
             return false;
         }

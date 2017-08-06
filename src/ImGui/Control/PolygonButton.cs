@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -26,7 +27,7 @@ namespace ImGui
             Window window = g.WindowManager.CurrentWindow;
             DrawList d = window.DrawList;
             int id = window.GetID(text);
-            var mousePos = Input.Mouse.Position;
+            var mousePos = Mouse.Instance.Position;
 
             var clicked = false;
             var hovered = MathEx.IsPointInPolygon(mousePos, points, new Vector(rect.X, rect.Y));
@@ -38,12 +39,12 @@ namespace ImGui
             {
                 g.SetHoverID(id);
 
-                if (Input.Mouse.LeftButtonPressed)//start track
+                if (Mouse.Instance.LeftButtonPressed)//start track
                 {
                     g.SetActiveID(id);
                 }
 
-                if (Input.Mouse.LeftButtonReleased)//end track
+                if (Mouse.Instance.LeftButtonReleased)//end track
                 {
                     clicked = true;
                     g.SetActiveID(GUIContext.None);
@@ -55,7 +56,7 @@ namespace ImGui
             if (hovered)
             {
                 state = GUI.Hover;
-                if (g.ActiveId == id && Input.Mouse.LeftButtonState == KeyState.Down)
+                if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
                     state = GUI.Active;
                 }

@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -50,14 +51,14 @@ namespace ImGui
             {
                 uiState.SetHoverID(id);
 
-                if (Input.Mouse.LeftButtonPressed)
+                if (Mouse.Instance.LeftButtonPressed)
                 {
                     uiState.SetActiveID(id);
                 }
             }
             else
             {
-                if (Input.Mouse.LeftButtonPressed)
+                if (Mouse.Instance.LeftButtonPressed)
                 {
                     if (g.ActiveId == id)
                     {
@@ -92,23 +93,23 @@ namespace ImGui
 
                 // Although we are active we don't prevent mouse from hovering other elements unless we are interacting right now with the widget.
                 // Down the line we should have a cleaner library-wide concept of Selected vs Active.
-                g.ActiveIdAllowOverlap = !Input.Mouse.LeftButtonPressed;
+                g.ActiveIdAllowOverlap = !Mouse.Instance.LeftButtonPressed;
 
 #if INSPECT_STATE
             var A = stateMachine.CurrentState;
 #endif
-                if (Input.Mouse.LeftButtonPressed)
+                if (Mouse.Instance.LeftButtonPressed)
                 {
                     stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
                 }
 
-                if (hovered && Input.Mouse.LeftButtonState == KeyState.Down && stateMachine.CurrentState != TextBoxState.ActiveSelecting)
+                if (hovered && Mouse.Instance.LeftButtonState == KeyState.Down && stateMachine.CurrentState != TextBoxState.ActiveSelecting)
                 {
                     stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
                     stateMachine.MoveNext(TextBoxCommand.BeginSelect, context);
                 }
 
-                if (hovered && Input.Mouse.LeftButtonState == KeyState.Up)
+                if (hovered && Mouse.Instance.LeftButtonState == KeyState.Up)
                 {
                     stateMachine.MoveNext(TextBoxCommand.EndSelect, context);
                 }

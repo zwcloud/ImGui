@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -131,11 +132,11 @@ namespace ImGui
                 g.KeepAliveID(this.MovedWindowMoveId);
                 Debug.Assert(this.MovedWindow != null && this.MovedWindow.RootWindow != null);
                 Debug.Assert(this.MovedWindow.RootWindow.MoveID == this.MovedWindowMoveId);
-                if (Input.Mouse.LeftButtonState == KeyState.Down)
+                if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
                     if (!this.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove))
                     {
-                        this.MovedWindow.PosFloat += Input.Mouse.MouseDelta;
+                        this.MovedWindow.PosFloat += Mouse.Instance.MouseDelta;
                     }
                     this.FocusWindow(this.MovedWindow);
                 }
@@ -153,18 +154,18 @@ namespace ImGui
             }
 
             // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
-            this.HoveredWindow = this.MovedWindow ?? this.FindHoveredWindow(Input.Mouse.Position, false);
+            this.HoveredWindow = this.MovedWindow ?? this.FindHoveredWindow(Mouse.Instance.Position, false);
             if (this.HoveredWindow != null && (this.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
                 this.HoveredRootWindow = this.HoveredWindow.RootWindow;
             else
-                this.HoveredRootWindow = (this.MovedWindow != null) ? this.MovedWindow.RootWindow : this.FindHoveredWindow(Input.Mouse.Position, true);
+                this.HoveredRootWindow = (this.MovedWindow != null) ? this.MovedWindow.RootWindow : this.FindHoveredWindow(Mouse.Instance.Position, true);
 
 
             // Scale & Scrolling
-            if (this.HoveredWindow!=null && Input.Mouse.MouseWheel != 0.0 && !this.HoveredWindow.Collapsed)
+            if (this.HoveredWindow!=null && Mouse.Instance.MouseWheel != 0.0 && !this.HoveredWindow.Collapsed)
             {
                 Window window = this.HoveredWindow;
-                if (Input.Keyboard.KeyDown(Key.LeftControl))
+                if (Keyboard.Instance.KeyDown(Key.LeftControl))
                 {
                     //Scale
                     //TODO
@@ -174,7 +175,7 @@ namespace ImGui
                     // Scroll
                     if (!(window.Flags.HaveFlag(WindowFlags.NoScrollWithMouse)))
                     {
-                        var newScrollY = window.Scroll.Y - Math.Sign(Input.Mouse.MouseWheel) * 20/*scroll step*/;
+                        var newScrollY = window.Scroll.Y - Math.Sign(Mouse.Instance.MouseWheel) * 20/*scroll step*/;
                         float window_rounding = (float)window.Style.Get<double>(GUIStyleName.WindowRounding);
                         double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
                         var contentSize = window.ContentRect.Size;
@@ -208,7 +209,7 @@ namespace ImGui
         public void EndFrame(GUIContext g)
         {
             // Click to focus window and start moving (after we're done with all our widgets)
-            if (g.ActiveId == 0 && g.HoverId == 0 && Input.Mouse.LeftButtonPressed)
+            if (g.ActiveId == 0 && g.HoverId == 0 && Mouse.Instance.LeftButtonPressed)
             {
                 if (this.HoveredRootWindow != null)
                 {
