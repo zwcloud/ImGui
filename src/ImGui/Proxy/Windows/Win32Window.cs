@@ -63,25 +63,25 @@ namespace ImGui
 
         delegate IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         static extern void PostQuitMessage(int nExitCode);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, UIntPtr wParam, IntPtr lParam);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
 
-        [DllImport("gdi32.dll")]
+        [DllImport("gdi32.dll", SetLastError = true)]
         static extern IntPtr GetStockObject(int fnObject);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern ushort RegisterClassW([In] ref WNDCLASS lpWndClass);
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        static extern ushort RegisterClass([In] ref WNDCLASS lpWndClass);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern IntPtr CreateWindowEx(
             uint dwExStyle,
             IntPtr lpClassName,
@@ -172,7 +172,7 @@ namespace ImGui
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ScreenToClient(IntPtr hWnd, ref POINT lpPoint);
 
-        [DllImport("user32.dll", EntryPoint = "GetWindowText", SetLastError = true)]
+        [DllImport("user32.dll", EntryPoint = "GetWindowText", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern int _GetWindowText(IntPtr hWnd, System.Text.StringBuilder lpString, int nMaxCount);
         [DllImport("user32.dll", EntryPoint = "GetWindowTextLength", SetLastError = true)]
         static extern int _GetWindowTextLength(IntPtr hWnd);
@@ -185,7 +185,7 @@ namespace ImGui
             return sb.ToString();
         }
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern bool SetWindowText(IntPtr hwnd, string lpString);
 
         [DllImport("user32.dll")]
@@ -321,7 +321,7 @@ namespace ImGui
             wndclass.lpszClassName = szAppName;
 
 
-            ushort atom = RegisterClassW(ref wndclass);
+            ushort atom = RegisterClass(ref wndclass);
 
             if (atom == 0)
             {
