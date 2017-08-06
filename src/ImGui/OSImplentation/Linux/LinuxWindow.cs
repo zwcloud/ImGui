@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.Common.Primitive;
 using ImGui.Input;
+using ImGui.OSAbstraction.Window;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Linux
 {
     using xcb_window_t = System.UInt32;//typedef uint32_t xcb_window_t;
     using xcb_colormap_t = System.UInt32;//typedef uint32_t xcb_colormap_t;
@@ -671,7 +672,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         {
             get
             {
-                return c;
+                return this.c;
             }
         }
 
@@ -679,7 +680,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         {
             get
             {
-                return c;
+                return this.c;
             }
         }
 
@@ -698,7 +699,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     UInt32* values = stackalloc UInt32[2];
                     values[0] = (UInt32)position.X;
                     values[1] = (UInt32)position.Y;
-                    xcb_configure_window(c, (xcb_window_t)this.Pointer,
+                    xcb_configure_window(this.c, (xcb_window_t)this.Pointer,
                         xcb_config_window_t.XCB_CONFIG_WINDOW_X | xcb_config_window_t.XCB_CONFIG_WINDOW_Y,
                         values);
                 }
@@ -719,9 +720,9 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     unsafe
                     {
                         UInt32* values = stackalloc UInt32[2];
-                        values[0] = (UInt32)size.Width;
-                        values[1] = (UInt32)size.Height;
-                        xcb_configure_window(c, (xcb_window_t)this.Pointer,
+                        values[0] = (UInt32)this.size.Width;
+                        values[1] = (UInt32)this.size.Height;
+                        xcb_configure_window(this.c, (xcb_window_t)this.Pointer,
                             xcb_config_window_t.XCB_CONFIG_WINDOW_WIDTH | xcb_config_window_t.XCB_CONFIG_WINDOW_HEIGHT,
                             values);
                     }
@@ -742,7 +743,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                 {
                     throw new ArgumentOutOfRangeException(nameof(title), "Length of titile cannot be larger than 256.");
                 }
-                xcb_change_property(c,
+                xcb_change_property(this.c,
                                      xcb_prop_mode_t.XCB_PROP_MODE_REPLACE,
                                      (xcb_window_t)this.Pointer,
                                      39/*XCB_ATOM_WM_NAME*/,
@@ -778,7 +779,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
         public void Show()
         {
-            xcb_map_window(c, (xcb_window_t)this.Pointer);
+            xcb_map_window(this.c, (xcb_window_t)this.Pointer);
         }
 
         public Point ScreenToClient(Point point)
@@ -795,7 +796,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         {
             unsafe
             {
-                IntPtr eventPtr = xcb_poll_for_event(c);
+                IntPtr eventPtr = xcb_poll_for_event(this.c);
                 if (eventPtr != IntPtr.Zero)
                 {
                     ProcessEvent(eventPtr);
@@ -940,7 +941,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             Debug.Write("Modifier mask: ");
             for (var i = 0; mask != 0; mask >>= 1, ++i)
             {
-                var modifier = MODIFIERS[i];
+                var modifier = this.MODIFIERS[i];
                 if ((mask & 1) != 0)
                 {
                     Debug.Write(modifier);

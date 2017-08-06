@@ -3,7 +3,7 @@
 namespace ImGui
 {
     [Flags]
-    public enum WindowTypes
+    internal enum WindowTypes
     {
         Regular,
         ToolBox,

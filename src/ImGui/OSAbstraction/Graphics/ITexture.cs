@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using ImGui.Common.Primitive;
 
-namespace ImGui
+namespace ImGui.OSAbstraction.Graphics
 {
     /// <summary>
     /// Texture-related functions

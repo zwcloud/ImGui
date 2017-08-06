@@ -26,7 +26,7 @@ namespace ImGui
     public static class Application
     {
         internal static List<Form> Forms = new List<Form>();
-        internal static PlatformContext platformContext;
+        internal static ImGui.OSAbstraction.PlatformContext platformContext;
         private static readonly Stopwatch stopwatch = new Stopwatch();
 
         /// <summary>
@@ -68,15 +68,15 @@ namespace ImGui
             //     platform-dependent implementation
             if (CurrentOS.IsAndroid)
             {
-                platformContext = AndroidContext.MapFactory();
+                platformContext = OSImplentation.Android.AndroidContext.MapFactory();
             }
             else if(CurrentOS.IsWindows)
             {
-                platformContext = WindowsContext.MapFactory();
+                platformContext = OSImplentation.Windows.WindowsContext.MapFactory();
             }
             else if(CurrentOS.IsLinux)
             {
-                platformContext = LinuxContext.MapFactory();
+                platformContext = OSImplentation.Linux.LinuxContext.MapFactory();
             }
         }
 

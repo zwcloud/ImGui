@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.Common.Primitive;
 using ImGui.Input;
+using ImGui.OSAbstraction.Window;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Windows
 {
     internal class Win32Window : IWindow
     {
@@ -310,19 +311,19 @@ namespace ImGui
             IntPtr hInstance = processHandle.DangerousGetHandle();
             string szAppName = "ImGuiApplication~";
 
-            wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/;
-            wndclass.lpfnWndProc = WindowProc;
-            wndclass.cbClsExtra = 0;
-            wndclass.cbWndExtra = 0;
-            wndclass.hInstance = hInstance;
-            wndclass.hIcon = LoadIcon(IntPtr.Zero, new IntPtr(32512/*IDI_APPLICATION*/));
-            wndclass.hCursor = LoadCursor(IntPtr.Zero, 32512/*IDC_ARROW*/);
-            wndclass.hbrBackground = IntPtr.Zero;// GetStockObject(0);
-            wndclass.lpszMenuName = null;
-            wndclass.lpszClassName = szAppName;
+            this.wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/;
+            this.wndclass.lpfnWndProc = WindowProc;
+            this.wndclass.cbClsExtra = 0;
+            this.wndclass.cbWndExtra = 0;
+            this.wndclass.hInstance = hInstance;
+            this.wndclass.hIcon = LoadIcon(IntPtr.Zero, new IntPtr(32512/*IDI_APPLICATION*/));
+            this.wndclass.hCursor = LoadCursor(IntPtr.Zero, 32512/*IDC_ARROW*/);
+            this.wndclass.hbrBackground = IntPtr.Zero;// GetStockObject(0);
+            this.wndclass.lpszMenuName = null;
+            this.wndclass.lpszClassName = szAppName;
 
 
-            ushort atom = RegisterClass(ref wndclass);
+            ushort atom = RegisterClass(ref this.wndclass);
 
             if (atom == 0)
             {
@@ -395,7 +396,7 @@ namespace ImGui
         {
             get
             {
-                return hwnd;
+                return this.hwnd;
             }
         }
 
@@ -403,7 +404,7 @@ namespace ImGui
         {
             get
             {
-                return hwnd;
+                return this.hwnd;
             }
         }
 

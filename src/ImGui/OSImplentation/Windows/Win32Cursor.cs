@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using ImGui.Input;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Windows
 {
     internal class Win32Cursor
     {

@@ -1,8 +1,11 @@
 ﻿using System;
 using ImGui.Common.Primitive;
 using ImGui.Input;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
+using ImGui.OSAbstraction.Window;
 
-namespace ImGui
+namespace ImGui.OSAbstraction
 {
     delegate ITextContext CTextContext(
         string text, string fontFamily, int fontSize,

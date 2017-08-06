@@ -1,6 +1,8 @@
 ﻿using System;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Window;
 
 namespace ImGui
 {

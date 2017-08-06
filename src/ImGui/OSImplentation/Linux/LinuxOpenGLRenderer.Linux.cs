@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Linux
 {
     partial class LinuxOpenGLRenderer
     {
@@ -111,19 +111,19 @@ namespace ImGui
             bool result = false;
 
             /* get an EGL display connection */
-            display = eglGetDisplay(IntPtr.Zero/*EGL_DEFAULT_DISPLAY*/);
-            if (display == IntPtr.Zero/*EGL_NO_DISPLAY*/)
+            this.display = eglGetDisplay(IntPtr.Zero/*EGL_DEFAULT_DISPLAY*/);
+            if (this.display == IntPtr.Zero/*EGL_NO_DISPLAY*/)
             {
                 Debug.WriteLine("Error: eglGetDisplay() failed. error: no default display connection is available.");
             }
 
             /* initialize the EGL display connection */
             int major, minor;
-            result = eglInitialize(display, out major, out minor);
+            result = eglInitialize(this.display, out major, out minor);
             if (!result)
             {
                 var error = (EGL_ERROR)eglGetError();
-                Debug.WriteLine(string.Format("Error: eglInitialize() failed. error<{0}>:{1}", error.ToString(), EGL_Error_Text[error]));
+                Debug.WriteLine(string.Format("Error: eglInitialize() failed. error<{0}>:{1}", error.ToString(), this.EGL_Error_Text[error]));
                 return false;
             }
             Debug.WriteLine("EGL version: {0}.{1}", major, minor);
@@ -146,11 +146,11 @@ namespace ImGui
                 EGL_NONE };
 
             IntPtr num_config = IntPtr.Zero;
-            result = eglChooseConfig(display, attribute_list, ref config, (IntPtr)1, ref num_config);
+            result = eglChooseConfig(this.display, attribute_list, ref this.config, (IntPtr)1, ref num_config);
             if (!result || num_config == IntPtr.Zero)
             {
                 var error = (EGL_ERROR)eglGetError();
-                Debug.WriteLine(string.Format("Error: eglChooseConfig() failed. error<{0}>:{1}", error.ToString(), EGL_Error_Text[error]));
+                Debug.WriteLine(string.Format("Error: eglChooseConfig() failed. error<{0}>:{1}", error.ToString(), this.EGL_Error_Text[error]));
                 return false;
             }
 
@@ -163,7 +163,7 @@ namespace ImGui
             if (!eglBindAPI(0x30A0/*EGL_OPENGL_ES_API*/))
             {
                 var error = (EGL_ERROR)eglGetError();
-                Debug.WriteLine(string.Format("Error: eglBindAPI() failed. error<{0}>:{1}", error.ToString(), EGL_Error_Text[error]));
+                Debug.WriteLine(string.Format("Error: eglBindAPI() failed. error<{0}>:{1}", error.ToString(), this.EGL_Error_Text[error]));
                 return false;
             }
 
@@ -176,22 +176,22 @@ namespace ImGui
              https://www.khronos.org/registry/egl/sdk/docs/man/html/eglCreateContext.xhtml
              */
             int[] ctx_attribs = new int[] { 0x3098/*EGL_CONTEXT_CLIENT_VERSION*/, 3, EGL_NONE };
-            context = eglCreateContext(display, config, IntPtr.Zero/*EGL_NO_CONTEXT*/, ctx_attribs);
-            if(context == IntPtr.Zero/*EGL_NO_CONTEXT*/)
+            this.context = eglCreateContext(this.display, this.config, IntPtr.Zero/*EGL_NO_CONTEXT*/, ctx_attribs);
+            if(this.context == IntPtr.Zero/*EGL_NO_CONTEXT*/)
             {
                 var error = (EGL_ERROR)eglGetError();
-                Debug.WriteLine(string.Format("Error: eglCreateContext() failed. error<{0}>:{1}", error.ToString(), EGL_Error_Text[error]));
+                Debug.WriteLine(string.Format("Error: eglCreateContext() failed. error<{0}>:{1}", error.ToString(), this.EGL_Error_Text[error]));
                 return false;
             }
 
             //Request eglVisualID for native window
             IntPtr eglConfAttrVisualID = IntPtr.Zero;
-            result = eglGetConfigAttrib(display, config, (IntPtr)0x302E/*EGL_NATIVE_VISUAL_ID*/,
+            result = eglGetConfigAttrib(this.display, this.config, (IntPtr)0x302E/*EGL_NATIVE_VISUAL_ID*/,
                     ref eglConfAttrVisualID);
             if (!result)
             {
                 var error = (EGL_ERROR)eglGetError();
-                Debug.WriteLine(string.Format("Error: eglGetConfigAttrib() failed. error<{0}>:{1}", error.ToString(), EGL_Error_Text[error]));
+                Debug.WriteLine(string.Format("Error: eglGetConfigAttrib() failed. error<{0}>:{1}", error.ToString(), this.EGL_Error_Text[error]));
                 return false;
             }
 
@@ -203,20 +203,20 @@ namespace ImGui
             bool result = false;
 
             /* create an EGL window surface */
-            surface = eglCreateWindowSurface(display, config, nativeWindow/*for xcb window, this should be xcb_window_t*/, IntPtr.Zero);
-            if(surface == IntPtr.Zero)
+            this.surface = eglCreateWindowSurface(this.display, this.config, nativeWindow/*for xcb window, this should be xcb_window_t*/, IntPtr.Zero);
+            if(this.surface == IntPtr.Zero)
             {
                 var error = (EGL_ERROR)eglGetError();
-                Debug.WriteLine(string.Format("Error: eglCreateWindowSurface() failed. error<{0}>:{1}", error.ToString(), EGL_Error_Text[error]));
+                Debug.WriteLine(string.Format("Error: eglCreateWindowSurface() failed. error<{0}>:{1}", error.ToString(), this.EGL_Error_Text[error]));
                 return false;
             }
 
             /* connect the context to the surface */
-            result = eglMakeCurrent(display, surface, surface, context);
+            result = eglMakeCurrent(this.display, this.surface, this.surface, this.context);
             if (!result)
             {
                 var error = (EGL_ERROR)eglGetError();
-                Debug.WriteLine(string.Format("Error: eglMakeCurrent() failed. error<{0}>:{1}", error.ToString(), EGL_Error_Text[error]));
+                Debug.WriteLine(string.Format("Error: eglMakeCurrent() failed. error<{0}>:{1}", error.ToString(), this.EGL_Error_Text[error]));
                 return false;
             }
 
@@ -225,8 +225,8 @@ namespace ImGui
 
         private bool DestroyEGL()
         {
-            eglDestroyContext(display, context);
-            eglDestroySurface(display, surface);
+            eglDestroyContext(this.display, this.context);
+            eglDestroySurface(this.display, this.surface);
 
             return true;
         }

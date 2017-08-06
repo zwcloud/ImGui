@@ -2,6 +2,7 @@
 using ImGui.Layout;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {

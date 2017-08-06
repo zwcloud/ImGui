@@ -3,8 +3,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Graphics;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Windows
 {
     internal class OpenGLTexture : ITexture
     {

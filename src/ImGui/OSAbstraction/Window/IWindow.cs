@@ -1,7 +1,7 @@
 using System;
 using ImGui.Common.Primitive;
 
-namespace ImGui
+namespace ImGui.OSAbstraction.Window
 {
     /// <summary>
     /// window-related functions

@@ -1,10 +1,9 @@
-﻿using CSharpGL;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CSharpGL;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Windows
 {
     internal partial class Win32OpenGLRenderer
     {
@@ -17,15 +16,15 @@ namespace ImGui
         {
             public void Init()
             {
-                nSize = (ushort)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>();
-                nVersion = 1;
-                dwFlags = PFD_FLAGS.PFD_DRAW_TO_WINDOW | PFD_FLAGS.PFD_SUPPORT_OPENGL | PFD_FLAGS.PFD_DOUBLEBUFFER;
-                iPixelType = PFD_PIXEL_TYPE.PFD_TYPE_RGBA;
-                cColorBits = 32;
-                cAlphaBits = 8;
-                cDepthBits = 24;
-                cStencilBits = 8;
-                iLayerType = PFD_LAYER_TYPES.PFD_MAIN_PLANE;
+                this.nSize = (ushort)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>();
+                this.nVersion = 1;
+                this.dwFlags = PFD_FLAGS.PFD_DRAW_TO_WINDOW | PFD_FLAGS.PFD_SUPPORT_OPENGL | PFD_FLAGS.PFD_DOUBLEBUFFER;
+                this.iPixelType = PFD_PIXEL_TYPE.PFD_TYPE_RGBA;
+                this.cColorBits = 32;
+                this.cAlphaBits = 8;
+                this.cDepthBits = 24;
+                this.cStencilBits = 8;
+                this.iLayerType = PFD_LAYER_TYPES.PFD_MAIN_PLANE;
             }
             ushort nSize;
             ushort nVersion;
@@ -362,7 +361,7 @@ namespace ImGui
         private void CreateOpenGLContext(IntPtr hwnd)
         {
             this.hwnd = hwnd;
-            hDC = GetDC(hwnd);
+            this.hDC = GetDC(hwnd);
 
             var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
             pixelformatdescriptor.Init();
@@ -441,23 +440,23 @@ namespace ImGui
 
             int pixelFormat;
             uint numFormats;
-            var result = Wgl.ChoosePixelFormatARB(hDC, iPixAttribs, null, 1, out pixelFormat, out numFormats);
+            var result = Wgl.ChoosePixelFormatARB(this.hDC, iPixAttribs, null, 1, out pixelFormat, out numFormats);
             if (result == false || numFormats == 0)
             {
                 throw new Exception(string.Format("wglChoosePixelFormatARB failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
-            if(!DescribePixelFormat(hDC, pixelFormat, (uint)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), ref pixelformatdescriptor))
+            if(!DescribePixelFormat(this.hDC, pixelFormat, (uint)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), ref pixelformatdescriptor))
             {
                 throw new Exception(string.Format("DescribePixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
-            if (!SetPixelFormat(hDC, pixelFormat, ref pixelformatdescriptor))
+            if (!SetPixelFormat(this.hDC, pixelFormat, ref pixelformatdescriptor))
             {
                 throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
             }
 
-            if ((hglrc = wglCreateContext(hDC)) == IntPtr.Zero)
+            if ((this.hglrc = wglCreateContext(this.hDC)) == IntPtr.Zero)
             {
                 throw new Exception(string.Format("wglCreateContext failed: error {0}", Marshal.GetLastWin32Error()));
             }
@@ -467,7 +466,7 @@ namespace ImGui
             ReleaseDC(tempHwnd, tempHdc);
             DestroyWindow(tempHwnd);
 
-            if (!wglMakeCurrent(hDC, hglrc))
+            if (!wglMakeCurrent(this.hDC, this.hglrc))
             {
                 throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
             }
@@ -495,7 +494,7 @@ namespace ImGui
 
         private void MakeCurrent()
         {
-            if (!wglMakeCurrent(hDC, hglrc))
+            if (!wglMakeCurrent(this.hDC, this.hglrc))
             {
                 throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
             }
@@ -503,7 +502,7 @@ namespace ImGui
 
         public void SwapBuffers()
         {
-            if(!SwapBuffers(hDC))
+            if(!SwapBuffers(this.hDC))
             {
                 throw new Exception(string.Format("SwapBuffers failed: error {0}", Marshal.GetLastWin32Error()));
             }
@@ -512,8 +511,8 @@ namespace ImGui
         private void DeleteOpenGLContext()
         {
             wglMakeCurrent(IntPtr.Zero, IntPtr.Zero);
-            wglDeleteContext(hglrc);
-            ReleaseDC(hwnd, hDC);
+            wglDeleteContext(this.hglrc);
+            ReleaseDC(this.hwnd, this.hDC);
         }
     }
 }

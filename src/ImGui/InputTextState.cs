@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ImGui.Common.Primitive;
 using ImGui.Input;
+using ImGui.OSAbstraction.Text;
 
 namespace ImGui
 {

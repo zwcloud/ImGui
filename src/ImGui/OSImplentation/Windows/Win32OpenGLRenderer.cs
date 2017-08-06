@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using CSharpGL;
 using System.Runtime.InteropServices;
+using CSharpGL;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Graphics;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Windows
 {
     internal partial class Win32OpenGLRenderer : IRenderer
     {

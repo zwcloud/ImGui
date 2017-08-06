@@ -1,10 +1,14 @@
 ﻿using System;
 using ImGui.Common.Primitive;
 using ImGui.Input;
+using ImGui.OSAbstraction;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
+using ImGui.OSAbstraction.Window;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Android
 {
-    class AndroidContext : PlatformContext
+    internal class AndroidContext : PlatformContext
     {
         public static PlatformContext MapFactory()
         {

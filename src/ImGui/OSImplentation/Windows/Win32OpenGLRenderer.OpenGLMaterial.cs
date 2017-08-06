@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using CSharpGL;
 using System.Runtime.InteropServices;
+using CSharpGL;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Windows
 {
     internal partial class Win32OpenGLRenderer
     {

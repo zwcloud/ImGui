@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {

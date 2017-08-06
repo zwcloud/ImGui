@@ -1,9 +1,10 @@
 ﻿using System;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Window;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Android
 {
-    class AndroidWindow : IWindow
+    internal class AndroidWindow : IWindow
     {
         public void Init()
         {
@@ -13,15 +14,9 @@ namespace ImGui
 
         #region Implementation of IWindow
 
-        public object Handle
-        {
-            get { return IntPtr.Zero; }//dummy
-        }
+        public object Handle => IntPtr.Zero;//dummy
 
-        public IntPtr Pointer
-        {
-            get { return IntPtr.Zero; }//dummy
-        }
+        public IntPtr Pointer => IntPtr.Zero;//dummy
 
         public Point Position
         {

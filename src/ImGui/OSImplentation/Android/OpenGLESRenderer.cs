@@ -1,11 +1,12 @@
-﻿using CSharpGLES;
+﻿using System;
 using System.Collections.Generic;
-using System;
 using System.Runtime.InteropServices;
+using CSharpGLES;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Graphics;
 
-namespace ImGui
+namespace ImGui.OSImplentation.Android
 {
     internal partial class OpenGLESRenderer : IRenderer
     {
@@ -47,61 +48,61 @@ namespace ImGui
 
             private void CreateShaders()
             {
-                program = new ShaderProgram();
-                attributePositon = 0;
-                attributeUV = 1;
-                attributeColor = 2;
-                attributeMap = new Dictionary<uint, string>
+                this.program = new ShaderProgram();
+                this.attributePositon = 0;
+                this.attributeUV = 1;
+                this.attributeColor = 2;
+                this.attributeMap = new Dictionary<uint, string>
                 {
                     {0, "Position"},
                     {1, "UV"},
                     {2, "Color" }
                 };
-                program.Create(vertexShaderSource, fragmentShaderSource, attributeMap);
+                this.program.Create(this.vertexShaderSource, this.fragmentShaderSource, this.attributeMap);
 
                 Utility.CheckGLESError();
             }
 
             private void CreateVBOs()
             {
-                GL.GenBuffers(2, buffers);
-                positionVboHandle = buffers[0];
-                elementsHandle = buffers[1];
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
-                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, elementsHandle);
+                GL.GenBuffers(2, this.buffers);
+                this.positionVboHandle = this.buffers[0];
+                this.elementsHandle = this.buffers[1];
+                GL.BindBuffer(GL.GL_ARRAY_BUFFER, this.positionVboHandle);
+                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.elementsHandle);
 
-                GL.GenVertexArrays(1, vertexArray);
-                vaoHandle = vertexArray[0];
-                GL.BindVertexArray(vaoHandle);
+                GL.GenVertexArrays(1, this.vertexArray);
+                this.vaoHandle = this.vertexArray[0];
+                GL.BindVertexArray(this.vaoHandle);
 
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, positionVboHandle);
+                GL.BindBuffer(GL.GL_ARRAY_BUFFER, this.positionVboHandle);
 
-                GL.EnableVertexAttribArray(attributePositon);
-                GL.EnableVertexAttribArray(attributeUV);
-                GL.EnableVertexAttribArray(attributeColor);
+                GL.EnableVertexAttribArray(this.attributePositon);
+                GL.EnableVertexAttribArray(this.attributeUV);
+                GL.EnableVertexAttribArray(this.attributeColor);
 
-                GL.VertexAttribPointer(attributePositon, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("pos"));
-                GL.VertexAttribPointer(attributeUV, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("uv"));
-                GL.VertexAttribPointer(attributeColor, 4, GL.GL_FLOAT, true, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("color"));
+                GL.VertexAttribPointer(this.attributePositon, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("pos"));
+                GL.VertexAttribPointer(this.attributeUV, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("uv"));
+                GL.VertexAttribPointer(this.attributeColor, 4, GL.GL_FLOAT, true, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("color"));
 
                 Utility.CheckGLESError();
             }
 
             private void DeleteShaders()
             {
-                if (program != null)
+                if (this.program != null)
                 {
-                    program.Unbind();
+                    this.program.Unbind();
                     Utility.CheckGLESError();
-                    program.Delete();
+                    this.program.Delete();
                     Utility.CheckGLESError();
-                    program = null;
+                    this.program = null;
                 }
             }
 
             private void DeleteVBOs()
             {
-                GL.DeleteBuffers(1, buffers);
+                GL.DeleteBuffers(1, this.buffers);
                 Utility.CheckGLESError();
 
                 GL.BindBuffer(GL.GL_ARRAY_BUFFER, 0);
@@ -226,9 +227,9 @@ void main()
             //CreateOpenGLContext((IntPtr)windowHandle);//done in Xamarin.Android
             //InitGLEW();//done in Xamarin.Android
 
-            m.Init();
-            mExtra.Init();
-            mImage.Init();
+            this.m.Init();
+            this.mExtra.Init();
+            this.mImage.Init();
 
             // Other state
             GL.ClearColor(1, 1, 1, 1);
@@ -340,15 +341,15 @@ void main()
 
         public void RenderDrawList(DrawList drawList, int width, int height)
         {
-            DoRender(m, drawList.ShapeMesh.CommandBuffer, drawList.ShapeMesh.IndexBuffer, drawList.ShapeMesh.VertexBuffer, width, height);
+            DoRender(this.m, drawList.ShapeMesh.CommandBuffer, drawList.ShapeMesh.IndexBuffer, drawList.ShapeMesh.VertexBuffer, width, height);
             //DoRender(mExtra, drawList.BezierBuffer.CommandBuffer, drawList.BezierBuffer.IndexBuffer, drawList.BezierBuffer.VertexBuffer, width, height);
-            DoRender(mImage, drawList.ImageMesh.CommandBuffer, drawList.ImageMesh.IndexBuffer, drawList.ImageMesh.VertexBuffer, width, height);
+            DoRender(this.mImage, drawList.ImageMesh.CommandBuffer, drawList.ImageMesh.IndexBuffer, drawList.ImageMesh.VertexBuffer, width, height);
         }
 
         public void ShutDown()
         {
-            m.ShutDown();
-            mExtra.ShutDown();
+            this.m.ShutDown();
+            this.mExtra.ShutDown();
         }
     }
 }

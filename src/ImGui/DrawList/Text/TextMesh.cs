@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Text;
 
 namespace ImGui
 {
