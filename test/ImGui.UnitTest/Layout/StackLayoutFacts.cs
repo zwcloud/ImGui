@@ -1,10 +1,8 @@
-using System;
-using Xunit;
-using ImGui;
 using ImGui.Common.Primitive;
 using ImGui.Layout;
+using Xunit;
 
-namespace ImGui.UnitTest
+namespace ImGui.UnitTest.Layout
 {
     public class StackLayoutFacts
     {
