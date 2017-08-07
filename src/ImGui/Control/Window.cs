@@ -334,7 +334,7 @@ namespace ImGui
 
             window.DrawList.PopClipRect();
 
-            window.StackLayout.Layout(window.ClientRect.Size);
+            window.StackLayout.Layout();
 
             // Pop
             w.WindowStack.RemoveAt(w.WindowStack.Count - 1);

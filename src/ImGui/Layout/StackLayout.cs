@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
@@ -23,6 +24,10 @@ namespace ImGui.Layout
 
         public Rect GetRect(int id, Size contentSize, GUIStyle style, LayoutOption[] options)
         {
+            if (contentSize.Height < 1 || contentSize.Height < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(contentSize), "Content size is too small.");
+            }
             return DoGetRect(id, contentSize, style, options);
         }
 
@@ -107,7 +112,7 @@ namespace ImGui.Layout
         /// <summary>
         /// Calculate positions and sizes of every LayoutGroup and LayoutEntry
         /// </summary>
-        public void Layout(Size size)
+        public void Layout()
         {
             if (!this.dirty) return;
             this.TopGroup.CalcWidth();

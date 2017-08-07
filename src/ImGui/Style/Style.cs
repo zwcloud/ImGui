@@ -409,11 +409,51 @@ namespace ImGui
         public double BorderRight => Get<double>(GUIStyleName.BorderRight);
         public double BorderBottom => Get<double>(GUIStyleName.BorderBottom);
         public double BorderLeft => Get<double>(GUIStyleName.BorderLeft);
+        public (double, double, double, double) Border
+        {
+            get
+            {
+                var top = Get<double>(GUIStyleName.BorderTop);
+                var right = Get<double>(GUIStyleName.BorderRight);
+                var bottom = Get<double>(GUIStyleName.BorderBottom);
+                var left = Get<double>(GUIStyleName.BorderLeft);
+                return (top, right, bottom, left);
+            }
+
+            set
+            {
+                var (top, right, bottom, left) = value;
+                Set<double>(GUIStyleName.BorderTop, top);
+                Set<double>(GUIStyleName.BorderRight, right);
+                Set<double>(GUIStyleName.BorderBottom, bottom);
+                Set<double>(GUIStyleName.BorderLeft, left);
+            }
+        }
 
         public double PaddingTop => Get<double>(GUIStyleName.PaddingTop);
         public double PaddingRight => Get<double>(GUIStyleName.PaddingRight);
         public double PaddingBottom => Get<double>(GUIStyleName.PaddingBottom);
         public double PaddingLeft => Get<double>(GUIStyleName.PaddingLeft);
+        public (double, double, double, double) Padding
+        {
+            get
+            {
+                var top = Get<double>(GUIStyleName.PaddingTop);
+                var right = Get<double>(GUIStyleName.PaddingRight);
+                var bottom = Get<double>(GUIStyleName.PaddingBottom);
+                var left = Get<double>(GUIStyleName.PaddingLeft);
+                return (top, right, bottom, left);
+            }
+
+            set
+            {
+                var (top, right, bottom, left) = value;
+                Set<double>(GUIStyleName.PaddingTop, top);
+                Set<double>(GUIStyleName.PaddingRight, right);
+                Set<double>(GUIStyleName.PaddingBottom, bottom);
+                Set<double>(GUIStyleName.PaddingLeft, left);
+            }
+        }
 
         public Color BorderTopColor => Get<Color>(GUIStyleName.BorderTopColor);
         public Color BorderRightColor => Get<Color>(GUIStyleName.BorderRightColor);
