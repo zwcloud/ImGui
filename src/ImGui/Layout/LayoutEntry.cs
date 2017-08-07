@@ -2,38 +2,38 @@
 using ImGui.Common;
 using ImGui.Common.Primitive;
 
-namespace ImGui
+namespace ImGui.Layout
 {
-    class LayoutEntry
+    internal class LayoutEntry
     {
-        public int id;
+        public int Id { get; set; }
 
-        public Rect rect;//border-box
-        public double contentWidth;//exact content width, pre-calculated from content and style
-        public double contentHeight;//exact content height, pre-calculated from content and style
-        public double minWidth = 1;//minimum width of content-box
-        public double maxWidth = 9999;//maximum width of content-box
-        public double minHeight = 1;//minimum height of content-box
-        public double maxHeight = 9999;//maximum height of content-box
-        public int horizontalStretchFactor = 0;//horizontal stretch factor
-        public int verticalStretchFactor = 0;//vertical stretch factor
+        public Rect Rect;//border-box
+        public double ContentWidth { get; set; }//exact content width, pre-calculated from content and style
+        public double ContentHeight { get; set; }//exact content height, pre-calculated from content and style
+        public double MinWidth { get; set; } = 1;//minimum width of content-box
+        public double MaxWidth { get; set; } = 9999;//maximum width of content-box
+        public double MinHeight { get; set; } = 1;//minimum height of content-box
+        public double MaxHeight { get; set; } = 9999;//maximum height of content-box
+        public int HorizontalStretchFactor { get; set; }//horizontal stretch factor
+        public int VerticalStretchFactor { get; set; }//vertical stretch factor
 
-        public bool HorizontallyStretched { get { return !IsFixedWidth && horizontalStretchFactor > 0; } }
-        public bool VerticallyStretched { get { return !IsFixedHeight && verticalStretchFactor > 0; } }
+        public bool HorizontallyStretched => !this.IsFixedWidth && this.HorizontalStretchFactor > 0;
+        public bool VerticallyStretched => !this.IsFixedHeight && this.VerticalStretchFactor > 0;
 
-        public bool IsFixedWidth { get { return MathEx.AmostEqual(this.minWidth, this.maxWidth); } }
-        public bool IsFixedHeight { get { return MathEx.AmostEqual(this.minHeight, this.maxHeight); } }
+        public bool IsFixedWidth => MathEx.AmostEqual(this.MinWidth, this.MaxWidth);
+        public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
 
-        public GUIStyle style;
+        public GUIStyle Style;
 
-        public LayoutGroup parent;
+        public LayoutGroup Parent;
 
         public LayoutEntry(GUIStyle style, params LayoutOption[] options)
         {
-            this.style = style ?? GUIStyle.Default;
+            this.Style = style ?? GUIStyle.Default;
             if (options != null)
             {
-                this.ApplyOptions(options);
+                ApplyOptions(options);
             }
         }
 
@@ -43,38 +43,50 @@ namespace ImGui
             {
                 return;
             }
-            //TODO handle min/max width/height
-            for (var i = 0; i < options.Length; i++)
+            foreach (var option in options)
             {
-                var option = options[i];
                 switch (option.type)
                 {
-                    case LayoutOption.Type.fixedWidth:
-                    double horizontalSpace = this.style.PaddingHorizontal + this.style.BorderHorizontal;
-                    if ((double)option.value < horizontalSpace)
+                    case LayoutOptionType.FixedWidth:
+                        double horizontalSpace = this.Style.PaddingHorizontal + this.Style.BorderHorizontal;
+                        if ((double)option.Value < horizontalSpace)
                         {
                             throw new InvalidOperationException(
                                 string.Format("The specified width is too small. It must bigger than the horizontal padding and border size ({0}).", horizontalSpace));
                         }
-                        this.minWidth = this.maxWidth = (double)option.value;
-                        this.horizontalStretchFactor = 0;
+                        this.MinWidth = this.MaxWidth = (double)option.Value;
+                        this.HorizontalStretchFactor = 0;
                         break;
-                    case LayoutOption.Type.fixedHeight:
-                    double verticalSpace = this.style.PaddingVertical + this.style.BorderVertical;
-                    if ((double)option.value < verticalSpace)
+                    case LayoutOptionType.FixedHeight:
+                        double verticalSpace = this.Style.PaddingVertical + this.Style.BorderVertical;
+                        if ((double)option.Value < verticalSpace)
                         {
                             throw new InvalidOperationException(
                                 string.Format("The specified height is too small. It must bigger than the vertical padding and border size ({0}).", verticalSpace));
                         }
-                        this.minHeight = this.maxHeight = (double)option.value;
-                        this.verticalStretchFactor = 0;
+                        this.MinHeight = this.MaxHeight = (double)option.Value;
+                        this.VerticalStretchFactor = 0;
                         break;
-                    case LayoutOption.Type.stretchWidth:
-                        this.horizontalStretchFactor = (int)option.value;
+                    case LayoutOptionType.StretchWidth:
+                        this.HorizontalStretchFactor = (int)option.Value;
                         break;
-                    case LayoutOption.Type.stretchHeight:
-                        this.verticalStretchFactor = (int)option.value;
+                    case LayoutOptionType.StretchHeight:
+                        this.VerticalStretchFactor = (int)option.Value;
                         break;
+                    case LayoutOptionType.MinWidth:
+                    case LayoutOptionType.MaxWidth:
+                    case LayoutOptionType.MinHeight:
+                    case LayoutOptionType.MaxHeight:
+                    case LayoutOptionType.AlignStart:
+                    case LayoutOptionType.AlignMiddle:
+                    case LayoutOptionType.AlignEnd:
+                    case LayoutOptionType.AlignJustify:
+                    case LayoutOptionType.EqualSize:
+                    case LayoutOptionType.Spacing:
+                        //TODO handle min/max width/height
+                        throw new NotImplementedException();
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -85,22 +97,22 @@ namespace ImGui
             {
                 if (unitPartWidth > 0)
                 {
-                    this.rect.Width = unitPartWidth * this.horizontalStretchFactor;
-                    this.contentWidth = this.rect.Width - this.style.PaddingHorizontal - this.style.BorderHorizontal;
+                    this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
+                    this.ContentWidth = this.Rect.Width - this.Style.PaddingHorizontal - this.Style.BorderHorizontal;
                 }
                 else
                 {
-                    throw new ArgumentException("The unit part width is invalid", "unitPartWidth");
+                    throw new ArgumentException("The unit part width is invalid", nameof(unitPartWidth));
                 }
             }
             else if (this.IsFixedWidth)
             {
-                this.rect.Width = this.minWidth;
-                this.contentWidth = this.rect.Width - this.style.PaddingHorizontal - this.style.BorderHorizontal;
+                this.Rect.Width = this.MinWidth;
+                this.ContentWidth = this.Rect.Width - this.Style.PaddingHorizontal - this.Style.BorderHorizontal;
             }
             else
             {
-                this.rect.Width = this.contentWidth + this.style.PaddingHorizontal + this.style.BorderHorizontal;
+                this.Rect.Width = this.ContentWidth + this.Style.PaddingHorizontal + this.Style.BorderHorizontal;
             }
         }
 
@@ -110,39 +122,38 @@ namespace ImGui
             {
                 if (unitPartHeight > 0)
                 {
-                    this.rect.Height = unitPartHeight * this.verticalStretchFactor;
-                    this.contentHeight = this.rect.Height - this.style.PaddingVertical - this.style.BorderVertical;
+                    this.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
+                    this.ContentHeight = this.Rect.Height - this.Style.PaddingVertical - this.Style.BorderVertical;
                 }
                 else
                 {
-                    throw new ArgumentException("The unit part height is invalid", "unitPartHeight");
+                    throw new ArgumentException("The unit part height is invalid", nameof(unitPartHeight));
                 }
             }
             else if (this.IsFixedHeight)
             {
-                this.rect.Height = this.minHeight;
-                this.contentHeight = this.rect.Height - this.style.PaddingVertical - this.style.BorderVertical;
+                this.Rect.Height = this.MinHeight;
+                this.ContentHeight = this.Rect.Height - this.Style.PaddingVertical - this.Style.BorderVertical;
             }
             else
             {
-                this.rect.Height = this.contentHeight + this.style.PaddingVertical + this.style.BorderVertical;
+                this.Rect.Height = this.ContentHeight + this.Style.PaddingVertical + this.Style.BorderVertical;
             }
         }
 
         public virtual void SetX(double x)
         {
-            this.rect.X = x;
+            this.Rect.X = x;
         }
 
         public virtual void SetY(double y)
         {
-            this.rect.Y = y;
+            this.Rect.Y = y;
         }
 
-
-        internal LayoutEntry Clone()
+        public LayoutEntry Clone()
         {
-            return (LayoutEntry)this.MemberwiseClone();
+            return (LayoutEntry)MemberwiseClone();
         }
     }
 }

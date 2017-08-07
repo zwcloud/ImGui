@@ -289,13 +289,13 @@ namespace ImGui
             {
                 foreach (var option in options)
                 {
-                    if (option.type == LayoutOption.Type.fixedWidth)
+                    if (option.type == LayoutOptionType.FixedWidth)
                     {
-                        width = (double)option.value;
+                        width = (double)option.Value;
                     }
-                    else if (option.type == LayoutOption.Type.fixedHeight)
+                    else if (option.type == LayoutOptionType.FixedHeight)
                     {
-                        height = (double)option.value;
+                        height = (double)option.Value;
                     }
                 }
             }
@@ -359,13 +359,13 @@ namespace ImGui
             {
                 foreach (var option in options)
                 {
-                    if (option.type == LayoutOption.Type.fixedWidth)
+                    if (option.type == LayoutOptionType.FixedWidth)
                     {
-                        width = (double)option.value;
+                        width = (double)option.Value;
                     }
-                    else if (option.type == LayoutOption.Type.fixedHeight)
+                    else if (option.type == LayoutOptionType.FixedHeight)
                     {
-                        height = (double)option.value;
+                        height = (double)option.Value;
                     }
                 }
             }

@@ -3,28 +3,27 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
 
-namespace ImGui
+namespace ImGui.Layout
 {
     internal class LayoutGroup : LayoutEntry
     {
-        public bool isForm;
-        public bool isVertical;
-        public bool isClipped;
-
-        public List<LayoutEntry> entries = new List<LayoutEntry>();
         private int cursor;
 
         public LayoutGroup(bool isVertical, GUIStyle style, params LayoutOption[] options) : base(style, options)
         {
-            this.isVertical = isVertical;
-            cursor = 0;
+            this.IsVertical = isVertical;
+            this.cursor = 0;
         }
+
+        public bool IsVertical { get; }
+
+        public List<LayoutEntry> Entries { get; } = new List<LayoutEntry>();
 
         public LayoutEntry GetNext()
         {
-            if (this.cursor < this.entries.Count)
+            if (this.cursor < this.Entries.Count)
             {
-                LayoutEntry result = this.entries[this.cursor];
+                LayoutEntry result = this.Entries[this.cursor];
                 this.cursor++;
                 return result;
             }
@@ -39,10 +38,10 @@ namespace ImGui
                 Log.Error("No last rect available.");
                 result = Rect.Empty;
             }
-            else if (this.cursor <= this.entries.Count)
+            else if (this.cursor <= this.Entries.Count)
             {
-                LayoutEntry gUILayoutEntry = this.entries[this.cursor - 1];
-                result = gUILayoutEntry.rect;
+                LayoutEntry entry = this.Entries[this.cursor - 1];
+                result = entry.Rect;
             }
             else
             {
@@ -67,44 +66,44 @@ namespace ImGui
             if (this.IsFixedWidth)
             {
                 Debug.Assert(!this.HorizontallyStretched);
-                if (this.isVertical && item.horizontalStretchFactor > 1)
+                if (this.IsVertical && item.HorizontalStretchFactor > 1)
                 {
-                    item.horizontalStretchFactor = 1;
+                    item.HorizontalStretchFactor = 1;
                 }
             }
             else if (this.HorizontallyStretched)
             {
-                if (this.isVertical && item.horizontalStretchFactor > 1)
+                if (this.IsVertical && item.HorizontalStretchFactor > 1)
                 {
-                    item.horizontalStretchFactor = 1;
+                    item.HorizontalStretchFactor = 1;
                 }
             }
             else
             {
-                item.horizontalStretchFactor = 0;
+                item.HorizontalStretchFactor = 0;
             }
 
             if (this.IsFixedHeight)
             {
                 Debug.Assert(!this.VerticallyStretched);
-                if (!this.isVertical && item.verticalStretchFactor > 1)
+                if (!this.IsVertical && item.VerticalStretchFactor > 1)
                 {
-                    item.verticalStretchFactor = 1;
+                    item.VerticalStretchFactor = 1;
                 }
             }
             else if (this.VerticallyStretched)
             {
-                if (!this.isVertical && item.verticalStretchFactor > 1)
+                if (!this.IsVertical && item.VerticalStretchFactor > 1)
                 {
-                    item.verticalStretchFactor = 1;
+                    item.VerticalStretchFactor = 1;
                 }
             }
             else
             {
-                item.verticalStretchFactor = 0;
+                item.VerticalStretchFactor = 0;
             }
 
-            this.entries.Add(item);
+            this.Entries.Add(item);
         }
 
         public override void CalcWidth(double unitPartWidth = -1)
@@ -112,10 +111,10 @@ namespace ImGui
             if (this.HorizontallyStretched)//stretched width
             {
                 // calculate the width
-                this.rect.Width = unitPartWidth * horizontalStretchFactor;
-                this.contentWidth = this.rect.Width - this.style.PaddingHorizontal - this.style.BorderHorizontal;
+                this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
+                this.ContentWidth = this.Rect.Width - this.Style.PaddingHorizontal - this.Style.BorderHorizontal;
 
-                if (this.contentWidth <= 0) return;//container has no space to hold the children
+                if (this.ContentWidth <= 0) return;//container has no space to hold the children
 
                 // calculate the width of children
                 CalcChildrenWidth();
@@ -123,51 +122,51 @@ namespace ImGui
             else if (this.IsFixedWidth)//fiexed width
             {
                 // calculate the width
-                this.rect.Width = this.minWidth;
-                this.contentWidth = this.rect.Width - this.style.PaddingHorizontal - this.style.BorderHorizontal;
+                this.Rect.Width = this.MinWidth;
+                this.ContentWidth = this.Rect.Width - this.Style.PaddingHorizontal - this.Style.BorderHorizontal;
 
-                if (this.contentWidth <= 0) return;//container has no space to hold the children
+                if (this.ContentWidth <= 0) return;//container has no space to hold the children
 
                 // calculate the width of children
                 CalcChildrenWidth();
             }
             else // default width
             {
-                if (this.isVertical) //vertical group
+                if (this.IsVertical) //vertical group
                 {
                     var temp = 0d;
                     // get the max width of children
-                    foreach (var entry in entries)
+                    foreach (var entry in this.Entries)
                     {
                         entry.CalcWidth();
-                        temp = Math.Max(temp, entry.rect.Width);
+                        temp = Math.Max(temp, entry.Rect.Width);
                     }
-                    this.contentWidth = temp;
+                    this.ContentWidth = temp;
                 }
                 else
                 {
                     var temp = 0d;
-                    foreach (var entry in entries)
+                    foreach (var entry in this.Entries)
                     {
                         entry.CalcWidth();
-                        temp += entry.rect.Width + this.style.CellingSpacingHorizontal;
+                        temp += entry.Rect.Width + this.Style.CellingSpacingHorizontal;
                     }
-                    temp -= this.style.CellingSpacingHorizontal;
-                    this.contentWidth = temp < 0 ? 0 : temp;
+                    temp -= this.Style.CellingSpacingHorizontal;
+                    this.ContentWidth = temp < 0 ? 0 : temp;
                 }
-                this.rect.Width = this.contentWidth + this.style.PaddingHorizontal + this.style.BorderHorizontal;
+                this.Rect.Width = this.ContentWidth + this.Style.PaddingHorizontal + this.Style.BorderHorizontal;
             }
         }
 
         private void CalcChildrenWidth()
         {
-            if (this.isVertical) //vertical group
+            if (this.IsVertical) //vertical group
             {
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
                     if (entry.HorizontallyStretched)
                     {
-                        entry.CalcWidth(this.contentWidth); //the unitPartWidth for stretched children is the content-box width of the group
+                        entry.CalcWidth(this.ContentWidth); //the unitPartWidth for stretched children is the content-box width of the group
                     }
                     else
                     {
@@ -179,25 +178,25 @@ namespace ImGui
             {
                 // calculate the unitPartWidth for stretched children
                 // calculate the width of fixed-size children
-                var childCount = this.entries.Count;
+                var childCount = this.Entries.Count;
                 var totalFactor = 0;
-                var totalStretchedPartWidth = this.contentWidth -
-                                              this.style.CellingSpacingHorizontal * (childCount - 1);
-                foreach (var entry in entries)
+                var totalStretchedPartWidth = this.ContentWidth -
+                                              this.Style.CellingSpacingHorizontal * (childCount - 1);
+                foreach (var entry in this.Entries)
                 {
                     if (entry.HorizontallyStretched)
                     {
-                        totalFactor += entry.horizontalStretchFactor;
+                        totalFactor += entry.HorizontalStretchFactor;
                     }
                     else
                     {
                         entry.CalcWidth();
-                        totalStretchedPartWidth -= entry.rect.Width;
+                        totalStretchedPartWidth -= entry.Rect.Width;
                     }
                 }
                 var childUnitPartWidth = totalStretchedPartWidth / totalFactor;
                 // calculate the width of stretched children
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
                     if (entry.HorizontallyStretched)
                     {
@@ -212,10 +211,10 @@ namespace ImGui
             if (this.VerticallyStretched)
             {
                 // calculate the height
-                this.rect.Height = unitPartHeight * this.verticalStretchFactor;
-                this.contentHeight = this.rect.Height - this.style.PaddingVertical - this.style.BorderVertical;
+                this.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
+                this.ContentHeight = this.Rect.Height - this.Style.PaddingVertical - this.Style.BorderVertical;
 
-                if (this.contentHeight < 1) return;//container has no space to hold the children
+                if (this.ContentHeight < 1) return;//container has no space to hold the children
 
                 // calculate the height of children
                 CalcChildrenHeight();
@@ -223,66 +222,66 @@ namespace ImGui
             else if (this.IsFixedHeight)//fiexed height
             {
                 // calculate the height
-                this.rect.Height = this.minHeight;
-                this.contentHeight = this.rect.Height - this.style.PaddingVertical - this.style.BorderVertical;
+                this.Rect.Height = this.MinHeight;
+                this.ContentHeight = this.Rect.Height - this.Style.PaddingVertical - this.Style.BorderVertical;
 
-                if (this.contentHeight < 1) return;//container has no space to hold the children
+                if (this.ContentHeight < 1) return;//container has no space to hold the children
 
                 // calculate the height of children
                 CalcChildrenHeight();
             }
             else // default height
             {
-                if (this.isVertical) // vertical group
+                if (this.IsVertical) // vertical group
                 {
                     var temp = 0d;
-                    foreach (var entry in entries)
+                    foreach (var entry in this.Entries)
                     {
                         entry.CalcHeight();
-                        temp += entry.rect.Height + this.style.CellingSpacingVertical;
+                        temp += entry.Rect.Height + this.Style.CellingSpacingVertical;
                     }
-                    temp -= this.style.CellingSpacingVertical;
-                    this.contentHeight = temp < 0 ? 0 : temp;
+                    temp -= this.Style.CellingSpacingVertical;
+                    this.ContentHeight = temp < 0 ? 0 : temp;
                 }
                 else // horizontal group
                 {
                     var temp = 0d;
                     // get the max height of children
-                    foreach (var entry in entries)
+                    foreach (var entry in this.Entries)
                     {
                         entry.CalcHeight();
-                        temp = Math.Max(temp, entry.rect.Height);
+                        temp = Math.Max(temp, entry.Rect.Height);
                     }
-                    this.contentHeight = temp;
+                    this.ContentHeight = temp;
                 }
-                this.rect.Height = this.contentHeight + this.style.PaddingVertical + this.style.BorderVertical;
+                this.Rect.Height = this.ContentHeight + this.Style.PaddingVertical + this.Style.BorderVertical;
             }
         }
 
         private void CalcChildrenHeight()
         {
-            if (this.isVertical) // vertical group
+            if (this.IsVertical) // vertical group
             {
                 // calculate the unitPartHeight for stretched children
                 // calculate the height of fixed-size children
-                var childCount = this.entries.Count;
-                var totalStretchedPartHeight = this.contentHeight - (childCount - 1) * this.style.CellingSpacingVertical;
+                var childCount = this.Entries.Count;
+                var totalStretchedPartHeight = this.ContentHeight - (childCount - 1) * this.Style.CellingSpacingVertical;
                 var totalFactor = 0;
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
                     if (entry.VerticallyStretched)
                     {
-                        totalFactor += entry.verticalStretchFactor;
+                        totalFactor += entry.VerticalStretchFactor;
                     }
                     else
                     {
                         entry.CalcHeight();
-                        totalStretchedPartHeight -= entry.rect.Height;
+                        totalStretchedPartHeight -= entry.Rect.Height;
                     }
                 }
                 var childUnitPartHeight = totalStretchedPartHeight / totalFactor;
                 // calculate the height of stretched children
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
                     if (entry.VerticallyStretched)
                     {
@@ -292,11 +291,11 @@ namespace ImGui
             }
             else // horizontal group
             {
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
                     if (entry.VerticallyStretched)
                     {
-                        entry.CalcHeight(this.contentHeight);
+                        entry.CalcHeight(this.ContentHeight);
                         //the unitPartHeight for stretched children is the content-box height of the group
                     }
                     else
@@ -309,24 +308,24 @@ namespace ImGui
 
         public override void SetX(double x)
         {
-            this.rect.X = x;
-            if (this.isVertical)
+            this.Rect.X = x;
+            if (this.IsVertical)
             {
                 var childX = 0d;
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
-                    switch (this.style.AlignmentHorizontal)
+                    switch (this.Style.AlignmentHorizontal)
                     {
                         case Alignment.Start:
-                            childX = x + this.style.BorderLeft + this.style.PaddingLeft;
+                            childX = x + this.Style.BorderLeft + this.Style.PaddingLeft;
                             break;
                         case Alignment.Center:
                         case Alignment.SpaceAround:
                         case Alignment.SpaceBetween:
-                            childX = x + this.style.BorderLeft + this.style.PaddingLeft + (this.contentWidth - entry.rect.Width) / 2;
+                            childX = x + this.Style.BorderLeft + this.Style.PaddingLeft + (this.ContentWidth - entry.Rect.Width) / 2;
                             break;
                         case Alignment.End:
-                            childX = x + this.rect.Width - this.style.BorderRight - this.style.PaddingRight - entry.rect.Width;
+                            childX = x + this.Rect.Width - this.Style.BorderRight - this.Style.PaddingRight - entry.Rect.Width;
                             break;
                     }
                     entry.SetX(childX);
@@ -334,54 +333,54 @@ namespace ImGui
             }
             else
             {
-                var nextX = 0d;
+                double nextX;
 
                 var childWidthWithCellSpcaing = 0d;
                 var childWidthWithoutCellSpcaing = 0d;
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
-                    childWidthWithCellSpcaing += entry.rect.Width + this.style.CellingSpacingHorizontal;
-                    childWidthWithoutCellSpcaing += entry.rect.Width;
+                    childWidthWithCellSpcaing += entry.Rect.Width + this.Style.CellingSpacingHorizontal;
+                    childWidthWithoutCellSpcaing += entry.Rect.Width;
                 }
-                childWidthWithCellSpcaing -= this.style.CellingSpacingVertical;
+                childWidthWithCellSpcaing -= this.Style.CellingSpacingVertical;
 
-                switch (this.style.AlignmentHorizontal)
+                switch (this.Style.AlignmentHorizontal)
                 {
                     case Alignment.Start:
-                        nextX = x + this.style.BorderLeft + this.style.PaddingLeft;
+                        nextX = x + this.Style.BorderLeft + this.Style.PaddingLeft;
                         break;
                     case Alignment.Center:
-                        nextX = x + this.style.BorderLeft + this.style.PaddingLeft + (this.contentWidth - childWidthWithCellSpcaing) / 2;
+                        nextX = x + this.Style.BorderLeft + this.Style.PaddingLeft + (this.ContentWidth - childWidthWithCellSpcaing) / 2;
                         break;
                     case Alignment.End:
-                        nextX = x + this.rect.Width - this.style.BorderRight - this.style.PaddingRight - childWidthWithCellSpcaing;
+                        nextX = x + this.Rect.Width - this.Style.BorderRight - this.Style.PaddingRight - childWidthWithCellSpcaing;
                         break;
                     case Alignment.SpaceAround:
-                        nextX = x + this.style.BorderLeft + this.style.PaddingLeft +
-                                (this.contentWidth - childWidthWithoutCellSpcaing) / (this.entries.Count + 1);
+                        nextX = x + this.Style.BorderLeft + this.Style.PaddingLeft +
+                                (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Entries.Count + 1);
                         break;
                     case Alignment.SpaceBetween:
-                        nextX = x + this.style.BorderLeft + this.style.PaddingLeft;
+                        nextX = x + this.Style.BorderLeft + this.Style.PaddingLeft;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
 
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
                     entry.SetX(nextX);
-                    switch (this.style.AlignmentHorizontal)
+                    switch (this.Style.AlignmentHorizontal)
                     {
                         case Alignment.Start:
                         case Alignment.Center:
                         case Alignment.End:
-                            nextX += entry.rect.Width + this.style.CellingSpacingHorizontal;
+                            nextX += entry.Rect.Width + this.Style.CellingSpacingHorizontal;
                             break;
                         case Alignment.SpaceAround:
-                            nextX += entry.rect.Width + (this.contentWidth - childWidthWithoutCellSpcaing) / (this.entries.Count + 1);
+                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Entries.Count + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextX += entry.rect.Width + (this.contentWidth - childWidthWithoutCellSpcaing) / (this.entries.Count - 1);
+                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Entries.Count - 1);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -392,57 +391,57 @@ namespace ImGui
 
         public override void SetY(double y)
         {
-            this.rect.Y = y;
-            if (this.isVertical)
+            this.Rect.Y = y;
+            if (this.IsVertical)
             {
-                var nextY = 0d;
+                double nextY;
 
                 var childHeightWithCellSpcaing = 0d;
                 var childHeightWithoutCellSpcaing = 0d;
-                foreach (var entry in this.entries)
+                foreach (var entry in this.Entries)
                 {
-                    childHeightWithCellSpcaing += entry.rect.Height + this.style.CellingSpacingVertical;
-                    childHeightWithoutCellSpcaing += entry.rect.Height;
+                    childHeightWithCellSpcaing += entry.Rect.Height + this.Style.CellingSpacingVertical;
+                    childHeightWithoutCellSpcaing += entry.Rect.Height;
                 }
-                childHeightWithCellSpcaing -= this.style.CellingSpacingVertical;
+                childHeightWithCellSpcaing -= this.Style.CellingSpacingVertical;
 
-                switch (this.style.AlignmentVertical)
+                switch (this.Style.AlignmentVertical)
                 {
                     case Alignment.Start:
-                        nextY = y + this.style.BorderTop + this.style.PaddingTop;
+                        nextY = y + this.Style.BorderTop + this.Style.PaddingTop;
                         break;
                     case Alignment.Center:
-                        nextY = y + this.style.BorderTop + this.style.PaddingTop + (this.contentHeight - childHeightWithCellSpcaing) / 2;
+                        nextY = y + this.Style.BorderTop + this.Style.PaddingTop + (this.ContentHeight - childHeightWithCellSpcaing) / 2;
                         break;
                     case Alignment.End:
-                        nextY = y + this.rect.Height - this.style.BorderBottom - this.style.PaddingBottom - childHeightWithCellSpcaing;
+                        nextY = y + this.Rect.Height - this.Style.BorderBottom - this.Style.PaddingBottom - childHeightWithCellSpcaing;
                         break;
                     case Alignment.SpaceAround:
-                        nextY = y + this.style.BorderTop + this.style.PaddingTop +
-                                (this.contentHeight - childHeightWithoutCellSpcaing) / (this.entries.Count + 1);
+                        nextY = y + this.Style.BorderTop + this.Style.PaddingTop +
+                                (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Entries.Count + 1);
                         break;
                     case Alignment.SpaceBetween:
-                        nextY = y + this.style.BorderTop + this.style.PaddingTop;
+                        nextY = y + this.Style.BorderTop + this.Style.PaddingTop;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
 
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
                     entry.SetY(nextY);
-                    switch (this.style.AlignmentVertical)
+                    switch (this.Style.AlignmentVertical)
                     {
                         case Alignment.Start:
                         case Alignment.Center:
                         case Alignment.End:
-                            nextY += entry.rect.Height + this.style.CellingSpacingVertical;
+                            nextY += entry.Rect.Height + this.Style.CellingSpacingVertical;
                             break;
                         case Alignment.SpaceAround:
-                            nextY += entry.rect.Height + (this.contentHeight - childHeightWithoutCellSpcaing) / (this.entries.Count + 1);
+                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Entries.Count + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextY += entry.rect.Height + (this.contentHeight - childHeightWithoutCellSpcaing) / (this.entries.Count - 1);
+                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Entries.Count - 1);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -452,20 +451,20 @@ namespace ImGui
             else
             {
                 var childY = 0d;
-                foreach (var entry in entries)
+                foreach (var entry in this.Entries)
                 {
-                    switch (this.style.AlignmentVertical)
+                    switch (this.Style.AlignmentVertical)
                     {
                         case Alignment.Start:
-                            childY = y + this.style.BorderTop + this.style.PaddingTop;
+                            childY = y + this.Style.BorderTop + this.Style.PaddingTop;
                             break;
                         case Alignment.Center:
                         case Alignment.SpaceAround:
                         case Alignment.SpaceBetween:
-                            childY = y + this.style.BorderTop + this.style.PaddingTop + (this.contentHeight - entry.rect.Height) / 2;
+                            childY = y + this.Style.BorderTop + this.Style.PaddingTop + (this.ContentHeight - entry.Rect.Height) / 2;
                             break;
                         case Alignment.End:
-                            childY += y + this.rect.Height - this.style.BorderBottom - this.style.PaddingBottom - entry.rect.Height;
+                            childY += y + this.Rect.Height - this.Style.BorderBottom - this.Style.PaddingBottom - entry.Rect.Height;
                             break;
                     }
                     entry.SetY(childY);

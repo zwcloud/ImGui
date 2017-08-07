@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Cairo;
 using ImGui;
 using System;
+using ImGui.Layout;
 
 namespace Test
 {
@@ -85,29 +86,29 @@ namespace Test
                 var option = options[i];
                 switch (option.type)
                 {
-                    case LayoutOption.Type.fixedWidth:
-                        if ((double) option.value < this.style.PaddingHorizontal + this.style.BorderHorizontal)
+                    case LayoutOptionType.FixedWidth:
+                        if ((double) option.Value < this.style.PaddingHorizontal + this.style.BorderHorizontal)
                         {
                             throw new InvalidOperationException(
                                 string.Format("The specified width is too small. It must bigger than the horizontal padding and border size ({0}).", this.style.PaddingHorizontal + this.style.BorderHorizontal));
                         }
-                        this.minWidth = this.maxWidth = (double)option.value;
+                        this.minWidth = this.maxWidth = (double)option.Value;
                         this.horizontalStretchFactor = 0;
                         break;
-                    case LayoutOption.Type.fixedHeight:
-                        if ((double)option.value < this.style.PaddingVertical + this.style.BorderVertical)
+                    case LayoutOptionType.FixedHeight:
+                        if ((double)option.Value < this.style.PaddingVertical + this.style.BorderVertical)
                         {
                             throw new InvalidOperationException(
                                 string.Format("The specified height is too small. It must bigger than the vertical padding and border size ({0}).", this.style.PaddingVertical + this.style.BorderVertical));
                         }
-                        this.minHeight = this.maxHeight = (double)option.value;
+                        this.minHeight = this.maxHeight = (double)option.Value;
                         this.verticalStretchFactor = 0;
                         break;
-                    case LayoutOption.Type.stretchWidth:
-                        this.horizontalStretchFactor = (int)option.value;
+                    case LayoutOptionType.StretchWidth:
+                        this.horizontalStretchFactor = (int)option.Value;
                         break;
-                    case LayoutOption.Type.stretchHeight:
-                        this.verticalStretchFactor = (int)option.value;
+                    case LayoutOptionType.StretchHeight:
+                        this.verticalStretchFactor = (int)option.Value;
                         break;
                 }
             }
@@ -721,7 +722,7 @@ namespace Test
     {
         public static void ShowResult(this LayoutGroup group, [System.Runtime.CompilerServices.CallerMemberName] string memberName = null)
         {
-            var rect = group.rect;
+            var rect = group.Rect;
             var surface = CairoEx.BuildSurface((int)rect.Width, (int)rect.Height, CairoEx.ColorMetal, Format.Rgb24);
             var context = new Cairo.Context(surface);
 
@@ -745,28 +746,28 @@ namespace Test
         {
             if (needClip)
             {
-                var rect = group.rect;
-                var style = group.style;
+                var rect = group.Rect;
+                var style = group.Style;
                 context.Rectangle(rect.X + style.PaddingLeft + style.BorderLeft, rect.Y + style.PaddingTop + style.BorderTop,
                     rect.Width - style.PaddingHorizontal - style.BorderHorizontal, rect.Height - style.PaddingVertical - style.BorderVertical);
                 //context.StrokePreserve();
                 context.Clip();
             }
-            foreach (var entry in group.entries)
+            foreach (var entry in @group.Entries)
             {
                 if (entry.HorizontallyStretched || entry.VerticallyStretched)
                 {
-                    context.FillRectangle(entry.rect, CairoEx.ColorLightBlue);
+                    context.FillRectangle(entry.Rect, CairoEx.ColorLightBlue);
                 }
                 else if (entry.IsFixedWidth || entry.IsFixedHeight)
                 {
-                    context.FillRectangle(entry.rect, CairoEx.ColorOrange);
+                    context.FillRectangle(entry.Rect, CairoEx.ColorOrange);
                 }
                 else
                 {
-                    context.FillRectangle(entry.rect, CairoEx.ColorPink);
+                    context.FillRectangle(entry.Rect, CairoEx.ColorPink);
                 }
-                context.StrokeRectangle(entry.rect, CairoEx.ColorBlack);
+                context.StrokeRectangle(entry.Rect, CairoEx.ColorBlack);
                 var innerGroup = entry as LayoutGroup;
                 if (innerGroup != null)
                 {

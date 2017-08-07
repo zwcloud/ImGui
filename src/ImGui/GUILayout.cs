@@ -94,7 +94,7 @@ namespace ImGui
         /// <returns>A <see cref="LayoutOption"/> that will set the width of a control/group.</returns>
         public static LayoutOption Width(double width)
         {
-            return new LayoutOption(LayoutOption.Type.fixedWidth, width);
+            return new LayoutOption(LayoutOptionType.FixedWidth, width);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace ImGui
         /// <returns>A <see cref="LayoutOption"/> that will set the height of a control/group.</returns>
         public static LayoutOption Height(double height)
         {
-            return new LayoutOption(LayoutOption.Type.fixedHeight, height);
+            return new LayoutOption(LayoutOptionType.FixedHeight, height);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace ImGui
         /// <returns>A <see cref="LayoutOption"/> that will expand the width of a control/group.</returns>
         public static LayoutOption ExpandWidth(bool expand)
         {
-            return new LayoutOption(LayoutOption.Type.stretchWidth, (!expand) ? 0 : 1);
+            return new LayoutOption(LayoutOptionType.StretchWidth, (!expand) ? 0 : 1);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace ImGui
         /// <returns>A <see cref="LayoutOption"/> that will expand the height of a control/group.</returns>
         public static LayoutOption ExpandHeight(bool expand)
         {
-            return new LayoutOption(LayoutOption.Type.stretchHeight, (!expand) ? 0 : 1);
+            return new LayoutOption(LayoutOptionType.StretchHeight, (!expand) ? 0 : 1);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace ImGui
         public static LayoutOption StretchWidth(int factor)
         {
             if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
-            return new LayoutOption(LayoutOption.Type.stretchWidth, factor);
+            return new LayoutOption(LayoutOptionType.StretchWidth, factor);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace ImGui
         public static LayoutOption StretchHeight(int factor)
         {
             if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
-            return new LayoutOption(LayoutOption.Type.stretchHeight, factor);
+            return new LayoutOption(LayoutOptionType.StretchHeight, factor);
         }
 
         #endregion
