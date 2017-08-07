@@ -167,7 +167,7 @@ namespace ImGui.Common.Primitive
                 // The funny width and height tests are to handle NaNs
                 System.Diagnostics.Debug.Assert((!(_width < 0) && !(_height < 0)) || (this == Empty));
 
-                return _width < 0;
+                return _width < 0 || _height < 0;
             }
         }
 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using ImGui.Common.Primitive;
 
 namespace ImGui
@@ -147,44 +145,6 @@ namespace ImGui
         {
             if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
             return new LayoutOption(LayoutOptionType.StretchHeight, factor);
-        }
-
-        #endregion
-
-        #region controls
-
-        public static bool CollapsingHeader(string text, ref bool open)
-        {
-            Window window = GetCurrentWindow();
-            if (window.SkipItems)
-                return false;
-
-            var height = GUIStyle.Default.FontSize;
-            var id = window.GetID(text);
-            GUIStyle style = GUISkin.Instance[GUIControlName.Button];
-            var rect = GetRect(new Size(0, height), text, style, GUILayout.ExpandWidth(true));
-
-            bool hovered, held;
-            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, ButtonFlags.PressedOnClick);
-            if (pressed)
-            {
-                open = !open;
-            }
-
-            // Render
-            DrawList d = window.DrawList;
-            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            d.RenderFrame(rect.Min, rect.Max, col, false, 0);
-            d.DrawText(rect, text, style, state);
-
-            return open;
-        }
-
-        public static bool Radio(string label, ref string active_id, string id)
-        {
-            return false;
-            throw new NotImplementedException();//TODO implement this with separate logic from Toggle.
         }
 
         #endregion

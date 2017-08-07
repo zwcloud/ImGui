@@ -438,34 +438,5 @@ namespace ImGui
             this.TextMesh.Append(textMesh, offset);
         }
 
-        //TODO move this to corresponding control.
-        #region Extra
-        public void RenderCollapseTriangle(Point pMin, bool isOpen, double height, Color color, double scale = 1)
-        {
-            GUIContext g = Form.current.uiContext;
-            Window window = Utility.GetCurrentWindow();
-
-            double h = height;
-            double r = h * 0.40f * scale;
-            Point center = pMin + new Vector(h * 0.50f, h * 0.50f * scale);
-
-            Point a, b, c;
-            if (isOpen)
-            {
-                center.Y -= r * 0.25f;
-                a = center + new Vector(0, 1) * r;
-                b = center + new Vector(-0.866f, -0.5f) * r;
-                c = center + new Vector(0.866f, -0.5f) * r;
-            }
-            else
-            {
-                a = center + new Vector(1, 0) * r;
-                b = center + new Vector(-0.500f, 0.866f) * r;
-                c = center + new Vector(-0.500f, -0.866f) * r;
-            }
-
-            window.DrawList.AddTriangleFilled(a, b, c, color);
-        }
-        #endregion
     }
 }

@@ -15,7 +15,9 @@ namespace UniversalAppTemplate
         bool openDemo = true;
         TestUI demoUI = new TestUI();
 
-        bool openA = true;
+        private bool openA = true;
+        private bool openGroupA = true, openGroupB = false;
+
 
         protected override void OnGUI()
         {
@@ -27,19 +29,25 @@ namespace UniversalAppTemplate
             //GUI.End();
 
             GUI.Begin("window A", ref openA);
-            GUILayout.BeginVertical("GroupA");
-            GUILayout.Label("AAAA");
-            GUILayout.Label("BBBB");
-            GUILayout.Label("CCCC");
-            GUILayout.Label("DDDD");
-            GUILayout.EndVertical();
-            
-            GUILayout.BeginHorizontal("GroupB");
-            GUILayout.Label("BAAAA啊");
-            GUILayout.Label("BBBBB");
-            GUILayout.Label("BCCCC");
-            GUILayout.Label("BDDDD");
-            GUILayout.EndHorizontal();
+            if (GUILayout.CollapsingHeader("MyGroupA", ref openGroupA))
+            {
+                GUILayout.BeginVertical("GroupA");
+                GUILayout.Label("AAAA");
+                GUILayout.Label("BBBB");
+                GUILayout.Label("CCCC");
+                GUILayout.Label("DDDD");
+                GUILayout.EndVertical();
+            }
+
+            if (GUILayout.CollapsingHeader("MyGroupB", ref openGroupB))
+            {
+                GUILayout.BeginHorizontal("GroupB");
+                GUILayout.Label("BAAAA啊");
+                GUILayout.Label("BBBBB");
+                GUILayout.Label("BCCCC");
+                GUILayout.Label("BDDDD");
+                GUILayout.EndHorizontal();
+            }
             GUI.End();
         }
     }
