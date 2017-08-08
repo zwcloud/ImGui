@@ -149,6 +149,29 @@ namespace ImGui.UnitTest.Layout
                 Assert.Equal(expandHeight ? 600 : size.Height, rect.Height);
             }
 
+            [Fact]
+            public void GetRectInsideGroup()
+            {
+                var layout = new StackLayout(0, new Size(800, 600));
+                var size = new Size(200, 300);
+
+                layout.Begin();
+                layout.BeginLayoutGroup(1, true);
+                    layout.GetRect(2, size);
+                layout.EndLayoutGroup();
+                layout.Layout();
+
+                layout.Begin();
+                layout.BeginLayoutGroup(1, true);
+                    var rect = layout.GetRect(2, size);
+                layout.EndLayoutGroup();
+
+                Assert.Equal(0, rect.X);
+                Assert.Equal(0, rect.Y);
+                Assert.Equal(size.Width, rect.Width);
+                Assert.Equal(size.Height, rect.Height);
+            }
+
         }
     }
 }

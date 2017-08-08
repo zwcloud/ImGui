@@ -247,6 +247,7 @@ namespace ImGui
 
             GUIContext g = Form.current.uiContext;
             g.KeepAliveID(id);
+
             return id;
         }
 

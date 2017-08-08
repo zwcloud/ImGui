@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
+    [DebuggerDisplay("{Id}, Rect={Rect}")]
     internal class LayoutEntry
     {
         public int Id { get; set; }
-        public bool Activated { get; set; }
 
         public Rect Rect;//border-box
         public double ContentWidth { get; set; }//exact content width, pre-calculated from content and style
@@ -26,8 +27,6 @@ namespace ImGui.Layout
         public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
 
         public GUIStyle Style;
-
-        public LayoutGroup Parent;
 
         public LayoutEntry(GUIStyle style, params LayoutOption[] options)
         {

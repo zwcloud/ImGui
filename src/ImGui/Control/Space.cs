@@ -16,8 +16,8 @@ namespace ImGui
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
-                layout.InsideVerticalGroup ? new[] { GUILayout.Height(size) } : new[] { GUILayout.Width(size) });
+            //window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
+            //    layout.InsideVerticalGroup ? new[] { GUILayout.Height(size) } : new[] { GUILayout.Width(size) });
         }
 
         /// <summary>
@@ -29,8 +29,8 @@ namespace ImGui
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            Rect rect = window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
-                layout.InsideVerticalGroup ? new[] { GUILayout.StretchHeight(1) } : new[] { GUILayout.StretchWidth(1) });
+            //Rect rect = window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
+            //    layout.InsideVerticalGroup ? new[] { GUILayout.StretchHeight(1) } : new[] { GUILayout.StretchWidth(1) });
         }
     }
 }

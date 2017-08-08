@@ -1,117 +1,175 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
     internal class StackLayout
     {
+        private int rootId;
         public bool dirty;
 
-        private readonly Stack<LayoutGroup> groupStack = new Stack<LayoutGroup>();
+        private readonly Stack<LayoutGroup> stackA = new Stack<LayoutGroup>();
+        private readonly Stack<LayoutGroup> stackB = new Stack<LayoutGroup>();
 
-        public StackLayout(int rootId, Size size)
+        private Stack<LayoutGroup> WritingStack { get; set; }
+        public Stack<LayoutGroup> ReadingStack { get; private set; }
+
+        public LayoutGroup TopGroup => this.ReadingStack.Peek();
+
+
+        private string GetStringId(int id)
         {
-            var rootGroup = new LayoutGroup(true, GUIStyle.Default, GUILayout.Width(size.Width), GUILayout.Height(size.Height)) { Id = rootId };
-            rootGroup.Activated = true;
-            this.dirty = true;
-            rootGroup.Id = rootId;
-            this.groupStack.Push(rootGroup);
-        }
-
-        public LayoutGroup TopGroup => this.groupStack.Peek();
-
-        public bool InsideVerticalGroup => this.TopGroup.IsVertical;
-
-        public Rect GetRect(int id, Size contentSize, GUIStyle style = null, LayoutOption[] options = null)
-        {
-            if (contentSize.Height < 1 || contentSize.Height < 1)
+            if (id == this.rootId)
             {
-                throw new ArgumentOutOfRangeException(nameof(contentSize), "Content size is too small.");
+                return "root";
             }
-            return DoGetRect(id, contentSize, style, options);
-        }
-
-        public LayoutGroup FindLayoutGroup(int id)
-        {
-            return FindLayoutGroup(this.TopGroup, id);
-        }
-
-        private static LayoutGroup FindLayoutGroup(LayoutGroup layoutGroup, int id)
-        {
-            foreach (var entry in layoutGroup.Entries)
+            string str;
+            if(GUILayout.stringIdMap.TryGetValue(id, out str))
             {
-                var group = entry as LayoutGroup;
-                if(group != null && group.Id == id)
-                {
-                    return group;
-                }
+                return str;
             }
-            //not found
-            return null;
+            return id.ToString();
         }
-
-        private static LayoutEntry FindLayoutEntry(LayoutGroup layoutGroup, int id)
+        StringBuilder sb = new StringBuilder();
+        private string GetStackString(Stack<LayoutGroup> stack , int id)
         {
-            foreach (var entry in layoutGroup.Entries)
+            foreach (var group in stack)
             {
-                var group = entry as LayoutGroup;
                 if (group == null)
                 {
-                    if (entry.Id == id)
+                    this.sb.AppendLine("<null>");
+                    continue;
+                }
+                sb.AppendFormat("{0}, Rect = {1} {2}\n", GetStringId(group.Id), group.Rect, id==group.Id? "<-" : "");
+                foreach (var entry in group.Entries)
+                {
+                    sb.AppendFormat("\t{0}, Rect = {1} {2}\n", GetStringId(entry.Id), entry.Rect, id == entry.Id ? "<-" : "");
+                    var innerGroup = entry as LayoutGroup;
+                    if (innerGroup != null)
                     {
-                        return entry;
+                        foreach (var e in innerGroup.Entries)
+                        {
+                            sb.AppendFormat("\t\t{0}, Rect = {1} {2}\n", GetStringId(e.Id), e.Rect, id == e.Id ? "<-" : "");
+                        }
                     }
                 }
             }
-            //not found
-            return null;
+            var result = sb.ToString();
+            sb.Clear();
+            return result;
         }
 
-        public LayoutGroup BeginLayoutGroup(int id, bool isVertical, GUIStyle style = null, LayoutOption[] options = null)
+        private void WriteStacks(int id)
         {
-            var group = FindLayoutGroup(id);
-            if(group == null)
+            Console.Clear();
+            Console.WriteLine("Reading stack:");
+            Console.WriteLine(GetStackString(this.ReadingStack, id));
+            Console.WriteLine("Writing stack:");
+            Console.WriteLine(GetStackString(this.WritingStack, id));
+            Console.WriteLine("--------------------------");
+        }
+
+        private void SwapStack()
+        {
+            var t = this.ReadingStack;
+            this.ReadingStack = this.WritingStack;
+            this.WritingStack = t;
+        }
+
+        private LayoutGroup CreateRootGroup(int rootId, Size size)
+        {
+            var rootGroup = new LayoutGroup(true, GUIStyle.Default, GUILayout.Width(size.Width), GUILayout.Height(size.Height)) { Id = rootId };
+            rootGroup.Id = rootId;
+            this.rootId = rootId;
+            return rootGroup;
+        }
+
+        public StackLayout(int rootId, Size size)
+        {
+            var rootGroup = CreateRootGroup(rootId, size);
+            this.stackA.Push(rootGroup);
+            this.WritingStack = this.stackA;
+
+            var rootGroupX = CreateRootGroup(rootId, size);
+            this.stackB.Push(rootGroupX);
+            this.ReadingStack = this.stackB;
+        }
+
+        public Rect GetRect(int id, Size contentSize, GUIStyle style = null, LayoutOption[] options = null)
+        {
+            Console.WriteLine("GetRect({0})", id);
+            //if (contentSize.Height < 1 || contentSize.Width < 1)
+            //{
+            //    throw new ArgumentOutOfRangeException(nameof(contentSize), "Content size is too small.");
+            //}
+
+            // build entry for next frame
             {
-                group = new LayoutGroup(isVertical, style, options) { Id = id};
-                this.TopGroup.Add(group);
-                this.dirty = true;
+                var entry = new LayoutEntry(style, options) { Id = id, ContentWidth = contentSize.Width, ContentHeight = contentSize.Height };
+                this.WritingStack.Peek().Add(entry);
             }
-            else
+
+            // read from built group
             {
-                group.ResetCursor();
+                var group = this.ReadingStack.Peek();
+                if (group == null)
+                {
+                    WriteStacks(id);
+                    return new Rect(100, 100);//dummy
+                }
+                var entry = group.GetEntry(id);
+                if(entry == null)
+                {
+                    WriteStacks(id);
+                    return new Rect(100, 100);//dummy
+                }
+
+                WriteStacks(id);
+                return entry.Rect;
             }
-            group.Activated = true;
-            this.groupStack.Push(group);
-            return group;
+        }
+
+        public void BeginLayoutGroup(int id, bool isVertical, GUIStyle style = null, LayoutOption[] options = null)
+        {
+            Console.WriteLine("BeginLayoutGroup({0})", id);
+            // build group for next frame
+            {
+                var group = new LayoutGroup(isVertical, style, options) { Id = id };
+                this.WritingStack.Peek().Add(group);
+                this.WritingStack.Push(group);
+            }
+
+            // read from built group
+            {
+                var parentGroup = this.ReadingStack.Peek();
+                LayoutGroup group = null;
+                if (parentGroup != null)
+                {
+                    group = parentGroup.GetEntry(id) as LayoutGroup;
+                    group?.ResetCursor();
+                }
+                this.ReadingStack.Push(group);
+            }
+            WriteStacks(id);
         }
 
         public void EndLayoutGroup()
         {
-            this.groupStack.Pop();
-        }
-
-        private Rect DoGetRect(int id, Size contentZize, GUIStyle style, LayoutOption[] options)
-        {
-            var entry = FindLayoutEntry(this.TopGroup, id);
-            if (entry == null)
-            {
-                entry = new LayoutEntry(style, options) { Id = id, ContentWidth = contentZize.Width, ContentHeight = contentZize.Height };
-                this.TopGroup.Add(entry);
-                this.dirty = true;
-                entry.Activated = true;
-                return new Rect(9999,9999);
-            }
-            //TODO check if layoutEntry' size/style/option changed
-            entry.Activated = true;
-            return entry.Rect;
+            Console.WriteLine("EndLayoutGroup");
+            this.WritingStack.Pop();
+            this.ReadingStack.Pop();
+            WriteStacks(-1);
         }
 
         public void Begin()
         {
-            this.TopGroup.ResetCursor();
-            DeactiveAllEntries(this.TopGroup);
-            // Following `BeginLayoutGroup` and `GetRect` calls will activate groups and entries.
+            Console.WriteLine("Begin");
+            this.ReadingStack.Peek().ResetCursor();//reset reading cursor of root group
+            this.WritingStack.Peek().Entries.Clear();//remove all children of root group
+            WriteStacks(-1);
         }
 
         /// <summary>
@@ -119,54 +177,14 @@ namespace ImGui.Layout
         /// </summary>
         public void Layout()
         {
-            if (RemoveInactiveEntries(this.TopGroup))
-            {
-                this.dirty = true;
-            }
-            if (this.dirty)
-            {
-                this.TopGroup.CalcWidth();
-                this.TopGroup.CalcHeight();
-                this.TopGroup.SetX(0);
-                this.TopGroup.SetY(0);
-                this.dirty = false;
-            }
-        }
+            Console.WriteLine("Layout");
+            this.WritingStack.Peek().CalcWidth();
+            this.WritingStack.Peek().CalcHeight();
+            this.WritingStack.Peek().SetX(0);
+            this.WritingStack.Peek().SetY(0);
 
-        private void DeactiveAllEntries(LayoutGroup targetGroup)
-        {
-            foreach (var entry in targetGroup.Entries)
-            {
-                entry.Activated = false;
-                var group = entry as LayoutGroup;
-                if (group != null)
-                {
-                    DeactiveAllEntries(group);
-                }
-            }
-        }
-
-        private bool RemoveInactiveEntries(LayoutGroup targetGroup)
-        {
-            bool removed = false;
-            for (int i = targetGroup.Entries.Count - 1; i >= 0; i--)
-            {
-                var entry = targetGroup.Entries[i];
-                if (entry.Activated)
-                {
-                    var group = entry as LayoutGroup;
-                    if (group != null)
-                    {
-                        removed = RemoveInactiveEntries(group);
-                    }
-                }
-                else
-                {
-                    targetGroup.Entries.RemoveAt(i);
-                    removed = true;
-                }
-            }
-            return removed;
+            this.SwapStack();
+            WriteStacks(-1);
         }
     }
 }

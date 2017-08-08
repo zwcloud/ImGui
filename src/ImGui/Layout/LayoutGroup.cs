@@ -5,6 +5,7 @@ using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
+    [DebuggerDisplay("{Id}, Count={Entries.Count}")]
     internal class LayoutGroup : LayoutEntry
     {
         private int cursor;
@@ -27,7 +28,19 @@ namespace ImGui.Layout
                 this.cursor++;
                 return result;
             }
-            throw new InvalidOperationException("Next layout entry does't exist.");
+            return null;
+        }
+
+        public LayoutEntry GetEntry(int id)
+        {
+            foreach (var entry in this.Entries)
+            {
+                if (entry.Id == id)
+                {
+                    return entry;
+                }
+            }
+            return null;
         }
 
         public Rect GetLast()

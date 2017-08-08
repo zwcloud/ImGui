@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ImGui.Common.Primitive;
 
 namespace ImGui
@@ -42,6 +43,9 @@ namespace ImGui
             Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
+
+            stringIdMap[id] = str_id;
+
             window.StackLayout.BeginLayoutGroup(id, false, style, options);
         }
 
@@ -57,6 +61,9 @@ namespace ImGui
             Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
+
+            stringIdMap[id] = str_id;
+
             window.StackLayout.BeginLayoutGroup(id, true, style, null);
         }
 
@@ -77,9 +84,15 @@ namespace ImGui
         {
             Window window = GetCurrentWindow();
             var id = window.GetID(str_id);
+
+            stringIdMap[id] = str_id;
+
             var rect = window.GetRect(id, size, style, options);
             return rect;
         }
+
+        // test only
+        public static Dictionary<int, string> stringIdMap = new Dictionary<int, string>();
 
         #endregion
 
