@@ -70,7 +70,7 @@ namespace ImGui
                 var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
                 var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
                 var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-                textContext = Application.platformContext.CreateTextContext(
+                textContext = Application.PlatformContext.CreateTextContext(
                     text,
                     fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
                     (int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height),

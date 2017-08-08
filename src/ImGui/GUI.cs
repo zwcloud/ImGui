@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ImGui.OSAbstraction.Graphics;
+﻿using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
@@ -26,7 +24,7 @@ namespace ImGui
 
         public static ITexture CreateTexture(string filePath)
         {
-            var texture = Application.platformContext.CreateTexture();
+            var texture = Application.PlatformContext.CreateTexture();
             texture.LoadImage(filePath);
             return texture;
         }

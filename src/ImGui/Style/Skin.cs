@@ -1,41 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ImGui.Common.Primitive;
 
 namespace ImGui
 {
-    enum GUIControlName
+    internal class GUISkin
     {
-        Label,
-        Image,
-        ToolTip,
-        Box,
-        Space,
+        public static GUISkin Instance { get; }= new GUISkin();
 
-        //_StatefulStart,
+        public GUIStyle this[GUIControlName name] => this.styles[name];
 
-        Button,
-        Toggle,
-        ComboBox,
-        TextBox,
-        Slider,
-        PolygonButton,
-    }
-
-
-    class GUISkin
-    {
-        public static GUISkin Instance { get; private set; }
-
-        static GUISkin() { Instance = new GUISkin(); }
-
-        public GUIStyle this[GUIControlName name]
-        {
-            get { return styles[name]; }
-        }
-
-        /// <summary> Get a GUIStyle from a string. </summary>
+        /// <summary>
+        /// Get a GUIStyle from a string.
+        /// </summary>
         public GUIStyle GetStyle(string styleName)
         {
             bool exist = this.controlNames.TryGetValue(styleName, out GUIControlName controlName);
@@ -46,22 +23,23 @@ namespace ImGui
             return this.styles[controlName];
         }
 
-        private Dictionary<GUIControlName, GUIStyle> styles = new Dictionary<GUIControlName, GUIStyle>();
+        private readonly Dictionary<GUIControlName, GUIStyle> styles = new Dictionary<GUIControlName, GUIStyle>();
 
         public GUIStyle InternalStyle;
 
-        private Dictionary<string, GUIControlName> controlNames = new Dictionary<string, GUIControlName>();
+        private readonly Dictionary<string, GUIControlName> controlNames = new Dictionary<string, GUIControlName>();
 
         private GUISkin()
         {
-            InternalStyle = new GUIStyle();//internal styles
+            //Set up default styles for controls
+            this.InternalStyle = new GUIStyle();//internal styles
             {
-                InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);
-                InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
-                InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
+                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);
+                this.InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
+                this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
             }
 
-            GUIStyle Label      = new GUIStyle();//no modification
+            GUIStyle Label      = new GUIStyle();
             GUIStyle Image      = new GUIStyle();
             GUIStyle Box        = new GUIStyle();
             GUIStyle Space      = new GUIStyle();
@@ -72,27 +50,27 @@ namespace ImGui
             GUIStyle Slider     = new GUIStyle();
             GUIStyle PolygonButton = new GUIStyle();
 
-            styles.Add(GUIControlName.Label        , Label        );
-            styles.Add(GUIControlName.Image        , Image        );
-            styles.Add(GUIControlName.Box          , Box          );
-            styles.Add(GUIControlName.Space        , Space        );
-            styles.Add(GUIControlName.Button       , Button       );
-            styles.Add(GUIControlName.Toggle       , Toggle       );
-            styles.Add(GUIControlName.ComboBox     , ComboBox     );
-            styles.Add(GUIControlName.TextBox      , TextBox      );
-            styles.Add(GUIControlName.Slider       , Slider       );
-            styles.Add(GUIControlName.PolygonButton, PolygonButton);
+            this.styles.Add(GUIControlName.Label        , Label        );
+            this.styles.Add(GUIControlName.Image        , Image        );
+            this.styles.Add(GUIControlName.Box          , Box          );
+            this.styles.Add(GUIControlName.Space        , Space        );
+            this.styles.Add(GUIControlName.Button       , Button       );
+            this.styles.Add(GUIControlName.Toggle       , Toggle       );
+            this.styles.Add(GUIControlName.ComboBox     , ComboBox     );
+            this.styles.Add(GUIControlName.TextBox      , TextBox      );
+            this.styles.Add(GUIControlName.Slider       , Slider       );
+            this.styles.Add(GUIControlName.PolygonButton, PolygonButton);
 
-            controlNames.Add("Label",         GUIControlName.Label        );
-            controlNames.Add("Image",         GUIControlName.Image        );
-            controlNames.Add("Box",           GUIControlName.Box          );
-            controlNames.Add("Space",         GUIControlName.Space        );
-            controlNames.Add("Button",        GUIControlName.Button       );
-            controlNames.Add("Toggle",        GUIControlName.Toggle       );
-            controlNames.Add("ComboBox",      GUIControlName.ComboBox     );
-            controlNames.Add("TextBox",       GUIControlName.TextBox      );
-            controlNames.Add("Slider",        GUIControlName.Slider       );
-            controlNames.Add("PolygonButton", GUIControlName.PolygonButton);
+            this.controlNames.Add("Label",         GUIControlName.Label        );
+            this.controlNames.Add("Image",         GUIControlName.Image        );
+            this.controlNames.Add("Box",           GUIControlName.Box          );
+            this.controlNames.Add("Space",         GUIControlName.Space        );
+            this.controlNames.Add("Button",        GUIControlName.Button       );
+            this.controlNames.Add("Toggle",        GUIControlName.Toggle       );
+            this.controlNames.Add("ComboBox",      GUIControlName.ComboBox     );
+            this.controlNames.Add("TextBox",       GUIControlName.TextBox      );
+            this.controlNames.Add("Slider",        GUIControlName.Slider       );
+            this.controlNames.Add("PolygonButton", GUIControlName.PolygonButton);
 
             //Set default styles for each control
             {
@@ -220,23 +198,5 @@ namespace ImGui
                 TextBox.Set<double>(GUIStyleName.FontSize, CurrentOS.IsAndroid ? 32 : 13, GUIState.Active);
             }
         }
-
-        #region Global Styles
-        public double LabelWidth
-        {
-            get => InternalStyle.Get<double>(GUIStyleName._LabelWidth);
-            set => InternalStyle.Set<double>(GUIStyleName._LabelWidth, value);
-        }
-        public double LabelHeight
-        {
-            get => InternalStyle.Get<double>(GUIStyleName._LabelHeight);
-            set => InternalStyle.Set<double>(GUIStyleName._LabelHeight, value);
-        }
-        public double ControlLabelSpacing
-        {
-            get => InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            set => InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, value);
-        }
-        #endregion
     }
 }

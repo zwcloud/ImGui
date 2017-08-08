@@ -1,5 +1,4 @@
 ﻿using System;
-using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Window;
@@ -28,71 +27,68 @@ namespace ImGui
 
         internal Form(Point position, Size size, string Title = "ImGui Form")
         {
-            this.nativeWindow = Application.platformContext.CreateWindow(position, size, WindowTypes.Regular);
+            this.nativeWindow = Application.PlatformContext.CreateWindow(position, size, WindowTypes.Regular);
             this.nativeWindow.Title = Title;
 
             Profile.Start("CreateRenderer");
-            renderer = Application.platformContext.CreateRenderer();
-            renderer.Init(this.Pointer, nativeWindow.ClientSize);
+            this.renderer = Application.PlatformContext.CreateRenderer();
+            this.renderer.Init(this.Pointer, this.nativeWindow.ClientSize);
             Profile.End();
         }
 
         internal void MainLoop(Action guiMethod)
         {
-            nativeWindow.MainLoop(guiMethod);
+            this.nativeWindow.MainLoop(guiMethod);
         }
 
         #region window management
 
         internal bool Closed { get; private set; }
 
-        internal IntPtr Pointer { get { return nativeWindow.Pointer; } }
+        internal IntPtr Pointer => this.nativeWindow.Pointer;
 
         internal Size Size
         {
-            get { return nativeWindow.Size; }
-            set { nativeWindow.Size = value; }
+            get => this.nativeWindow.Size;
+            set => this.nativeWindow.Size = value;
         }
 
         internal Point ClientPosition
         {
-            get => nativeWindow.ClientPosition;
-            set => nativeWindow.ClientPosition = value;
+            get => this.nativeWindow.ClientPosition;
+            set => this.nativeWindow.ClientPosition = value;
         }
 
         internal Size ClientSize
         {
-            get => nativeWindow.ClientSize;
-            set => nativeWindow.ClientSize = value;
+            get => this.nativeWindow.ClientSize;
+            set => this.nativeWindow.ClientSize = value;
         }
 
         internal Point Position
         {
-            get { return nativeWindow.Position; }
-            set { nativeWindow.Position = value; }
+            get => this.nativeWindow.Position;
+            set => this.nativeWindow.Position = value;
         }
 
-        internal Rect Rect
-        {
-            get { return new Rect(Position, Size); }
-        }
+        internal Rect Rect => new Rect(this.Position, this.Size);
 
-        internal bool Focused { get { throw new NotImplementedException(); } }
+        internal bool Focused => throw new NotImplementedException();
 
         internal void Show()
         {
-            nativeWindow.Show();
+            this.nativeWindow.Show();
         }
 
         internal void Hide()
         {
-            nativeWindow.Hide();
+            this.nativeWindow.Hide();
         }
 
         internal void Close()
         {
             this.renderer.ShutDown();
-            nativeWindow.Close();
+            this.nativeWindow.Close();
             this.Closed = true;
         }
 
@@ -100,12 +96,12 @@ namespace ImGui
 
         internal Point ScreenToClient(Point point)
         {
-            return nativeWindow.ScreenToClient(point);
+            return this.nativeWindow.ScreenToClient(point);
         }
 
         internal Point ClientToScreen(Point point)
         {
-            return nativeWindow.ClientToScreen(point);
+            return this.nativeWindow.ClientToScreen(point);
         }
     }
 }

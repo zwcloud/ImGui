@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-
-using CSharpGL;
 using ImGui.Common.Primitive;
 using ImGui.Input;
 
@@ -106,7 +104,7 @@ namespace ImGui
             w.NewFrame(g);
 
             // Create implicit window - we will only render it if the user has added something to it.
-            GUI.Begin("Debug", ref debugWindowOpen);
+            GUI.Begin("Debug", ref this.debugWindowOpen);
         }
 
         internal void EndFrame()
@@ -178,7 +176,7 @@ namespace ImGui
 
             if (g.LogEnabled)
             {
-                var l = Application.logger;
+                var l = Application.Logger;
                 WindowManager w = g.WindowManager;
                 l.Clear();
                 l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);

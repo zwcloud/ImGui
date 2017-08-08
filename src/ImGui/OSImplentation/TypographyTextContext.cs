@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Text;
 using Typography.OpenFont;
 using Typography.Rendering;
 using Typography.TextLayout;
 
-namespace ImGui
+namespace ImGui.OSImplentation
 {
     /// <summary>
     /// Text context based on Typography
@@ -48,31 +47,31 @@ namespace ImGui
         /// </summary>
         public string FontFamily
         {
-            get { return fontFamily; }
+            get { return this.fontFamily; }
             set
             {
-                if (fontFamily != value)
+                if (this.fontFamily != value)
                 {
-                    fontFamily = value;
+                    this.fontFamily = value;
 
                     Typeface typeFace;
-                    if(!typefaceCache.TryGetValue(fontFamily, out typeFace))
+                    if(!typefaceCache.TryGetValue(this.fontFamily, out typeFace))
                     {
-                        using (var fs = Utility.ReadFile(fontFamily))
+                        using (var fs = Utility.ReadFile(this.fontFamily))
                         {
                             var reader = new OpenFontReader();
                             Profile.Start("OpenFontReader.Read");
                             typeFace = reader.Read(fs);
                             Profile.End();
                         }
-                        typefaceCache.Add(fontFamily, typeFace);
+                        typefaceCache.Add(this.fontFamily, typeFace);
                     }
                     this.CurrentTypeFace = typeFace;
 
                     //2. Update GlyphLayout
-                    glyphLayout.ScriptLang = ScriptLangs.Latin;
-                    glyphLayout.PositionTechnique = this.PositionTechnique;
-                    glyphLayout.EnableLigature = this.EnableLigature;
+                    this.glyphLayout.ScriptLang = ScriptLangs.Latin;
+                    this.glyphLayout.PositionTechnique = this.PositionTechnique;
+                    this.glyphLayout.EnableLigature = this.EnableLigature;
                 }
             }
         }
@@ -87,11 +86,11 @@ namespace ImGui
 
         public string Text
         {
-            get => text;
+            get => this.text;
             set
             {
-                text = value;
-                textCharacters = text.ToCharArray();
+                this.text = value;
+                this.textCharacters = this.text.ToCharArray();
             }
         }
 
@@ -109,21 +108,21 @@ namespace ImGui
         {
             //Profile.Start("TypographyTextContext.Measure");
             this.Position = Point.Zero;
-            glyphLayout.Typeface = this.CurrentTypeFace;
-            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            this.glyphLayout.Typeface = this.CurrentTypeFace;
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
             if (string.IsNullOrEmpty(this.Text))
             {
                 this.Size = Size.Zero;
             }
             else
             {
-                if (glyphPlans.Count == 0)
+                if (this.glyphPlans.Count == 0)
                 {
-                    glyphLayout.Typeface = this.CurrentTypeFace;
-                    glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, glyphPlans, null);
+                    this.glyphLayout.Typeface = this.CurrentTypeFace;
+                    this.glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, this.glyphPlans, null);
                 }
 
-                int j = glyphPlans.Count;
+                int j = this.glyphPlans.Count;
                 Typeface currentTypeface = this.CurrentTypeFace;
                 MeasuredStringBox strBox;
                 if (j == 0)
@@ -135,14 +134,14 @@ namespace ImGui
                 }
                 else
                 {
-                    GlyphPlan lastOne = glyphPlans[j - 1];
+                    GlyphPlan lastOne = this.glyphPlans[j - 1];
                     strBox = new MeasuredStringBox((lastOne.x + lastOne.advX) * scale,
                         currentTypeface.Ascender * scale,
                         currentTypeface.Descender * scale,
                         currentTypeface.LineGap * scale);
                 }
-                lineHeight = strBox.CalculateLineHeight();
-                this.Size = new Size(strBox.width, lineHeight);//FIXME incorrect, line-height * line-count not calculated.
+                this.lineHeight = strBox.CalculateLineHeight();
+                this.Size = new Size(strBox.width, this.lineHeight);//FIXME incorrect, line-height * line-count not calculated.
             }
             //Profile.End();
 
@@ -154,34 +153,34 @@ namespace ImGui
             //Profile.Start("TypographyTextContext.Build");
             // layout glyphs with selected layout technique
             this.Position = offset;
-            glyphPlans.Clear();
-            glyphLayout.Typeface = this.CurrentTypeFace;
-            glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, glyphPlans, null);
+            this.glyphPlans.Clear();
+            this.glyphLayout.Typeface = this.CurrentTypeFace;
+            this.glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, this.glyphPlans, null);
 
-            int j = glyphPlans.Count;
+            int j = this.glyphPlans.Count;
             var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
-            lineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender + this.CurrentTypeFace.LineGap)*scale;
+            this.lineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender + this.CurrentTypeFace.LineGap)*scale;
 
             if (container != null)
             {
                 // render each glyph
-                lineCount = 1;
+                this.lineCount = 1;
                 float back = 0;
-                for (int i = 0; i < glyphPlans.Count; ++i)
+                for (int i = 0; i < this.glyphPlans.Count; ++i)
                 {
-                    var glyphPlan = glyphPlans[i];
+                    var glyphPlan = this.glyphPlans[i];
                     Glyph glyph = this.CurrentTypeFace.GetGlyphByIndex(glyphPlan.glyphIndex);
 
                     //1. start with original points/contours from glyph
                     if (glyphPlan.glyphIndex == 0)
                     {
-                        lineCount++;
+                        this.lineCount++;
                         back = (glyphPlan.x + glyphPlan.advX) * scale;
                         continue;
                     }
 
                     var offsetX = glyphPlan.x * scale - back;
-                    var offsetY = glyphPlan.y * scale + lineCount * lineHeight;
+                    var offsetY = glyphPlan.y * scale + this.lineCount * this.lineHeight;
 
                     var points = glyph.GlyphPoints;
                     var endPoints = glyph.EndPoints;
@@ -203,44 +202,44 @@ namespace ImGui
 
             // recording line data
             {
-                lineCount = 1;
+                this.lineCount = 1;
                 float back = 0;
                 int backCharCount = 0;
                 int i;
-                for (i = 0; i < glyphPlans.Count; ++i)
+                for (i = 0; i < this.glyphPlans.Count; ++i)
                 {
-                    var glyphPlan = glyphPlans[i];
+                    var glyphPlan = this.glyphPlans[i];
                     if (glyphPlan.glyphIndex == 0)
                     {
-                        lineCount++;
-                        LineWidthList.Add((glyphPlan.x + glyphPlan.advX) * scale - back);
-                        LineCharacterCountList.Add((uint)(i + 1 - backCharCount));// count in line break ('\n')
+                        this.lineCount++;
+                        this.LineWidthList.Add((glyphPlan.x + glyphPlan.advX) * scale - back);
+                        this.LineCharacterCountList.Add((uint)(i + 1 - backCharCount));// count in line break ('\n')
                         backCharCount = i + 1;
                         back = (glyphPlan.x + glyphPlan.advX) * scale;
                         continue;
                     }
                 }
-                if(glyphPlans.Count >0)
+                if(this.glyphPlans.Count >0)
                 {
-                    var lastGlyph = glyphPlans[glyphPlans.Count - 1];
-                    LineWidthList.Add((lastGlyph.x + lastGlyph.advX) * scale - back);
-                    LineCharacterCountList.Add((uint)(i - backCharCount));
+                    var lastGlyph = this.glyphPlans[this.glyphPlans.Count - 1];
+                    this.LineWidthList.Add((lastGlyph.x + lastGlyph.advX) * scale - back);
+                    this.LineCharacterCountList.Add((uint)(i - backCharCount));
                     if(lastGlyph.glyphIndex == 0)//last glyph is '\n', add an additional empty line
                     {
-                        LineWidthList.Add(0);
-                        LineCharacterCountList.Add(0);
-                        lineCount++;
+                        this.LineWidthList.Add(0);
+                        this.LineCharacterCountList.Add(0);
+                        this.lineCount++;
                     }
                 }
-                if(LineWidthList.Count == 0)
+                if(this.LineWidthList.Count == 0)
                 {
-                    LineWidthList.Add(0);
-                    LineCharacterCountList.Add(0);
+                    this.LineWidthList.Add(0);
+                    this.LineCharacterCountList.Add(0);
                 }
             }
             
             {
-                lineBreakWidth = this.CurrentTypeFace.GetHAdvanceWidthFromGlyphIndex(0) * scale;
+                this.lineBreakWidth = this.CurrentTypeFace.GetHAdvanceWidthFromGlyphIndex(0) * scale;
             }
 
             //Profile.End();
@@ -254,24 +253,24 @@ namespace ImGui
             isInside = false;
             int i = 0;
 
-            LineIndex = (int)Math.Ceiling(pointY / lineHeight) - 1;//line index start from 0
-            if(LineIndex < 0)
+            this.LineIndex = (int)Math.Ceiling(pointY / this.lineHeight) - 1;//line index start from 0
+            if(this.LineIndex < 0)
             {
-                LineIndex = 0;
+                this.LineIndex = 0;
             }
-            if(LineIndex > lineCount - 1)
+            if(this.LineIndex > this.lineCount - 1)
             {
-                LineIndex = lineCount-1;
+                this.LineIndex = this.lineCount-1;
             }
 
-            System.Diagnostics.Debug.Assert(lineCount == LineWidthList.Count);
+            System.Diagnostics.Debug.Assert(this.lineCount == this.LineWidthList.Count);
 
             uint result = 0;
             float back = 0;
-            for (i = 0; i < LineIndex; i++)
+            for (i = 0; i < this.LineIndex; i++)
             {
-                result += LineCharacterCountList[i];
-                back += LineWidthList[i];
+                result += this.LineCharacterCountList[i];
+                back += this.LineWidthList[i];
             }
 
             // ↓↓↓
@@ -283,12 +282,12 @@ namespace ImGui
 
             //                      ↓↓↓
             // ^CONTENT_OF_THIS_LINE$
-            float currentLineWidth = LineWidthList[LineIndex];
-            uint currentLineCharacterCount = LineCharacterCountList[LineIndex];
+            float currentLineWidth = this.LineWidthList[this.LineIndex];
+            uint currentLineCharacterCount = this.LineCharacterCountList[this.LineIndex];
             if (pointX > position.X + currentLineWidth)//last index of this line
             {
                 result += currentLineCharacterCount;
-                if (result > 0 && currentLineCharacterCount != 0 && glyphPlans[(int)result - 1].glyphIndex == 0)
+                if (result > 0 && currentLineCharacterCount != 0 && this.glyphPlans[(int)result - 1].glyphIndex == 0)
                 {
                     result -= 1;
                 }
@@ -297,17 +296,17 @@ namespace ImGui
 
             //  ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
             // ^CONTENT_OF_THIS_LINE\n$
-            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);//TODO cache scale
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);//TODO cache scale
             uint characterCountBeforeThisLine = 0;
-            for (i = 0; i < LineIndex; i++)
+            for (i = 0; i < this.LineIndex; i++)
             {
-                characterCountBeforeThisLine += LineCharacterCountList[i];
+                characterCountBeforeThisLine += this.LineCharacterCountList[i];
             }
             var firstGlyphIndex = (int)characterCountBeforeThisLine;
             float offsetX = (float)position.X;
-            for (i = firstGlyphIndex; i < glyphPlans.Count; i++)
+            for (i = firstGlyphIndex; i < this.glyphPlans.Count; i++)
             {
-                var glyph = glyphPlans[i];
+                var glyph = this.glyphPlans[i];
                 var minX = offsetX;
                 var glyphWidth = glyph.advX * scale;
                 var maxX = minX + glyphWidth;
@@ -323,11 +322,11 @@ namespace ImGui
 
         public void IndexToXY(uint caretIndex, bool isTrailing, out float pointX, out float pointY, out float height)
         {
-            height = lineHeight;
-            if (glyphPlans.Count == 0)
+            height = this.lineHeight;
+            if (this.glyphPlans.Count == 0)
             {
-                pointX = (float)Position.X;
-                pointY = (float)Position.Y;
+                pointX = (float)this.Position.X;
+                pointY = (float)this.Position.Y;
                 return;
             }
 
@@ -340,27 +339,27 @@ namespace ImGui
             int newLinesBeforeThisCaretPosition = 0;
             for (int i = 0; i < caretIndex; i++)
             {
-                var g = glyphPlans[i];
+                var g = this.glyphPlans[i];
                 if (g.glyphIndex == 0)
                 {
                     newLinesBeforeThisCaretPosition++;
                 }
             }
 
-            var scale = CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
             bool previousCharIsLineBreak = false;
             GlyphPlan previousGlyph = new GlyphPlan();
             if (previousCharIndex!=-1)
             {
-                previousGlyph = glyphPlans[previousCharIndex];
+                previousGlyph = this.glyphPlans[previousCharIndex];
                 if (previousGlyph.glyphIndex == 0)// \n
                 {
                     previousCharIsLineBreak = true;
                 }
             }
 
-            pointX = (float)Position.X;
-            pointY = (float)Position.Y;
+            pointX = (float)this.Position.X;
+            pointY = (float)this.Position.Y;
             if(previousCharIndex!=-1)
             {
                 pointX += (previousGlyph.x + previousGlyph.advX) * scale;
@@ -368,18 +367,18 @@ namespace ImGui
 
             if(previousCharIsLineBreak)
             {
-                pointX = (float)Position.X;
+                pointX = (float)this.Position.X;
                 for (int i = 0; i < newLinesBeforeThisCaretPosition; i++)
                 {
-                    pointY += lineHeight;
+                    pointY += this.lineHeight;
                 }
             }
             else
             {
                 for (int i = 0; i < newLinesBeforeThisCaretPosition; i++)
                 {
-                    pointX -= LineWidthList[i];
-                    pointY += lineHeight;
+                    pointX -= this.LineWidthList[i];
+                    pointY += this.lineHeight;
                 }
             }
         }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ImGui.Common.Primitive;
+﻿using ImGui.Common.Primitive;
 using ImGui.Input;
 
 namespace ImGui
@@ -35,38 +33,38 @@ namespace ImGui
 
         public int HoverId
         {
-            get => hoverId;
-            set => hoverId = value;
+            get => this.hoverId;
+            set => this.hoverId = value;
         }
 
         public int ActiveId
         {
-            get => activeId;
-            private set => activeId = value;
+            get => this.activeId;
+            private set => this.activeId = value;
         }
 
         public bool ActiveIdIsAlive
         {
-            get => activeIdIsAlive;
-            set => activeIdIsAlive = value;
+            get => this.activeIdIsAlive;
+            set => this.activeIdIsAlive = value;
         }
 
         public int ActiveIdPreviousFrame
         {
-            get => activeIdPreviousFrame;
-            set => activeIdPreviousFrame = value;
+            get => this.activeIdPreviousFrame;
+            set => this.activeIdPreviousFrame = value;
         }
 
         public bool ActiveIdIsJustActivated
         {
-            get => activeIdIsJustActivated;
-            set => activeIdIsJustActivated = value;
+            get => this.activeIdIsJustActivated;
+            set => this.activeIdIsJustActivated = value;
         }
 
         public int HoverIdPreviousFrame
         {
-            get => hoverIdPreviousFrame;
-            set => hoverIdPreviousFrame = value;
+            get => this.hoverIdPreviousFrame;
+            set => this.hoverIdPreviousFrame = value;
         }
 
 
@@ -112,28 +110,28 @@ namespace ImGui
             Window window = g.WindowManager.CurrentWindow;
 
             // Clip
-            Rect rect_clipped = rect;
+            Rect rectClipped = rect;
             if (clip)
-                rect_clipped.Intersect(window.ClipRect);
+                rectClipped.Intersect(window.ClipRect);
 
-            return rect_clipped.Contains(Mouse.Instance.Position);
+            return rectClipped.Contains(Mouse.Instance.Position);
         }
 
-        public bool IsMouseHoveringRect(Point r_min, Point r_max, bool clip = true)
+        public bool IsMouseHoveringRect(Point rMin, Point rMax, bool clip = true)
         {
-            Rect rect = new Rect(r_min, r_max);
+            Rect rect = new Rect(rMin, rMax);
             return IsMouseHoveringRect(rect, clip);
         }
 
-        public bool IsHovered(Rect bb, int id, bool flatten_childs = false)
+        public bool IsHovered(Rect bb, int id, bool flattenChilds = false)
         {
             GUIContext g = this;
             if (g.HoverId == 0 || g.HoverId == id || g.HoverIdAllowOverlap)
             {
                 Window window = g.WindowManager.CurrentWindow;
-                if (g.WindowManager.HoveredWindow == window || (flatten_childs && g.WindowManager.HoveredRootWindow == window.RootWindow))
+                if (g.WindowManager.HoveredWindow == window || (flattenChilds && g.WindowManager.HoveredRootWindow == window.RootWindow))
                     if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
-                        if (WindowManager.IsWindowContentHoverable(g.WindowManager.HoveredRootWindow))
+                        if (this.WindowManager.IsWindowContentHoverable(g.WindowManager.HoveredRootWindow))
                             return true;
             }
             return false;
@@ -143,8 +141,6 @@ namespace ImGui
         {
             GUIContext g = this;
             long t = Mouse.Instance.LeftButtonDownDuration;
-            if (t == 0.0f)
-                return true;
 
             if (repeat && t > Keyboard.KeyRepeatDelay)
             {

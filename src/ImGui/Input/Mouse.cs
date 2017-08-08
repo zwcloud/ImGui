@@ -150,7 +150,7 @@ namespace ImGui.Input
             {
                 if(this.cursor!=value)
                 {
-                    Application.platformContext.ChangeCursor(value);
+                    Application.PlatformContext.ChangeCursor(value);
                     this.cursor = value;
                 }
             }

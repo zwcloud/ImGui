@@ -22,7 +22,7 @@ namespace ImGui
             ITexture texture;
             if(!TextureCache.TryGetValue(id, out texture))
             {
-                texture = Application.platformContext.CreateTexture();
+                texture = Application.PlatformContext.CreateTexture();
                 texture.LoadImage(filePath);
                 TextureCache.Add(id, texture);
             }

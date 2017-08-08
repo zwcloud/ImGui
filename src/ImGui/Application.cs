@@ -26,8 +26,8 @@ namespace ImGui
     public static class Application
     {
         internal static List<Form> Forms = new List<Form>();
-        internal static ImGui.OSAbstraction.PlatformContext platformContext;
-        private static readonly Stopwatch stopwatch = new Stopwatch();
+        internal static OSAbstraction.PlatformContext PlatformContext;
+        private static readonly Stopwatch _applicationWatch = new Stopwatch();
 
         /// <summary>
         /// The time in ms since the application started.
@@ -36,47 +36,48 @@ namespace ImGui
         {
             get
             {
-                if(!stopwatch.IsRunning)
+                if(!_applicationWatch.IsRunning)
                 {
                     throw new InvalidOperationException(
                         "The application's time cannot be obtained because it isn't running. Call Application.Run to run it first.");
                 }
-                return stopwatch.ElapsedMilliseconds;
+                return _applicationWatch.ElapsedMilliseconds;
             }
         }
 
-        private static long frameStartTime = 0;
-        private static long deltaTime = 0;
+        private static long _frameStartTime;
+        private static long _deltaTime;
+
         /// <summary>
         /// The time in ms it took to complete the last frame
         /// </summary>
-        internal static long DeltaTime => deltaTime;
+        public static long DeltaTime => _deltaTime;
 
         internal static void InitSysDependencies()
         {
-            // create factory: service
-            if (Application.IsRunningInUnitTest)
+            // load logger
+            if (IsRunningInUnitTest)
             {
-                logger = new DebugLogger();
+                Logger = new DebugLogger();
             }
             else
             {
-                logger = Utility.Create<ILogger>(CurrentOS.Platform);
+                Logger = Utility.Create<ILogger>(CurrentOS.Platform);
             }
 
             // load platform context:
             //     platform-dependent implementation
             if (CurrentOS.IsAndroid)
             {
-                platformContext = OSImplentation.Android.AndroidContext.MapFactory();
+                PlatformContext = OSImplentation.Android.AndroidContext.MapFactory();
             }
             else if(CurrentOS.IsWindows)
             {
-                platformContext = OSImplentation.Windows.WindowsContext.MapFactory();
+                PlatformContext = OSImplentation.Windows.WindowsContext.MapFactory();
             }
             else if(CurrentOS.IsLinux)
             {
-                platformContext = OSImplentation.Linux.LinuxContext.MapFactory();
+                PlatformContext = OSImplentation.Linux.LinuxContext.MapFactory();
             }
         }
 
@@ -100,7 +101,7 @@ namespace ImGui
 
             while (!mainForm.Closed)
             {
-                frameStartTime = Time;
+                _frameStartTime = Time;
 
                 foreach (Form childForm in Forms)
                 {
@@ -110,7 +111,7 @@ namespace ImGui
                 {
                     break;
                 }
-                deltaTime = Time - frameStartTime;
+                _deltaTime = Time - _frameStartTime;
             }
         }
 
@@ -123,21 +124,21 @@ namespace ImGui
             }
 
             //Time
-            stopwatch.Start();
+            _applicationWatch.Start();
 
             Forms.Add(mainForm);
 
             //Show main form
             mainForm.Show();
 
-            frameStartTime = Time;
+            _frameStartTime = Time;
         }
 
         public static void RunLoop(Form form)
         {
-            frameStartTime = Time;
+            _frameStartTime = Time;
             form.MainLoop(form.GUILoop);
-            deltaTime = Time - frameStartTime;
+            _deltaTime = Time - _frameStartTime;
         }
 
 
@@ -151,6 +152,6 @@ namespace ImGui
 
         public static bool IsRunningInUnitTest { get; set; } = false;
 
-        internal static ILogger logger;
+        internal static ILogger Logger;
     }
 }

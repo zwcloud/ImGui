@@ -6,76 +6,6 @@ using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
-    public enum GUIStyleName
-    {
-        PaddingTop,
-        PaddingRight,
-        PaddingBottom,
-        PaddingLeft,
-
-        BorderTop,
-        BorderRight,
-        BorderBottom,
-        BorderLeft,
-        BorderTopColor,
-        BorderRightColor,
-        BorderBottomColor,
-        BorderLeftColor,
-        BorderImageSource,
-        BorderImageSliceTop,  
-        BorderImageSliceRight,
-        BorderImageSliceBottom,
-        BorderImageSliceLeft,
-
-        OutlineWidth,
-        OutlineColor,
-
-        CellingSpacingHorizontal,
-        CellingSpacingVertical,
-
-        BackgroundColor,
-        BackgroundImage,
-
-        TextAlignment,
-        AlignmentHorizontal,
-        AlignmentVertical,
-
-        FontFamily,
-        FontStyle,
-        FontStretch,
-        FontWeight,
-        FontSize,
-        FontColor,
-
-        Slider_LineUsed,
-        Slider_LineUnused,
-
-        LineColor,
-        FillColor,
-
-        _ControlLabelSpacing,
-        _LabelWidth,
-        _LabelHeight,
-
-        WindowRounding,
-        ResizeGripSize,
-        ResizeGripColor,
-        WindowBorderColor,
-        WindowBorderShadowColor,
-
-        ScrollBarWidth,
-        ScrollBarBackgroundColor,
-        ScrollBarButtonColor,
-    }
-
-    public enum GUIState
-    {
-        Normal,
-        Hover,
-        Active,
-        Disabled,
-    }
-
     public class GUIStyle
     {
         private struct NameState
@@ -84,11 +14,11 @@ namespace ImGui
             public GUIState State { get; set; }
         }
 
-        public static GUIStyle Default { get; private set; }
+        public static GUIStyle Default { get; }
 
         private static readonly double DefaultFontSize;
 
-        private static string DefaultFontFamily;
+        private static readonly string DefaultFontFamily;
 
         static GUIStyle()
         {
@@ -112,7 +42,7 @@ namespace ImGui
 
         public GUIStyle()
         {
-            NumberStyles = new Dictionary<NameState, double>
+            this.numberStyles = new Dictionary<NameState, double>
             {
                 [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Hover }] = 0,
@@ -169,7 +99,7 @@ namespace ImGui
 
             };
 
-            ColorStyles = new Dictionary<NameState, Color>
+            this.colorStyles = new Dictionary<NameState, Color>
             {
                 [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Normal }] = Color.Black,
                 [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Hover }] = Color.Black,
@@ -196,7 +126,7 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = new Color(0.90, 0.90, 0.90),
             };
 
-            ImageStyles = new Dictionary<NameState, ITexture>
+            this.imageStyles = new Dictionary<NameState, ITexture>
             {
                 [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
                 [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Hover }] = null,
@@ -208,7 +138,7 @@ namespace ImGui
 
             };
 
-            EnumStyles = new Dictionary<NameState, int>
+            this.enumStyles = new Dictionary<NameState, int>
             {
                 [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Normal }] = (int)TextAlignment.Leading,
                 [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Hover }] = (int)TextAlignment.Leading,
@@ -226,7 +156,7 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Active }] = (int)Alignment.Start,
             };
 
-            StrStyles = new Dictionary<NameState, string>
+            this.strStyles = new Dictionary<NameState, string>
             {
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover }] = DefaultFontFamily,
@@ -235,11 +165,11 @@ namespace ImGui
 
         }
 
-        private Dictionary<NameState, double> NumberStyles;
-        private Dictionary<NameState, Color> ColorStyles;
-        private Dictionary<NameState, ITexture> ImageStyles;
-        private Dictionary<NameState, int> EnumStyles;
-        private Dictionary<NameState, string> StrStyles;
+        private readonly Dictionary<NameState, double> numberStyles;
+        private readonly Dictionary<NameState, Color> colorStyles;
+        private readonly Dictionary<NameState, ITexture> imageStyles;
+        private readonly Dictionary<NameState, int> enumStyles;
+        private readonly Dictionary<NameState, string> strStyles;
 
         public T Get<T>(GUIStyleName styleName, GUIState state = GUIState.Normal)
         {
@@ -267,11 +197,11 @@ namespace ImGui
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Dictionary<NameState, T> GetDict<T>()
         {
-            return NumberStyles as Dictionary<NameState, T>
-                ?? EnumStyles as Dictionary<NameState, T>
-                ?? ColorStyles as Dictionary<NameState, T>
-                ?? StrStyles as Dictionary<NameState, T>
-                ?? ImageStyles as Dictionary<NameState, T>;
+            return this.numberStyles as Dictionary<NameState, T>
+                ?? this.enumStyles as Dictionary<NameState, T>
+                ?? this.colorStyles as Dictionary<NameState, T>
+                ?? this.strStyles as Dictionary<NameState, T>
+                ?? this.imageStyles as Dictionary<NameState, T>;
         }
 
         /// <summary>
@@ -305,7 +235,7 @@ namespace ImGui
 
                 if (width < 0 && height < 0) // auto-sized text
                 {
-                    var actualSize = this.MeasureText(state, text);
+                    var actualSize = MeasureText(state, text);
                     width = actualSize.Width;
                     height = actualSize.Height;
                 }
@@ -313,12 +243,12 @@ namespace ImGui
                 {
                     if (width < 0) // width-auto-sized text
                     {
-                        var actualSize = this.MeasureText(state, text);
+                        var actualSize = MeasureText(state, text);
                         width = actualSize.Width;
                     }
                     else if (height < 0) // height-auto-sized text
                     {
-                        var actualSize = this.MeasureText(state, text);
+                        var actualSize = MeasureText(state, text);
                         height = actualSize.Height;
                     }
                 }
@@ -351,8 +281,14 @@ namespace ImGui
         {
             if (texture == null) throw new ArgumentNullException(nameof(texture));
 
-            var width = -1d;
-            var height = -1d;
+            double width;
+            double height;
+
+            // apply image size
+            {
+                width = texture.Width;
+                height = texture.Height;
+            }
 
             // apply options
             if (options != null)
@@ -368,12 +304,6 @@ namespace ImGui
                         height = (double)option.Value;
                     }
                 }
-            }
-
-            // apply image size
-            {
-                width = texture.Width;
-                height = texture.Height;
             }
 
             // apply padding and border
@@ -403,7 +333,7 @@ namespace ImGui
             return actualSize;
         }
 
-        #region common styles
+        #region short-cuts
 
         public double BorderTop => Get<double>(GUIStyleName.BorderTop);
         public double BorderRight => Get<double>(GUIStyleName.BorderRight);
