@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ImGui.UnitTest.Layout
 {
-    public class StackLayoutFacts
+    public partial class StackLayoutFacts
     {
         public class TheCtor
         {
@@ -19,7 +19,7 @@ namespace ImGui.UnitTest.Layout
             }
         }
 
-        public class TheGetRectMethod
+        public partial class TheGetRectMethod
         {
             [Fact]
             public void GetNormalRectAfterLayout()
@@ -39,12 +39,19 @@ namespace ImGui.UnitTest.Layout
             public void CannotGetRectOfVerySmallSize()
             {
                 var layout = new StackLayout(0, new Size(800, 600));
-                Size size = Size.Zero;
+                Size zeroSize = Size.Zero;
+                Size smallSize = new Size(0.5, 0.6);
 
                 Assert.Throws<ArgumentOutOfRangeException>("contentSize", () =>
                 {
-                    layout.GetRect(1, size, null, null);
+                    layout.GetRect(1, zeroSize, null, null);
                 });
+
+                Assert.Throws<ArgumentOutOfRangeException>("contentSize", () =>
+                {
+                    layout.GetRect(1, smallSize, null, null);
+                });
+
             }
 
             [Fact]
@@ -141,6 +148,7 @@ namespace ImGui.UnitTest.Layout
                 Assert.Equal(expandWidth ? 800 : size.Width, rect.Width);
                 Assert.Equal(expandHeight ? 600 : size.Height, rect.Height);
             }
+
         }
     }
 }

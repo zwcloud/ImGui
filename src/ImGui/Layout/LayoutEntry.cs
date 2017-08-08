@@ -7,6 +7,7 @@ namespace ImGui.Layout
     internal class LayoutEntry
     {
         public int Id { get; set; }
+        public bool Activated { get; set; }
 
         public Rect Rect;//border-box
         public double ContentWidth { get; set; }//exact content width, pre-calculated from content and style
