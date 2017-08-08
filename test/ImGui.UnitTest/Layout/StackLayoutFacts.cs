@@ -25,9 +25,10 @@ namespace ImGui.UnitTest.Layout
             public void GetNormalRectAfterLayout()
             {
                 var layout = new StackLayout(0, new Size(800,600));
-                layout.GetRect(1, new Size(100, 30), null, null);
+                layout.Begin();
+                layout.GetRect(1, new Size(100, 30));
                 layout.Layout();
-                var rect = layout.GetRect(1, new Size(100, 30), null, null);
+                var rect = layout.GetRect(1, new Size(100, 30));
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -41,15 +42,16 @@ namespace ImGui.UnitTest.Layout
                 var layout = new StackLayout(0, new Size(800, 600));
                 Size zeroSize = Size.Zero;
                 Size smallSize = new Size(0.5, 0.6);
+                layout.Begin();
 
                 Assert.Throws<ArgumentOutOfRangeException>("contentSize", () =>
                 {
-                    layout.GetRect(1, zeroSize, null, null);
+                    layout.GetRect(1, zeroSize);
                 });
 
                 Assert.Throws<ArgumentOutOfRangeException>("contentSize", () =>
                 {
-                    layout.GetRect(1, smallSize, null, null);
+                    layout.GetRect(1, smallSize);
                 });
 
             }
@@ -62,9 +64,10 @@ namespace ImGui.UnitTest.Layout
                 var style = new GUIStyle();
                 style.Padding = (1, 2, 3, 4);
 
-                layout.GetRect(1, size, style, null);
+                layout.Begin();
+                layout.GetRect(1, size, style);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, style, null);
+                var rect = layout.GetRect(1, size, style);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -80,9 +83,10 @@ namespace ImGui.UnitTest.Layout
                 var style = new GUIStyle();
                 style.Border = (1, 2, 3, 4);
 
-                layout.GetRect(1, size, style, null);
+                layout.Begin();
+                layout.GetRect(1, size, style);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, style, null);
+                var rect = layout.GetRect(1, size, style);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -99,9 +103,10 @@ namespace ImGui.UnitTest.Layout
                 style.Border = (1, 2, 3, 4);
                 style.Padding = (5, 6, 7, 8);
 
-                layout.GetRect(1, size, style, null);
+                layout.Begin();
+                layout.GetRect(1, size, style);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, style, null);
+                var rect = layout.GetRect(1, size, style);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -118,6 +123,7 @@ namespace ImGui.UnitTest.Layout
                 const int fixedHeight = 200;
                 var options = new[] {GUILayout.Width(fixedWidth), GUILayout.Height(fixedHeight) };
 
+                layout.Begin();
                 layout.GetRect(1, size, null, options);
                 layout.Layout();
                 var rect = layout.GetRect(1, size, null, options);
@@ -139,6 +145,7 @@ namespace ImGui.UnitTest.Layout
                 var options = new[] { GUILayout.ExpandWidth(expandWidth),
                     GUILayout.ExpandHeight(expandHeight) };
 
+                layout.Begin();
                 layout.GetRect(1, size, null, options);
                 layout.Layout();
                 var rect = layout.GetRect(1, size, null, options);

@@ -20,9 +20,6 @@ namespace ImGui
 
             int id = window.GetID(text);
             Size contentSize = style.CalcSize(text, GUIState.Normal, options);
-
-            GUILayout.stringIdMap[id] = text;
-
             Rect rect = window.GetRect(id, contentSize, style, options);
             GUI.Label(rect, text);
         }
