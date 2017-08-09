@@ -5,6 +5,18 @@ using ImGui.OSAbstraction.Graphics;
 public class TestUI
 {
     bool helpOn;
+
+    #region Window Options
+    bool windowsOptionsOn;
+    static bool no_titlebar = false;
+    static bool no_border = true;
+    static bool no_resize = false;
+    static bool no_move = false;
+    static bool no_scrollbar = false;
+    static bool no_collapse = false;
+    static double bg_alpha = 0.65;
+    #endregion
+
     bool widgetsOn = true;
 
     bool toggleOn = false;
@@ -16,19 +28,46 @@ public class TestUI
     string text = "ABCD\nEFGHI";
 
 
-    public void OnGUI()
+    public void ShowTestWindow(ref bool open)
     {
         if(image == null)
         {
             image = GUI.CreateTexture("./Image/trees.jpg");
         }
 
-        GUILayout.Label("ImGui says hello.");
+        WindowFlags window_flags = WindowFlags.VerticalScrollbar;
+        if (no_titlebar) window_flags |= WindowFlags.NoTitleBar;
+        if (!no_border) window_flags |= WindowFlags.ShowBorders;
+        if (no_resize) window_flags |= WindowFlags.NoResize;
+        if (no_move) window_flags |= WindowFlags.NoMove;
+        if (no_scrollbar) window_flags |= WindowFlags.NoScrollbar;
+        if (no_collapse) window_flags |= WindowFlags.NoCollapse;
 
+        GUI.Begin("ImGui Demo", ref open, (650, 20), (550, 680), bg_alpha, window_flags);
+        GUILayout.Label("ImGui says hello.");
         GUILayout.Space("Space~1", 5);
         if (GUILayout.CollapsingHeader("Help", ref helpOn))
         {
             ShowUserGuide();
+        }
+
+        if (GUILayout.CollapsingHeader("Window options", ref windowsOptionsOn))
+        {
+            GUILayout.PushID("WindowOptions");
+            GUILayout.BeginHorizontal("HGroup");
+                GUILayout.Space("HGroup_indient", 60);
+                GUILayout.BeginVertical("VGroup");
+                    no_titlebar = GUILayout.Toggle("no titlebar", no_titlebar);
+                    no_border = GUILayout.Toggle("no border", no_border);
+                    no_resize = GUILayout.Toggle("no resize", no_resize);
+                    no_move = GUILayout.Toggle("no move", no_move);
+                    no_scrollbar = GUILayout.Toggle("no scrollbar", no_scrollbar);
+                    bg_alpha = GUILayout.Slider("background alpha", bg_alpha, 0.0, 1.0);
+                    ShowStyleEditor();
+                    //TODO logging
+                GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
+            GUILayout.PopID();
         }
 
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))
@@ -75,6 +114,7 @@ public class TestUI
             GUILayout.EndHorizontal();
         }
 
+        GUI.End();
     }
 
     private void ShowUserGuide()
@@ -95,5 +135,10 @@ public class TestUI
 - ESCAPE to revert\n
 - You can apply arithmetic operators +,*,/ on numerical values.
   Use +- to subtract.");
+    }
+
+    private void ShowStyleEditor()
+    {
+        //TODO
     }
 }

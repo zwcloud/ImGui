@@ -9,26 +9,32 @@ namespace UniversalAppTemplate
         {
         }
 
+        private bool showAnotherWindow = true;
+
         bool showDemoWindow = false;
         TestUI demoUI = new TestUI();
 
-        private bool showAnotherWindow = true;
-
         protected override void OnGUI()
         {
-            showDemoWindow = GUILayout.ToggleButton("Show Demo Window", showDemoWindow);
-            if(showDemoWindow)
+            // 1. Show a simple window
+            // Tip: if we don't call GUI.Begin()/GUI.End() the widgets appears in a window automatically called "Debug"
             {
-                GUI.Begin("ImGui Demo", ref showDemoWindow, (650, 20), (550, 680));
-                demoUI.OnGUI();
-                GUI.End();
+                if (GUILayout.Button("Show Demo Window")) showDemoWindow = !showDemoWindow;
+                if (GUILayout.Button("Show Another Window")) showAnotherWindow = !showAnotherWindow;
             }
 
-            if(showAnotherWindow)
+            // 2. Show another simple window, this time using an explicit Begin/End pair
+            if (showAnotherWindow)
             {
                 GUI.Begin("Another Window", ref showAnotherWindow, (70, 450), (400, 100));
                 GUILayout.Label("Hello");
                 GUI.End();
+            }
+
+            // 3. Show the ImGui demo window. Most of the sample code is in demoUI.ShowTestWindow()
+            if (showDemoWindow)
+            {
+                demoUI.ShowTestWindow(ref showDemoWindow);
             }
 
         }
