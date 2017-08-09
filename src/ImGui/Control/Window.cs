@@ -18,7 +18,7 @@ namespace ImGui
             return Begin(name, ref open, Point.Zero, new Size(400, 300), 1, WindowFlags.VerticalScrollbar);
         }
 
-        public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags)
+        public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha = 1, WindowFlags flags = WindowFlags.VerticalScrollbar)
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;

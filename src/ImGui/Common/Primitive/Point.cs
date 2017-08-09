@@ -153,6 +153,14 @@ namespace ImGui.Common.Primitive
         }
 
         /// <summary>
+        /// Implicit conversion from ValueTuple(double, double)
+        /// </summary>
+        public static implicit operator Point((double, double) p)
+        {
+            return new Point(p.Item1, p.Item2);
+        }
+
+        /// <summary>
         /// Creates a string representation of this object based on the current culture.
         /// </summary>
         /// <returns>

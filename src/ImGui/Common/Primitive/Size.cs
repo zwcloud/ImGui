@@ -142,6 +142,15 @@ namespace ImGui.Common.Primitive
             return new Point(size._width, size._height);
         }
 
+        /// <summary>
+        /// Implicit conversion from ValueTuple(double, double)
+        /// the resulting size will contains the absolute values of Item1 and Item2
+        /// </summary>
+        public static implicit operator Size((double, double) p)
+        {
+            return new Size(Math.Abs(p.Item1), Math.Abs(p.Item2));
+        }
+
         static private Size CreateEmptySize()
         {
             Size size = new Size();

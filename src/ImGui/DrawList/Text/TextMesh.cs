@@ -170,6 +170,8 @@ namespace ImGui
             command.ElemCount = textMesh.IndexBuffer.Count;
             this.Commands[this.Commands.Count - 1] = command;
 
+            // TODO merge command with previous one if they share the same clip rect.
+
             // Append mesh data
             {
                 this.VertexBuffer.AddRange(textMesh.VertexBuffer);
