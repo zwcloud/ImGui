@@ -153,7 +153,31 @@ namespace ImGui
                 }
 
                 var newDrawCmd = drawCmdBuffer[drawCmdBuffer.Count - 1];
-                newDrawCmd.ClipRect = currentClipRect;
+                {
+                    if (newDrawCmd.ElemCount != 0 && newDrawCmd.ClipRect != currentClipRect)
+                    {
+                        AddDrawCommand();
+                        return;
+                    }
+
+                    // Try to merge with previous command if it matches, else use current command
+                    if (drawCmdBuffer.Count > 1)
+                    {
+                        var previousCmd = drawCmdBuffer[drawCmdBuffer.Count - 2];
+                        if (previousCmd.ClipRect == currentClipRect)
+                        {
+                            drawCmdBuffer.RemoveAt(drawCmdBuffer.Count - 1);
+                        }
+                        else
+                        {
+                            newDrawCmd.ClipRect = currentClipRect;
+                        }
+                    }
+                    else
+                    {
+                        newDrawCmd.ClipRect = currentClipRect;
+                    }
+                }
                 drawCmdBuffer[drawCmdBuffer.Count - 1] = newDrawCmd;
             }
         }
