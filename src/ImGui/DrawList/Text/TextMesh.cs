@@ -155,21 +155,17 @@ namespace ImGui
             textContext.Build(position, color, this.textGeometryContainer);
 
             // create mesh data
-
-            //FIXME Apply text color.
-
             // triangles
-            Color tmpColor = color;// new Color(1.01 / 255, 0, 0, 1);
             foreach (var polygon in this.textGeometryContainer.Polygons)
             {
                 if (polygon == null || polygon.Count < 3) { continue; }
                 for (int i = 0; i < polygon.Count-1; i++)
                 {
-                    AddTriangle(polygon[0], polygon[i], polygon[i + 1], tmpColor);
+                    AddTriangle(polygon[0], polygon[i], polygon[i + 1], color);
                 }
             }
             // bezier segments
-            AddBezierSegments(this.textGeometryContainer.CurveSegments, tmpColor);
+            AddBezierSegments(this.textGeometryContainer.CurveSegments, color);
         }
 
         public void Append(TextMesh textMesh, Vector offset)

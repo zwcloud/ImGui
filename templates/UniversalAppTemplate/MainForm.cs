@@ -9,46 +9,47 @@ namespace UniversalAppTemplate
         {
         }
 
-        private bool open = true;
-        private string text = "123";
-
-        bool openDemo = true;
+        bool showDemoWindow = false;
         TestUI demoUI = new TestUI();
 
-        private bool openA = true;
+        private bool showAnotherWindow = true;
         private bool openGroupA = true, openGroupB = false;
-
 
         protected override void OnGUI()
         {
-            //GUI.Begin("Demo", ref open, new Point(60, 60), new Size(400, 400), 1, WindowFlags.Default);
-            //text = GUILayout.Textbox("MyTextBox", new Size(400, 600), text);
-            //GUI.End();
-            //GUI.Begin("ImGui Demo", ref openDemo);
-            //demoUI.OnGUI();
-            //GUI.End();
-
-            GUI.Begin("window A", ref openA);
-            if (GUILayout.CollapsingHeader("MyGroupA", ref openGroupA))
+            showDemoWindow = GUILayout.ToggleButton("Show Demo Window", showDemoWindow);
+            if(showDemoWindow)
             {
-                GUILayout.BeginVertical("GroupA");
-                GUILayout.Label("AAAA");
-                GUILayout.Label("BBBB");
-                GUILayout.Label("CCCC");
-                GUILayout.Label("DDDD");
-                GUILayout.EndVertical();
+                GUI.Begin("ImGui Demo", ref showDemoWindow);
+                demoUI.OnGUI();
+                GUI.End();
             }
 
-            if (GUILayout.CollapsingHeader("MyGroupB", ref openGroupB))
+            if(showAnotherWindow)
             {
-                GUILayout.BeginHorizontal("GroupB");
-                GUILayout.Label("BAAAA啊");
-                GUILayout.Label("BBBBB");
-                GUILayout.Label("BCCCC");
-                GUILayout.Label("BDDDD");
-                GUILayout.EndHorizontal();
+                GUI.Begin("Another Window", ref showAnotherWindow);
+                if (GUILayout.CollapsingHeader("MyGroupA", ref openGroupA))
+                {
+                    GUILayout.BeginVertical("GroupA");
+                    GUILayout.Label("AAAA");
+                    GUILayout.Label("BBBB");
+                    GUILayout.Label("CCCC");
+                    GUILayout.Label("DDDD");
+                    GUILayout.EndVertical();
+                }
+
+                if (GUILayout.CollapsingHeader("MyGroupB", ref openGroupB))
+                {
+                    GUILayout.BeginHorizontal("GroupB");
+                    GUILayout.Label("BAAAA啊");
+                    GUILayout.Label("BBBBB");
+                    GUILayout.Label("BCCCC");
+                    GUILayout.Label("BDDDD");
+                    GUILayout.EndHorizontal();
+                }
+                GUI.End();
             }
-            GUI.End();
+
         }
     }
 }

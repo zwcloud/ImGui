@@ -58,10 +58,6 @@ namespace ImGui.Layout
             // read from built group
             {
                 var group = this.ReadingStack.Peek();
-                if (group == null)
-                {
-                    return new Rect(100, 100);//dummy
-                }
                 var entry = group.GetEntry(id);
                 if(entry == null)
                 {
@@ -88,8 +84,12 @@ namespace ImGui.Layout
                 if (parentGroup != null)
                 {
                     group = parentGroup.GetEntry(id) as LayoutGroup;
-                    group?.ResetCursor();
                 }
+                if(group == null)
+                {
+                    group = new LayoutGroup(isVertical, style, options) { Id = id };//dummy (HACK added to reading stack to forbid NRE)
+                }
+                group.ResetCursor();
                 this.ReadingStack.Push(group);
             }
         }

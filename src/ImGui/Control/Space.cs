@@ -16,21 +16,21 @@ namespace ImGui
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            //window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
-            //    layout.InsideVerticalGroup ? new[] { GUILayout.Height(size) } : new[] { GUILayout.Width(size) });
+            window.GetRect(id, Size.Zero, null,
+                layout.TopGroup.IsVertical ? new[] { GUILayout.Height(size) } : new[] { GUILayout.Width(size) });
         }
 
         /// <summary>
         /// Put a expanded space inside a layout group.
         /// </summary>
-        public static void FlexibleSpace(string str_id)
+        public static void FlexibleSpace(string str_id, int stretchFactor = 1)
         {
             Window window = GetCurrentWindow();
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            //Rect rect = window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
-            //    layout.InsideVerticalGroup ? new[] { GUILayout.StretchHeight(1) } : new[] { GUILayout.StretchWidth(1) });
+            Rect rect = window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
+                layout.TopGroup.IsVertical ? new[] { GUILayout.StretchHeight(stretchFactor) } : new[] { GUILayout.StretchWidth(stretchFactor) });
         }
     }
 }

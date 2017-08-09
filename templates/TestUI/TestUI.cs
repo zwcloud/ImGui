@@ -4,7 +4,9 @@ using ImGui.OSAbstraction.Graphics;
 
 public class TestUI
 {
+    bool helpOn;
     bool widgetsOn = true;
+
     bool toggleOn = false;
     bool a = false;
     string active_id;
@@ -13,11 +15,20 @@ public class TestUI
     ITexture image;
     string text = "ABCD\nEFGHI";
 
+
     public void OnGUI()
     {
         if(image == null)
         {
             image = GUI.CreateTexture("./Image/trees.jpg");
+        }
+
+        GUILayout.Label("ImGui says hello.");
+
+        GUILayout.Space("Space~1", 5);
+        if (GUILayout.CollapsingHeader("Help", ref helpOn))
+        {
+            ShowUserGuide();
         }
 
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))
@@ -62,8 +73,27 @@ public class TestUI
                 GUILayout.EndVertical();
             }
             GUILayout.EndHorizontal();
-
         }
 
+    }
+
+    private void ShowUserGuide()
+    {
+        GUILayout.Label("Double-click on title bar to collapse window.");
+        GUILayout.Label("Click and drag on lower right corner to resize window.");
+        GUILayout.Label("Click and drag on any empty space to move window.");
+        GUILayout.Label("Mouse Wheel to scroll.");
+        GUILayout.Label("TAB/SHIFT+TAB to cycle thru keyboard editable fields.");
+        GUILayout.Label("CTRL+Click on a slider to input text.");
+        GUILayout.Label(
+            @"While editing text:
+- Hold SHIFT or use mouse to select text
+- CTRL+Left/Right to word jump
+- CTRL+A select all
+- CTRL+X,CTRL+C,CTRL+V clipboard
+- CTRL+Z,CTRL+Y undo/redo
+- ESCAPE to revert\n
+- You can apply arithmetic operators +,*,/ on numerical values.
+  Use +- to subtract.");
     }
 }
