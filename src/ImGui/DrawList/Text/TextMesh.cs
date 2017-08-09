@@ -29,10 +29,7 @@ namespace ImGui
         /// </summary>
         public UnsafeList<DrawIndex> IndexBuffer { get; set; } = new UnsafeList<DrawIndex>();
 
-        /// <summary>
-        /// draw command
-        /// </summary>
-        public DrawCommand Command { get; set; } = new DrawCommand { ClipRect = Rect.Big };
+        public List<DrawCommand> Commands { get; set; } = new List<DrawCommand>(2);
 
         public void Clear()
         {
@@ -44,7 +41,7 @@ namespace ImGui
             this.idxWritePosition = 0;
             this.currentIdx = 0;
 
-            this.Command = new DrawCommand { ClipRect = Rect.Big };
+            this.Commands.Clear();
         }
 
         private void AppendVertex(DrawVertex vertex)
@@ -77,10 +74,6 @@ namespace ImGui
             int idxBufferSize = this.IndexBuffer.Count;
             this.idxWritePosition = idxBufferSize;
             this.IndexBuffer.Resize(idxBufferSize + idxCount);
-
-            var command = this.Command;
-            command.ElemCount += vtxCount;
-            this.Command = command;
         }
 
         private static readonly List<Point> Path = new List<Point>();
@@ -168,10 +161,14 @@ namespace ImGui
             AddBezierSegments(this.textGeometryContainer.CurveSegments, color);
         }
 
-        public void Append(TextMesh textMesh, Vector offset)
+        public void Append(TextMesh textMesh, Vector offset)// must use after DrawList.AddText
         {
             var oldVertexCount = this.VertexBuffer.Count;
             var oldIndexCount = this.IndexBuffer.Count;
+            // Update added command
+            var command = this.Commands[this.Commands.Count - 1];
+            command.ElemCount = textMesh.IndexBuffer.Count;
+            this.Commands[this.Commands.Count - 1] = command;
 
             // Append mesh data
             {
@@ -184,9 +181,6 @@ namespace ImGui
                     index += oldVertexCount;
                     this.IndexBuffer[i] = new DrawIndex { Index = index };
                 }
-                var command = this.Command;
-                command.ElemCount = this.IndexBuffer.Count;
-                this.Command = command;
             }
 
             // Apply offset to appended part

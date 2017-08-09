@@ -104,74 +104,13 @@ void main()
         private static readonly float[] FloatBuffer = { 0, 0, 0, 0 };
         private static readonly uint[] UIntBuffer = { 0, 0, 0, 0 };
 
-        //#START
-        private uint renderedTexture;
-        private uint textFrameBuffer;
-        private readonly UnsafeList<DrawVertex> quadVertices = new UnsafeList<DrawVertex>(4);
-        private readonly UnsafeList<DrawIndex> quadIndices = new UnsafeList<DrawIndex>(6);
-        //#END
-
         public void Init(IntPtr windowHandle, Size size)
         {
-            CreateOpenGLContext((IntPtr)windowHandle);
+            CreateOpenGLContext(windowHandle);
 
             this.shapeMaterial.Init();
             this.imageMaterial.Init();
             this.glyphMaterial.Init();
-            {
-                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 0), color = (ColorF)Color.Black });
-                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (0, 1), color = (ColorF)Color.Black });
-                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (1, 1), color = (ColorF)Color.Black });
-                this.quadVertices.Add(new DrawVertex { pos = (0, 0), uv = (1, 0), color = (ColorF)Color.Black });
-
-                this.quadIndices.Add(new DrawIndex { Index = 0 });
-                this.quadIndices.Add(new DrawIndex { Index = 1 });
-                this.quadIndices.Add(new DrawIndex { Index = 2 });
-                this.quadIndices.Add(new DrawIndex { Index = 2 });
-                this.quadIndices.Add(new DrawIndex { Index = 3 });
-                this.quadIndices.Add(new DrawIndex { Index = 0 });
-            }
-
-            // render target
-            {
-                GL.GenFramebuffersEXT(1, UIntBuffer);
-                this.textFrameBuffer = UIntBuffer[0];
-                GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, this.textFrameBuffer);
-
-                //create the texture which will contain the RGB output of our shader.
-                // The texture we're going to render to
-                GL.GenTextures(1, UIntBuffer);
-                this.renderedTexture = UIntBuffer[0];
-
-                // "Bind" the newly created texture : all future texture functions will modify this texture
-                GL.BindTexture(GL.GL_TEXTURE_2D, this.renderedTexture);
-
-                // Give an empty image to OpenGL ( the last "0" )
-                GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, (int)size.Width, (int)size.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntPtr.Zero);
-
-                // Poor filtering. Needed !
-                GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-                GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-
-                // configure our framebuffer
-                // Set "renderedTexture" as our colour attachement #0
-                GL.FramebufferTexture(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, this.renderedTexture, 0);
-
-                // Set the list of draw buffers.
-                UIntBuffer[0] = GL.GL_COLOR_ATTACHMENT0_EXT;//DrawBuffers
-                GL.DrawBuffers(1, UIntBuffer); // "1" is the size of DrawBuffers
-
-                // check that our framebuffer is ok
-                if (GL.CheckFramebufferStatusEXT(GL.GL_FRAMEBUFFER_EXT) != GL.GL_FRAMEBUFFER_COMPLETE_EXT)
-                {
-                    throw new Exception("Failed to create framebuffer.");
-                }
-
-                // restore to default framebuffer
-                GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
-                // unbind texture
-                GL.BindTexture(GL.GL_TEXTURE_2D, 0);
-            }
 
             // Other state
             GL.Enable(GL.GL_MULTISAMPLE);
@@ -220,6 +159,12 @@ void main()
             uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
             uint last_enable_depth_test = GL.IsEnabled(GL.GL_DEPTH_TEST);
             uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
+            GL.GetIntegerv(GL.GL_SCISSOR_BOX, IntBuffer);
+            int last_sessor_rect_x = IntBuffer[0];
+            int last_sessor_rect_y = IntBuffer[1];
+            int last_sessor_rect_width = IntBuffer[2];
+            int last_sessor_rect_height = IntBuffer[3];
+
 
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
             GL.Enable(GL.GL_BLEND);
@@ -276,6 +221,7 @@ void main()
             if (last_enable_depth_test == GL.GL_TRUE) GL.Enable(GL.GL_DEPTH_TEST); else GL.Disable(GL.GL_DEPTH_TEST);
             if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
+            GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
         }
 
         /// <summary>
@@ -284,7 +230,6 @@ void main()
         private void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
             // Backup GL state
-            GL.GetIntegerv(GL.GL_FRAMEBUFFER_BINDING_EXT, IntBuffer); int last_framebuffer_binding = IntBuffer[0];
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
             GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
             GL.GetIntegerv(GL.GL_ACTIVE_TEXTURE, IntBuffer); int last_active_texture = IntBuffer[0];
@@ -305,52 +250,61 @@ void main()
             uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
             uint last_enable_depth_test = GL.IsEnabled(GL.GL_DEPTH_TEST);
             uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
+            GL.GetIntegerv(GL.GL_SCISSOR_BOX, IntBuffer);
+            int last_sessor_rect_x = IntBuffer[0];
+            int last_sessor_rect_y = IntBuffer[1];
+            int last_sessor_rect_width = IntBuffer[2];
+            int last_sessor_rect_height = IntBuffer[3];
 
             GLM.mat4 ortho_projection = GLM.glm.ortho(0.0f, width, height, 0.0f, -5.0f, 5.0f);
             GL.Viewport(0, 0, width, height);
 
-            GL.Enable(GL.GL_STENCIL_TEST);
-            GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_INVERT);
-            GL.StencilFunc(GL.GL_ALWAYS, 1, 1);
+            var material = this.glyphMaterial;
+            var vertexBuffer = textMesh.VertexBuffer;
+            var indexBuffer = textMesh.IndexBuffer;
 
-            GL.ColorMask(false, false, false, false);//only draw to stencil buffer
-            GL.Clear(GL.GL_STENCIL_BUFFER_BIT); //clear stencil buffer to 0
+            material.program.Bind();
+            material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
+
+            // Send vertex data
+            GL.BindVertexArray(material.VaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
+            GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
+            GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
             Utility.CheckGLError();
 
+            GL.Enable(GL.GL_STENCIL_TEST);
+            var indexBufferOffset = IntPtr.Zero;
+            foreach (var drawCmd in textMesh.Commands)
             {
-                // Draw text mesh to stencil buffer
-                var material = this.glyphMaterial;
-                var vertexBuffer = textMesh.VertexBuffer;
-                var indexBuffer = textMesh.IndexBuffer;
-
-                material.program.Bind();
-                material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
-
-                // Send vertex data
-                GL.BindVertexArray(material.VaoHandle);
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
-                GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
-                GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
-
-                var drawCmd = textMesh.Command;
                 var clipRect = drawCmd.ClipRect;
-                GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
-                GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);
+                {
+                    // Draw text mesh to stencil buffer
+                    GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_INVERT);
+                    GL.StencilFunc(GL.GL_ALWAYS, 1, 1);
 
-                Utility.CheckGLError();
+                    GL.ColorMask(false, false, false, false);//only draw to stencil buffer
+                    GL.Clear(GL.GL_STENCIL_BUFFER_BIT); //clear stencil buffer to 0
 
-                GL.StencilFunc(GL.GL_EQUAL, 1, 1);
-                GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
-                GL.ColorMask(true, true, true, true);
-                // Draw text mesh againest stencil buffer
-                GL.DrawElements(GL.GL_TRIANGLES, indexBuffer.Count, GL.GL_UNSIGNED_INT, IntPtr.Zero);
+                    GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
+                    GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
+
+                    Utility.CheckGLError();
+
+                    // Draw text mesh againest stencil buffer
+                    GL.StencilFunc(GL.GL_EQUAL, 1, 1);
+                    GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
+                    GL.ColorMask(true, true, true, true);
+
+                    GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
+                }
+                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
             }
             GL.Disable(GL.GL_STENCIL_TEST);
 
             // Restore modified GL state
-            GL.BindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, (uint)last_framebuffer_binding);
             GL.UseProgram((uint)last_program);
             GL.ActiveTexture((uint)last_active_texture);
             GL.BindTexture(GL.GL_TEXTURE_2D, (uint)last_texture);
@@ -365,6 +319,7 @@ void main()
             if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
             GL.ClearColor(last_clear_color_r, last_clear_color_g, last_clear_color_b, last_clear_color_a);
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
+            GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
         }
 
         public void ShutDown()

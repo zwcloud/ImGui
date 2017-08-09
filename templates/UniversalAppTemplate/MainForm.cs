@@ -17,13 +17,13 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            showDemoWindow = GUILayout.ToggleButton("Show Demo Window", showDemoWindow);
-            if(showDemoWindow)
-            {
-                GUI.Begin("ImGui Demo", ref showDemoWindow);
-                demoUI.OnGUI();
-                GUI.End();
-            }
+            //showDemoWindow = GUILayout.ToggleButton("Show Demo Window", showDemoWindow);
+            //if(showDemoWindow)
+            //{
+            //    GUI.Begin("ImGui Demo", ref showDemoWindow);
+            //    demoUI.OnGUI();
+            //    GUI.End();
+            //}
 
             if(showAnotherWindow)
             {

@@ -423,20 +423,5 @@ namespace ImGui
 
         #endregion
 
-        /// <summary>
-        /// Append a text mesh to this drawlist
-        /// </summary>
-        /// <param name="textMesh"></param>
-        /// <param name="offset"></param>
-        public void AppendTextMesh(TextMesh textMesh, Vector offset)
-        {
-            if (textMesh == null)
-            {
-                throw new ArgumentNullException(nameof(textMesh));
-            }
-
-            this.TextMesh.Append(textMesh, offset);
-        }
-
     }
 }
