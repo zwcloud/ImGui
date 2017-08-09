@@ -141,7 +141,31 @@ namespace ImGui.OSImplentation
                         currentTypeface.LineGap * scale);
                 }
                 this.lineHeight = strBox.CalculateLineHeight();
-                this.Size = new Size(strBox.width, this.lineHeight);//FIXME incorrect, line-height * line-count not calculated.
+
+                // get line count
+                {
+                    this.lineCount = 1;
+                    int i;
+                    for (i = 0; i < this.glyphPlans.Count; ++i)
+                    {
+                        var glyphPlan = this.glyphPlans[i];
+                        if (glyphPlan.glyphIndex == 0)
+                        {
+                            this.lineCount++;
+                            continue;
+                        }
+                    }
+                    if (this.glyphPlans.Count > 0)
+                    {
+                        var lastGlyph = this.glyphPlans[this.glyphPlans.Count - 1];
+                        if (lastGlyph.glyphIndex == 0)//last glyph is '\n', add an additional empty line
+                        {
+                            this.lineCount++;
+                        }
+                    }
+                }
+
+                this.Size = new Size(strBox.width, this.lineCount * this.lineHeight);
             }
             //Profile.End();
 
