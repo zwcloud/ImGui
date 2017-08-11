@@ -12,8 +12,8 @@ namespace ImGui
 
             var height = GUIStyle.Default.FontSize;
             var id = window.GetID(text);
-            GUIStyle style = GUISkin.Instance[GUIControlName.Button];
-            var rect = GUILayout.GetRect(new Size(0, height), text, style, GUILayout.ExpandWidth(true));
+            GUIStyle style = GUISkin.Instance[GUIControlName.CollapsingHeader];
+            var rect = window.GetRect(id, new Size(0, height), style);
 
             bool hovered, held;
             bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, ButtonFlags.PressedOnClick);

@@ -30,19 +30,27 @@ namespace ImGui
 
         #endregion
 
-        private static Window GetCurrentWindow()
+        internal static Window GetCurrentWindow()
         {
             return Utility.GetCurrentWindow();
         }
 
         #region stack-layout
 
-        public static void BeginHorizontal(string str_id, GUIStyle style = null, params LayoutOption[] options)
+        public static void BeginHorizontal(string str_id, GUIStyle style = null)
+        {
+            BeginHorizontal(str_id, Size.Zero, style);
+        }
+
+        public static void BeginHorizontal(string str_id, Size size, GUIStyle style = null)
         {
             Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
-            window.StackLayout.BeginLayoutGroup(id, false, style, options);
+            PushHorizontalStretchFactor(1);
+            PushID(id);
+            window.StackLayout.BeginLayoutGroup(id, false, size, style);
+            PopHorizontalStretchFactor();
         }
 
         public static void EndHorizontal()
@@ -50,14 +58,23 @@ namespace ImGui
             Window window = GetCurrentWindow();
 
             window.StackLayout.EndLayoutGroup();
+            PopID();
         }
 
-        public static void BeginVertical(string str_id, GUIStyle style = null, params LayoutOption[] options)
+        public static void BeginVertical(string str_id, GUIStyle style = null)
+        {
+            BeginVertical(str_id, Size.Zero, style);
+        }
+
+        public static void BeginVertical(string str_id, Size size, GUIStyle style = null)
         {
             Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
-            window.StackLayout.BeginLayoutGroup(id, true, style, null);
+            PushHorizontalStretchFactor(1);
+            PushID(id);
+            window.StackLayout.BeginLayoutGroup(id, true, size, style);
+            PopHorizontalStretchFactor();
         }
 
         public static void EndVertical()
@@ -65,20 +82,13 @@ namespace ImGui
             Window window = GetCurrentWindow();
 
             window.StackLayout.EndLayoutGroup();
+            PopID();
         }
 
         public static Rect GetWindowClientRect()
         {
             Window window = GetCurrentWindow();
             return window.ClientRect;
-        }
-
-        public static Rect GetRect(Size size, string str_id, GUIStyle style = null, params LayoutOption[] options)
-        {
-            Window window = GetCurrentWindow();
-            var id = window.GetID(str_id);
-            var rect = window.GetRect(id, size, style, options);
-            return rect;
         }
 
         // test only

@@ -269,6 +269,10 @@ namespace ImGui
         /// <param name="new_size"></param>
         public void ApplySize(Size new_size)
         {
+            if (this.FullSize != new_size)
+            {
+                this.StackLayout.SetRootSize(new_size);
+            }
             this.FullSize = new_size;
         }
 
@@ -278,11 +282,10 @@ namespace ImGui
         /// <param name="id">id of the control</param>
         /// <param name="size">size of content, border and padding NOT included</param>
         /// <param name="style">style that will apply to requested rect</param>
-        /// <param name="options">layout options that will apply to requested rect</param>
         /// <returns></returns>
-        public Rect GetRect(int id, Size size, GUIStyle style, LayoutOption[] options)
+        public Rect GetRect(int id, Size size, GUIStyle style)
         {
-            var rect = StackLayout.GetRect(id, size, style, options);
+            var rect = StackLayout.GetRect(id, size, style);
 
             Rect newContentRect = ContentRect;
             newContentRect.Union(rect);

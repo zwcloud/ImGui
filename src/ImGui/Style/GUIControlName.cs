@@ -7,6 +7,7 @@ namespace ImGui
         ToolTip,
         Box,
         Space,
+        FlexibleSpace,
 
         //_StatefulStart,
 
@@ -16,5 +17,7 @@ namespace ImGui
         TextBox,
         Slider,
         PolygonButton,
+        CollapsingHeader,
+        ColorField,
     }
 }

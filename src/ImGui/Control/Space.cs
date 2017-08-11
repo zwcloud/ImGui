@@ -16,8 +16,7 @@ namespace ImGui
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            window.GetRect(id, Size.Zero, null,
-                layout.TopGroup.IsVertical ? new[] { GUILayout.Height(size) } : new[] { GUILayout.Width(size) });
+            window.GetRect(id, layout.TopGroup.IsVertical? new Size(0,size): new Size(size,0), GUISkin.Instance[GUIControlName.Space]);
         }
 
         /// <summary>
@@ -29,8 +28,19 @@ namespace ImGui
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            Rect rect = window.GetRect(id, Size.Zero, GUISkin.Instance[GUIControlName.Space],
-                layout.TopGroup.IsVertical ? new[] { GUILayout.StretchHeight(stretchFactor) } : new[] { GUILayout.StretchWidth(stretchFactor) });
+
+            var style = GUISkin.Instance[GUIControlName.FlexibleSpace];
+            var oldHorizontalStretchFactor = style.HorizontalStretchFactor;
+            var oldVerticalStretchFactor = style.VerticalStretchFactor;
+
+            var horizontalStretchFactor = layout.TopGroup.IsVertical ? -1 : stretchFactor;
+            var verticalStretchFactor = layout.TopGroup.IsVertical ? stretchFactor : -1;
+            style.HorizontalStretchFactor = horizontalStretchFactor;
+            style.VerticalStretchFactor = verticalStretchFactor;
+            Rect rect = window.GetRect(id, Size.Zero, style);
+
+            style.HorizontalStretchFactor = oldHorizontalStretchFactor;
+            style.VerticalStretchFactor = oldVerticalStretchFactor;
         }
     }
 }

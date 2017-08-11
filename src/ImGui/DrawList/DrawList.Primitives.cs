@@ -206,6 +206,11 @@ namespace ImGui
             }
         }
 
+        public void AddRectFilled(Rect rect, Color color, float rounding = 0.0f, int roundingCorners = 0x0F)
+        {
+            AddRectFilled(rect.TopLeft, rect.BottomRight, color, rounding, roundingCorners);
+        }
+
         /// <summary>
         /// Add a filled triangle. Make sure the points a->b->c is clockwise.
         /// </summary>

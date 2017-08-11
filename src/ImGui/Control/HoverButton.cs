@@ -88,7 +88,7 @@ namespace ImGui
         {
             Window window = GetCurrentWindow();
             var id = window.GetID(text);
-            Size size = style.CalcSize(text, GUIState.Normal, options);
+            Size size = style.CalcSize(text, GUIState.Normal);
             var rect = window.GetRect(id, size, style, options);
             return GUI.HoverButton(rect, text);
         }

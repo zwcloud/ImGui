@@ -4,7 +4,16 @@ using ImGui.OSAbstraction.Graphics;
 
 public class TestUI
 {
+    static double f = 0.0f;
+
+    private bool showAnotherWindow = true;
+
+    #region Demo
+    bool showDemoWindow = false;
+
+    #region Help
     bool helpOn;
+    #endregion
 
     #region Window Options
     bool windowsOptionsOn;
@@ -17,6 +26,7 @@ public class TestUI
     static double bg_alpha = 0.65;
     #endregion
 
+    #region Widgets
     bool widgetsOn = true;
 
     bool toggleOn = false;
@@ -26,9 +36,41 @@ public class TestUI
     double vSliderValue = 0.5f;
     ITexture image;
     string text = "ABCD\nEFGHI";
+    #endregion
 
+    #endregion
 
-    public void ShowTestWindow(ref bool open)
+    public void OnGUI()
+    {
+        // 1. Show a simple window
+        // Tip: if we don't call GUI.Begin()/GUI.End() the widgets appears in a window automatically called "Debug"
+        {
+            GUILayout.Label("Hello, world!");
+            f = GUILayout.Slider("float", f, 0, 1);
+            //TODO color control
+            if (GUILayout.Button("Show Demo Window")) showDemoWindow = !showDemoWindow;
+            if (GUILayout.Button("Show Another Window")) showAnotherWindow = !showAnotherWindow;
+            //var fps = Form.current.uiContext.fps;
+            //GUILayout.Label(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000.0f / fps, fps)); //removed, will be added again when textmesh cache is solved
+        }
+
+        // 2. Show another simple window, this time using an explicit Begin/End pair
+        if (showAnotherWindow)
+        {
+            GUI.Begin("Another Window", ref showAnotherWindow, (70, 450), (400, 100));
+            GUILayout.Label("Hello");
+            GUI.End();
+        }
+
+        // 3. Show the ImGui demo window. Most of the sample code is in demoUI.ShowTestWindow()
+        if (showDemoWindow)
+        {
+            ShowTestWindow(ref showDemoWindow);
+        }
+
+    }
+
+    private void ShowTestWindow(ref bool open)
     {
         if(image == null)
         {
@@ -139,6 +181,10 @@ public class TestUI
 
     private void ShowStyleEditor()
     {
+        var bgColor = GUILayout.GetCurrentWindow().Style.BackgroundColor;
         //TODO
+        bgColor = GUILayout.ColorField("Background Color", bgColor);
+
+        GUILayout.GetCurrentWindow().Style.BackgroundColor = bgColor;
     }
 }

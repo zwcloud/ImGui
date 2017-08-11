@@ -12,23 +12,23 @@ namespace ImGui
         /// <param name="text">text to display on the button</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>true when the users clicks the button.</returns>
-        public static bool Button(string text, params LayoutOption[] options)
+        public static bool Button(string text)
         {
-            return Button(text, GUISkin.Instance[GUIControlName.Button], options);
+            return Button(text, GUISkin.Instance[GUIControlName.Button]);
         }
 
-        internal static bool Button(string text, GUIStyle style, params LayoutOption[] options)
+        internal static bool Button(string text, GUIStyle style)
         {
-            return DoButton(text, style, options);
+            return DoButton(text, style);
         }
 
-        private static bool DoButton(string text, GUIStyle style, params LayoutOption[] options)
+        private static bool DoButton(string text, GUIStyle style)
         {
             Window window = GetCurrentWindow();
 
             int id = window.GetID(text);
-            Size size = style.CalcSize(text, GUIState.Normal, options);
-            Rect rect = window.GetRect(id, size, style, options);
+            Size size = style.CalcSize(text, GUIState.Normal);
+            Rect rect = window.GetRect(id, size, style);
 
             return GUI.Button(rect, text);
         }
@@ -65,9 +65,7 @@ namespace ImGui
 
             // Render
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            d.RenderFrame(rect.Min, rect.Max, col, false, 0);
-            d.DrawText(rect, text, style, state);
+            d.DrawBoxModel(rect, text, style, state);
 
             return pressed;
         }

@@ -15,7 +15,7 @@ namespace ImGui
 
             string name = string.Format("{0}.{1}", window.Name, str_id);
             int id = window.GetID(name);
-            var rect = window.GetRect(id, size, GUIStyle.Default, null);
+            var rect = window.GetRect(id, size, GUIStyle.Default);
             bool open = true;//dummy
             return GUI.Begin(name, ref open, rect.TopLeft, rect.Size, 1.0, flags | extra_flags);
         }

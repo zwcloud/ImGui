@@ -10,7 +10,7 @@ namespace ImGui.Layout
     {
         private int cursor;
 
-        public LayoutGroup(bool isVertical, GUIStyle style, params LayoutOption[] options) : base(style, options)
+        public LayoutGroup(int id, bool isVertical, GUIStyle style, Size contentSize) : base(id, style, contentSize)
         {
             this.IsVertical = isVertical;
             this.cursor = 0;
@@ -232,7 +232,7 @@ namespace ImGui.Layout
                 // calculate the height of children
                 CalcChildrenHeight();
             }
-            else if (this.IsFixedHeight)//fiexed height
+            else if (this.IsFixedHeight)//fixed height
             {
                 // calculate the height
                 this.Rect.Height = this.MinHeight;

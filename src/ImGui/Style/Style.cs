@@ -42,8 +42,14 @@ namespace ImGui
 
         public GUIStyle()
         {
+            // set up default style values
             this.numberStyles = new Dictionary<NameState, double>
             {
+                [new NameState { Name = GUIStyleName.MinWidth, State = GUIState.Normal }] = 1,
+                [new NameState { Name = GUIStyleName.MaxWidth, State = GUIState.Normal }] = 9999,
+                [new NameState { Name = GUIStyleName.MinHeight, State = GUIState.Normal }] = 1,
+                [new NameState { Name = GUIStyleName.MaxHeight, State = GUIState.Normal }] = 9999,
+
                 [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Hover }] = 0,
                 [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Active }] = 0,
@@ -138,15 +144,26 @@ namespace ImGui
 
             };
 
-            this.enumStyles = new Dictionary<NameState, int>
+            this.intStyles = new Dictionary<NameState, int>
             {
+                [new NameState { Name = GUIStyleName.HorizontalStretchFactor, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.VerticalStretchFactor, State = GUIState.Normal }] = 0,
+
                 [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Normal }] = (int)TextAlignment.Leading,
                 [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Hover }] = (int)TextAlignment.Leading,
                 [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Active }] = (int)TextAlignment.Leading,
 
-                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Normal }] = (int)FontWeight.Normal,
-                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Hover }] = (int)FontWeight.Normal,
-                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Active }] = (int)FontWeight.Normal,
+                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Normal }] = (int)FontStyle.Normal,
+                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Hover }] = (int)FontStyle.Normal,
+                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Active }] = (int)FontStyle.Normal,
+
+                [new NameState { Name = GUIStyleName.FontWeight, State = GUIState.Normal }] = (int)FontWeight.Normal,
+                [new NameState { Name = GUIStyleName.FontWeight, State = GUIState.Hover }] = (int)FontWeight.Normal,
+                [new NameState { Name = GUIStyleName.FontWeight, State = GUIState.Active }] = (int)FontWeight.Normal,
+
+                [new NameState { Name = GUIStyleName.FontStretch, State = GUIState.Normal }] = (int)FontStretch.Normal,
+                [new NameState { Name = GUIStyleName.FontStretch, State = GUIState.Hover }] = (int)FontStretch.Normal,
+                [new NameState { Name = GUIStyleName.FontStretch, State = GUIState.Active }] = (int)FontStretch.Normal,
 
                 [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Normal }] = (int)Alignment.Start,
                 [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Hover }] = (int)Alignment.Start,
@@ -168,7 +185,7 @@ namespace ImGui
         private readonly Dictionary<NameState, double> numberStyles;
         private readonly Dictionary<NameState, Color> colorStyles;
         private readonly Dictionary<NameState, ITexture> imageStyles;
-        private readonly Dictionary<NameState, int> enumStyles;
+        private readonly Dictionary<NameState, int> intStyles;
         private readonly Dictionary<NameState, string> strStyles;
 
         public T Get<T>(GUIStyleName styleName, GUIState state = GUIState.Normal)
@@ -179,6 +196,7 @@ namespace ImGui
             {
                 return v;
             }
+
             return GetDefault<T>(styleName, state);
         }
 
@@ -191,70 +209,42 @@ namespace ImGui
 
         public T GetDefault<T>(GUIStyleName styleName, GUIState state)
         {
-            return default(T);//TODO replace with real default styles
+            var nameState = new NameState { Name = styleName, State = state };
+            var defalutDict = Default.GetDict<T>();
+            if (defalutDict.TryGetValue(nameState, out T defaultValue))
+            {
+                return defaultValue;
+            }
+
+            throw new Exception(string.Format("Cannot find the style<{0},{1}>", styleName, state));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Dictionary<NameState, T> GetDict<T>()
         {
             return this.numberStyles as Dictionary<NameState, T>
-                ?? this.enumStyles as Dictionary<NameState, T>
+                ?? this.intStyles as Dictionary<NameState, T>
                 ?? this.colorStyles as Dictionary<NameState, T>
                 ?? this.strStyles as Dictionary<NameState, T>
                 ?? this.imageStyles as Dictionary<NameState, T>;
         }
 
         /// <summary>
-        /// Get border-box size of a segment of text
+        /// Get exact size of a text segment.
         /// </summary>
-        internal Size CalcSize(string text, GUIState state, LayoutOption[] options)
+        internal Size CalcSize(string text, GUIState state)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
 
             var width = -1d;
             var height = -1d;
 
-            // apply options
-            if (options != null)
-            {
-                foreach (var option in options)
-                {
-                    if (option.type == LayoutOptionType.FixedWidth)
-                    {
-                        width = (double)option.Value;
-                    }
-                    else if (option.type == LayoutOptionType.FixedHeight)
-                    {
-                        height = (double)option.Value;
-                    }
-                }
-            }
-
             // apply font and text styles
             {
-
-                if (width < 0 && height < 0) // auto-sized text
-                {
-                    var actualSize = MeasureText(state, text);
-                    width = actualSize.Width;
-                    height = actualSize.Height;
-                }
-                else
-                {
-                    if (width < 0) // width-auto-sized text
-                    {
-                        var actualSize = MeasureText(state, text);
-                        width = actualSize.Width;
-                    }
-                    else if (height < 0) // height-auto-sized text
-                    {
-                        var actualSize = MeasureText(state, text);
-                        height = actualSize.Height;
-                    }
-                }
+                var actualSize = MeasureText(state, text);
+                width = actualSize.Width;
+                height = actualSize.Height;
             }
-
-            // apply padding and border
             if (width < 0)
             {
                 width = 0;
@@ -263,19 +253,13 @@ namespace ImGui
             {
                 height = 0;
             }
-            var size = new Size(Math.Ceiling(width), Math.Ceiling(height));
-            var paddingHorizontal = Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
-            var borderHorizontal = Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
-            var paddingVertical = Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
-            var borderVertical = Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
-            size.Width += paddingHorizontal + borderHorizontal;
-            size.Height += paddingVertical + borderVertical;
 
+            var size = new Size(Math.Ceiling(width), Math.Ceiling(height));
             return size;
         }
 
         /// <summary>
-        /// Get border-box size of a segment of text
+        /// Get border-box size of a texture
         /// </summary>
         internal Size CalcSize(ITexture texture, GUIState state, LayoutOption[] options)
         {
@@ -335,35 +319,38 @@ namespace ImGui
 
         #region short-cuts
 
-        public double BorderTop => Get<double>(GUIStyleName.BorderTop);
-        public double BorderRight => Get<double>(GUIStyleName.BorderRight);
-        public double BorderBottom => Get<double>(GUIStyleName.BorderBottom);
-        public double BorderLeft => Get<double>(GUIStyleName.BorderLeft);
-        public (double, double, double, double) Border
+        #region Box model
+        // We use `box-sizing: border-box;`. So the width and height is the width and height of border-box.
+        #region Width & Height
+        public double MinWidth
         {
-            get
-            {
-                var top = Get<double>(GUIStyleName.BorderTop);
-                var right = Get<double>(GUIStyleName.BorderRight);
-                var bottom = Get<double>(GUIStyleName.BorderBottom);
-                var left = Get<double>(GUIStyleName.BorderLeft);
-                return (top, right, bottom, left);
-            }
-
-            set
-            {
-                var (top, right, bottom, left) = value;
-                Set<double>(GUIStyleName.BorderTop, top);
-                Set<double>(GUIStyleName.BorderRight, right);
-                Set<double>(GUIStyleName.BorderBottom, bottom);
-                Set<double>(GUIStyleName.BorderLeft, left);
-            }
+            get => Get<double>(GUIStyleName.MinWidth);
+            set => Set<double>(GUIStyleName.MinWidth, value);
         }
+        public double MaxWidth
+        {
+            get => Get<double>(GUIStyleName.MaxWidth);
+            set => Set<double>(GUIStyleName.MaxWidth, value);
+        }
+        public double MinHeight
+        {
+            get => Get<double>(GUIStyleName.MinHeight);
+            set => Set<double>(GUIStyleName.MinHeight, value);
+        }
+        public double MaxHeight
+        {
+            get => Get<double>(GUIStyleName.MaxHeight);
+            set => Set<double>(GUIStyleName.MaxHeight, value);
+        }
+        #endregion Width & Height
 
+        #region Padding
         public double PaddingTop => Get<double>(GUIStyleName.PaddingTop);
         public double PaddingRight => Get<double>(GUIStyleName.PaddingRight);
         public double PaddingBottom => Get<double>(GUIStyleName.PaddingBottom);
         public double PaddingLeft => Get<double>(GUIStyleName.PaddingLeft);
+        public double PaddingHorizontal => Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
+        public double PaddingVertical => Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
         public (double, double, double, double) Padding
         {
             get
@@ -384,17 +371,59 @@ namespace ImGui
                 Set<double>(GUIStyleName.PaddingLeft, left);
             }
         }
+        #endregion Padding
 
-        public Color BorderTopColor => Get<Color>(GUIStyleName.BorderTopColor);
-        public Color BorderRightColor => Get<Color>(GUIStyleName.BorderRightColor);
-        public Color BorderBottomColor => Get<Color>(GUIStyleName.BorderBottomColor);
-        public Color BorderLeftColor => Get<Color>(GUIStyleName.BorderLeftColor);
-
-        public double PaddingHorizontal => Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
+        #region Border
+        public double BorderTop => Get<double>(GUIStyleName.BorderTop);
+        public double BorderRight => Get<double>(GUIStyleName.BorderRight);
+        public double BorderBottom => Get<double>(GUIStyleName.BorderBottom);
+        public double BorderLeft => Get<double>(GUIStyleName.BorderLeft);
         public double BorderHorizontal => Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
+        public double BorderVertical => Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
+        public (double, double, double, double) Border
+        {
+            get
+            {
+                var top = Get<double>(GUIStyleName.BorderTop);
+                var right = Get<double>(GUIStyleName.BorderRight);
+                var bottom = Get<double>(GUIStyleName.BorderBottom);
+                var left = Get<double>(GUIStyleName.BorderLeft);
+                return (top, right, bottom, left);
+            }
 
+            set
+            {
+                var (top, right, bottom, left) = value;
+                Set<double>(GUIStyleName.BorderTop, top);
+                Set<double>(GUIStyleName.BorderRight, right);
+                Set<double>(GUIStyleName.BorderBottom, bottom);
+                Set<double>(GUIStyleName.BorderLeft, left);
+            }
+        }
+        public Color BorderColor
+        {
+            get
+            {
+                var color = BorderTopColor;
+                if (color == BorderRightColor && color == BorderBottomColor && color == BorderLeftColor)
+                {
+                    return color;
+                }
+                throw new InvalidOperationException("Not all border share the same color! So we don't know which one should be returned.");
+            }
+            set
+            {
+                Set<Color>(GUIStyleName.BorderTopColor, value);
+                Set<Color>(GUIStyleName.BorderRightColor, value);
+                Set<Color>(GUIStyleName.BorderBottomColor, value);
+                Set<Color>(GUIStyleName.BorderLeftColor, value);
+            }
+        }
+        public Color BorderTopColor =>      Get<Color>(GUIStyleName.BorderTopColor);
+        public Color BorderRightColor =>    Get<Color>(GUIStyleName.BorderRightColor);
+        public Color BorderBottomColor =>   Get<Color>(GUIStyleName.BorderBottomColor);
+        public Color BorderLeftColor =>     Get<Color>(GUIStyleName.BorderLeftColor);
         public ITexture BorderImageSource => Get<ITexture>(GUIStyleName.BorderImageSource);
-
         public (double, double, double, double) BorderImageSlice
         {
             get
@@ -415,15 +444,31 @@ namespace ImGui
                 Set<double>(GUIStyleName.BorderImageSliceLeft, left);
             }
         }
+        #endregion Border
 
-        public double PaddingVertical => Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
-        public double BorderVertical => Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
+        #region Outline
+        public double OutlineWidth => Get<double>(GUIStyleName.OutlineWidth);
+        public Color OutlineColor => Get<Color>(GUIStyleName.OutlineColor);
+        #endregion Outline
+
+        #endregion Box model
+
+        #region Layout
+
+        public int HorizontalStretchFactor
+        {
+            get => Get<int>(GUIStyleName.HorizontalStretchFactor);
+            set => Set<int>(GUIStyleName.HorizontalStretchFactor, value);
+        }
+
+        public int VerticalStretchFactor
+        {
+            get => Get<int>(GUIStyleName.VerticalStretchFactor);
+            set => Set<int>(GUIStyleName.VerticalStretchFactor, value);
+        }
 
         public double CellingSpacingHorizontal => Get<double>(GUIStyleName.CellingSpacingHorizontal);
         public double CellingSpacingVertical => Get<double>(GUIStyleName.CellingSpacingVertical);
-
-        public double OutlineWidth => Get<double>(GUIStyleName.OutlineWidth);
-        public Color OutlineColor => Get<Color>(GUIStyleName.OutlineColor);
 
         public Alignment AlignmentHorizontal
         {
@@ -436,10 +481,18 @@ namespace ImGui
             set => Set<int>(GUIStyleName.AlignmentVertical, (int)value);
         }
 
+        #endregion Layout
+
+
+
         public Color LineColor => Get<Color>(GUIStyleName.LineColor);
         public Color FillColor => Get<Color>(GUIStyleName.FillColor);
 
-        public Color BackgroundColor => Get<Color>(GUIStyleName.BackgroundColor);
+        public Color BackgroundColor
+        {
+            get => Get<Color>(GUIStyleName.BackgroundColor);
+            set => Set<Color>(GUIStyleName.BackgroundColor, value);
+        }
 
         public double FontSize
         {

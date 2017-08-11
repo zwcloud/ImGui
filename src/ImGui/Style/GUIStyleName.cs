@@ -2,6 +2,12 @@ namespace ImGui
 {
     public enum GUIStyleName
     {
+        #region Box model
+        MinWidth,
+        MaxWidth,
+        MinHeight,
+        MaxHeight,
+
         PaddingTop,
         PaddingRight,
         PaddingBottom,
@@ -16,13 +22,17 @@ namespace ImGui
         BorderBottomColor,
         BorderLeftColor,
         BorderImageSource,
-        BorderImageSliceTop,  
+        BorderImageSliceTop,
         BorderImageSliceRight,
         BorderImageSliceBottom,
         BorderImageSliceLeft,
 
         OutlineWidth,
         OutlineColor,
+        #endregion Box model
+
+        HorizontalStretchFactor,
+        VerticalStretchFactor,
 
         CellingSpacingHorizontal,
         CellingSpacingVertical,
@@ -47,6 +57,7 @@ namespace ImGui
         LineColor,
         FillColor,
 
+        _FieldControlWidth,
         _ControlLabelSpacing,
         _LabelWidth,
         _LabelHeight,

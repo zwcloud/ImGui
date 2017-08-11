@@ -116,7 +116,7 @@ namespace ImGui
         {
             Window window = GetCurrentWindow();
             var id = window.GetID(text);
-            var textSize = style.CalcSize(text, GUIState.Normal, null);
+            var textSize = style.CalcSize(text, GUIState.Normal);
             var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
             return window.GetRect(id, size, style, options);
         }

@@ -290,7 +290,7 @@ namespace ImGui
                 return value;
 
             var id = window.GetID(label);
-            Size size = style.CalcSize(label, GUIState.Normal, null);//label size
+            Size size = style.CalcSize(label, GUIState.Normal);//label size
             var options = new LayoutOption[] { isHorizontal ? GUILayout.ExpandWidth(true) : GUILayout.ExpandHeight(true) };
             if(isHorizontal)//full size
             {

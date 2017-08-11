@@ -8,32 +8,121 @@ namespace ImGui.Layout
     [DebuggerDisplay("{Id}, Rect={Rect}")]
     internal class LayoutEntry
     {
-        public int Id { get; set; }
+        /// <summary>
+        /// identifier number of this entry/group
+        /// </summary>
+        public int Id { get; }
 
-        public Rect Rect;//border-box
-        public double ContentWidth { get; set; }//exact content width, pre-calculated from content and style
-        public double ContentHeight { get; set; }//exact content height, pre-calculated from content and style
-        public double MinWidth { get; set; } = 1;//minimum width of content-box
-        public double MaxWidth { get; set; } = 9999;//maximum width of content-box
-        public double MinHeight { get; set; } = 1;//minimum height of content-box
-        public double MaxHeight { get; set; } = 9999;//maximum height of content-box
-        public int HorizontalStretchFactor { get; set; }//horizontal stretch factor
-        public int VerticalStretchFactor { get; set; }//vertical stretch factor
+        /// <summary>
+        /// border-box, the layout result
+        /// </summary>
+        public Rect Rect;
 
+        /// <summary>
+        /// exact content width, pre-calculated from content and style
+        /// </summary>
+        public double ContentWidth { get; set; }
+
+        /// <summary>
+        /// exact content height, pre-calculated from content and style
+        /// </summary>
+        public double ContentHeight { get; set; }
+
+        /// <summary>
+        /// minimum width of content-box
+        /// </summary>
+        public double MinWidth { get; set; } = 1;
+
+        /// <summary>
+        /// maximum width of content-box
+        /// </summary>
+        public double MaxWidth { get; set; } = 9999;
+
+        /// <summary>
+        /// minimum height of content-box
+        /// </summary>
+        public double MinHeight { get; set; } = 1;
+
+        /// <summary>
+        /// maximum height of content-box
+        /// </summary>
+        public double MaxHeight { get; set; } = 9999;
+
+        private int h = 0;
+        /// <summary>
+        /// horizontal stretch factor
+        /// </summary>
+        public int HorizontalStretchFactor { get { return h; }
+            set { h = value; } }
+
+        /// <summary>
+        /// vertical stretch factor
+        /// </summary>
+        public int VerticalStretchFactor { get; set; }
+
+        /// <summary>
+        /// Is this entry or group horizontally stretched?
+        /// </summary>
         public bool HorizontallyStretched => !this.IsFixedWidth && this.HorizontalStretchFactor > 0;
+
+        /// <summary>
+        /// Is this entry or group vertically stretched?
+        /// </summary>
         public bool VerticallyStretched => !this.IsFixedHeight && this.VerticalStretchFactor > 0;
 
+        /// <summary>
+        /// Is this entry or group has a fixed width?
+        /// </summary>
         public bool IsFixedWidth => MathEx.AmostEqual(this.MinWidth, this.MaxWidth);
+
+        /// <summary>
+        /// Is this entry or group has a fixed height?
+        /// </summary>
         public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
 
-        public GUIStyle Style;
+        protected GUIStyle Style;
 
-        public LayoutEntry(GUIStyle style, params LayoutOption[] options)
+        public LayoutEntry(int id, GUIStyle style, Size contentSize)
         {
+            this.Id = id;
+            this.ContentWidth = contentSize.Width;
+            this.ContentHeight = contentSize.Height;
+
             this.Style = style ?? GUIStyle.Default;
-            if (options != null)
+            ApplyStyle();
+            ApplyOverridedStyle();
+        }
+
+        private void ApplyStyle()
+        {
+            this.MinWidth = MathEx.Clamp(this.Style.MinWidth, 1, 9999);
+            this.MaxWidth = MathEx.Clamp(this.Style.MaxWidth, 1, 9999);
+            this.MinHeight = MathEx.Clamp(this.Style.MinHeight, 1, 9999);
+            this.MaxHeight = MathEx.Clamp(this.Style.MaxHeight, 1, 9999);
+            if (this.MinWidth > this.MaxWidth)
             {
-                ApplyOptions(options);
+                this.MaxWidth = this.MinWidth;
+            }
+            if (this.MinHeight > this.MaxHeight)
+            {
+                this.MaxHeight = this.MinHeight;
+            }
+
+            this.HorizontalStretchFactor = this.Style.HorizontalStretchFactor;
+            this.VerticalStretchFactor = this.Style.VerticalStretchFactor;
+        }
+
+        private void ApplyOverridedStyle()
+        {
+            var hsf = GUILayout.GetOverrideHorizontalStretchFactor();
+            if(hsf > 0 )
+            {
+                this.HorizontalStretchFactor = hsf;
+            }
+            var vsf = GUILayout.GetOverrideVerticalStretchFactor();
+            if (vsf > 0)
+            {
+                this.VerticalStretchFactor = vsf;
             }
         }
 

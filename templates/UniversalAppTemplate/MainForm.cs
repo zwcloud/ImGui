@@ -1,4 +1,5 @@
-﻿using ImGui;
+﻿using System;
+using ImGui;
 using ImGui.Common.Primitive;
 
 namespace UniversalAppTemplate
@@ -9,41 +10,42 @@ namespace UniversalAppTemplate
         {
         }
 
-        static double f = 0.0f;
-
-        private bool showAnotherWindow = true;
-
-        bool showDemoWindow = false;
-        TestUI demoUI = new TestUI();
-
         protected override void OnGUI()
         {
-            // 1. Show a simple window
-            // Tip: if we don't call GUI.Begin()/GUI.End() the widgets appears in a window automatically called "Debug"
-            {
-                GUILayout.Label("Hello, world!");
-                f = GUILayout.Slider("float", f, 0, 1);
-                //TODO color control
-                if (GUILayout.Button("Show Demo Window")) showDemoWindow = !showDemoWindow;
-                if (GUILayout.Button("Show Another Window")) showAnotherWindow = !showAnotherWindow;
-                //var fps = Form.current.uiContext.fps;
-                //GUILayout.Label(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000.0f / fps, fps)); //removed, will be added again when textmesh cache is solved
-            }
+            GUILayout.BeginHorizontal("H~~~1");
+            GUILayout.PushHorizontalStretchFactor(1);
+            GUILayout.Button("1");
+            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.PushHorizontalStretchFactor(2);
+            GUILayout.Button("2");
+            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.PushHorizontalStretchFactor(3);
+            GUILayout.Button("3");
+            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal("H~~~2");
+            GUILayout.PushHorizontalStretchFactor(3);
+            GUILayout.Button("3");
+            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.PushHorizontalStretchFactor(2);
+            GUILayout.Button("2");
+            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.PushHorizontalStretchFactor(1);
+            GUILayout.Button("1");
+            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.EndHorizontal();
 
-            // 2. Show another simple window, this time using an explicit Begin/End pair
-            if (showAnotherWindow)
-            {
-                GUI.Begin("Another Window", ref showAnotherWindow, (70, 450), (400, 100));
-                GUILayout.Label("Hello");
-                GUI.End();
-            }
-
-            // 3. Show the ImGui demo window. Most of the sample code is in demoUI.ShowTestWindow()
-            if (showDemoWindow)
-            {
-                demoUI.ShowTestWindow(ref showDemoWindow);
-            }
-
+            //GUILayout.Space("!!~~1", 100);
+            //GUILayout.BeginHorizontal("H~~~");
+            //GUILayout.Space("!!~~2", 10);
+            //GUILayout.PushHorizontalStretchFactor(2);
+            //GUILayout.Button("A f:2");
+            //GUILayout.PopHorizontalStretchFactor();
+            //GUILayout.PushHorizontalStretchFactor(1);
+            //GUILayout.Button("B f:1");
+            //GUILayout.Button("C f:1");
+            //GUILayout.PopHorizontalStretchFactor();
+            //GUILayout.EndHorizontal();
         }
     }
 }
