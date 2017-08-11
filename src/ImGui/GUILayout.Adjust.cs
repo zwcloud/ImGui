@@ -4,64 +4,34 @@ using System.Text;
 
 namespace ImGui
 {
-    public class LayoutStyle
-    {
-        public double MinWidth = -2;
-        public double MaxWidth = -1;
-        public double MinHeight = -2;
-        public double MaxHeight = -1;
-        public int HorizontalStretchFactor = -1;
-        public int VerticalStretchFactor = -1;
-
-        public void Reset()
-        {
-            this.MinWidth = -2;
-            this.MaxWidth = -1;
-            this.MinHeight = -2;
-            this.MaxHeight = -1;
-            this.HorizontalStretchFactor = -1;
-            this.VerticalStretchFactor = -1;
-        }
-    }
-
     public partial class GUILayout
     {
-        static Stack<LayoutStyle> _overrideLayoutStyleStack = new Stack<LayoutStyle>();
-
-        public static void PushStyle(LayoutStyle layoutStyle)
+        public static void PushHStretchFactor(int factor)
         {
-            _overrideLayoutStyleStack.Push(layoutStyle);
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PushStretchFactor(false, factor);
         }
 
-        public static void PopStyle()
+        public static void PopHStretchFactor()
         {
-            _overrideLayoutStyleStack.Pop();
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PopStretchFactor(false);
         }
 
-        public static void PushHorizontalStretchFactor(int factor)
+        public static void PushVStretchFactor(int factor)
         {
-            var style = new LayoutStyle()
-            {
-                HorizontalStretchFactor = factor
-            };
-            PushStyle(style);
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PushStretchFactor(true, factor);
         }
 
-        public static void PopHorizontalStretchFactor()
+        public static void PopVStretchFactor()
         {
-            PopStyle();
-        }
-
-        public static int GetOverrideHorizontalStretchFactor()
-        {
-            if (_overrideLayoutStyleStack.Count == 0) return -1;
-            return _overrideLayoutStyleStack.Peek().HorizontalStretchFactor;
-        }
-
-        public static int GetOverrideVerticalStretchFactor()
-        {
-            if (_overrideLayoutStyleStack.Count == 0) return -1;
-            return _overrideLayoutStyleStack.Peek().VerticalStretchFactor;
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PopStretchFactor(true);
         }
     }
 }

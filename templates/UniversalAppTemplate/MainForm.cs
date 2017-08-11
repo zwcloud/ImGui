@@ -13,26 +13,26 @@ namespace UniversalAppTemplate
         protected override void OnGUI()
         {
             GUILayout.BeginHorizontal("H~~~1");
-            GUILayout.PushHorizontalStretchFactor(1);
+            GUILayout.PushHStretchFactor(1);
             GUILayout.Button("1");
-            GUILayout.PopHorizontalStretchFactor();
-            GUILayout.PushHorizontalStretchFactor(2);
+            GUILayout.PopHStretchFactor();
+            GUILayout.PushHStretchFactor(2);
             GUILayout.Button("2");
-            GUILayout.PopHorizontalStretchFactor();
-            GUILayout.PushHorizontalStretchFactor(3);
+            GUILayout.PopHStretchFactor();
+            GUILayout.PushHStretchFactor(3);
             GUILayout.Button("3");
-            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.PopHStretchFactor();
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal("H~~~2");
-            GUILayout.PushHorizontalStretchFactor(3);
+            GUILayout.PushHStretchFactor(3);
             GUILayout.Button("3");
-            GUILayout.PopHorizontalStretchFactor();
-            GUILayout.PushHorizontalStretchFactor(2);
+            GUILayout.PopHStretchFactor();
+            GUILayout.PushHStretchFactor(2);
             GUILayout.Button("2");
-            GUILayout.PopHorizontalStretchFactor();
-            GUILayout.PushHorizontalStretchFactor(1);
+            GUILayout.PopHStretchFactor();
+            GUILayout.PushHStretchFactor(1);
             GUILayout.Button("1");
-            GUILayout.PopHorizontalStretchFactor();
+            GUILayout.PopHStretchFactor();
             GUILayout.EndHorizontal();
 
             //GUILayout.Space("!!~~1", 100);

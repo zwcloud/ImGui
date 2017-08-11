@@ -90,7 +90,6 @@ namespace ImGui.Layout
 
             this.Style = style ?? GUIStyle.Default;
             ApplyStyle();
-            ApplyOverridedStyle();
         }
 
         private void ApplyStyle()
@@ -112,14 +111,12 @@ namespace ImGui.Layout
             this.VerticalStretchFactor = this.Style.VerticalStretchFactor;
         }
 
-        private void ApplyOverridedStyle()
+        public void ApplyOverridedStyle(int hsf, int vsf)
         {
-            var hsf = GUILayout.GetOverrideHorizontalStretchFactor();
             if(hsf > 0 )
             {
                 this.HorizontalStretchFactor = hsf;
             }
-            var vsf = GUILayout.GetOverrideVerticalStretchFactor();
             if (vsf > 0)
             {
                 this.VerticalStretchFactor = vsf;

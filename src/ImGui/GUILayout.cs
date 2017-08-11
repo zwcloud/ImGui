@@ -47,10 +47,10 @@ namespace ImGui
             Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
-            PushHorizontalStretchFactor(1);
+            PushHStretchFactor(1);
             PushID(id);
             window.StackLayout.BeginLayoutGroup(id, false, size, style);
-            PopHorizontalStretchFactor();
+            PopHStretchFactor();
         }
 
         public static void EndHorizontal()
@@ -71,10 +71,10 @@ namespace ImGui
             Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
-            PushHorizontalStretchFactor(1);
+            PushHStretchFactor(1);
             PushID(id);
             window.StackLayout.BeginLayoutGroup(id, true, size, style);
-            PopHorizontalStretchFactor();
+            PopHStretchFactor();
         }
 
         public static void EndVertical()

@@ -4,7 +4,7 @@ using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
-    internal class StackLayout
+    internal partial class StackLayout
     {
         public bool dirty;
 
@@ -52,6 +52,7 @@ namespace ImGui.Layout
             // build entry for next frame
             {
                 var entry = new LayoutEntry(id, style, contentSize);
+                entry.ApplyOverridedStyle(this.HorizontalStretchFactor, this.VerticalStretchFactor);
                 this.WritingStack.Peek().Add(entry);
             }
 
@@ -73,6 +74,7 @@ namespace ImGui.Layout
             // build group for next frame
             {
                 var group = new LayoutGroup(id, isVertical, style, size);
+                group.ApplyOverridedStyle(this.HorizontalStretchFactor, this.VerticalStretchFactor);
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }
