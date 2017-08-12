@@ -2,6 +2,15 @@
 {
     public partial class GUILayout
     {
+        #region fixed width/height (same min/max width/height)
+
+        public static void PushWidth(double width) => PushWidth((width, width));
+
+        public static void PushHeight(double height) => PushHeight((height, height));
+
+        //pop methods are shared
+        #endregion
+
         #region min/max width
 
         public static void PushWidth((double, double) width)
@@ -16,6 +25,20 @@
             var window = GetCurrentWindow();
             var layout = window.StackLayout;
             layout.PopWidth();
+        }
+
+        public static void PushHeight((double, double) height)
+        {
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PushHeight(height);
+        }
+
+        public static void PopHeight()
+        {
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PopHeight();
         }
 
         #endregion

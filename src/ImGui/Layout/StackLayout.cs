@@ -128,7 +128,7 @@ namespace ImGui.Layout
             rootGroup.ContentHeight = size.Height;
         }
 
-        public void ApplyOverridedStyle(LayoutEntry entry)
+        private void ApplyOverridedStyle(LayoutEntry entry)
         {
             if (this.MinWidth > 0) entry.MinWidth = this.MinWidth;
             if (this.MaxWidth  > 0) entry.MaxWidth = this.MaxWidth;
@@ -140,7 +140,7 @@ namespace ImGui.Layout
             if (this.Padding.Item1 > 0) entry.Padding = this.Padding;
         }
 
-        public void ApplyOverridedStyle(LayoutGroup group)
+        private void ApplyOverridedStyle(LayoutGroup group)
         {
             ApplyOverridedStyle(group as LayoutEntry);
             if (this.CellSpacingHorizontal > 0) group.CellSpacingHorizontal = this.CellSpacingHorizontal;

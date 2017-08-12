@@ -13,22 +13,22 @@ namespace UniversalAppTemplate
         protected override void OnGUI()
         {
             GUILayout.BeginHorizontal("H~~~1");
-            GUILayout.Button("1");
+            GUILayout.Button("1");//width = content width + (padding width) + (border width)
             GUILayout.Button("2");
             GUILayout.Button("3");
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal("H~~~2");
             GUILayout.PushHStretchFactor(3);
-            GUILayout.PushWidth((100, 200));
-            GUILayout.Button("3");
+            GUILayout.PushWidth(200);
+            GUILayout.Button("3");//width fixed to 200, content-box width = 200 - (padding width) - (border width)
             GUILayout.PopWidth();
             GUILayout.PopHStretchFactor();
-            GUILayout.PushHStretchFactor(2);
+            GUILayout.PushHStretchFactor(2);//width is stretched, width = 2 * (contatiner content-box width)/(container children count)
             GUILayout.Button("2");
             GUILayout.PopHStretchFactor();
-            GUILayout.PushHStretchFactor(1);
+            GUILayout.PushVStretchFactor(1);
             GUILayout.Button("1");
-            GUILayout.PopHStretchFactor();
+            GUILayout.PopVStretchFactor();
             GUILayout.EndHorizontal();
 
             //GUILayout.Space("!!~~1", 100);

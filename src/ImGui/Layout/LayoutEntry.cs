@@ -5,7 +5,7 @@ using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
-    [DebuggerDisplay("{Id}, Rect={Rect}")]
+    [DebuggerDisplay("Entry {Id}, Rect={Rect}")]
     internal class LayoutEntry
     {
         /// <summary>

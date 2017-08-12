@@ -5,7 +5,7 @@ using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
-    [DebuggerDisplay("{Id}, Count={Entries.Count}")]
+    [DebuggerDisplay("Group {Id}, Count={Entries.Count}")]
     internal class LayoutGroup : LayoutEntry
     {
         private int cursor;
