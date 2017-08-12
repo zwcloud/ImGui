@@ -80,7 +80,23 @@ namespace ImGui.Layout
         /// </summary>
         public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
 
-        protected GUIStyle Style;
+        protected (double, double, double, double) Border = (0, 0, 0, 0);
+
+        protected (double, double, double, double) Padding = (0, 0, 0, 0);
+
+        public double BorderTop => Border.Item1;
+        public double BorderRight => Border.Item2;
+        public double BorderBottom => Border.Item3;
+        public double BorderLeft => Border.Item4;
+        public double BorderHorizontal => BorderLeft + BorderRight;
+        public double BorderVertical => BorderTop + BorderBottom;
+
+        public double PaddingTop => Padding.Item1;
+        public double PaddingRight => Padding.Item2;
+        public double PaddingBottom => Padding.Item3;
+        public double PaddingLeft => Padding.Item4;
+        public double PaddingHorizontal => PaddingLeft + PaddingRight;
+        public double PaddingVertical => PaddingTop + PaddingBottom;
 
         public LayoutEntry(int id, GUIStyle style, Size contentSize)
         {
@@ -88,16 +104,20 @@ namespace ImGui.Layout
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
 
-            this.Style = style ?? GUIStyle.Default;
-            ApplyStyle();
+            ApplyStyle(style);
         }
 
-        private void ApplyStyle()
+        protected virtual void ApplyStyle(GUIStyle style)
         {
-            this.MinWidth = MathEx.Clamp(this.Style.MinWidth, 1, 9999);
-            this.MaxWidth = MathEx.Clamp(this.Style.MaxWidth, 1, 9999);
-            this.MinHeight = MathEx.Clamp(this.Style.MinHeight, 1, 9999);
-            this.MaxHeight = MathEx.Clamp(this.Style.MaxHeight, 1, 9999);
+            if(style == null)
+            {
+                style = GUIStyle.Default;
+            }
+
+            this.MinWidth = MathEx.Clamp(this.MinWidth, 1, 9999);
+            this.MaxWidth = MathEx.Clamp(this.MaxWidth, 1, 9999);
+            this.MinHeight = MathEx.Clamp(this.MinHeight, 1, 9999);
+            this.MaxHeight = MathEx.Clamp(this.MaxHeight, 1, 9999);
             if (this.MinWidth > this.MaxWidth)
             {
                 this.MaxWidth = this.MinWidth;
@@ -107,8 +127,10 @@ namespace ImGui.Layout
                 this.MaxHeight = this.MinHeight;
             }
 
-            this.HorizontalStretchFactor = this.Style.HorizontalStretchFactor;
-            this.VerticalStretchFactor = this.Style.VerticalStretchFactor;
+            this.HorizontalStretchFactor = style.HorizontalStretchFactor;
+            this.VerticalStretchFactor = style.VerticalStretchFactor;
+            this.Border = style.Border;
+            this.Padding = style.Padding;
         }
 
         public void ApplyOverridedStyle(int hsf, int vsf)
@@ -134,7 +156,7 @@ namespace ImGui.Layout
                 switch (option.type)
                 {
                     case LayoutOptionType.FixedWidth:
-                        double horizontalSpace = this.Style.PaddingHorizontal + this.Style.BorderHorizontal;
+                        double horizontalSpace = this.PaddingHorizontal + this.BorderHorizontal;
                         if ((double)option.Value < horizontalSpace)
                         {
                             throw new InvalidOperationException(
@@ -144,7 +166,7 @@ namespace ImGui.Layout
                         this.HorizontalStretchFactor = 0;
                         break;
                     case LayoutOptionType.FixedHeight:
-                        double verticalSpace = this.Style.PaddingVertical + this.Style.BorderVertical;
+                        double verticalSpace = this.PaddingVertical + this.BorderVertical;
                         if ((double)option.Value < verticalSpace)
                         {
                             throw new InvalidOperationException(
@@ -184,7 +206,7 @@ namespace ImGui.Layout
                 if (unitPartWidth > 0)
                 {
                     this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
-                    this.ContentWidth = this.Rect.Width - this.Style.PaddingHorizontal - this.Style.BorderHorizontal;
+                    this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
                 }
                 else
                 {
@@ -194,11 +216,11 @@ namespace ImGui.Layout
             else if (this.IsFixedWidth)
             {
                 this.Rect.Width = this.MinWidth;
-                this.ContentWidth = this.Rect.Width - this.Style.PaddingHorizontal - this.Style.BorderHorizontal;
+                this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
             }
             else
             {
-                this.Rect.Width = this.ContentWidth + this.Style.PaddingHorizontal + this.Style.BorderHorizontal;
+                this.Rect.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
             }
         }
 
@@ -209,7 +231,7 @@ namespace ImGui.Layout
                 if (unitPartHeight > 0)
                 {
                     this.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
-                    this.ContentHeight = this.Rect.Height - this.Style.PaddingVertical - this.Style.BorderVertical;
+                    this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
                 }
                 else
                 {
@@ -219,11 +241,11 @@ namespace ImGui.Layout
             else if (this.IsFixedHeight)
             {
                 this.Rect.Height = this.MinHeight;
-                this.ContentHeight = this.Rect.Height - this.Style.PaddingVertical - this.Style.BorderVertical;
+                this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
             }
             else
             {
-                this.Rect.Height = this.ContentHeight + this.Style.PaddingVertical + this.Style.BorderVertical;
+                this.Rect.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
             }
         }
 

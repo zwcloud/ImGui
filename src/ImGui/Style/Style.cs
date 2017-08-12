@@ -419,10 +419,10 @@ namespace ImGui
                 Set<Color>(GUIStyleName.BorderLeftColor, value);
             }
         }
-        public Color BorderTopColor =>      Get<Color>(GUIStyleName.BorderTopColor);
-        public Color BorderRightColor =>    Get<Color>(GUIStyleName.BorderRightColor);
-        public Color BorderBottomColor =>   Get<Color>(GUIStyleName.BorderBottomColor);
-        public Color BorderLeftColor =>     Get<Color>(GUIStyleName.BorderLeftColor);
+        public Color BorderTopColor => Get<Color>(GUIStyleName.BorderTopColor);
+        public Color BorderRightColor => Get<Color>(GUIStyleName.BorderRightColor);
+        public Color BorderBottomColor => Get<Color>(GUIStyleName.BorderBottomColor);
+        public Color BorderLeftColor => Get<Color>(GUIStyleName.BorderLeftColor);
         public ITexture BorderImageSource => Get<ITexture>(GUIStyleName.BorderImageSource);
         public (double, double, double, double) BorderImageSlice
         {
@@ -467,8 +467,21 @@ namespace ImGui
             set => Set<int>(GUIStyleName.VerticalStretchFactor, value);
         }
 
-        public double CellingSpacingHorizontal => Get<double>(GUIStyleName.CellingSpacingHorizontal);
-        public double CellingSpacingVertical => Get<double>(GUIStyleName.CellingSpacingVertical);
+        public double CellSpacingHorizontal
+        {
+            get => Get<double>(GUIStyleName.CellingSpacingHorizontal);
+            set => Set<double>(GUIStyleName.CellingSpacingHorizontal, value);
+        }
+        public double CellSpacingVertical
+        {
+            get => Get<double>(GUIStyleName.CellingSpacingVertical);
+            set => Set<double>(GUIStyleName.CellingSpacingVertical, value);
+        }
+        public (double, double) CellSpacing
+        {
+            get => (CellSpacingHorizontal, CellSpacingVertical);
+            set { CellSpacingHorizontal = value.Item1; CellSpacingVertical = value.Item2; }
+        }
 
         public Alignment AlignmentHorizontal
         {
@@ -479,6 +492,11 @@ namespace ImGui
         {
             get => (Alignment)Get<int>(GUIStyleName.AlignmentVertical);
             set => Set<int>(GUIStyleName.AlignmentVertical, (int)value);
+        }
+        public (Alignment, Alignment) GroupAlignment
+        {
+            get => (AlignmentHorizontal, AlignmentVertical);
+            set { AlignmentHorizontal = value.Item1; AlignmentVertical = value.Item2; }
         }
 
         #endregion Layout

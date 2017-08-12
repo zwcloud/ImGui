@@ -47,7 +47,7 @@ namespace ImGui.UnitTest.Layout
                     var rect2 = layout.GetRect(2, size, null, null); //get rect 2
 
                     Assert.Equal(0, rect2.X);
-                    Assert.Equal(300 + GUIStyle.Default.CellingSpacingVertical, rect2.Y);
+                    Assert.Equal(300 + GUIStyle.Default.CellSpacingVertical, rect2.Y);
                     Assert.Equal(size.Width, rect2.Width);
                     Assert.Equal(size.Height, rect2.Height);
 
