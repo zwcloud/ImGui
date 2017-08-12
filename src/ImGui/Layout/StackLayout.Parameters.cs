@@ -6,6 +6,7 @@ namespace ImGui.Layout
 {
     internal partial class StackLayout
     {
+        #region stretch factor
         Stack<int> horizontalStretchFactorStack = new Stack<int>();
         Stack<int> verticalStretchFactorStack = new Stack<int>();
 
@@ -39,5 +40,8 @@ namespace ImGui.Layout
                 this.HorizontalStretchFactor = horizontalStretchFactorStack.Count == 0 ? -1 : horizontalStretchFactorStack.Peek();
             }
         }
+
+        #endregion
+
     }
 }

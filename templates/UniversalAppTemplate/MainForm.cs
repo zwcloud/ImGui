@@ -13,15 +13,9 @@ namespace UniversalAppTemplate
         protected override void OnGUI()
         {
             GUILayout.BeginHorizontal("H~~~1");
-            GUILayout.PushHStretchFactor(1);
             GUILayout.Button("1");
-            GUILayout.PopHStretchFactor();
-            GUILayout.PushHStretchFactor(2);
             GUILayout.Button("2");
-            GUILayout.PopHStretchFactor();
-            GUILayout.PushHStretchFactor(3);
             GUILayout.Button("3");
-            GUILayout.PopHStretchFactor();
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal("H~~~2");
             GUILayout.PushHStretchFactor(3);

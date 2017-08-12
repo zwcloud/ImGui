@@ -10,27 +10,21 @@ namespace ImGui
         /// Create an auto-layout button. When the user click it, something will happen immediately.
         /// </summary>
         /// <param name="text">text to display on the button</param>
-        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
-        /// <returns>true when the users clicks the button.</returns>
-        public static bool Button(string text)
+        internal static bool Button(string text)
         {
-            return Button(text, GUISkin.Instance[GUIControlName.Button]);
+            return DoButton(text);
         }
 
-        internal static bool Button(string text, GUIStyle style)
-        {
-            return DoButton(text, style);
-        }
-
-        private static bool DoButton(string text, GUIStyle style)
+        private static bool DoButton(string text)
         {
             Window window = GetCurrentWindow();
 
             int id = window.GetID(text);
+            var style = GUISkin.Instance[GUIControlName.Button];
             Size size = style.CalcSize(text, GUIState.Normal);
             Rect rect = window.GetRect(id, size, style);
 
-            return GUI.Button(rect, text);
+            return GUI.DoButton(rect, text);
         }
     }
 

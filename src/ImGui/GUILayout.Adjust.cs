@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ImGui
+﻿namespace ImGui
 {
     public partial class GUILayout
     {
