@@ -19,7 +19,9 @@ namespace UniversalAppTemplate
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal("H~~~2");
             GUILayout.PushHStretchFactor(3);
+            GUILayout.PushWidth((100, 200));
             GUILayout.Button("3");
+            GUILayout.PopWidth();
             GUILayout.PopHStretchFactor();
             GUILayout.PushHStretchFactor(2);
             GUILayout.Button("2");

@@ -7,5 +7,6 @@
         End,
         SpaceAround,
         SpaceBetween,
+        Undefined,
     }
 }

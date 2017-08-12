@@ -10,10 +10,10 @@ namespace ImGui.Layout
     {
         private int cursor;
 
-        public double CellSpacingHorizontal { get; set; }
-        public double CellSpacingVertical { get; set; }
-        public Alignment AlignmentHorizontal { get; set; }
-        public Alignment AlignmentVertical { get; set; }
+        public double CellSpacingHorizontal { get; set; } = 0;
+        public double CellSpacingVertical { get; set; } = 0;
+        public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
+        public Alignment AlignmentVertical { get; set; } = Alignment.Start;
 
         public LayoutGroup(int id, bool isVertical, GUIStyle style, Size contentSize) : base(id, style, contentSize)
         {

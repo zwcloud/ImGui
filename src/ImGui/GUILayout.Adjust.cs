@@ -2,6 +2,24 @@
 {
     public partial class GUILayout
     {
+        #region min/max width
+
+        public static void PushWidth((double, double) width)
+        {
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PushWidth(width);
+        }
+
+        public static void PopWidth()
+        {
+            var window = GetCurrentWindow();
+            var layout = window.StackLayout;
+            layout.PopWidth();
+        }
+
+        #endregion
+
         public static void PushHStretchFactor(int factor)
         {
             var window = GetCurrentWindow();

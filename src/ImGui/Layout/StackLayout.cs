@@ -52,7 +52,7 @@ namespace ImGui.Layout
             // build entry for next frame
             {
                 var entry = new LayoutEntry(id, style, contentSize);
-                entry.ApplyOverridedStyle(this.HorizontalStretchFactor, this.VerticalStretchFactor);
+                ApplyOverridedStyle(entry);
                 this.WritingStack.Peek().Add(entry);
             }
 
@@ -74,7 +74,7 @@ namespace ImGui.Layout
             // build group for next frame
             {
                 var group = new LayoutGroup(id, isVertical, style, size);
-                group.ApplyOverridedStyle(this.HorizontalStretchFactor, this.VerticalStretchFactor);
+                ApplyOverridedStyle(group);
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }
@@ -126,6 +126,27 @@ namespace ImGui.Layout
             var rootGroup = this.ReadingStack.Peek();
             rootGroup.ContentWidth = size.Width;
             rootGroup.ContentHeight = size.Height;
+        }
+
+        public void ApplyOverridedStyle(LayoutEntry entry)
+        {
+            if (this.MinWidth > 0) entry.MinWidth = this.MinWidth;
+            if (this.MaxWidth  > 0) entry.MaxWidth = this.MaxWidth;
+            if (this.MinHeight > 0) entry.MinHeight = this.MinHeight;
+            if (this.MaxHeight > 0) entry.MaxHeight = this.MaxHeight;
+            if (this.HorizontalStretchFactor > 0) entry.HorizontalStretchFactor = this.HorizontalStretchFactor;
+            if (this.VerticalStretchFactor > 0) entry.VerticalStretchFactor = this.VerticalStretchFactor;
+            if (this.Border.Item1 > 0) entry.Border = this.Border;
+            if (this.Padding.Item1 > 0) entry.Padding = this.Padding;
+        }
+
+        public void ApplyOverridedStyle(LayoutGroup group)
+        {
+            ApplyOverridedStyle(group as LayoutEntry);
+            if (this.CellSpacingHorizontal > 0) group.CellSpacingHorizontal = this.CellSpacingHorizontal;
+            if (this.CellSpacingVertical > 0) group.CellSpacingVertical = this.CellSpacingVertical;
+            if (this.AlignmentHorizontal != Alignment.Undefined) group.AlignmentHorizontal = this.AlignmentHorizontal;
+            if (this.AlignmentVertical != Alignment.Undefined) group.AlignmentVertical = this.AlignmentVertical;
         }
     }
 }

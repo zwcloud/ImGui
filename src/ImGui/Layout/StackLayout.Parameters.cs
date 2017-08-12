@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace ImGui.Layout
 {
     internal partial class StackLayout
     {
-        #region min/max width
+        #region min/max width/height
 
         Stack<(double, double)> widthStack = new Stack<(double, double)>();
-        private (double,double) width { get; set; }
+        private (double, double) width { get; set; } = (1, 9999);
         public double MinWidth => this.width.Item1;
         public double MaxWidth => this.width.Item2;
 
@@ -22,7 +20,25 @@ namespace ImGui.Layout
         public void PopWidth()
         {
             widthStack.Pop();
-            this.width = widthStack.Count == 0 ? (1, 9999) : widthStack.Peek();
+            this.width = widthStack.Count == 0 ? (-1, -1) : widthStack.Peek();
+        }
+
+
+        Stack<(double, double)> heightStack = new Stack<(double, double)>();
+        private (double, double) height { get; set; } = (1, 9999);
+        public double MinHeight => this.height.Item1;
+        public double MaxHeight => this.height.Item2;
+
+        public void PushHeight((double, double) height)
+        {
+            heightStack.Push(height);
+            this.height = height;
+        }
+
+        public void PopHeight()
+        {
+            heightStack.Pop();
+            this.height = heightStack.Count == 0 ? (-1, -1) : heightStack.Peek();
         }
 
         #endregion
@@ -68,8 +84,8 @@ namespace ImGui.Layout
 
         Stack<double> cellSpacingHorizontalStack = new Stack<double>();
         Stack<double> cellSpacingVerticalStack = new Stack<double>();
-        public double CellSpacingHorizontal { get; set; }
-        public double CellSpacingVertical { get; set; }
+        public double CellSpacingHorizontal { get; set; } = 0;
+        public double CellSpacingVertical { get; set; } = 0;
 
         public void PushCellSpacing(bool isVertical, double spacing)
         {
@@ -103,12 +119,12 @@ namespace ImGui.Layout
 
         #region alignment
 
-        Stack<double> alignmentHorizontalStack = new Stack<double>();
-        Stack<double> alignmentVerticalStack = new Stack<double>();
-        public double AlignmentHorizontal { get; set; }
-        public double AlignmentVertical { get; set; }
+        Stack<Alignment> alignmentHorizontalStack = new Stack<Alignment>();
+        Stack<Alignment> alignmentVerticalStack = new Stack<Alignment>();
+        public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
+        public Alignment AlignmentVertical { get; set; } = Alignment.Start;
 
-        public void PushAlignment(bool isVertical, double spacing)
+        public void PushAlignment(bool isVertical, Alignment spacing)
         {
             if (isVertical)
             {
@@ -127,12 +143,12 @@ namespace ImGui.Layout
             if (isVertical)
             {
                 alignmentVerticalStack.Pop();
-                this.AlignmentVertical = alignmentVerticalStack.Count == 0 ? -1 : alignmentVerticalStack.Peek();
+                this.AlignmentVertical = alignmentVerticalStack.Count == 0 ? Alignment.Undefined : alignmentVerticalStack.Peek();
             }
             else
             {
                 alignmentHorizontalStack.Pop();
-                this.AlignmentHorizontal = alignmentHorizontalStack.Count == 0 ? -1 : alignmentHorizontalStack.Peek();
+                this.AlignmentHorizontal = alignmentHorizontalStack.Count == 0 ? Alignment.Undefined : alignmentHorizontalStack.Peek();
             }
         }
 
@@ -140,7 +156,7 @@ namespace ImGui.Layout
 
         #region box model
         Stack<(double, double, double, double)> borderStack = new Stack<(double, double, double, double)>();
-        public (double, double, double, double) Border { get; set; }
+        public (double, double, double, double) Border { get; set; } = (0, 0, 0, 0);
 
         public void PushBorder((double, double, double, double) border)
         {
@@ -150,7 +166,21 @@ namespace ImGui.Layout
         public void PopBorder()
         {
             borderStack.Pop();
-            this.Border = borderStack.Count == 0 ? (-1,-1,-1,-1) : borderStack.Peek();
+            this.Border = borderStack.Count == 0 ? (-1, -1, -1, -1) : borderStack.Peek();
+        }
+
+        Stack<(double, double, double, double)> paddingStack = new Stack<(double, double, double, double)>();
+        public (double, double, double, double) Padding { get; set; } = (0, 0, 0, 0);
+
+        public void PushPadding((double, double, double, double) padding)
+        {
+            this.Padding = padding;
+        }
+
+        public void PopPadding()
+        {
+            paddingStack.Pop();
+            this.Padding = paddingStack.Count == 0 ? (-1, -1, -1, -1) : paddingStack.Peek();
         }
 
         #endregion

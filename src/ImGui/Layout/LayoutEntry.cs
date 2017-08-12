@@ -80,9 +80,9 @@ namespace ImGui.Layout
         /// </summary>
         public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
 
-        protected (double, double, double, double) Border = (0, 0, 0, 0);
+        public (double, double, double, double) Border = (0, 0, 0, 0);
 
-        protected (double, double, double, double) Padding = (0, 0, 0, 0);
+        public (double, double, double, double) Padding = (0, 0, 0, 0);
 
         public double BorderTop => Border.Item1;
         public double BorderRight => Border.Item2;
@@ -127,75 +127,39 @@ namespace ImGui.Layout
                 this.MaxHeight = this.MinHeight;
             }
 
-            this.HorizontalStretchFactor = style.HorizontalStretchFactor;
-            this.VerticalStretchFactor = style.VerticalStretchFactor;
             this.Border = style.Border;
             this.Padding = style.Padding;
-        }
 
-        public void ApplyOverridedStyle(int hsf, int vsf)
-        {
-            if(hsf > 0 )
+            if (IsFixedWidth)
             {
-                this.HorizontalStretchFactor = hsf;
-            }
-            if (vsf > 0)
-            {
-                this.VerticalStretchFactor = vsf;
-            }
-        }
-
-        protected void ApplyOptions(LayoutOption[] options)
-        {
-            if (options == null)
-            {
-                return;
-            }
-            foreach (var option in options)
-            {
-                switch (option.type)
+                double horizontalSpace = this.PaddingHorizontal + this.BorderHorizontal;
+                var fixedWidth = MinWidth;
+                if(fixedWidth < horizontalSpace)
                 {
-                    case LayoutOptionType.FixedWidth:
-                        double horizontalSpace = this.PaddingHorizontal + this.BorderHorizontal;
-                        if ((double)option.Value < horizontalSpace)
-                        {
-                            throw new InvalidOperationException(
-                                string.Format("The specified width is too small. It must bigger than the horizontal padding and border size ({0}).", horizontalSpace));
-                        }
-                        this.MinWidth = this.MaxWidth = (double)option.Value;
-                        this.HorizontalStretchFactor = 0;
-                        break;
-                    case LayoutOptionType.FixedHeight:
-                        double verticalSpace = this.PaddingVertical + this.BorderVertical;
-                        if ((double)option.Value < verticalSpace)
-                        {
-                            throw new InvalidOperationException(
-                                string.Format("The specified height is too small. It must bigger than the vertical padding and border size ({0}).", verticalSpace));
-                        }
-                        this.MinHeight = this.MaxHeight = (double)option.Value;
-                        this.VerticalStretchFactor = 0;
-                        break;
-                    case LayoutOptionType.StretchWidth:
-                        this.HorizontalStretchFactor = (int)option.Value;
-                        break;
-                    case LayoutOptionType.StretchHeight:
-                        this.VerticalStretchFactor = (int)option.Value;
-                        break;
-                    case LayoutOptionType.MinWidth:
-                    case LayoutOptionType.MaxWidth:
-                    case LayoutOptionType.MinHeight:
-                    case LayoutOptionType.MaxHeight:
-                    case LayoutOptionType.AlignStart:
-                    case LayoutOptionType.AlignMiddle:
-                    case LayoutOptionType.AlignEnd:
-                    case LayoutOptionType.AlignJustify:
-                    case LayoutOptionType.EqualSize:
-                    case LayoutOptionType.Spacing:
-                        //TODO handle min/max width/height
-                        throw new NotImplementedException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    throw new InvalidOperationException(
+                        string.Format("Specified width is too small. It must bigger than the horizontal padding and border size ({0}).", horizontalSpace));
                 }
+                this.HorizontalStretchFactor = 0;
+            }
+            else
+            {
+                this.HorizontalStretchFactor = style.HorizontalStretchFactor;
+            }
+
+            if (IsFixedHeight)
+            {
+                double verticalSpace = this.PaddingVertical + this.BorderVertical;
+                var fixedHeight = MinHeight;
+                if (fixedHeight < verticalSpace)
+                {
+                    throw new InvalidOperationException(
+                        string.Format("Specified height is too small. It must bigger than the vertical padding and border size ({0}).", verticalSpace));
+                }
+                this.VerticalStretchFactor = 0;
+            }
+            else
+            {
+                this.VerticalStretchFactor = style.VerticalStretchFactor;
             }
         }
 
