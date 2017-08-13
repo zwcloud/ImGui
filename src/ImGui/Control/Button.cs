@@ -17,12 +17,14 @@ namespace ImGui
 
         private static bool DoButton(string text)
         {
+            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
+            //var style = GUISkin.Instance[GUIControlName.Button];//TODO apply this . GUISkin should only record style modifiers
+            var style = g.StyleStack.Style;
 
             int id = window.GetID(text);
-            var style = GUISkin.Instance[GUIControlName.Button];
             Size size = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id, size, style);
+            Rect rect = window.GetRect(id, size);
 
             return GUI.DoButton(rect, text);
         }

@@ -283,9 +283,9 @@ namespace ImGui
         /// <param name="size">size of content, border and padding NOT included</param>
         /// <param name="style">style that will apply to requested rect</param>
         /// <returns></returns>
-        public Rect GetRect(int id, Size size, GUIStyle style)
+        public Rect GetRect(int id, Size size)
         {
-            var rect = StackLayout.GetRect(id, size, style);
+            var rect = StackLayout.GetRect(id, size);
 
             Rect newContentRect = ContentRect;
             newContentRect.Union(rect);

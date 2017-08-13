@@ -15,20 +15,19 @@ namespace ImGui.Layout
         public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
         public Alignment AlignmentVertical { get; set; } = Alignment.Start;
 
-        public LayoutGroup(int id, bool isVertical, GUIStyle style, Size contentSize) : base(id, style, contentSize)
+        public LayoutGroup(int id, bool isVertical, Size contentSize) : base(id, contentSize)
         {
             this.IsVertical = isVertical;
             this.cursor = 0;
 
-            this.ApplyStyle(style);
+            this.ApplyStyle();
         }
 
-        protected override void ApplyStyle(GUIStyle style)
+        protected override void ApplyStyle()
         {
-            if (style == null)
-            {
-                style = GUIStyle.Default;
-            }
+            base.ApplyStyle();
+
+            var style = Form.current.uiContext.StyleStack.Style;
 
             var csh = style.CellSpacingHorizontal;
             if(csh >= 0)

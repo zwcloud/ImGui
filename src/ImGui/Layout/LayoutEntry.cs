@@ -98,26 +98,23 @@ namespace ImGui.Layout
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
 
-        public LayoutEntry(int id, GUIStyle style, Size contentSize)
+        public LayoutEntry(int id, Size contentSize)
         {
             this.Id = id;
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
 
-            ApplyStyle(style);
+            ApplyStyle();
         }
 
-        protected virtual void ApplyStyle(GUIStyle style)
+        protected virtual void ApplyStyle()
         {
-            if(style == null)
-            {
-                style = GUIStyle.Default;
-            }
+            var style = Form.current.uiContext.StyleStack.Style;
 
-            this.MinWidth = MathEx.Clamp(this.MinWidth, 1, 9999);
-            this.MaxWidth = MathEx.Clamp(this.MaxWidth, 1, 9999);
-            this.MinHeight = MathEx.Clamp(this.MinHeight, 1, 9999);
-            this.MaxHeight = MathEx.Clamp(this.MaxHeight, 1, 9999);
+            this.MinWidth = MathEx.Clamp(style.MinWidth, 1, 9999);
+            this.MaxWidth = MathEx.Clamp(style.MaxWidth, 1, 9999);
+            this.MinHeight = MathEx.Clamp(style.MinHeight, 1, 9999);
+            this.MaxHeight = MathEx.Clamp(style.MaxHeight, 1, 9999);
             if (this.MinWidth > this.MaxWidth)
             {
                 this.MaxWidth = this.MinWidth;

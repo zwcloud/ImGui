@@ -1,9 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ImGui
 {
+    struct StyleModifier
+    {
+        public Action<GUIStyle> callback;
+    }
+
     internal class StyleStack
     {
+        Stack<GUIStyle> Stack { get; } = new Stack<GUIStyle>();
+        Stack<Action<GUIStyle>> ModifierStack { get; } = new Stack<Action<GUIStyle>>();
+        public GUIStyle Style
+        {
+            get
+            {
+                if(this.Stack.Count > 0)
+                {
+                    return this.Stack.Peek();
+                }
+                else
+                {
+                    return GUISkin.Instance[GUIControlName.Button];
+                }
+            }
+        }
+
+        public void Push(GUIStyle style)
+        {
+            this.Stack.Push(style);
+        }
+
+        public void Pop()
+        {
+            this.Stack.Pop();
+        }
+
         #region positon, size
 
         #region min/max width/height
@@ -25,7 +58,6 @@ namespace ImGui
             this.width = widthStack.Count == 0 ? (-1, -1) : widthStack.Peek();
         }
 
-
         Stack<(double, double)> heightStack = new Stack<(double, double)>();
         private (double, double) height { get; set; } = (1, 9999);
         public double MinHeight => this.height.Item1;
@@ -46,38 +78,38 @@ namespace ImGui
         #endregion
 
         #region stretch factor
-        Stack<int> horizontalStretchFactorStack = new Stack<int>();
-        Stack<int> verticalStretchFactorStack = new Stack<int>();
 
-        public int HorizontalStretchFactor { get; set; } = 0;
-        public int VerticalStretchFactor { get; set; } = 0;
+        public int HorizontalStretchFactor => this.Style.HorizontalStretchFactor;
+        public int VerticalStretchFactor => this.Style.VerticalStretchFactor;
 
         public void PushStretchFactor(bool isVertical, int factor)
         {
             if (isVertical)
             {
-                this.verticalStretchFactorStack.Push(factor);
-                this.VerticalStretchFactor = factor;
+                var oldVerticalStretchFactor = this.Style.VerticalStretchFactor;
+                this.Style.VerticalStretchFactor = factor;
+                Action<GUIStyle> callback = (s) =>
+                {
+                    s.VerticalStretchFactor = oldVerticalStretchFactor;
+                };
+                ModifierStack.Push(callback);
             }
             else
             {
-                this.horizontalStretchFactorStack.Push(factor);
-                this.HorizontalStretchFactor = factor;
+                var oldHorizontalStretchFactor = this.Style.HorizontalStretchFactor;
+                this.Style.HorizontalStretchFactor = factor;
+                Action<GUIStyle> callback = (s) =>
+                {
+                    s.HorizontalStretchFactor = oldHorizontalStretchFactor;
+                };
+                ModifierStack.Push(callback);
             }
         }
 
         public void PopStretchFactor(bool isVertical)
         {
-            if (isVertical)
-            {
-                verticalStretchFactorStack.Pop();
-                this.VerticalStretchFactor = verticalStretchFactorStack.Count == 0 ? -1 : verticalStretchFactorStack.Peek();
-            }
-            else
-            {
-                horizontalStretchFactorStack.Pop();
-                this.HorizontalStretchFactor = horizontalStretchFactorStack.Count == 0 ? -1 : horizontalStretchFactorStack.Peek();
-            }
+            var restore = ModifierStack.Pop();
+            restore(this.Style);
         }
 
         #endregion

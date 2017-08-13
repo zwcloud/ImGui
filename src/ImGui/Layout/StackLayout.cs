@@ -25,8 +25,9 @@ namespace ImGui.Layout
 
         private LayoutGroup CreateRootGroup(int rootId, Size size)
         {
-            var rootGroup = new LayoutGroup(rootId, true, GUIStyle.Default, size);
-            rootGroup.HorizontalStretchFactor = 1;
+            var rootGroup = new LayoutGroup(rootId, true, size);
+            rootGroup.MinWidth = rootGroup.MaxWidth = size.Width;
+            rootGroup.MinHeight = rootGroup.MaxHeight = size.Height;
             return rootGroup;
         }
 
@@ -41,7 +42,7 @@ namespace ImGui.Layout
             this.ReadingStack = this.stackB;
         }
 
-        public Rect GetRect(int id, Size contentSize, GUIStyle style = null)
+        public Rect GetRect(int id, Size contentSize)
         {
             // FIXME This should only be checked if the rect's width or height is not stretched.
             //if (contentSize.Height < 1 || contentSize.Width < 1)
@@ -51,8 +52,8 @@ namespace ImGui.Layout
 
             // build entry for next frame
             {
-                var entry = new LayoutEntry(id, style, contentSize);
-                ApplyOverridedStyle(entry);
+                var entry = new LayoutEntry(id, contentSize);
+                //ApplyOverridedStyle(entry);
                 this.WritingStack.Peek().Add(entry);
             }
 
@@ -73,8 +74,8 @@ namespace ImGui.Layout
         {
             // build group for next frame
             {
-                var group = new LayoutGroup(id, isVertical, style, size);
-                ApplyOverridedStyle(group);
+                var group = new LayoutGroup(id, isVertical, size);
+                //ApplyOverridedStyle(group);
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }
@@ -89,7 +90,7 @@ namespace ImGui.Layout
                 }
                 if(group == null)// this happens when new group is added in previous frame
                 {
-                    group = new LayoutGroup(id, isVertical, style, size);//dummy (HACK added to reading stack to forbid NRE)
+                    group = new LayoutGroup(id, isVertical, size);//dummy (HACK added to reading stack to forbid NRE)
                 }
                 group.ResetCursor();
                 this.ReadingStack.Push(group);
@@ -123,9 +124,16 @@ namespace ImGui.Layout
 
         public void SetRootSize(Size size)
         {
-            var rootGroup = this.ReadingStack.Peek();
-            rootGroup.ContentWidth = size.Width;
-            rootGroup.ContentHeight = size.Height;
+            {
+                var rootGroup = this.ReadingStack.Peek();
+                rootGroup.MinWidth = rootGroup.MaxWidth = rootGroup.ContentWidth = size.Width;
+                rootGroup.MinHeight = rootGroup.MaxHeight = rootGroup.ContentHeight = size.Height;
+            }
+            {
+                var rootGroup = this.WritingStack.Peek();
+                rootGroup.MinWidth = rootGroup.MaxWidth = rootGroup.ContentWidth = size.Width;
+                rootGroup.MinHeight = rootGroup.MaxHeight = rootGroup.ContentHeight = size.Height;
+            }
         }
 
         private void ApplyOverridedStyle(LayoutEntry entry)
