@@ -30,6 +30,11 @@ namespace ImGui
 
         #endregion
 
+        internal static GUIContext GetCurrentContext()
+        {
+            return Form.current.uiContext;
+        }
+
         internal static Window GetCurrentWindow()
         {
             return Utility.GetCurrentWindow();
@@ -94,72 +99,5 @@ namespace ImGui
         // test only
 
         #endregion
-
-        #region options
-
-        /// <summary>
-        /// Set the width of a control.
-        /// </summary>
-        /// <param name="width">width value</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the width of a control/group.</returns>
-        public static LayoutOption Width(double width)
-        {
-            return new LayoutOption(LayoutOptionType.FixedWidth, width);
-        }
-
-        /// <summary>
-        /// Set the height of a control.
-        /// </summary>
-        /// <param name="height">height value</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the height of a control/group.</returns>
-        public static LayoutOption Height(double height)
-        {
-            return new LayoutOption(LayoutOptionType.FixedHeight, height);
-        }
-
-        /// <summary>
-        /// Set whether the width of a control should be expanded to occupy as much space as possible.
-        /// </summary>
-        /// <param name="expand">expanded?</param>
-        /// <returns>A <see cref="LayoutOption"/> that will expand the width of a control/group.</returns>
-        public static LayoutOption ExpandWidth(bool expand)
-        {
-            return new LayoutOption(LayoutOptionType.StretchWidth, (!expand) ? 0 : 1);
-        }
-
-        /// <summary>
-        /// Set whether the height of a control should be expanded to occupy as much space as possible.
-        /// </summary>
-        /// <param name="expand">expanded?</param>
-        /// <returns>A <see cref="LayoutOption"/> that will expand the height of a control/group.</returns>
-        public static LayoutOption ExpandHeight(bool expand)
-        {
-            return new LayoutOption(LayoutOptionType.StretchHeight, (!expand) ? 0 : 1);
-        }
-
-        /// <summary>
-        /// Set the factor when expanding the width of a control.
-        /// </summary>
-        /// <param name="factor">the value of the factor</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the width of a control/group.</returns>
-        public static LayoutOption StretchWidth(int factor)
-        {
-            if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
-            return new LayoutOption(LayoutOptionType.StretchWidth, factor);
-        }
-
-        /// <summary>
-        /// Set the factor when expanding the height of a control.
-        /// </summary>
-        /// <param name="factor">the value of the factor</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the height of a control/group.</returns>
-        public static LayoutOption StretchHeight(int factor)
-        {
-            if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
-            return new LayoutOption(LayoutOptionType.StretchHeight, factor);
-        }
-
-        #endregion
-
     }
 }

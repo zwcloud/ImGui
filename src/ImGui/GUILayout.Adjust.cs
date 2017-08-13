@@ -15,60 +15,104 @@
 
         public static void PushWidth((double, double) width)
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PushWidth(width);
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PushWidth(width);
         }
 
         public static void PopWidth()
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PopWidth();
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PopWidth();
         }
 
         public static void PushHeight((double, double) height)
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PushHeight(height);
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PushHeight(height);
         }
 
         public static void PopHeight()
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PopHeight();
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PopHeight();
         }
 
         #endregion
 
+        #region stretch factor
+
         public static void PushHStretchFactor(int factor)
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PushStretchFactor(false, factor);
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PushStretchFactor(false, factor);
         }
 
         public static void PopHStretchFactor()
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PopStretchFactor(false);
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PopStretchFactor(false);
         }
 
         public static void PushVStretchFactor(int factor)
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PushStretchFactor(true, factor);
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PushStretchFactor(true, factor);
         }
 
         public static void PopVStretchFactor()
         {
-            var window = GetCurrentWindow();
-            var layout = window.StackLayout;
-            layout.PopStretchFactor(true);
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PopStretchFactor(true);
         }
+
+        #endregion
+
+        #region cell spacing
+        //TODO
+        #endregion
+
+        #region alignment
+        //TODO
+        #endregion
+
+        #region box model
+
+        public static void PushBorder((double, double, double, double) border)
+        {
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PushBorder(border);
+        }
+
+        public static void PopBorder()
+        {
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PopBorder();
+        }
+
+        public static void PushPadding((double, double, double, double) padding)
+        {
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PushPadding(padding);
+        }
+
+        public static void PopPadding()
+        {
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.PopPadding();
+        }
+
+        #endregion
     }
 }

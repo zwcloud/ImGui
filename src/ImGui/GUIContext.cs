@@ -17,6 +17,8 @@ namespace ImGui
 
         public WindowManager WindowManager { get; } = new WindowManager();
 
+        public StyleStack StyleStack { get; } = new StyleStack();
+
         //public InputTextState InputTextState = new InputTextState();
 
         private int hoverId;

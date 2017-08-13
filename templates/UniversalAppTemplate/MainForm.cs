@@ -19,6 +19,7 @@ namespace UniversalAppTemplate
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal("H~~~2");
             GUILayout.PushHStretchFactor(3);
+            GUILayout.PushBorder((1, 20, 10, 2));
             GUILayout.PushWidth(200);
             GUILayout.Button("3");//width fixed to 200, content-box width = 200 - (padding width) - (border width)
             GUILayout.PopWidth();
@@ -26,6 +27,7 @@ namespace UniversalAppTemplate
             GUILayout.PushHStretchFactor(2);//width is stretched, width = 2 * (contatiner content-box width)/(container children count)
             GUILayout.Button("2");
             GUILayout.PopHStretchFactor();
+            GUILayout.PopBorder();
             GUILayout.PushVStretchFactor(1);
             GUILayout.Button("1");
             GUILayout.PopVStretchFactor();

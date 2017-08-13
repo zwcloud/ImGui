@@ -130,23 +130,44 @@ namespace ImGui.Layout
 
         private void ApplyOverridedStyle(LayoutEntry entry)
         {
-            if (this.MinWidth > 0) entry.MinWidth = this.MinWidth;
-            if (this.MaxWidth  > 0) entry.MaxWidth = this.MaxWidth;
-            if (this.MinHeight > 0) entry.MinHeight = this.MinHeight;
-            if (this.MaxHeight > 0) entry.MaxHeight = this.MaxHeight;
-            if (this.HorizontalStretchFactor > 0) entry.HorizontalStretchFactor = this.HorizontalStretchFactor;
-            if (this.VerticalStretchFactor > 0) entry.VerticalStretchFactor = this.VerticalStretchFactor;
-            if (this.Border.Item1 > 0) entry.Border = this.Border;
-            if (this.Padding.Item1 > 0) entry.Padding = this.Padding;
+            var context = Form.current.uiContext;
+            var styleStack = context.StyleStack;
+
+            var minWidth = styleStack.MinWidth;
+            var maxWidth = styleStack.MaxWidth;
+            var minHeight = styleStack.MinHeight;
+            var maxHeight = styleStack.MaxHeight;
+            var horizontalStretchFactor = styleStack.HorizontalStretchFactor;
+            var verticalStretchFactor = styleStack.VerticalStretchFactor;
+            var border = styleStack.Border;
+            var padding = styleStack.Padding;
+
+            if (minWidth > 0) entry.MinWidth = minWidth;
+            if (maxWidth  > 0) entry.MaxWidth =  maxWidth;
+            if (minHeight > 0) entry.MinHeight = minHeight;
+            if (maxHeight > 0) entry.MaxHeight = maxHeight;
+            if (horizontalStretchFactor > 0) entry.HorizontalStretchFactor = horizontalStretchFactor;
+            if (verticalStretchFactor > 0) entry.VerticalStretchFactor = verticalStretchFactor;
+            if (border.Item1 > 0) entry.Border = border;
+            if (padding.Item1 > 0) entry.Padding = padding;
         }
 
         private void ApplyOverridedStyle(LayoutGroup group)
         {
             ApplyOverridedStyle(group as LayoutEntry);
-            if (this.CellSpacingHorizontal > 0) group.CellSpacingHorizontal = this.CellSpacingHorizontal;
-            if (this.CellSpacingVertical > 0) group.CellSpacingVertical = this.CellSpacingVertical;
-            if (this.AlignmentHorizontal != Alignment.Undefined) group.AlignmentHorizontal = this.AlignmentHorizontal;
-            if (this.AlignmentVertical != Alignment.Undefined) group.AlignmentVertical = this.AlignmentVertical;
+
+            var context = Form.current.uiContext;
+            var styleStack = context.StyleStack;
+
+            var cellSpacingHorizontal = styleStack.CellSpacingHorizontal;
+            var cellSpacingVertical = styleStack.CellSpacingVertical;
+            var alignmentHorizontal = styleStack.AlignmentHorizontal;
+            var alignmentVertical = styleStack.AlignmentVertical;
+
+            if (cellSpacingHorizontal > 0) group.CellSpacingHorizontal = cellSpacingHorizontal;
+            if (cellSpacingVertical > 0) group.CellSpacingVertical = cellSpacingVertical;
+            if (alignmentHorizontal != Alignment.Undefined) group.AlignmentHorizontal = alignmentHorizontal;
+            if (alignmentVertical != Alignment.Undefined) group.AlignmentVertical = alignmentVertical;
         }
     }
 }

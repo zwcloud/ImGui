@@ -261,7 +261,7 @@ namespace ImGui
         /// <summary>
         /// Get border-box size of a texture
         /// </summary>
-        internal Size CalcSize(ITexture texture, GUIState state, LayoutOption[] options)
+        internal Size CalcSize(ITexture texture, GUIState state)
         {
             if (texture == null) throw new ArgumentNullException(nameof(texture));
 
@@ -272,22 +272,6 @@ namespace ImGui
             {
                 width = texture.Width;
                 height = texture.Height;
-            }
-
-            // apply options
-            if (options != null)
-            {
-                foreach (var option in options)
-                {
-                    if (option.type == LayoutOptionType.FixedWidth)
-                    {
-                        width = (double)option.Value;
-                    }
-                    else if (option.type == LayoutOptionType.FixedHeight)
-                    {
-                        height = (double)option.Value;
-                    }
-                }
             }
 
             // apply padding and border

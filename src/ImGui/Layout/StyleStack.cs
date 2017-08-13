@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace ImGui.Layout
+namespace ImGui
 {
-    internal partial class StackLayout
+    internal class StyleStack
     {
+        #region positon, size
+
         #region min/max width/height
 
         Stack<(double, double)> widthStack = new Stack<(double, double)>();
@@ -160,6 +162,7 @@ namespace ImGui.Layout
 
         public void PushBorder((double, double, double, double) border)
         {
+            borderStack.Push(border);
             this.Border = border;
         }
 
@@ -174,6 +177,7 @@ namespace ImGui.Layout
 
         public void PushPadding((double, double, double, double) padding)
         {
+            paddingStack.Push(padding);
             this.Padding = padding;
         }
 
@@ -182,6 +186,12 @@ namespace ImGui.Layout
             paddingStack.Pop();
             this.Padding = paddingStack.Count == 0 ? (-1, -1, -1, -1) : paddingStack.Peek();
         }
+
+        #endregion
+
+        #endregion
+
+        #region image, color
 
         #endregion
 
