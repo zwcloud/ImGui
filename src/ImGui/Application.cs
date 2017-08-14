@@ -64,6 +64,7 @@ namespace ImGui
             {
                 Logger = Utility.Create<ILogger>(CurrentOS.Platform);
             }
+            Log.Init(Logger);
 
             // load platform context:
             //     platform-dependent implementation

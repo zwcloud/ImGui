@@ -8,8 +8,6 @@ namespace ImGui.Layout
     [DebuggerDisplay("Group {Id}, Count={Entries.Count}")]
     internal class LayoutGroup : LayoutEntry
     {
-        private int cursor;
-
         public double CellSpacingHorizontal { get; set; } = 0;
         public double CellSpacingVertical { get; set; } = 0;
         public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
@@ -18,7 +16,6 @@ namespace ImGui.Layout
         public LayoutGroup(int id, bool isVertical, Size contentSize) : base(id, contentSize)
         {
             this.IsVertical = isVertical;
-            this.cursor = 0;
 
             this.ApplyStyle();
         }
@@ -47,17 +44,6 @@ namespace ImGui.Layout
 
         public List<LayoutEntry> Entries { get; } = new List<LayoutEntry>();
 
-        public LayoutEntry GetNext()
-        {
-            if (this.cursor < this.Entries.Count)
-            {
-                LayoutEntry result = this.Entries[this.cursor];
-                this.cursor++;
-                return result;
-            }
-            return null;
-        }
-
         public LayoutEntry GetEntry(int id)
         {
             foreach (var entry in this.Entries)
@@ -69,33 +55,6 @@ namespace ImGui.Layout
             }
             return null;
         }
-
-        public Rect GetLast()
-        {
-            Rect result;
-            if (this.cursor == 0)
-            {
-                Log.Error("No last rect available.");
-                result = Rect.Empty;
-            }
-            else if (this.cursor <= this.Entries.Count)
-            {
-                LayoutEntry entry = this.Entries[this.cursor - 1];
-                result = entry.Rect;
-            }
-            else
-            {
-                Log.Error("No last rect available.");// this rarely happens
-                result = Rect.Empty;
-            }
-            return result;
-        }
-
-        public void ResetCursor()
-        {
-            this.cursor = 0;
-        }
-
 
         /// <summary>
         /// Append child entry to this group
@@ -154,7 +113,11 @@ namespace ImGui.Layout
                 this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
                 this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
-                if (this.ContentWidth <= 0) return;//container has no space to hold the children
+                if (this.ContentWidth <= 0)
+                {
+                    Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
+                    return;
+                }
 
                 // calculate the width of children
                 CalcChildrenWidth();
@@ -165,7 +128,11 @@ namespace ImGui.Layout
                 this.Rect.Width = this.MinWidth;
                 this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
-                if (this.ContentWidth <= 0) return;//container has no space to hold the children
+                if (this.ContentWidth <= 0)
+                {
+                    Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
+                    return;
+                }
 
                 // calculate the width of children
                 CalcChildrenWidth();
@@ -222,11 +189,11 @@ namespace ImGui.Layout
                 var totalFactor = 0;
                 var totalStretchedPartWidth = this.ContentWidth -
                                               this.CellSpacingHorizontal * (childCount - 1);
-                if(totalStretchedPartWidth<0)
+                if (totalStretchedPartWidth <= 0)
                 {
-                    throw new Exception(
-                        string.Format("Group<{0}> doesn't have enough width for horizontal-cell-spacing<{1}> with {2} children.",
+                    Log.Warning(string.Format("Group<{0}> doesn't have enough width for horizontal-cell-spacing<{1}> with {2} children.",
                         this.Id, this.CellSpacingHorizontal, childCount));
+                    return;
                 }
 
                 foreach (var entry in this.Entries)
@@ -239,9 +206,10 @@ namespace ImGui.Layout
                     {
                         entry.CalcWidth();
                         totalStretchedPartWidth -= entry.Rect.Width;
-                        if(totalStretchedPartWidth < 0)
+                        if(totalStretchedPartWidth <= 0)
                         {
-                            throw new Exception(string.Format("Group<{0}> doesn't have enough width for more entries.", this.Id));
+                            Log.Warning(string.Format("Group<{0}> doesn't have enough width for more entries.", this.Id));
+                            return;
                         }
                     }
                 }
@@ -265,7 +233,11 @@ namespace ImGui.Layout
                 this.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
                 this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
-                if (this.ContentHeight < 1) return;//container has no space to hold the children
+                if (this.ContentHeight < 1)
+                {
+                    Log.Warning(string.Format("The height of Group<{0}> is too small to hold any children.", this.Id));
+                    return;
+                }
 
                 // calculate the height of children
                 CalcChildrenHeight();
@@ -276,7 +248,11 @@ namespace ImGui.Layout
                 this.Rect.Height = this.MinHeight;
                 this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
-                if (this.ContentHeight < 1) return;//container has no space to hold the children
+                if (this.ContentHeight < 1)
+                {
+                    Log.Warning(string.Format("The height of Group<{0}> is too small to hold any children.", this.Id));
+                    return;
+                }
 
                 // calculate the height of children
                 CalcChildrenHeight();
@@ -317,6 +293,13 @@ namespace ImGui.Layout
                 // calculate the height of fixed-size children
                 var childCount = this.Entries.Count;
                 var totalStretchedPartHeight = this.ContentHeight - (childCount - 1) * this.CellSpacingVertical;
+                if(totalStretchedPartHeight <=0)
+                {
+                    Log.Warning(string.Format("Group<{0}> doesn't have enough height for horizontal-cell-spacing<{1}> with {2} children.",
+                        this.Id, this.CellSpacingVertical, childCount));
+                    return;
+                }
+
                 var totalFactor = 0;
                 foreach (var entry in this.Entries)
                 {
@@ -328,6 +311,11 @@ namespace ImGui.Layout
                     {
                         entry.CalcHeight();
                         totalStretchedPartHeight -= entry.Rect.Height;
+                        if(totalStretchedPartHeight <=0)
+                        {
+                            Log.Warning(string.Format("Group<{0}> doesn't have enough height for more entries.", this.Id));
+                            return;
+                        }
                     }
                 }
                 var childUnitPartHeight = totalStretchedPartHeight / totalFactor;

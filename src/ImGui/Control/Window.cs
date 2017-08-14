@@ -149,7 +149,11 @@ namespace ImGui
                         {
                             // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
                             var t = Mouse.Instance.Position - g.ActiveIdClickOffset - window.Position;
-                            Size resize_size = new Size(t.X + resize_rect.Width, t.Y + resize_rect.Height);
+                            var new_size_width = t.X + resize_rect.Width;
+                            var new_size_height = t.Y + resize_rect.Height;
+                            new_size_width = MathEx.Clamp(new_size_width, 145, fullScreenRect.Width);//min size of a window is 145x235
+                            new_size_height = MathEx.Clamp(new_size_height, 235, fullScreenRect.Height);
+                            Size resize_size = new Size(new_size_width, new_size_height);
                             window.ApplySize(resize_size);
 
                             // adjust scroll parameters

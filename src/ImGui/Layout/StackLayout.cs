@@ -90,7 +90,6 @@ namespace ImGui.Layout
                 {
                     group = new LayoutGroup(id, isVertical, size);//dummy (HACK added to reading stack to forbid NRE)
                 }
-                group.ResetCursor();
                 this.ReadingStack.Push(group);
             }
         }
@@ -103,7 +102,6 @@ namespace ImGui.Layout
 
         public void Begin()
         {
-            this.ReadingStack.Peek().ResetCursor();//reset reading cursor of root group
             this.WritingStack.Peek().Entries.Clear();//remove all children of root group
         }
 
