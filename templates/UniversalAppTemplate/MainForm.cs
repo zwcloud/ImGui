@@ -13,13 +13,13 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            Label("Three default sized button.");
+            Label("Three button of default size.");
             BeginHorizontal("H~~~1");
             Button("1");
             Button("2");
             Button("3");
             EndHorizontal();
-            Label("Three fixed sized(100) button.");
+            Label("Three fixed-width (100 pixels) buttons.");
             BeginHorizontal("H~~~2");
             PushFixedWidth(100);
             Button("1");
@@ -27,7 +27,7 @@ namespace UniversalAppTemplate
             Button("3");
             PopStyleVar(2);
             EndHorizontal();
-            Label("Three stretched sized button with 1/2/3 stretch factor.");
+            Label("Three stretched sized buttons with 1/2/3 stretch factor.");
             BeginHorizontal("H~~~3");
             PushHStretchFactor(1);
             Button("1");
@@ -36,7 +36,7 @@ namespace UniversalAppTemplate
             Button("2");
             PopStyleVar();
             PushHStretchFactor(3);
-            Textbox("3", 60, "3");
+            Button("3");
             PopStyleVar();
             EndHorizontal();
         }

@@ -142,7 +142,11 @@ namespace ImGui
 
             this.TitleBarHeight = TitleBarStyle.PaddingVertical + 30;
 
-            this.StackLayout = new StackLayout(this.ID, this.Size);
+            var scrollBarWidth = this.Style.Get<double>(GUIStyleName.ScrollBarWidth);
+            var clientSize = new Size(
+                this.Size.Width - scrollBarWidth - this.Style.PaddingHorizontal - this.Style.BorderHorizontal,
+                this.Size.Height - this.Style.PaddingVertical - this.Style.BorderVertical);
+            this.StackLayout = new StackLayout(this.ID, clientSize);
         }
 
         /// <summary>
@@ -271,7 +275,14 @@ namespace ImGui
         {
             if (this.FullSize != new_size)
             {
-                this.StackLayout.SetRootSize(new_size);
+                {
+                    var topLeft = this.Position + new Vector(this.Style.PaddingLeft + this.Style.BorderLeft, this.Style.PaddingTop + this.Style.BorderTop);
+                    var bottomRight = this.Rect.BottomRight
+                        - new Vector(this.Style.PaddingRight + this.Style.BorderRight, this.Style.PaddingBottom + this.Style.BorderBottom)
+                        - new Vector(this.Style.Get<double>(GUIStyleName.ScrollBarWidth), 0);
+                    this.ClientRect = new Rect(topLeft, bottomRight);
+                }
+                this.StackLayout.SetRootSize(this.ClientRect.Size);
             }
             this.FullSize = new_size;
         }

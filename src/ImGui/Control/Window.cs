@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common;
 using ImGui.Common.Primitive;
@@ -85,7 +84,7 @@ namespace ImGui
                     window.ClipRect = fullScreenRect;
                 }
 
-                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Blue);//test only
+                //window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Blue);//test only
 
                 // Collapse window by double-clicking on title bar
                 if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Mouse.Instance.LeftButtonDoubleClicked)
@@ -104,7 +103,6 @@ namespace ImGui
                     window.Size = window.FullSize = size; // 'size' as provided by user passed via BeginChild()->Begin().
                 }
 
-
                 #endregion
 
                 #region position
@@ -112,6 +110,7 @@ namespace ImGui
                 window.Position = new Point((int)window.PosFloat.X, (int)window.PosFloat.Y);
 
                 #endregion
+
 
                 // Draw window + handle manual resize
                 GUIStyle style = window.Style;
@@ -268,10 +267,6 @@ namespace ImGui
                     window.ContentRect = Rect.Zero;
                 }
 
-                window.ClientRect = new Rect(
-                    point1: new Point(window.Position.X, window.Position.Y + window.TitleBarHeight),
-                    point2: window.Rect.BottomRight);
-
                 // Title bar
                 if (!flags.HaveFlag(WindowFlags.NoTitleBar))
                 {
@@ -310,7 +305,7 @@ namespace ImGui
                               Math.Floor(0.5f + window.Position.Y + window.Size.Height - border_size)));
                 window.DrawList.PushClipRect(clip_rect, true);
                 window.ClipRect = clip_rect;
-                window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Red);//test only
+                //window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Red);//test only
             }
 
             // Clear 'accessed' flag last thing
