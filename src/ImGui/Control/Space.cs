@@ -16,7 +16,6 @@ namespace ImGui
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            //TODO apply GUISkin.Instance[GUIControlName.Space]
             window.GetRect(id, layout.TopGroup.IsVertical? new Size(0,size): new Size(size,0));
         }
 
@@ -25,23 +24,24 @@ namespace ImGui
         /// </summary>
         public static void FlexibleSpace(string str_id, int stretchFactor = 1)
         {
+            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
 
-            var style = GUISkin.Instance[GUIControlName.FlexibleSpace];
-            var oldHorizontalStretchFactor = style.HorizontalStretchFactor;
-            var oldVerticalStretchFactor = style.VerticalStretchFactor;
-
-            var horizontalStretchFactor = layout.TopGroup.IsVertical ? -1 : stretchFactor;
-            var verticalStretchFactor = layout.TopGroup.IsVertical ? stretchFactor : -1;
-            style.HorizontalStretchFactor = horizontalStretchFactor;
-            style.VerticalStretchFactor = verticalStretchFactor;
+            if(layout.TopGroup.IsVertical)
+            {
+                PushVStretchFactor(stretchFactor);
+            }
+            else
+            {
+                PushHStretchFactor(stretchFactor);
+            }
+            g.StyleStack.Apply();
             Rect rect = window.GetRect(id, Size.Zero);
-
-            style.HorizontalStretchFactor = oldHorizontalStretchFactor;
-            style.VerticalStretchFactor = oldVerticalStretchFactor;
+            g.StyleStack.Restore();
+            PopStyleVar();
         }
     }
 }

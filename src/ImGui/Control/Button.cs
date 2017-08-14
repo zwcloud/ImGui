@@ -12,22 +12,26 @@ namespace ImGui
         /// <param name="text">text to display on the button</param>
         internal static bool Button(string text)
         {
-            return DoButton(text);
-        }
-
-        private static bool DoButton(string text)
-        {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
-            //var style = GUISkin.Instance[GUIControlName.Button];//TODO apply this . GUISkin should only record style modifiers
-            var style = g.StyleStack.Style;
+
+            //apply skin and stack style modifiers
+            var s = g.StyleStack;
+            var modifiers = GUISkin.Instance[GUIControlName.Button];
+            s.Apply(modifiers);
 
             int id = window.GetID(text);
+            var style = g.StyleStack.Style;
             Size size = style.CalcSize(text, GUIState.Normal);
             Rect rect = window.GetRect(id, size);
 
-            return GUI.DoButton(rect, text);
+            var result = GUI.DoButton(rect, text);
+
+            s.Restore(modifiers);
+
+            return result;
         }
+
     }
 
     public partial class GUI
@@ -40,7 +44,16 @@ namespace ImGui
         /// <returns>true when the users clicks the button.</returns>
         public static bool Button(Rect rect, string text)
         {
-            return DoButton(rect, text);
+            GUIContext g = GetCurrentContext();
+            //apply skin and stack style modifiers
+            var s = g.StyleStack;
+            s.Apply(GUISkin.Instance[GUIControlName.Button]);
+
+            var result = DoButton(rect, text);
+
+            s.Restore();
+
+            return result;
         }
 
         internal static bool DoButton(Rect rect, string text)
@@ -54,7 +67,7 @@ namespace ImGui
             DrawList d = window.DrawList;
             int id = window.GetID(text);
 
-            GUIStyle style = GUISkin.Instance[GUIControlName.Button];
+            GUIStyle style = g.StyleStack.Style;
 
             bool hovered, held;
             bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);

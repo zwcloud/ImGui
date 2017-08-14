@@ -7,9 +7,18 @@ namespace ImGui
     /// </summary>
     public partial class GUI
     {
-        private static Window GetCurrentWindow()
+        internal static GUIContext GetCurrentContext()
         {
-            return Utility.GetCurrentWindow();
+            return Form.current.uiContext;
+        }
+
+        internal static Window GetCurrentWindow()
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.WindowManager.CurrentWindow;
+            window.Accessed = true;
+            return window;
         }
 
         #region Constant

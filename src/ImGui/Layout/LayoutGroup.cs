@@ -222,6 +222,13 @@ namespace ImGui.Layout
                 var totalFactor = 0;
                 var totalStretchedPartWidth = this.ContentWidth -
                                               this.CellSpacingHorizontal * (childCount - 1);
+                if(totalStretchedPartWidth<0)
+                {
+                    throw new Exception(
+                        string.Format("Group<{0}> doesn't have enough width for horizontal-cell-spacing<{1}> with {2} children.",
+                        this.Id, this.CellSpacingHorizontal, childCount));
+                }
+
                 foreach (var entry in this.Entries)
                 {
                     if (entry.HorizontallyStretched)
@@ -232,6 +239,10 @@ namespace ImGui.Layout
                     {
                         entry.CalcWidth();
                         totalStretchedPartWidth -= entry.Rect.Width;
+                        if(totalStretchedPartWidth < 0)
+                        {
+                            throw new Exception(string.Format("Group<{0}> doesn't have enough width for more entries.", this.Id));
+                        }
                     }
                 }
                 var childUnitPartWidth = totalStretchedPartWidth / totalFactor;

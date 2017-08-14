@@ -8,12 +8,12 @@ namespace ImGui
     {
         public static GUISkin Instance { get; } = new GUISkin();
 
-        public GUIStyle this[GUIControlName name] => this.styles[name];
+        public StyleModifier[] this[GUIControlName name] => this.styles[name];
 
         /// <summary>
         /// Get a GUIStyle from a string.
         /// </summary>
-        public GUIStyle GetStyle(string styleName)
+        public StyleModifier[] GetStyle(string styleName)
         {
             bool exist = this.controlNames.TryGetValue(styleName, out GUIControlName controlName);
             if (!exist)
@@ -23,7 +23,7 @@ namespace ImGui
             return this.styles[controlName];
         }
 
-        private readonly Dictionary<GUIControlName, GUIStyle> styles = new Dictionary<GUIControlName, GUIStyle>();
+        private readonly Dictionary<GUIControlName, StyleModifier[]> styles = new Dictionary<GUIControlName, StyleModifier[]>();
 
         public GUIStyle InternalStyle;
 
@@ -40,31 +40,56 @@ namespace ImGui
                 this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
             }
 
-            GUIStyle Label = new GUIStyle();
-            GUIStyle Image = new GUIStyle();
-            GUIStyle Box = new GUIStyle();
-            GUIStyle Space = new GUIStyle();
-            GUIStyle Button = new GUIStyle();
-            GUIStyle Toggle = new GUIStyle();
-            GUIStyle ComboBox = new GUIStyle();
-            GUIStyle TextBox = new GUIStyle();
-            GUIStyle Slider = new GUIStyle();
-            GUIStyle PolygonButton = new GUIStyle();
-            GUIStyle CollapsingHeader = new GUIStyle();
-            GUIStyle ColorField = new GUIStyle();
+            var borderColor = Color.Black;
+            var Button = new StyleModifier[]
+            {
+                //normal
+                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 0.60f)),
+                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal),
 
-            this.styles.Add(GUIControlName.Label, Label);
-            this.styles.Add(GUIControlName.Image, Image);
-            this.styles.Add(GUIControlName.Box, Box);
-            this.styles.Add(GUIControlName.Space, Space);
+                //hover
+                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderBottom,StyleType.@double,  15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover),
+                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal, GUIState.Hover),
+
+                //active
+                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active),
+                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Bold, GUIState.Active),
+            };
+
             this.styles.Add(GUIControlName.Button, Button);
-            this.styles.Add(GUIControlName.Toggle, Toggle);
-            this.styles.Add(GUIControlName.ComboBox, ComboBox);
-            this.styles.Add(GUIControlName.TextBox, TextBox);
-            this.styles.Add(GUIControlName.Slider, Slider);
-            this.styles.Add(GUIControlName.PolygonButton, PolygonButton);
-            this.styles.Add(GUIControlName.CollapsingHeader, CollapsingHeader);
-            this.styles.Add(GUIControlName.ColorField, ColorField);
+            //TODO add others
 
             this.controlNames.Add("Label", GUIControlName.Label);
             this.controlNames.Add("Image", GUIControlName.Image);
@@ -78,6 +103,31 @@ namespace ImGui
             this.controlNames.Add("PolygonButton", GUIControlName.PolygonButton);
             this.controlNames.Add("CollapsingHeader", GUIControlName.CollapsingHeader);
             this.controlNames.Add("ColorField", GUIControlName.ColorField);
+#if old
+            GUIStyle Label = new GUIStyle();
+            GUIStyle Image = new GUIStyle();
+            GUIStyle Box = new GUIStyle();
+            GUIStyle Space = new GUIStyle();
+            GUIStyle Toggle = new GUIStyle();
+            GUIStyle ComboBox = new GUIStyle();
+            GUIStyle TextBox = new GUIStyle();
+            GUIStyle Slider = new GUIStyle();
+            GUIStyle PolygonButton = new GUIStyle();
+            GUIStyle CollapsingHeader = new GUIStyle();
+            GUIStyle ColorField = new GUIStyle();
+
+            this.styles.Add(GUIControlName.Label, Label);
+            this.styles.Add(GUIControlName.Image, Image);
+            this.styles.Add(GUIControlName.Box, Box);
+            this.styles.Add(GUIControlName.Space, Space);
+            this.styles.Add(GUIControlName.Toggle, Toggle);
+            this.styles.Add(GUIControlName.ComboBox, ComboBox);
+            this.styles.Add(GUIControlName.TextBox, TextBox);
+            this.styles.Add(GUIControlName.Slider, Slider);
+            this.styles.Add(GUIControlName.PolygonButton, PolygonButton);
+            this.styles.Add(GUIControlName.CollapsingHeader, CollapsingHeader);
+            this.styles.Add(GUIControlName.ColorField, ColorField);
+
 
             //Set default styles for each control
             {
@@ -154,10 +204,6 @@ namespace ImGui
                 Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Active);
                 Button.Set(GUIStyleName.BackgroundColor, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
                 Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Bold, GUIState.Active);
-
-                Button.Border = (10, 10, 10, 10);
-                Button.BorderColor = Color.Black;
-                Button.Padding = (20, 20, 20, 20);
             }
 
             {
@@ -264,6 +310,7 @@ namespace ImGui
                 ColorField.Set(GUIStyleName.BorderBottomColor, Color.Metal, GUIState.Normal);
                 ColorField.Set(GUIStyleName.BorderLeftColor, Color.Metal, GUIState.Normal);
             }
+#endif
         }
 
         #region short-cuts

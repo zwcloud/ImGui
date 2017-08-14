@@ -3,220 +3,135 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    struct StyleModifier
-    {
-        public Action<GUIStyle> callback;
-    }
-
     internal class StyleStack
     {
-        Stack<GUIStyle> Stack { get; } = new Stack<GUIStyle>();
-        Stack<Action<GUIStyle>> ModifierStack { get; } = new Stack<Action<GUIStyle>>();
-        public GUIStyle Style
+        public GUIStyle Style => GUIStyle.Default;
+
+        Stack<StyleModifier> ModifierStack { get; } = new Stack<StyleModifier>();
+
+        public void Push(StyleModifier modifier)
         {
-            get
+            this.ModifierStack.Push(modifier);
+        }
+
+        public void PopStyle(int number = 1)
+        {
+            for (int i = 0; i < number; i++)
             {
-                if(this.Stack.Count > 0)
+                this.ModifierStack.Pop();
+            }
+        }
+
+        public void Apply(StyleModifier[] modifiers = null)
+        {
+            if (modifiers != null)
+            {
+                foreach (var modifier in modifiers)
                 {
-                    return this.Stack.Peek();
+                    modifier.Modify(this.Style);
                 }
-                else
+            }
+
+            foreach (var modifier in this.ModifierStack)
+            {
+                modifier.Modify(this.Style);
+            }
+
+        }
+
+        public void Restore(StyleModifier[] modifiers = null)
+        {
+            foreach (var modifier in ModifierStack)
+            {
+                modifier.Restore(this.Style);
+            }
+
+            if (modifiers != null)
+            {
+                foreach (var modifier in modifiers)
                 {
-                    return GUISkin.Instance[GUIControlName.Button];
+                    modifier.Restore(this.Style);
                 }
             }
         }
 
-        public void Push(GUIStyle style)
-        {
-            this.Stack.Push(style);
-        }
-
-        public void Pop()
-        {
-            this.Stack.Pop();
-        }
 
         #region positon, size
 
         #region min/max width/height
 
-        Stack<(double, double)> widthStack = new Stack<(double, double)>();
-        private (double, double) width { get; set; } = (1, 9999);
-        public double MinWidth => this.width.Item1;
-        public double MaxWidth => this.width.Item2;
-
         public void PushWidth((double, double) width)
         {
-            widthStack.Push(width);
-            this.width = width;
+            var modifier1 = new StyleModifier(GUIStyleName.MinWidth, StyleType.@double, width.Item1);
+            var modifier2 = new StyleModifier(GUIStyleName.MaxWidth, StyleType.@double, width.Item2);
+            this.ModifierStack.Push(modifier1);
+            this.ModifierStack.Push(modifier2);
         }
-
-        public void PopWidth()
-        {
-            widthStack.Pop();
-            this.width = widthStack.Count == 0 ? (-1, -1) : widthStack.Peek();
-        }
-
-        Stack<(double, double)> heightStack = new Stack<(double, double)>();
-        private (double, double) height { get; set; } = (1, 9999);
-        public double MinHeight => this.height.Item1;
-        public double MaxHeight => this.height.Item2;
 
         public void PushHeight((double, double) height)
         {
-            heightStack.Push(height);
-            this.height = height;
-        }
-
-        public void PopHeight()
-        {
-            heightStack.Pop();
-            this.height = heightStack.Count == 0 ? (-1, -1) : heightStack.Peek();
+            var modifier1 = new StyleModifier(GUIStyleName.MinHeight, StyleType.@double, height.Item1);
+            var modifier2 = new StyleModifier(GUIStyleName.MaxHeight, StyleType.@double, height.Item2);
+            this.ModifierStack.Push(modifier1);
+            this.ModifierStack.Push(modifier2);
         }
 
         #endregion
 
         #region stretch factor
 
-        public int HorizontalStretchFactor => this.Style.HorizontalStretchFactor;
-        public int VerticalStretchFactor => this.Style.VerticalStretchFactor;
-
         public void PushStretchFactor(bool isVertical, int factor)
         {
-            if (isVertical)
-            {
-                var oldVerticalStretchFactor = this.Style.VerticalStretchFactor;
-                this.Style.VerticalStretchFactor = factor;
-                Action<GUIStyle> callback = (s) =>
-                {
-                    s.VerticalStretchFactor = oldVerticalStretchFactor;
-                };
-                ModifierStack.Push(callback);
-            }
-            else
-            {
-                var oldHorizontalStretchFactor = this.Style.HorizontalStretchFactor;
-                this.Style.HorizontalStretchFactor = factor;
-                Action<GUIStyle> callback = (s) =>
-                {
-                    s.HorizontalStretchFactor = oldHorizontalStretchFactor;
-                };
-                ModifierStack.Push(callback);
-            }
-        }
-
-        public void PopStretchFactor(bool isVertical)
-        {
-            var restore = ModifierStack.Pop();
-            restore(this.Style);
+            var modifier = new StyleModifier(isVertical? GUIStyleName.VerticalStretchFactor : GUIStyleName.HorizontalStretchFactor, StyleType.@int, factor);
+            this.ModifierStack.Push(modifier);
         }
 
         #endregion
 
         #region cell spacing
 
-        Stack<double> cellSpacingHorizontalStack = new Stack<double>();
-        Stack<double> cellSpacingVerticalStack = new Stack<double>();
-        public double CellSpacingHorizontal { get; set; } = 0;
-        public double CellSpacingVertical { get; set; } = 0;
-
         public void PushCellSpacing(bool isVertical, double spacing)
         {
-            if(isVertical)
-            {
-                cellSpacingVerticalStack.Push(spacing);
-                CellSpacingVertical = spacing;
-            }
-            else
-            {
-                cellSpacingHorizontalStack.Push(spacing);
-                CellSpacingHorizontal = spacing;
-            }
-        }
-
-        public void PopCellSpacing(bool isVertical)
-        {
-            if(isVertical)
-            {
-                cellSpacingVerticalStack.Pop();
-                this.CellSpacingVertical = cellSpacingVerticalStack.Count == 0 ? -1 : cellSpacingVerticalStack.Peek();
-            }
-            else
-            {
-                cellSpacingHorizontalStack.Pop();
-                this.CellSpacingHorizontal = cellSpacingHorizontalStack.Count == 0 ? -1 : cellSpacingHorizontalStack.Peek();
-            }
+            var modifier = new StyleModifier(isVertical ? GUIStyleName.CellingSpacingVertical : GUIStyleName.CellingSpacingHorizontal, StyleType.@double, spacing);
+            this.ModifierStack.Push(modifier);
         }
 
         #endregion
 
         #region alignment
 
-        Stack<Alignment> alignmentHorizontalStack = new Stack<Alignment>();
-        Stack<Alignment> alignmentVerticalStack = new Stack<Alignment>();
-        public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
-        public Alignment AlignmentVertical { get; set; } = Alignment.Start;
-
-        public void PushAlignment(bool isVertical, Alignment spacing)
+        public void PushAlignment(bool isVertical, Alignment alignment)
         {
-            if (isVertical)
-            {
-                alignmentVerticalStack.Push(spacing);
-                AlignmentVertical = spacing;
-            }
-            else
-            {
-                alignmentHorizontalStack.Push(spacing);
-                AlignmentHorizontal = spacing;
-            }
-        }
-
-        public void PopAlignment(bool isVertical)
-        {
-            if (isVertical)
-            {
-                alignmentVerticalStack.Pop();
-                this.AlignmentVertical = alignmentVerticalStack.Count == 0 ? Alignment.Undefined : alignmentVerticalStack.Peek();
-            }
-            else
-            {
-                alignmentHorizontalStack.Pop();
-                this.AlignmentHorizontal = alignmentHorizontalStack.Count == 0 ? Alignment.Undefined : alignmentHorizontalStack.Peek();
-            }
+            var modifier = new StyleModifier(isVertical ? GUIStyleName.AlignmentVertical : GUIStyleName.AlignmentHorizontal, StyleType.@int, (int)alignment);
+            this.ModifierStack.Push(modifier);
         }
 
         #endregion
 
         #region box model
-        Stack<(double, double, double, double)> borderStack = new Stack<(double, double, double, double)>();
-        public (double, double, double, double) Border { get; set; } = (0, 0, 0, 0);
 
         public void PushBorder((double, double, double, double) border)
         {
-            borderStack.Push(border);
-            this.Border = border;
+            var modifier1 = new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, border.Item1);
+            var modifier2 = new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, border.Item2);
+            var modifier3 = new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, border.Item3);
+            var modifier4 = new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, border.Item4);
+            this.ModifierStack.Push(modifier1);
+            this.ModifierStack.Push(modifier2);
+            this.ModifierStack.Push(modifier3);
+            this.ModifierStack.Push(modifier4);
         }
-
-        public void PopBorder()
-        {
-            borderStack.Pop();
-            this.Border = borderStack.Count == 0 ? (-1, -1, -1, -1) : borderStack.Peek();
-        }
-
-        Stack<(double, double, double, double)> paddingStack = new Stack<(double, double, double, double)>();
-        public (double, double, double, double) Padding { get; set; } = (0, 0, 0, 0);
 
         public void PushPadding((double, double, double, double) padding)
         {
-            paddingStack.Push(padding);
-            this.Padding = padding;
-        }
-
-        public void PopPadding()
-        {
-            paddingStack.Pop();
-            this.Padding = paddingStack.Count == 0 ? (-1, -1, -1, -1) : paddingStack.Peek();
+            var modifier1 = new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, padding.Item1);
+            var modifier2 = new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, padding.Item2);
+            var modifier3 = new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, padding.Item3);
+            var modifier4 = new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, padding.Item4);
+            this.ModifierStack.Push(modifier1);
+            this.ModifierStack.Push(modifier2);
+            this.ModifierStack.Push(modifier3);
+            this.ModifierStack.Push(modifier4);
         }
 
         #endregion

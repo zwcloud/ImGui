@@ -39,15 +39,11 @@ namespace ImGui
         /// <param name="state"></param>
         public static void DrawBoxModel(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state = GUIState.Normal)
         {
-            var styleStack = Form.current.uiContext.StyleStack;
-
             //Widths of border
             var bt = style.Get<double>(GUIStyleName.BorderTop, state);
             var br = style.Get<double>(GUIStyleName.BorderRight, state);
             var bb = style.Get<double>(GUIStyleName.BorderBottom, state);
             var bl = style.Get<double>(GUIStyleName.BorderLeft, state);
-
-            (bt, br, bb, bl) = styleStack.Border;//TODO use styleStack GUIStyle instead.
 
             //Widths of padding
             var pt = style.Get<double>(GUIStyleName.PaddingTop, state);

@@ -35,11 +35,6 @@ namespace ImGui
             Default = new GUIStyle();
         }
 
-        public static implicit operator GUIStyle(string str)
-        {
-            return GUISkin.Instance.GetStyle(str);
-        }
-
         public GUIStyle()
         {
             // set up default style values

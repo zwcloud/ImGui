@@ -37,7 +37,11 @@ namespace ImGui
 
         internal static Window GetCurrentWindow()
         {
-            return Utility.GetCurrentWindow();
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            Window window = g.WindowManager.CurrentWindow;
+            window.Accessed = true;
+            return window;
         }
 
         #region stack-layout
@@ -50,12 +54,16 @@ namespace ImGui
         public static void BeginHorizontal(string str_id, Size size, GUIStyle style = null)
         {
             Window window = GetCurrentWindow();
+            var styleStack = Form.current.uiContext.StyleStack;
 
             int id = window.GetID(str_id);
-            PushHStretchFactor(1);
             PushID(id);
+
+            styleStack.PushStretchFactor(false, 1);
+            styleStack.Apply();
             window.StackLayout.BeginLayoutGroup(id, false, size, style);
-            PopHStretchFactor();
+            styleStack.Restore();
+            styleStack.PopStyle();
         }
 
         public static void EndHorizontal()
@@ -74,12 +82,16 @@ namespace ImGui
         public static void BeginVertical(string str_id, Size size, GUIStyle style = null)
         {
             Window window = GetCurrentWindow();
+            var styleStack = Form.current.uiContext.StyleStack;
 
             int id = window.GetID(str_id);
-            PushHStretchFactor(1);
             PushID(id);
+
+            styleStack.PushStretchFactor(true, 1);
+            styleStack.Apply();
             window.StackLayout.BeginLayoutGroup(id, true, size, style);
-            PopHStretchFactor();
+            styleStack.Restore();
+            styleStack.PopStyle();
         }
 
         public static void EndVertical()

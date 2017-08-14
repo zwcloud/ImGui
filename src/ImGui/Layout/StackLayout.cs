@@ -53,7 +53,6 @@ namespace ImGui.Layout
             // build entry for next frame
             {
                 var entry = new LayoutEntry(id, contentSize);
-                //ApplyOverridedStyle(entry);
                 this.WritingStack.Peek().Add(entry);
             }
 
@@ -75,7 +74,6 @@ namespace ImGui.Layout
             // build group for next frame
             {
                 var group = new LayoutGroup(id, isVertical, size);
-                //ApplyOverridedStyle(group);
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }
@@ -134,48 +132,6 @@ namespace ImGui.Layout
                 rootGroup.MinWidth = rootGroup.MaxWidth = rootGroup.ContentWidth = size.Width;
                 rootGroup.MinHeight = rootGroup.MaxHeight = rootGroup.ContentHeight = size.Height;
             }
-        }
-
-        private void ApplyOverridedStyle(LayoutEntry entry)
-        {
-            var context = Form.current.uiContext;
-            var styleStack = context.StyleStack;
-
-            var minWidth = styleStack.MinWidth;
-            var maxWidth = styleStack.MaxWidth;
-            var minHeight = styleStack.MinHeight;
-            var maxHeight = styleStack.MaxHeight;
-            var horizontalStretchFactor = styleStack.HorizontalStretchFactor;
-            var verticalStretchFactor = styleStack.VerticalStretchFactor;
-            var border = styleStack.Border;
-            var padding = styleStack.Padding;
-
-            if (minWidth > 0) entry.MinWidth = minWidth;
-            if (maxWidth  > 0) entry.MaxWidth =  maxWidth;
-            if (minHeight > 0) entry.MinHeight = minHeight;
-            if (maxHeight > 0) entry.MaxHeight = maxHeight;
-            if (horizontalStretchFactor > 0) entry.HorizontalStretchFactor = horizontalStretchFactor;
-            if (verticalStretchFactor > 0) entry.VerticalStretchFactor = verticalStretchFactor;
-            if (border.Item1 > 0) entry.Border = border;
-            if (padding.Item1 > 0) entry.Padding = padding;
-        }
-
-        private void ApplyOverridedStyle(LayoutGroup group)
-        {
-            ApplyOverridedStyle(group as LayoutEntry);
-
-            var context = Form.current.uiContext;
-            var styleStack = context.StyleStack;
-
-            var cellSpacingHorizontal = styleStack.CellSpacingHorizontal;
-            var cellSpacingVertical = styleStack.CellSpacingVertical;
-            var alignmentHorizontal = styleStack.AlignmentHorizontal;
-            var alignmentVertical = styleStack.AlignmentVertical;
-
-            if (cellSpacingHorizontal > 0) group.CellSpacingHorizontal = cellSpacingHorizontal;
-            if (cellSpacingVertical > 0) group.CellSpacingVertical = cellSpacingVertical;
-            if (alignmentHorizontal != Alignment.Undefined) group.AlignmentHorizontal = alignmentHorizontal;
-            if (alignmentVertical != Alignment.Undefined) group.AlignmentVertical = alignmentVertical;
         }
     }
 }
