@@ -486,10 +486,25 @@ namespace ImGui.OSImplentation.Windows
         {
             string version = GL.GetString(GL.GL_VERSION);
             Debug.WriteLine("OpenGL version info: " + version);
-            int[] tmp = { 0 };
-            GL.GetIntegerv(GL.GL_MAX_TEXTURE_SIZE, tmp);
-            int max_texture_size = tmp[0];
-            Debug.WriteLine("Max texture size: " + max_texture_size);
+
+            GL.GetIntegerv(GL.GL_MAX_TEXTURE_SIZE, IntBuffer);
+            int max_texture_size = IntBuffer[0];
+            Debug.WriteLine("GL_MAX_TEXTURE_SIZE: " + max_texture_size);
+            GL.GetIntegerv(GL.GL_RED_BITS, IntBuffer);
+            var redBits = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_GREEN_BITS, IntBuffer);
+            var greenBits = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_BLUE_BITS, IntBuffer);
+            var blueBits = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_ALPHA_BITS, IntBuffer);
+            var alphaBits = IntBuffer[0];
+            Debug.WriteLine("R{0} G{1} B{2} A{3}", redBits, greenBits, blueBits, alphaBits);
+            GL.GetIntegerv(GL.GL_DEPTH_BITS, IntBuffer);
+            var depthBits = IntBuffer[0];
+            Debug.WriteLine("GL_DEPTH_BITS: " + depthBits);
+            GL.GetIntegerv(GL.GL_STENCIL_BITS, IntBuffer);
+            var stencilBits = IntBuffer[0];
+            Debug.WriteLine("GL_STENCIL_BITS: " + stencilBits);
         }
 
         private void MakeCurrent()
