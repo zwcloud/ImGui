@@ -166,6 +166,61 @@ namespace ImGui
         }
     }
 
+    partial class GUISkin
+    {
+        void InitButtonStyles()
+        {
+            var borderColor = Color.Black;
+            var buttonStyles = new StyleModifier[]
+            {
+                //normal
+                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 10.0),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 20.0),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 0.60f)),
+                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal),
+
+                //hover
+                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderBottom,StyleType.@double,  15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, borderColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 15.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover),
+                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal, GUIState.Hover),
+
+                //active
+                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, borderColor, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 2.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active),
+                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Bold, GUIState.Active),
+            };
+            this.styles.Add(GUIControlName.Button, buttonStyles);
+        }
+    }
+
     [Flags]
     public enum ButtonFlags
     {

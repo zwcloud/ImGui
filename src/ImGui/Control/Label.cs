@@ -8,20 +8,22 @@ namespace ImGui
         /// Create an auto-layout label.
         /// </summary>
         /// <param name="text">text to display on the label</param>
-        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
-        public static void Label(string text, params LayoutOption[] options)
+        public static void Label(string text)
         {
-            DoLabel(text, GUISkin.Instance[GUIControlName.Label], options);
-        }
-
-        private static void DoLabel(string text, GUIStyle style, params LayoutOption[] options)
-        {
+            var g = GetCurrentContext();
             Window window = GetCurrentWindow();
 
+            //apply skin and stack style modifiers
+            var s = g.StyleStack;
+            s.Apply(GUISkin.Instance[GUIControlName.Label]);
+
             int id = window.GetID(text);
+            var style = g.StyleStack.Style;
             Size contentSize = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id, contentSize, style, options);
-            GUI.Label(rect, text);
+            Rect rect = window.GetRect(id, contentSize);
+            GUI.DoLabel(rect, text);
+
+            s.Restore();
         }
     }
 
@@ -35,17 +37,33 @@ namespace ImGui
         /// <param name="id">the unique id of this control</param>
         public static void Label(Rect rect, string text)
         {
+            var g = GetCurrentContext();
+            //apply skin and stack style modifiers
+            var s = g.StyleStack;
+            s.Apply(GUISkin.Instance[GUIControlName.Button]);
+
             DoLabel(rect, text);
+
+            s.Restore();
         }
 
         internal static void DoLabel(Rect rect, string text)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.WindowManager.CurrentWindow;
-            DrawList d = window.DrawList;
+            var g = GetCurrentContext();
+            Window window = GetCurrentWindow();
 
-            d.DrawBoxModel(rect, text, GUISkin.Instance[GUIControlName.Label]);
+            GUIStyle style = g.StyleStack.Style;
+            DrawList d = window.DrawList;
+            d.DrawBoxModel(rect, text, style);
+        }
+    }
+
+    partial class GUISkin
+    {
+        void InitLabelStyles()
+        {
+            var labelStyles = new StyleModifier[] { };
+            this.styles.Add(GUIControlName.Label, labelStyles);
         }
     }
 }
