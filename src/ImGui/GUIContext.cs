@@ -19,7 +19,7 @@ namespace ImGui
 
         public StyleStack StyleStack { get; } = new StyleStack();
 
-        //public InputTextState InputTextState = new InputTextState();
+        public InputTextState InputTextState = new InputTextState();
 
         private int hoverId;
         private int activeId;

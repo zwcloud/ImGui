@@ -36,7 +36,7 @@ namespace UniversalAppTemplate
             Button("2");
             PopStyleVar();
             PushHStretchFactor(3);
-            Button("3");
+            Textbox("3", 60, "3");
             PopStyleVar();
             EndHorizontal();
         }

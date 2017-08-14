@@ -49,11 +49,8 @@
     <Compile Remove="Control\Image.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
     <Compile Remove="Control\Slider.cs" />
-    <Compile Remove="Control\TextBox.cs" />
     <Compile Remove="Control\Toggle.cs" />
     <Compile Remove="Control\ToggleButton.cs" />
-    <Compile Remove="InputTextState.cs" />
-    <Compile Remove="StateMachineEx.cs" />
   </ItemGroup>
 
   <ItemGroup>

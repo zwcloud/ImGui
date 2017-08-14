@@ -8,23 +8,56 @@ namespace ImGui
 {
     public partial class GUILayout
     {
-        public static string Textbox(string label, Size size, string text, params LayoutOption[] options)
+        /// <summary>
+        /// multi-line text box
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="size"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string Textbox(string label, Size size, string text)
         {
-            return Textbox(label, size, text, GUISkin.Instance[GUIControlName.TextBox], options);
-        }
-        public static string Textbox(string label, Size size, string text, GUIStyle style, params LayoutOption[] options)
-        {
+            var g = GetCurrentContext();
             Window window = GetCurrentWindow();
 
+            //apply skin and stack style modifiers
+            var s = g.StyleStack;
+            s.Apply(GUISkin.Instance[GUIControlName.Label]);
+
             int id = window.GetID(label);
-            Rect rect = window.GetRect(id, size, style, options);
-            return GUI.DoTextbox(rect, label, text);
+            Rect rect = window.GetRect(id, size);
+            var result = GUI.DoTextbox(rect, label, text);
+
+            s.Restore();
+
+            return result;
         }
 
-        public static string Textbox(string label, double width, string text, params LayoutOption[] options)
+        /// <summary>
+        /// single-line text box
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="width"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string Textbox(string label, double width, string text)
         {
-            var height = GUISkin.Instance.GetStyle("TextBox").FontSize;
-            return Textbox(label, new Size(width, height), text, GUISkin.Instance[GUIControlName.TextBox], options);
+            var g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+
+            //apply skin and stack style modifiers
+            var s = g.StyleStack;
+            s.Apply(GUISkin.Instance[GUIControlName.TextBox]);
+
+            int id = window.GetID(label);
+            var height = s.Style.FontSize;
+            var size = new Size(width, height);
+            Rect rect = window.GetRect(id, size);
+            var result = GUI.DoTextbox(rect, label, text);
+
+            s.Restore();
+
+            return result;
         }
     }
 
@@ -32,9 +65,19 @@ namespace ImGui
     {
         public static string Textbox(Rect rect, string label, string text)
         {
+            var g = GetCurrentContext();
             var window = GetCurrentWindow();
+
+            //apply skin and stack style modifiers
+            var s = g.StyleStack;
+            s.Apply(GUISkin.Instance[GUIControlName.TextBox]);
+
             rect = window.GetRect(rect);
-            return DoTextbox(rect, label, text);
+            var result = DoTextbox(rect, label, text);
+
+            s.Restore();
+
+            return result;
         }
 
         internal static string DoTextbox(Rect rect, string label, string text)
@@ -45,7 +88,7 @@ namespace ImGui
 
             var hovered = g.IsHovered(rect, id);
             // control logic
-            var style = GUISkin.Instance[GUIControlName.TextBox];
+            var style = g.StyleStack.Style;
             var uiState = Form.current.uiContext;
             if (hovered)
             {
@@ -78,7 +121,6 @@ namespace ImGui
                     Selecting = false,
                     CaretPosition = Point.Zero,
                     Rect = rect,
-                    Style = style,
                     Text = text
                 };
             }
@@ -89,7 +131,6 @@ namespace ImGui
                 var stateMachine = g.InputTextState.stateMachine;
                 context = g.InputTextState.inputTextContext;
                 context.Rect = rect;
-                context.Style = style;
 
                 // Although we are active we don't prevent mouse from hovering other elements unless we are interacting right now with the widget.
                 // Down the line we should have a cleaner library-wide concept of Selected vs Active.
@@ -136,7 +177,7 @@ namespace ImGui
             // ui painting
             {
                 var d = window.DrawList;
-                var contentRect = Utility.GetContentRect(rect, style);
+                var contentRect = Utility.GetContentRect(rect, g.StyleStack.Style);
                 d.PushClipRect(rect, true);
                 if (g.ActiveId == id)
                 {
@@ -220,5 +261,31 @@ namespace ImGui
         public const string MoveCaretKeyboard = "MoveCaretKeyboard";
         public const string DoSelect = "DoSelect";
         public const string DoEdit = "DoEdit";
+    }
+
+    partial class GUISkin
+    {
+        void InitTextBoxStyles()
+        {
+            double fontSize = CurrentOS.IsAndroid ? 32.0 : 13.0;
+            var textBoxStyles = new StyleModifier[] {
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Normal),
+                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Hover),
+                new StyleModifier(GUIStyleName.FontSize, StyleType.@double,  fontSize, GUIState.Active),
+            };
+            this.styles.Add(GUIControlName.TextBox, textBoxStyles);
+        }
     }
 }

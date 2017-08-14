@@ -47,8 +47,10 @@ namespace ImGui
 
         private static void MoveCaretCallBack(InputTextContext textBox)
         {
+            var g = Form.current.uiContext;
+
             var rect = textBox.Rect;
-            var style = textBox.Style;
+            var style = g.StyleStack.Style;
             ITextContext textContext = TextMeshUtil.GetTextContext(textBox.Text, rect.Size, style, GUIState.Normal);
 
             var contentRect = Utility.GetContentRect(rect, style);
@@ -98,9 +100,11 @@ namespace ImGui
 
         private static void DoSelectCallBack(InputTextContext textBox)
         {
+            var g = Form.current.uiContext;
+
             var rect = textBox.Rect;
-            var style = textBox.Style;
             var text = textBox.Text;
+            var style = g.StyleStack.Style;
             var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, GUIState.Normal);
 
             var contentRect = Utility.GetContentRect(rect, style);
@@ -239,8 +243,6 @@ namespace ImGui
         public Rect Rect { get; set; }
 
         public string Text { get; set; }
-
-        public GUIStyle Style { get; set; }
 
         public Point CaretPosition { get; set; }
 

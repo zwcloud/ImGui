@@ -44,6 +44,7 @@ namespace ImGui
 
             InitButtonStyles();
             InitLabelStyles();
+            InitTextBoxStyles();
             //TODO add others
             this.controlNames.Add("Image", GUIControlName.Image);
             this.controlNames.Add("Box", GUIControlName.Box);
