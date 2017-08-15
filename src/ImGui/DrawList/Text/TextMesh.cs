@@ -33,8 +33,6 @@ namespace ImGui
 
         public void Clear()
         {
-            Path.Clear();
-
             this.VertexBuffer.Clear();
             this.IndexBuffer.Clear();
             this.vtxWritePosition = 0;
@@ -74,35 +72,6 @@ namespace ImGui
             int idxBufferSize = this.IndexBuffer.Count;
             this.idxWritePosition = idxBufferSize;
             this.IndexBuffer.Resize(idxBufferSize + idxCount);
-        }
-
-        private static readonly List<Point> Path = new List<Point>();
-
-        public void PathClear()
-        {
-            Path.Clear();
-        }
-
-        public void PathMoveTo(Point point)
-        {
-            Path.Add(point);
-        }
-
-        public void PathLineTo(Point pos)
-        {
-            Path.Add(pos);
-        }
-
-        public void PathClose()
-        {
-            Path.Add(Path[0]);
-        }
-
-        public void PathAddBezier(Point start, Point control, Point end)
-        {
-            Path.Add(start);
-            Path.Add(control);
-            Path.Add(end);
         }
 
         public void AddTriangle(Point a, Point b, Point c, Color color)
