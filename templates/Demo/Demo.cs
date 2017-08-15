@@ -2,7 +2,7 @@
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 
-public class TestUI
+public class Demo
 {
     static double f = 0.0f;
 
