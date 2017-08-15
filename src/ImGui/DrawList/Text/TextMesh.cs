@@ -10,7 +10,7 @@ namespace ImGui
     /// </summary>
     /// <remarks>
     /// A text mesh contains two parts:
-    ///   1. triangle strip: generated from glyph contours
+    ///   1. triangles: generated from glyph contours
     ///   2. quadratic bezier segments: generated from glyph bezier curves
     /// </remarks>
     class TextMesh
@@ -86,15 +86,21 @@ namespace ImGui
             this.currentIdx += 3;
         }
 
-        public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color)
+        public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color,  Vector positionOffset = new Vector(), Vector glyphOffset = new Vector(), double scale = 1, bool flipY = true)
         {
             PrimReserve(segments.Count * 3, segments.Count * 3);
             for (int i = 0; i < segments.Count; i++)
             {
                 var segment = segments[i];
                 var startPoint = segment.Item1;
+                startPoint += glyphOffset;
+                startPoint = ApplyOffsetScale(startPoint, positionOffset.X, positionOffset.Y, scale, flipY);
                 var controlPoint = segment.Item2;
+                controlPoint += glyphOffset;
+                controlPoint = ApplyOffsetScale(controlPoint, positionOffset.X, positionOffset.Y, scale, flipY);
                 var endPoint = segment.Item3;
+                endPoint += glyphOffset;
+                endPoint = ApplyOffsetScale(endPoint, positionOffset.X, positionOffset.Y, scale, flipY);
                 var uv0 = new PointF(0, 0);
                 var uv1 = new PointF(0.5, 0);
                 var uv2 = new PointF(1, 1);
@@ -109,25 +115,14 @@ namespace ImGui
             }
         }
 
-        private readonly TextGeometryContainer textGeometryContainer = new TextGeometryContainer();
-        internal void Build(Point position, GUIStyle style, ITextContext textContext)
+        private static Point ApplyOffsetScale(Point point, double offsetX, double offsetY, double scale, bool flipY)
         {
-            var color = style.Get<Color>(GUIStyleName.FontColor);
-            this.textGeometryContainer.Clear();
-            textContext.Build(position, color, this.textGeometryContainer);
+            return new Point(point.X * scale + offsetX, point.Y * scale * (flipY ? -1 : 1)+ offsetY);
+        }
 
-            // create mesh data
-            // triangles
-            foreach (var polygon in this.textGeometryContainer.Polygons)
-            {
-                if (polygon == null || polygon.Count < 3) { continue; }
-                for (int i = 0; i < polygon.Count-1; i++)
-                {
-                    AddTriangle(polygon[0], polygon[i], polygon[i + 1], color);
-                }
-            }
-            // bezier segments
-            AddBezierSegments(this.textGeometryContainer.CurveSegments, color);
+        internal void Build(Point position, ITextContext textContext)
+        {
+            textContext.Build(position);
         }
 
         public void Append(TextMesh textMesh, Vector offset)// must use after DrawList.AddText
@@ -165,5 +160,30 @@ namespace ImGui
                 }
             }
         }
+
+        public void Append(Vector positionOffset, GlyphData glyphData, Vector glyphOffset, double scale, Color color, bool flipY)
+        {
+            var polygons = glyphData.Polygons;
+            var segments = glyphData.QuadraticCurveSegments;
+
+            // triangles
+            foreach (var polygon in polygons)
+            {
+                if (polygon == null || polygon.Count < 3) { continue; }
+                var p0 = polygon[0] + glyphOffset;
+                p0 = ApplyOffsetScale(p0, positionOffset.X, positionOffset.Y, scale, flipY);
+                for (int i = 0; i < polygon.Count - 1; i++)
+                {
+                    var p1 = polygon[i] + glyphOffset;
+                    p1 = ApplyOffsetScale(p1, positionOffset.X, positionOffset.Y, scale, flipY);
+                    var p2 = polygon[i + 1] + glyphOffset;
+                    p2 = ApplyOffsetScale(p2, positionOffset.X, positionOffset.Y, scale, flipY);
+                    AddTriangle(p0, p1, p2, color);
+                }
+            }
+            // quadratic bezier segments
+            AddBezierSegments(segments, color, positionOffset, glyphOffset, scale, flipY);
+        }
+
     }
 }

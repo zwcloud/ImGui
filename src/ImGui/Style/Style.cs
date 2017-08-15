@@ -491,13 +491,35 @@ namespace ImGui
             set => Set<Color>(GUIStyleName.BackgroundColor, value);
         }
 
+        public string FontFamily
+        {
+            get => Get<string>(GUIStyleName.FontFamily);
+            set => Set<string>(GUIStyleName.FontFamily, value);
+        }
+
         public double FontSize
         {
             get => Get<double>(GUIStyleName.FontSize);
             set => Set<double>(GUIStyleName.FontSize, value);
         }
 
-        public Color FontColor => Get<Color>(GUIStyleName.FontColor);
+        public FontStyle FontStyle
+        {
+            get => (FontStyle)Get<int>(GUIStyleName.FontStyle);
+            set => Set<int>(GUIStyleName.FontStyle, (int)value);
+        }
+
+        public FontWeight FontWeight
+        {
+            get => (FontWeight)Get<int>(GUIStyleName.FontWeight);
+            set => Set<int>(GUIStyleName.FontWeight, (int)value);
+        }
+
+        public Color FontColor
+        {
+            get => Get<Color>(GUIStyleName.FontColor);
+            set => Set<Color>(GUIStyleName.FontColor, value);
+        }
 
 
 #endregion

@@ -14,7 +14,45 @@ namespace ImGui.OSImplentation
     /// <remarks>TypographyTextContext is an pure C# implementation of <see cref="ITextContext"/>.</remarks>
     class TypographyTextContext : ITextContext
     {
-        private readonly List<GlyphPlan> glyphPlans = new List<GlyphPlan>();
+        private static Typeface GetTypeFace(string fontFamily)
+        {
+            Typeface typeFace;
+            if (!typefaceCache.TryGetValue(fontFamily, out typeFace))
+            {
+                using (var fs = Utility.ReadFile(fontFamily))
+                {
+                    var reader = new OpenFontReader();
+                    Profile.Start("OpenFontReader.Read");
+                    typeFace = reader.Read(fs);
+                    Profile.End();
+                }
+                typefaceCache.Add(fontFamily, typeFace);
+            }
+            return typeFace;
+        }
+
+        public static Glyph LookUpGlyph(string fontFamily, char character)
+        {
+            Typeface typeFace = GetTypeFace(fontFamily);
+            var glyph = typeFace.Lookup(character);
+            return glyph;
+        }
+
+        public static Glyph LookUpGlyph(string fontFamily, int glyphIndex)
+        {
+            Typeface typeFace = GetTypeFace(fontFamily);
+            var glyph = typeFace.GetGlyphByIndex(glyphIndex);
+            return glyph;
+        }
+
+        public static double GetScale(string fontFamily, double fontSize)
+        {
+            Typeface typeFace = GetTypeFace(fontFamily);
+            var scale = typeFace.CalculateToPixelScaleFromPointSize((float)fontSize);
+            return scale;
+        }
+
+        public readonly List<GlyphPlan> glyphPlans = new List<GlyphPlan>();
         private readonly GlyphLayout glyphLayout = new GlyphLayout();
 
         private char[] textCharacters;
@@ -96,13 +134,15 @@ namespace ImGui.OSImplentation
 
         #region line data
 
-        int lineCount = 0;
-        float lineHeight;
+        public int lineCount = 0;
+        public float lineHeight;
         float lineBreakWidth;
         List<float> LineWidthList = new List<float>();
         List<uint> LineCharacterCountList = new List<uint>();
 
         #endregion
+
+        public List<Vector> GlyphOffsets = new List<Vector>();
 
         public Size Measure()
         {
@@ -172,9 +212,10 @@ namespace ImGui.OSImplentation
             return this.Size;
         }
 
-        public void Build(Point offset, Color color, ITextGeometryContainer container)
+        public void Build(Point offset)
         {
             //Profile.Start("TypographyTextContext.Build");
+            this.GlyphOffsets.Clear();
             // layout glyphs with selected layout technique
             this.Position = offset;
             this.glyphPlans.Clear();
@@ -182,10 +223,8 @@ namespace ImGui.OSImplentation
             this.glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, this.glyphPlans, null);
 
             int j = this.glyphPlans.Count;
-            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
-            this.lineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender + this.CurrentTypeFace.LineGap)*scale;
+            this.lineHeight = this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender + this.CurrentTypeFace.LineGap;
 
-            if (container != null)
             {
                 // render each glyph
                 this.lineCount = 1;
@@ -199,32 +238,19 @@ namespace ImGui.OSImplentation
                     if (glyphPlan.glyphIndex == 0)
                     {
                         this.lineCount++;
-                        back = (glyphPlan.x + glyphPlan.advX) * scale;
+                        back = glyphPlan.x + glyphPlan.advX;
                         continue;
                     }
 
-                    var offsetX = glyphPlan.x * scale - back;
-                    var offsetY = glyphPlan.y * scale + this.lineCount * this.lineHeight;
+                    var offsetX = glyphPlan.x - back;
+                    var offsetY = glyphPlan.y + this.lineCount * this.lineHeight;
 
-                    var points = glyph.GlyphPoints;
-                    var endPoints = glyph.EndPoints;
-
-                    // read polygons and bezier segments
-                    var polygons = new List<List<Point>>();
-                    var bezierSegments = new List<(Point, Point, Point)>();
-                    GlyphReader.Read(points, endPoints, offsetX, offsetY, scale, out polygons, out bezierSegments);
-                    foreach (var polygon in polygons)
-                    {
-                        container.AddContour(polygon);
-                    }
-                    foreach (var segment in bezierSegments)
-                    {
-                        container.AddBezier(segment);
-                    }
+                    this.GlyphOffsets.Add(new Vector(offsetX, offsetY));
                 }
             }
 
             // recording line data
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
             {
                 this.lineCount = 1;
                 float back = 0;

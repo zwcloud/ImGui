@@ -37,9 +37,7 @@ namespace ImGui.OSAbstraction.Text
         /// build text glyphs to retrive text rendering data (line segments and bezier curves)
         /// </summary>
         /// <param name="offset">offset of the text base-point against the rectangle position(bottom-left of the rectangle)</param>
-        /// <param name="color"></param>
-        /// <param name="container"></param>
-        void Build(Point offset, Color color, ITextGeometryContainer container);
+        void Build(Point offset);
 
         /// <summary>
         /// get space that the text occupies

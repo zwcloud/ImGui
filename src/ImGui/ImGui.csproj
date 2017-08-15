@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00175" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.2" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
