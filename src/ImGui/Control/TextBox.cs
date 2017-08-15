@@ -22,13 +22,14 @@ namespace ImGui
 
             //apply skin and stack style modifiers
             var s = g.StyleStack;
-            s.Apply(GUISkin.Instance[GUIControlName.Label]);
+            var modifiers = GUISkin.Instance[GUIControlName.TextBox];
+            s.PushRange(modifiers);
 
             int id = window.GetID(label);
             Rect rect = window.GetRect(id, size);
             var result = GUI.DoTextbox(rect, label, text);
 
-            s.Restore();
+            s.PopStyle(modifiers.Length);
 
             return result;
         }
@@ -45,9 +46,9 @@ namespace ImGui
             var g = GetCurrentContext();
             Window window = GetCurrentWindow();
 
-            //apply skin and stack style modifiers
             var s = g.StyleStack;
-            s.Apply(GUISkin.Instance[GUIControlName.TextBox]);
+            var modifiers = GUISkin.Instance[GUIControlName.Label];
+            s.PushRange(modifiers);
 
             int id = window.GetID(label);
             var height = s.Style.FontSize;
@@ -55,7 +56,7 @@ namespace ImGui
             Rect rect = window.GetRect(id, size);
             var result = GUI.DoTextbox(rect, label, text);
 
-            s.Restore();
+            s.PopStyle(modifiers.Length);
 
             return result;
         }
@@ -68,14 +69,14 @@ namespace ImGui
             var g = GetCurrentContext();
             var window = GetCurrentWindow();
 
-            //apply skin and stack style modifiers
             var s = g.StyleStack;
-            s.Apply(GUISkin.Instance[GUIControlName.TextBox]);
+            var modifiers = GUISkin.Instance[GUIControlName.TextBox];
+            s.PushRange(modifiers);
 
             rect = window.GetRect(rect);
             var result = DoTextbox(rect, label, text);
 
-            s.Restore();
+            s.PopStyle(modifiers.Length);
 
             return result;
         }

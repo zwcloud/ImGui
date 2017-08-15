@@ -12,49 +12,26 @@ namespace ImGui
         public void Push(StyleModifier modifier)
         {
             this.ModifierStack.Push(modifier);
+            modifier.Modify(this.Style);
+        }
+
+        public void PushRange(StyleModifier[] modifiers)
+        {
+            foreach (var modifier in modifiers)
+            {
+                this.ModifierStack.Push(modifier);
+                modifier.Modify(this.Style);
+            }
         }
 
         public void PopStyle(int number = 1)
         {
             for (int i = 0; i < number; i++)
             {
-                this.ModifierStack.Pop();
-            }
-        }
-
-        public void Apply(StyleModifier[] modifiers = null)
-        {
-            if (modifiers != null)
-            {
-                foreach (var modifier in modifiers)
-                {
-                    modifier.Modify(this.Style);
-                }
-            }
-
-            foreach (var modifier in this.ModifierStack)
-            {
-                modifier.Modify(this.Style);
-            }
-
-        }
-
-        public void Restore(StyleModifier[] modifiers = null)
-        {
-            foreach (var modifier in ModifierStack)
-            {
+                var modifier = this.ModifierStack.Pop();
                 modifier.Restore(this.Style);
             }
-
-            if (modifiers != null)
-            {
-                foreach (var modifier in modifiers)
-                {
-                    modifier.Restore(this.Style);
-                }
-            }
         }
-
 
         #region positon, size
 
@@ -64,16 +41,16 @@ namespace ImGui
         {
             var modifier1 = new StyleModifier(GUIStyleName.MinWidth, StyleType.@double, width.Item1);
             var modifier2 = new StyleModifier(GUIStyleName.MaxWidth, StyleType.@double, width.Item2);
-            this.ModifierStack.Push(modifier1);
-            this.ModifierStack.Push(modifier2);
+            Push(modifier1);
+            Push(modifier2);
         }
 
         public void PushHeight((double, double) height)
         {
             var modifier1 = new StyleModifier(GUIStyleName.MinHeight, StyleType.@double, height.Item1);
             var modifier2 = new StyleModifier(GUIStyleName.MaxHeight, StyleType.@double, height.Item2);
-            this.ModifierStack.Push(modifier1);
-            this.ModifierStack.Push(modifier2);
+            Push(modifier1);
+            Push(modifier2);
         }
 
         #endregion
@@ -83,7 +60,7 @@ namespace ImGui
         public void PushStretchFactor(bool isVertical, int factor)
         {
             var modifier = new StyleModifier(isVertical? GUIStyleName.VerticalStretchFactor : GUIStyleName.HorizontalStretchFactor, StyleType.@int, factor);
-            this.ModifierStack.Push(modifier);
+            Push(modifier);
         }
 
         #endregion
@@ -93,7 +70,7 @@ namespace ImGui
         public void PushCellSpacing(bool isVertical, double spacing)
         {
             var modifier = new StyleModifier(isVertical ? GUIStyleName.CellingSpacingVertical : GUIStyleName.CellingSpacingHorizontal, StyleType.@double, spacing);
-            this.ModifierStack.Push(modifier);
+            Push(modifier);
         }
 
         #endregion
@@ -103,7 +80,7 @@ namespace ImGui
         public void PushAlignment(bool isVertical, Alignment alignment)
         {
             var modifier = new StyleModifier(isVertical ? GUIStyleName.AlignmentVertical : GUIStyleName.AlignmentHorizontal, StyleType.@int, (int)alignment);
-            this.ModifierStack.Push(modifier);
+            Push(modifier);
         }
 
         #endregion
@@ -116,10 +93,10 @@ namespace ImGui
             var modifier2 = new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, border.Item2);
             var modifier3 = new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, border.Item3);
             var modifier4 = new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, border.Item4);
-            this.ModifierStack.Push(modifier1);
-            this.ModifierStack.Push(modifier2);
-            this.ModifierStack.Push(modifier3);
-            this.ModifierStack.Push(modifier4);
+            Push(modifier1);
+            Push(modifier2);
+            Push(modifier3);
+            Push(modifier4);
         }
 
         public void PushPadding((double, double, double, double) padding)
@@ -128,10 +105,10 @@ namespace ImGui
             var modifier2 = new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, padding.Item2);
             var modifier3 = new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, padding.Item3);
             var modifier4 = new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, padding.Item4);
-            this.ModifierStack.Push(modifier1);
-            this.ModifierStack.Push(modifier2);
-            this.ModifierStack.Push(modifier3);
-            this.ModifierStack.Push(modifier4);
+            Push(modifier1);
+            Push(modifier2);
+            Push(modifier3);
+            Push(modifier4);
         }
 
         #endregion

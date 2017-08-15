@@ -11,8 +11,11 @@ namespace UniversalAppTemplate
         {
         }
 
+        bool myWindowOpen = true;
+
         protected override void OnGUI()
         {
+            GUI.Begin("MyWindow", ref myWindowOpen);
             Label("Three button of default size.");
             BeginHorizontal("H~~~1");
             Button("1");
@@ -39,6 +42,7 @@ namespace UniversalAppTemplate
             Button("3");
             PopStyleVar();
             EndHorizontal();
+            GUI.End();
         }
     }
 }

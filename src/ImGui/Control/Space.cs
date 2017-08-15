@@ -28,20 +28,13 @@ namespace ImGui
             Window window = GetCurrentWindow();
             var layout = window.StackLayout;
 
-            int id = window.GetID(str_id);
+            var s = g.StyleStack;
+            s.PushStretchFactor(layout.TopGroup.IsVertical, stretchFactor);
 
-            if(layout.TopGroup.IsVertical)
-            {
-                PushVStretchFactor(stretchFactor);
-            }
-            else
-            {
-                PushHStretchFactor(stretchFactor);
-            }
-            g.StyleStack.Apply();
+            int id = window.GetID(str_id);
             Rect rect = window.GetRect(id, Size.Zero);
-            g.StyleStack.Restore();
-            PopStyleVar();
+
+            s.PopStyle();
         }
     }
 }

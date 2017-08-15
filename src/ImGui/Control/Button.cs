@@ -14,11 +14,13 @@ namespace ImGui
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
 
             //apply skin and stack style modifiers
             var s = g.StyleStack;
             var modifiers = GUISkin.Instance[GUIControlName.Button];
-            s.Apply(modifiers);
+            s.PushRange(modifiers);
 
             int id = window.GetID(text);
             var style = g.StyleStack.Style;
@@ -27,7 +29,7 @@ namespace ImGui
 
             var result = GUI.DoButton(rect, text);
 
-            s.Restore(modifiers);
+            s.PopStyle(modifiers.Length);
 
             return result;
         }
@@ -45,13 +47,17 @@ namespace ImGui
         public static bool Button(Rect rect, string text)
         {
             GUIContext g = GetCurrentContext();
-            //apply skin and stack style modifiers
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
+
             var s = g.StyleStack;
-            s.Apply(GUISkin.Instance[GUIControlName.Button]);
+            var modifiers = GUISkin.Instance[GUIControlName.Button];
+            s.PushRange(modifiers);
 
             var result = DoButton(rect, text);
 
-            s.Restore();
+            s.PopStyle(modifiers.Length);
 
             return result;
         }

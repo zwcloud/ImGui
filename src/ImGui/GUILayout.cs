@@ -60,9 +60,7 @@ namespace ImGui
             PushID(id);
 
             styleStack.PushStretchFactor(false, 1);
-            styleStack.Apply();
             window.StackLayout.BeginLayoutGroup(id, false, size, style);
-            styleStack.Restore();
             styleStack.PopStyle();
         }
 
@@ -88,9 +86,7 @@ namespace ImGui
             PushID(id);
 
             styleStack.PushStretchFactor(true, 1);
-            styleStack.Apply();
             window.StackLayout.BeginLayoutGroup(id, true, size, style);
-            styleStack.Restore();
             styleStack.PopStyle();
         }
 

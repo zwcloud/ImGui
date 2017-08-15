@@ -15,7 +15,8 @@ namespace ImGui
 
             //apply skin and stack style modifiers
             var s = g.StyleStack;
-            s.Apply(GUISkin.Instance[GUIControlName.Label]);
+            var modifiers = GUISkin.Instance[GUIControlName.Label];
+            s.PushRange(modifiers);
 
             int id = window.GetID(text);
             var style = g.StyleStack.Style;
@@ -23,7 +24,7 @@ namespace ImGui
             Rect rect = window.GetRect(id, contentSize);
             GUI.DoLabel(rect, text);
 
-            s.Restore();
+            s.PopStyle(modifiers.Length);
         }
     }
 
@@ -38,13 +39,14 @@ namespace ImGui
         public static void Label(Rect rect, string text)
         {
             var g = GetCurrentContext();
-            //apply skin and stack style modifiers
+
             var s = g.StyleStack;
-            s.Apply(GUISkin.Instance[GUIControlName.Button]);
+            var modifiers = GUISkin.Instance[GUIControlName.Label];
+            s.PushRange(modifiers);
 
             DoLabel(rect, text);
 
-            s.Restore();
+            s.PopStyle(modifiers.Length);
         }
 
         internal static void DoLabel(Rect rect, string text)
