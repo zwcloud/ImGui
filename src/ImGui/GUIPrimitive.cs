@@ -65,6 +65,7 @@ namespace ImGui
             var ptr = new Point(btr.X - br, btr.Y + bt);
             var pbr = new Point(bbr.X - br, bbr.Y - bb);
             var pbl = new Point(bbl.X + bl, bbl.Y - bb);
+            //if (ptl.X > ptr.X) return;//TODO what if (ptl.X > ptr.X) happens?
             var paddingBoxRect = new Rect(ptl, pbr);
 
             //4 corner of the content-box
@@ -79,8 +80,9 @@ namespace ImGui
 
             //Content
             //Content-box
-            if (text != null)
+            if (text != null && ctl.X < ctr.X)//content should not be visible when ctl.X > ctr.X
             {
+                //TODO handle text alignment
                 drawList.DrawText(contentBoxRect, text, style, state);
             }
 
@@ -209,7 +211,7 @@ namespace ImGui
 
             //Content
             //Content-box
-            if (texture != null)
+            if (texture != null && ctl.X < ctr.X)//content should not be visible when ctl.X > ctr.X
             {
                 drawList.DrawImage(contentBoxRect, texture, style);
             }
