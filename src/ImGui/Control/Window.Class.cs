@@ -298,13 +298,16 @@ namespace ImGui
         {
             var rect = StackLayout.GetRect(id, size);
 
-            Rect newContentRect = ContentRect;
-            newContentRect.Union(rect);
-            ContentRect = newContentRect;
+            if(rect != StackLayout.DummyRect)
+            {
+                Rect newContentRect = ContentRect;
+                newContentRect.Union(rect);
+                ContentRect = newContentRect;
 
-            // Apply window position, style(border and padding) and titlebar
-            rect.Offset(this.Position.X + this.Style.BorderLeft + this.Style.PaddingLeft, this.Position.Y + this.TitleBarHeight + this.Style.BorderTop + this.Style.PaddingTop);
-            rect.Offset(-this.Scroll);
+                // Apply window position, style(border and padding) and titlebar
+                rect.Offset(this.Position.X + this.Style.BorderLeft + this.Style.PaddingLeft, this.Position.Y + this.TitleBarHeight + this.Style.BorderTop + this.Style.PaddingTop);
+                rect.Offset(-this.Scroll);
+            }
 
             return rect;
         }

@@ -41,6 +41,9 @@ namespace ImGui
         /// <param name="state"></param>
         public static void DrawBoxModel(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state = GUIState.Normal)
         {
+            if(rect == Layout.StackLayout.DummyRect)
+            { return; }
+
             //Widths of border
             var bt = style.Get<double>(GUIStyleName.BorderTop, state);
             var br = style.Get<double>(GUIStyleName.BorderRight, state);
@@ -351,6 +354,7 @@ namespace ImGui
             textMesh.Commands[textMesh.Commands.Count - 1] = command;
 
             // TODO merge command with previous one if they share the same clip rect.
+            // TODO refactor this
         }
 
         /// <summary>

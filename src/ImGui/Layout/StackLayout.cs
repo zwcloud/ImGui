@@ -62,7 +62,7 @@ namespace ImGui.Layout
                 var entry = group.GetEntry(id);
                 if(entry == null)
                 {
-                    return new Rect(100, 100);//dummy
+                    return DummyRect;//dummy
                 }
 
                 return entry.Rect;
@@ -88,7 +88,7 @@ namespace ImGui.Layout
                 }
                 if(group == null)// this happens when new group is added in previous frame
                 {
-                    group = new LayoutGroup(id, isVertical, size);//dummy (HACK added to reading stack to forbid NRE)
+                    group = DummyGroup;//dummy (HACK added to reading stack to forbid NRE)
                 }
                 this.ReadingStack.Push(group);
             }
@@ -131,5 +131,8 @@ namespace ImGui.Layout
                 rootGroup.ContentHeight = size.Height;
             }
         }
+
+        public static Rect DummyRect = new Rect(1, 1);
+        public static LayoutGroup DummyGroup = new LayoutGroup(-9999, false, Size.Zero);
     }
 }
