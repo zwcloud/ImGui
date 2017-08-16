@@ -111,28 +111,27 @@ namespace ImGui.Layout
             {
                 // calculate the width
                 this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
-                this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
-
-                if (this.ContentWidth <= 0)
+                if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal <= 0)
                 {
                     Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
                     return;
                 }
+                this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
                 // calculate the width of children
                 CalcChildrenWidth();
             }
-            else if (this.IsFixedWidth)//fiexed width
+            else if (this.IsFixedWidth)//fixed width
             {
                 // calculate the width
                 this.Rect.Width = this.MinWidth;
-                this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
-                if (this.ContentWidth <= 0)
+                if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal <= 0)
                 {
                     Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
                     return;
                 }
+                this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
                 // calculate the width of children
                 CalcChildrenWidth();
@@ -185,43 +184,90 @@ namespace ImGui.Layout
             {
                 // calculate the unitPartWidth for stretched children
                 // calculate the width of fixed-size children
+
                 var childCount = this.Entries.Count;
-                var totalFactor = 0;
-                var totalStretchedPartWidth = this.ContentWidth -
-                                              this.CellSpacingHorizontal * (childCount - 1);
-                if (totalStretchedPartWidth <= 0)
+                var cellSpacingWidth = this.CellSpacingHorizontal * (childCount - 1);
+                if(cellSpacingWidth >= this.ContentWidth)
                 {
                     Log.Warning(string.Format("Group<{0}> doesn't have enough width for horizontal-cell-spacing<{1}> with {2} children.",
                         this.Id, this.CellSpacingHorizontal, childCount));
                     return;
                 }
 
+                var widthWithoutCellSpacing = this.ContentWidth - cellSpacingWidth;
+
+                double minWidthOfEntries = 0;
+                double minStretchedWidth = 0;
                 foreach (var entry in this.Entries)
                 {
                     if (entry.HorizontallyStretched)
                     {
-                        totalFactor += entry.HorizontalStretchFactor;
+                        var defaultWidth = entry.GetDefaultWidth();
+                        minWidthOfEntries += defaultWidth;
+                        minStretchedWidth += defaultWidth;
+                    }
+                    else if(entry.IsFixedWidth)
+                    {
+                        minWidthOfEntries += entry.MinWidth;
                     }
                     else
                     {
-                        entry.CalcWidth();
-                        totalStretchedPartWidth -= entry.Rect.Width;
-                        if(totalStretchedPartWidth <= 0)
+                        minWidthOfEntries += entry.GetDefaultWidth();
+                    }
+                }
+
+                if(minWidthOfEntries > widthWithoutCellSpacing)//overflow
+                {
+                    var factor = 0;
+                    foreach (var entry in this.Entries)
+                    {
+                        if (entry.HorizontallyStretched)
                         {
-                            Log.Warning(string.Format("Group<{0}> doesn't have enough width for more entries.", this.Id));
-                            return;
+                            factor += entry.HorizontalStretchFactor;
+                        }
+                    }
+                    var unit = minStretchedWidth / factor;
+                    // change all HorizontallyStretched entries to fixed width
+                    foreach (var entry in this.Entries)
+                    {
+                        if (entry.HorizontallyStretched)
+                        {
+                            entry.MinWidth = entry.MaxWidth = unit * entry.HorizontalStretchFactor;
+                            entry.HorizontalStretchFactor = 0;
+                        }
+                        entry.CalcWidth();
+                    }
+                }
+                else
+                {
+                    var factor = 0;
+                    foreach (var entry in this.Entries)
+                    {
+                        if (entry.HorizontallyStretched)
+                        {
+                            factor += entry.HorizontalStretchFactor;
+                        }
+                        else
+                        {
+                            entry.CalcWidth();
+                        }
+                    }
+
+                    if (factor > 0)
+                    {
+                        var stretchedWidth = widthWithoutCellSpacing - minWidthOfEntries + minStretchedWidth;
+                        var unit = stretchedWidth / factor;
+                        // calculate the width of stretched children
+                        foreach (var entry in this.Entries)
+                        {
+                            if (entry.HorizontallyStretched)
+                            {
+                                entry.CalcWidth(unit);
+                            }
                         }
                     }
                 }
-                var childUnitPartWidth = totalStretchedPartWidth / totalFactor;
-                // calculate the width of stretched children
-                foreach (var entry in this.Entries)
-                {
-                    if (entry.HorizontallyStretched)
-                    {
-                        entry.CalcWidth(childUnitPartWidth);
-                    }
-                }
+
             }
         }
 

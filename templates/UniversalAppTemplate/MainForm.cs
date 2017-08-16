@@ -32,14 +32,15 @@ namespace UniversalAppTemplate
             EndHorizontal();
             Label("Three stretched sized buttons with 1/2/3 stretch factor.");
             BeginHorizontal("H~~~3");
-            PushHStretchFactor(1);
             Button("1");
-            PopStyleVar();
-            PushHStretchFactor(2);
+            PushHStretchFactor(1);
             Button("2");
             PopStyleVar();
             PushHStretchFactor(3);
             Button("3");
+            PopStyleVar();
+            PushFixedWidth(300);
+            Button("4");
             PopStyleVar();
             EndHorizontal();
             GUI.End();

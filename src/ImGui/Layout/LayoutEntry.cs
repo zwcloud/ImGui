@@ -19,32 +19,32 @@ namespace ImGui.Layout
         public Rect Rect;
 
         /// <summary>
-        /// exact content width, pre-calculated from content and style
+        /// exact content width, externally pre-calculated from content and style
         /// </summary>
         public double ContentWidth { get; set; }
 
         /// <summary>
-        /// exact content height, pre-calculated from content and style
+        /// exact content height, externally pre-calculated from content and style
         /// </summary>
         public double ContentHeight { get; set; }
 
         /// <summary>
-        /// minimum width of content-box
+        /// minimum width of border-box
         /// </summary>
         public double MinWidth { get; set; } = 1;
 
         /// <summary>
-        /// maximum width of content-box
+        /// maximum width of border-box
         /// </summary>
         public double MaxWidth { get; set; } = 9999;
 
         /// <summary>
-        /// minimum height of content-box
+        /// minimum height of border-box
         /// </summary>
         public double MinHeight { get; set; } = 1;
 
         /// <summary>
-        /// maximum height of content-box
+        /// maximum height of border-box
         /// </summary>
         public double MaxHeight { get; set; } = 9999;
 
@@ -167,7 +167,6 @@ namespace ImGui.Layout
                 if (unitPartWidth > 0)
                 {
                     this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
-                    this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
                 }
                 else
                 {
@@ -177,7 +176,6 @@ namespace ImGui.Layout
             else if (this.IsFixedWidth)
             {
                 this.Rect.Width = this.MinWidth;
-                this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
             }
             else
             {
@@ -218,6 +216,24 @@ namespace ImGui.Layout
         public virtual void SetY(double y)
         {
             this.Rect.Y = y;
+        }
+
+        public double GetDefaultWidth()
+        {
+            if(this.IsFixedWidth)
+            {
+                throw new Exception("Cannot get default width of a fixed size entry.");
+            }
+            return this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
+        }
+
+        public double GetDefaultHeight()
+        {
+            if (this.IsFixedHeight)
+            {
+                throw new Exception("Cannot get default width of a fixed height entry.");
+            }
+            return this.ContentHeight + this.PaddingVertical + this.BorderVertical;
         }
 
         public LayoutEntry Clone()

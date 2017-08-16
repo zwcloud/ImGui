@@ -26,7 +26,8 @@ namespace ImGui.Layout
         private LayoutGroup CreateRootGroup(int rootId, Size size)
         {
             var rootGroup = new LayoutGroup(rootId, true, size);
-            rootGroup.MinWidth = rootGroup.MaxWidth = size.Width;
+            rootGroup.ContentWidth = size.Width;
+            rootGroup.ContentHeight = size.Height;
             return rootGroup;
         }
 
@@ -109,8 +110,8 @@ namespace ImGui.Layout
         /// </summary>
         public void Layout()
         {
-            this.WritingStack.Peek().CalcWidth(TopGroup.ContentWidth);
-            this.WritingStack.Peek().CalcHeight(TopGroup.ContentHeight);
+            this.WritingStack.Peek().CalcWidth();
+            this.WritingStack.Peek().CalcHeight();
             this.WritingStack.Peek().SetX(0);
             this.WritingStack.Peek().SetY(0);
 
@@ -122,12 +123,12 @@ namespace ImGui.Layout
             {
                 var rootGroup = this.ReadingStack.Peek();
                 rootGroup.MinWidth = rootGroup.MaxWidth = rootGroup.ContentWidth = size.Width;
-                rootGroup.MinHeight = rootGroup.MaxHeight = rootGroup.ContentHeight = size.Height;
+                rootGroup.ContentHeight = size.Height;
             }
             {
                 var rootGroup = this.WritingStack.Peek();
                 rootGroup.MinWidth = rootGroup.MaxWidth = rootGroup.ContentWidth = size.Width;
-                rootGroup.MinHeight = rootGroup.MaxHeight = rootGroup.ContentHeight = size.Height;
+                rootGroup.ContentHeight = size.Height;
             }
         }
     }
