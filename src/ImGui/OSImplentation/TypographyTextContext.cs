@@ -239,7 +239,6 @@ namespace ImGui.OSImplentation
                     {
                         this.lineCount++;
                         back = glyphPlan.x + glyphPlan.advX;
-                        continue;
                     }
 
                     var offsetX = glyphPlan.x - back;
