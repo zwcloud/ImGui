@@ -20,10 +20,11 @@ namespace ImGui
 
         internal static bool DoToggle(Rect rect, string label, bool value)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.WindowManager.CurrentWindow;
-            DrawList d = window.DrawList;
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
+
             int id = window.GetID(label);
 
             var mousePos = Mouse.Instance.Position;
@@ -60,6 +61,11 @@ namespace ImGui
             // +----+               |
             //      |               |
             //      +---------------+
+            DrawList d = window.DrawList;
+            var s = g.StyleStack;
+            var toggleModifiers = GUISkin.Instance[GUIControlName.Toggle];
+            s.PushRange(toggleModifiers);
+            var style = s.Style;
             {
                 var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
                 var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
@@ -80,8 +86,12 @@ namespace ImGui
                     d.PathStroke(tickColor, false, 2);
                 }
                 // label
-                d.DrawBoxModel(textRect, label, GUISkin.Instance[GUIControlName.Label]);
+                var labelModifiers = GUISkin.Instance[GUIControlName.Label];
+                s.PushRange(labelModifiers);
+                d.DrawBoxModel(textRect, label, style);
+                s.PopStyle(labelModifiers.Length);
             }
+            s.PopStyle(toggleModifiers.Length);
 
             return result;
         }
@@ -94,32 +104,43 @@ namespace ImGui
         /// </summary>
         /// <param name="text">text to display on the label</param>
         /// <param name="value">Is this toggle checked or unchecked?</param>
-        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>new value of the toggle</returns>
-        public static bool Toggle(string text, bool value, params LayoutOption[] options)
+        public static bool Toggle(string text, bool value)
         {
-            return DoToggle(text, value, GUISkin.Instance[GUIControlName.Toggle], options);
+            return DoToggle(text, value);
         }
 
-        private static bool Toggle(string text, bool value, GUIStyle style, params LayoutOption[] options)
+        private static bool DoToggle(string text, bool value)
         {
-            return DoToggle(text, value, style, options);
-        }
-
-        private static bool DoToggle(string text, bool value, GUIStyle style, params LayoutOption[] options)
-        {
-            var result = GUI.Toggle(GUILayout.GetToggleRect(text, style, options), text, value);
+            var result = GUI.Toggle(GUILayout.GetToggleRect(text), text, value);
             return result;
         }
 
-        private static Rect GetToggleRect(string text, GUIStyle style, params LayoutOption[] options)
+        private static Rect GetToggleRect(string text)
         {
+            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
+
+            var style = g.StyleStack.Style;
             var id = window.GetID(text);
             var textSize = style.CalcSize(text, GUIState.Normal);
             var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
-            return window.GetRect(id, size, style, options);
+            return window.GetRect(id, size);
         }
     }
 
+    internal partial class GUISkin
+    {
+        void InitToggleStyles()
+        {
+            var bgColor = new Color(0x9F, 0x9F, 0x9F);
+            var toggleStyleModifiers = new StyleModifier[]
+            {
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, bgColor, GUIState.Normal),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, bgColor, GUIState.Hover),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, bgColor, GUIState.Active),
+            };
+            this.styles.Add(GUIControlName.Toggle, toggleStyleModifiers);
+        }
+    }
 }

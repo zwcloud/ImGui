@@ -210,8 +210,8 @@ namespace ImGui
             {
                 return defaultValue;
             }
-
-            throw new Exception(string.Format("Cannot find the style<{0},{1}>", styleName, state));
+            return default(T);//TODO better solution for this?
+            //throw new Exception(string.Format("Cannot find the style<{0},{1}>", styleName, state));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

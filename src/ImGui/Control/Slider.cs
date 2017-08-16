@@ -18,7 +18,14 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double Slider(Rect rect, string label, double value, double minValue, double maxValue)
         {
-            return DoHorizontalSlider(rect, label, value, minValue, maxValue);
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return value;
+
+            var result = DoHorizontalSlider(rect, label, value, minValue, maxValue);
+
+            return result;
         }
 
         /// <summary>
@@ -33,31 +40,32 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double VSlider(Rect rect, string label, double value, double minValue, double maxValue)
         {
-            return DoVerticalSlider(rect, label, value, minValue, maxValue);
-        }
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return value;
 
-        internal static double Slider(Rect rect, string label, double value, double minValue, double maxValue, bool isHorizontal)
-        {
-            if (isHorizontal)
-            {
-                return Slider(rect, label, value, minValue, maxValue);
-            }
-            return VSlider(rect, label, value, minValue, maxValue);
+            var result = DoVerticalSlider(rect, label, value, minValue, maxValue);
+
+            return result;
         }
 
         internal static double DoHorizontalSlider(Rect rect, string label, double value, double minValue, double maxValue)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.WindowManager.CurrentWindow;
-            DrawList d = window.DrawList;
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
             int id = window.GetID(label);
 
             var mousePos = Mouse.Instance.Position;
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
             var labelWidth = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
+            var sliderWidth = rect.Width - spacing - labelWidth;
+            if(sliderWidth <= 0)
+            {
+                sliderWidth = 1;
+            }
             var sliderRect = new Rect(rect.X, rect.Y,
-                rect.Width - spacing - labelWidth,
+                sliderWidth,
                 rect.Height);
             var hovered = sliderRect.Contains(mousePos);
 
@@ -102,11 +110,14 @@ namespace ImGui
             }
 
             // ui painting
+            var s = g.StyleStack;
+            var sliderModifiers = GUISkin.Instance[GUIControlName.Slider];
+            s.PushRange(sliderModifiers);
+            var style = s.Style;
             {
-                var style = GUISkin.Instance[GUIControlName.Slider];
+                DrawList d = window.DrawList;
                 var colorForLineUsed = style.Get<Color>(GUIStyleName.Slider_LineUsed, state);
                 var colorForLineUnused = style.Get<Color>(GUIStyleName.Slider_LineUnused, state);
-                var buttonStyle = GUISkin.Instance[GUIControlName.Button];
                 //slider
                 var h = sliderRect.Height;
                 var a = 0.2f * h;
@@ -141,27 +152,36 @@ namespace ImGui
                     labelWidth, rect.Height);
                 d.DrawText(labelRect, label, style, state);
 
-                var fillColor = buttonStyle.Get<Color>(GUIStyleName.BackgroundColor, state);
+                var buttonModifiers = GUISkin.Instance[GUIControlName.Button];
+                s.PushRange(buttonModifiers);//TODO selectively push one style modifier of a control. For example, only the bgcolor modifier is needed here.
+
+                var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
                 d.PathFill(fillColor);
+
+                s.PopStyle(buttonModifiers.Length);
             }
+            s.PopStyle(sliderModifiers.Length);
 
             return value;
         }
 
         internal static double DoVerticalSlider(Rect rect, string label, double value, double minValue, double maxValue)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.WindowManager.CurrentWindow;
-            DrawList d = window.DrawList;
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
             int id = window.GetID(label);
 
             var mousePos = Mouse.Instance.Position;
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
             var labelHeight = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
+            var sliderHeight = rect.Height - spacing - labelHeight;
+            if (sliderHeight <= 0)
+            {
+                sliderHeight = 1;
+            }
             var sliderRect = new Rect(rect.X, rect.Y,
                 rect.Width,
-                rect.Height - spacing - labelHeight);
+                sliderHeight);
             var hovered = rect.Contains(mousePos);
 
             //control logic
@@ -205,8 +225,12 @@ namespace ImGui
             }
 
             // ui painting
+            var s = g.StyleStack;
+            var sliderModifiers = GUISkin.Instance[GUIControlName.Slider];
+            s.PushRange(sliderModifiers);
+            var style = s.Style;
             {
-                var style = GUISkin.Instance[GUIControlName.Slider];
+                DrawList d = window.DrawList;
                 var colorForLineUsed = style.Get<Color>(GUIStyleName.Slider_LineUsed, state);
                 var colorForLineUnused = style.Get<Color>(GUIStyleName.Slider_LineUnused, state);
 
@@ -244,11 +268,15 @@ namespace ImGui
                     rect.Width, labelHeight);
                 d.DrawText(labelRect, label, style, state);
 
-                var buttonStyle = GUISkin.Instance[GUIControlName.Button];
-                var fillColor = buttonStyle.Get<Color>(GUIStyleName.BackgroundColor, state);
-                d.PathFill(fillColor);
-            }
+                var buttonModifiers = GUISkin.Instance[GUIControlName.Button];
+                s.PushRange(buttonModifiers);
 
+                var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+                d.PathFill(fillColor);
+
+                s.PopStyle(buttonModifiers.Length);
+            }
+            s.PopStyle(sliderModifiers.Length);
             return value;
         }
     }
@@ -266,7 +294,14 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double Slider(string label, double value, double minValue, double maxValue)
         {
-            return DoSlider(label, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], true);
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return value;
+
+            var result = DoSlider(label, value, minValue, maxValue, true);
+
+            return result;
         }
 
         /// <summary>
@@ -280,18 +315,29 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double VSlider(string label, double value, double minValue, double maxValue)
         {
-            return DoSlider(label, value, minValue, maxValue, GUISkin.Instance[GUIControlName.Slider], false);
-        }
-
-        private static double DoSlider(string label, double value, double minValue, double maxValue, GUIStyle style, bool isHorizontal)
-        {
+            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return value;
 
+            var result = DoSlider(label, value, minValue, maxValue, false);
+
+            return result;
+        }
+
+        private static double DoSlider(string label, double value, double minValue, double maxValue, bool isHorizontal)
+        {
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+
+            var s = g.StyleStack;
+            var sliderModifiers = GUISkin.Instance[GUIControlName.Slider];
+            s.PushRange(sliderModifiers);
+            var style = s.Style;
+
             var id = window.GetID(label);
             Size size = style.CalcSize(label, GUIState.Normal);//label size
-            var options = new LayoutOption[] { isHorizontal ? GUILayout.ExpandWidth(true) : GUILayout.ExpandHeight(true) };
+            s.PushStretchFactor(!isHorizontal, 1);//+1
             if(isHorizontal)//full size
             {
                 var minSilderWidth = 200;
@@ -304,8 +350,33 @@ namespace ImGui
                 size.Width = 20;
                 size.Height += minSilderHeight;
             }
-            var rect = window.GetRect(id, size, style, options);
-            return GUI.Slider(rect, label, value, minValue, maxValue, isHorizontal);
+            var rect = window.GetRect(id, size);
+            //TODO reconsider reusing here: this is incorrect because sliderModifiers are pushed twice!
+            var result = isHorizontal? GUI.DoHorizontalSlider(rect, label, value, minValue, maxValue):
+                GUI.DoVerticalSlider(rect, label, value, minValue, maxValue);
+            s.PopStyle();//-1
+
+            s.PopStyle(sliderModifiers.Length);
+
+            return result;
         }
     }
+
+    partial class GUISkin
+    {
+        void InitSliderStyles()
+        {
+            var sliderStyles = new StyleModifier[]
+            {
+                new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Normal),
+                new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Hover),
+                new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Active),
+                new StyleModifier(GUIStyleName.Slider_LineUnused, StyleType.Color, Color.Rgb(117, 117, 117), GUIState.Normal),
+                new StyleModifier(GUIStyleName.Slider_LineUnused, StyleType.Color, Color.Rgb(255, 128, 171), GUIState.Hover),
+                new StyleModifier(GUIStyleName.Slider_LineUnused, StyleType.Color, Color.Rgb(255, 128, 171), GUIState.Active),
+            };
+            this.styles.Add(GUIControlName.Slider, sliderStyles);
+        }
+    }
+
 }

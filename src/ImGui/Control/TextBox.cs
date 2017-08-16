@@ -89,7 +89,6 @@ namespace ImGui
 
             var hovered = g.IsHovered(rect, id);
             // control logic
-            var style = g.StyleStack.Style;
             var uiState = Form.current.uiContext;
             if (hovered)
             {
@@ -178,7 +177,8 @@ namespace ImGui
             // ui painting
             {
                 var d = window.DrawList;
-                var contentRect = Utility.GetContentRect(rect, g.StyleStack.Style);
+                var style = g.StyleStack.Style;
+                var contentRect = Utility.GetContentRect(rect, style);
                 d.PushClipRect(rect, true);
                 if (g.ActiveId == id)
                 {

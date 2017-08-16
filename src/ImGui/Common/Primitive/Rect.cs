@@ -65,7 +65,7 @@ namespace ImGui.Common.Primitive
         {
             if (width < 0 || height < 0)
             {
-                throw new ArgumentException("Size width and height can not be negative");
+                throw new ArgumentException("width and height can not be negative");
             }
 
             _x = x;

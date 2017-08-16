@@ -12,44 +12,49 @@ namespace ImGui
         /// <param name="filePath">file path of the image to display. The path should be relative to current dir or absolute.</param>
         public static void Image(Rect rect, string filePath)
         {
-            Image(rect, filePath, GUISkin.Instance[GUIControlName.Image]);
-        }
-
-        public static void Image(Rect rect, string filePath, GUIStyle style)
-        {
-            DoImage(rect, filePath, style);
+            DoImage(rect, filePath);
         }
 
         public static void Image(Rect rect, ITexture texture)
         {
-            Image(rect, texture, GUISkin.Instance[GUIControlName.Image]);
+            DoImage(rect, texture);
         }
 
-        public static void Image(Rect rect, ITexture texture, GUIStyle style)
+        internal static void DoImage(Rect rect, string filePath)
         {
-            DoImage(rect, texture, style);
-        }
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return;
 
-        internal static void DoImage(Rect rect, string filePath, GUIStyle style)
-        {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.WindowManager.CurrentWindow;
-            DrawList d = window.DrawList;
+            var s = g.StyleStack;
+            var modifiers = GUISkin.Instance[GUIControlName.Image];
+            s.PushRange(modifiers);
 
+            var style = s.Style;
             var texture = TextureUtil.GetTexture(filePath);
-
+            DrawList d = window.DrawList;
             d.DrawBoxModel(rect, texture, style);
+
+            s.PopStyle(modifiers.Length);
         }
 
-        internal static void DoImage(Rect rect, ITexture texture, GUIStyle style)
+        internal static void DoImage(Rect rect, ITexture texture)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.WindowManager.CurrentWindow;
-            DrawList d = window.DrawList;
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return;
 
+            var s = g.StyleStack;
+            var modifiers = GUISkin.Instance[GUIControlName.Image];
+            s.PushRange(modifiers);
+
+            DrawList d = window.DrawList;
+            var style = s.Style;
             d.DrawBoxModel(rect, texture, style);
+
+            s.PopStyle(modifiers.Length);
         }
     }
 
@@ -59,50 +64,78 @@ namespace ImGui
         /// Create an auto-layout image.
         /// </summary>
         /// <param name="filePath">file path of the image to display. The path should be relative to current dir or absolute.</param>
-        /// <param name="id">the unique id of this control</param>
-        /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
-        public static void Image(string filePath, params LayoutOption[] options)
+        public static void Image(string filePath)
         {
-            Image(filePath, GUISkin.Instance[GUIControlName.Image], options);
+            DoImage(filePath);
         }
 
-        public static void Image(string filePath, GUIStyle style, params LayoutOption[] options)
+        public static void Image(ITexture texture)
         {
-            DoImage(filePath, style, options);//var texture = TextureUtil.GetTexture(filePath);
+            DoImage(texture);
         }
 
-        private static void DoImage(string filePath, GUIStyle style, params LayoutOption[] options)
+        private static void DoImage(string filePath)
         {
+            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
+            var s = g.StyleStack;
+            var modifiers = GUISkin.Instance[GUIControlName.Image];
+            s.PushRange(modifiers);
+
             var id = window.GetID(filePath);
             var texture = TextureUtil.GetTexture(filePath);
-            Size size = style.CalcSize(texture, GUIState.Normal, options);
-            var rect = window.GetRect(id, size, style,
-                new[] { GUILayout.Width(size.Width), GUILayout.Height(size.Height) });
-            GUI.DoImage(rect, texture, style);
+            var style = s.Style;
+            Size size = style.CalcSize(texture, GUIState.Normal);
+            var rect = window.GetRect(id, size);
+
+            DrawList d = window.DrawList;
+            d.DrawBoxModel(rect, texture, style);
+
+            s.PopStyle(modifiers.Length);
         }
 
-        internal static void Image(ITexture texture, params LayoutOption[] options)
+        private static void DoImage(ITexture texture)
         {
-            Image(texture, GUISkin.Instance[GUIControlName.Image], options);
-        }
-
-        internal static void Image(ITexture texture, GUIStyle style, params LayoutOption[] options)
-        {
-            DoImage(texture, style, options);
-        }
-
-        private static void DoImage(ITexture texture, GUIStyle style, params LayoutOption[] options)
-        {
+            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return;
+
+            var s = g.StyleStack;
+            var modifiers = GUISkin.Instance[GUIControlName.Image];
+            s.PushRange(modifiers);
+
             var id = window.GetID(texture);
-            Size size = style.CalcSize(texture, GUIState.Normal, options);
-            var rect = window.GetRect(id, size, style,
-                new[] { GUILayout.Width(size.Width), GUILayout.Height(size.Height) });
-            GUI.DoImage(rect, texture, style);
+            var style = s.Style;
+            Size size = style.CalcSize(texture, GUIState.Normal);
+            var rect = window.GetRect(id, size);
+
+            DrawList d = window.DrawList;
+            d.DrawBoxModel(rect, texture, style);
+
+            s.PopStyle(modifiers.Length);
+        }
+    }
+
+    partial class GUISkin
+    {
+        void InitImageStyles()
+        {
+            var imageStyles = new StyleModifier[]
+            {
+                 new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 1.0),
+                 new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 1.0),
+                 new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, 1.0),
+                 new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 1.0),
+                 new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, Color.Black),
+                 new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color,Color.Black),
+                 new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color,Color.Black),
+                 new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color,Color.Black),
+            };
+            this.styles.Add(GUIControlName.Image, imageStyles);
         }
     }
 }

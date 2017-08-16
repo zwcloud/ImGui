@@ -43,14 +43,9 @@
 
   <ItemGroup>
     <Compile Remove="Control\Box.cs" />
-    <Compile Remove="Control\CollapsingHeader.cs" />
-    <Compile Remove="Control\ColorField.cs" />
     <Compile Remove="Control\GUIBehavior.cs" />
     <Compile Remove="Control\HoverButton.cs" />
-    <Compile Remove="Control\Image.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
-    <Compile Remove="Control\Slider.cs" />
-    <Compile Remove="Control\Toggle.cs" />
     <Compile Remove="Control\ToggleButton.cs" />
   </ItemGroup>
 

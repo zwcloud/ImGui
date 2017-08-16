@@ -6,26 +6,33 @@ namespace ImGui
     {
         public static Color ColorField(string label, Color value)
         {
-            return ColorField(label, value, GUISkin.Instance[GUIControlName.ColorField], null);
+            return DoColorField(label, value);
         }
 
-        public static Color ColorField(string label, Color value, GUIStyle style, params LayoutOption[] options)
+        private static Color DoColorField(string label, Color value)
         {
-            return DoColorField(label, value, style, options);
-        }
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return value;
 
-        private static Color DoColorField(string label, Color value, GUIStyle style, params LayoutOption[] options)
-        {
-            var window = GetCurrentWindow();
+            var s = g.StyleStack;
+            var colorFieldModifiers = GUISkin.Instance[GUIControlName.ColorField];
+            s.PushRange(colorFieldModifiers);
+
             var id = window.GetID(label);
-
+            var style = s.Style;
             var width = GUISkin.Instance.FieldControlWidth;
             var textSize = style.CalcSize(label, GUIState.Normal);
             var size = new Size(width + textSize.Width, textSize.Height);
-            var rect = window.GetRect(id, size, style, options);
+            var rect = window.GetRect(id, size);
             var boxRect = new Rect(rect.X, rect.Y, width, textSize.Height);
             var labelRect = new Rect(boxRect.TopRight, rect.BottomRight);
-            return GUI.ColorField(label, boxRect, labelRect, value);
+            var result = GUI.ColorField(label, boxRect, labelRect, value);
+
+            s.PopStyle(colorFieldModifiers.Length);
+
+            return result;
         }
     }
 
@@ -38,13 +45,34 @@ namespace ImGui
 
         private static Color DoColorField(string label, Rect boxRect, Rect labelRect, Color value)
         {
-            var window = GetCurrentWindow();
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return value;
+
+            var s = g.StyleStack;
+            var colorFieldModifiers = GUISkin.Instance[GUIControlName.ColorField];
+            s.PushRange(colorFieldModifiers);
 
             // draw
             var d = window.DrawList;
+            var style = s.Style;
             d.AddRectFilled(boxRect, value);
-            d.DrawText(labelRect, label, GUIStyle.Default, GUIState.Normal);
+            d.DrawText(labelRect, label, style, GUIState.Normal);
+
+            s.PopStyle(colorFieldModifiers.Length);
+
             return value;
         }
     }
+
+    partial class GUISkin
+    {
+        void InitColorFieldStyles()
+        {
+            var colorFieldStyles = new StyleModifier[] { };
+            this.styles.Add(GUIControlName.ColorField, colorFieldStyles);
+        }
+    }
+
 }

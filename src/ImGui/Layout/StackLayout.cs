@@ -27,7 +27,6 @@ namespace ImGui.Layout
         {
             var rootGroup = new LayoutGroup(rootId, true, size);
             rootGroup.MinWidth = rootGroup.MaxWidth = size.Width;
-            rootGroup.MinHeight = rootGroup.MaxHeight = size.Height;
             return rootGroup;
         }
 

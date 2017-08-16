@@ -40,12 +40,17 @@ namespace ImGui
                 this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
             }
 
-            var borderColor = Color.Black;
+            //TODO refactor this into style *register*.
 
             InitButtonStyles();
             InitLabelStyles();
             InitTextBoxStyles();
-            //TODO add others
+            InitToggleStyles();
+            InitImageStyles();
+            InitCollapsingHeaderStyles();
+            InitSliderStyles();
+            InitColorFieldStyles();
+
             this.controlNames.Add("Image", GUIControlName.Image);
             this.controlNames.Add("Box", GUIControlName.Box);
             this.controlNames.Add("Space", GUIControlName.Space);
@@ -58,43 +63,7 @@ namespace ImGui
             this.controlNames.Add("CollapsingHeader", GUIControlName.CollapsingHeader);
             this.controlNames.Add("ColorField", GUIControlName.ColorField);
 #if old
-            GUIStyle Label = new GUIStyle();
-            GUIStyle Image = new GUIStyle();
-            GUIStyle Box = new GUIStyle();
-            GUIStyle Space = new GUIStyle();
-            GUIStyle Toggle = new GUIStyle();
-            GUIStyle ComboBox = new GUIStyle();
-            GUIStyle TextBox = new GUIStyle();
-            GUIStyle Slider = new GUIStyle();
-            GUIStyle PolygonButton = new GUIStyle();
-            GUIStyle CollapsingHeader = new GUIStyle();
-            GUIStyle ColorField = new GUIStyle();
-
-            this.styles.Add(GUIControlName.Label, Label);
-            this.styles.Add(GUIControlName.Image, Image);
-            this.styles.Add(GUIControlName.Box, Box);
-            this.styles.Add(GUIControlName.Space, Space);
-            this.styles.Add(GUIControlName.Toggle, Toggle);
-            this.styles.Add(GUIControlName.ComboBox, ComboBox);
-            this.styles.Add(GUIControlName.TextBox, TextBox);
-            this.styles.Add(GUIControlName.Slider, Slider);
-            this.styles.Add(GUIControlName.PolygonButton, PolygonButton);
-            this.styles.Add(GUIControlName.CollapsingHeader, CollapsingHeader);
-            this.styles.Add(GUIControlName.ColorField, ColorField);
-
-
             //Set default styles for each control
-            {
-                Image.Set(GUIStyleName.BorderTop, 1.0, GUIState.Normal);
-                Image.Set(GUIStyleName.BorderRight, 1.0, GUIState.Normal);
-                Image.Set(GUIStyleName.BorderBottom, 1.0, GUIState.Normal);
-                Image.Set(GUIStyleName.BorderLeft, 1.0, GUIState.Normal);
-                Image.Set(GUIStyleName.BorderTopColor, Color.Black, GUIState.Normal);
-                Image.Set(GUIStyleName.BorderRightColor, Color.Black, GUIState.Normal);
-                Image.Set(GUIStyleName.BorderBottomColor, Color.Black, GUIState.Normal);
-                Image.Set(GUIStyleName.BorderLeftColor, Color.Black, GUIState.Normal);
-            }
-
             {
                 var borderColor = Color.Rgb(24, 131, 215);
                 var bgColor = Color.Rgb(242, 242, 242);
@@ -116,67 +85,6 @@ namespace ImGui
             }
 
             {
-                var borderColor = Color.Black;
-                //normal
-                Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Normal);
-                Button.Set(GUIStyleName.BackgroundColor, new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);
-                Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Normal, GUIState.Normal);
-                //hover
-                Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderTopColor, borderColor, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderRightColor, borderColor, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderBottomColor, borderColor, GUIState.Hover);
-                Button.Set(GUIStyleName.BorderLeftColor, borderColor, GUIState.Hover);
-                Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Hover);
-                Button.Set(GUIStyleName.BackgroundColor, new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
-                Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Normal, GUIState.Hover);
-                //active
-                Button.Set(GUIStyleName.BorderTop, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.BorderRight, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.BorderTopColor, borderColor, GUIState.Active);
-                Button.Set(GUIStyleName.BorderRightColor, borderColor, GUIState.Active);
-                Button.Set(GUIStyleName.BorderBottomColor, borderColor, GUIState.Active);
-                Button.Set(GUIStyleName.BorderLeftColor, borderColor, GUIState.Active);
-                Button.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Active);
-                Button.Set(GUIStyleName.BackgroundColor, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
-                Button.Set(GUIStyleName.FontWeight, (int)FontWeight.Bold, GUIState.Active);
-            }
-
-            {
-                var bgColor = new Color(0x9F, 0x9F, 0x9F);
-                Toggle.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Normal);
-                Toggle.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Hover);
-                Toggle.Set(GUIStyleName.BackgroundColor, bgColor, GUIState.Active);
-            }
-
-            {
-                Slider.Set(GUIStyleName.Slider_LineUsed, Color.Rgb(0, 151, 167), GUIState.Normal);
-                Slider.Set(GUIStyleName.Slider_LineUsed, Color.Rgb(0, 151, 167), GUIState.Hover);
-                Slider.Set(GUIStyleName.Slider_LineUsed, Color.Rgb(0, 151, 167), GUIState.Active);
-                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Rgb(117, 117, 117), GUIState.Normal);
-                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Rgb(255, 128, 171), GUIState.Hover);
-                Slider.Set(GUIStyleName.Slider_LineUnused, Color.Rgb(255, 128, 171), GUIState.Active);
-            }
-
-            {
                 PolygonButton.Set(GUIStyleName.TextAlignment, (int)TextAlignment.Center, GUIState.Normal);
                 PolygonButton.Set(GUIStyleName.BackgroundColor, Color.Clear, GUIState.Normal);
 
@@ -189,69 +97,6 @@ namespace ImGui
                 PolygonButton.Set(GUIStyleName.BackgroundColor, Color.Clear, GUIState.Active);
                 PolygonButton.Set(GUIStyleName.LineColor, Color.Blue, GUIState.Active);
                 PolygonButton.Set(GUIStyleName.FillColor, Color.Red, GUIState.Active);
-            }
-
-            {
-                TextBox.Set<double>(GUIStyleName.PaddingLeft, 5, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.PaddingLeft, 5, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.PaddingLeft, 5, GUIState.Active);
-                TextBox.Set<double>(GUIStyleName.PaddingTop, 5, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.PaddingTop, 5, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.PaddingTop, 5, GUIState.Active);
-                TextBox.Set<double>(GUIStyleName.PaddingRight, 5, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.PaddingRight, 5, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.PaddingRight, 5, GUIState.Active);
-                TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.PaddingBottom, 5, GUIState.Active);
-                TextBox.Set<double>(GUIStyleName.FontSize, CurrentOS.IsAndroid ? 32 : 13, GUIState.Normal);
-                TextBox.Set<double>(GUIStyleName.FontSize, CurrentOS.IsAndroid ? 32 : 13, GUIState.Hover);
-                TextBox.Set<double>(GUIStyleName.FontSize, CurrentOS.IsAndroid ? 32 : 13, GUIState.Active);
-            }
-
-            {
-                var borderColor = Color.Black;
-                //normal
-                CollapsingHeader.Set(GUIStyleName.BorderTop, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.BorderRight, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.BackgroundColor, new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);
-                CollapsingHeader.Set(GUIStyleName.FontWeight, (int)FontWeight.Normal, GUIState.Normal);
-                //hover
-                CollapsingHeader.Set(GUIStyleName.BorderTop, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BorderRight, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BorderTopColor, borderColor, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BorderRightColor, borderColor, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BorderBottomColor, borderColor, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BorderLeftColor, borderColor, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.BackgroundColor, new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
-                CollapsingHeader.Set(GUIStyleName.FontWeight, (int)FontWeight.Normal, GUIState.Hover);
-                //active
-                CollapsingHeader.Set(GUIStyleName.BorderTop, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BorderRight, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BorderBottom, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BorderLeft, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BorderTopColor, borderColor, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BorderRightColor, borderColor, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BorderBottomColor, borderColor, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BorderLeftColor, borderColor, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.PaddingTop, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.PaddingRight, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.PaddingBottom, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.PaddingLeft, 2.0, GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.BackgroundColor, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
-                CollapsingHeader.Set(GUIStyleName.FontWeight, (int)FontWeight.Bold, GUIState.Active);
             }
 
             {
