@@ -17,21 +17,32 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
 
-            //apply skin and stack style modifiers
+            int id = window.GetID(text);
+
+            // style apply
             var s = g.StyleStack;
+            var style = g.StyleStack.Style;
             var modifiers = GUISkin.Instance[GUIControlName.Button];
             s.PushRange(modifiers);
 
-            int id = window.GetID(text);
-            var style = g.StyleStack.Style;
+            // rect
+            Rect rect;
             Size size = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id, size);
+            rect = window.GetRect(id, size);
 
-            var result = GUI.DoButton(rect, text);
+            // interact
+            bool hovered, held;
+            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
 
+            // render
+            var d = window.DrawList;
+            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            d.DrawBoxModel(rect, text, style, state);
+
+            // style restore
             s.PopStyle(modifiers.Length);
 
-            return result;
+            return pressed;
         }
 
     }
@@ -51,36 +62,28 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
 
+            int id = window.GetID(text);
+
+            // style apply
             var s = g.StyleStack;
+            var style = g.StyleStack.Style;
             var modifiers = GUISkin.Instance[GUIControlName.Button];
             s.PushRange(modifiers);
 
-            var result = DoButton(rect, text);
+            // rect
+            rect = window.GetRect(rect);
 
-            s.PopStyle(modifiers.Length);
-
-            return result;
-        }
-
-        internal static bool DoButton(Rect rect, string text)
-        {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
-            Window window = g.WindowManager.CurrentWindow;
-            if (window.SkipItems)
-                return false;
-
-            DrawList d = window.DrawList;
-            int id = window.GetID(text);
-
-            GUIStyle style = g.StyleStack.Style;
-
+            // interact
             bool hovered, held;
             bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
 
-            // Render
+            // render
+            var d = window.DrawList;
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             d.DrawBoxModel(rect, text, style, state);
+
+            // style restore
+            s.PopStyle(modifiers.Length);
 
             return pressed;
         }

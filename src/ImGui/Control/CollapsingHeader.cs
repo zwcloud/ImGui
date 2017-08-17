@@ -1,4 +1,3 @@
-using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui
@@ -7,26 +6,33 @@ namespace ImGui
     {
         public static bool CollapsingHeader(string text, ref bool open)
         {
+            // context
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
+            // id
+            var id = window.GetID(text);
+
+            // style apply
             var s = g.StyleStack;
+            var style = s.Style;
             var modifiers = GUISkin.Instance[GUIControlName.CollapsingHeader];
             s.PushRange(modifiers);
             s.PushStretchFactor(false, 1);//+1, always expand width
 
-            var height = GUIStyle.Default.FontSize;
-            var id = window.GetID(text);
-            var rect = window.GetRect(id, new Size(0, height));
-            if(rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
+            // rect
+            var height = style.FontSize;
+            Rect rect = window.GetRect(id, new Size(0, height));
+            if (rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
             {
                 s.PopStyle();//-1
                 s.PopStyle(modifiers.Length);
                 return false;
             }
 
+            // interact
             bool hovered, held;
             bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, ButtonFlags.PressedOnClick);
             if (pressed)
@@ -34,52 +40,29 @@ namespace ImGui
                 open = !open;
             }
 
-            // Render
-            DrawList d = window.DrawList;
-            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            Color col = s.Style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            d.RenderFrame(rect.Min, rect.Max, col, false, 0);
-            RenderCollapseTriangle(rect.Min, open, rect.Height, Color.White);
-            //TODO test if following adjust is valid
-            rect.X += rect.Height;
-            var detla = rect.Width - rect.Height;
-            if (detla > 0)
+            // render
             {
-                rect.Width = detla;
+                DrawList d = window.DrawList;
+                var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+                Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+                d.RenderFrame(rect.Min, rect.Max, col, false, 0);
+                d.RenderCollapseTriangle(rect.Min, open, rect.Height, Color.White);
+                rect.X += rect.Height;
+                var delta = rect.Width - rect.Height;
+                if (delta > 0)
+                {
+                    rect.Width = delta;
+                }
+                d.DrawText(rect, text, style, state);
             }
-            d.DrawText(rect, text, s.Style, state);
 
+            // style restore
             s.PopStyle();//-1
             s.PopStyle(modifiers.Length);
 
             return open;
         }
 
-        private static void RenderCollapseTriangle(Point pMin, bool isOpen, double height, Color color, double scale = 1)
-        {
-            Window window = GetCurrentWindow();
-
-            double h = height;
-            double r = h * 0.40f * scale;
-            Point center = pMin + new Vector(h * 0.50f, h * 0.50f * scale);
-
-            Point a, b, c;
-            if (isOpen)
-            {
-                center.Y -= r * 0.25f;
-                a = center + new Vector(0, 1) * r;
-                b = center + new Vector(-0.866f, -0.5f) * r;
-                c = center + new Vector(0.866f, -0.5f) * r;
-            }
-            else
-            {
-                a = center + new Vector(1, 0) * r;
-                b = center + new Vector(-0.500f, 0.866f) * r;
-                c = center + new Vector(-0.500f, -0.866f) * r;
-            }
-
-            window.DrawList.AddTriangleFilled(a, b, c, color);
-        }
     }
 
     partial class GUISkin
@@ -135,4 +118,30 @@ namespace ImGui
         }
     }
 
+    internal static partial class DrawListExtension
+    {
+        public static void RenderCollapseTriangle(this DrawList drawList, Point pMin, bool isOpen, double height, Color color, double scale = 1)
+        {
+            double h = height;
+            double r = h * 0.40f * scale;
+            Point center = pMin + new Vector(h * 0.50f, h * 0.50f * scale);
+
+            Point a, b, c;
+            if (isOpen)
+            {
+                center.Y -= r * 0.25f;
+                a = center + new Vector(0, 1) * r;
+                b = center + new Vector(-0.866f, -0.5f) * r;
+                c = center + new Vector(0.866f, -0.5f) * r;
+            }
+            else
+            {
+                a = center + new Vector(1, 0) * r;
+                b = center + new Vector(-0.500f, 0.866f) * r;
+                c = center + new Vector(-0.500f, -0.866f) * r;
+            }
+
+            drawList.AddTriangleFilled(a, b, c, color);
+        }
+    }
 }
