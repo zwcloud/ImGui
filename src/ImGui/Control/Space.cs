@@ -12,11 +12,12 @@ namespace ImGui
         /// </summary>
         public static void Space(string str_id, double size)
         {
+            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             var layout = window.StackLayout;
 
             int id = window.GetID(str_id);
-            window.GetRect(id, layout.TopGroup.IsVertical? new Size(0,size): new Size(size,0));
+            layout.GetRect(id, layout.TopGroup.IsVertical ? new Size(0, size) : new Size(size, 0));
         }
 
         /// <summary>

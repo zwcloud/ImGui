@@ -28,6 +28,8 @@ namespace ImGui.Layout
             var rootGroup = new LayoutGroup(rootId, true, size);
             rootGroup.ContentWidth = size.Width;
             rootGroup.ContentHeight = size.Height;
+            rootGroup.HorizontalStretchFactor = 1;
+            rootGroup.VerticalStretchFactor = 1;
             return rootGroup;
         }
 
@@ -110,8 +112,8 @@ namespace ImGui.Layout
         /// </summary>
         public void Layout()
         {
-            this.WritingStack.Peek().CalcWidth();
-            this.WritingStack.Peek().CalcHeight();
+            this.WritingStack.Peek().CalcWidth(TopGroup.ContentWidth);
+            this.WritingStack.Peek().CalcHeight(TopGroup.ContentHeight);
             this.WritingStack.Peek().SetX(0);
             this.WritingStack.Peek().SetY(0);
 

@@ -1,3 +1,4 @@
+using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui
@@ -19,6 +20,12 @@ namespace ImGui
             var height = GUIStyle.Default.FontSize;
             var id = window.GetID(text);
             var rect = window.GetRect(id, new Size(0, height));
+            if(rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
+            {
+                s.PopStyle();//-1
+                s.PopStyle(modifiers.Length);
+                return false;
+            }
 
             bool hovered, held;
             bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, ButtonFlags.PressedOnClick);
@@ -35,7 +42,11 @@ namespace ImGui
             RenderCollapseTriangle(rect.Min, open, rect.Height, Color.White);
             //TODO test if following adjust is valid
             rect.X += rect.Height;
-            rect.Width -= rect.Height;
+            var detla = rect.Width - rect.Height;
+            if (detla > 0)
+            {
+                rect.Width = detla;
+            }
             d.DrawText(rect, text, s.Style, state);
 
             s.PopStyle();//-1
