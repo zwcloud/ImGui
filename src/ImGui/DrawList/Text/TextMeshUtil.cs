@@ -7,14 +7,12 @@ namespace ImGui
 {
     class TextMeshUtil
     {
-        static readonly Dictionary<int, ITextContext> TextContextCache = new Dictionary<int, ITextContext>();
+        static readonly Dictionary<int, ITextContext> TextContextCache = new Dictionary<int, ITextContext>(255);
 
-        static int GetTextId(string text, Size size, GUIStyle style, GUIState state)
+        static int GetTextId(string text, GUIState state)
         {
             int hash = 17;
             hash = hash * 23 + text.GetHashCode();
-            hash = hash * 23 + size.GetHashCode();
-            hash = hash * 23 + style.GetHashCode();
             hash = hash * 23 + state.GetHashCode();
             return hash;
         }
@@ -24,7 +22,7 @@ namespace ImGui
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (style == null) throw new ArgumentNullException(nameof(style));
 
-            int textMeshId = GetTextId(text, size, style, state);
+            int textMeshId = GetTextId(text, state);
 
             ITextContext textContext;
             if (TextContextCache.TryGetValue(textMeshId, out textContext))

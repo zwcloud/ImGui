@@ -22,12 +22,29 @@ namespace ImGui
         /// <summary>
         /// vertex buffer
         /// </summary>
-        public UnsafeList<DrawVertex> VertexBuffer { get; set; } = new UnsafeList<DrawVertex>();
+        /// <remarks>
+        /// Specifiy a big capacity to forbid frequent GC due to List reallocation
+        /// when adding Glyph triangles and curve segments _frequently_ to the TextMesh.
+        /// See important not below.
+        /// </remarks>
+        public UnsafeList<DrawVertex> VertexBuffer { get; set; } = new UnsafeList<DrawVertex>(100000);
 
         /// <summary>
         /// index buffer
         /// </summary>
-        public UnsafeList<DrawIndex> IndexBuffer { get; set; } = new UnsafeList<DrawIndex>();
+        /// <remarks>
+        /// (same as vertex buffer)
+        /// </remarks>
+        public UnsafeList<DrawIndex> IndexBuffer { get; set; } = new UnsafeList<DrawIndex>(100000);
+
+        /*
+         * Important Note:
+         * 
+         * The initial capacity of VertexBuffer and IndexBuffer should be big enough.
+         * Otherwise, when adding Glyph triangles and curve segments _frequently_ to the TextMesh, 
+         * List reallocation will happen frequently and creates many garbages(discarded old `UsafeList._items` buffer of about 200KB-600KB).
+         * Those garbages will lead to Generation 2 GC which uses much CPU time and stuck the application.
+         */
 
         public List<DrawCommand> Commands { get; set; } = new List<DrawCommand>(2);
 
@@ -184,6 +201,5 @@ namespace ImGui
             // quadratic bezier segments
             AddBezierSegments(segments, color, positionOffset, glyphOffset, scale, flipY);
         }
-
     }
 }

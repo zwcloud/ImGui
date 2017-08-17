@@ -13,8 +13,13 @@ namespace UniversalAppTemplate
 
         bool myWindowOpen = true;
         bool show = false;
+
+        Demo demo = new Demo();
+
         protected override void OnGUI()
         {
+            demo.OnGUI();
+
             GUI.Begin("MyWindow", ref myWindowOpen);
             Label("Three button of default size.");
             BeginHorizontal("H~~~1");
