@@ -15,11 +15,6 @@ namespace ImGui
         /// <returns>new value of the toggle</returns>
         public static bool Toggle(Rect rect, string label, bool value)
         {
-            return DoToggle(rect, label, value);
-        }
-
-        internal static bool DoToggle(Rect rect, string label, bool value)
-        {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
@@ -27,32 +22,20 @@ namespace ImGui
 
             int id = window.GetID(label);
 
-            var mousePos = Mouse.Instance.Position;
-            var hovered = rect.Contains(mousePos);
-            var result = value;
-            //control logic
-            var uiState = Form.current.uiContext;
-            uiState.KeepAliveID(id);
-            if (hovered)
-            {
-                uiState.SetHoverID(id);
+            // style apply
+            var s = g.StyleStack;
+            var style = s.Style;
+            var toggleModifiers = GUISkin.Instance[GUIControlName.Toggle];
+            s.PushRange(toggleModifiers);
 
-                if (Mouse.Instance.LeftButtonPressed)
-                {
-                    uiState.SetActiveID(id);
-                }
+            // rect
+            rect = window.GetRect(rect);
 
-                if (uiState.ActiveId == id && Mouse.Instance.LeftButtonReleased)
-                {
-                    result = !value;
-                    uiState.SetActiveID(GUIContext.None);
-                }
-            }
+            // interact
+            bool hovered;
+            value = GUIBehavior.ToggleBehavior(rect, id, value, out hovered);
 
-            // ui representation
-            // nothing to do
-
-            // ui painting
+            // render
             // |←16→|
             // |    |---------------+
             // |    |               |
@@ -61,12 +44,17 @@ namespace ImGui
             // +----+               |
             //      |               |
             //      +---------------+
-            DrawList d = window.DrawList;
-            var s = g.StyleStack;
-            var toggleModifiers = GUISkin.Instance[GUIControlName.Toggle];
-            s.PushRange(toggleModifiers);
-            var style = s.Style;
             {
+                var state = GUIState.Normal;
+                if (hovered)
+                {
+                    state = GUIState.Hover;
+                }
+                if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
+                {
+                    state = GUIState.Active;
+                }
+                DrawList d = window.DrawList;
                 var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
                 var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
                 var textRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing), rect.Height);
@@ -77,7 +65,7 @@ namespace ImGui
                 var tickColor = Color.Rgb(48, 48, 48);
                 d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, filledBoxColor);//□
                 d.AddRect(boxRect.TopLeft, boxRect.BottomRight, boxBorderColor, 0, 0, 2);//□
-                if (result)//√
+                if (value)//√
                 {
                     var h = boxRect.Height;
                     d.PathMoveTo(new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y));
@@ -88,12 +76,14 @@ namespace ImGui
                 // label
                 var labelModifiers = GUISkin.Instance[GUIControlName.Label];
                 s.PushRange(labelModifiers);
-                d.DrawBoxModel(textRect, label, style);
+                d.DrawBoxModel(textRect, label, style, state);
                 s.PopStyle(labelModifiers.Length);
             }
+
+            // style restore
             s.PopStyle(toggleModifiers.Length);
 
-            return result;
+            return value;
         }
     }
 
@@ -102,30 +92,111 @@ namespace ImGui
         /// <summary>
         /// Create an auto-layout toggle (check-box) with an label.
         /// </summary>
-        /// <param name="text">text to display on the label</param>
+        /// <param name="label">text to display</param>
         /// <param name="value">Is this toggle checked or unchecked?</param>
         /// <returns>new value of the toggle</returns>
-        public static bool Toggle(string text, bool value)
-        {
-            return DoToggle(text, value);
-        }
-
-        private static bool DoToggle(string text, bool value)
-        {
-            var result = GUI.Toggle(GUILayout.GetToggleRect(text), text, value);
-            return result;
-        }
-
-        private static Rect GetToggleRect(string text)
+        public static bool Toggle(string label, bool value)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
 
+            int id = window.GetID(label);
+
+            // style apply
+            var s = g.StyleStack;
+            var toggleModifiers = GUISkin.Instance[GUIControlName.Toggle];
+            s.PushRange(toggleModifiers);
+
+            // rect
             var style = g.StyleStack.Style;
-            var id = window.GetID(text);
-            var textSize = style.CalcSize(text, GUIState.Normal);
+            var textSize = style.CalcSize(label, GUIState.Normal);
             var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
-            return window.GetRect(id, size);
+            var rect = window.GetRect(id, size);
+
+            // interact
+            bool hovered;
+            value = GUIBehavior.ToggleBehavior(rect, id, value, out hovered);
+
+            // render
+            // |←16→|
+            // |    |---------------+
+            // |    |               |
+            // +----+               |
+            // | √  | label         |
+            // +----+               |
+            //      |               |
+            //      +---------------+
+            // TODO reuse rendering code
+            {
+                var state = GUIState.Normal;
+                if (hovered)
+                {
+                    state = GUIState.Hover;
+                }
+                if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
+                {
+                    state = GUIState.Active;
+                }
+                DrawList d = window.DrawList;
+                var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+                var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
+                var textRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing), rect.Height);
+
+                // box
+                var filledBoxColor = Color.Rgb(0, 151, 167);
+                var boxBorderColor = Color.White;
+                var tickColor = Color.Rgb(48, 48, 48);
+                d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, filledBoxColor);//□
+                d.AddRect(boxRect.TopLeft, boxRect.BottomRight, boxBorderColor, 0, 0, 2);//□
+                if (value)//√
+                {
+                    var h = boxRect.Height;
+                    d.PathMoveTo(new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y));
+                    d.PathLineTo(new Point(0.333f * h + boxRect.X, 0.75f * h + boxRect.Y));
+                    d.PathLineTo(new Point(0.875f * h + boxRect.X, 0.25f * h + boxRect.Y));
+                    d.PathStroke(tickColor, false, 2);
+                }
+                // label
+                var labelModifiers = GUISkin.Instance[GUIControlName.Label];
+                s.PushRange(labelModifiers);
+                d.DrawBoxModel(textRect, label, style, state);
+                s.PopStyle(labelModifiers.Length);
+            }
+
+            // style restore
+            s.PopStyle(toggleModifiers.Length);
+
+            return value;
+        }
+    }
+
+    internal partial class GUIBehavior
+    {
+        public static bool ToggleBehavior(Rect rect, int id, bool value, out bool hovered)
+        {
+            GUIContext g = Form.current.uiContext;
+
+            var mousePos = Mouse.Instance.Position;
+            hovered = rect.Contains(mousePos);
+            g.KeepAliveID(id);
+            if (hovered)
+            {
+                g.SetHoverID(id);
+
+                if (Mouse.Instance.LeftButtonPressed)
+                {
+                    g.SetActiveID(id);
+                }
+
+                if (g.ActiveId == id && Mouse.Instance.LeftButtonReleased)
+                {
+                    value = !value;
+                    g.SetActiveID(0);
+                }
+            }
+            return value;
         }
     }
 
@@ -133,12 +204,8 @@ namespace ImGui
     {
         void InitToggleStyles()
         {
-            var bgColor = new Color(0x9F, 0x9F, 0x9F);
             var toggleStyleModifiers = new StyleModifier[]
             {
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, bgColor, GUIState.Normal),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, bgColor, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, bgColor, GUIState.Active),
             };
             this.styles.Add(GUIControlName.Toggle, toggleStyleModifiers);
         }

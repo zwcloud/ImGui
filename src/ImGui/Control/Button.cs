@@ -89,14 +89,13 @@ namespace ImGui
         }
     }
 
-    partial class GUIBehavior
+    internal partial class GUIBehavior
     {
         public static bool ButtonBehavior(Rect bb, int id, out bool out_hovered, out bool out_held, ButtonFlags flags = 0)
         {
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
-
 
             if (flags.HaveFlag(ButtonFlags.Disabled))
             {
