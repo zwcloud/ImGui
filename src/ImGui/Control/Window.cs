@@ -205,10 +205,6 @@ namespace ImGui
                         window.DrawList.PathFill(resize_col);
                     }
 
-                    // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
-                    window.WindowClippedRect = window.Rect;
-                    window.WindowClippedRect.Intersect(window.ClipRect);
-
                     // Scroll bar
                     if (flags.HaveFlag(WindowFlags.VerticalScrollbar))
                     {
@@ -292,6 +288,10 @@ namespace ImGui
                         window.DrawList.AddLine(title_bar_rect.BottomLeft + new Vector(1, 0), title_bar_rect.BottomRight - new Vector(1, 0), borderColor);
                     }
                 }
+
+                // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
+                window.WindowClippedRect = window.Rect;
+                window.WindowClippedRect.Intersect(window.ClipRect);
             }
 
             // Inner clipping rectangle
