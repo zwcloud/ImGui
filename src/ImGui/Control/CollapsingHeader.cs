@@ -4,15 +4,20 @@ namespace ImGui
 {
     public partial class GUILayout
     {
+        /// <summary>
+        /// Create an auto-layout collapsing header.
+        /// </summary>
+        /// <param name="text">header text</param>
+        /// <param name="open">opened</param>
+        /// <returns>true when opened</returns>
+        /// <remarks> It is horizontally stretched (factor 1).</remarks>
         public static bool CollapsingHeader(string text, ref bool open)
         {
-            // context
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
-            // id
             var id = window.GetID(text);
 
             // style apply

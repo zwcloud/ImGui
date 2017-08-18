@@ -4,6 +4,48 @@ using ImGui.Input;
 
 namespace ImGui
 {
+    public partial class GUI
+    {
+        /// <summary>
+        /// Create a button. When the user click it, something will happen immediately.
+        /// </summary>
+        /// <param name="rect">position and size of the control</param>
+        /// <param name="text">text to display on the button</param>
+        /// <returns>true when the users clicks the button.</returns>
+        public static bool Button(Rect rect, string text)
+        {
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
+
+            int id = window.GetID(text);
+
+            // style apply
+            var s = g.StyleStack;
+            var style = g.StyleStack.Style;
+            var modifiers = GUISkin.Instance[GUIControlName.Button];
+            s.PushRange(modifiers);
+
+            // rect
+            rect = window.GetRect(rect);
+
+            // interact
+            bool hovered, held;
+            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
+
+            // render
+            var d = window.DrawList;
+            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            d.DrawBoxModel(rect, text, style, state);
+
+            // style restore
+            s.PopStyle(modifiers.Length);
+
+            return pressed;
+        }
+    }
+
     public partial class GUILayout
     {
         /// <summary>
@@ -45,48 +87,6 @@ namespace ImGui
             return pressed;
         }
 
-    }
-
-    public partial class GUI
-    {
-        /// <summary>
-        /// Create a button. When the user click it, something will happen immediately.
-        /// </summary>
-        /// <param name="rect">position and size of the control</param>
-        /// <param name="text">text to display on the button</param>
-        /// <returns>true when the users clicks the button.</returns>
-        public static bool Button(Rect rect, string text)
-        {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
-            if (window.SkipItems)
-                return false;
-
-            int id = window.GetID(text);
-
-            // style apply
-            var s = g.StyleStack;
-            var style = g.StyleStack.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Button];
-            s.PushRange(modifiers);
-
-            // rect
-            rect = window.GetRect(rect);
-
-            // interact
-            bool hovered, held;
-            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
-
-            // render
-            var d = window.DrawList;
-            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            d.DrawBoxModel(rect, text, style, state);
-
-            // style restore
-            s.PopStyle(modifiers.Length);
-
-            return pressed;
-        }
     }
 
     internal partial class GUIBehavior
