@@ -178,8 +178,7 @@ namespace ImGui
         {
             GUIContext g = Form.current.uiContext;
 
-            var mousePos = Mouse.Instance.Position;
-            hovered = rect.Contains(mousePos);
+            hovered = g.IsHovered(rect, id);
             g.KeepAliveID(id);
             if (hovered)
             {

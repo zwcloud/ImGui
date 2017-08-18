@@ -268,8 +268,7 @@ namespace ImGui
         {
             GUIContext g = Form.current.uiContext;
 
-            var mousePos = Mouse.Instance.Position;
-            hovered = sliderRect.Contains(mousePos);
+            hovered = g.IsHovered(sliderRect, id);
             g.KeepAliveID(id);
             if (hovered)
             {
@@ -284,6 +283,7 @@ namespace ImGui
             {
                 if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
+                    var mousePos = Mouse.Instance.Position;
                     if (horizontal)
                     {
                         var leftPoint = new Point(sliderRect.X + 10, sliderRect.Y + sliderRect.Height / 2);
@@ -425,11 +425,11 @@ namespace ImGui
         }
     }
 
-    partial class GUISkin
+    internal partial class GUISkin
     {
-        void InitSliderStyles()
+        private void InitSliderStyles()
         {
-            var sliderStyles = new StyleModifier[]
+            var sliderStyles = new []
             {
                 new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Normal),
                 new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Hover),
