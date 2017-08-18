@@ -24,7 +24,6 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var style = s.Style;
             var toggleModifiers = GUISkin.Instance[GUIControlName.Toggle];
             s.PushRange(toggleModifiers);
 
@@ -36,55 +35,23 @@ namespace ImGui
             value = GUIBehavior.ToggleBehavior(rect, id, value, out hovered);
 
             // render
-            // |←16→|
-            // |    |---------------+
-            // |    |               |
-            // +----+               |
-            // | √  | label         |
-            // +----+               |
-            //      |               |
-            //      +---------------+
+            var state = GUIState.Normal;
+            if (hovered)
             {
-                var state = GUIState.Normal;
-                if (hovered)
-                {
-                    state = GUIState.Hover;
-                }
-                if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
-                {
-                    state = GUIState.Active;
-                }
-                DrawList d = window.DrawList;
-                var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-                var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
-                var textRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing), rect.Height);
-
-                // box
-                var filledBoxColor = Color.Rgb(0, 151, 167);
-                var boxBorderColor = Color.White;
-                var tickColor = Color.Rgb(48, 48, 48);
-                d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, filledBoxColor);//□
-                d.AddRect(boxRect.TopLeft, boxRect.BottomRight, boxBorderColor, 0, 0, 2);//□
-                if (value)//√
-                {
-                    var h = boxRect.Height;
-                    d.PathMoveTo(new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y));
-                    d.PathLineTo(new Point(0.333f * h + boxRect.X, 0.75f * h + boxRect.Y));
-                    d.PathLineTo(new Point(0.875f * h + boxRect.X, 0.25f * h + boxRect.Y));
-                    d.PathStroke(tickColor, false, 2);
-                }
-                // label
-                var labelModifiers = GUISkin.Instance[GUIControlName.Label];
-                s.PushRange(labelModifiers);
-                d.DrawBoxModel(textRect, label, style, state);
-                s.PopStyle(labelModifiers.Length);
+                state = GUIState.Hover;
             }
+            if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
+            {
+                state = GUIState.Active;
+            }
+            GUIAppearance.DrawToggle(rect, label, value, state);
 
             // style restore
             s.PopStyle(toggleModifiers.Length);
 
             return value;
         }
+
     }
 
     public partial class GUILayout
@@ -120,50 +87,16 @@ namespace ImGui
             value = GUIBehavior.ToggleBehavior(rect, id, value, out hovered);
 
             // render
-            // |←16→|
-            // |    |---------------+
-            // |    |               |
-            // +----+               |
-            // | √  | label         |
-            // +----+               |
-            //      |               |
-            //      +---------------+
-            // TODO reuse rendering code
+            var state = GUIState.Normal;
+            if (hovered)
             {
-                var state = GUIState.Normal;
-                if (hovered)
-                {
-                    state = GUIState.Hover;
-                }
-                if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
-                {
-                    state = GUIState.Active;
-                }
-                DrawList d = window.DrawList;
-                var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-                var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
-                var textRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing), rect.Height);
-
-                // box
-                var filledBoxColor = Color.Rgb(0, 151, 167);
-                var boxBorderColor = Color.White;
-                var tickColor = Color.Rgb(48, 48, 48);
-                d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, filledBoxColor);//□
-                d.AddRect(boxRect.TopLeft, boxRect.BottomRight, boxBorderColor, 0, 0, 2);//□
-                if (value)//√
-                {
-                    var h = boxRect.Height;
-                    d.PathMoveTo(new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y));
-                    d.PathLineTo(new Point(0.333f * h + boxRect.X, 0.75f * h + boxRect.Y));
-                    d.PathLineTo(new Point(0.875f * h + boxRect.X, 0.25f * h + boxRect.Y));
-                    d.PathStroke(tickColor, false, 2);
-                }
-                // label
-                var labelModifiers = GUISkin.Instance[GUIControlName.Label];
-                s.PushRange(labelModifiers);
-                d.DrawBoxModel(textRect, label, style, state);
-                s.PopStyle(labelModifiers.Length);
+                state = GUIState.Hover;
             }
+            if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
+            {
+                state = GUIState.Active;
+            }
+            GUIAppearance.DrawToggle(rect, label, value, state);
 
             // style restore
             s.PopStyle(toggleModifiers.Length);
@@ -199,6 +132,55 @@ namespace ImGui
         }
     }
 
+    internal partial class GUIAppearance
+    {
+        /// <remarks>
+        /// Note: Design of a toggle
+        /// |←16→|
+        /// |    |---------------+
+        /// |    |               |
+        /// +----+               |
+        /// | √  | label         |
+        /// +----+               |
+        ///      |               |
+        ///      +---------------+
+        /// </remarks>
+        public static void DrawToggle(Rect rect, string label, bool value, GUIState state)
+        {
+            GUIContext g = Form.current.uiContext;
+            WindowManager w = g.WindowManager;
+            Window window = w.CurrentWindow;
+            StyleStack s = g.StyleStack;
+            GUIStyle style = s.Style;
+            DrawList d = window.DrawList;
+
+            var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+            var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
+            var textRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing),
+                rect.Height);
+
+            // box
+            var filledBoxColor = Color.Rgb(0, 151, 167);
+            var boxBorderColor = Color.White;
+            var tickColor = Color.Rgb(48, 48, 48);
+            d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, filledBoxColor); //□
+            d.AddRect(boxRect.TopLeft, boxRect.BottomRight, boxBorderColor, 0, 0, 2); //□
+            if (value) //√
+            {
+                var h = boxRect.Height;
+                d.PathMoveTo(new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y));
+                d.PathLineTo(new Point(0.333f * h + boxRect.X, 0.75f * h + boxRect.Y));
+                d.PathLineTo(new Point(0.875f * h + boxRect.X, 0.25f * h + boxRect.Y));
+                d.PathStroke(tickColor, false, 2);
+            }
+            // label
+            var labelModifiers = GUISkin.Instance[GUIControlName.Label];
+            s.PushRange(labelModifiers);
+            d.DrawBoxModel(textRect, label, style, state);
+            s.PopStyle(labelModifiers.Length);
+        }
+    }
+
     internal partial class GUISkin
     {
         void InitToggleStyles()
@@ -212,6 +194,7 @@ namespace ImGui
 }
 
 #region TODO
+// toggle with label on the right (maybe this is the right choice)
 // toggle without label
 // tristate
 #endregion
