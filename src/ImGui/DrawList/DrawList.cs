@@ -145,40 +145,30 @@ namespace ImGui
 
             // update shape mesh command
             var drawCmdBuffer = this.ShapeMesh.CommandBuffer;
+            DrawCommand currentCmd;
+            if (drawCmdBuffer.Count > 0)
             {
-                if (drawCmdBuffer.Count == 0)
+                currentCmd = drawCmdBuffer[drawCmdBuffer.Count - 1];
+                if (currentCmd.ElemCount != 0 && currentCmd.ClipRect != currentClipRect)
                 {
                     AddDrawCommand();
                     return;
                 }
+            }
+            else
+            {
+                AddDrawCommand();
+                return;
+            }
 
-                var newDrawCmd = drawCmdBuffer[drawCmdBuffer.Count - 1];
+            // try to merge with previous command
+            if (drawCmdBuffer.Count > 1)
+            {
+                DrawCommand previousCmd = drawCmdBuffer[drawCmdBuffer.Count - 2];
+                if (previousCmd.TextureData == currentCmd.TextureData && previousCmd.ClipRect == currentClipRect)
                 {
-                    if (newDrawCmd.ElemCount != 0 && newDrawCmd.ClipRect != currentClipRect)
-                    {
-                        AddDrawCommand();
-                        return;
-                    }
-
-                    // Try to merge with previous command if it matches, else use current command
-                    if (drawCmdBuffer.Count > 1)
-                    {
-                        var previousCmd = drawCmdBuffer[drawCmdBuffer.Count - 2];
-                        if (previousCmd.ClipRect == currentClipRect)
-                        {
-                            drawCmdBuffer.RemoveAt(drawCmdBuffer.Count - 1);
-                        }
-                        else
-                        {
-                            newDrawCmd.ClipRect = currentClipRect;
-                        }
-                    }
-                    else
-                    {
-                        newDrawCmd.ClipRect = currentClipRect;
-                    }
+                    drawCmdBuffer.RemoveAt(drawCmdBuffer.Count - 1);
                 }
-                drawCmdBuffer[drawCmdBuffer.Count - 1] = newDrawCmd;
             }
         }
 

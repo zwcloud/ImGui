@@ -120,7 +120,7 @@ namespace ImGui
                 if (window.Collapsed)
                 {
                     // Draw title bar only
-                    window.DrawList.AddRectFilled(title_bar_rect.Min, title_bar_rect.Max, new Color(0.40f, 0.40f, 0.80f, 0.20f));
+                    window.DrawList.AddRectFilled(title_bar_rect.Min, title_bar_rect.Max, new Color(0.40f, 0.40f, 0.80f, 0.50f));
                 }
                 else
                 {
@@ -267,10 +267,10 @@ namespace ImGui
                     window.ContentRect = Rect.Zero;
                 }
 
-                // Title bar
+                // draw title bar text
                 if (!flags.HaveFlag(WindowFlags.NoTitleBar))
                 {
-                    window.DrawList.DrawBoxModel(title_bar_rect, name, titleBarStyle);
+                    window.DrawList.DrawText(title_bar_rect, name, titleBarStyle, Normal);
                 }
 
                 // Borders
