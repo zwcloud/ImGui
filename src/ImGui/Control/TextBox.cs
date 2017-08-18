@@ -6,97 +6,133 @@ using ImGui.Input;
 
 namespace ImGui
 {
-    public partial class GUILayout
-    {
-        /// <summary>
-        /// multi-line text box
-        /// </summary>
-        /// <param name="label"></param>
-        /// <param name="size"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static string Textbox(string label, Size size, string text)
-        {
-            var g = GetCurrentContext();
-            Window window = GetCurrentWindow();
-
-            //apply skin and stack style modifiers
-            var s = g.StyleStack;
-            var modifiers = GUISkin.Instance[GUIControlName.TextBox];
-            s.PushRange(modifiers);
-
-            int id = window.GetID(label);
-            Rect rect = window.GetRect(id, size);
-            var result = GUI.DoTextbox(rect, label, text);
-
-            s.PopStyle(modifiers.Length);
-
-            return result;
-        }
-
-        /// <summary>
-        /// single-line text box
-        /// </summary>
-        /// <param name="label"></param>
-        /// <param name="width"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static string Textbox(string label, double width, string text)
-        {
-            var g = GetCurrentContext();
-            Window window = GetCurrentWindow();
-
-            var s = g.StyleStack;
-            var modifiers = GUISkin.Instance[GUIControlName.Label];
-            s.PushRange(modifiers);
-
-            int id = window.GetID(label);
-            var height = s.Style.FontSize;
-            var size = new Size(width, height);
-            Rect rect = window.GetRect(id, size);
-            var result = GUI.DoTextbox(rect, label, text);
-
-            s.PopStyle(modifiers.Length);
-
-            return result;
-        }
-    }
-
     public partial class GUI
     {
         public static string Textbox(Rect rect, string label, string text)
         {
-            var g = GetCurrentContext();
-            var window = GetCurrentWindow();
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return text;
 
+            var id = window.GetID(label);
+
+            // style apply
             var s = g.StyleStack;
             var modifiers = GUISkin.Instance[GUIControlName.TextBox];
             s.PushRange(modifiers);
 
+            // rect
             rect = window.GetRect(rect);
-            var result = DoTextbox(rect, label, text);
 
+            // interact
+            InputTextContext context;
+            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context);
+
+            // render
+            GUIAppearance.DrawTextBox(rect, id, text, context);
+
+            // style restore
             s.PopStyle(modifiers.Length);
 
-            return result;
+            return text;
+        }
+    }
+
+    public partial class GUILayout
+    {
+        /// <summary>
+        /// Create a multi-line text box.
+        /// </summary>
+        /// <param name="label">label</param>
+        /// <param name="size">size</param>
+        /// <param name="text">text</param>
+        /// <returns>(modified) text</returns>
+        public static string TextBox(string label, Size size, string text)
+        {
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return text;
+
+            int id = window.GetID(label);
+
+            // style apply
+            var s = g.StyleStack;
+            var modifiers = GUISkin.Instance[GUIControlName.TextBox];
+            s.PushRange(modifiers);
+
+            // rect
+            Rect rect = window.GetRect(id, size);
+
+            // interact
+            InputTextContext context;
+            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context);
+
+            // render
+            GUIAppearance.DrawTextBox(rect, id, text, context);
+
+            // style restore
+            s.PopStyle(modifiers.Length);
+
+            return text;
         }
 
-        internal static string DoTextbox(Rect rect, string label, string text)
+        /// <summary>
+        /// Create a single-line text box.
+        /// </summary>
+        /// <param name="label">label</param>
+        /// <param name="width">width</param>
+        /// <param name="text">text</param>
+        /// <returns>(modified) text</returns>
+        public static string TextBox(string label, double width, string text)
         {
-            var g = Form.current.uiContext;
-            var window = GetCurrentWindow();
-            var id = window.GetID(label);
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return text;
+
+            int id = window.GetID(label);
+
+            // style apply
+            var s = g.StyleStack;
+            var style = s.Style;
+            var modifiers = GUISkin.Instance[GUIControlName.Label];
+            s.PushRange(modifiers);
+
+            // rect
+            var height = style.FontSize;
+            var size = new Size(width, height);
+            Rect rect = window.GetRect(id, size);
+
+            // interact
+            InputTextContext context;
+            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context);
+
+            // render
+            GUIAppearance.DrawTextBox(rect, id, text, context);
+
+            // style restore
+            s.PopStyle(modifiers.Length);
+
+            return text;
+        }
+    }
+
+    internal partial class GUIBehavior
+    {
+        public static string TextBoxBehavior(int id, Rect rect, string text, out InputTextContext context)
+        {
+            GUIContext g = Form.current.uiContext;
 
             var hovered = g.IsHovered(rect, id);
-            // control logic
-            var uiState = Form.current.uiContext;
             if (hovered)
             {
-                uiState.SetHoverID(id);
+                g.SetHoverID(id);
 
                 if (Mouse.Instance.LeftButtonPressed)
                 {
-                    uiState.SetActiveID(id);
+                    g.SetActiveID(id);
                 }
             }
             else
@@ -105,15 +141,15 @@ namespace ImGui
                 {
                     if (g.ActiveId == id)
                     {
-                        uiState.SetActiveID(0);
+                        g.SetActiveID(0);
                     }
                 }
             }
 
-            if (g.ActiveId == id && g.InputTextState.inputTextContext.Id != id)//editing text box changed to TextBox<id>
+            if (g.ActiveId == id && g.InputTextState.inputTextContext.Id != id) //editing text box changed to TextBox<id>
             {
-                g.InputTextState.stateMachine.CurrentState = "Active";//reset state
-                g.InputTextState.inputTextContext = new InputTextContext()//reset input text context data
+                g.InputTextState.stateMachine.CurrentState = "Active"; //reset state
+                g.InputTextState.inputTextContext = new InputTextContext() //reset input text context data
                 {
                     Id = id,
                     CaretIndex = 0,
@@ -125,7 +161,7 @@ namespace ImGui
                 };
             }
 
-            InputTextContext context = null;
+            context = null;
             if (g.ActiveId == id)
             {
                 var stateMachine = g.InputTextState.stateMachine;
@@ -144,7 +180,8 @@ namespace ImGui
                     stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
                 }
 
-                if (hovered && Mouse.Instance.LeftButtonState == KeyState.Down && stateMachine.CurrentState != TextBoxState.ActiveSelecting)
+                if (hovered && Mouse.Instance.LeftButtonState == KeyState.Down &&
+                    stateMachine.CurrentState != TextBoxState.ActiveSelecting)
                 {
                     stateMachine.MoveNext(TextBoxCommand.MoveCaret, context);
                     stateMachine.MoveNext(TextBoxCommand.BeginSelect, context);
@@ -158,7 +195,6 @@ namespace ImGui
                 if (stateMachine.CurrentState == TextBoxState.Active)
                 {
                     stateMachine.MoveNext(TextBoxCommand.DoEdit, context);
-
                 }
                 if (stateMachine.CurrentState == TextBoxState.ActiveSelecting)
                 {
@@ -173,70 +209,102 @@ namespace ImGui
 #endif
                 text = context.Text;
             }
-
-            // ui painting
-            {
-                var d = window.DrawList;
-                var style = g.StyleStack.Style;
-                var contentRect = Utility.GetContentRect(rect, style);
-                d.PushClipRect(rect, true);
-                if (g.ActiveId == id)
-                {
-                    //Calculate positions and sizes
-                    var textContext = TextMeshUtil.GetTextContext(context.Text, rect.Size, style, GUIState.Normal);
-                    var offsetOfTextRect = contentRect.TopLeft;
-                    float pointX, pointY;
-                    float caretHeight;
-                    textContext.IndexToXY(context.CaretIndex, false, out pointX, out pointY, out caretHeight);
-                    var caretTopPoint = new Point(pointX, pointY);
-                    var caretBottomPoint = new Point(pointX, pointY + caretHeight);
-                    caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                    caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-
-                    byte caretAlpha = context.CaretAlpha;
-
-                    // Check if the caret is outside the rect. If so, move the text so the caret is always shown.
-                    var caretX = caretTopPoint.X;
-                    if (caretX < contentRect.X || caretX > contentRect.Right)
-                    {
-                        var offsetX = -(caretX - contentRect.Width - rect.X);
-                        contentRect.Offset(offsetX, 0);
-                        caretTopPoint.Offset(offsetX, 0);
-                        caretBottomPoint.Offset(offsetX, 0);
-                    }
-
-                    //Draw the box //TODO draw selection line blocks
-                    d.AddRect(rect.Min, rect.Max, Color.White);
-
-                    //Draw text
-                    d.DrawText(contentRect, context.Text, style, GUIState.Normal);
-
-                    //Draw selection rect
-                    if (context.SelectIndex != context.CaretIndex)
-                    {
-                        float selectPointX, selectPointY, dummyHeight;
-                        textContext.IndexToXY(context.SelectIndex, false, out selectPointX, out selectPointY, out dummyHeight);
-                        var selectionRect = new Rect(
-                            new Point(pointX, pointY),
-                            new Point(selectPointX, selectPointY + caretHeight));
-                        selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                        d.AddRectFilled(selectionRect.Min, selectionRect.Max, Color.Argb(100, 10, 102, 214));
-                    }
-
-                    //Draw caret
-                    d.PathMoveTo(caretTopPoint);
-                    d.PathLineTo(caretBottomPoint);
-                    d.PathStroke(Color.Argb(caretAlpha, 255, 255, 255), false, 2);
-                }
-                else
-                {
-                    d.DrawText(contentRect, text, style, GUIState.Normal);
-                    d.AddRect(rect.Min, rect.Max, Color.White);
-                }
-                d.PopClipRect();
-            }
-
             return text;
+        }
+    }
+
+    internal partial class GUIAppearance
+    {
+        public static void DrawTextBox(Rect rect, int id, string text, InputTextContext context)
+        {
+            GUIContext g = Form.current.uiContext;
+            WindowManager w = g.WindowManager;
+            Window window = w.CurrentWindow;
+
+            var d = window.DrawList;
+            var style = g.StyleStack.Style;
+            var contentRect = Utility.GetContentRect(rect, style);
+            d.PushClipRect(rect, true);
+            if (g.ActiveId == id)
+            {
+                //Calculate positions and sizes
+                var textContext = TextMeshUtil.GetTextContext(context.Text, rect.Size, style, GUIState.Normal);
+                var offsetOfTextRect = contentRect.TopLeft;
+                float pointX, pointY;
+                float caretHeight;
+                textContext.IndexToXY(context.CaretIndex, false, out pointX, out pointY, out caretHeight);
+                var caretTopPoint = new Point(pointX, pointY);
+                var caretBottomPoint = new Point(pointX, pointY + caretHeight);
+                caretTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                caretBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+
+                byte caretAlpha = context.CaretAlpha;
+
+                // Check if the caret is outside the rect. If so, move the text so the caret is always shown.
+                var caretX = caretTopPoint.X;
+                if (caretX < contentRect.X || caretX > contentRect.Right)
+                {
+                    var offsetX = -(caretX - contentRect.Width - rect.X);
+                    contentRect.Offset(offsetX, 0);
+                    caretTopPoint.Offset(offsetX, 0);
+                    caretBottomPoint.Offset(offsetX, 0);
+                }
+
+                //Draw the box //TODO draw selection line blocks
+                d.AddRect(rect.Min, rect.Max, Color.White);
+
+                //Draw text
+                d.DrawText(contentRect, context.Text, style, GUIState.Normal);
+
+                //Draw selection rect
+                if (context.SelectIndex != context.CaretIndex)
+                {
+                    float selectPointX, selectPointY, dummyHeight;
+                    textContext.IndexToXY(context.SelectIndex, false, out selectPointX, out selectPointY, out dummyHeight);
+                    var selectionRect = new Rect(
+                        new Point(pointX, pointY),
+                        new Point(selectPointX, selectPointY + caretHeight));
+                    selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                    d.AddRectFilled(selectionRect.Min, selectionRect.Max, Color.Argb(100, 10, 102, 214));
+                }
+
+                //Draw caret
+                d.PathMoveTo(caretTopPoint);
+                d.PathLineTo(caretBottomPoint);
+                d.PathStroke(Color.Argb(caretAlpha, 255, 255, 255), false, 2);
+            }
+            else
+            {
+                d.DrawText(contentRect, text, style, GUIState.Normal);
+                d.AddRect(rect.Min, rect.Max, Color.White);
+            }
+            d.PopClipRect();
+        }
+    }
+
+    partial class GUISkin
+    {
+        void InitTextBoxStyles()
+        {
+            double fontSize = CurrentOS.IsAndroid ? 32.0 : 13.0;
+            var textBoxStyles = new [] {
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Normal),
+                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Hover),
+                new StyleModifier(GUIStyleName.FontSize, StyleType.@double,  fontSize, GUIState.Active),
+            };
+            this.styles.Add(GUIControlName.TextBox, textBoxStyles);
         }
     }
 
@@ -262,31 +330,5 @@ namespace ImGui
         public const string MoveCaretKeyboard = "MoveCaretKeyboard";
         public const string DoSelect = "DoSelect";
         public const string DoEdit = "DoEdit";
-    }
-
-    partial class GUISkin
-    {
-        void InitTextBoxStyles()
-        {
-            double fontSize = CurrentOS.IsAndroid ? 32.0 : 13.0;
-            var textBoxStyles = new StyleModifier[] {
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Normal),
-                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Hover),
-                new StyleModifier(GUIStyleName.FontSize, StyleType.@double,  fontSize, GUIState.Active),
-            };
-            this.styles.Add(GUIControlName.TextBox, textBoxStyles);
-        }
     }
 }

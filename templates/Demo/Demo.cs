@@ -114,7 +114,7 @@ public class Demo
 
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))
         {
-            text = GUILayout.Textbox("Text Box", new Size(120, 200), text);
+            text = GUILayout.TextBox("Text Box", new Size(120, 200), text);
 
             GUILayout.BeginHorizontal("all");
             {

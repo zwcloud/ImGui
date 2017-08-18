@@ -211,3 +211,8 @@ namespace ImGui
         }
     }
 }
+
+#region TODO
+// toggle without label
+// tristate
+#endregion
