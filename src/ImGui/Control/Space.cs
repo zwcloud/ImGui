@@ -1,40 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ImGui.Common.Primitive;
+﻿using ImGui.Common.Primitive;
 
 namespace ImGui
 {
     public partial class GUILayout
     {
         /// <summary>
-        /// Put a fixed-size space inside a layout group.
+        /// Create a fixed size space.
         /// </summary>
         public static void Space(string str_id, double size)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
-            var layout = window.StackLayout;
+            if (window.SkipItems)
+                return;
 
             int id = window.GetID(str_id);
+
+            // rect
+            var layout = window.StackLayout;
             layout.GetRect(id, layout.TopGroup.IsVertical ? new Size(0, size) : new Size(size, 0));
         }
 
         /// <summary>
-        /// Put a expanded space inside a layout group.
+        /// Create a flexible space.
         /// </summary>
         public static void FlexibleSpace(string str_id, int stretchFactor = 1)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
-            var layout = window.StackLayout;
+            if (window.SkipItems)
+                return;
 
+            // style apply
             var s = g.StyleStack;
+            var layout = window.StackLayout;
             s.PushStretchFactor(layout.TopGroup.IsVertical, stretchFactor);
 
+            // rect
             int id = window.GetID(str_id);
-            Rect rect = window.GetRect(id, Size.Zero);
+            window.GetRect(id, Size.Zero);
 
+            // style restore
             s.PopStyle();
         }
     }
