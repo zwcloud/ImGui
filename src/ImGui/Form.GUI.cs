@@ -167,6 +167,10 @@ namespace ImGui
                 }
             }
 
+            this.renderer.RenderDrawList(this.OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+            this.OverlayDrawList.Clear();
+            this.OverlayDrawList.Init();
+
             this.renderer.SwapBuffers();
         }
 
@@ -192,6 +196,7 @@ namespace ImGui
 
                 l.Msg("Window:");
                 l.Msg("    HoveredWindow: {0}", (w.HoveredWindow != null) ? w.HoveredWindow.ID.ToString() : "<none>");
+                l.Msg("    MovedWindow: {0}", (w.MovedWindow != null) ? w.MovedWindow.ID.ToString() : "<none>");
                 l.Msg("    Window List:");
                 for (int i = 0; i < w.Windows.Count; i++)
                 {
