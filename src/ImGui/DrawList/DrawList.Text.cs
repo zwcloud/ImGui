@@ -25,13 +25,18 @@ namespace ImGui
             var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, state) as OSImplentation.TypographyTextContext;
             var glyphOffsets = textContext.GlyphOffsets;
 
-            int index = 0;
+            int index = -1;
 
             // get glyph data from typeface
             FontStyle fontStyle = style.FontStyle;
             FontWeight fontWeight = style.FontWeight;
             foreach (var character in text)
             {
+                index++;
+                if (char.IsWhiteSpace(character))
+                {
+                    continue;
+                }
                 var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
                 if (glyphData == null)
                 {
@@ -46,7 +51,6 @@ namespace ImGui
 
                 // append to drawlist
                 Vector glyphOffset = glyphOffsets[index];
-                index++;
                 var positionOffset = (Vector)rect.TopLeft;
                 this.TextMesh.Append(positionOffset, glyphData, glyphOffset, scale, fontColor, false);
             }

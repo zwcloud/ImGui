@@ -240,7 +240,7 @@ namespace ImGui
 
                 byte caretAlpha = context.CaretAlpha;
 
-                // Check if the caret is outside the rect. If so, move the text so the caret is always shown.
+                // Check if the caret is outside the rect. If so, move the text so the caret is always shown. FIXME this should be done in TextBoxBehaviour
                 var caretX = caretTopPoint.X;
                 if (caretX < contentRect.X || caretX > contentRect.Right)
                 {
@@ -250,22 +250,92 @@ namespace ImGui
                     caretBottomPoint.Offset(offsetX, 0);
                 }
 
-                //Draw the box //TODO draw selection line blocks
-                d.AddRect(rect.Min, rect.Max, Color.White);
+                //Draw the box
+                {
+                    d.AddRect(rect.Min, rect.Max, Color.White);
+                }
 
                 //Draw text
                 d.DrawText(contentRect, context.Text, style, GUIState.Normal);
 
                 //Draw selection rect
+                /*
+                 * Note: Design
+                 * 
+                 *  left bound            right bound
+                 *     ↓                        ↓
+                 *     |      A-----------------+
+                 *     |      |CONTENT_CONTENT_C| => Line 1 => rect1
+                 *     +------B                 |
+                 *     |ONTENT_CONTENT_CONTENT_C| => Line 2 (represents inner lines) => rect2
+                 *     |                 C------+
+                 *     |ONTENT_CONTENT_CO| => Line 3 => rect3
+                 *     +-----------------D
+                 * 
+                 * left bound = l
+                 * right bound = r
+                 */
                 if (context.SelectIndex != context.CaretIndex)
                 {
-                    float selectPointX, selectPointY, dummyHeight;
-                    textContext.IndexToXY(context.SelectIndex, false, out selectPointX, out selectPointY, out dummyHeight);
-                    var selectionRect = new Rect(
-                        new Point(pointX, pointY),
-                        new Point(selectPointX, selectPointY + caretHeight));
-                    selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                    d.AddRectFilled(selectionRect.Min, selectionRect.Max, Color.Argb(100, 10, 102, 214));
+                    float selectPointX, selectPointY;
+                    textContext.IndexToXY(context.SelectIndex, false, out selectPointX, out selectPointY, out float dummyHeight);
+                    var selectTopPoint = new Point(selectPointX, selectPointY);
+                    var selectBottomPoint = new Point(selectPointX, selectPointY + caretHeight);
+                    selectTopPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                    selectBottomPoint.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                    var delta = Math.Abs(selectTopPoint.Y - caretTopPoint.Y);
+                    if (delta < caretHeight) // single line
+                    {
+                        var selectionRect = new Rect(
+                            new Point(pointX, pointY),
+                            new Point(selectPointX, selectPointY + caretHeight));
+                        selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
+                        d.AddRectFilled(selectionRect.Min, selectionRect.Max, Color.Argb(100, 10, 102, 214));
+                    }
+                    else//mutiple line
+                    {
+                        var l = contentRect.Left;
+                        var r = contentRect.Right;
+
+                        Point A;
+                        Point B;
+                        Point C;
+                        Point D;
+
+                        if (selectTopPoint.Y > caretTopPoint.Y)
+                        {
+                            A = caretTopPoint;
+                            B = caretBottomPoint;
+                            C = selectTopPoint;
+                            D = selectBottomPoint;
+                        }
+                        else
+                        {
+                            A = selectTopPoint;
+                            B = selectBottomPoint;
+                            C = caretTopPoint;
+                            D = caretBottomPoint;
+                        }
+
+
+                        // Line 1
+                        var rect1 = new Rect(A, r - A.X, caretHeight);
+                        d.AddRectFilled(rect1, Color.Argb(100, 10, 102, 214), 12);
+                        d.AddRect(rect1.Min, rect1.Max, Color.White, 12, 15, 2);
+
+                        // Line 2
+                        var rect2 = new Rect(new Point(l, B.Y), new Point(r, C.Y));
+                        if (rect2.Height > 0.5 * caretHeight)//TODO There should more a more reasonable way to detect this: If it only has two lines, we don't draw the inner rectangle.
+                        {
+                            d.AddRectFilled(rect2, Color.Argb(100, 10, 102, 214), 12);
+                            d.AddRect(rect2.Min, rect2.Max, Color.White, 12, 15, 2);
+                        }
+
+                        // Line 3
+                        var rect3 = new Rect(new Point(l, C.Y), D);
+                        d.AddRectFilled(rect3, Color.Argb(100, 10, 102, 214), 12);
+                        d.AddRect(rect3.Min, rect3.Max, Color.White, 12, 15, 2);
+                    }
                 }
 
                 //Draw caret
@@ -288,18 +358,18 @@ namespace ImGui
         {
             double fontSize = CurrentOS.IsAndroid ? 32.0 : 13.0;
             var textBoxStyles = new [] {
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 5.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 5.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 5.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 5.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 10.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 10.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 10.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 10.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 10.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 10.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 10.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 10.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 10.0, GUIState.Active),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 10.0, GUIState.Normal),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 10.0, GUIState.Hover),
+                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 10.0, GUIState.Active),
                 new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Normal),
                 new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Hover),
                 new StyleModifier(GUIStyleName.FontSize, StyleType.@double,  fontSize, GUIState.Active),
