@@ -2,61 +2,69 @@
 
 namespace ImGui
 {
-    public partial class GUILayout
-    {
-        /// <summary>
-        /// Create an auto-layout label.
-        /// </summary>
-        /// <param name="text">text to display on the label</param>
-        public static void Label(string text)
-        {
-            var g = GetCurrentContext();
-            Window window = GetCurrentWindow();
-
-            //apply skin and stack style modifiers
-            var s = g.StyleStack;
-            var modifiers = GUISkin.Instance[GUIControlName.Label];
-            s.PushRange(modifiers);
-
-            int id = window.GetID(text);
-            var style = g.StyleStack.Style;
-            Size contentSize = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id, contentSize);
-            GUI.DoLabel(rect, text);
-
-            s.PopStyle(modifiers.Length);
-        }
-    }
-
     public partial class GUI
     {
         /// <summary>
         /// Create a label.
         /// </summary>
-        /// <param name="rect">position and size of the control</param>
-        /// <param name="text">text to display on the label</param>
-        /// <param name="id">the unique id of this control</param>
+        /// <param name="rect">position and size</param>
+        /// <param name="text">text to display</param>
         public static void Label(Rect rect, string text)
         {
-            var g = GetCurrentContext();
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return;
 
+            // style apply
             var s = g.StyleStack;
+            GUIStyle style = g.StyleStack.Style;
             var modifiers = GUISkin.Instance[GUIControlName.Label];
             s.PushRange(modifiers);
 
-            DoLabel(rect, text);
+            // rect
+            window.GetRect(rect);
 
-            s.PopStyle(modifiers.Length);
-        }
-
-        internal static void DoLabel(Rect rect, string text)
-        {
-            var g = GetCurrentContext();
-            Window window = GetCurrentWindow();
-
-            GUIStyle style = g.StyleStack.Style;
+            // render
             DrawList d = window.DrawList;
             d.DrawBoxModel(rect, text, style);
+
+            // style restore
+            s.PopStyle(modifiers.Length);
+        }
+    }
+
+    public partial class GUILayout
+    {
+        /// <summary>
+        /// Create an auto-layout label.
+        /// </summary>
+        /// <param name="text">text to display</param>
+        public static void Label(string text)
+        {
+            GUIContext g = GetCurrentContext();
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return;
+
+            int id = window.GetID(text);
+
+            // style apply
+            var s = g.StyleStack;
+            var style = g.StyleStack.Style;
+            var modifiers = GUISkin.Instance[GUIControlName.Label];
+            s.PushRange(modifiers);
+
+            // rect
+            Size contentSize = style.CalcSize(text, GUIState.Normal);
+            Rect rect = window.GetRect(id, contentSize);
+
+            // rendering
+            DrawList d = window.DrawList;
+            d.DrawBoxModel(rect, text, style);
+
+            // style restore
+            s.PopStyle(modifiers.Length);
         }
     }
 
