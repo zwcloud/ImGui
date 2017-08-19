@@ -1,5 +1,4 @@
-﻿using ImGui.Common;
-using ImGui.Common.Primitive;
+﻿using ImGui.Common.Primitive;
 
 namespace ImGui
 {
@@ -42,75 +41,76 @@ namespace ImGui
             if (window.SkipItems)
                 return value;
 
-            var id = window.GetID(label);
-
             GUIContext g = GetCurrentContext();
             var s = g.StyleStack;
             var style = s.Style;
 
             // rect
             var textSize = style.CalcSize(label, GUIState.Normal);
-            var cSize = style.CalcSize("R", GUIState.Normal).Width;
-            var boxSize = new Size(cSize, textSize.Height);
-            var spaceSize = new Size(0, textSize.Height);
-            var colorBoxSize = new Size(200, 200);
-            var spaceWidth = 5;
+            var boxSize = new Size(0, textSize.Height);
 
-            GUILayout.PushFixedHeight(100);//+1
-            GUILayout.PushPadding((10, 10, 10, 10));
-            GUILayout.BeginHorizontal(label+"#HGroug");
-                GUILayout.PopStyleVar(4);//-4
-                GUILayout.PopStyleVar(1);//-1
-                s.PushStretchFactor(false, 1);//+1
-                s.PushStretchFactor(true, 1);//+1
+            int rId;
+            int gId;
+            int bId;
+            int aId;
+            int colorId;
 
-                var rId = window.GetID("#R");
-                var space0Id = window.GetID("#space0");
-                var gId = window.GetID("#G");
-                var space1Id = window.GetID("#space1");
-                var bId = window.GetID("#B");
-                var aId = window.GetID("#A");
-                var space2Id = window.GetID("#space2");
-                var colorId = window.GetID("#Color");
+            Rect rectR, rectG, rectB, rectA, rectColor;
 
-                GUILayout.BeginVertical("#RGBA");
-                    GUILayout.BeginHorizontal("#RGB");
-                        var rectR = window.GetRect(rId, boxSize);
-                        GUILayout.PushFixedWidth(spaceWidth);//+2
-                        window.GetRect(space0Id, spaceSize);
-                        GUILayout.PopStyleVar(2);//-2
-                        var rectG = window.GetRect(gId, boxSize);
-                        GUILayout.PushFixedWidth(spaceWidth);//+2
-                        window.GetRect(space1Id, spaceSize);
-                        GUILayout.PopStyleVar(2);//-2
-                        var rectB = window.GetRect(bId, boxSize);
-                    GUILayout.EndHorizontal();
-                    var rectA = window.GetRect(aId, boxSize);
-                GUILayout.EndVertical();
-                GUILayout.PushFixedWidth(spaceWidth);//+2
-                window.GetRect(space2Id, spaceSize);
-                GUILayout.PopStyleVar(2);//-2
-                GUILayout.PushVStretchFactor(1);//+1
-                var rectColor = window.GetRect(colorId, colorBoxSize);
-                GUILayout.PopStyleVar(1);//-1
-                s.PopStyle();//-1
-                s.PopStyle();//-1
-            GUILayout.EndHorizontal();
+            PushFixedHeight(100);//+2
+            PushPadding((10, 10, 10, 10));//+4
+            BeginHorizontal(label+"#HGroup");
+            PopStyleVar(4); //-4
+            PopStyleVar(2); //-2
+            {
+                PushHStretchFactor(1); //+1
+                PushVStretchFactor(1); //+1
+                BeginVertical("#RGBA");
+                {
+                    BeginHorizontal("#RGB");
+                    {
+                        rId = window.GetID("#R");
+                        gId = window.GetID("#G");
+                        bId = window.GetID("#B");
+                        rectR = window.GetRect(rId, boxSize);
+                        PushHStretchFactor(0); //+1
+                        Space("#space0", 5);
+                        PopStyleVar(); //-1
+                        rectG = window.GetRect(gId, boxSize);
+                        PushHStretchFactor(0); //+1
+                        Space("#space1", 5);
+                        PopStyleVar(); //-1
+                        rectB = window.GetRect(bId, boxSize);
+                    }
+                    EndHorizontal();
+                    aId = window.GetID("#A");
+                    rectA = window.GetRect(aId, Size.Zero);
+                }
+                EndVertical();
+                colorId = window.GetID("#Color");
+                PushHStretchFactor(0); //+1
+                Space("#space2", 10);
+                PopStyleVar(); //-1
+                PushVStretchFactor(1); //+1
+                rectColor = window.GetRect(colorId, Size.Zero);
+                PopStyleVar(); //-1
+                PopStyleVar(); //-1
+                PopStyleVar(); //-1
+            }
+            EndHorizontal();
 
-            var d = window.DrawList;
-
+            // interact
             value.R = GUIBehavior.SliderBehavior(rectR, rId, true, value.R, 0, 1.0, out bool _);
-            DrawColorDragButton(d, rectR, rId, 'R', value.R);
-
             value.G = GUIBehavior.SliderBehavior(rectG, gId, true, value.G, 0, 1.0, out bool _);
-            DrawColorDragButton(d, rectG, gId, 'G', value.G);
-
             value.B = GUIBehavior.SliderBehavior(rectB, bId, true, value.B, 0, 1.0, out bool _);
-            DrawColorDragButton(d, rectB, bId, 'B', value.B);
-
             value.A = GUIBehavior.SliderBehavior(rectA, aId, true, value.A, 0, 1.0, out bool _);
-            DrawColorDragButton(d, rectA, aId, 'A', value.A);
 
+            // render
+            var d = window.DrawList;
+            DrawColorDragButton(d, rectR, rId, 'R', value.R);
+            DrawColorDragButton(d, rectG, gId, 'G', value.G);
+            DrawColorDragButton(d, rectB, bId, 'B', value.B);
+            DrawColorDragButton(d, rectA, aId, 'A', value.A);
             d.AddRectFilled(rectColor, value);
 
             return value;
