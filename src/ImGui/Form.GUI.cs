@@ -7,7 +7,9 @@ namespace ImGui
 {
     partial class Form
     {
-        bool debugWindowOpen = true;
+        private bool debugWindowOpen = true;
+
+        public Color BackgroundColor { get; set; } = Color.Argb(255, 114, 144, 154);
 
         internal void NewFrame()
         {
@@ -158,7 +160,7 @@ namespace ImGui
                 EndFrame();
             g.FrameCountRendered = g.FrameCount;
 
-            this.renderer.Clear();
+            this.renderer.Clear(this.BackgroundColor);
             foreach (var window in w.Windows)
             {
                 if(window.Active)

@@ -17,9 +17,9 @@ namespace ImGui.OSAbstraction.Graphics
         void Init(IntPtr windowHandle, Size size);
 
         /// <summary>
-        /// Clear the rendered data
+        /// Clear the front buffer
         /// </summary>
-        void Clear();
+        void Clear(Color color);
 
         /// <summary>
         /// Render the drawList

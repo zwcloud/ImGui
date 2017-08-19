@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {
@@ -116,6 +117,24 @@ namespace ImGui
         #endregion
 
         #region image, color
+
+        public void PushBorderColor(Color color)
+        {
+            var modifier1 = new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, color);
+            var modifier2 = new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, color);
+            var modifier3 = new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, color);
+            var modifier4 = new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, color);
+            Push(modifier1);
+            Push(modifier2);
+            Push(modifier3);
+            Push(modifier4);
+        }
+
+        public void PushBgColor(Color color)
+        {
+            var modifier = new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, color);
+            Push(modifier);
+        }
 
         #endregion
 

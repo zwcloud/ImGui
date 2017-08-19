@@ -118,14 +118,13 @@ void main()
             GL.Disable(GL.GL_DEPTH_TEST);
             GL.DepthFunc(GL.GL_NEVER);
             GL.Enable(GL.GL_SCISSOR_TEST);
-            var clearColor = Color.Argb(255, 114, 144, 154);//TODO this should be the background color of Form
-            GL.ClearColor((float)clearColor.R, (float)clearColor.G, (float)clearColor.B, (float)clearColor.A);
 
             Utility.CheckGLError();
         }
 
-        public void Clear()
+        public void Clear(Color clearColor)
         {
+            GL.ClearColor((float)clearColor.R, (float)clearColor.G, (float)clearColor.B, (float)clearColor.A);
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
         }
 

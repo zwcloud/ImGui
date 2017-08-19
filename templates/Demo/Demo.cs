@@ -4,8 +4,8 @@ using ImGui.OSAbstraction.Graphics;
 
 public class Demo
 {
-    static double f = 0.0f;
-
+    double f = 0.0f;
+    Color clearColor = Color.Argb(255, 114, 144, 154);
     private bool showAnotherWindow = true;
 
     #region Demo
@@ -47,7 +47,7 @@ public class Demo
         {
             GUILayout.Label("Hello, world!");
             f = GUILayout.Slider("float", f, 0, 1);
-            //TODO color control
+            clearColor = GUILayout.ColorField("clear color", clearColor);
             if (GUILayout.Button("Show Demo Window")) showDemoWindow = !showDemoWindow;
             if (GUILayout.Button("Show Another Window")) showAnotherWindow = !showAnotherWindow;
             var fps = Form.current.uiContext.fps;
@@ -68,6 +68,7 @@ public class Demo
             ShowTestWindow(ref showDemoWindow);
         }
 
+        Form.current.BackgroundColor = clearColor;
     }
 
     private void ShowTestWindow(ref bool open)
