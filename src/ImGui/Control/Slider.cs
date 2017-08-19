@@ -45,7 +45,7 @@ namespace ImGui
                 sliderWidth,
                 rect.Height);
             bool hovered;
-            value = GUIBehavior.ToggleBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered);
+            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered);
 
             // render
             var state = GUIState.Normal;
@@ -103,7 +103,7 @@ namespace ImGui
             var sliderRect = new Rect(rect.X, rect.Y,
                 rect.Width, sliderHeight);
             bool hovered;
-            value = GUIBehavior.ToggleBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered);
+            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered);
 
             // render
             var state = GUIState.Normal;
@@ -172,7 +172,7 @@ namespace ImGui
                 sliderWidth,
                 rect.Height);
             bool hovered;
-            value = GUIBehavior.ToggleBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered);
+            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered);
 
             // render
             var state = GUIState.Normal;
@@ -240,7 +240,7 @@ namespace ImGui
                 sliderHeight);
 
             bool hovered;
-            value = GUIBehavior.ToggleBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered);
+            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered);
 
             // render
             var state = GUI.Normal;
@@ -264,7 +264,7 @@ namespace ImGui
 
     internal partial class GUIBehavior
     {
-        public static double ToggleBehavior(Rect sliderRect, int id, bool horizontal, double value, double minValue, double maxValue, out bool hovered)
+        public static double SliderBehavior(Rect sliderRect, int id, bool horizontal, double value, double minValue, double maxValue, out bool hovered)
         {
             GUIContext g = Form.current.uiContext;
 
