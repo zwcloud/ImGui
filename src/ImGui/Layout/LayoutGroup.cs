@@ -111,7 +111,7 @@ namespace ImGui.Layout
             {
                 // calculate the width
                 this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
-                if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal <= 0)
+                if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
                 {
                     Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
                     return;
@@ -126,7 +126,7 @@ namespace ImGui.Layout
                 // calculate the width
                 this.Rect.Width = this.MinWidth;
 
-                if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal <= 0)
+                if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
                 {
                     Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
                     return;
@@ -172,7 +172,10 @@ namespace ImGui.Layout
                 {
                     if (entry.HorizontallyStretched)
                     {
-                        entry.CalcWidth(this.ContentWidth); //the unitPartWidth for stretched children is the content-box width of the group
+                        entry.CalcWidth(this.ContentWidth);
+                        //the unitPartWidth
+                        //(actually every entry will have this width, because entry.HorizontalStretchFactor is always 1 in this case. See `LayoutGroup.Add`.)
+                        //for stretched children is the content-box width of the group
                     }
                     else
                     {
@@ -277,13 +280,12 @@ namespace ImGui.Layout
             {
                 // calculate the height
                 this.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
-                this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
-
-                if (this.ContentHeight < 1)
+                if (this.Rect.Height - this.PaddingVertical - this.BorderVertical < 1)
                 {
                     Log.Warning(string.Format("The height of Group<{0}> is too small to hold any children.", this.Id));
                     return;
                 }
+                this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
                 // calculate the height of children
                 CalcChildrenHeight();
@@ -292,13 +294,13 @@ namespace ImGui.Layout
             {
                 // calculate the height
                 this.Rect.Height = this.MinHeight;
-                this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
-                if (this.ContentHeight < 1)
+                if (this.Rect.Height - this.PaddingVertical - this.BorderVertical < 1)
                 {
                     Log.Warning(string.Format("The height of Group<{0}> is too small to hold any children.", this.Id));
                     return;
                 }
+                this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
                 // calculate the height of children
                 CalcChildrenHeight();
@@ -337,42 +339,90 @@ namespace ImGui.Layout
             {
                 // calculate the unitPartHeight for stretched children
                 // calculate the height of fixed-size children
+
                 var childCount = this.Entries.Count;
-                var totalStretchedPartHeight = this.ContentHeight - (childCount - 1) * this.CellSpacingVertical;
-                if(totalStretchedPartHeight <=0)
+                var cellSpacingHeight = (childCount - 1) * this.CellSpacingVertical;
+                if(cellSpacingHeight >= this.ContentWidth)
                 {
-                    Log.Warning(string.Format("Group<{0}> doesn't have enough height for horizontal-cell-spacing<{1}> with {2} children.",
+                    Log.Warning(string.Format("Group<{0}> doesn't have enough height for vertical-cell-spacing<{1}> with {2} children.",
                         this.Id, this.CellSpacingVertical, childCount));
                     return;
                 }
 
-                var totalFactor = 0;
+                var heightWithoutCellSpacing = this.ContentHeight - cellSpacingHeight;
+
+                double minHeightOfEntries = 0;
+                double minStretchedHeight = 0;
                 foreach (var entry in this.Entries)
                 {
                     if (entry.VerticallyStretched)
                     {
-                        totalFactor += entry.VerticalStretchFactor;
+                        var defaultHeight = entry.GetDefaultHeight();
+                        minHeightOfEntries += defaultHeight;
+                        minStretchedHeight += defaultHeight;
+                    }
+                    else if (entry.IsFixedHeight)
+                    {
+                        minHeightOfEntries += entry.MinHeight;
                     }
                     else
                     {
-                        entry.CalcHeight();
-                        totalStretchedPartHeight -= entry.Rect.Height;
-                        if(totalStretchedPartHeight <=0)
+                        minHeightOfEntries += entry.GetDefaultHeight();
+                    }
+                }
+
+                if (minHeightOfEntries > heightWithoutCellSpacing)//overflow
+                {
+                    var factor = 0;
+                    foreach (var entry in this.Entries)
+                    {
+                        if (entry.VerticallyStretched)
                         {
-                            Log.Warning(string.Format("Group<{0}> doesn't have enough height for more entries.", this.Id));
-                            return;
+                            factor += entry.VerticalStretchFactor;
+                        }
+                    }
+                    var unit = minStretchedHeight / factor;
+                    // change all VerticallyStretched entries to fixed height
+                    foreach (var entry in this.Entries)
+                    {
+                        if (entry.VerticallyStretched)
+                        {
+                            entry.MinHeight = entry.MaxHeight = unit * entry.VerticalStretchFactor;
+                            entry.VerticalStretchFactor = 0;
+                        }
+                        entry.CalcHeight();
+                    }
+                }
+                else
+                {
+                    var factor = 0;
+                    foreach (var entry in this.Entries)
+                    {
+                        if (entry.VerticallyStretched)
+                        {
+                            factor += entry.VerticalStretchFactor;
+                        }
+                        else
+                        {
+                            entry.CalcHeight();
+                        }
+                    }
+
+                    if (factor > 0)
+                    {
+                        var stretchedHeight = heightWithoutCellSpacing - minHeightOfEntries + minStretchedHeight;
+                        var unit = stretchedHeight / factor;
+                        // calculate the height of stretched children
+                        foreach (var entry in this.Entries)
+                        {
+                            if (entry.VerticallyStretched)
+                            {
+                                entry.CalcHeight(unit);
+                            }
                         }
                     }
                 }
-                var childUnitPartHeight = totalStretchedPartHeight / totalFactor;
-                // calculate the height of stretched children
-                foreach (var entry in this.Entries)
-                {
-                    if (entry.VerticallyStretched)
-                    {
-                        entry.CalcHeight(childUnitPartHeight);
-                    }
-                }
+
             }
             else // horizontal group
             {
@@ -381,7 +431,9 @@ namespace ImGui.Layout
                     if (entry.VerticallyStretched)
                     {
                         entry.CalcHeight(this.ContentHeight);
-                        //the unitPartHeight for stretched children is the content-box height of the group
+                        //the unitPartHeight
+                        //(actually every entry will have this height, because entry.VerticalStretchFactor is always 1 in this case. See `LayoutGroup.Add`.)
+                        //for stretched children is the content-box height of the group
                     }
                     else
                     {
