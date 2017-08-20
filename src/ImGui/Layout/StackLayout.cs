@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
@@ -29,7 +28,7 @@ namespace ImGui.Layout
             rootGroup.ContentWidth = size.Width;
             rootGroup.ContentHeight = size.Height;
             rootGroup.HorizontalStretchFactor = 1;
-            rootGroup.VerticalStretchFactor = 1;
+            //rootGroup.VerticalStretchFactor = 1;
             return rootGroup;
         }
 
@@ -87,6 +86,14 @@ namespace ImGui.Layout
                 if (parentGroup != null)
                 {
                     group = parentGroup.GetEntry(id) as LayoutGroup;
+#if DrawGroup
+                    if(group!= null)
+                    {
+                        var window = Form.current.uiContext.WindowManager.CurrentWindow;
+                        var rect = window.GetRect(group.Rect);
+                        window.DrawList.AddRectFilled(rect, group.IsVertical ? Color.Argb(30, 255, 0, 0) : Color.Argb(30, 0, 0, 255));
+                    }
+#endif
                 }
                 if(group == null)// this happens when new group is added in previous frame
                 {

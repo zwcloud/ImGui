@@ -182,6 +182,49 @@ namespace ImGui
             return pt;
         }
 
+        public static void CheckGLError()
+        {
+            var error = GL.GetError();
+            string errorStr = null;
+            switch (error)
+            {
+                case GL.GL_NO_ERROR:
+                    errorStr = "GL_NO_ERROR";
+                    break;
+                case GL.GL_INVALID_ENUM:
+                    errorStr = "GL_INVALID_ENUM";
+                    break;
+                case GL.GL_INVALID_VALUE:
+                    errorStr = "GL_INVALID_VALUE";
+                    break;
+                case GL.GL_INVALID_OPERATION:
+                    errorStr = "GL_INVALID_OPERATION";
+                    break;
+                case GL.GL_STACK_OVERFLOW:
+                    errorStr = "GL_STACK_OVERFLOW";
+                    break;
+                case GL.GL_STACK_UNDERFLOW:
+                    errorStr = "GL_STACK_UNDERFLOW";
+                    break;
+                case GL.GL_OUT_OF_MEMORY:
+                    errorStr = "GL_OUT_OF_MEMORY";
+                    break;
+                case GL.GL_INVALID_FRAMEBUFFER_OPERATION:
+                    errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION";
+                    break;
+                case GL.GL_CONTEXT_LOST:
+                    errorStr = "GL_CONTEXT_LOST";
+                    break;
+            }
+
+            if (error != GL.GL_NO_ERROR)
+            {
+                throw new Exception(string.Format("glError: 0x{0:X} ({1})", error, errorStr));
+            }
+        }
+
+#if false
+        //BUG This method is quite slow.
         public static void CheckGLError(
             [CallerFilePath] string fileName = null,
             [CallerLineNumber] int lineNumber = 0,
@@ -223,10 +266,10 @@ namespace ImGui
             if (error != GL.GL_NO_ERROR)
             {
                 throw new Exception(string.Format("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
-                    fileName, lineNumber, error, errorStr, memberName));//TODO throw an exception instead
+                    fileName, lineNumber, error, errorStr, memberName));
             }
         }
-
+#endif
         public static void CheckGLESError(
             [CallerFilePath] string fileName = null,
             [CallerLineNumber] int lineNumber = 0,
