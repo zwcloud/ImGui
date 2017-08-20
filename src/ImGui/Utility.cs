@@ -182,6 +182,7 @@ namespace ImGui
             return pt;
         }
 
+        [Conditional("None")]
         public static void CheckGLError()
         {
             var error = GL.GetError();

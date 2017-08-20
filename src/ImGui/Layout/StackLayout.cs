@@ -5,6 +5,9 @@ namespace ImGui.Layout
 {
     internal partial class StackLayout
     {
+        static ObjectPool<LayoutEntry> EntryPool = new ObjectPool<LayoutEntry>(256);
+        static ObjectPool<LayoutGroup> GroupPool = new ObjectPool<LayoutGroup>(256);
+
         public bool dirty;
 
         private readonly Stack<LayoutGroup> stackA = new Stack<LayoutGroup>();
@@ -53,7 +56,10 @@ namespace ImGui.Layout
 
             // build entry for next frame
             {
-                var entry = new LayoutEntry(id, contentSize);
+                var entry = EntryPool.Get();
+                entry.Init(id, contentSize);
+
+                //var entry = new LayoutEntry(id, contentSize);
                 this.WritingStack.Peek().Add(entry);
             }
 
@@ -65,8 +71,8 @@ namespace ImGui.Layout
                 {
                     return DummyRect;//dummy
                 }
-
-                return entry.Rect;
+                var rect = entry.Rect;
+                return rect;
             }
         }
 
@@ -74,7 +80,8 @@ namespace ImGui.Layout
         {
             // build group for next frame
             {
-                var group = new LayoutGroup(id, isVertical, size);
+                var group = GroupPool.Get();
+                group.Init(id, isVertical, size);
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }
@@ -109,9 +116,31 @@ namespace ImGui.Layout
             this.ReadingStack.Pop();
         }
 
+        void PutBackEntries(LayoutGroup group)
+        {
+            foreach (var entry in group.Entries)
+            {
+                var childGroup = entry as LayoutGroup;
+                if (childGroup == null)
+                {
+                    EntryPool.Put(entry);
+                }
+                else
+                {
+                    if (childGroup == StackLayout.DummyGroup) continue;
+                    PutBackEntries(childGroup);
+                    GroupPool.Put(childGroup);
+                }
+            }
+
+            group.Entries.Clear();
+        }
+
         public void Begin()
         {
-            this.WritingStack.Peek().Entries.Clear();//remove all children of root group
+            var rootGroup = this.WritingStack.Peek();
+            PutBackEntries(rootGroup);
+            rootGroup.Entries.Clear();//remove all children of root group
         }
 
         /// <summary>

@@ -13,10 +13,19 @@ namespace ImGui.Layout
         public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
         public Alignment AlignmentVertical { get; set; } = Alignment.Start;
 
+        public LayoutGroup() { }
+
         public LayoutGroup(int id, bool isVertical, Size contentSize) : base(id, contentSize)
         {
             this.IsVertical = isVertical;
 
+            this.ApplyStyle();
+        }
+
+        public void Init(int id, bool isVertical, Size contentSize)
+        {
+            base.Init(id, contentSize);
+            this.IsVertical = isVertical;
             this.ApplyStyle();
         }
 
@@ -40,7 +49,7 @@ namespace ImGui.Layout
             this.AlignmentVertical = style.AlignmentVertical;
         }
 
-        public bool IsVertical { get; }
+        public bool IsVertical { get; private set; }
 
         public List<LayoutEntry> Entries { get; } = new List<LayoutEntry>();
 

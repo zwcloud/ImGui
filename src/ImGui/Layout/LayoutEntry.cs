@@ -11,7 +11,7 @@ namespace ImGui.Layout
         /// <summary>
         /// identifier number of this entry/group
         /// </summary>
-        public int Id { get; }
+        public int Id { get; private set; }
 
         /// <summary>
         /// border-box, the layout result
@@ -98,7 +98,21 @@ namespace ImGui.Layout
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
 
+        public LayoutEntry()
+        {
+
+        }
+
         public LayoutEntry(int id, Size contentSize)
+        {
+            this.Id = id;
+            this.ContentWidth = contentSize.Width;
+            this.ContentHeight = contentSize.Height;
+
+            ApplyStyle();
+        }
+
+        public void Init(int id, Size contentSize)
         {
             this.Id = id;
             this.ContentWidth = contentSize.Width;
