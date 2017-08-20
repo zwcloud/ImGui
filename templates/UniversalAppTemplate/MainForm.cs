@@ -11,48 +11,11 @@ namespace UniversalAppTemplate
         {
         }
 
-        bool myWindowOpen = true;
-        bool show = false;
-
         Demo demo = new Demo();
 
         protected override void OnGUI()
         {
             demo.OnGUI();
-
-            GUI.Begin("MyWindow", ref myWindowOpen);
-            Label("Three button of default size.");
-            BeginHorizontal("H~~~1");
-            Button("1");
-            Button("2");
-            Button("3");
-            EndHorizontal();
-            Label("Three fixed-width (100 pixels) buttons.");
-            show = Toggle("Show?", show);
-            if (show)
-            {
-                BeginHorizontal("H~~~2");
-                PushFixedWidth(100);
-                Button("1");
-                Button("2");
-                Button("3");
-                PopStyleVar(2);
-                EndHorizontal();
-            }
-            Label("Three stretched sized buttons with 1/2/3 stretch factor.");
-            BeginHorizontal("H~~~3");
-            Button("1");
-            PushHStretchFactor(1);
-            Button("2");
-            PopStyleVar();
-            PushHStretchFactor(3);
-            Button("3");
-            PopStyleVar();
-            PushFixedWidth(300);
-            Button("4");
-            PopStyleVar();
-            EndHorizontal();
-            GUI.End();
         }
     }
 }

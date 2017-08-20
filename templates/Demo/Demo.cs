@@ -38,6 +38,10 @@ public class Demo
     string text = "ABCD\nEFGHI";
     #endregion
 
+    #region Layout
+    bool layoutOn = false;
+    #endregion
+
     #endregion
 
     public void OnGUI()
@@ -153,6 +157,43 @@ public class Demo
                     GUILayout.EndHorizontal();
                 }
                 GUILayout.EndVertical();
+            }
+            GUILayout.EndHorizontal();
+        }
+
+        if (GUILayout.CollapsingHeader("Layout", ref layoutOn))
+        {
+            GUILayout.Label("Three button of default size.");
+            GUILayout.BeginHorizontal("H~~~1");
+            {
+                GUILayout.Button("1");
+                GUILayout.Button("2");
+                GUILayout.Button("3");
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Label("Three fixed-width (100 pixels) buttons.");
+            GUILayout.BeginHorizontal("H~~~2");
+            {
+                GUILayout.PushFixedWidth(100);
+                GUILayout.Button("1");
+                GUILayout.Button("2");
+                GUILayout.Button("3");
+                GUILayout.PopStyleVar(2);
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Label("Three stretched sized buttons with 1/2/3 stretch factor.");
+            GUILayout.BeginHorizontal("H~~~3");
+            {
+                GUILayout.Button("1");
+                GUILayout.PushHStretchFactor(1);
+                GUILayout.Button("2");
+                GUILayout.PopStyleVar();
+                GUILayout.PushHStretchFactor(3);
+                GUILayout.Button("3");
+                GUILayout.PopStyleVar();
+                GUILayout.PushFixedWidth(300);
+                GUILayout.Button("4");
+                GUILayout.PopStyleVar();
             }
             GUILayout.EndHorizontal();
         }
