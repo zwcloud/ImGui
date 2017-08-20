@@ -49,7 +49,6 @@ namespace ImGui
             InitImageStyles();
             InitCollapsingHeaderStyles();
             InitSliderStyles();
-            InitColorFieldStyles();
 
             this.controlNames.Add("Image", GUIControlName.Image);
             this.controlNames.Add("Box", GUIControlName.Box);

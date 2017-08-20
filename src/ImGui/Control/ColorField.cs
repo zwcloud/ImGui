@@ -1,35 +1,13 @@
-﻿using ImGui.Common.Primitive;
+﻿using System;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {
     public partial class GUI
     {
-        public static Color ColorField(string label, Rect boxRect, Rect labelRect, Color value)
+        public static Color ColorField(string label, Rect rect, Color value)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
-            if (window.SkipItems)
-                return value;
-
-            // style apply
-            var s = g.StyleStack;
-            var colorFieldModifiers = GUISkin.Instance[GUIControlName.ColorField];
-            s.PushRange(colorFieldModifiers);
-
-            //rect
-
-            // interact
-
-            // render
-            var d = window.DrawList;
-            var style = s.Style;
-            d.AddRectFilled(boxRect, value);
-            d.DrawText(labelRect, label, style, GUIState.Normal);
-
-            // style restore
-            s.PopStyle(colorFieldModifiers.Length);
-
-            return value;
+            throw new NotImplementedException();
         }
     }
 
@@ -46,8 +24,7 @@ namespace ImGui
             var style = s.Style;
 
             // rect
-            var textSize = style.CalcSize(label, GUIState.Normal);
-            var boxSize = new Size(0, textSize.Height);
+            var boxSize = new Size(0, 50);
 
             int rId;
             int gId;
@@ -134,12 +111,4 @@ namespace ImGui
 
     }
 
-    internal partial class GUISkin
-    {
-        private void InitColorFieldStyles()
-        {
-            var colorFieldStyles = new StyleModifier[] { };
-            this.styles.Add(GUIControlName.ColorField, colorFieldStyles);
-        }
-    }
 }
