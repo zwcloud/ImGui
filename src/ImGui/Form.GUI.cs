@@ -180,6 +180,8 @@ namespace ImGui
         {
             GUIContext g = this.uiContext;
 
+            this.nativeWindow.Title = string.Format("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
+
             if (g.LogEnabled)
             {
                 var l = Application.Logger;
