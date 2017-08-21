@@ -101,7 +101,7 @@ namespace ImGui
             s.PushRange(modifiers);
 
             // rect
-            var height = style.FontSize;
+            var height = style.CalcSize(text, GUIState.Normal).Height;
             var size = new Size(width, height);
             Rect rect = window.GetRect(id, size);
 

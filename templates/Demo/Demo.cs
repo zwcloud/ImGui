@@ -28,14 +28,30 @@ public class Demo
 
     #region Widgets
     bool widgetsOn = true;
-
-    bool toggleOn = false;
     bool a = false;
-    string active_id;
-    double hSliderValue = 0.5f;
-    double vSliderValue = 0.5f;
     ITexture image;
-    string text = "ABCD\nEFGHI";
+    bool open1, open2, open3, open4, open5, open6, open7, open8, open9, open10, open11, open12, open13;
+    bool[] openChild = new bool[5]{ false, false, false, false, false};
+    bool closable_group = true;
+    string buf = "日本語";
+    bool read_only = false;
+    string text = @"/*\n
+ The Pentium F00F bug, shorthand for F0 0F C7 C8,
+ the hexadecimal encoding of one offending instruction,
+ more formally, the invalid operand with locked CMPXCHG8B
+ instruction bug, is a design flaw in the majority of
+ Intel Pentium, Pentium MMX, and Pentium OverDrive
+ processors (all in the P5 microarchitecture).
+*/
+
+label:
+\tlock cmpxchg8b eax
+";
+    bool check;
+    #endregion
+
+    #region Graphics Widgets
+    bool graphicsWidgetsOn;
     #endregion
 
     #region Layout
@@ -54,8 +70,8 @@ public class Demo
             clearColor = GUILayout.ColorField("clear color", clearColor);
             if (GUILayout.Button("Show Demo Window")) showDemoWindow = !showDemoWindow;
             if (GUILayout.Button("Show Another Window")) showAnotherWindow = !showAnotherWindow;
-            var fps = Form.current.uiContext.fps;
-            GUILayout.Label(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000.0f / fps, fps)); //removed, will be added again when textmesh cache is solved
+            //var fps = Form.current.uiContext.fps;
+            //GUILayout.Label(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000.0f / fps, fps)); //removed, will be added again when textmesh cache is solved
         }
 
         // 2. Show another simple window, this time using an explicit Begin/End pair
@@ -100,7 +116,7 @@ public class Demo
 
         if (GUILayout.CollapsingHeader("Window options", ref windowsOptionsOn))
         {
-            GUILayout.PushID("WindowOptions");
+            GUILayout.PushID("_WindowOptions");
             GUILayout.BeginHorizontal("HGroup");
                 GUILayout.Space("HGroup_indient", 60);
                 GUILayout.BeginVertical("VGroup");
@@ -119,51 +135,184 @@ public class Demo
 
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))
         {
-            text = GUILayout.TextBox("Text Box", new Size(120, 200), text);
-
-            GUILayout.BeginHorizontal("all");
+            GUILayout.PushID("_Widgets");
+            if (GUILayout.TreeNode("Trees", ref open1))
             {
-                GUILayout.Space("HeadSpace",30);
-                GUILayout.BeginVertical("V1");
+                if(GUILayout.TreeNode("Basic trees", ref open2))
                 {
-                    GUILayout.BeginHorizontal("H1");
+                    for (int i = 0; i < openChild.Length; i++)
                     {
-                        if (GUILayout.Button("Button"))
+                        if (GUILayout.TreeNode(string.Format("Child {0}", i), ref openChild[i]))
                         {
-                            a ^= true;
+                            GUILayout.BeginHorizontal("HGroup");
+                            GUILayout.Label("blah blah");
+                            if (GUILayout.Button("print")) System.Console.WriteLine("Child {0} pressed", i);
+                            GUILayout.EndHorizontal();
                         }
-                        if (a)
-                        {
-                            GUILayout.Label("Thanks for clicking me!");
-                        }
+                        GUILayout.TreePop();
                     }
-                    GUILayout.EndHorizontal();
-
-                    toggleOn = GUILayout.Toggle("Toggle", toggleOn);
-
-                    //GUILayout.BeginHorizontal("H2");
-                    //{
-                    //    GUILayout.Radio("Radio 0", ref active_id, "radio_b_0");
-                    //    GUILayout.Radio("Radio 1", ref active_id, "radio_b_1");
-                    //    GUILayout.Radio("Radio 2", ref active_id, "radio_b_2");
-                    //}
-                    //GUILayout.EndHorizontal();
-
-                    hSliderValue = GUILayout.Slider("Horizontal Slider", hSliderValue, 0, 1.0);
-                    GUILayout.Image("Image/trees.jpg");
-
-                    GUILayout.BeginHorizontal("Vertical Sliders");
-                    vSliderValue = GUILayout.VSlider("Vertical Slider", vSliderValue, 0, 1.0);
-                    GUILayout.EndHorizontal();
                 }
-                GUILayout.EndVertical();
+                GUILayout.TreePop();
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Collapsing Headers", ref open4))
+            {
+                if (GUILayout.CollapsingHeader("Header", ref open5))
+                {
+                    closable_group = GUILayout.Toggle("Enable extra group", closable_group);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        GUILayout.Label("Some content {0}", i);
+                    }
+                }
+                if (GUILayout.CollapsingHeader("Header with a close button", ref closable_group))
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        GUILayout.Label("More content {0}", i);
+                    }
+                }
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Bullets", ref open6))
+            {
+                //TODO
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Colored Text", ref open7))
+            {
+                // Using shortcut. You can use GUILayout.PushFontColor() for more flexibility.
+                GUILayout.Label(new Color(1.0f, 0.0f, 1.0f, 1.0f), "Pink");
+                GUILayout.Label(new Color(1.0f, 1.0f, 0.0f, 1.0f), "Yellow");
+                GUILayout.LabelDisabled("Disabled");
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Word Wrapping", ref open8))
+            {
+                //TODO
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Non-ASCII Text", ref open9))
+            {
+                //TODO wrapped Label
+                GUILayout.Label("Hiragana: カククケコ (kakikukeko)");
+                GUILayout.Label("Kanjis: 日本語 (nihongo)");
+                buf = GUILayout.TextBox("Unicode input", 200, buf);
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Images", ref open10))
+            {
+                GUILayout.Image("Image/trees.jpg");
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Selectables", ref open11))
+            {
+                //TODO
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Filtered Text Input", ref open12))
+            {
+                //TODO
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Multi-line Text Input", ref open13))
+            {
+                GUILayout.PushPadding((0,0,0,0));
+                read_only = GUILayout.CheckBox("Read-only", read_only);
+                GUILayout.PopStyleVar(4);
+                GUILayout.PushHStretchFactor(1);
+                if(read_only)
+                {
+                    GUILayout.TextBox("Text Box", new Size(120, 200), text);
+                }
+                else
+                {
+                    text = GUILayout.TextBox("Text Box", new Size(120, 200), text);
+                }
+                GUILayout.PopStyleVar();
+            }
+            GUILayout.TreePop();
+
+            GUILayout.BeginHorizontal("HGroup~button_show_text");
+            {
+                if (GUILayout.Button("Button"))
+                {
+                    System.Console.WriteLine("Clicked");
+                    a ^= true;
+                }
+                if (a)
+                {
+                    GUILayout.Label("Thanks for clicking me!");
+                }
             }
             GUILayout.EndHorizontal();
+
+            check = GUILayout.CheckBox("checkbox", check);
+
+            // TODO radio
+            //GUILayout.BeginHorizontal("HGroup~radios");
+            //{
+            //    GUILayout.Radio("Radio 0", ref active_id, "radio_b_0");
+            //    GUILayout.Radio("Radio 1", ref active_id, "radio_b_1");
+            //    GUILayout.Radio("Radio 2", ref active_id, "radio_b_2");
+            //}
+            //GUILayout.EndHorizontal();
+
+            // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
+            for (int i = 0; i < 7; i++)
+            {
+                //We don't need to push ID, because BeginHorizontal alreay defined an inner scope (by Push/PopID() internaly).
+                GUILayout.BeginHorizontal("HGroup~click buttons");
+                {
+                    GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.6f, 0.6f), GUIState.Normal);
+                    GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.7f, 0.7f), GUIState.Hover);
+                    GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.8f, 0.8f), GUIState.Active);
+                    GUILayout.Button("Click");
+                    GUILayout.PopStyleVar(3);
+                }
+                GUILayout.EndHorizontal();
+            }
+
+            //TODO tooltip
+            //GUILayout.BeginHorizontal("HGroup~tooltips");
+            //GUILayout.Text("Hover over me");
+            //if (GUI.IsItemHovered())
+            //    GUI.SetTooltip("I am a tooltip");
+
+            //if (GUI.IsItemHovered())
+            //{
+            //    GUILayout.BeginTooltip();
+            //    //...
+            //    GUILayout.EndTooltip();
+            //}
+            //GUILayout.EndHorizontal();
+
+            //GUILayout.Separator();//TODO
+
+            //TODO add sliders demo
+            GUILayout.PopID();
+        }
+
+        if (GUILayout.CollapsingHeader("Graphs widgets", ref graphicsWidgetsOn))
+        {
+            GUILayout.PushID("_GraphsWidgets");
+            //TODO
+            GUILayout.PopID();
         }
 
         if (GUILayout.CollapsingHeader("Layout", ref layoutOn))
         {
-            GUILayout.Label("Three button of default size.");
+            GUILayout.PushID("_Layout");
+            GUILayout.Label("Three buttons of default size.");
             GUILayout.BeginHorizontal("H~~~1");
             {
                 GUILayout.Button("1");
@@ -196,6 +345,7 @@ public class Demo
                 GUILayout.PopStyleVar();
             }
             GUILayout.EndHorizontal();
+            GUILayout.PopID();
         }
 
         GUI.End();

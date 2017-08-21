@@ -136,6 +136,12 @@ namespace ImGui
             Push(modifier);
         }
 
+        public void PushFontColor(Color color)
+        {
+            var modifier = new StyleModifier(GUIStyleName.FontColor, StyleType.Color, color);
+            Push(modifier);
+        }
+
         #endregion
 
     }

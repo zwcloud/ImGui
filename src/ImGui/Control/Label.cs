@@ -52,8 +52,6 @@ namespace ImGui
             // style apply
             var s = g.StyleStack;
             var style = g.StyleStack.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Label];
-            s.PushRange(modifiers);
 
             // rect
             Size contentSize = style.CalcSize(text, GUIState.Normal);
@@ -62,9 +60,27 @@ namespace ImGui
             // rendering
             DrawList d = window.DrawList;
             d.DrawBoxModel(rect, text, style);
+        }
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+        /// <summary>
+        /// Create a colored auto-layout label.
+        /// </summary>
+        /// <param name="color">text color</param>
+        /// <param name="text">text</param>
+        public static void Label(Color color, string text)
+        {
+            PushFontColor(color);
+            Label(text);
+            PopStyleVar();
+        }
+
+        /// <summary>
+        /// Create a auto-layout and disabled label.
+        /// </summary>
+        /// <param name="text">text</param>
+        public static void LabelDisabled(string text)
+        {
+            Label(Color.TextDisabled, text);
         }
 
         public static void Label(string format, object arg0)
@@ -86,6 +102,8 @@ namespace ImGui
         {
             Label(string.Format(format, args));
         }
+
+        public static void Text(string text) => Label(text);
     }
 
     partial class GUISkin

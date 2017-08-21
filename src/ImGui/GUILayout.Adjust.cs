@@ -1,7 +1,22 @@
-﻿namespace ImGui
+﻿using ImGui.Common.Primitive;
+
+namespace ImGui
 {
     public partial class GUILayout
     {
+        /// <summary>
+        /// Push 1 style color to stack.
+        /// </summary>
+        /// <param name="name">style name, <see cref="GUIStyleName"/></param>
+        /// <param name="color">color</param>
+        /// <param name="state">which state will this style be apply to</param>
+        public static void PushStyleColor(GUIStyleName name, Color color, GUIState state = GUIState.Normal)
+        {
+            var context = GetCurrentContext();
+            var styleStack = context.StyleStack;
+            styleStack.Push(new StyleModifier(name, StyleType.Color, color, state));
+        }
+
         /// <summary>
         /// Pop 1 or more style modifiers from stack.
         /// </summary>
@@ -12,6 +27,7 @@
             var styleStack = context.StyleStack;
             styleStack.PopStyle(number);
         }
+
 
         #region fixed width/height (same min/max width/height)
         public static void PushFixedWidth(double width) => PushMinMaxWidth((width, width));
@@ -97,6 +113,22 @@
             var context = GetCurrentContext();
             var styleStack = context.StyleStack;
             styleStack.PushPadding(padding);
+        }
+        #endregion
+
+        #region color
+        public static void PushBgColor(Color color)
+        {
+            var g = GetCurrentContext();
+            var styleStack = g.StyleStack;
+            styleStack.PushBgColor(color);
+        }
+
+        public static void PushFontColor(Color color)
+        {
+            var g = GetCurrentContext();
+            var styleStack = g.StyleStack;
+            styleStack.PushFontColor(color);
         }
         #endregion
     }

@@ -5,8 +5,8 @@ namespace ImGui.Layout
 {
     internal partial class StackLayout
     {
-        static ObjectPool<LayoutEntry> EntryPool = new ObjectPool<LayoutEntry>(256);
-        static ObjectPool<LayoutGroup> GroupPool = new ObjectPool<LayoutGroup>(256);
+        static ObjectPool<LayoutEntry> EntryPool = new ObjectPool<LayoutEntry>(1024);
+        static ObjectPool<LayoutGroup> GroupPool = new ObjectPool<LayoutGroup>(1024);
 
         public bool dirty;
 

@@ -103,6 +103,12 @@ namespace ImGui
 
             return value;
         }
+
+        /// <summary>
+        /// alias of Toggle
+        /// </summary>
+        public static bool CheckBox(string label, bool value) => Toggle(label, value);
+
     }
 
     internal partial class GUIBehavior

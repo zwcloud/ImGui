@@ -85,6 +85,10 @@ namespace ImGui.Common.Primitive
         public static readonly Color Pink = Rgb(255, 192, 203);
         public static readonly Color Orange = Rgb(255, 165, 0);
 
+        #region "System" colors
+        public static readonly Color TextDisabled = new Color(0.60f, 0.60f, 0.60f, 1.00f);
+        #endregion
+
         public static Color Rgb(byte r, byte g, byte b)
         {
             return new Color(r / 255.0, g / 255.0, b / 255.0, 1.0);
@@ -105,7 +109,7 @@ namespace ImGui.Common.Primitive
                 );
         }
 
-        public static Color ColorFromHSV(double hue, double saturation, double value)
+        public static Color HSV(double hue, double saturation, double value)
         {
             int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
             double f = hue / 60 - Math.Floor(hue / 60);
