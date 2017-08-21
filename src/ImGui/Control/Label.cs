@@ -66,6 +66,26 @@ namespace ImGui
             // style restore
             s.PopStyle(modifiers.Length);
         }
+
+        public static void Label(string format, object arg0)
+        {
+            Label(string.Format(format, arg0));
+        }
+
+        public static void Label(string format, object arg0, object arg1)
+        {
+            Label(string.Format(format, arg0, arg1));
+        }
+
+        public static void Label(string format, object arg0, object arg1, object arg2)
+        {
+            Label(string.Format(format, arg0, arg1, arg2));
+        }
+
+        public static void Label(string format, params object[] args)
+        {
+            Label(string.Format(format, args));
+        }
     }
 
     partial class GUISkin
