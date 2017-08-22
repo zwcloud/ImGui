@@ -106,7 +106,12 @@ label:
         if (no_scrollbar) window_flags |= WindowFlags.NoScrollbar;
         if (no_collapse) window_flags |= WindowFlags.NoCollapse;
 
-        GUI.Begin("ImGui Demo", ref open, (650, 20), (550, 680), bg_alpha, window_flags);
+        if(!GUI.Begin("ImGui Demo", ref open, (650, 20), (550, 680), bg_alpha, window_flags))
+        {
+            // Early out if the window is collapsed, as an optimization.
+            GUI.End();
+            return;
+        }
         GUILayout.Label("ImGui says hello.");
         GUILayout.Space("Space~1", 5);
         if (GUILayout.CollapsingHeader("Help", ref helpOn))

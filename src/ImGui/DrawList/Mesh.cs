@@ -18,12 +18,12 @@ namespace ImGui
         /// <summary>
         /// Index buffer. Each command consume DrawCommand.ElemCount of those
         /// </summary>
-        public UnsafeList<DrawIndex> IndexBuffer { get; } = new UnsafeList<DrawIndex>();
+        public UnsafeList<DrawIndex> IndexBuffer { get; } = new UnsafeList<DrawIndex>(5000);
 
         /// <summary>
         /// Vertex buffer
         /// </summary>
-        public UnsafeList<DrawVertex> VertexBuffer { get; } = new UnsafeList<DrawVertex>();
+        public UnsafeList<DrawVertex> VertexBuffer { get; } = new UnsafeList<DrawVertex>(5000);
 
         /// <summary>
         /// Append a vertex to the VertexBuffer

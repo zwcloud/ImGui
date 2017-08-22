@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define USE_MSAA
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGL;
@@ -366,6 +367,14 @@ namespace ImGui.OSImplentation.Windows
             var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
             pixelformatdescriptor.Init();
 
+#if !USE_MSAA
+            int pixelFormat;
+            pixelFormat = ChoosePixelFormat(this.hDC, ref pixelformatdescriptor);
+            SetPixelFormat(this.hDC, pixelFormat, ref pixelformatdescriptor);
+
+            this.hglrc = wglCreateContext(this.hDC);
+            wglMakeCurrent(this.hDC, this.hglrc);
+#else
             IntPtr tempContext = IntPtr.Zero;
             IntPtr tempHwnd = IntPtr.Zero;
             //Create temporary window
@@ -472,6 +481,7 @@ namespace ImGui.OSImplentation.Windows
             }
 
             Utility.CheckGLError();
+#endif
 
             GL.GetIntegerv(GL.GL_STENCIL_BITS, IntBuffer);
             var stencilBits = IntBuffer[0];

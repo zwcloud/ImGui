@@ -1,8 +1,6 @@
 ﻿using ImGui;
 using ImGui.Common.Primitive;
 
-using static ImGui.GUILayout;
-
 namespace UniversalAppTemplate
 {
     public class MainForm : Form
