@@ -52,6 +52,13 @@ namespace ImGui.OSImplentation
             return scale;
         }
 
+        public static double GetLineHeight(string fontFamily, double fontSize)
+        {
+            Typeface typeFace = GetTypeFace(fontFamily);
+            var scale = typeFace.CalculateToPixelScaleFromPointSize((float)fontSize);
+            return (typeFace.Ascender - typeFace.Descender + typeFace.LineGap) * scale;
+        }
+
         private readonly List<GlyphPlan> glyphPlans = new List<GlyphPlan>();
         private readonly GlyphLayout glyphLayout = new GlyphLayout();
 

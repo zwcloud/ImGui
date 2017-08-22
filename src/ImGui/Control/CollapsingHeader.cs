@@ -11,7 +11,7 @@ namespace ImGui
         /// <param name="open">opened</param>
         /// <returns>true when opened</returns>
         /// <remarks> It is horizontally stretched (factor 1).</remarks>
-        public static bool CollapsingHeader(string text, ref bool open)
+        public static bool CollapsingHeader(string text, ref bool open, float scale = 1)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
@@ -51,7 +51,7 @@ namespace ImGui
                 var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
                 Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
                 d.RenderFrame(rect.Min, rect.Max, col, false, 0);
-                d.RenderCollapseTriangle(rect.Min, open, rect.Height, Color.White);
+                d.RenderCollapseTriangle(rect.Min, open, rect.Height, Color.White, scale);
                 rect.X += rect.Height;
                 var delta = rect.Width - rect.Height;
                 if (delta > 0)
@@ -86,7 +86,7 @@ namespace ImGui
                 new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 2.0, GUIState.Normal),
                 new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 2.0, GUIState.Normal),
                 new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 2.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.40f, 0.40f, 0.90f, 0.45f), GUIState.Normal),
                 new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal, GUIState.Normal),
                 //hover
                 new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 2.0, GUIState.Hover),
@@ -101,7 +101,7 @@ namespace ImGui
                 new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 2.0, GUIState.Hover),
                 new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 2.0, GUIState.Hover),
                 new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 2.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.45f, 0.45f, 0.90f, 0.80f), GUIState.Hover),
                 new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal, GUIState.Hover),
                 //active
                 new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 2.0, GUIState.Active),
@@ -116,7 +116,7 @@ namespace ImGui
                 new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 2.0, GUIState.Active),
                 new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 2.0, GUIState.Active),
                 new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 2.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active),
+                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.53f, 0.53f, 0.87f, 0.80f), GUIState.Active),
                 new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Bold, GUIState.Active),
             };
             this.styles.Add(GUIControlName.CollapsingHeader, collapsingHeaderStyles);
@@ -129,7 +129,7 @@ namespace ImGui
         {
             double h = height;
             double r = h * 0.40f * scale;
-            Point center = pMin + new Vector(h * 0.50f, h * 0.50f * scale);
+            Point center = pMin + new Vector(h * 0.50f, h * 0.50f) * scale;
 
             Point a, b, c;
             if (isOpen)

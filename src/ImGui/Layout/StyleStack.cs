@@ -130,15 +130,15 @@ namespace ImGui
             Push(modifier4);
         }
 
-        public void PushBgColor(Color color)
+        public void PushBgColor(Color color, GUIState state = GUIState.Normal)
         {
-            var modifier = new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, color);
+            var modifier = new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, color, state);
             Push(modifier);
         }
 
-        public void PushFontColor(Color color)
+        public void PushFontColor(Color color, GUIState state = GUIState.Normal)
         {
-            var modifier = new StyleModifier(GUIStyleName.FontColor, StyleType.Color, color);
+            var modifier = new StyleModifier(GUIStyleName.FontColor, StyleType.Color, color, state);
             Push(modifier);
         }
 

@@ -289,6 +289,13 @@ namespace ImGui
             return size;
         }
 
+        internal double GetLineHeight()
+        {
+            var lineHeight = OSImplentation.TypographyTextContext.GetLineHeight(this.FontFamily, this.FontSize);
+            lineHeight += this.PaddingVertical + this.BorderVertical;
+            return lineHeight;
+        }
+
         internal Size MeasureText(GUIState state, string text)
         {
             var measureContext = TextMeshUtil.GetTextContext(text, new Size(4096, 4096), this, state);
