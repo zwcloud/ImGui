@@ -27,8 +27,6 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var sliderModifiers = GUISkin.Instance[GUIControlName.Slider];
-            s.PushRange(sliderModifiers);
 
             // rect
             rect = window.GetRect(rect);
@@ -59,9 +57,6 @@ namespace ImGui
             }
             GUIAppearance.DrawSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelWidth);
 
-            // style restore
-            s.PopStyle(sliderModifiers.Length);
-
             return value;
         }
 
@@ -86,8 +81,6 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var sliderModifiers = GUISkin.Instance[GUIControlName.Slider];
-            s.PushRange(sliderModifiers);
 
             // rect
             rect = window.GetRect(rect);
@@ -117,9 +110,6 @@ namespace ImGui
             }
             GUIAppearance.DrawVSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelHeight);
 
-            // style restore
-            s.PopStyle(sliderModifiers.Length);
-
             return value;
         }
     }
@@ -147,8 +137,6 @@ namespace ImGui
             // style apply
             var s = g.StyleStack;
             var style = s.Style;
-            var sliderModifiers = GUISkin.Instance[GUIControlName.Slider];
-            s.PushRange(sliderModifiers);
 
             // rect
             Size size = style.CalcSize(label, GUIState.Normal);
@@ -188,7 +176,6 @@ namespace ImGui
 
             // style restore
             s.PopStyle();//-1
-            s.PopStyle(sliderModifiers.Length);
 
             return value;
         }
@@ -214,12 +201,10 @@ namespace ImGui
             // style apply
             var s = g.StyleStack;
             var style = s.Style;
-            var sliderModifiers = GUISkin.Instance[GUIControlName.Slider];
-            s.PushRange(sliderModifiers);
 
             // rect
             Size size = style.CalcSize(label, GUIState.Normal);
-            s.PushStretchFactor(!false, 1);//+1
+            s.PushStretchFactor(true, 1);//+1
             {
                 var minSilderHeight = 200;
                 size.Width = 20;
@@ -256,7 +241,6 @@ namespace ImGui
 
             // style restore
             s.PopStyle();//-1
-            s.PopStyle(sliderModifiers.Length);
 
             return value;
         }
@@ -324,8 +308,9 @@ namespace ImGui
             GUIStyle style = s.Style;
             DrawList d = window.DrawList;
 
-            var colorForLineUsed = style.Get<Color>(GUIStyleName.Slider_LineUsed, state);
-            var colorForLineUnused = style.Get<Color>(GUIStyleName.Slider_LineUnused, state);
+            var colorForLineUsed = Color.Rgb(0, 151, 167);
+            var colorForLineUnused = state == GUIState.Normal ? Color.Rgb(117, 117, 117) : Color.Rgb(255, 128, 171);
+
             //slider
             var h = sliderRect.Height;
             var a = 0.2f * h;
@@ -360,12 +345,12 @@ namespace ImGui
                 labelWidth, rect.Height);
             d.DrawText(labelRect, label, style, state);
 
-            var buttonModifiers = GUISkin.Instance[GUIControlName.Button];
-            s.PushRange(
-                buttonModifiers); //TODO selectively push one style modifier of a control. For example, only the bgcolor modifier is needed here.
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
             d.PathFill(fillColor);
-            s.PopStyle(buttonModifiers.Length);
+            s.PopStyle(3);
         }
 
         public static void DrawVSlider(Rect rect, string label, double value, double minValue, double maxValue, GUIState state,
@@ -378,8 +363,8 @@ namespace ImGui
             GUIStyle style = s.Style;
             DrawList d = window.DrawList;
 
-            var colorForLineUsed = style.Get<Color>(GUIStyleName.Slider_LineUsed, state);
-            var colorForLineUnused = style.Get<Color>(GUIStyleName.Slider_LineUnused, state);
+            var colorForLineUsed = Color.Rgb(0, 151, 167);
+            var colorForLineUnused = state == GUIState.Normal ? Color.Rgb(117, 117, 117) : Color.Rgb(255, 128, 171);
 
             //slider
             var h = sliderRect.Width;
@@ -415,30 +400,12 @@ namespace ImGui
                 rect.Width, labelHeight);
             d.DrawText(labelRect, label, style, state);
 
-            var buttonModifiers = GUISkin.Instance[GUIControlName.Button];
-            s.PushRange(buttonModifiers);
-
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
             d.PathFill(fillColor);
-
-            s.PopStyle(buttonModifiers.Length);
-        }
-    }
-
-    internal partial class GUISkin
-    {
-        private void InitSliderStyles()
-        {
-            var sliderStyles = new []
-            {
-                new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Normal),
-                new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Hover),
-                new StyleModifier(GUIStyleName.Slider_LineUsed, StyleType.Color, Color.Rgb(0, 151, 167), GUIState.Active),
-                new StyleModifier(GUIStyleName.Slider_LineUnused, StyleType.Color, Color.Rgb(117, 117, 117), GUIState.Normal),
-                new StyleModifier(GUIStyleName.Slider_LineUnused, StyleType.Color, Color.Rgb(255, 128, 171), GUIState.Hover),
-                new StyleModifier(GUIStyleName.Slider_LineUnused, StyleType.Color, Color.Rgb(255, 128, 171), GUIState.Active),
-            };
-            this.styles.Add(GUIControlName.Slider, sliderStyles);
+            s.PopStyle(3);
         }
     }
 

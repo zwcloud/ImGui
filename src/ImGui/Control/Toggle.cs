@@ -24,8 +24,6 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var toggleModifiers = GUISkin.Instance[GUIControlName.Toggle];
-            s.PushRange(toggleModifiers);
 
             // rect
             rect = window.GetRect(rect);
@@ -45,9 +43,6 @@ namespace ImGui
                 state = GUIState.Active;
             }
             GUIAppearance.DrawToggle(rect, label, value, state);
-
-            // style restore
-            s.PopStyle(toggleModifiers.Length);
 
             return value;
         }
@@ -71,10 +66,8 @@ namespace ImGui
 
             int id = window.GetID(label);
 
-            // style apply
+            // style
             var s = g.StyleStack;
-            var toggleModifiers = GUISkin.Instance[GUIControlName.Toggle];
-            s.PushRange(toggleModifiers);
 
             // rect
             var style = g.StyleStack.Style;
@@ -97,9 +90,6 @@ namespace ImGui
                 state = GUIState.Active;
             }
             GUIAppearance.DrawToggle(rect, label, value, state);
-
-            // style restore
-            s.PopStyle(toggleModifiers.Length);
 
             return value;
         }
@@ -180,21 +170,7 @@ namespace ImGui
                 d.PathStroke(tickColor, false, 2);
             }
             // label
-            var labelModifiers = GUISkin.Instance[GUIControlName.Label];
-            s.PushRange(labelModifiers);
             d.DrawBoxModel(textRect, label, style, state);
-            s.PopStyle(labelModifiers.Length);
-        }
-    }
-
-    internal partial class GUISkin
-    {
-        void InitToggleStyles()
-        {
-            var toggleStyleModifiers = new StyleModifier[]
-            {
-            };
-            this.styles.Add(GUIControlName.Toggle, toggleStyleModifiers);
         }
     }
 }

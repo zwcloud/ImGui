@@ -40,16 +40,6 @@ namespace ImGui
                 this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
             }
 
-            //TODO refactor this into style *register*.
-
-            InitButtonStyles();
-            InitLabelStyles();
-            InitTextBoxStyles();
-            InitToggleStyles();
-            InitImageStyles();
-            InitCollapsingHeaderStyles();
-            InitSliderStyles();
-
             this.controlNames.Add("Image", GUIControlName.Image);
             this.controlNames.Add("Box", GUIControlName.Box);
             this.controlNames.Add("Space", GUIControlName.Space);

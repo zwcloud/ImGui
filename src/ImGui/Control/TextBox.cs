@@ -17,10 +17,10 @@ namespace ImGui
 
             var id = window.GetID(label);
 
-            // style apply
+            // style
             var s = g.StyleStack;
-            var modifiers = GUISkin.Instance[GUIControlName.TextBox];
-            s.PushRange(modifiers);
+            s.PushFontSize(CurrentOS.IsAndroid ? 32.0 : 13.0);//+1
+            s.PushPadding(10.0);//+4
 
             // rect
             rect = window.GetRect(rect);
@@ -32,8 +32,7 @@ namespace ImGui
             // render
             GUIAppearance.DrawTextBox(rect, id, text, context);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(1 + 4);
 
             return text;
         }
@@ -57,10 +56,10 @@ namespace ImGui
 
             int id = window.GetID(label);
 
-            // style apply
+            // style
             var s = g.StyleStack;
-            var modifiers = GUISkin.Instance[GUIControlName.TextBox];
-            s.PushRange(modifiers);
+            s.PushFontSize(CurrentOS.IsAndroid ? 32.0 : 13.0);//+1
+            s.PushPadding(10.0);//+4
 
             // rect
             Rect rect = window.GetRect(id, size);
@@ -72,8 +71,7 @@ namespace ImGui
             // render
             GUIAppearance.DrawTextBox(rect, id, text, context);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(1 + 4);
 
             return text;
         }
@@ -97,8 +95,8 @@ namespace ImGui
             // style apply
             var s = g.StyleStack;
             var style = s.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Label];
-            s.PushRange(modifiers);
+            s.PushFontSize(CurrentOS.IsAndroid ? 32.0 : 13.0);//+1
+            s.PushPadding(10.0);//+4
 
             // rect
             var height = style.CalcSize(text, GUIState.Normal).Height;
@@ -112,8 +110,7 @@ namespace ImGui
             // render
             GUIAppearance.DrawTextBox(rect, id, text, context);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(1 + 4);
 
             return text;
         }
@@ -349,32 +346,6 @@ namespace ImGui
                 d.AddRect(rect.Min, rect.Max, Color.White);
             }
             d.PopClipRect();
-        }
-    }
-
-    partial class GUISkin
-    {
-        void InitTextBoxStyles()
-        {
-            double fontSize = CurrentOS.IsAndroid ? 32.0 : 13.0;
-            var textBoxStyles = new [] {
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 10.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 10.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, 10.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 10.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 10.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, 10.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 10.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 10.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, 10.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 10.0, GUIState.Normal),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 10.0, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, 10.0, GUIState.Active),
-                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Normal),
-                new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, GUIState.Hover),
-                new StyleModifier(GUIStyleName.FontSize, StyleType.@double,  fontSize, GUIState.Active),
-            };
-            this.styles.Add(GUIControlName.TextBox, textBoxStyles);
         }
     }
 

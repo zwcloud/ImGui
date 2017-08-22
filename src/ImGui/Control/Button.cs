@@ -24,8 +24,8 @@ namespace ImGui
             // style apply
             var s = g.StyleStack;
             var style = g.StyleStack.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Button];
-            s.PushRange(modifiers);
+            s.PushBorder(1.0);//+4
+            s.PushPadding(5.0);//+4
 
             // rect
             rect = window.GetRect(rect);
@@ -37,10 +37,14 @@ namespace ImGui
             // render
             var d = window.DrawList;
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            s.PushBorderColor(Color.Black);//+4
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             d.DrawBoxModel(rect, text, style, state);
+            s.PopStyle(4 + 1 + 1 + 1);//-4-1-1-1
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(4 + 4);//-4-4
 
             return pressed;
         }
@@ -61,11 +65,11 @@ namespace ImGui
 
             int id = window.GetID(text);
 
-            // style apply
+            // style
             var s = g.StyleStack;
             var style = g.StyleStack.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Button];
-            s.PushRange(modifiers);
+            s.PushBorder(1.0);//+4
+            s.PushPadding(5.0);//+4
 
             // rect
             Rect rect;
@@ -78,11 +82,15 @@ namespace ImGui
 
             // render
             var d = window.DrawList;
+            s.PushBorderColor(Color.Black);//+4
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             d.DrawBoxModel(rect, text, style, state);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(4+1+1+1);//-4-1-1-1
+            s.PopStyle(4+4);//-4-4
 
             return pressed;
         }
@@ -171,63 +179,6 @@ namespace ImGui
             out_held = held;
 
             return pressed;
-        }
-    }
-
-    partial class GUISkin
-    {
-        void InitButtonStyles()
-        {
-            var borderColor = Color.Black;
-            double border = 1.0;
-            double padding = 5.0;
-            var buttonStyles = new []
-            {
-                //normal
-                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, border),
-                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, border),
-                new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, border),
-                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, border),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, padding),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, padding),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, padding),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, padding),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 0.60f)),
-                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal),
-
-                //hover
-                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, border, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, border, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BorderBottom,StyleType.@double,  border, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, border, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, borderColor, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, borderColor, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, borderColor, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, borderColor, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, padding, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, padding, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, padding, GUIState.Hover),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, padding, GUIState.Hover),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover),
-                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Normal, GUIState.Hover),
-
-                //active
-                new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, border, GUIState.Active),
-                new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, border, GUIState.Active),
-                new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, border, GUIState.Active),
-                new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, border, GUIState.Active),
-                new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, borderColor, GUIState.Active),
-                new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, borderColor, GUIState.Active),
-                new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, borderColor, GUIState.Active),
-                new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, borderColor, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, padding, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, padding, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, padding, GUIState.Active),
-                new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, padding, GUIState.Active),
-                new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active),
-                new StyleModifier(GUIStyleName.FontWeight, StyleType.@int, (int)FontWeight.Bold, GUIState.Active),
-            };
-            this.styles.Add(GUIControlName.Button, buttonStyles);
         }
     }
 

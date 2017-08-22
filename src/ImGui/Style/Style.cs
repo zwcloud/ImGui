@@ -16,6 +16,8 @@ namespace ImGui
 
         public static GUIStyle Default { get; }
 
+        public static GUIStyle Basic { get; }
+
         private static readonly double DefaultFontSize;
 
         private static readonly string DefaultFontFamily;
@@ -32,13 +34,15 @@ namespace ImGui
                 DefaultFontFamily = Utility.FontDir + "msjh.ttf";
             }
 
-            Default = new GUIStyle();
+            Default = CreateDefaultStyle();
+            Basic = CreateBasicStyle();
         }
 
-        public GUIStyle()
+        private static GUIStyle CreateDefaultStyle()
         {
-            // set up default style values
-            this.numberStyles = new Dictionary<NameState, double>
+            var style = new GUIStyle(true);
+
+            style.numberStyles = new Dictionary<NameState, double>
             {
                 [new NameState { Name = GUIStyleName.MinWidth, State = GUIState.Normal }] = 1,
                 [new NameState { Name = GUIStyleName.MaxWidth, State = GUIState.Normal }] = 9999,
@@ -100,7 +104,7 @@ namespace ImGui
 
             };
 
-            this.colorStyles = new Dictionary<NameState, Color>
+            style.colorStyles = new Dictionary<NameState, Color>
             {
                 [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Normal }] = Color.Black,
                 [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Hover }] = Color.Black,
@@ -127,7 +131,7 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = new Color(0.90, 0.90, 0.90),
             };
 
-            this.imageStyles = new Dictionary<NameState, ITexture>
+            style.imageStyles = new Dictionary<NameState, ITexture>
             {
                 [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
                 [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Hover }] = null,
@@ -139,7 +143,7 @@ namespace ImGui
 
             };
 
-            this.intStyles = new Dictionary<NameState, int>
+            style.intStyles = new Dictionary<NameState, int>
             {
                 [new NameState { Name = GUIStyleName.HorizontalStretchFactor, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.VerticalStretchFactor, State = GUIState.Normal }] = 0,
@@ -168,31 +172,160 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Active }] = (int)Alignment.Start,
             };
 
-            this.strStyles = new Dictionary<NameState, string>
+            style.strStyles = new Dictionary<NameState, string>
             {
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Active }] = DefaultFontFamily,
             };
 
+            return style;
         }
 
-        private readonly Dictionary<NameState, double> numberStyles;
-        private readonly Dictionary<NameState, Color> colorStyles;
-        private readonly Dictionary<NameState, ITexture> imageStyles;
-        private readonly Dictionary<NameState, int> intStyles;
-        private readonly Dictionary<NameState, string> strStyles;
+        private static GUIStyle CreateBasicStyle()
+        {
+            var style = new GUIStyle(true);
+
+            style.numberStyles = new Dictionary<NameState, double>
+            {
+                [new NameState { Name = GUIStyleName.MinWidth, State = GUIState.Normal }] = 1,
+                [new NameState { Name = GUIStyleName.MaxWidth, State = GUIState.Normal }] = 9999,
+                [new NameState { Name = GUIStyleName.MinHeight, State = GUIState.Normal }] = 1,
+                [new NameState { Name = GUIStyleName.MaxHeight, State = GUIState.Normal }] = 9999,
+
+                [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderRight, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottom, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderLeft, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceTop, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceRight, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceBottom, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Normal }] = 0,
+
+                [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingRight, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.PaddingLeft, State = GUIState.Normal }] = 0,
+
+                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Normal }] = 8,
+                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Normal }] = 4,
+
+                [new NameState { Name = GUIStyleName.OutlineWidth, State = GUIState.Normal }] = 0,
+
+                [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Normal }] = DefaultFontSize,
+
+            };
+
+            style.colorStyles = new Dictionary<NameState, Color>
+            {
+                [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Normal }] = Color.Black,
+
+                [new NameState { Name = GUIStyleName.BorderRightColor, State = GUIState.Normal }] = Color.Black,
+
+                [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Normal }] = Color.Black,
+
+                [new NameState { Name = GUIStyleName.BorderLeftColor, State = GUIState.Normal }] = Color.Black,
+
+                [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Normal }] = Color.Clear,
+
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+            };
+
+            style.imageStyles = new Dictionary<NameState, ITexture>
+            {
+                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
+
+                [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Normal }] = null,
+
+            };
+
+            style.intStyles = new Dictionary<NameState, int>
+            {
+                [new NameState { Name = GUIStyleName.HorizontalStretchFactor, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.VerticalStretchFactor, State = GUIState.Normal }] = 0,
+
+                [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Normal }] = (int)TextAlignment.Leading,
+
+                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Normal }] = (int)FontStyle.Normal,
+
+                [new NameState { Name = GUIStyleName.FontWeight, State = GUIState.Normal }] = (int)FontWeight.Normal,
+
+                [new NameState { Name = GUIStyleName.FontStretch, State = GUIState.Normal }] = (int)FontStretch.Normal,
+
+                [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Normal }] = (int)Alignment.Start,
+                [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Normal }] = (int)Alignment.Start,
+            };
+
+            style.strStyles = new Dictionary<NameState, string>
+            {
+                [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
+            };
+
+            return style;
+        }
+
+        private Dictionary<NameState, double> numberStyles;
+        private Dictionary<NameState, Color> colorStyles;
+        private Dictionary<NameState, ITexture> imageStyles;
+        private Dictionary<NameState, int> intStyles;
+        private Dictionary<NameState, string> strStyles;
+
+        private GUIStyle(bool dummy)//only used to create Default and Basic GUIStyle
+        {
+        }
+
+        /// <summary>
+        /// Create a custom style.
+        /// </summary>
+        public GUIStyle()
+        {
+            this.numberStyles = new Dictionary<NameState, double>();
+            this.colorStyles = new Dictionary<NameState, Color>();
+            this.imageStyles = new Dictionary<NameState, ITexture>();
+            this.intStyles = new Dictionary<NameState, int>();
+            this.strStyles = new Dictionary<NameState, string>();
+        }
 
         public T Get<T>(GUIStyleName styleName, GUIState state = GUIState.Normal)
         {
+            T value;
             var nameState = new NameState { Name = styleName, State = state };
             var dict = GetDict<T>();
-            if (dict.TryGetValue(nameState, out T v))
+
+            //try get the style value of specified state
+            if (dict.TryGetValue(nameState, out value))
             {
-                return v;
+                return value;
             }
 
-            return GetDefault<T>(styleName, state);
+            if(state != GUIState.Normal)
+            {
+                //try to get the style value of Normal state
+                if (dict.TryGetValue(new NameState { Name = styleName, State = GUIState.Normal }, out value))
+                {
+                    return value;
+                }
+            }
+
+            var defalutDict = Default.GetDict<T>();
+
+            //try to get a default value of  specified state
+            if (defalutDict.TryGetValue(nameState, out value))
+            {
+                return value;
+            }
+
+            if (state != GUIState.Normal)
+            {
+                // try to get a default value of Normal state
+                if (defalutDict.TryGetValue(new NameState { Name = styleName, State = GUIState.Normal }, out value))
+                {
+                    return value;
+                }
+            }
+
+            Log.Warning("Cannot find the style<{0},{1}>", styleName.ToString(), state.ToString());
+            return default(T);//still not found, get defalut value of that types //FIXME may we should throw an exception instead?
         }
 
         public void Set<T>(GUIStyleName styleName, T value, GUIState state = GUIState.Normal)
@@ -200,18 +333,6 @@ namespace ImGui
             var nameState = new NameState { Name = styleName, State = state };
             var dict = GetDict<T>();
             dict[nameState] = value;
-        }
-
-        public T GetDefault<T>(GUIStyleName styleName, GUIState state)
-        {
-            var nameState = new NameState { Name = styleName, State = state };
-            var defalutDict = Default.GetDict<T>();
-            if (defalutDict.TryGetValue(nameState, out T defaultValue))
-            {
-                return defaultValue;
-            }
-            return default(T);//TODO better solution for this?
-            //throw new Exception(string.Format("Cannot find the style<{0},{1}>", styleName, state));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

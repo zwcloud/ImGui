@@ -268,19 +268,20 @@ label:
             //GUILayout.EndHorizontal();
 
             // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
-            for (int i = 0; i < 7; i++)
+            GUILayout.BeginHorizontal("HGroup~click buttons");
             {
-                //We don't need to push ID, because BeginHorizontal alreay defined an inner scope (by Push/PopID() internaly).
-                GUILayout.BeginHorizontal("HGroup~click buttons");
+                for (int i = 0; i < 7; i++)
                 {
+                    GUILayout.PushID(i);
                     GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.6f, 0.6f), GUIState.Normal);
                     GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.7f, 0.7f), GUIState.Hover);
                     GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.8f, 0.8f), GUIState.Active);
                     GUILayout.Button("Click");
                     GUILayout.PopStyleVar(3);
+                    GUILayout.PopID();
                 }
-                GUILayout.EndHorizontal();
             }
+            GUILayout.EndHorizontal();
 
             //TODO tooltip
             //GUILayout.BeginHorizontal("HGroup~tooltips");
@@ -333,15 +334,14 @@ label:
             GUILayout.Label("Three stretched sized buttons with 1/2/3 stretch factor.");
             GUILayout.BeginHorizontal("H~~~3");
             {
-                GUILayout.Button("1");
                 GUILayout.PushHStretchFactor(1);
+                GUILayout.Button("1");
+                GUILayout.PopStyleVar();
+                GUILayout.PushHStretchFactor(2);
                 GUILayout.Button("2");
                 GUILayout.PopStyleVar();
                 GUILayout.PushHStretchFactor(3);
                 GUILayout.Button("3");
-                GUILayout.PopStyleVar();
-                GUILayout.PushFixedWidth(300);
-                GUILayout.Button("4");
                 GUILayout.PopStyleVar();
             }
             GUILayout.EndHorizontal();

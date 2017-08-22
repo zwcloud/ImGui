@@ -6,7 +6,7 @@ namespace ImGui
 {
     internal class StyleStack
     {
-        public GUIStyle Style => GUIStyle.Default;
+        public GUIStyle Style => GUIStyle.Basic;
 
         Stack<StyleModifier> ModifierStack { get; } = new Stack<StyleModifier>();
 
@@ -88,29 +88,33 @@ namespace ImGui
 
         #region box model
 
-        public void PushBorder((double, double, double, double) border)
+        public void PushBorder((double, double, double, double) border, GUIState state = GUIState.Normal)
         {
-            var modifier1 = new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, border.Item1);
-            var modifier2 = new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, border.Item2);
-            var modifier3 = new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, border.Item3);
-            var modifier4 = new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, border.Item4);
+            var modifier1 = new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, border.Item1, state);
+            var modifier2 = new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, border.Item2, state);
+            var modifier3 = new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, border.Item3, state);
+            var modifier4 = new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, border.Item4, state);
             Push(modifier1);
             Push(modifier2);
             Push(modifier3);
             Push(modifier4);
         }
 
-        public void PushPadding((double, double, double, double) padding)
+        public void PushBorder(double border, GUIState state = GUIState.Normal) => PushBorder((border, border, border, border), state);
+
+        public void PushPadding((double, double, double, double) padding, GUIState state = GUIState.Normal)
         {
-            var modifier1 = new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, padding.Item1);
-            var modifier2 = new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, padding.Item2);
-            var modifier3 = new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, padding.Item3);
-            var modifier4 = new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, padding.Item4);
+            var modifier1 = new StyleModifier(GUIStyleName.PaddingTop, StyleType.@double, padding.Item1, state);
+            var modifier2 = new StyleModifier(GUIStyleName.PaddingRight, StyleType.@double, padding.Item2, state);
+            var modifier3 = new StyleModifier(GUIStyleName.PaddingBottom, StyleType.@double, padding.Item3, state);
+            var modifier4 = new StyleModifier(GUIStyleName.PaddingLeft, StyleType.@double, padding.Item4, state);
             Push(modifier1);
             Push(modifier2);
             Push(modifier3);
             Push(modifier4);
         }
+
+        public void PushPadding(double padding, GUIState state = GUIState.Normal) => PushPadding((padding, padding, padding, padding), state);
 
         #endregion
 
@@ -136,6 +140,16 @@ namespace ImGui
             Push(modifier);
         }
 
+        #endregion
+
+        #region font
+
+        public void PushFontSize(double fontSize, GUIState state = GUIState.Normal)
+        {
+            var modifier = new StyleModifier(GUIStyleName.FontSize, StyleType.@double, fontSize, state);
+            Push(modifier);
+        }
+
         public void PushFontColor(Color color, GUIState state = GUIState.Normal)
         {
             var modifier = new StyleModifier(GUIStyleName.FontColor, StyleType.Color, color, state);
@@ -143,6 +157,5 @@ namespace ImGui
         }
 
         #endregion
-
     }
 }

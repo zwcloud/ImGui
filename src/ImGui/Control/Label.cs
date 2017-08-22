@@ -18,9 +18,7 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            GUIStyle style = g.StyleStack.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Label];
-            s.PushRange(modifiers);
+            var style = s.Style;
 
             // rect
             window.GetRect(rect);
@@ -28,9 +26,6 @@ namespace ImGui
             // render
             DrawList d = window.DrawList;
             d.DrawBoxModel(rect, text, style);
-
-            // style restore
-            s.PopStyle(modifiers.Length);
         }
     }
 
@@ -51,7 +46,7 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var style = g.StyleStack.Style;
+            var style = s.Style;
 
             // rect
             Size contentSize = style.CalcSize(text, GUIState.Normal);
@@ -106,12 +101,4 @@ namespace ImGui
         public static void Text(string text) => Label(text);
     }
 
-    partial class GUISkin
-    {
-        void InitLabelStyles()
-        {
-            var labelStyles = new StyleModifier[] { };
-            this.styles.Add(GUIControlName.Label, labelStyles);
-        }
-    }
 }

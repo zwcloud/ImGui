@@ -20,8 +20,7 @@ namespace ImGui
             // style apply
             var s = g.StyleStack;
             var style = s.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Image];
-            s.PushRange(modifiers);
+            s.PushBorder(1.0);//+4
 
             // rect
             rect = window.GetRect(rect);
@@ -29,10 +28,10 @@ namespace ImGui
             // render
             var texture = TextureUtil.GetTexture(filePath);
             DrawList d = window.DrawList;
+            s.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(4+4);
         }
 
         /// <summary>
@@ -47,21 +46,20 @@ namespace ImGui
             if (window.SkipItems)
                 return;
 
-            // style apply
+            // style
             var s = g.StyleStack;
             var style = s.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Image];
-            s.PushRange(modifiers);
+            s.PushBorder(1.0);
 
             // rect
             rect = window.GetRect(rect);
 
             // render
             DrawList d = window.DrawList;
+            s.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(4+4);
         }
     }
 
@@ -80,11 +78,10 @@ namespace ImGui
 
             var id = window.GetID(filePath);
 
-            // style apply
+            // style
             var s = g.StyleStack;
             var style = s.Style;
-            var modifiers = GUISkin.Instance[GUIControlName.Image];
-            s.PushRange(modifiers);
+            s.PushBorder(1.0);
 
             // rect
             var texture = TextureUtil.GetTexture(filePath);
@@ -93,10 +90,10 @@ namespace ImGui
 
             // render
             DrawList d = window.DrawList;
+            s.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
+            s.PopStyle(4 + 4);
         }
 
         public static void Image(ITexture texture)
@@ -108,10 +105,9 @@ namespace ImGui
 
             var id = window.GetID(texture);
 
-            // style apply
+            // style
             var s = g.StyleStack;
-            var modifiers = GUISkin.Instance[GUIControlName.Image];
-            s.PushRange(modifiers);
+            s.PushBorder(1.0);//+4
 
             // rect
             var style = s.Style;
@@ -120,29 +116,10 @@ namespace ImGui
 
             // render
             DrawList d = window.DrawList;
+            s.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            // style restore
-            s.PopStyle(modifiers.Length);
-        }
-    }
-
-    partial class GUISkin
-    {
-        void InitImageStyles()
-        {
-            var imageStyles = new []
-            {
-                 new StyleModifier(GUIStyleName.BorderTop, StyleType.@double, 1.0),
-                 new StyleModifier(GUIStyleName.BorderRight, StyleType.@double, 1.0),
-                 new StyleModifier(GUIStyleName.BorderBottom, StyleType.@double, 1.0),
-                 new StyleModifier(GUIStyleName.BorderLeft, StyleType.@double, 1.0),
-                 new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, Color.Black),
-                 new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color,Color.Black),
-                 new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color,Color.Black),
-                 new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color,Color.Black),
-            };
-            this.styles.Add(GUIControlName.Image, imageStyles);
+            s.PopStyle(4+4);
         }
     }
 }

@@ -136,6 +136,7 @@ namespace ImGui
                 style.Set(GUIStyleName.PaddingBottom, 8.0);
                 style.Set(GUIStyleName.PaddingLeft, 8.0);
                 style.Set(GUIStyleName.FontColor, Color.White);
+                style.FontFamily = GUIStyle.Default.FontFamily;
                 style.FontSize = 20.0;
                 this.TitleBarStyle = style;
             }
