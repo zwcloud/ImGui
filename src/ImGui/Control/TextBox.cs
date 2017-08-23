@@ -1,6 +1,4 @@
-﻿//#define INSPECT_STATE
-using System;
-using System.Diagnostics;
+﻿using System;
 using ImGui.Common.Primitive;
 using ImGui.Input;
 
@@ -82,6 +80,8 @@ namespace ImGui
         /// <param name="label">label</param>
         /// <param name="width">width</param>
         /// <param name="text">text</param>
+        /// <param name="flags">filter flags</param>
+        /// <param name="checker">custom checker</param>
         /// <returns>(modified) text</returns>
         public static string TextBox(string label, double width, string text, InputTextFlags flags = 0, Func<char, bool> checker = null)
         {
@@ -108,13 +108,13 @@ namespace ImGui
 
             // interact
             InputTextContext context;
-            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context, flags, checker);
+            text = GUIBehavior.TextBoxBehavior(id, boxRect, text, out context, flags, checker);
 
             // render
             var d = window.DrawList;
             if(flags.HaveFlag(InputTextFlags.Password))
             {
-                var dotText = new string('*', text.Length);
+                var dotText = new string('*', text.Length);//FIXME bad performance
                 GUIAppearance.DrawTextBox(boxRect, id, dotText, context);
             }
             else
@@ -219,7 +219,7 @@ namespace ImGui
                 string.Format("TextBox<{0}> {1}=>{2} CaretIndex: {3}, SelectIndex: {4}",
                     id, A, B, context.CaretIndex, context.SelectIndex));
 #endif
-                text = context.Text;
+                return context.Text;
             }
             return text;
         }

@@ -270,8 +270,8 @@ label:
                 noBlankText = GUILayout.TextBox("no blank", 200, noBlankText, InputTextFlags.CharsNoBlank);
                 customText = GUILayout.TextBox("\"imgui\" letters", 200, customText, 0, (c) => "imguiIMGUI".IndexOf(c) >= 0);
                 GUILayout.Text("Password input");
-                GUILayout.TextBox("password", 200, password, InputTextFlags.Password | InputTextFlags.CharsNoBlank);
-                GUILayout.TextBox("password (clear)", 200, password, InputTextFlags.CharsNoBlank);
+                password = GUILayout.TextBox("password", 200, password, InputTextFlags.Password | InputTextFlags.CharsNoBlank);
+                password = GUILayout.TextBox("password (clear)", 200, password, InputTextFlags.CharsNoBlank);
             }
             GUILayout.TreePop();
 
