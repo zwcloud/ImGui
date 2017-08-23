@@ -12,36 +12,36 @@ namespace ImGui.Common.Primitive
 
         public Color(double r, double g, double b, double a)
         {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
+            this.r = (float)r;
+            this.g = (float)g;
+            this.b = (float)b;
+            this.a = (float)a;
         }
 
-        private double r, g, b, a;
+        private float r, g, b, a;
 
         public double R
         {
             get { return r; }
-            set { r = value; }
+            set { r = (float)value; }
         }
 
         public double G
         {
             get { return g; }
-            set { g = value; }
+            set { g = (float)value; }
         }
 
         public double B
         {
             get { return b; }
-            set { b = value; }
+            set { b = (float)value; }
         }
 
         public double A
         {
             get { return a; }
-            set { a = value; }
+            set { a = (float)value; }
         }
 
         public static bool operator ==(Color a, Color b)

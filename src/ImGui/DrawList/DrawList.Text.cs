@@ -62,7 +62,6 @@ namespace ImGui
             command.ElemCount += newIndexBufferCount - oldIndexBufferCount;
             textMesh.Commands[textMesh.Commands.Count - 1] = command;
 
-            // TODO merge command with previous one if they share the same clip rect.
             // TODO refactor this
         }
     }

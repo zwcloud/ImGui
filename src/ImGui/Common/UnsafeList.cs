@@ -193,11 +193,11 @@ namespace ImGui.Common
 
             set
             {
-                if ((uint)index >= (uint)_size)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                Contract.EndContractBlock();
+                //if ((uint)index >= (uint)_size)
+                //{
+                //    throw new ArgumentOutOfRangeException();
+                //}
+                //Contract.EndContractBlock();
                 _items[index] = value;
                 _version++;
             }

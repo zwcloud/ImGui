@@ -1,12 +1,13 @@
-﻿using System.Diagnostics;
+﻿using ImGui.Common.Primitive;
+using System.Diagnostics;
 
 namespace ImGui
 {
     [DebuggerDisplay("{pos} {uv} {color}")]
     internal struct DrawVertex
     {
-        public PointF pos;
-        public PointF uv;
-        public ColorF color;
+        public Point pos;
+        public Point uv;
+        public Color color;
     }
 }

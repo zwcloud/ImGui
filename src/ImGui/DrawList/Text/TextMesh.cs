@@ -94,39 +94,61 @@ namespace ImGui
             this.IndexBuffer.Resize(idxBufferSize + idxCount);
         }
 
-        public void AddTriangle(Point a, Point b, Point c, Color color)
+        private void AddTriangles(Vector positionOffset, Vector glyphOffset, double scale, Color color, bool flipY,
+            List<List<Point>> polygons)
         {
-            PrimReserve(3, 3);
-            AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)color });
-            AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)color });
-            AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)color });
-            AppendIndex(0);
-            AppendIndex(1);
-            AppendIndex(2);
-            this.currentIdx += 3;
+            foreach (var polygon in polygons)
+            {
+                if (polygon == null || polygon.Count < 3)
+                {
+                    continue;
+                }
+                var p0 = polygon[0] + glyphOffset;
+                p0 = ApplyOffsetScale(p0, positionOffset.X, positionOffset.Y, scale, flipY);
+                PrimReserve(3 * (polygon.Count - 1), 3 * (polygon.Count - 1));
+                for (int i = 0; i < polygon.Count - 1; i++)
+                {
+                    var p1 = polygon[i] + glyphOffset;
+                    p1 = ApplyOffsetScale(p1, positionOffset.X, positionOffset.Y, scale, flipY);
+                    var p2 = polygon[i + 1] + glyphOffset;
+                    p2 = ApplyOffsetScale(p2, positionOffset.X, positionOffset.Y, scale, flipY);
+                    AppendVertex(new DrawVertex { pos = p0, uv = Point.Zero, color = color });
+                    AppendVertex(new DrawVertex { pos = p1, uv = Point.Zero, color = color });
+                    AppendVertex(new DrawVertex { pos = p2, uv = Point.Zero, color = color });
+                    AppendIndex(0);
+                    AppendIndex(1);
+                    AppendIndex(2);
+                    this.currentIdx += 3;
+                }
+            }
         }
 
-        public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color,  Vector positionOffset = new Vector(), Vector glyphOffset = new Vector(), double scale = 1, bool flipY = true)
+        public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color, Vector positionOffset, Vector glyphOffset, double scale = 1, bool flipY = true)
         {
             PrimReserve(segments.Count * 3, segments.Count * 3);
+            var uv0 = new Point(0, 0);
+            var uv1 = new Point(0.5, 0);
+            var uv2 = new Point(1, 1);
+
             for (int i = 0; i < segments.Count; i++)
             {
                 var segment = segments[i];
+
                 var startPoint = segment.Item1;
                 startPoint += glyphOffset;
                 startPoint = ApplyOffsetScale(startPoint, positionOffset.X, positionOffset.Y, scale, flipY);
+
                 var controlPoint = segment.Item2;
                 controlPoint += glyphOffset;
                 controlPoint = ApplyOffsetScale(controlPoint, positionOffset.X, positionOffset.Y, scale, flipY);
+
                 var endPoint = segment.Item3;
                 endPoint += glyphOffset;
                 endPoint = ApplyOffsetScale(endPoint, positionOffset.X, positionOffset.Y, scale, flipY);
-                var uv0 = new PointF(0, 0);
-                var uv1 = new PointF(0.5, 0);
-                var uv2 = new PointF(1, 1);
-                AppendVertex(new DrawVertex { pos = (PointF)startPoint, uv = uv0, color = (ColorF)color });
-                AppendVertex(new DrawVertex { pos = (PointF)controlPoint, uv = uv1, color = (ColorF)color });
-                AppendVertex(new DrawVertex { pos = (PointF)endPoint, uv = uv2, color = (ColorF)color });
+
+                AppendVertex(new DrawVertex { pos = startPoint, uv = uv0, color = color });
+                AppendVertex(new DrawVertex { pos = controlPoint, uv = uv1, color = color });
+                AppendVertex(new DrawVertex { pos = endPoint, uv = uv2, color = color });
 
                 AppendIndex(0);
                 AppendIndex(1);
@@ -135,6 +157,7 @@ namespace ImGui
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Point ApplyOffsetScale(Point point, double offsetX, double offsetY, double scale, bool flipY)
         {
             return new Point(point.X * scale + offsetX, point.Y * scale * (flipY ? -1 : 1)+ offsetY);
@@ -145,62 +168,13 @@ namespace ImGui
             textContext.Build(position);
         }
 
-        public void Append(TextMesh textMesh, Vector offset)// must use after DrawList.AddText
-        {
-            var oldVertexCount = this.VertexBuffer.Count;
-            var oldIndexCount = this.IndexBuffer.Count;
-            // Update added command
-            var command = this.Commands[this.Commands.Count - 1];
-            command.ElemCount = textMesh.IndexBuffer.Count;
-            this.Commands[this.Commands.Count - 1] = command;
-
-            // TODO merge command with previous one if they share the same clip rect.
-
-            // Append mesh data
-            {
-                this.VertexBuffer.AddRange(textMesh.VertexBuffer);
-                this.IndexBuffer.AddRange(textMesh.IndexBuffer);
-                var newIndexCount = this.IndexBuffer.Count;
-                for (int i = oldIndexCount; i < newIndexCount; i++)
-                {
-                    var index = this.IndexBuffer[i].Index;
-                    index += oldVertexCount;
-                    this.IndexBuffer[i] = new DrawIndex { Index = index };
-                }
-            }
-
-            // Apply offset to appended part
-            if (!MathEx.AmostZero(offset.X) || !MathEx.AmostZero(offset.Y))
-            {
-                for (int i = oldVertexCount; i < this.VertexBuffer.Count; i++)
-                {
-                    var vertex = this.VertexBuffer[i];
-                    vertex.pos = new PointF(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
-                    this.VertexBuffer[i] = vertex;
-                }
-            }
-        }
-
         public void Append(Vector positionOffset, GlyphData glyphData, Vector glyphOffset, double scale, Color color, bool flipY)
         {
             var polygons = glyphData.Polygons;
             var segments = glyphData.QuadraticCurveSegments;
 
             // triangles
-            foreach (var polygon in polygons)
-            {
-                if (polygon == null || polygon.Count < 3) { continue; }
-                var p0 = polygon[0] + glyphOffset;
-                p0 = ApplyOffsetScale(p0, positionOffset.X, positionOffset.Y, scale, flipY);
-                for (int i = 0; i < polygon.Count - 1; i++)
-                {
-                    var p1 = polygon[i] + glyphOffset;
-                    p1 = ApplyOffsetScale(p1, positionOffset.X, positionOffset.Y, scale, flipY);
-                    var p2 = polygon[i + 1] + glyphOffset;
-                    p2 = ApplyOffsetScale(p2, positionOffset.X, positionOffset.Y, scale, flipY);
-                    AddTriangle(p0, p1, p2, color);
-                }
-            }
+            AddTriangles(positionOffset, glyphOffset, scale, color, flipY, polygons);
             // quadratic bezier segments
             AddBezierSegments(segments, color, positionOffset, glyphOffset, scale, flipY);
         }

@@ -39,10 +39,10 @@ namespace ImGui
             Point uvB = new Point(uvC.X, uvA.Y);
             Point uvD = new Point(uvA.X, uvC.Y);
 
-            this.ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uvA, color = (ColorF)color });
-            this.ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uvB, color = (ColorF)color });
-            this.ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uvC, color = (ColorF)color });
-            this.ImageMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uvD, color = (ColorF)color });
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = a, uv = uvA, color = color });
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = b, uv = uvB, color = color });
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = c, uv = uvC, color = color });
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = d, uv = uvD, color = color });
             this.ImageMesh.AppendIndex(0);
             this.ImageMesh.AppendIndex(1);
             this.ImageMesh.AppendIndex(2);

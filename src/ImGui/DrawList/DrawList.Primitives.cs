@@ -66,10 +66,10 @@ namespace ImGui
 
                     float dx = (float)(diff.X * (thickness * 0.5f));
                     float dy = (float)(diff.Y * (thickness * 0.5f));
-                    var vertex0 = new DrawVertex { pos = new PointF(p1.X + dy, p1.Y - dx), uv = PointF.Zero, color = (ColorF)color };
-                    var vertex1 = new DrawVertex { pos = new PointF(p2.X + dy, p2.Y - dx), uv = PointF.Zero, color = (ColorF)color };
-                    var vertex2 = new DrawVertex { pos = new PointF(p2.X - dy, p2.Y + dx), uv = PointF.Zero, color = (ColorF)color };
-                    var vertex3 = new DrawVertex { pos = new PointF(p1.X - dy, p1.Y + dx), uv = PointF.Zero, color = (ColorF)color };
+                    var vertex0 = new DrawVertex { pos = new Point(p1.X + dy, p1.Y - dx), uv = Point.Zero, color = color };
+                    var vertex1 = new DrawVertex { pos = new Point(p2.X + dy, p2.Y - dx), uv = Point.Zero, color = color };
+                    var vertex2 = new DrawVertex { pos = new Point(p2.X - dy, p2.Y + dx), uv = Point.Zero, color = color };
+                    var vertex3 = new DrawVertex { pos = new Point(p1.X - dy, p1.Y + dx), uv = Point.Zero, color = color };
                     this.ShapeMesh.AppendVertex(vertex0);
                     this.ShapeMesh.AppendVertex(vertex1);
                     this.ShapeMesh.AppendVertex(vertex2);
@@ -110,7 +110,7 @@ namespace ImGui
                 this.ShapeMesh.PrimReserve(idxCount, vtxCount);
                 for (int i = 0; i < vtxCount; i++)
                 {
-                    this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)points[i], uv = PointF.Zero, color = (ColorF)color });
+                    this.ShapeMesh.AppendVertex(new DrawVertex { pos = points[i], uv = Point.Zero, color = color });
                 }
                 for (int i = 2; i < pointsCount; i++)
                 {
@@ -148,10 +148,10 @@ namespace ImGui
             Point d = new Point(a.X, c.Y);
             Point uv = Point.Zero;
 
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = PointF.Zero, color = (ColorF)color });
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = PointF.Zero, color = (ColorF)color });
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = PointF.Zero, color = (ColorF)color });
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = PointF.Zero, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = a, uv = Point.Zero, color = color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = b, uv = Point.Zero, color = color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = c, uv = Point.Zero, color = color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = d, uv = Point.Zero, color = color });
 
             this.ShapeMesh.AppendIndex(0);
             this.ShapeMesh.AppendIndex(1);
@@ -170,10 +170,10 @@ namespace ImGui
             Point uvB = new Point(uvC.X, uvA.Y);
             Point uvD = new Point(uvA.X, uvC.Y);
 
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)a, uv = (PointF)uvA, color = (ColorF)color });
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)b, uv = (PointF)uvB, color = (ColorF)color });
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)c, uv = (PointF)uvC, color = (ColorF)color });
-            this.ShapeMesh.AppendVertex(new DrawVertex { pos = (PointF)d, uv = (PointF)uvD, color = (ColorF)color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = a, uv = uvA, color = color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = b, uv = uvB, color = color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = c, uv = uvC, color = color });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = d, uv = uvD, color = color });
 
             this.ShapeMesh.AppendIndex(0);
             this.ShapeMesh.AppendIndex(1);

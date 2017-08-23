@@ -15,8 +15,8 @@ namespace ImGui.Common.Primitive
         /// <param name="y">The value for the Y coordinate of the new Point</param>
         public Point(double x, double y)
         {
-            _x = x;
-            _y = y;
+            _x = (float)x;
+            _y = (float)y;
         }
 
         #endregion Constructors
@@ -28,8 +28,8 @@ namespace ImGui.Common.Primitive
         /// <param name="offsetY"> The offset in the y dimension </param>
         public void Offset(double offsetX, double offsetY)
         {
-            _x += offsetX;
-            _y += offsetY;
+            _x += (float)offsetX;
+            _y += (float)offsetY;
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace ImGui.Common.Primitive
         {
             get { return _x; }
 
-            set { _x = value; }
+            set { _x = (float)value; }
         }
 
         /// <summary>
@@ -300,12 +300,12 @@ namespace ImGui.Common.Primitive
         {
             get { return _y; }
 
-            set { _y = value; }
+            set { _y = (float)value; }
         }
 
 
-        internal double _x;
-        internal double _y;
+        internal float _x;
+        internal float _y;
 
         public static readonly Point Zero = new Point(0, 0);
         public static readonly Point One = new Point(1, 1);
