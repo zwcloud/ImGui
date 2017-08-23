@@ -1293,7 +1293,7 @@ namespace ImGui.Common
                 if (size > this.Capacity)   // Optimization
                     this.Capacity = size;
 
-                this.AddRange(System.Linq.Enumerable.Repeat(element, size - count));
+                this.AddRange(new T[size-count]);
             }
         }
 
