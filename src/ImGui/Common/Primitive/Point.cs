@@ -19,8 +19,14 @@ namespace ImGui.Common.Primitive
             _y = (float)y;
         }
 
+        public Point(float x, float y)
+        {
+            _x = x;
+            _y = y;
+        }
+
         #endregion Constructors
-        
+
         /// <summary>
         /// Offset - update the location by adding offsetX to X and offsetY to Y
         /// </summary>
@@ -303,6 +309,17 @@ namespace ImGui.Common.Primitive
             set { _y = (float)value; }
         }
 
+        public float x
+        {
+            get { return _x; }
+            set { _x = value; }
+        }
+
+        public float y
+        {
+            get { return _y; }
+            set { _y = value; }
+        }
 
         internal float _x;
         internal float _y;
