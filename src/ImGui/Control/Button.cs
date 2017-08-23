@@ -56,7 +56,7 @@ namespace ImGui
         /// Create an auto-layout button. When the user click it, something will happen immediately.
         /// </summary>
         /// <param name="text">text to display on the button</param>
-        internal static bool Button(string text)
+        public static bool Button(string text)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
@@ -95,7 +95,7 @@ namespace ImGui
             return pressed;
         }
 
-        internal static bool ImageButton(string filePath, Size size, Point uv0, Point uv1, Color tintColor)
+        public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1, Color tintColor)
         {
             Window window = GetCurrentWindow();
             if (window.SkipItems)
@@ -146,7 +146,7 @@ namespace ImGui
             return pressed;
         }
 
-        internal static bool ImageButton(string filePath, Color tintColor)
+        public static bool ImageButton(string filePath, Color tintColor)
         {
             return ImageButton(filePath, Size.Empty, Point.Zero, Point.One, tintColor);
         }
