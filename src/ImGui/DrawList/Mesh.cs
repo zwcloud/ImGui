@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ImGui.Common;
+using System.Runtime.CompilerServices;
 
 namespace ImGui
 {
@@ -18,16 +19,17 @@ namespace ImGui
         /// <summary>
         /// Index buffer. Each command consume DrawCommand.ElemCount of those
         /// </summary>
-        public UnsafeList<DrawIndex> IndexBuffer { get; } = new UnsafeList<DrawIndex>(5000);
+        public UnsafeList<DrawIndex> IndexBuffer { get; } = new UnsafeList<DrawIndex>(10000);
 
         /// <summary>
         /// Vertex buffer
         /// </summary>
-        public UnsafeList<DrawVertex> VertexBuffer { get; } = new UnsafeList<DrawVertex>(5000);
+        public UnsafeList<DrawVertex> VertexBuffer { get; } = new UnsafeList<DrawVertex>(10000);
 
         /// <summary>
         /// Append a vertex to the VertexBuffer
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AppendVertex(DrawVertex vertex)
         {
             this.VertexBuffer[this.vtxWritePosition] = vertex;
@@ -38,6 +40,7 @@ namespace ImGui
         /// Append an index to the IndexBuffer
         /// </summary>
         /// <remarks>The value to insert is `_currentIdx + offsetToCurrentIndex`.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AppendIndex(int offsetToCurrentIndex)
         {
             this.IndexBuffer[this.idxWritePosition] = new DrawIndex { Index = this.currentIdx + offsetToCurrentIndex };

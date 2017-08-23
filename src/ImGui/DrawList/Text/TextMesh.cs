@@ -2,6 +2,7 @@
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Text;
+using System.Runtime.CompilerServices;
 
 namespace ImGui
 {
@@ -59,6 +60,7 @@ namespace ImGui
             this.Commands.Clear();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AppendVertex(DrawVertex vertex)
         {
             this.VertexBuffer[this.vtxWritePosition] = vertex;
@@ -69,6 +71,7 @@ namespace ImGui
         /// Append an index to the IndexBuffer
         /// </summary>
         /// <remarks>The value to insert is `_currentIdx + offsetToCurrentIndex`.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AppendIndex(int offsetToCurrentIndex)
         {
             this.IndexBuffer[this.idxWritePosition] = new DrawIndex { Index = this.currentIdx + offsetToCurrentIndex };
