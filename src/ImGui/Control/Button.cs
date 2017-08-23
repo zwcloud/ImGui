@@ -95,6 +95,61 @@ namespace ImGui
             return pressed;
         }
 
+        internal static bool ImageButton(string filePath, Size size, Point uv0, Point uv1, Color tintColor)
+        {
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
+
+            var id = window.GetID(filePath);
+            GUIContext g = GetCurrentContext();
+
+            // style
+            var s = g.StyleStack;
+            var style = s.Style;
+            s.PushBorder(1.0);//+4
+            s.PushPadding(5.0);//+4
+
+            // rect
+            var texture = TextureUtil.GetTexture(filePath);
+            if(size == Size.Empty)
+            {
+                size = style.CalcSize(texture, GUIState.Normal);
+            }
+            var rect = window.GetRect(id, size);
+            if(rect == Layout.StackLayout.DummyRect)
+            {
+                s.PopStyle(4 + 4);//-4-4
+                return false;
+            }
+
+            // interact
+            bool hovered, held;
+            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
+
+            // render
+            // TODO implement this with DrawBoxModel
+            var d = window.DrawList;
+            s.PushBorderColor(Color.Black);//+4
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1
+            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
+            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            d.AddRectFilled(rect.Min, rect.Max, style.Get<Color>(GUIStyleName.BackgroundColor, state));
+            rect.Offset(style.PaddingLeft + style.BorderLeft, style.PaddingTop + style.BorderTop);
+            rect.Size = new Size(rect.Size.Width - style.PaddingHorizontal, rect.Size.Height - style.PaddingVertical);
+            d.AddImage(texture, rect.TopLeft, rect.BottomRight, uv0, uv1, tintColor);
+
+            s.PopStyle(4 + 1+1+1);//-4-1-1-1
+            s.PopStyle(4 + 4);//-4-4
+
+            return pressed;
+        }
+
+        internal static bool ImageButton(string filePath, Color tintColor)
+        {
+            return ImageButton(filePath, Size.Empty, Point.Zero, Point.One, tintColor);
+        }
     }
 
     internal partial class GUIBehavior

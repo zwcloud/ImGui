@@ -1,4 +1,5 @@
 ﻿using ImGui;
+using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 
@@ -30,6 +31,7 @@ public class Demo
     bool widgetsOn = true;
     bool a = false;
     ITexture image;
+    int pressed_count = 0;
     bool open1, open2, open3, open4, open5, open6, open7, open8, open9, open10, open11, open12, open13;
     bool[] openChild = new bool[5]{ false, false, false, false, false};
     bool closable_group = true;
@@ -183,7 +185,12 @@ label:
 
             if (GUILayout.TreeNode("Bullets", ref open6))
             {
-                //TODO
+                GUILayout.BulletText("Bullet point 1");
+                GUILayout.BulletText("Bullet point 2\nOn multiple lines");
+                GUILayout.PushHCellSpacing(0);//remove horizontal cell spacing of following groups.
+                GUILayout.BeginHorizontal("HGroup~1"); GUILayout.Bullet("_Bullet"); GUILayout.Text("Bullet point 3 (two calls)"); GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal("HGroup~2"); GUILayout.Bullet("_Bullet"); GUILayout.Button("Button"); GUILayout.EndHorizontal();
+                GUILayout.PopStyleVar();
             }
             GUILayout.TreePop();
 
@@ -214,12 +221,24 @@ label:
             if (GUILayout.TreeNode("Images", ref open10))
             {
                 GUILayout.Image("Image/trees.jpg");
+                GUILayout.Text("Some textured buttons:");
+                GUILayout.BeginHorizontal("HGroup~1");
+                for (int i = 0; i < 8; i++)
+                {
+                    GUILayout.PushID(i);
+                    if (GUILayout.ImageButton("Image/trees.jpg", new Size(32, 32), new Point(32.0f * i / 256, 0), new Point(32.0f * (i + 1) / 256, 32.0f / 256), Color.White))
+                        pressed_count += 1;
+                    GUILayout.PopID();
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.Label("Pressed {0} times.", pressed_count);
             }
             GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Selectables", ref open11))
             {
                 //TODO
+                GUILayout.Label("TODO");
             }
             GUILayout.TreePop();
 

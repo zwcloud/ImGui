@@ -308,6 +308,6 @@ namespace ImGui.Common.Primitive
         internal double _y;
 
         public static readonly Point Zero = new Point(0, 0);
-        public static readonly Point Invalid = new Point(-9999, -9999);
+        public static readonly Point One = new Point(1, 1);
     }
 }

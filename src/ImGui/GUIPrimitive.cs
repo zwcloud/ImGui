@@ -313,7 +313,7 @@ namespace ImGui
         /// <param name="drawList"></param>
         /// <param name="rect">the rect to draw this image content</param>
         /// <param name="texture">the texture</param>
-        /// <param name="style">style of the image content (not used)</param>
+        /// <param name="style">style of the image content</param>
         public static void DrawImage(this DrawList drawList, Rect rect, ITexture texture, GUIStyle style)
         {
             var (top, right, bottom, left) = style.BorderImageSlice;

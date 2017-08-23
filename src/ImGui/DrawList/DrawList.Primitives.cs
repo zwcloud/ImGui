@@ -122,6 +122,26 @@ namespace ImGui
             }
         }
 
+        public void AddCircle(Point center, float radius, Color col, int num_segments, float thickness)
+        {
+            if (MathEx.AmostZero(col.A))
+                return;
+
+            float a_max = (float)Math.PI*2.0f * ((float)num_segments - 1.0f) / (float)num_segments;
+            PathArcTo(center, radius-0.5f, 0.0f, a_max, num_segments);
+            PathStroke(col, true, thickness);
+        }
+
+        public void AddCircleFilled(Point center, float radius, Color col, int num_segments)
+        {
+            if (MathEx.AmostZero(col.A))
+                return;
+
+            float a_max = (float)Math.PI * 2.0f * ((float)num_segments - 1.0f) / (float)num_segments;
+            PathArcTo(center, radius, 0.0f, a_max, num_segments);
+            PathFill(col);
+        }
+
         private void PrimRect(Point a, Point c, Color color)
         {
             Point b = new Point(c.X, a.Y);
@@ -415,6 +435,18 @@ namespace ImGui
                     Point c = CirclePoints[a % CirclePoints.Length];
                     Path.Add(new Point(center.X + c.X * radius, center.Y + c.Y * radius));
                 }
+            }
+        }
+
+        public void PathArcTo(Point center, float radius, float amin, float amax, int num_segments)
+        {
+            if (radius == 0.0f)
+                Path.Add(center);
+            Path.Capacity = Path.Count + (num_segments + 1);
+            for (int i = 0; i <= num_segments; i++)
+            {
+                float a = amin + ((float)i / (float)num_segments) * (amax - amin);
+                Path.Add(new Point(center.X + Math.Cos(a) * radius, center.Y + Math.Sin(a) * radius));
             }
         }
 
