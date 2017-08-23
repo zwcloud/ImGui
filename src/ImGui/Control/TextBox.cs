@@ -83,7 +83,7 @@ namespace ImGui
         /// <param name="width">width</param>
         /// <param name="text">text</param>
         /// <returns>(modified) text</returns>
-        public static string TextBox(string label, double width, string text, TextBoxFlags flags = 0)
+        public static string TextBox(string label, double width, string text, InputTextFlags flags = 0, Func<char, bool> checker = null)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
@@ -99,16 +99,29 @@ namespace ImGui
             s.PushPadding(10.0);//+4
 
             // rect
-            var height = style.CalcSize(text, GUIState.Normal).Height;
+            var height = style.GetLineHeight();
             var size = new Size(width, height);
-            Rect rect = window.GetRect(id, size);
+            var labelWidth = style.CalcSize(label, GUIState.Normal).Width;
+            Rect rect = window.GetRect(id, size + new Vector(labelWidth, 0));
+            Rect boxRect = new Rect(rect.TopLeft, width, height);
+            Rect labelRect = new Rect(boxRect.TopRight, labelWidth, height);
 
             // interact
             InputTextContext context;
-            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context, flags);
+            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context, flags, checker);
 
             // render
-            GUIAppearance.DrawTextBox(rect, id, text, context);
+            var d = window.DrawList;
+            if(flags.HaveFlag(InputTextFlags.Password))
+            {
+                var dotText = new string('*', text.Length);
+                GUIAppearance.DrawTextBox(boxRect, id, dotText, context);
+            }
+            else
+            {
+                GUIAppearance.DrawTextBox(boxRect, id, text, context);
+            }
+            d.DrawBoxModel(labelRect, label, style);
 
             s.PopStyle(1 + 4);
 
@@ -118,7 +131,7 @@ namespace ImGui
 
     internal partial class GUIBehavior
     {
-        public static string TextBoxBehavior(int id, Rect rect, string text, out InputTextContext context, TextBoxFlags flags = 0)
+        public static string TextBoxBehavior(int id, Rect rect, string text, out InputTextContext context, InputTextFlags flags = 0, Func<char, bool> checker = null)
         {
             GUIContext g = Form.current.uiContext;
 
@@ -153,6 +166,8 @@ namespace ImGui
                     SelectIndex = 0,
                     Selecting = false,
                     CaretPosition = Point.Zero,
+                    Flags = flags,
+                    Checker = checker,
                     Rect = rect,
                     Text = text
                 };
@@ -373,7 +388,7 @@ namespace ImGui
         public const string DoEdit = "DoEdit";
     }
 
-    public enum TextBoxFlags
+    public enum InputTextFlags
     {
         // Default: 0
         CharsDecimal = 1 << 0,   // Allow 0123456789.+-*/
@@ -396,4 +411,12 @@ namespace ImGui
         // [Internal]
         Multiline = 1 << 20   // For internal use by InputTextMultiline()
     };
+
+    internal static class InputTextFlagsExtension
+    {
+        public static bool HaveFlag(this InputTextFlags value, InputTextFlags flag)
+        {
+            return (value & flag) != 0;
+        }
+    }
 }

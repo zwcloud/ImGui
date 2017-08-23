@@ -196,6 +196,19 @@ namespace ImGui.Common.Primitive
         {
             return !(size1 == size2);
         }
+
+        /// <summary>
+        /// Operator Size + Vector
+        /// </summary>
+        /// <returns>
+        /// Size - The result of the addition
+        /// </returns>
+        /// <param name="vector"> The Vector to be added to the Size </param>
+        public static Size operator +(Size point, Vector vector)
+        {
+            return new Size(point._width + vector._x, point._height + vector._y);
+        }
+
         /// <summary>
         /// Compares two Size instances for object equality.  In this equality
         /// double.NaN is equal to itself, unlike in numeric equality.

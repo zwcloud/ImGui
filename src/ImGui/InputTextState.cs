@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ImGui.Common.Primitive;
 using ImGui.Input;
@@ -130,7 +131,8 @@ namespace ImGui
                 //Input characters
                 if (Ime.ImeBuffer.Count != 0)
                 {
-                    var inputText = new string(Ime.ImeBuffer.ToArray());
+                    char[] textSequence = ApplyFilter(Ime.ImeBuffer, textBox.Flags, textBox.Checker);
+                    var inputText = new string(textSequence);
                     if (CaretIndex != SelectIndex) //Replace selected text with inputText
                     {
                         //TODO check whether convert int and uint back and forth is appropriate
@@ -226,6 +228,122 @@ namespace ImGui
             }
         }
 
+        private static char[] ApplyFilter(Queue<char> imeBuffer, InputTextFlags flags, Func<char, bool> checker)
+        {
+            if (checker != null)
+            {
+                List<char> list = new List<char>();
+                foreach (var c in imeBuffer)
+                {
+                    if (checker(c))
+                    {
+                        list.Add(c);
+                    }
+                }
+                return list.ToArray();
+            }
+            else if (flags == 0 || !CheckFlags(flags))
+            {
+                return imeBuffer.ToArray();
+            }
+            else
+            {
+                List<char> list = new List<char>();
+
+                foreach (var c in imeBuffer)
+                {
+                    bool pass = false;
+                    char charToAdd = c;
+
+                    if (flags.HaveFlag(InputTextFlags.CharsDecimal))
+                    {
+                        if (c >= '0' && c <= '9' || c == '.')
+                        {
+                            pass = true;
+                        }
+                    }
+                    else if (flags.HaveFlag(InputTextFlags.CharsHexadecimal))
+                    {
+                        if (flags.HaveFlag(InputTextFlags.CharsUppercase))
+                        {
+                            if (c >= '0' && c <= '9' || c >= 'A' && c <= 'F')
+                            {
+                                pass = true;
+                            }
+                        }
+                        else
+                        {
+                            if (c >= '0' && c <= '9' || c >= 'A' && c <= 'F' || c >= 'a' && c <= 'f')
+                            {
+                                pass = true;
+                            }
+                        }
+                    }
+                    else if (flags.HaveFlag(InputTextFlags.CharsUppercase))
+                    {
+                        if (c >= 'A' && c <= 'Z')
+                        {
+                            pass = true;
+                        }
+                        else if (c >= 'a' && c <= 'z')
+                        {
+                            charToAdd = char.ToUpper(c);
+                            pass = true;
+                        }
+                    }
+                    else if(flags.HaveFlag(InputTextFlags.CharsNoBlank))
+                    {
+                        if (!char.IsWhiteSpace(c))
+                        {
+                            pass = true;
+                        }
+                    }
+
+                    if (pass)
+                    {
+                        list.Add(charToAdd);
+                    }
+                }
+
+                return list.ToArray();
+            }
+
+        }
+
+        private static bool CheckFlags(InputTextFlags flags)
+        {
+            // allowed flags combination
+            if(flags == InputTextFlags.CharsDecimal)
+            {
+                return true;
+            }
+            if(flags == InputTextFlags.CharsHexadecimal)
+            {
+                return true;
+            }
+            if(flags == InputTextFlags.CharsUppercase)
+            {
+                return true;
+            }
+            if(flags == (InputTextFlags.CharsUppercase | InputTextFlags.CharsHexadecimal))
+            {
+                return true;
+            }
+            if(flags == InputTextFlags.CharsNoBlank)
+            {
+                return true;
+            }
+            if (flags == InputTextFlags.Password)
+            {
+                return true;
+            }
+            if (flags == (InputTextFlags.Password | InputTextFlags.CharsNoBlank))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public InputTextState()
         {
             stateMachine = new StateMachineEx(TextBoxState.Normal, states, callBacks);
@@ -295,6 +413,9 @@ namespace ImGui
                 return result;
             }
         }
+
+        public InputTextFlags Flags { get; set; }
+        public Func<char, bool> Checker { get; set; }
 
         private bool HoldAlpha { get; set; }
         private double holdingTime;

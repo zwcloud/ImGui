@@ -41,8 +41,9 @@ public class Demo
     string decimalText = "";
     string hexadecimalText = "";
     string uppercaseText = "";
+    string customText = "";
     string noBlankText = "";
-    string password = "";
+    string password = "password123";
     #endregion
 
     string buf = "日本語";
@@ -262,19 +263,15 @@ label:
             if (GUILayout.TreeNode("Filtered Text Input", ref open12))
             {
                 GUILayout.Label("TODO");
-#if false
-                GUILayout.TextBox("default", 64,     defaultText     );
-                GUILayout.TextBox("decimal", 64,     decimalText,     TextBoxFlags.CharsDecimal);
-                GUILayout.TextBox("hexadecimal", 64, hexadecimalText, TextBoxFlags.CharsHexadecimal | TextBoxFlags.CharsUppercase);
-                GUILayout.TextBox("uppercase", 64,   uppercaseText,   TextBoxFlags.CharsUppercase);
-                GUILayout.TextBox("no blank", 64,    noBlankText,     TextBoxFlags.CharsNoBlank);
-                //TODO callback-based filters
-
+                defaultText = GUILayout.TextBox("default", 200, defaultText);
+                decimalText = GUILayout.TextBox("decimal", 200, decimalText, InputTextFlags.CharsDecimal);
+                hexadecimalText = GUILayout.TextBox("hexadecimal", 200, hexadecimalText, InputTextFlags.CharsHexadecimal | InputTextFlags.CharsUppercase);
+                uppercaseText = GUILayout.TextBox("uppercase", 200, uppercaseText, InputTextFlags.CharsUppercase);
+                noBlankText = GUILayout.TextBox("no blank", 200, noBlankText, InputTextFlags.CharsNoBlank);
+                customText = GUILayout.TextBox("\"imgui\" letters", 200, customText, 0, (c) => "imguiIMGUI".IndexOf(c) >= 0);
                 GUILayout.Text("Password input");
-                GUILayout.TextBox("password", 64, password, TextBoxFlags.Password | TextBoxFlags.CharsNoBlank);
-                GUILayout.TextBox("password (clear)", 64, password, TextBoxFlags.CharsNoBlank);
-                //TODO
-#endif
+                GUILayout.TextBox("password", 200, password, InputTextFlags.Password | InputTextFlags.CharsNoBlank);
+                GUILayout.TextBox("password (clear)", 200, password, InputTextFlags.CharsNoBlank);
             }
             GUILayout.TreePop();
 
