@@ -54,7 +54,7 @@ namespace ImGui
         Slider_LineUsed,
         Slider_LineUnused,
 
-        LineColor,
+        StrokeColor,
         FillColor,
 
         _FieldControlWidth,

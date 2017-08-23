@@ -32,9 +32,19 @@ public class Demo
     bool a = false;
     ITexture image;
     int pressed_count = 0;
-    bool open1, open2, open3, open4, open5, open6, open7, open8, open9, open10, open11, open12, open13;
+    bool open1, open2, open3, open4, open5, open6, open7, open8, open9, open10, open11, open12, open13, open14;
     bool[] openChild = new bool[5]{ false, false, false, false, false};
     bool closable_group = true;
+
+    #region Filtered Text Input
+    string defaultText = "";
+    string decimalText = "";
+    string hexadecimalText = "";
+    string uppercaseText = "";
+    string noBlankText = "";
+    string password = "";
+    #endregion
+
     string buf = "日本語";
     bool read_only = false;
     string text = @"/*\n
@@ -50,6 +60,12 @@ label:
 \tlock cmpxchg8b eax
 ";
     bool check;
+
+    #region Sliders
+    double sliderValue = 0.01;
+    double vSliderValue = 0.01;
+    #endregion
+
     #endregion
 
     #region Graphics Widgets
@@ -206,6 +222,7 @@ label:
             if (GUILayout.TreeNode("Word Wrapping", ref open8))
             {
                 //TODO
+                GUILayout.Label("TODO");
             }
             GUILayout.TreePop();
 
@@ -244,7 +261,20 @@ label:
 
             if (GUILayout.TreeNode("Filtered Text Input", ref open12))
             {
+                GUILayout.Label("TODO");
+#if false
+                GUILayout.TextBox("default", 64,     defaultText     );
+                GUILayout.TextBox("decimal", 64,     decimalText,     TextBoxFlags.CharsDecimal);
+                GUILayout.TextBox("hexadecimal", 64, hexadecimalText, TextBoxFlags.CharsHexadecimal | TextBoxFlags.CharsUppercase);
+                GUILayout.TextBox("uppercase", 64,   uppercaseText,   TextBoxFlags.CharsUppercase);
+                GUILayout.TextBox("no blank", 64,    noBlankText,     TextBoxFlags.CharsNoBlank);
+                //TODO callback-based filters
+
+                GUILayout.Text("Password input");
+                GUILayout.TextBox("password", 64, password, TextBoxFlags.Password | TextBoxFlags.CharsNoBlank);
+                GUILayout.TextBox("password (clear)", 64, password, TextBoxFlags.CharsNoBlank);
                 //TODO
+#endif
             }
             GUILayout.TreePop();
 
@@ -321,9 +351,17 @@ label:
             //}
             //GUILayout.EndHorizontal();
 
-            //GUILayout.Separator();//TODO
+            GUILayout.Separator("Separator~1");
 
-            //TODO add sliders demo
+            if (GUILayout.TreeNode("Sliders", ref open14))
+            {
+                GUILayout.Label("Horizontal Slider");
+                sliderValue = GUILayout.Slider("slider", sliderValue, 0.0, 1.0);
+                GUILayout.Label("Vertical Slder");
+                vSliderValue = GUILayout.VSlider("vslider", vSliderValue, 0.0, 1.0);
+            }
+            GUILayout.TreePop();
+
             GUILayout.PopID();
         }
 
@@ -331,6 +369,7 @@ label:
         {
             GUILayout.PushID("_GraphsWidgets");
             //TODO
+            GUILayout.Label("TODO");
             GUILayout.PopID();
         }
 
@@ -340,9 +379,9 @@ label:
             GUILayout.Label("Three buttons of default size.");
             GUILayout.BeginHorizontal("H~~~1");
             {
-                GUILayout.Button("1");
-                GUILayout.Button("2");
-                GUILayout.Button("3");
+                GUILayout.Button("1~");
+                GUILayout.Button("2~~");
+                GUILayout.Button("3~~~");
             }
             GUILayout.EndHorizontal();
             GUILayout.Label("Three fixed-width (100 pixels) buttons.");
@@ -377,6 +416,7 @@ label:
 
     private void ShowUserGuide()
     {
+        GUILayout.PushID("UserGuide");
         GUILayout.Label("Double-click on title bar to collapse window.");
         GUILayout.Label("Click and drag on lower right corner to resize window.");
         GUILayout.Label("Click and drag on any empty space to move window.");
@@ -393,14 +433,21 @@ label:
 - ESCAPE to revert\n
 - You can apply arithmetic operators +,*,/ on numerical values.
   Use +- to subtract.");
+        GUILayout.PopID();
     }
 
     private void ShowStyleEditor()
     {
+        GUILayout.PushID("StyleEditor");
+
         var bgColor = GUILayout.GetCurrentWindow().Style.BackgroundColor;
-        //TODO
-        bgColor = GUILayout.ColorField("Background Color", bgColor);
+
+        GUILayout.BeginHorizontal("HGroup~1");
+        bgColor = GUILayout.ColorField("Background Color", bgColor); //FIXME
+        GUILayout.EndHorizontal();
 
         GUILayout.GetCurrentWindow().Style.BackgroundColor = bgColor;
+
+        GUILayout.PopID();
     }
 }

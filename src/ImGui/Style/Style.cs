@@ -229,6 +229,10 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Normal }] = Color.Clear,
 
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+
+                [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+
+                [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
             };
 
             style.imageStyles = new Dictionary<NameState, ITexture>
@@ -610,7 +614,7 @@ namespace ImGui
 
 
 
-        public Color LineColor => Get<Color>(GUIStyleName.LineColor);
+        public Color StrokeColor => Get<Color>(GUIStyleName.StrokeColor);
         public Color FillColor => Get<Color>(GUIStyleName.FillColor);
 
         public Color BackgroundColor
