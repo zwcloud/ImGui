@@ -97,11 +97,11 @@ namespace ImGui
                 if (this.TextMesh.Commands.Count > 0)
                 {
                     currentCmd = this.TextMesh.Commands[this.TextMesh.Commands.Count - 1];
-                }
-                var currentClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
-                if(currentCmd.ClipRect == currentClipRect)//no need to add command
-                {
-                    return;
+                    var currentClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
+                    if(currentCmd.ClipRect == currentClipRect)//no need to add command
+                    {
+                        return;
+                    }
                 }
                 cmd.ClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
             }

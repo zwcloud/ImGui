@@ -10,108 +10,7 @@ namespace ImGui.OSImplentation.Android
 {
     internal partial class OpenGLESRenderer : IRenderer
     {
-        class Material
-        {
-            string vertexShaderSource;
-            string fragmentShaderSource;
-
-            public readonly uint[] buffers = { 0, 0 };
-            public uint positionVboHandle/*buffers[0]*/, elementsHandle/*buffers[1]*/;
-
-            public readonly uint[] vertexArray = { 0 };
-            public uint vaoHandle;
-
-            public uint attributePositon, attributeUV, attributeColor;
-
-            public ShaderProgram program;
-            public Dictionary<uint, string> attributeMap;
-
-            public readonly uint[] textures = { 0 };
-
-            public Material(string vertexShader, string fragmentShader)
-            {
-                this.vertexShaderSource = vertexShader;
-                this.fragmentShaderSource = fragmentShader;
-            }
-
-            public void Init()
-            {
-                this.CreateShaders();
-                this.CreateVBOs();
-            }
-
-            public void ShutDown()
-            {
-                this.DeleteShaders();
-                this.DeleteVBOs();
-            }
-
-            private void CreateShaders()
-            {
-                this.program = new ShaderProgram();
-                this.attributePositon = 0;
-                this.attributeUV = 1;
-                this.attributeColor = 2;
-                this.attributeMap = new Dictionary<uint, string>
-                {
-                    {0, "Position"},
-                    {1, "UV"},
-                    {2, "Color" }
-                };
-                this.program.Create(this.vertexShaderSource, this.fragmentShaderSource, this.attributeMap);
-
-                Utility.CheckGLESError();
-            }
-
-            private void CreateVBOs()
-            {
-                GL.GenBuffers(2, this.buffers);
-                this.positionVboHandle = this.buffers[0];
-                this.elementsHandle = this.buffers[1];
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, this.positionVboHandle);
-                GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.elementsHandle);
-
-                GL.GenVertexArrays(1, this.vertexArray);
-                this.vaoHandle = this.vertexArray[0];
-                GL.BindVertexArray(this.vaoHandle);
-
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, this.positionVboHandle);
-
-                GL.EnableVertexAttribArray(this.attributePositon);
-                GL.EnableVertexAttribArray(this.attributeUV);
-                GL.EnableVertexAttribArray(this.attributeColor);
-
-                GL.VertexAttribPointer(this.attributePositon, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("pos"));
-                GL.VertexAttribPointer(this.attributeUV, 2, GL.GL_FLOAT, false, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("uv"));
-                GL.VertexAttribPointer(this.attributeColor, 4, GL.GL_FLOAT, true, Marshal.SizeOf<DrawVertex>(), Marshal.OffsetOf<DrawVertex>("color"));
-
-                Utility.CheckGLESError();
-            }
-
-            private void DeleteShaders()
-            {
-                if (this.program != null)
-                {
-                    this.program.Unbind();
-                    Utility.CheckGLESError();
-                    this.program.Delete();
-                    Utility.CheckGLESError();
-                    this.program = null;
-                }
-            }
-
-            private void DeleteVBOs()
-            {
-                GL.DeleteBuffers(1, this.buffers);
-                Utility.CheckGLESError();
-
-                GL.BindBuffer(GL.GL_ARRAY_BUFFER, 0);
-                Utility.CheckGLESError();
-            }
-
-        }
-
-        Material m = new Material(
+        Material shapeMaterial = new Material(
             vertexShader: @"
 #version 300 es
 uniform mat4 ProjMtx;
@@ -140,56 +39,7 @@ void main()
 "
             );
 
-        Material mExtra = new Material(
-            vertexShader: @"
-#version 300 es
-uniform mat4 ProjMtx;
-
-in vec4 Position;
-in vec2 UV;
-in vec4 Color;
-
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-            fragmentShader: @"
-#version 300 es
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-
-out vec4 Out_Color;
-
-float inCurve(vec2 uv)
-{
-	return uv.x * uv.x - uv.y;
-}
-
-void main()
-{
-	float x = inCurve(Frag_UV);
-
-	if(!gl_FrontFacing)
-	{
-		if (x > 0.) discard;
-	}
-	else
-	{
-		if (x < 0.) discard;
-	}
-
-	Out_Color = Frag_Color;
-}
-"
-            );
-
-        Material mImage = new Material(
+        Material imageMaterial = new Material(
             vertexShader: @"
 #version 300 es
 uniform mat4 ProjMtx;
@@ -218,21 +68,57 @@ void main()
 "
             );
 
+        private readonly Material glyphMaterial = new Material(
+    vertexShader: @"
+#version 300 es
+uniform mat4 ProjMtx;
+in vec2 Position;
+in vec2 UV;
+in vec4 Color;
+out vec2 Frag_UV;
+out vec4 Frag_Color;
+void main()
+{
+	Frag_UV = UV;
+	Frag_Color = Color;
+	gl_Position = ProjMtx * vec4(Position.xy,0,1);
+}
+",
+    fragmentShader: @"
+#version 300 es
+in vec2 Frag_UV;
+in vec4 Frag_Color;
+out vec4 Out_Color;
+void main()
+{
+	if (Frag_UV.s * Frag_UV.s - Frag_UV.t > 0.0)
+	{
+		discard;
+	}
+	Out_Color = Frag_Color;
+}
+"
+    );
 
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
+        private static readonly float[] FloatBuffer = { 0, 0, 0, 0 };
+        private static readonly uint[] UIntBuffer = { 0, 0, 0, 0 };
 
         public void Init(IntPtr windowHandle, Size size)
         {
             //CreateOpenGLContext((IntPtr)windowHandle);//done in Xamarin.Android
             //InitGLEW();//done in Xamarin.Android
 
-            this.m.Init();
-            this.mExtra.Init();
-            this.mImage.Init();
+            this.shapeMaterial.Init();
+            this.imageMaterial.Init();
+            this.glyphMaterial.Init();
 
             // Other state
-            GL.ClearColor(1, 1, 1, 1);
+            GL.Disable(GL.GL_CULL_FACE);
+            GL.Disable(GL.GL_DEPTH_TEST);
+            GL.DepthFunc(GL.GL_NEVER);
+            GL.Enable(GL.GL_SCISSOR_TEST);
 
             Utility.CheckGLESError();
         }
@@ -243,10 +129,20 @@ void main()
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
         }
 
-        private static void DoRender(Material material,
-            List<DrawCommand> commandBuffer, UnsafeList<DrawIndex> indexBuffer, UnsafeList<DrawVertex> vertexBuffer,
-            int width, int height)
+        public void RenderDrawList(DrawList drawList, int width, int height)
         {
+            DrawMesh(this.shapeMaterial, drawList.ShapeMesh, width, height);
+            DrawMesh(this.imageMaterial, drawList.ImageMesh, width, height);
+
+            DrawTextMesh(drawList.TextMesh, width, height);
+        }
+
+        private static void DrawMesh(Material material, Mesh mesh, int width, int height)
+        {
+            List<DrawCommand> commandBuffer = mesh.CommandBuffer;
+            UnsafeList<DrawVertex> vertexBuffer = mesh.VertexBuffer;
+            UnsafeList<DrawIndex> indexBuffer = mesh.IndexBuffer;
+
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
             Utility.CheckGLESError();
@@ -340,17 +236,106 @@ void main()
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
         }
 
-        public void RenderDrawList(DrawList drawList, int width, int height)
+        private void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
-            DoRender(this.m, drawList.ShapeMesh.CommandBuffer, drawList.ShapeMesh.IndexBuffer, drawList.ShapeMesh.VertexBuffer, width, height);
-            //DoRender(mExtra, drawList.BezierBuffer.CommandBuffer, drawList.BezierBuffer.IndexBuffer, drawList.BezierBuffer.VertexBuffer, width, height);
-            DoRender(this.mImage, drawList.ImageMesh.CommandBuffer, drawList.ImageMesh.IndexBuffer, drawList.ImageMesh.VertexBuffer, width, height);
+            // Backup GL state
+            GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_ACTIVE_TEXTURE, IntBuffer); int last_active_texture = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_ARRAY_BUFFER_BINDING, IntBuffer); int last_array_buffer = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_ELEMENT_ARRAY_BUFFER_BINDING, IntBuffer); int last_element_array_buffer = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_VERTEX_ARRAY_BINDING, IntBuffer); int last_vertex_array = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_BLEND_SRC, IntBuffer); int last_blend_src = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_BLEND_DST, IntBuffer); int last_blend_dst = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_BLEND_EQUATION_RGB, IntBuffer); int last_blend_equation_rgb = IntBuffer[0];
+            GL.GetIntegerv(GL.GL_BLEND_EQUATION_ALPHA, IntBuffer); int last_blend_equation_alpha = IntBuffer[0];
+            GL.GetFloatv(GL.GL_COLOR_CLEAR_VALUE, FloatBuffer);
+            float last_clear_color_r = FloatBuffer[0];
+            float last_clear_color_g = FloatBuffer[1];
+            float last_clear_color_b = FloatBuffer[2];
+            float last_clear_color_a = FloatBuffer[3];
+            GL.GetIntegerv(GL.GL_VIEWPORT, IntBuffer); Rect last_viewport = new Rect(IntBuffer[0], IntBuffer[1], IntBuffer[2], IntBuffer[3]);
+            uint last_enable_blend = GL.IsEnabled(GL.GL_BLEND);
+            uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
+            uint last_enable_depth_test = GL.IsEnabled(GL.GL_DEPTH_TEST);
+            uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
+            GL.GetIntegerv(GL.GL_SCISSOR_BOX, IntBuffer);
+            int last_sessor_rect_x = IntBuffer[0];
+            int last_sessor_rect_y = IntBuffer[1];
+            int last_sessor_rect_width = IntBuffer[2];
+            int last_sessor_rect_height = IntBuffer[3];
+
+            GLM.mat4 ortho_projection = GLM.glm.ortho(0.0f, width, height, 0.0f, -5.0f, 5.0f);
+            GL.Viewport(0, 0, width, height);
+
+            var material = this.glyphMaterial;
+            var vertexBuffer = textMesh.VertexBuffer;
+            var indexBuffer = textMesh.IndexBuffer;
+
+            material.program.Bind();
+            material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
+
+            // Send vertex data
+            GL.BindVertexArray(material.vaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
+            GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
+            GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
+
+            Utility.CheckGLError();
+
+            GL.Enable(GL.GL_STENCIL_TEST);
+            var indexBufferOffset = IntPtr.Zero;
+            foreach (var drawCmd in textMesh.Commands)
+            {
+                var clipRect = drawCmd.ClipRect;
+                {
+                    // Draw text mesh to stencil buffer
+                    GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_INVERT);
+                    GL.StencilFunc(GL.GL_ALWAYS, 1, 1);
+
+                    GL.ColorMask(false, false, false, false);//only draw to stencil buffer
+                    GL.Clear(GL.GL_STENCIL_BUFFER_BIT); //clear stencil buffer to 0
+
+                    GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
+                    GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
+
+                    Utility.CheckGLError();
+
+                    // Draw text mesh againest stencil buffer
+                    GL.StencilFunc(GL.GL_EQUAL, 1, 1);
+                    GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
+                    GL.ColorMask(true, true, true, true);
+
+                    GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
+                }
+                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
+            }
+            GL.Disable(GL.GL_STENCIL_TEST);
+
+            // Restore modified GL state
+            GL.UseProgram((uint)last_program);
+            GL.ActiveTexture((uint)last_active_texture);
+            GL.BindTexture(GL.GL_TEXTURE_2D, (uint)last_texture);
+            GL.BindVertexArray((uint)last_vertex_array);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, (uint)last_array_buffer);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, (uint)last_element_array_buffer);
+            GL.BlendEquationSeparate((uint)last_blend_equation_rgb, (uint)last_blend_equation_alpha);
+            GL.BlendFunc((uint)last_blend_src, (uint)last_blend_dst);
+            if (last_enable_blend == GL.GL_TRUE) GL.Enable(GL.GL_BLEND); else GL.Disable(GL.GL_BLEND);
+            if (last_enable_cull_face == GL.GL_TRUE) GL.Enable(GL.GL_CULL_FACE); else GL.Disable(GL.GL_CULL_FACE);
+            if (last_enable_depth_test == GL.GL_TRUE) GL.Enable(GL.GL_DEPTH_TEST); else GL.Disable(GL.GL_DEPTH_TEST);
+            if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
+            GL.ClearColor(last_clear_color_r, last_clear_color_g, last_clear_color_b, last_clear_color_a);
+            GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
+            GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
         }
 
         public void ShutDown()
         {
-            this.m.ShutDown();
-            this.mExtra.ShutDown();
+            this.shapeMaterial.ShutDown();
+            this.imageMaterial.ShutDown();
+            this.glyphMaterial.ShutDown();
         }
     }
 }

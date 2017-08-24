@@ -40,6 +40,9 @@ namespace CSharpGLES
         [DllImport(GLESv2, EntryPoint = "glGetIntegerv")]
         public static extern void GetIntegerv(uint pname, int[] params_notkeyword);
 
+        [DllImport(GLESv2, EntryPoint = "glGetFloatv")]
+        public static extern void GetFloatv(uint pname, float[] params_notkeyword);
+
         [DllImport(GLESv2, EntryPoint = "glIsEnabled")]
         public static extern byte IsEnabled(uint cap);
 
@@ -76,6 +79,17 @@ namespace CSharpGLES
         [DllImport(GLESv2, EntryPoint = "glBlendEquationSeparate")]
         public static extern void BlendEquationSeparate(uint modeRGB, uint modeAlpha);
 
+        [DllImport(GLESv2, EntryPoint = "glStencilOp")]
+        public static extern void StencilOp(uint fail, uint zfail, uint zpass);
+
+        [DllImport(GLESv2, EntryPoint = "glStencilFunc")]
+        public static extern void StencilFunc(uint func, int ref_notkeword, uint mask);
+
+        [DllImport(GLESv2, EntryPoint = "glColorMask")]
+        public static extern void ColorMask(bool red, bool green, bool blue, bool alpha);
+
+        [DllImport(GLESv2, EntryPoint = "glDepthFunc")]
+        public static extern void DepthFunc(uint func);
 
         //shader
         [DllImport(GLESv2, EntryPoint = "glCreateProgram")]

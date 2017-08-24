@@ -42,8 +42,8 @@ namespace AndroidTemplate
             // the default GraphicsMode that is set consists of (16, 16, 0, 0, 2, false)
             try
             {
+                this.GraphicsMode = new GraphicsMode(new ColorFormat(32), 16, 8, 4);
                 base.CreateFrameBuffer();// if you don't call this, the context won't be created
-                this.GraphicsMode = new GraphicsMode(new ColorFormat(32), 24, 8, 8);
                 return;
             }
             catch (Exception ex)
@@ -57,9 +57,6 @@ namespace AndroidTemplate
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-
-            GL.ClearColor(0.5f, 0.5f, 0f, 1.0f);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
 
             ImGui.Application.RunLoop(mainForm);
 

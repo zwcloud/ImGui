@@ -38,6 +38,7 @@ namespace ImGui.OSImplentation.Android
         {
             AndroidWindow window = new AndroidWindow();
             window.Init();
+            window.Size = size;
             return window;
         }
 
