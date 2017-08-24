@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 using CSharpGL;
 using System.Reflection;
 using ImGui.Common.Primitive;
@@ -46,120 +43,6 @@ namespace ImGui
             var contentBoxRect = new Rect(ctl, cbr);
             return contentBoxRect;
         }
-        
-        public static void GetId(string t, out string text, out string id)
-        {
-            if (t.Contains("###"))
-            {
-                var tmp0 = t.IndexOf("###");
-                text = t.Substring(0, tmp0);
-                id = t;
-            }
-            else if (t.Contains("##"))
-            {
-                var tmp0 = t.IndexOf("##");
-                text = t.Substring(0, tmp0);
-                id = t.Substring(tmp0 + 1);
-            }
-            else
-            {
-                text = id = t;
-            }
-        }
-
-        [Conditional("DEBUG")]
-        public static void SaveToObjFile(string path, IList<DrawVertex> vertexes, IList<DrawIndex> indexes)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("# ImGui Test");
-            sb.AppendLine();
-
-            for (int i = 0; i < vertexes.Count; i++)
-            {
-                var position = vertexes[i].pos;
-                sb.AppendFormat("v {0} {1} {2}", -position.X, position.Y, 0);
-                sb.AppendLine();
-            }
-
-            //for (int i = 0; i < vertexes.Count; i++)
-            //{
-            //    var uv = vertexes[i].uv;
-            //    sb.AppendFormat("vt {0} {1}", uv.x, uv.y);
-            //    sb.AppendLine();
-            //}
-
-            for (int i = 0; i < indexes.Count; i += 3)
-            {
-                sb.AppendFormat("f {0}/{0} {1}/{1} {2}/{2}",
-                    indexes[i] + 1,
-                    indexes[i + 2] + 1,
-                    indexes[i + 1] + 1);
-                sb.AppendLine();
-            }
-            File.WriteAllText(path, sb.ToString());
-        }
-
-        [Conditional("DEBUG")]
-        public static void SaveToObjFile(IList<DrawVertex> vertexes, IList<DrawIndex> indexes)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("# ImGui Test");
-            sb.AppendLine();
-
-            for (int i = 0; i < vertexes.Count; i++)
-            {
-                var position = vertexes[i].pos;
-                sb.AppendFormat("v {0} {1} {2}", -position.X, position.Y, 0);
-                sb.AppendLine();
-            }
-
-            for (int i = 0; i < vertexes.Count; i++)
-            {
-                var uv = vertexes[i].uv;
-                sb.AppendFormat("vt {0} {1}", uv.X, uv.Y);
-                sb.AppendLine();
-            }
-
-            for (int i = 0; i < indexes.Count; i += 3)
-            {
-                sb.AppendFormat("f {0}/{0} {1}/{1} {2}/{2}",
-                    indexes[i] + 1,
-                    indexes[i + 2] + 1,
-                    indexes[i + 1] + 1);
-                sb.AppendLine();
-            }
-            File.WriteAllText("D:\\imgui_test.obj", sb.ToString());
-        }
-
-        public static void SaveToObjFile2(string filePath, float[] positions, int[] indexes)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("# Triangle");
-            sb.AppendLine();
-
-            for (int i = 0; i < positions.Length; i += 2)
-            {
-                sb.AppendFormat("v {0} {1} 0", positions[i], positions[i + 1]);
-                sb.AppendLine();
-            }
-
-            for (int i = 0; i < positions.Length; i++)
-            {
-                sb.AppendFormat("vt {0} {1}", 0, 0);
-                sb.AppendLine();
-            }
-
-            for (int i = 0; i < indexes.Length; i += 3)
-            {
-                sb.AppendFormat("f {0}/{0} {1}/{1} {2}/{2}",
-                    indexes[i] + 1,
-                    indexes[i + 1] + 1,
-                    indexes[i + 2] + 1);
-                sb.AppendLine();
-            }
-
-            File.WriteAllText(filePath, sb.ToString());
-        }
 
         /// <summary>
         /// convert pt to dip
@@ -181,6 +64,9 @@ namespace ImGui
             return pt;
         }
 
+        /// <summary>
+        /// (Not using, performance is bad.)
+        /// </summary>
         [Conditional("None")]
         public static void CheckGLError()
         {
@@ -223,57 +109,11 @@ namespace ImGui
             }
         }
 
-#if false
-        //BUG This method is quite slow.
-        public static void CheckGLError(
-            [CallerFilePath] string fileName = null,
-            [CallerLineNumber] int lineNumber = 0,
-            [CallerMemberName] string memberName = null)
-        {
-            var error = GL.GetError();
-            string errorStr = "GL_NO_ERROR";
-            switch (error)
-            {
-                case GL.GL_NO_ERROR:
-                    errorStr = "GL_NO_ERROR";
-                    break;
-                case GL.GL_INVALID_ENUM:
-                    errorStr = "GL_INVALID_ENUM";
-                    break;
-                case GL.GL_INVALID_VALUE:
-                    errorStr = "GL_INVALID_VALUE";
-                    break;
-                case GL.GL_INVALID_OPERATION:
-                    errorStr = "GL_INVALID_OPERATION";
-                    break;
-                case GL.GL_STACK_OVERFLOW:
-                    errorStr = "GL_STACK_OVERFLOW";
-                    break;
-                case GL.GL_STACK_UNDERFLOW:
-                    errorStr = "GL_STACK_UNDERFLOW";
-                    break;
-                case GL.GL_OUT_OF_MEMORY:
-                    errorStr = "GL_OUT_OF_MEMORY";
-                    break;
-                case GL.GL_INVALID_FRAMEBUFFER_OPERATION:
-                    errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION";
-                    break;
-                case GL.GL_CONTEXT_LOST:
-                    errorStr = "GL_CONTEXT_LOST";
-                    break;
-            }
-
-            if (error != GL.GL_NO_ERROR)
-            {
-                throw new Exception(string.Format("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
-                    fileName, lineNumber, error, errorStr, memberName));
-            }
-        }
-#endif
-        public static void CheckGLESError(
-            [CallerFilePath] string fileName = null,
-            [CallerLineNumber] int lineNumber = 0,
-            [CallerMemberName] string memberName = null)
+        /// <summary>
+        /// (Not using, performance is bad.)
+        /// </summary>
+        [Conditional("None")]
+        public static void CheckGLESError()
         {
             var error = CSharpGLES.GL.GetError();
             string errorStr = "GL_NO_ERROR";
@@ -310,8 +150,7 @@ namespace ImGui
 
             if (error != GL.GL_NO_ERROR)
             {
-                Debug.WriteLine("{0}({1}): glError: 0x{2:X} ({3}) in {4}",
-                    fileName, lineNumber, error, errorStr, memberName);//TODO throw an exception instead
+                throw new Exception(string.Format("glError: 0x{0:X} ({1})", error, errorStr));
             }
         }
 
@@ -336,6 +175,7 @@ namespace ImGui
         }
 
         //HACK remove this if font-family in Typography is ready
+        //FIXME relative path? how?
         public static string FontDir = CurrentOS.IsWindows? @"W:\VS2017\ImGui\templates\Demo\Font\" : Path.GetDirectoryName(typeof(ImGui.Application).GetTypeInfo().Assembly.Location) + Path.DirectorySeparatorChar + "Font" + Path.DirectorySeparatorChar;
 
     }
