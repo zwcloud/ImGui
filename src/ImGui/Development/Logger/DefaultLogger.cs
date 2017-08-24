@@ -1,9 +1,7 @@
-﻿using System;
-using Ivony.Logs;
+﻿using Ivony.Logs;
 
 namespace ImGui
 {
-    [Platform(Platform.Windows | Platform.Mac | Platform.Linux | Platform.Android)]
     class DefaultLogger : ILogger
     {
         private readonly ConsoleLogger logger = new ConsoleLogger();

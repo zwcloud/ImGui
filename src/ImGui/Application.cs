@@ -62,7 +62,7 @@ namespace ImGui
             }
             else
             {
-                Logger = Utility.Create<ILogger>(CurrentOS.Platform);
+                Logger = new DefaultLogger();
             }
             Log.Init(Logger);
 

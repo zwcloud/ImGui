@@ -5,7 +5,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using CSharpGL;
-using System.Linq;
 using System.Reflection;
 using ImGui.Common.Primitive;
 
@@ -315,41 +314,6 @@ namespace ImGui
                     fileName, lineNumber, error, errorStr, memberName);//TODO throw an exception instead
             }
         }
-
-        public static T Create<T>(Platform platform)
-        {
-            var IFuncType = typeof(T);
-#if DEBUG
-            if (!IFuncType.GetTypeInfo().IsInterface)
-            {
-                throw new ArgumentException("T must be an interface");
-            }
-#endif
-            var asm = typeof(Utility).GetTypeInfo().Assembly;
-            var asmTypes = asm.GetTypes();
-            var funcType = asmTypes.FirstOrDefault(t =>
-            {
-                var typeInfo = t.GetTypeInfo();
-                if (typeInfo.IsInterface)
-                {
-                    return false;
-                }
-                if (!IFuncType.GetTypeInfo().IsAssignableFrom(t))
-                {
-                    return false;
-                }
-                var platformAttr = (PlatformAttribute)typeInfo.GetCustomAttribute(typeof(PlatformAttribute), false);
-                if (platformAttr == null || ((platformAttr.Value & platform) != platform))
-                {
-                    return false;
-                }
-                return true;
-            });
-            if (funcType == null) { throw new InvalidOperationException(); }
-            var func = (T)Activator.CreateInstance(funcType);
-            return func;
-        }
-
 
         public static System.IO.Stream ReadFile(string filePath)
         {
