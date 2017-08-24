@@ -605,16 +605,16 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         #region Window creation
 
         IntPtr/*xcb_connection_t* */ c;
+        xcb_window_t/*xcb_window_t */ window;
 
         public void Init(Point position, Size size, WindowTypes windowType)
         {
-            xcb_window_t win;
             unsafe
             {
                 xcb_screen_t* screen;
 
                 //connect to X server
-                var c = xcb_connect(IntPtr.Zero, IntPtr.Zero);
+                c = xcb_connect(IntPtr.Zero, IntPtr.Zero);
                 var error = (XCB_CONN)xcb_connection_has_error(c);
                 if (error != XCB_CONN.XCB_CONN_NO_ERROR)
                 {
@@ -629,7 +629,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                 }
 
                 //generate window id
-                win = xcb_generate_id(c);
+                window = xcb_generate_id(c);
 
                 var mask = xcb_cw_t.XCB_CW_BACK_PIXEL | xcb_cw_t.XCB_CW_EVENT_MASK;//background and event mask
                 UInt32[] maskValues = new UInt32[2];
@@ -640,7 +640,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     xcb_event_mask_t.XCB_EVENT_MASK_KEY_PRESS | xcb_event_mask_t.XCB_EVENT_MASK_KEY_RELEASE);//events that will be received
                 xcb_create_window(c,
                     XCB_COPY_FROM_PARENT,//depth: same as parent
-                    win,//window id
+                    window,//window id
                     screen->root,//parent window
                     (short)position.X, (short)position.Y,//x,y
                     (ushort)size.Width, (ushort)size.Height,//width, height
@@ -650,7 +650,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     (UInt32)mask, maskValues);//masks and their values
 
                 // show it
-                xcb_map_window(c, win);
+                xcb_map_window(c, window);
 
                 // flush pending requests
                 xcb_flush(c);
@@ -661,7 +661,6 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             }
 
             this.size = size;
-            this.c = (IntPtr)win;
         }
 
         #endregion
@@ -672,7 +671,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         {
             get
             {
-                return this.c;
+                return this.window;
             }
         }
 
@@ -680,7 +679,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
         {
             get
             {
-                return this.c;
+                return new IntPtr(this.window);
             }
         }
 
@@ -699,7 +698,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                     UInt32* values = stackalloc UInt32[2];
                     values[0] = (UInt32)position.X;
                     values[1] = (UInt32)position.Y;
-                    xcb_configure_window(this.c, (xcb_window_t)this.Pointer,
+                    xcb_configure_window(this.c, this.window,
                         xcb_config_window_t.XCB_CONFIG_WINDOW_X | xcb_config_window_t.XCB_CONFIG_WINDOW_Y,
                         values);
                 }
@@ -722,7 +721,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                         UInt32* values = stackalloc UInt32[2];
                         values[0] = (UInt32)this.size.Width;
                         values[1] = (UInt32)this.size.Height;
-                        xcb_configure_window(this.c, (xcb_window_t)this.Pointer,
+                        xcb_configure_window(this.c, this.window,
                             xcb_config_window_t.XCB_CONFIG_WINDOW_WIDTH | xcb_config_window_t.XCB_CONFIG_WINDOW_HEIGHT,
                             values);
                     }
@@ -745,7 +744,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
                 }
                 xcb_change_property(this.c,
                                      xcb_prop_mode_t.XCB_PROP_MODE_REPLACE,
-                                     (xcb_window_t)this.Pointer,
+                                     this.window,
                                      39/*XCB_ATOM_WM_NAME*/,
                                      31/*XCB_ATOM_STRING*/,
                                      8,
@@ -779,7 +778,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
 
         public void Show()
         {
-            xcb_map_window(this.c, (xcb_window_t)this.Pointer);
+            xcb_map_window(this.c, this.window);
         }
 
         public Point ScreenToClient(Point point)

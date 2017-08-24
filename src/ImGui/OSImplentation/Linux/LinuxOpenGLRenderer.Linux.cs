@@ -140,6 +140,7 @@ namespace ImGui.OSImplentation.Linux
                 0x3023/*EGL_GREEN_SIZE*/, 8,
                 0x3022/*EGL_BLUE_SIZE*/ , 8,
                 0x3025/*EGL_DEPTH_SIZE*/, 24,
+                0x3026/*EGL_STENCIL_SIZE*/, 8,
                 0x3033/*EGL_SURFACE_TYPE*/, 0x0004/*EGL_WINDOW_BIT*/,
                 0x3040/*EGL_RENDERABLE_TYPE*/, 0x00000040/*EGL_OPENGL_ES3_BIT*/,
                 //0x3031/*EGL_SAMPLES*/, 16,//MSAA, 16 samples
