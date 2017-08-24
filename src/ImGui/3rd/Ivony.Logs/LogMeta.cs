@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Ivony.Logs
 {
@@ -92,15 +89,6 @@ namespace Ivony.Logs
 
     private Type GetRootType( Type type )
     {
-#if NETSTANDARD1_6
-      var typeInfo = type.GetTypeInfo();
-      if (typeInfo.IsValueType )
-        throw new InvalidOperationException( "值类型对象不能作为日志元数据储存" );
-      if (typeInfo.BaseType != typeof( object ) )
-        return GetRootType(typeInfo.BaseType );
-      else
-        return type;
-#else//for xamarin
       if ( type.IsValueType )
         throw new InvalidOperationException( "值类型对象不能作为日志元数据储存" );
 
@@ -109,7 +97,6 @@ namespace Ivony.Logs
 
       else
         return type;
-#endif
     }
   }
 }

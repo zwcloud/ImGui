@@ -40,7 +40,7 @@ namespace ImGui
 
             if(g.DeltaTime < 17)//limit fps to about 60
             {
-                System.Threading.Tasks.Task.Delay((int)(17 - g.DeltaTime)).Wait();
+                System.Threading.Thread.Sleep((int)(17 - g.DeltaTime));
             }
 
             #region Input

@@ -24,6 +24,7 @@ namespace ImGui
             var s = g.StyleStack;
             var style = s.Style;
             s.PushStretchFactor(false, 1);//+1, always expand width
+            s.PushPadding(2);//4
 
             // rect
             var height = style.GetLineHeight();
@@ -31,6 +32,7 @@ namespace ImGui
             if (rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
             {
                 s.PopStyle();//-1
+                s.PopStyle(4);//-4
                 return false;
             }
 
@@ -64,6 +66,7 @@ namespace ImGui
 
             // style restore
             s.PopStyle();//-1
+            s.PopStyle(4);//-4
 
             return open;
         }

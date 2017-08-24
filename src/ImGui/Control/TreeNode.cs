@@ -15,21 +15,22 @@ namespace ImGui
             PushHStretchFactor(1);
             BeginVertical(label + "_Tree");
             PopStyleVar(1);
+
+                var id = window.GetID(label);
+
+                // style apply
+                var s = g.StyleStack;
+                var style = s.Style;
+                s.PushStretchFactor(false, 1);//+1, always expand width
+                s.PushPadding((1, 1, 1, 5));//+4
+
                 do
                 {
-                    var id = window.GetID(label);
-
-                    // style apply
-                    var s = g.StyleStack;
-                    var style = s.Style;
-                    s.PushStretchFactor(false, 1);//+1, always expand width
-
                     // rect
                     var lineHeight = style.GetLineHeight();
                     Rect rect = window.GetRect(id, new Size(0, lineHeight));
                     if (rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
                     {
-                        s.PopStyle();//-1
                         break;
                     }
 
@@ -63,10 +64,12 @@ namespace ImGui
                         }
                         d.DrawText(rect, label, style, state);
                     }
-
-                    // style restore
-                    s.PopStyle();//-1
                 }while(false);
+
+                // style restore
+                s.PopStyle();//-1
+                s.PopStyle(4);//-4
+
                 BeginHorizontal("#Content");
                     Space("Space", 20);
                     PushHStretchFactor(1);

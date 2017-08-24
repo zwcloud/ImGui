@@ -437,13 +437,15 @@ label:
     {
         GUILayout.PushID("StyleEditor");
 
-        var bgColor = GUILayout.GetCurrentWindow().Style.BackgroundColor;
+        var bgColor = Form.current.BackgroundColor;
 
         GUILayout.BeginHorizontal("HGroup~1");
+        GUILayout.PushFixedWidth(300);
         bgColor = GUILayout.ColorField("Background Color", bgColor); //FIXME
+        GUILayout.PopStyleVar(2);
         GUILayout.EndHorizontal();
 
-        GUILayout.GetCurrentWindow().Style.BackgroundColor = bgColor;
+        Form.current.BackgroundColor = bgColor;
 
         GUILayout.PopID();
     }

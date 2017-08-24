@@ -270,7 +270,7 @@ namespace ImGui
                 // draw title bar text
                 if (!flags.HaveFlag(WindowFlags.NoTitleBar))
                 {
-                    window.DrawList.DrawText(title_bar_rect, name, titleBarStyle, Normal);
+                    window.DrawList.DrawBoxModel(title_bar_rect, name, titleBarStyle, Normal);
                 }
 
                 // Borders

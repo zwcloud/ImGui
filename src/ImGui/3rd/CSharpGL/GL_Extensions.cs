@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace CSharpGL
 {
+    [Obfuscation(Exclude = false, Feature = "-rename")]
     public static partial class GL
     {
         private static bool allFunctionsLoaded = false;

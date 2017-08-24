@@ -5,4 +5,3 @@
 [assembly: InternalsVisibleTo("PrimitiveRenderingTest")]
 [assembly: InternalsVisibleTo("TextRenderingTest")]
 [assembly: InternalsVisibleTo("ControlTest")]
-[assembly: InternalsVisibleTo("UniversalAppTemplate")]

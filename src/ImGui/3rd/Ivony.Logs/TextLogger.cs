@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ivony.Logs
 {
@@ -130,12 +125,8 @@ namespace Ivony.Logs
     /// <returns>转换后的时间</returns>
     protected DateTime GetDateTime( LogEntry entry )
     {
-#if NETSTANDARD1_6
-            return TimeZoneInfo.ConvertTime(entry.LogDate, TimeZone);
-#else
             return TimeZoneInfo.ConvertTimeFromUtc( entry.LogDate, TimeZone );
-#endif
-        }
+    }
 
 
 
