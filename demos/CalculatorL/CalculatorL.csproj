@@ -1,15 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
-    <AssemblyName>Calculator</AssemblyName>
-    <OutputType>Exe</OutputType>
-    <PackageId>CalculatorL</PackageId>
-    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>exe</OutputType>
+		<TargetFramework>netcoreapp2.0</TargetFramework>
+		<OutputTypeEx>exe</OutputTypeEx>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
+	</ItemGroup>
 </Project>

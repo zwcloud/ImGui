@@ -12,97 +12,106 @@ namespace Calculator
 
         protected override void OnGUI()
         {
-            //GUI.Box(new Rect(0, 0, new Size(220, 230)), Content.None, "FormBorder");
-            GUILayout.Label("Simple Calculator", "Title");
+            GUILayout.PushHStretchFactor(1);
+            GUILayout.PushVStretchFactor(1);// FIXME this doesn't work
 
-            if(Current != ButtonType.Idle)
+            GUILayout.Label("Simple Calculator");//Title
+
+            if (Current != ButtonType.Idle)
                 Last = Current;
             Current = ButtonType.Idle;
 
-            GUILayout.Label(calc.Expression, "ExpressionLabel");
-            GUILayout.Label(calc.Result, "ResultLabel");
+            GUILayout.Label(calc.Expression);//ExpressionLabel
+            GUILayout.Label(calc.Result);//ResultLabel
 
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal("Line0");
             {
-                var backspace = GUILayout.Button("←", "backspaceButton");
-                if(backspace) Current = ButtonType.Backspace;
-                var clearInput = GUILayout.Button("CE", "CEButton");
+                var backspace = GUILayout.Button("←");//backspaceButton
+                if (backspace) Current = ButtonType.Backspace;
+                var clearInput = GUILayout.Button("CE");//CEButton
                 if (clearInput) Current = ButtonType.ClearInput;
-                var clear = GUILayout.Button("C", "CButton");
+                var clear = GUILayout.Button("C");//CButton
                 if (clear) Current = ButtonType.Clear;
-                var plusMinus = GUILayout.Button("±", "SignButton");
+                var plusMinus = GUILayout.Button("±");//SignButton
                 if (plusMinus) Current = ButtonType.PlusMinus;
-                var sqrt = GUILayout.Button("√", "SqrtButton");
+                var sqrt = GUILayout.Button("√");//SqrtButton
                 if (sqrt) Current = ButtonType.Sqrt;
             }
             GUILayout.EndHorizontal();
 
             bool[] number = new bool[10];
 
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal("Line1");
             {
-                number[7] = GUILayout.Button("7", "_7Button");
+                number[7] = GUILayout.Button("7");//_7Button
                 if (number[7]) Current = ButtonType.Number7;
-                number[8] = GUILayout.Button( "8", "_8Button");
+                number[8] = GUILayout.Button("8");//_8Button
                 if (number[8]) Current = ButtonType.Number8;
-                number[9] = GUILayout.Button("9", "_9Button");
+                number[9] = GUILayout.Button("9");//_9Button
                 if (number[9]) Current = ButtonType.Number9;
-                var divide = GUILayout.Button("/", "DivideButton");
+                var divide = GUILayout.Button("/");//DivideButton
                 if (divide) Current = ButtonType.Divide;
-                var percent = GUILayout.Button("%", "PercentButton");
+                var percent = GUILayout.Button("%");//PercentButton
                 if (percent) Current = ButtonType.Percent;
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal("Line2");
             {
-                number[4] = GUILayout.Button("4", "_4Button");
+                number[4] = GUILayout.Button("4");//_4Button
                 if (number[4]) Current = ButtonType.Number4;
-                number[5] = GUILayout.Button("5", "_5Button");
+                number[5] = GUILayout.Button("5");//_5Button
                 if (number[5]) Current = ButtonType.Number5;
-                number[6] = GUILayout.Button("6", "_6Button");
+                number[6] = GUILayout.Button("6");//_6Button
                 if (number[6]) Current = ButtonType.Number6;
-                var multiply = GUILayout.Button("*", "MultiplyButton");
+                var multiply = GUILayout.Button("*");//MultiplyButton
                 if (multiply) Current = ButtonType.Multiply;
-                var inverse = GUILayout.Button("1/x", "InverseButton");
+                var inverse = GUILayout.Button("1/x");//InverseButton
                 if (inverse) Current = ButtonType.Inverse;
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal("Line3");
             {
-                GUILayout.BeginVertical(GUILayout.StretchWidth(4));
+                GUILayout.PushHStretchFactor(4);
+                GUILayout.BeginVertical("VGroup~");
+                GUILayout.PopStyleVar();
                 {
-                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal("HGroup~0");
                     {
-                        number[1] = GUILayout.Button("1", "_1Button");
+                        number[1] = GUILayout.Button("1");//_1Button
                         if (number[1]) Current = ButtonType.Number1;
-                        number[2] = GUILayout.Button("2", "_2Button");
+                        number[2] = GUILayout.Button("2");//_2Button
                         if (number[2]) Current = ButtonType.Number2;
-                        number[3] = GUILayout.Button("3", "_3Button");
+                        number[3] = GUILayout.Button("3");//_3Button
                         if (number[3]) Current = ButtonType.Number3;
-                        var minus = GUILayout.Button("-", "MinusButton");
+                        var minus = GUILayout.Button("-");//MinusButton
                         if (minus) Current = ButtonType.Minus;
                     }
                     GUILayout.EndHorizontal();
 
-                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal("HGroup~1");
                     {
-                        number[0] = GUILayout.Button("0", "_0Button", GUILayout.StretchWidth(2));
+                        GUILayout.PushHStretchFactor(2);
+                        number[0] = GUILayout.Button("0");//_0Button
+                        GUILayout.PopStyleVar();
                         if (number[0]) Current = ButtonType.Number0;
-                        var dot = GUILayout.Button(".", "PointButton");
+                        var dot = GUILayout.Button(".");//PointButton
                         if (dot) Current = ButtonType.Dot;
-                        var plus = GUILayout.Button("+", "_plusButton");
+                        var plus = GUILayout.Button("+");//_plusButton
                         if (plus) Current = ButtonType.Plus;
                     }
                     GUILayout.EndHorizontal();
                 }
                 GUILayout.EndVertical();
 
-                var equal = GUILayout.Button("=", "_EqualButton", GUILayout.ExpandHeight(true));
+                GUILayout.PushVStretchFactor(1);
+                var equal = GUILayout.Button("=");//_EqualButton
+                GUILayout.PopStyleVar();
                 if (equal) Current = ButtonType.Equal;
             }
             GUILayout.EndHorizontal();
+            GUILayout.PopStyleVar(2);
 
             if (Current == ButtonType.Idle)
                 return;
