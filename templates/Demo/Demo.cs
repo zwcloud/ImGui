@@ -114,7 +114,7 @@ label:
     {
         if(image == null)
         {
-            image = GUI.CreateTexture("./Image/trees.jpg");
+            image = GUI.CreateTexture("Image/trees.jpg");
         }
 
         WindowFlags window_flags = WindowFlags.VerticalScrollbar;

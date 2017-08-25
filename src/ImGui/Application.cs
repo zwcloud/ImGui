@@ -85,7 +85,7 @@ namespace ImGui
         internal static bool RequestQuit;
 
         // HACK for Android
-        public static Func<string, System.IO.Stream> FontFileRead;
+        public static Func<string, System.IO.Stream> OpenAndroidAssets;
 
         public static void Init()
         {

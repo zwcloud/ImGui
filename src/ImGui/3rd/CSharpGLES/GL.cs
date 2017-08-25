@@ -21,7 +21,7 @@ namespace CSharpGLES
 
         [DllImport(GLESv2, EntryPoint = "glBindVertexArray")]
         public static extern void BindVertexArray(uint array);
-        
+
         [DllImport(GLESv2, EntryPoint = "glEnableVertexAttribArray")]
         public static extern void EnableVertexAttribArray(uint index);
 
@@ -54,21 +54,33 @@ namespace CSharpGLES
 
         [DllImport(GLESv2, EntryPoint = "glBlendFunc")]
         public static extern void BlendFunc(uint sfactor, uint dfactor);
-        
+
         [DllImport(GLESv2, EntryPoint = "glDisable")]
         public static extern void Disable(uint cap);
         
         [DllImport(GLESv2, EntryPoint = "glViewport")]
         public static extern void Viewport(int x, int y, int width, int height);
-        
+
         [DllImport(GLESv2, EntryPoint = "glBufferData")]
         public static extern void BufferData(uint target, int size, IntPtr data, uint usage);
-        
+
         [DllImport(GLESv2, EntryPoint = "glActiveTexture")]
         public static extern void ActiveTexture(uint texture);
-        
+
         [DllImport(GLESv2, EntryPoint = "glBindTexture")]
         public static extern void BindTexture(uint target, uint texture);
+
+        [DllImport(GLESv2, EntryPoint = "glGenTextures")]
+        public static extern void GenTextures(int n, uint[] textures);
+
+        [DllImport(GLESv2, EntryPoint = "glTexImage2D")]
+        public static extern void TexImage2D(uint target, int level, uint internalformat, int width, int height, int border, uint format, uint type, IntPtr pixels);
+
+        [DllImport(GLESv2, EntryPoint = "glTexParameteri")]
+        public static extern void TexParameteri(uint target, uint pname, int param);
+
+        [DllImport(GLESv2, EntryPoint = "glDeleteTexture")]
+        public static extern void DeleteTextures(int n, uint[] textures);
 
         [DllImport(GLESv2, EntryPoint = "glDrawElements")]
         public static extern void DrawElements(uint mode, int count, uint type, IntPtr indices);

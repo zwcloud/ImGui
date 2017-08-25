@@ -57,7 +57,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ImageSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ImageSharp.1.0.0-alpha1-00099\lib\netstandard1.1\ImageSharp.dll</HintPath>
+      <HintPath>..\..\packages\ImageSharp.1.0.0-alpha9\lib\netstandard1.3\ImageSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Extensions.Caching.Abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
@@ -77,6 +77,9 @@
     <Reference Include="Mono.Android" />
     <Reference Include="OpenTK" />
     <Reference Include="mscorlib" />
+    <Reference Include="SixLabors.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SixLabors.Core.0.1.0-alpha0002\lib\netstandard1.1\SixLabors.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Buffers.4.4.0-preview2-25405-01\lib\netstandard1.1\System.Buffers.dll</HintPath>
@@ -124,6 +127,11 @@
       <Project>{bd7603bf-6e5c-48e3-a1c3-56c8d65f3fac}</Project>
       <Name>ImGui</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Image\trees.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AndroidAsset>
   </ItemGroup>
   <Import Project="..\Demo\Demo.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

@@ -159,7 +159,7 @@ namespace ImGui
             Stream stream = null;
             if (CurrentOS.IsAndroid)
             {
-                var s = Application.FontFileRead(filePath);//TODO unify this
+                var s = Application.OpenAndroidAssets(filePath);//TODO unify this
                 using (var ms = new MemoryStream())
                 {
                     s.CopyTo(ms);

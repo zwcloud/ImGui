@@ -54,7 +54,7 @@ namespace ImGui.OSImplentation.Android
 
         private static ITexture CTexture()
         {
-            throw new NotImplementedException();
+            return new OpenGLESTexture();
         }
     }
 }

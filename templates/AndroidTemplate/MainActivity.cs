@@ -31,7 +31,7 @@ namespace AndroidTemplate
         {
             base.OnCreate(bundle);
 
-            ImGui.Application.FontFileRead = this.Assets.Open;
+            ImGui.Application.OpenAndroidAssets = this.Assets.Open;
             ImGui.Application.Init();
 
             // Set up callback to show keyboard and get input from it.
