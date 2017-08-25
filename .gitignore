@@ -9,3 +9,4 @@ packages
 /templates/UniversalAppTemplate/Font
 /templates/UniversalAppTemplate/Image
 *.DotSettings
+/*.DotSettings
