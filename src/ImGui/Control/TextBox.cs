@@ -67,7 +67,9 @@ namespace ImGui
             text = GUIBehavior.TextBoxBehavior(id, rect, text, out context);
 
             // render
+            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
             GUIAppearance.DrawTextBox(rect, id, text, context);
+            s.PopStyle();
 
             s.PopStyle(1 + 4);
 

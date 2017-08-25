@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlTest", "test\Control
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui", "src\ImGui\ImGui.csproj", "{BD7603BF-6E5C-48E3-A1C3-56C8D65F3FAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HostEditor", "demos\HostEditor\HostEditor.csproj", "{B8EE6600-33B7-4604-9951-608641DA0D98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextPad", "demos\HostEditor\TextPad.csproj", "{B8EE6600-33B7-4604-9951-608641DA0D98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidTemplate", "templates\AndroidTemplate\AndroidTemplate.csproj", "{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A}"
 EndProject

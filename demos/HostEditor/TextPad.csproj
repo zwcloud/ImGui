@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>exe</OutputType>
+		<TargetFramework>netcoreapp2.0</TargetFramework>
+		<OutputTypeEx>exe</OutputTypeEx>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
+	</ItemGroup>
+</Project>

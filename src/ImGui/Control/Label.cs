@@ -21,7 +21,7 @@ namespace ImGui
             var style = s.Style;
 
             // rect
-            window.GetRect(rect);
+            rect = window.GetRect(rect);
 
             // render
             DrawList d = window.DrawList;
