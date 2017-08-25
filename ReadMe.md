@@ -5,6 +5,16 @@ Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](http
 
 Now it runs on Win10 x64, Ubuntu 16.04, and Android.
 
+Please be infromed that ImGui is just released and there's a lack of documentation. But all will be added gradually.
+
+## Get Started
+
+Use templates projects,
+
+In `MainFrom.OnGui()`,
+
+![code sample](https://raw.githubusercontent.com/wiki/zwcloud/imgui/images/code_sample.png)
+
 ## Target
 
 A Real Universal GUI Framework.
