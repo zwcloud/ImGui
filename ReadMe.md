@@ -3,7 +3,7 @@ Hello ImGui,
 
 Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](https://docs.unity3d.com/Manual/GUIScriptingGuide.html) and [dear imgui](https://github.com/ocornut/imgui).
 
-Now it runs on Win10 x64, Ubuntu 16.04, and Android.
+Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms).
 
 Please be infromed that ImGui is just released and there's a lack of documentation. But all will be added gradually.
 
