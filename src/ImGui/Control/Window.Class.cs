@@ -105,10 +105,10 @@ namespace ImGui
                 style.Set(GUIStyleName.BorderRight, 1.0);
                 style.Set(GUIStyleName.BorderBottom, 1.0);
                 style.Set(GUIStyleName.BorderLeft, 1.0);
-                style.Set(GUIStyleName.PaddingTop, 2.0);
-                style.Set(GUIStyleName.PaddingRight, 2.0);
-                style.Set(GUIStyleName.PaddingBottom, 2.0);
-                style.Set(GUIStyleName.PaddingLeft, 2.0);
+                style.Set(GUIStyleName.PaddingTop, 5.0);
+                style.Set(GUIStyleName.PaddingRight, 10.0);
+                style.Set(GUIStyleName.PaddingBottom, 5.0);
+                style.Set(GUIStyleName.PaddingLeft, 10.0);
                 style.Set(GUIStyleName.WindowBorderColor, new Color(0.70f, 0.70f, 0.70f, 0.65f));
                 style.Set(GUIStyleName.WindowBorderShadowColor, new Color(0.00f, 0.00f, 0.00f, 0.00f));
                 style.Set(GUIStyleName.BackgroundColor, new Color(0.30f, 0.30f, 0.30f, 0.70f));

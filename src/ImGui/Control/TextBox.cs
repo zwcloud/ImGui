@@ -41,18 +41,18 @@ namespace ImGui
         /// <summary>
         /// Create a multi-line text box.
         /// </summary>
-        /// <param name="label">label</param>
+        /// <param name="str_id">id</param>
         /// <param name="size">size</param>
         /// <param name="text">text</param>
         /// <returns>(modified) text</returns>
-        public static string TextBox(string label, Size size, string text)
+        public static string TextBox(string str_id, Size size, string text)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return text;
 
-            int id = window.GetID(label);
+            int id = window.GetID(str_id);
 
             // style
             var s = g.StyleStack;
@@ -96,7 +96,8 @@ namespace ImGui
             var s = g.StyleStack;
             var style = s.Style;
             s.PushFontSize(CurrentOS.IsAndroid ? 32.0 : 13.0);//+1
-            s.PushPadding(10.0);//+4
+            s.PushBorder(0);//+4
+            s.PushPadding(3.0);//+4
 
             // rect
             var height = style.GetLineHeight();
@@ -112,7 +113,8 @@ namespace ImGui
 
             // render
             var d = window.DrawList;
-            if(flags.HaveFlag(InputTextFlags.Password))
+            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
+            if (flags.HaveFlag(InputTextFlags.Password))
             {
                 var dotText = new string('*', text.Length);//FIXME bad performance
                 GUIAppearance.DrawTextBox(boxRect, id, dotText, context);
@@ -121,9 +123,11 @@ namespace ImGui
             {
                 GUIAppearance.DrawTextBox(boxRect, id, text, context);
             }
+            s.PopStyle();
             d.DrawBoxModel(labelRect, label, style);
 
-            s.PopStyle(1 + 4);
+
+            s.PopStyle(1 + 4 + 4);
 
             return text;
         }
@@ -237,6 +241,12 @@ namespace ImGui
             var style = g.StyleStack.Style;
             var contentRect = Utility.GetContentRect(rect, style);
             d.PushClipRect(rect, true);
+
+            //Draw the box
+            {
+                d.AddRectFilled(rect.Min, rect.Max, style.BackgroundColor);
+            }
+
             if (g.ActiveId == id)
             {
                 //Calculate positions and sizes
@@ -260,11 +270,6 @@ namespace ImGui
                     contentRect.Offset(offsetX, 0);
                     caretTopPoint.Offset(offsetX, 0);
                     caretBottomPoint.Offset(offsetX, 0);
-                }
-
-                //Draw the box
-                {
-                    d.AddRect(rect.Min, rect.Max, Color.White);
                 }
 
                 //Draw text
@@ -358,7 +363,6 @@ namespace ImGui
             else
             {
                 d.DrawText(contentRect, text, style, GUIState.Normal);
-                d.AddRect(rect.Min, rect.Max, Color.White);
             }
             d.PopClipRect();
         }

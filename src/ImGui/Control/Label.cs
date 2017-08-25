@@ -100,6 +100,8 @@ namespace ImGui
 
         public static void Text(string text) => Label(text);
 
+        public static void Text(string format, params object[] args) => Label(format, args);
+
         #region Bullets
 
 
