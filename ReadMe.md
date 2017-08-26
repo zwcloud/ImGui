@@ -17,7 +17,7 @@ Please be infromed that ImGui is just released. There's a lack of usability and 
 
 3. Add follwing code files to your project,
 
-    Program.cs
+    *Program.cs*
     ```C#
     namespace YourApp
     {
@@ -33,15 +33,13 @@ Please be infromed that ImGui is just released. There's a lack of usability and 
     }
     ```
 
-    MainForm.cs
+    *MainForm.cs*
     ```C#
     namespace YourApp
     {
         public class MainForm : Form
         {
-            public MainForm() : base(new Rect(320, 180, 1280, 720))
-            {
-            }
+            public MainForm() : base(new Rect(320, 180, 1280, 720)) { }
 
             protected override void OnGUI()
             {
@@ -62,6 +60,7 @@ Please be infromed that ImGui is just released. There's a lack of usability and 
         dotnet MyApp.dll
         ```
 6. Exit
+
     Press <kbd>Esc</kbd> or click the close button of the window.
 
 For now, please refer to [the shared project __Demo__](https://github.com/zwcloud/ImGui/tree/master/templates/Demo) for how to use Hello ImGui.
