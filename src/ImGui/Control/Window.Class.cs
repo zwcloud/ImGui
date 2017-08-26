@@ -117,7 +117,7 @@ namespace ImGui
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.90f), GUIState.Active);
                 style.Set(GUIStyleName.WindowRounding, 3.0);
-                style.Set(GUIStyleName.ScrollBarWidth, 10.0);
+                style.Set(GUIStyleName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
                 style.Set(GUIStyleName.ScrollBarBackgroundColor, Color.Metal);
                 style.Set(GUIStyleName.ScrollBarButtonColor, new Color(0.40f, 0.40f, 0.80f, 0.30f), GUIState.Normal);
                 style.Set(GUIStyleName.ScrollBarButtonColor, new Color(0.40f, 0.40f, 0.80f, 0.40f), GUIState.Hover);

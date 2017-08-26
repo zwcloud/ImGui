@@ -30,7 +30,6 @@ public class Demo
     #region Widgets
     bool widgetsOn = true;
     bool a = false;
-    ITexture image;
     int pressed_count = 0;
     bool open1, open2, open3, open4, open5, open6, open7, open8, open9, open10, open11, open12, open13, open14;
     bool[] openChild = new bool[5]{ false, false, false, false, false};
@@ -112,11 +111,6 @@ label:
 
     private void ShowTestWindow(ref bool open)
     {
-        if(image == null)
-        {
-            image = GUI.CreateTexture("images/trees.jpg");
-        }
-
         WindowFlags window_flags = WindowFlags.VerticalScrollbar;
         if (no_titlebar) window_flags |= WindowFlags.NoTitleBar;
         if (!no_border) window_flags |= WindowFlags.ShowBorders;
@@ -238,13 +232,13 @@ label:
 
             if (GUILayout.TreeNode("Images", ref open10))
             {
-                GUILayout.Image("Image/trees.jpg");
+                GUILayout.Image("images/trees.jpg");
                 GUILayout.Text("Some textured buttons:");
                 GUILayout.BeginHorizontal("HGroup~1");
                 for (int i = 0; i < 8; i++)
                 {
                     GUILayout.PushID(i);
-                    if (GUILayout.ImageButton("Image/trees.jpg", new Size(32, 32), new Point(32.0f * i / 256, 0), new Point(32.0f * (i + 1) / 256, 32.0f / 256), Color.White))
+                    if (GUILayout.ImageButton("images/trees.jpg", new Size(32, 32), new Point(32.0f * i / 256, 0), new Point(32.0f * (i + 1) / 256, 32.0f / 256), Color.White))
                         pressed_count += 1;
                     GUILayout.PopID();
                 }

@@ -17,7 +17,6 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            s.PushFontSize(CurrentOS.IsAndroid ? 32.0 : 13.0);//+1
             s.PushPadding(10.0);//+4
 
             // rect
@@ -30,7 +29,7 @@ namespace ImGui
             // render
             GUIAppearance.DrawTextBox(rect, id, text, context);
 
-            s.PopStyle(1 + 4);
+            s.PopStyle(4);
 
             return text;
         }
@@ -56,7 +55,6 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            s.PushFontSize(CurrentOS.IsAndroid ? 32.0 : 13.0);//+1
             s.PushPadding(10.0);//+4
 
             // rect
@@ -71,7 +69,7 @@ namespace ImGui
             GUIAppearance.DrawTextBox(rect, id, text, context);
             s.PopStyle();
 
-            s.PopStyle(1 + 4);
+            s.PopStyle(4);
 
             return text;
         }
@@ -97,7 +95,6 @@ namespace ImGui
             // style apply
             var s = g.StyleStack;
             var style = s.Style;
-            s.PushFontSize(CurrentOS.IsAndroid ? 32.0 : 13.0);//+1
             s.PushBorder(0);//+4
             s.PushPadding(3.0);//+4
 
@@ -125,11 +122,11 @@ namespace ImGui
             {
                 GUIAppearance.DrawTextBox(boxRect, id, text, context);
             }
-            s.PopStyle();
+            s.PopStyle();//-1
             d.DrawBoxModel(labelRect, label, style);
 
 
-            s.PopStyle(1 + 4 + 4);
+            s.PopStyle(4 + 4);//-4-4
 
             return text;
         }

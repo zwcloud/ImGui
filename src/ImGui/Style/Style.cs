@@ -24,13 +24,14 @@ namespace ImGui
 
         static GUIStyle()
         {
-            DefaultFontSize = 12;
             if (CurrentOS.IsAndroid)
             {
+                DefaultFontSize = 24;
                 DefaultFontFamily = "DroidSans.ttf";
             }
             else
             {
+                DefaultFontSize = 12;
                 DefaultFontFamily = Utility.FontDir + "msjh.ttf";
             }
 
