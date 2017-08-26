@@ -12,6 +12,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Demo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)images\trees.jpg" />
+    <None Include="$(MSBuildThisFileDirectory)images\trees.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

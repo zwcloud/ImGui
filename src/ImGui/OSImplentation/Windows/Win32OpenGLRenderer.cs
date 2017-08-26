@@ -326,8 +326,6 @@ void main()
             this.shapeMaterial.ShutDown();
             this.imageMaterial.ShutDown();
             this.glyphMaterial.ShutDown();
-
-            //TODO release frame buffer
         }
     }
 }
