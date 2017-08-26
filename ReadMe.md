@@ -5,15 +5,19 @@ Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](http
 
 ![code sample](https://raw.githubusercontent.com/wiki/zwcloud/imgui/images/code_sample.png)
 
-Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms).
+Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms). MAC and iphone are not supported because I don't have them.
 
 Please be infromed that ImGui is just released. There's a lack of usability and documentation. But all will be improved gradually.
 
+Please note that the API is unstable and will change at any time.
+
 ## Get Started
+
+### For Windows and Linux
 
 1. Download msjh.ttf to directory `ImGui\src\ImGui\assets\fonts`. See [font note](https://github.com/zwcloud/ImGui/blob/master/src/ImGui/assets/fonts/ReadMe.md).
 
-2. Create a .NET Core 2.0 project and referance _ImGui_.
+2. Create a .NET Core 2.0 project and reference _ImGui_.
 
 3. Add follwing code files to your project,
 
@@ -53,20 +57,30 @@ Please be infromed that ImGui is just released. There's a lack of usability and 
 
 5. Run
     * run in VS2017: Press F5
-    * run in console:
+    * run in Windows console:
 
         ```
         cd MyApp/bin/Debug/netcoreapp2.0
         dotnet MyApp.dll
+       ```
+    * run in Linux terminal:
+
         ```
+        cd MyApp/bin/Debug/netcoreapp2.0
+        dotnet MyApp.dll
+       ```
+
 6. Exit
 
     Press <kbd>Esc</kbd> or click the close button of the window.
 
+### For Android
+
+1. Copy [Android Templates project](https://github.com/zwcloud/ImGui/tree/master/templates/AndroidTemplate). The referenced Demo can be removed if you don't need that.
+2. Add your GUI code in `MainForm.OnGUI`.
+3. Build and depoly it to your Android device.
+
 For now, please refer to [the shared project __Demo__](https://github.com/zwcloud/ImGui/tree/master/templates/Demo) for how to use Hello ImGui.
-
-Please note that the API is unstable and will change at any time. Documentaion will be added in the future when API is stable.
-
 
 ## Target
 
@@ -79,7 +93,9 @@ A Real Universal GUI Framework.
 
 ## Credits
 
-*ImGui doesn't depends on those projects, code used by ImGui are taken from them.*
+DroidSans.ttf, Droid Sans is a humanist sans serif typeface designed by Steve Matteson [licenced under Apache 2](https://github.com/google/fonts/blob/master/apache/droidsans/LICENSE.txt).
+
+*ImGui doesn't depends on following projects, code used by ImGui are taken from them.*
 
 * [Typography](https://github.com/LayoutFarm/Typography): C# Font Reader (TrueType / OpenType / OpenFont) , Glyphs Layout and Rendering
 * [OpenTK](https://github.com/opentk/opentk): low-level C# wrapper for OpenGL
