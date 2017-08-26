@@ -175,8 +175,12 @@ namespace ImGui
         }
 
         //HACK remove this if font-family in Typography is ready
-        //FIXME relative path? how?
-        public static string FontDir = CurrentOS.IsWindows? @"W:\VS2017\ImGui\templates\Demo\Font\" : Path.GetDirectoryName(typeof(ImGui.Application).GetTypeInfo().Assembly.Location) + Path.DirectorySeparatorChar + "Font" + Path.DirectorySeparatorChar;
+        public static string FontDir = GetFontDir();
+
+        static string GetFontDir()
+        {
+            return Path.GetDirectoryName(typeof(Application).GetTypeInfo().Assembly.Location) + Path.DirectorySeparatorChar + "assets/fonts" + Path.DirectorySeparatorChar;
+        }
 
     }
 }

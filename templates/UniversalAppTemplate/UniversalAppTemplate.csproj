@@ -12,12 +12,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="Font\Helvetica.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   
   <ItemGroup>
     <DotNetCliToolReference Include="DotnetPublishSsh" Version="0.0.4" />
