@@ -15,7 +15,9 @@ Please note that the API is unstable and will change at any time.
 
 ### For Windows and Linux
 
-1. Download msjh.ttf to directory `ImGui\src\ImGui\assets\fonts`. See [font note](https://github.com/zwcloud/ImGui/blob/master/src/ImGui/assets/fonts/ReadMe.md).
+1. Preparation
+    * Download msjh.ttf to directory `ImGui\src\ImGui\assets\fonts`. See [font note](https://github.com/zwcloud/ImGui/blob/master/src/ImGui/assets/fonts/ReadMe.md).
+    * Add a local directory as a new nuget package source and put [`ImageSharp.1.0.0-alpha9.nupkg`](https://github.com/zwcloud/ImGui/blob/master/packages/ImageSharp.1.0.0-alpha9/ImageSharp.1.0.0-alpha9.nupkg) inside. (The offical ImageSharp package is a dummy one on nuget.org. This is a modified version of the lastest ImageSharp so it supports .NET Standard 2.0.)
 
 2. Create a .NET Core 2.0 project and reference _ImGui_.
 
@@ -76,9 +78,11 @@ Please note that the API is unstable and will change at any time.
 
 ### For Android
 
-1. Copy [Android Templates project](https://github.com/zwcloud/ImGui/tree/master/templates/AndroidTemplate). The referenced Demo can be removed if you don't need that.
-2. Add your GUI code in `MainForm.OnGUI`.
-3. Build and depoly it to your Android device.
+1. Preparation
+    * Add a local directory as a new nuget package source and put [`ImageSharp.1.0.0-alpha9.nupkg`](https://github.com/zwcloud/ImGui/blob/master/packages/ImageSharp.1.0.0-alpha9/ImageSharp.1.0.0-alpha9.nupkg) inside. (The offical ImageSharp package is a dummy one on nuget.org. This is a modified version of the lastest ImageSharp so it supports .NET Standard 2.0.)
+2. Copy [Android Templates project](https://github.com/zwcloud/ImGui/tree/master/templates/AndroidTemplate). The referenced Demo can be removed if you don't need that.
+3. Add your GUI code in `MainForm.OnGUI`.
+4. Build and depoly it to your Android device.
 
 For now, please refer to [the shared project __Demo__](https://github.com/zwcloud/ImGui/tree/master/templates/Demo) for how to use Hello ImGui.
 
