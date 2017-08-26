@@ -70,6 +70,8 @@ label:
 
     #region Graphics Widgets
     bool graphicsWidgetsOn;
+    bool animate = true;
+    double progress = 0.0, progress_dir = 1.0;
     #endregion
 
     #region Layout
@@ -359,8 +361,31 @@ label:
         if (GUILayout.CollapsingHeader("Graphs widgets", ref graphicsWidgetsOn))
         {
             GUILayout.PushID("_GraphsWidgets");
-            //TODO
-            GUILayout.Label("TODO");
+            animate = GUILayout.CheckBox("Animate", animate);
+            GUILayout.PushHStretchFactor(1);//+1
+            if (animate)
+            {
+                progress += progress_dir * 0.4f * Application.DeltaTime / 1000.0;
+                if (progress >= +1.1f) { progress = +1.1f; progress_dir *= -1.0f; }
+                if (progress <= -0.1f) { progress = -0.1f; progress_dir *= -1.0f; }
+            }
+            double progress_saturated = (progress < 0.0) ? 0.0 : (progress > 1.0f) ? 1.0 : progress;
+
+            var percentText = string.Format("{0}%", (int)(progress_saturated * 100));
+            GUILayout.BeginHorizontal("HGroup~1");
+            GUILayout.BeginVertical("ProgressBars");
+            GUILayout.ProgressBar("ProgressBar %", progress, (400, 20), percentText);
+
+            const int total = 1753;
+            var text = string.Format("{0}/{1}", (int)(progress_saturated * total), total);
+            GUILayout.ProgressBar("ProgressBar /", progress, (400, 20), text);
+            GUILayout.EndVertical();
+            GUILayout.PushFixedWidth(100);//+2
+            GUILayout.Text("Progress");
+            GUILayout.PopStyleVar(2);//-2
+            GUILayout.EndHorizontal();
+
+            GUILayout.PopStyleVar();//-1
             GUILayout.PopID();
         }
 

@@ -158,6 +158,16 @@ namespace ImGui
 
         #endregion
 
+        #region text
+
+        public void PushTextAlignment(TextAlignment alignment)
+        {
+            var modifier = new StyleModifier(GUIStyleName.TextAlignment, StyleType.@int, (int)alignment);
+            Push(modifier);
+        }
+
+        #endregion
+
         #region fill and stroke
 
         public void PushFillColor(Color color, GUIState state = GUIState.Normal)

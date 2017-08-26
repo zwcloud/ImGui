@@ -5,7 +5,7 @@ namespace ImGui
 {
     public partial class GUILayout
     {
-        public static double ProgressBar(string str_id, float percent, Size size, string overlayText)
+        public static double ProgressBar(string str_id, double percent, Size size, string overlayText = null)
         {
             Window window = GetCurrentWindow();
             if (window.SkipItems)
@@ -24,7 +24,14 @@ namespace ImGui
             percent = MathEx.Clamp01(percent);
 
             // render
+            DrawList d = window.DrawList;
             GUIAppearance.DrawProgressBar(rect, percent);
+            if(overlayText != null)
+            {
+                s.PushTextAlignment(TextAlignment.Center);
+                d.DrawBoxModel(rect, overlayText, style);
+                s.PopStyle();
+            }
 
             return percent;
         }
@@ -41,12 +48,14 @@ namespace ImGui
             GUIStyle style = s.Style;
             DrawList d = window.DrawList;
 
+            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
             d.AddRectFilled(rect, style.BackgroundColor);
+            s.PopStyle();//-1
             var fillWidth = rect.Width * percent;
             var fillRect = new Rect(rect.X, rect.Y, fillWidth, rect.Height);
-            s.PushFillColor(new Color(0.90f, 0.70f, 0.00f, 1.00f));
+            s.PushFillColor(new Color(0.90f, 0.70f, 0.00f, 1.00f));//+1
             d.AddRectFilled(fillRect, style.FillColor);
-            s.PopStyle();
+            s.PopStyle();//-1
         }
     }
 }

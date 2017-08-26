@@ -83,10 +83,10 @@ namespace ImGui
             //Content-box
             if (text != null && ctl.X < ctr.X)//content should not be visible when ctl.X > ctr.X
             {
-                var textSize = style.CalcSize(text, state);
-                if(textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)
+                //var textSize = style.CalcSize(text, state);
+                /*HACK Don't check text size because the size calculated by Typography is not accurate. */
+                /*if (textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)*/
                 {
-                    //TODO handle text alignment
                     drawList.DrawText(contentBoxRect, text, style, state);
                 }
             }
@@ -308,7 +308,28 @@ namespace ImGui
         /// <param name="state">state of the style</param>
         public static void DrawText(this DrawList drawList, Rect rect, string text, GUIStyle style, GUIState state)
         {
+            TextAlignment alignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+            if(alignment != TextAlignment.Leading)
+            {
+                var textWidth = style.CalcSize(text, state).Width;
+                if (rect.Width > textWidth)
+                {
+                    if (alignment == TextAlignment.Center)
+                    {
+                        var offsetX = (rect.Width - textWidth) / 2;
+                        rect.X += offsetX;
+                        rect.Width -= offsetX;
+                    }
+                    else if (alignment == TextAlignment.Trailing)
+                    {
+                        rect.X = rect.Right - textWidth;
+                        rect.Width = textWidth;
+                    }
+                }
+            }
+
             drawList.AddText(rect, text, style, state);
+
         }
 
         /// <summary>
