@@ -132,13 +132,13 @@ namespace ImGui
             PathStroke(col, true, thickness);
         }
 
-        public void AddCircleFilled(Point center, float radius, Color col, int num_segments)
+        public void AddCircleFilled(Point center, double radius, Color col, int num_segments)
         {
             if (MathEx.AmostZero(col.A))
                 return;
 
-            float a_max = (float)Math.PI * 2.0f * ((float)num_segments - 1.0f) / (float)num_segments;
-            PathArcTo(center, radius, 0.0f, a_max, num_segments);
+            float a_max = (float)Math.PI * 2.0f * (num_segments - 1.0f) / num_segments;
+            PathArcTo(center, (float)radius, 0.0f, a_max, num_segments);
             PathFill(col);
         }
 

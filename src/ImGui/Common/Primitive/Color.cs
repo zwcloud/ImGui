@@ -87,6 +87,10 @@ namespace ImGui.Common.Primitive
 
         #region "System" colors
         public static readonly Color TextDisabled = new Color(0.60f, 0.60f, 0.60f, 1.00f);
+        public static readonly Color FrameBg = new Color(0.80f, 0.80f, 0.80f, 0.30f);
+        public static readonly Color FrameBgHovered = new Color(0.90f, 0.80f, 0.80f, 0.40f);
+        public static readonly Color FrameBgActive = new Color(0.90f, 0.65f, 0.65f, 0.45f);
+        public static readonly Color CheckMark = new Color(0.90f, 0.90f, 0.90f, 0.50f);
         #endregion
 
         public static Color Rgb(byte r, byte g, byte b)

@@ -60,6 +60,7 @@ label:
 \tlock cmpxchg8b eax
 ";
     bool check;
+    int active_id = 0;
 
     #region Sliders
     double sliderValue = 0.01;
@@ -305,14 +306,13 @@ label:
 
             check = GUILayout.CheckBox("checkbox", check);
 
-            // TODO radio
-            //GUILayout.BeginHorizontal("HGroup~radios");
-            //{
-            //    GUILayout.Radio("Radio 0", ref active_id, "radio_b_0");
-            //    GUILayout.Radio("Radio 1", ref active_id, "radio_b_1");
-            //    GUILayout.Radio("Radio 2", ref active_id, "radio_b_2");
-            //}
-            //GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal("HGroup~radios");
+            {
+                GUILayout.RadioButton("Radio 0", ref active_id, 0);
+                GUILayout.RadioButton("Radio 1", ref active_id, 1);
+                GUILayout.RadioButton("Radio 2", ref active_id, 2);
+            }
+            GUILayout.EndHorizontal();
 
             // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
             GUILayout.BeginHorizontal("HGroup~click buttons");
