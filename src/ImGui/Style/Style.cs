@@ -422,6 +422,42 @@ namespace ImGui
             return lineHeight;
         }
 
+        /// <summary>
+        /// Get rect of the context box
+        /// </summary>
+        /// <param name="rect">rect of the entire box</param>
+        /// <param name="style">style</param>
+        /// <param name="state">state</param>
+        /// <returns>rect of the context box</returns>
+        public Rect GetContentRect(Rect rect, GUIState state = GUIState.Normal)
+        {
+            //Widths of border
+            var bt = this.Get<double>(GUIStyleName.BorderTop, state);
+            var br = this.Get<double>(GUIStyleName.BorderRight, state);
+            var bb = this.Get<double>(GUIStyleName.BorderBottom, state);
+            var bl = this.Get<double>(GUIStyleName.BorderLeft, state);
+
+            //Widths of padding
+            var pt = this.Get<double>(GUIStyleName.PaddingTop, state);
+            var pr = this.Get<double>(GUIStyleName.PaddingRight, state);
+            var pb = this.Get<double>(GUIStyleName.PaddingBottom, state);
+            var pl = this.Get<double>(GUIStyleName.PaddingLeft, state);
+
+            //4 corner of the border-box
+            var btl = new Point(rect.Left, rect.Top);
+            var bbr = new Point(rect.Right, rect.Bottom);
+
+            //4 corner of the padding-box
+            var ptl = new Point(btl.X + bl, btl.Y + bt);
+            var pbr = new Point(bbr.X - br, bbr.Y - bb);
+
+            //4 corner of the content-box
+            var ctl = new Point(ptl.X + pl, ptl.Y + pt);
+            var cbr = new Point(pbr.X - pr, pbr.Y - pb);
+            var contentBoxRect = new Rect(ctl, cbr);
+            return contentBoxRect;
+        }
+
         internal Size MeasureText(GUIState state, string text)
         {
             var measureContext = TextMeshUtil.GetTextContext(text, new Size(4096, 4096), this, state);

@@ -157,5 +157,21 @@ namespace ImGui
         }
 
         #endregion
+
+        #region fill and stroke
+
+        public void PushFillColor(Color color, GUIState state = GUIState.Normal)
+        {
+            var modifier = new StyleModifier(GUIStyleName.FillColor, StyleType.Color, color, state);
+            Push(modifier);
+        }
+
+        public void PushStrokeColor(Color color, GUIState state = GUIState.Normal)
+        {
+            var modifier = new StyleModifier(GUIStyleName.StrokeColor, StyleType.Color, color, state);
+            Push(modifier);
+        }
+
+        #endregion
     }
 }

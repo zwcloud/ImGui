@@ -6,9 +6,18 @@
     <Company>zwcloud</Company>
     <Product>zwcloud.ImGui</Product>
     <Copyright>Copyright (c) 2016-2017 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
-    <PackageProjectUrl>https://zwcloud.net/#project/imgui</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/zwcloud/ImGui</PackageProjectUrl>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <SignAssembly>False</SignAssembly>
+    <RepositoryUrl>https://github.com/zwcloud/ImGui</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/zwcloud/ImGui/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <Version>0.0.1</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageTags>GUI</PackageTags>
+    <AssemblyVersion>0.0.0.1</AssemblyVersion>
+    <FileVersion>0.0.0.1</FileVersion>
+    <ApplicationIcon />
+    <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,7 +46,6 @@
 
   <ItemGroup>
     <Compile Remove="Control\Box.cs" />
-    <Compile Remove="Control\GUIBehavior.cs" />
     <Compile Remove="Control\HoverButton.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
     <Compile Remove="Control\ToggleButton.cs" />

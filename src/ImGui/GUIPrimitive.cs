@@ -83,8 +83,12 @@ namespace ImGui
             //Content-box
             if (text != null && ctl.X < ctr.X)//content should not be visible when ctl.X > ctr.X
             {
-                //TODO handle text alignment
-                drawList.DrawText(contentBoxRect, text, style, state);
+                var textSize = style.CalcSize(text, state);
+                if(textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)
+                {
+                    //TODO handle text alignment
+                    drawList.DrawText(contentBoxRect, text, style, state);
+                }
             }
 
             //Border

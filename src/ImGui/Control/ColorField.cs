@@ -61,7 +61,9 @@ namespace ImGui
                     }
                     EndHorizontal();
                     aId = window.GetID("#A");
+                    PushFixedHeight(10);//+2
                     rectA = window.GetRect(aId, Size.Zero);
+                    PopStyleVar(2);//-2
                 }
                 EndVertical();
                 colorId = window.GetID("#Color");
@@ -77,23 +79,25 @@ namespace ImGui
             EndHorizontal();
 
             // interact
-            value.R = GUIBehavior.SliderBehavior(rectR, rId, true, value.R, 0, 1.0, out bool _);
-            value.G = GUIBehavior.SliderBehavior(rectG, gId, true, value.G, 0, 1.0, out bool _);
-            value.B = GUIBehavior.SliderBehavior(rectB, bId, true, value.B, 0, 1.0, out bool _);
-            value.A = GUIBehavior.SliderBehavior(rectA, aId, true, value.A, 0, 1.0, out bool _);
+            value.R = GUIBehavior.SliderBehavior(rectR, rId, true, value.R, 0, 1.0, out bool R_hovered, out bool R_held);
+            value.G = GUIBehavior.SliderBehavior(rectG, gId, true, value.G, 0, 1.0, out bool G_hovered, out bool G_held);
+            value.B = GUIBehavior.SliderBehavior(rectB, bId, true, value.B, 0, 1.0, out bool B_hovered, out bool B_held);
+            value.A = GUIBehavior.SliderBehavior(rectA, aId, true, value.A, 0, 1.0, out bool A_hovered, out bool A_held);
 
             // render
             var d = window.DrawList;
-            DrawColorDragButton(d, rectR, rId, 'R', value.R);
-            DrawColorDragButton(d, rectG, gId, 'G', value.G);
-            DrawColorDragButton(d, rectB, bId, 'B', value.B);
-            DrawColorDragButton(d, rectA, aId, 'A', value.A);
+            DrawColorDragButton(d, rectR, rId, 'R', value.R, (R_hovered && R_held) ? GUIState.Active : R_hovered ? GUIState.Hover : GUIState.Normal);
+            DrawColorDragButton(d, rectG, gId, 'G', value.G, (G_hovered && G_held) ? GUIState.Active : G_hovered ? GUIState.Hover : GUIState.Normal);
+            DrawColorDragButton(d, rectB, bId, 'B', value.B, (B_hovered && B_held) ? GUIState.Active : B_hovered ? GUIState.Hover : GUIState.Normal);
+
+            GUIAppearance.DrawProgressBar(rectA, value.A);
+
             d.AddRectFilled(rectColor, value);
 
             return value;
         }
 
-        private static void DrawColorDragButton(DrawList drawList, Rect rect, int id, char colorChar, double value)
+        private static void DrawColorDragButton(DrawList drawList, Rect rect, int id, char colorChar, double value, GUIState state)
         {
             GUIContext g = Form.current.uiContext;
             Window window = g.WindowManager.CurrentWindow;
@@ -102,13 +106,22 @@ namespace ImGui
             var style = s.Style;
             var d = window.DrawList;
 
-            s.PushBorder((1, 1, 1, 1));//+4
-            s.PushBorderColor(Color.White);//+4
-            d.DrawBoxModel(rect, string.Format("{0}:{1,3}", colorChar,(int)(value * 255)), style);
-            s.PopStyle(4);//-4
-            s.PopStyle(4);//-4
-        }
+            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
+            d.AddRectFilled(rect, style.BackgroundColor);
+            s.PopStyle();//-1
 
+            string text;
+            text = string.Format("{0}:{1,3}", colorChar, (int)(value * 255));
+            var fullTextSize = style.CalcSize(text, state);
+            var contentRect = style.GetContentRect(rect, state);
+            if(fullTextSize.Width > contentRect.Width)
+            {
+                text = ((int)(value * 255)).ToString();
+            }
+
+            d.DrawBoxModel(rect, text, style, state);
+            
+        }
     }
 
 }

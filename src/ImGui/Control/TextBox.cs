@@ -238,7 +238,7 @@ namespace ImGui
 
             var d = window.DrawList;
             var style = g.StyleStack.Style;
-            var contentRect = Utility.GetContentRect(rect, style);
+            var contentRect = style.GetContentRect(rect);
             d.PushClipRect(rect, true);
 
             //Draw the box

@@ -54,7 +54,7 @@ namespace ImGui
             var style = g.StyleStack.Style;
             ITextContext textContext = TextMeshUtil.GetTextContext(textBox.Text, rect.Size, style, GUIState.Normal);
 
-            var contentRect = Utility.GetContentRect(rect, style);
+            var contentRect = style.GetContentRect(rect);
             var mousePos = Mouse.Instance.Position;
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;
@@ -108,7 +108,7 @@ namespace ImGui
             var style = g.StyleStack.Style;
             var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, GUIState.Normal);
 
-            var contentRect = Utility.GetContentRect(rect, style);
+            var contentRect = style.GetContentRect(rect);
             var mousePos = Mouse.Instance.Position;
             var offsetOfTextRect = contentRect.TopLeft;
             uint caretIndex;

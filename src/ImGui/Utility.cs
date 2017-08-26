@@ -9,40 +9,7 @@ namespace ImGui
 {
     internal static class Utility
     {
-        /// <summary>
-        /// Get rect of the context box
-        /// </summary>
-        /// <param name="rect">rect of the entire box</param>
-        /// <param name="style">style</param>
-        /// <returns>rect of the context box</returns>
-        public static Rect GetContentRect(Rect rect, GUIStyle style)
-        {
-            //Widths of border
-            var bt = style.BorderTop;
-            var br = style.BorderRight;
-            var bb = style.BorderBottom;
-            var bl = style.BorderLeft;
 
-            //Widths of padding
-            var pt = style.PaddingTop;
-            var pr = style.PaddingRight;
-            var pb = style.PaddingBottom;
-            var pl = style.PaddingLeft;
-
-            //4 corner of the border-box
-            var btl = new Point(rect.Left, rect.Top);
-            var bbr = new Point(rect.Right, rect.Bottom);
-
-            //4 corner of the padding-box
-            var ptl = new Point(btl.X + bl, btl.Y + bt);
-            var pbr = new Point(bbr.X - br, bbr.Y - bb);
-
-            //4 corner of the content-box
-            var ctl = new Point(ptl.X + pl, ptl.Y + pt);
-            var cbr = new Point(pbr.X - pr, pbr.Y - pb);
-            var contentBoxRect = new Rect(ctl, cbr);
-            return contentBoxRect;
-        }
 
         /// <summary>
         /// convert pt to dip

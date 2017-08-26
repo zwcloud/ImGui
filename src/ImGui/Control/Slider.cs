@@ -42,8 +42,8 @@ namespace ImGui
             var sliderRect = new Rect(rect.X, rect.Y,
                 sliderWidth,
                 rect.Height);
-            bool hovered;
-            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered);
+            bool hovered, held;
+            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered, out held);
 
             // render
             var state = GUIState.Normal;
@@ -95,8 +95,8 @@ namespace ImGui
             }
             var sliderRect = new Rect(rect.X, rect.Y,
                 rect.Width, sliderHeight);
-            bool hovered;
-            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered);
+            bool hovered, held;
+            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered, out held);
 
             // render
             var state = GUIState.Normal;
@@ -159,8 +159,8 @@ namespace ImGui
             var sliderRect = new Rect(rect.X, rect.Y,
                 sliderWidth,
                 rect.Height);
-            bool hovered;
-            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered);
+            bool hovered, held;
+            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered, out held);
 
             // render
             var state = GUIState.Normal;
@@ -224,8 +224,8 @@ namespace ImGui
                 rect.Width,
                 sliderHeight);
 
-            bool hovered;
-            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered);
+            bool hovered, held;
+            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered, out held);
 
             // render
             var state = GUI.Normal;
@@ -248,9 +248,12 @@ namespace ImGui
 
     internal partial class GUIBehavior
     {
-        public static double SliderBehavior(Rect sliderRect, int id, bool horizontal, double value, double minValue, double maxValue, out bool hovered)
+        public static double SliderBehavior(Rect sliderRect, int id, bool horizontal, double value, double minValue, double maxValue, out bool hovered, out bool held)
         {
             GUIContext g = Form.current.uiContext;
+
+            hovered = false;
+            held = false;
 
             hovered = g.IsHovered(sliderRect, id);
             g.KeepAliveID(id);
@@ -292,6 +295,12 @@ namespace ImGui
                     g.SetActiveID(0);
                 }
             }
+
+            if(g.ActiveId == id)
+            {
+                held = true;
+            }
+
             return value;
         }
     }
