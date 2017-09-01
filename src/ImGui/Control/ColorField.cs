@@ -34,9 +34,9 @@ namespace ImGui
 
             Rect rectR, rectG, rectB, rectA, rectColor;
 
-            BeginHorizontal("#RGBA&Color", Width((int)GUISkin.Instance.FieldWidth), Height(100));
+            BeginHorizontal("#RGBA&Color", GUILayout.Width((int)GUISkin.Instance.FieldWidth).Height(100));
             {
-                BeginVertical(label + "#RGBA", ExpandWidth(true));
+                BeginVertical(label + "#RGBA", GUILayout.ExpandWidth(true));
                 {
                     BeginHorizontal("#RGB");
                     {
@@ -52,7 +52,7 @@ namespace ImGui
                     EndHorizontal();
 
                     aId = window.GetID("#A");
-                    rectA = window.GetRect(aId, (0, 10), ExpandWidth(true));
+                    rectA = window.GetRect(aId, (0, 10), GUILayout.ExpandWidth(true));
                 }
                 EndVertical();
             }

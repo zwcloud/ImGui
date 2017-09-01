@@ -46,7 +46,7 @@ namespace ImGui.Layout
             this.ReadingStack = this.stackB;
         }
 
-        public Rect GetRect(int id, Size contentSize, params LayoutOption[] options)
+        public Rect GetRect(int id, Size contentSize, LayoutOptions? options = null)
         {
             // FIXME This should only be checked if the rect's width or height is not stretched.
             //if (contentSize.Height < 1 || contentSize.Width < 1)
@@ -76,7 +76,7 @@ namespace ImGui.Layout
             }
         }
 
-        public void BeginLayoutGroup(int id, bool isVertical, Size size, LayoutOption[] options)
+        public void BeginLayoutGroup(int id, bool isVertical, Size size, LayoutOptions? options)
         {
             // build group for next frame
             {

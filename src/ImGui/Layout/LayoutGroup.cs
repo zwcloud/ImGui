@@ -22,7 +22,7 @@ namespace ImGui.Layout
             this.ApplyStyle();
         }
 
-        public void Init(int id, bool isVertical, Size contentSize, LayoutOption[] options)
+        public void Init(int id, bool isVertical, Size contentSize, LayoutOptions? options)
         {
             this.Id = id;
             this.ContentWidth = contentSize.Width;
@@ -31,7 +31,10 @@ namespace ImGui.Layout
             this.IsVertical = isVertical;
 
             this.ApplyStyle();
-            this.ApplyOptions(options);
+            if(options.HasValue)
+            {
+                this.ApplyOptions(options.Value);
+            }
         }
 
         protected override void ApplyStyle()

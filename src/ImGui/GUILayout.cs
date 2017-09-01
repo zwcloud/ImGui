@@ -52,12 +52,12 @@ namespace ImGui
             BeginHorizontal(str_id, Size.Zero, ExpandWidth(true));
         }
 
-        public static void BeginHorizontal(string str_id, params LayoutOption[] options)
+        public static void BeginHorizontal(string str_id, LayoutOptions? options = null)
         {
             BeginHorizontal(str_id, Size.Zero, options);
         }
 
-        public static void BeginHorizontal(string str_id, Size size, params LayoutOption[] options)
+        public static void BeginHorizontal(string str_id, Size size, LayoutOptions? options = null)
         {
             Window window = GetCurrentWindow();
             var styleStack = Form.current.uiContext.StyleStack;
@@ -81,12 +81,12 @@ namespace ImGui
             BeginVertical(str_id, Size.Zero, ExpandWidth(true));
         }
 
-        public static void BeginVertical(string str_id, params LayoutOption[] options)
+        public static void BeginVertical(string str_id, LayoutOptions? options = null)
         {
             BeginVertical(str_id, Size.Zero, options);
         }
 
-        public static void BeginVertical(string str_id, Size size, params LayoutOption[] options)
+        public static void BeginVertical(string str_id, Size size, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
             var styleStack = Form.current.uiContext.StyleStack;
@@ -113,69 +113,48 @@ namespace ImGui
 
         #endregion
 
-        #region layout option creators
+        #region layout option short-cuts
 
         /// <summary>
         /// Set the width of a control.
         /// </summary>
         /// <param name="width">width value</param>
         /// <returns>A <see cref="LayoutOption"/> that will set the width of a control/group.</returns>
-        public static LayoutOption Width(int width)
-        {
-            return new LayoutOption(LayoutOptionType.FixedWidth, width);
-        }
+        public static LayoutOptions Width(int width) => new LayoutOptions().Width(width);
 
         /// <summary>
         /// Set the height of a control.
         /// </summary>
         /// <param name="height">height value</param>
         /// <returns>A <see cref="LayoutOption"/> that will set the height of a control/group.</returns>
-        public static LayoutOption Height(int height)
-        {
-            return new LayoutOption(LayoutOptionType.FixedHeight, height);
-        }
+        public static LayoutOptions Height(int height) => new LayoutOptions().Height(height);
 
         /// <summary>
         /// Set whether the width of a control should be expanded to occupy as much space as possible.
         /// </summary>
         /// <param name="expand">expanded?</param>
         /// <returns>A <see cref="LayoutOption"/> that will expand the width of a control/group.</returns>
-        public static LayoutOption ExpandWidth(bool expand)
-        {
-            return new LayoutOption(LayoutOptionType.StretchWidth, expand ? 1 : 0);
-        }
+        public static LayoutOptions ExpandWidth(bool expand) => new LayoutOptions().ExpandWidth(expand);
 
         /// <summary>
         /// Set whether the height of a control should be expanded to occupy as much space as possible.
         /// </summary>
         /// <param name="expand">expanded?</param>
         /// <returns>A <see cref="LayoutOption"/> that will expand the height of a control/group.</returns>
-        public static LayoutOption ExpandHeight(bool expand)
-        {
-            return new LayoutOption(LayoutOptionType.StretchHeight, expand ? 1 : 0);
-        }
+        public static LayoutOptions ExpandHeight(bool expand) => new LayoutOptions().ExpandHeight(expand);
 
         /// <summary>
         /// Set the factor when expanding the width of a control.
         /// </summary>
         /// <param name="factor">the value of the factor</param>
         /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the width of a control/group.</returns>
-        public static LayoutOption StretchWidth(int factor)
-        {
-            if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
-            return new LayoutOption(LayoutOptionType.StretchWidth, factor);
-        }
-
+        public static LayoutOptions StretchWidth(int factor) => new LayoutOptions().StretchWidth(factor);
         /// <summary>
         /// Set the factor when expanding the height of a control.
         /// </summary>
         /// <param name="factor">the value of the factor</param>
         /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the height of a control/group.</returns>
-        public static LayoutOption StretchHeight(int factor)
-        {
-            if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
-            return new LayoutOption(LayoutOptionType.StretchHeight, factor);
-        }
+        public static LayoutOptions StretchHeight(int factor) => new LayoutOptions().StretchHeight(factor);
 
         #endregion
     }
