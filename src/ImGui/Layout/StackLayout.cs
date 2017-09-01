@@ -76,7 +76,7 @@ namespace ImGui.Layout
             }
         }
 
-        public void BeginLayoutGroup(int id, bool isVertical, Size size, GUIStyle style = null)
+        public void BeginLayoutGroup(int id, bool isVertical, Size size)
         {
             // build group for next frame
             {

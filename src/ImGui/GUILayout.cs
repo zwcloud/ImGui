@@ -46,12 +46,12 @@ namespace ImGui
 
         #region stack-layout
 
-        public static void BeginHorizontal(string str_id, GUIStyle style = null)
+        public static void BeginHorizontal(string str_id)
         {
-            BeginHorizontal(str_id, Size.Zero, style);
+            BeginHorizontal(str_id, Size.Zero);
         }
 
-        public static void BeginHorizontal(string str_id, Size size, GUIStyle style = null)
+        public static void BeginHorizontal(string str_id, Size size)
         {
             Window window = GetCurrentWindow();
             var styleStack = Form.current.uiContext.StyleStack;
@@ -60,7 +60,7 @@ namespace ImGui
             PushID(id);
 
             styleStack.PushStretchFactor(false, 1);
-            window.StackLayout.BeginLayoutGroup(id, false, size, style);
+            window.StackLayout.BeginLayoutGroup(id, false, size);
             styleStack.PopStyle();
         }
 
@@ -72,12 +72,12 @@ namespace ImGui
             PopID();
         }
 
-        public static void BeginVertical(string str_id, GUIStyle style = null)
+        public static void BeginVertical(string str_id)
         {
-            BeginVertical(str_id, Size.Zero, style);
+            BeginVertical(str_id, Size.Zero);
         }
 
-        public static void BeginVertical(string str_id, Size size, GUIStyle style = null)
+        public static void BeginVertical(string str_id, Size size)
         {
             Window window = GetCurrentWindow();
             var styleStack = Form.current.uiContext.StyleStack;
@@ -86,7 +86,7 @@ namespace ImGui
             PushID(id);
 
             styleStack.PushStretchFactor(true, 1);
-            window.StackLayout.BeginLayoutGroup(id, true, size, style);
+            window.StackLayout.BeginLayoutGroup(id, true, size);
             styleStack.PopStyle();
         }
 
