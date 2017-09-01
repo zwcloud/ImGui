@@ -18,13 +18,15 @@ public class Demo
 
     #region Window Options
     bool windowsOptionsOn;
-    static bool no_titlebar = false;
-    static bool no_border = true;
-    static bool no_resize = false;
-    static bool no_move = false;
-    static bool no_scrollbar = false;
-    static bool no_collapse = false;
-    static double bg_alpha = 0.65;
+    bool no_titlebar = false;
+    bool no_border = true;
+    bool no_resize = false;
+    bool no_move = false;
+    bool no_scrollbar = false;
+    bool no_collapse = false;
+    double bg_alpha = 0.65;
+    bool styleEditorOpen = false;
+    bool loggingOpen = false;
     #endregion
 
     #region Widgets
@@ -144,19 +146,23 @@ label:
         if (GUILayout.CollapsingHeader("Window options", ref windowsOptionsOn))
         {
             GUILayout.PushID("_WindowOptions");
-            GUILayout.BeginHorizontal("HGroup");
-                GUILayout.Space("HGroup_indient", 60);
-                GUILayout.BeginVertical("VGroup");
-                    no_titlebar = GUILayout.Toggle("no titlebar", no_titlebar);
-                    no_border = GUILayout.Toggle("no border", no_border);
-                    no_resize = GUILayout.Toggle("no resize", no_resize);
-                    no_move = GUILayout.Toggle("no move", no_move);
-                    no_scrollbar = GUILayout.Toggle("no scrollbar", no_scrollbar);
-                    bg_alpha = GUILayout.Slider("background alpha", bg_alpha, 0.0, 1.0);
-                    ShowStyleEditor();
-                    //TODO logging
-                GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+            no_titlebar = GUILayout.Toggle("no titlebar", no_titlebar);
+            no_border = GUILayout.Toggle("no border", no_border);
+            no_resize = GUILayout.Toggle("no resize", no_resize);
+            no_move = GUILayout.Toggle("no move", no_move);
+            no_scrollbar = GUILayout.Toggle("no scrollbar", no_scrollbar);
+            bg_alpha = GUILayout.Slider("background alpha", bg_alpha, 0.0, 1.0);
+            if (GUILayout.TreeNode("Style", ref styleEditorOpen))
+            {
+                ShowStyleEditor();
+            }
+            GUILayout.TreePop();
+            if (GUILayout.TreeNode("Logging", ref loggingOpen))
+            {
+                GUILayout.Text("TODO");
+            }
+            GUILayout.TreePop();
+            //TODO logging
             GUILayout.PopID();
         }
 
@@ -512,9 +518,7 @@ label:
         var bgColor = Form.current.BackgroundColor;
 
         GUILayout.BeginHorizontal("HGroup~1");
-        GUILayout.PushFixedWidth(300);
-        bgColor = GUILayout.ColorField("Background Color", bgColor); //FIXME
-        GUILayout.PopStyleVar(2);
+        bgColor = GUILayout.ColorField("Background Color", bgColor);
         GUILayout.EndHorizontal();
 
         Form.current.BackgroundColor = bgColor;
