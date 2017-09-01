@@ -24,7 +24,7 @@ namespace ImGui
             var style = s.Style;
 
             // rect
-            var boxSize = new Size(0, 50);
+            var boxSize = new Size(50, 50);
 
             int rId;
             int gId;
@@ -34,48 +34,38 @@ namespace ImGui
 
             Rect rectR, rectG, rectB, rectA, rectColor;
 
+            PushFixedWidth(GUISkin.Instance.FieldWidth);//+2
             PushFixedHeight(100);//+2
-            PushPadding((10, 10, 10, 10));//+4
-            BeginHorizontal(label+"#HGroup");
-            PopStyleVar(4); //-4
-            PopStyleVar(2); //-2
+            BeginHorizontal("#RGBA&Color");
+            PopStyleVar(2);
+            PopStyleVar(2);
             {
-                PushHStretchFactor(1); //+1
-                PushVStretchFactor(1); //+1
-                BeginVertical("#RGBA");
+                PushHStretchFactor(1);
+                BeginVertical(label + "#RGBA");
+                PopStyleVar(1);
                 {
                     BeginHorizontal("#RGB");
                     {
+                        PushHStretchFactor(1);
                         rId = window.GetID("#R");
                         gId = window.GetID("#G");
                         bId = window.GetID("#B");
-                        rectR = window.GetRect(rId, boxSize);
-                        PushHStretchFactor(0); //+1
-                        Space("#space0", 5);
-                        PopStyleVar(); //-1
-                        rectG = window.GetRect(gId, boxSize);
-                        PushHStretchFactor(0); //+1
-                        Space("#space1", 5);
-                        PopStyleVar(); //-1
-                        rectB = window.GetRect(bId, boxSize);
+                        rectR = window.GetRect(rId, (0, 50));
+                        rectG = window.GetRect(gId, (0, 50));
+                        rectB = window.GetRect(bId, (0, 50));
+                        PopStyleVar(1);
                     }
                     EndHorizontal();
+
                     aId = window.GetID("#A");
-                    PushFixedHeight(10);//+2
-                    rectA = window.GetRect(aId, Size.Zero);
-                    PopStyleVar(2);//-2
+                    PushHStretchFactor(1); //+1
+                    rectA = window.GetRect(aId, (0, 10));
+                    PopStyleVar(1);
                 }
                 EndVertical();
-                colorId = window.GetID("#Color");
-                PushHStretchFactor(0); //+1
-                Space("#space2", 10);
-                PopStyleVar(); //-1
-                PushVStretchFactor(1); //+1
-                rectColor = window.GetRect(colorId, Size.Zero);
-                PopStyleVar(); //-1
-                PopStyleVar(); //-1
-                PopStyleVar(); //-1
             }
+            colorId = window.GetID("#Color");
+            rectColor = window.GetRect(colorId, (20, 20));
             EndHorizontal();
 
             // interact

@@ -108,5 +108,5 @@ namespace ImGui
             set =>InternalStyle.Set<double>(GUIStyleName._FieldWidth, value);
         }
         #endregion
-}
+    }
 }
