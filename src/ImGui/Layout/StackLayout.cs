@@ -46,7 +46,7 @@ namespace ImGui.Layout
             this.ReadingStack = this.stackB;
         }
 
-        public Rect GetRect(int id, Size contentSize)
+        public Rect GetRect(int id, Size contentSize, params LayoutOption[] options)
         {
             // FIXME This should only be checked if the rect's width or height is not stretched.
             //if (contentSize.Height < 1 || contentSize.Width < 1)
@@ -57,7 +57,7 @@ namespace ImGui.Layout
             // build entry for next frame
             {
                 var entry = EntryPool.Get();
-                entry.Init(id, contentSize);
+                entry.Init(id, contentSize, options);
 
                 //var entry = new LayoutEntry(id, contentSize);
                 this.WritingStack.Peek().Add(entry);
@@ -76,12 +76,12 @@ namespace ImGui.Layout
             }
         }
 
-        public void BeginLayoutGroup(int id, bool isVertical, Size size)
+        public void BeginLayoutGroup(int id, bool isVertical, Size size, LayoutOption[] options)
         {
             // build group for next frame
             {
                 var group = GroupPool.Get();
-                group.Init(id, isVertical, size);
+                group.Init(id, isVertical, size, options);
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }

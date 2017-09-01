@@ -11,7 +11,7 @@ namespace ImGui.Layout
         /// <summary>
         /// identifier number of this entry/group
         /// </summary>
-        public int Id { get; private set; }
+        public int Id { get; protected set; }
 
         /// <summary>
         /// border-box, the layout result
@@ -112,13 +112,14 @@ namespace ImGui.Layout
             ApplyStyle();
         }
 
-        public void Init(int id, Size contentSize)
+        public void Init(int id, Size contentSize, LayoutOption[] options)
         {
             this.Id = id;
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
 
             ApplyStyle();
+            ApplyOptions(options);
         }
 
         protected virtual void ApplyStyle()
@@ -171,6 +172,53 @@ namespace ImGui.Layout
             else
             {
                 this.VerticalStretchFactor = style.VerticalStretchFactor;
+            }
+        }
+
+        protected void ApplyOptions(LayoutOption[] options)
+        {
+            if (options == null || options.Length == 0)
+            {
+                return;
+            }
+
+            var style = Form.current.uiContext.StyleStack.Style;
+
+            //TODO handle min/max width/height
+            for (var i = 0; i < options.Length; i++)
+            {
+                var option = options[i];
+                switch (option.Type)
+                {
+                    case LayoutOptionType.FixedWidth:
+                        if (option.Value < style.PaddingHorizontal + style.BorderHorizontal)
+                        {
+                            throw new InvalidOperationException(
+                                string.Format(
+                                    "The specified width is too small. It must bigger than the horizontal padding and border size ({0}).",
+                                    style.PaddingHorizontal + style.BorderHorizontal));
+                        }
+                        this.MinWidth = this.MaxWidth = option.Value;
+                        this.HorizontalStretchFactor = 0;
+                        break;
+                    case LayoutOptionType.FixedHeight:
+                        if (option.Value < style.PaddingVertical + style.BorderVertical)
+                        {
+                            throw new InvalidOperationException(
+                                string.Format(
+                                    "The specified height is too small. It must bigger than the vertical padding and border size ({0}).",
+                                    style.PaddingVertical + style.BorderVertical));
+                        }
+                        this.MinHeight = this.MaxHeight = option.Value;
+                        this.VerticalStretchFactor = 0;
+                        break;
+                    case LayoutOptionType.StretchWidth:
+                        this.HorizontalStretchFactor = option.Value;
+                        break;
+                    case LayoutOptionType.StretchHeight:
+                        this.VerticalStretchFactor = option.Value;
+                        break;
+                }
             }
         }
 

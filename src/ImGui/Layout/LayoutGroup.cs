@@ -22,11 +22,16 @@ namespace ImGui.Layout
             this.ApplyStyle();
         }
 
-        public void Init(int id, bool isVertical, Size contentSize)
+        public void Init(int id, bool isVertical, Size contentSize, LayoutOption[] options)
         {
-            base.Init(id, contentSize);
+            this.Id = id;
+            this.ContentWidth = contentSize.Width;
+            this.ContentHeight = contentSize.Height;
+
             this.IsVertical = isVertical;
+
             this.ApplyStyle();
+            this.ApplyOptions(options);
         }
 
         protected override void ApplyStyle()

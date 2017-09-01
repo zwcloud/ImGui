@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGui.Common.Primitive;
+using ImGui.Layout;
 
 namespace ImGui
 {
@@ -48,10 +49,15 @@ namespace ImGui
 
         public static void BeginHorizontal(string str_id)
         {
-            BeginHorizontal(str_id, Size.Zero);
+            BeginHorizontal(str_id, Size.Zero, ExpandWidth(true));
         }
 
-        public static void BeginHorizontal(string str_id, Size size)
+        public static void BeginHorizontal(string str_id, params LayoutOption[] options)
+        {
+            BeginHorizontal(str_id, Size.Zero, options);
+        }
+
+        public static void BeginHorizontal(string str_id, Size size, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
             var styleStack = Form.current.uiContext.StyleStack;
@@ -59,9 +65,7 @@ namespace ImGui
             int id = window.GetID(str_id);
             PushID(id);
 
-            styleStack.PushStretchFactor(false, 1);
-            window.StackLayout.BeginLayoutGroup(id, false, size);
-            styleStack.PopStyle();
+            window.StackLayout.BeginLayoutGroup(id, false, size, options);
         }
 
         public static void EndHorizontal()
@@ -74,10 +78,15 @@ namespace ImGui
 
         public static void BeginVertical(string str_id)
         {
-            BeginVertical(str_id, Size.Zero);
+            BeginVertical(str_id, Size.Zero, ExpandWidth(true));
         }
 
-        public static void BeginVertical(string str_id, Size size)
+        public static void BeginVertical(string str_id, params LayoutOption[] options)
+        {
+            BeginVertical(str_id, Size.Zero, options);
+        }
+
+        public static void BeginVertical(string str_id, Size size, params LayoutOption[] options)
         {
             Window window = GetCurrentWindow();
             var styleStack = Form.current.uiContext.StyleStack;
@@ -85,9 +94,7 @@ namespace ImGui
             int id = window.GetID(str_id);
             PushID(id);
 
-            styleStack.PushStretchFactor(true, 1);
-            window.StackLayout.BeginLayoutGroup(id, true, size);
-            styleStack.PopStyle();
+            window.StackLayout.BeginLayoutGroup(id, true, size, options);
         }
 
         public static void EndVertical()
@@ -104,7 +111,71 @@ namespace ImGui
             return window.ClientRect;
         }
 
-        // test only
+        #endregion
+
+        #region layout option creators
+
+        /// <summary>
+        /// Set the width of a control.
+        /// </summary>
+        /// <param name="width">width value</param>
+        /// <returns>A <see cref="LayoutOption"/> that will set the width of a control/group.</returns>
+        public static LayoutOption Width(int width)
+        {
+            return new LayoutOption(LayoutOptionType.FixedWidth, width);
+        }
+
+        /// <summary>
+        /// Set the height of a control.
+        /// </summary>
+        /// <param name="height">height value</param>
+        /// <returns>A <see cref="LayoutOption"/> that will set the height of a control/group.</returns>
+        public static LayoutOption Height(int height)
+        {
+            return new LayoutOption(LayoutOptionType.FixedHeight, height);
+        }
+
+        /// <summary>
+        /// Set whether the width of a control should be expanded to occupy as much space as possible.
+        /// </summary>
+        /// <param name="expand">expanded?</param>
+        /// <returns>A <see cref="LayoutOption"/> that will expand the width of a control/group.</returns>
+        public static LayoutOption ExpandWidth(bool expand)
+        {
+            return new LayoutOption(LayoutOptionType.StretchWidth, expand ? 1 : 0);
+        }
+
+        /// <summary>
+        /// Set whether the height of a control should be expanded to occupy as much space as possible.
+        /// </summary>
+        /// <param name="expand">expanded?</param>
+        /// <returns>A <see cref="LayoutOption"/> that will expand the height of a control/group.</returns>
+        public static LayoutOption ExpandHeight(bool expand)
+        {
+            return new LayoutOption(LayoutOptionType.StretchHeight, expand ? 1 : 0);
+        }
+
+        /// <summary>
+        /// Set the factor when expanding the width of a control.
+        /// </summary>
+        /// <param name="factor">the value of the factor</param>
+        /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the width of a control/group.</returns>
+        public static LayoutOption StretchWidth(int factor)
+        {
+            if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
+            return new LayoutOption(LayoutOptionType.StretchWidth, factor);
+        }
+
+        /// <summary>
+        /// Set the factor when expanding the height of a control.
+        /// </summary>
+        /// <param name="factor">the value of the factor</param>
+        /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the height of a control/group.</returns>
+        public static LayoutOption StretchHeight(int factor)
+        {
+            if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor), "The stretch factor must be positive.");
+            return new LayoutOption(LayoutOptionType.StretchHeight, factor);
+        }
 
         #endregion
     }

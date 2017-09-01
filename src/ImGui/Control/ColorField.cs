@@ -34,15 +34,9 @@ namespace ImGui
 
             Rect rectR, rectG, rectB, rectA, rectColor;
 
-            PushFixedWidth(GUISkin.Instance.FieldWidth);//+2
-            PushFixedHeight(100);//+2
-            BeginHorizontal("#RGBA&Color");
-            PopStyleVar(2);
-            PopStyleVar(2);
+            BeginHorizontal("#RGBA&Color", Width((int)GUISkin.Instance.FieldWidth), Height(100));
             {
-                PushHStretchFactor(1);
-                BeginVertical(label + "#RGBA");
-                PopStyleVar(1);
+                BeginVertical(label + "#RGBA", ExpandWidth(true));
                 {
                     BeginHorizontal("#RGB");
                     {
@@ -58,9 +52,7 @@ namespace ImGui
                     EndHorizontal();
 
                     aId = window.GetID("#A");
-                    PushHStretchFactor(1); //+1
-                    rectA = window.GetRect(aId, (0, 10));
-                    PopStyleVar(1);
+                    rectA = window.GetRect(aId, (0, 10), ExpandWidth(true));
                 }
                 EndVertical();
             }
