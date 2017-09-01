@@ -81,7 +81,7 @@ namespace ImGui
         /// <param name="width">width</param>
         /// <param name="text">text</param>
         /// <param name="flags">filter flags</param>
-        /// <param name="checker">custom checker</param>
+        /// <param name="checker">custom checker per char</param>
         /// <returns>(modified) text</returns>
         public static string TextBox(string label, double width, string text, InputTextFlags flags = 0, Func<char, bool> checker = null)
         {
@@ -129,6 +129,85 @@ namespace ImGui
             s.PopStyle(4 + 4);//-4-4
 
             return text;
+        }
+
+        /// <summary>
+        /// Create a multi-line text box.
+        /// </summary>
+        /// <param name="str_id">id</param>
+        /// <param name="size">size</param>
+        /// <param name="text">text</param>
+        /// <returns>(modified) text</returns>
+        public static string InputTextMultiline(string str_id, Size size, string text) => TextBox(str_id, size, text);
+
+        /// <summary>
+        /// Create a single-line text box.
+        /// </summary>
+        /// <param name="label">label</param>
+        /// <param name="text">text</param>
+        /// <param name="flags">filter flags</param>
+        /// <param name="checker">custom checker per char</param>
+        /// <returns>(modified) text</returns>
+        public static string InputText(string label, string text, InputTextFlags flags = 0, Func<char, bool> checker = null)
+        {
+            var g = GetCurrentContext();
+            var s = g.StyleStack;
+            var style = s.Style;
+            return TextBox(label, GUISkin.Instance.FieldWidth, text, flags, checker);
+        }
+
+        /// <summary>
+        /// Create a float input field.
+        /// </summary>
+        /// <param name="label">label</param>
+        /// <param name="value">value</param>
+        /// <returns>modified value</returns>
+        public static float InputFloat(string label, float value)
+        {
+            var text = value.ToString();
+            text = InputText(label, text, InputTextFlags.CharsDecimal);
+            float newValue = value;
+            if (float.TryParse(text, out newValue))
+            {
+                return newValue;
+            }
+            return value;
+        }
+
+        /// <summary>
+        /// Create a double input field.
+        /// </summary>
+        /// <param name="label">label</param>
+        /// <param name="value">value</param>
+        /// <returns>modified value</returns>
+        public static double InputDouble(string label, double value)
+        {
+            var text = value.ToString();
+            text = InputText(label, text, InputTextFlags.CharsDecimal);
+            double newValue = value;
+            if (double.TryParse(text, out newValue))
+            {
+                return newValue;
+            }
+            return value;
+        }
+
+        /// <summary>
+        /// Create a int input field.
+        /// </summary>
+        /// <param name="label">label</param>
+        /// <param name="value">value</param>
+        /// <returns>modified value</returns>
+        public static int InputInt(string label, int value)
+        {
+            var text = value.ToString();
+            text = InputText(label, text, InputTextFlags.CharsDecimal, (c) => c != '.');
+            int newValue = value;
+            if (int.TryParse(text, out newValue))
+            {
+                return newValue;
+            }
+            return value;
         }
     }
 

@@ -62,6 +62,10 @@ label:
     bool check;
     int active_id = 0;
 
+    string str0 = "Hello, world!";
+    int i0 = 123;
+    float f0 = 0.001f;
+
     #region Sliders
     double sliderValue = 0.01;
     double vSliderValue = 0.01;
@@ -77,6 +81,8 @@ label:
 
     #region Layout
     bool layoutOn = false;
+    bool childRegionsOpen = false;
+    int line = 50;
     #endregion
 
     #endregion
@@ -229,7 +235,7 @@ label:
                 //TODO wrapped Label
                 GUILayout.Label("Hiragana: カククケコ (kakikukeko)");
                 GUILayout.Label("Kanjis: 日本語 (nihongo)");
-                buf = GUILayout.TextBox("Unicode input", 200, buf);
+                buf = GUILayout.InputText("Unicode input", buf);
             }
             GUILayout.TreePop();
 
@@ -260,15 +266,15 @@ label:
             if (GUILayout.TreeNode("Filtered Text Input", ref open12))
             {
                 GUILayout.Label("TODO");
-                defaultText = GUILayout.TextBox("default", 200, defaultText);
-                decimalText = GUILayout.TextBox("decimal", 200, decimalText, InputTextFlags.CharsDecimal);
-                hexadecimalText = GUILayout.TextBox("hexadecimal", 200, hexadecimalText, InputTextFlags.CharsHexadecimal | InputTextFlags.CharsUppercase);
-                uppercaseText = GUILayout.TextBox("uppercase", 200, uppercaseText, InputTextFlags.CharsUppercase);
-                noBlankText = GUILayout.TextBox("no blank", 200, noBlankText, InputTextFlags.CharsNoBlank);
-                customText = GUILayout.TextBox("\"imgui\" letters", 200, customText, 0, (c) => "imguiIMGUI".IndexOf(c) >= 0);
+                defaultText = GUILayout.InputText("default", defaultText);
+                decimalText = GUILayout.InputText("decimal", decimalText, InputTextFlags.CharsDecimal);
+                hexadecimalText = GUILayout.InputText("hexadecimal", hexadecimalText, InputTextFlags.CharsHexadecimal | InputTextFlags.CharsUppercase);
+                uppercaseText = GUILayout.InputText("uppercase", uppercaseText, InputTextFlags.CharsUppercase);
+                noBlankText = GUILayout.InputText("no blank", noBlankText, InputTextFlags.CharsNoBlank);
+                customText = GUILayout.InputText("\"imgui\" letters", customText, 0, (c) => "imguiIMGUI".IndexOf(c) >= 0);
                 GUILayout.Text("Password input");
-                password = GUILayout.TextBox("password", 200, password, InputTextFlags.Password | InputTextFlags.CharsNoBlank);
-                password = GUILayout.TextBox("password (clear)", 200, password, InputTextFlags.CharsNoBlank);
+                password = GUILayout.InputText("password", password, InputTextFlags.Password | InputTextFlags.CharsNoBlank);
+                password = GUILayout.InputText("password (clear)", password, InputTextFlags.CharsNoBlank);
             }
             GUILayout.TreePop();
 
@@ -280,11 +286,11 @@ label:
                 GUILayout.PushHStretchFactor(1);
                 if(read_only)
                 {
-                    GUILayout.TextBox("Text Box", new Size(120, 200), text);
+                    GUILayout.InputTextMultiline("Text Box", new Size(120, 200), text);
                 }
                 else
                 {
-                    text = GUILayout.TextBox("Text Box", new Size(120, 200), text);
+                    text = GUILayout.InputTextMultiline("Text Box", new Size(120, 200), text);
                 }
                 GUILayout.PopStyleVar();
             }
@@ -346,6 +352,12 @@ label:
 
             GUILayout.Separator("Separator~1");
 
+            //TODO combo
+
+            str0 = GUILayout.InputText("input text", str0);
+            i0 = GUILayout.InputInt("input int", i0);
+            f0 = GUILayout.InputFloat("input float", f0);
+
             if (GUILayout.TreeNode("Sliders", ref open14))
             {
                 GUILayout.Label("Horizontal Slider");
@@ -392,6 +404,47 @@ label:
         if (GUILayout.CollapsingHeader("Layout", ref layoutOn))
         {
             GUILayout.PushID("_Layout");
+
+            if (GUILayout.TreeNode("Child regions", ref childRegionsOpen))
+            {
+                GUILayout.Text("Without border");
+                bool goto_line = GUILayout.Button("Goto");
+
+                GUILayout.BeginHorizontal("HGroup~1");
+                GUILayout.PushFixedWidth(100);//+2
+                var newLine = GUILayout.InputInt("##Line", line);
+                if(newLine != line)
+                {
+                    goto_line = true;
+                }
+                GUILayout.PopStyleVar(2);//-2
+                GUILayout.BeginChild("Sub1", new Size(GUILayout.GetWindowClientRect().Width * 0.5f, 300), false, 0);
+                for (int i = 0; i < 100; i++)
+                {
+                    GUILayout.Text("{0,4}: scrollable region", i);
+                    if (goto_line && line == i)
+                    {
+                        //SetScrollHere();//TODO
+                    }
+                }
+                if (goto_line && line >= 100)
+                {
+                    //SetScrollHere();//TODO
+                }
+                GUILayout.EndChild();
+
+                GUILayout.BeginChild("Sub2", new Size(0, 300), true, 0);
+                GUILayout.Text("With border");
+                for (int i = 0; i < 100; i++)
+                {
+                    GUILayout.Button(string.Format("0x{0:X8}", i * 5731));
+                }
+                GUILayout.EndChild();
+                GUILayout.EndHorizontal();
+
+            }
+            GUILayout.TreePop();
+
             GUILayout.Label("Three buttons of default size.");
             GUILayout.BeginHorizontal("H~~~1");
             {

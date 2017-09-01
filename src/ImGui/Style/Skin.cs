@@ -34,7 +34,7 @@ namespace ImGui
             //Set up default styles for controls
             this.InternalStyle = new GUIStyle();//internal styles
             {
-                this.InternalStyle.Set<double>(GUIStyleName._FieldControlWidth, 60);
+                this.InternalStyle.Set<double>(GUIStyleName._FieldWidth, 200);
                 this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);
                 this.InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
                 this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
@@ -102,10 +102,10 @@ namespace ImGui
         }
 
         #region short-cuts
-        public double FieldControlWidth
+        public double FieldWidth
         {
-            get => InternalStyle.Get<double>(GUIStyleName._FieldControlWidth);
-            set =>InternalStyle.Set<double>(GUIStyleName._FieldControlWidth, value);
+            get => InternalStyle.Get<double>(GUIStyleName._FieldWidth);
+            set =>InternalStyle.Set<double>(GUIStyleName._FieldWidth, value);
         }
         #endregion
 }

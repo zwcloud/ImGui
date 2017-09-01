@@ -57,7 +57,7 @@ namespace ImGui
         StrokeColor,
         FillColor,
 
-        _FieldControlWidth,
+        _FieldWidth,
         _ControlLabelSpacing,
         _LabelWidth,
         _LabelHeight,
