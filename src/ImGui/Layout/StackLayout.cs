@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ImGui.Common.Primitive;
+using System.Diagnostics;
 
 namespace ImGui.Layout
 {
@@ -27,7 +28,8 @@ namespace ImGui.Layout
 
         private LayoutGroup CreateRootGroup(int rootId, Size size)
         {
-            var rootGroup = new LayoutGroup(rootId, true, size);
+            var rootGroup = new LayoutGroup();
+            rootGroup.Init(rootId, true, GUILayout.Width((int)size.Width).Height(size.Height));
             rootGroup.ContentWidth = size.Width;
             rootGroup.ContentHeight = size.Height;
             rootGroup.HorizontalStretchFactor = 1;
@@ -46,7 +48,7 @@ namespace ImGui.Layout
             this.ReadingStack = this.stackB;
         }
 
-        public Rect GetRect(int id, Size contentSize, LayoutOptions? options = null)
+        public Rect GetRect(int id, Size contentSize, LayoutOptions? options = null, string str_id = null)
         {
             // FIXME This should only be checked if the rect's width or height is not stretched.
             //if (contentSize.Height < 1 || contentSize.Width < 1)
@@ -58,6 +60,7 @@ namespace ImGui.Layout
             {
                 var entry = EntryPool.Get();
                 entry.Init(id, contentSize, options);
+                entry.StrId = str_id;
 
                 //var entry = new LayoutEntry(id, contentSize);
                 this.WritingStack.Peek().Add(entry);
@@ -76,12 +79,13 @@ namespace ImGui.Layout
             }
         }
 
-        public void BeginLayoutGroup(int id, bool isVertical, LayoutOptions? options)
+        public void BeginLayoutGroup(int id, bool isVertical, LayoutOptions? options, string str_id = null)
         {
             // build group for next frame
             {
                 var group = GroupPool.Get();
                 group.Init(id, isVertical, options);
+                group.StrId = str_id;
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }
@@ -127,8 +131,8 @@ namespace ImGui.Layout
                 }
                 else
                 {
-                    if (childGroup == StackLayout.DummyGroup) continue;
                     PutBackEntries(childGroup);
+                    if (childGroup == StackLayout.DummyGroup) continue;
                     GroupPool.Put(childGroup);
                 }
             }
@@ -138,9 +142,6 @@ namespace ImGui.Layout
 
         public void Begin()
         {
-            var rootGroup = this.WritingStack.Peek();
-            PutBackEntries(rootGroup);
-            rootGroup.Entries.Clear();//remove all children of root group
         }
 
         /// <summary>
@@ -154,6 +155,11 @@ namespace ImGui.Layout
             this.WritingStack.Peek().SetY(0);
 
             this.SwapStack();
+
+            Debug.Assert(this.WritingStack.Count == 1);
+            Debug.Assert(this.ReadingStack.Count == 1);
+            var rootGroup = this.WritingStack.Peek();
+            PutBackEntries(rootGroup);//remove all children of root group
         }
 
         public void SetRootSize(Size size)
@@ -171,6 +177,12 @@ namespace ImGui.Layout
         }
 
         public static Rect DummyRect = new Rect(1, 1);
-        public static LayoutGroup DummyGroup = new LayoutGroup(-9999, false, Size.Zero);
+        public static LayoutGroup DummyGroup = CreateDummyGroup();
+        private static LayoutGroup CreateDummyGroup()
+        {
+            var group = new LayoutGroup();
+            group.Init(-9999, true, null);
+            return group;
+        }
     }
 }

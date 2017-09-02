@@ -5,13 +5,19 @@ using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
-    [DebuggerDisplay("Entry {Id}, Rect={Rect}")]
+    [DebuggerDisplay("Entry {StrId}:{Id}, Rect={Rect}")]
+    [DebuggerTypeProxy(typeof(LayoutEntryDebuggerView))]
     internal class LayoutEntry
     {
         /// <summary>
         /// identifier number of this entry/group
         /// </summary>
-        public int Id { get; protected set; }
+        public int Id { get; set; }
+
+        /// <summary>
+        /// string identifier of this entry/group
+        /// </summary>
+        public string StrId { get; set; }
 
         /// <summary>
         /// border-box, the layout result
@@ -48,12 +54,10 @@ namespace ImGui.Layout
         /// </summary>
         public double MaxHeight { get; set; } = 9999;
 
-        private int h = 0;
         /// <summary>
         /// horizontal stretch factor
         /// </summary>
-        public int HorizontalStretchFactor { get { return h; }
-            set { h = value; } }
+        public int HorizontalStretchFactor { get; set; }
 
         /// <summary>
         /// vertical stretch factor
@@ -98,22 +102,27 @@ namespace ImGui.Layout
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
 
-        public LayoutEntry()
+        protected virtual void Reset()
         {
-
-        }
-
-        public LayoutEntry(int id, Size contentSize)
-        {
-            this.Id = id;
-            this.ContentWidth = contentSize.Width;
-            this.ContentHeight = contentSize.Height;
-
-            ApplyStyle();
+            this.Id = 0;
+            this.StrId = null;
+            this.ContentWidth = 0;
+            this.ContentHeight = 0;
+            this.Rect = Rect.Zero;
+            this.MinWidth = 1;
+            this.MaxWidth = 9999;
+            this.MinHeight = 1;
+            this.MaxHeight = 9999;
+            this.HorizontalStretchFactor = 0;
+            this.VerticalStretchFactor = 0;
+            this.Border = (0, 0, 0, 0);
+            this.Padding = (0, 0, 0, 0);
         }
 
         public void Init(int id, Size contentSize, LayoutOptions? options)
         {
+            this.Reset();
+
             this.Id = id;
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
@@ -215,7 +224,7 @@ namespace ImGui.Layout
             if (options.VerticalStretchFactor.HasValue)
             {
                 this.VerticalStretchFactor = options.VerticalStretchFactor.Value;
-            }                
+            }
         }
 
         public virtual void CalcWidth(double unitPartWidth = -1d)
@@ -298,5 +307,18 @@ namespace ImGui.Layout
         {
             return (LayoutEntry)MemberwiseClone();
         }
+
+        /// <summary>
+        /// Debugger view of <see cref="LayoutEntry"/>
+        /// </summary>
+        internal class LayoutEntryDebuggerView
+        {
+            private LayoutEntry entry;
+            public LayoutEntryDebuggerView(LayoutEntry entry)
+            {
+                this.entry = entry;
+            }
+        }
     }
+
 }

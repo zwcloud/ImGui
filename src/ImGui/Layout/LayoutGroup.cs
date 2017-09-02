@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ImGui.Common.Primitive;
 
 namespace ImGui.Layout
 {
-    [DebuggerDisplay("Group {Id}, Count={Entries.Count}")]
+    [DebuggerDisplay("Group {StrId}:{Id}, Count={Entries.Count}")]
+    [DebuggerTypeProxy(typeof(LayoutGroupDebuggerView))]
     internal class LayoutGroup : LayoutEntry
     {
         public double CellSpacingHorizontal { get; set; } = 0;
@@ -13,17 +13,19 @@ namespace ImGui.Layout
         public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
         public Alignment AlignmentVertical { get; set; } = Alignment.Start;
 
-        public LayoutGroup() { }
-
-        public LayoutGroup(int id, bool isVertical, Size contentSize) : base(id, contentSize)
+        protected override void Reset()
         {
-            this.IsVertical = isVertical;
-
-            this.ApplyStyle();
+            base.Reset();
+            this.CellSpacingHorizontal = 0;
+            this.CellSpacingVertical = 0;
+            this.AlignmentHorizontal = Alignment.Start;
+            this.AlignmentVertical = Alignment.Start;
         }
 
         public void Init(int id, bool isVertical, LayoutOptions? options)
         {
+            this.Reset();
+
             this.Id = id;
             //NOTE content size is always a calculated value
 
@@ -625,5 +627,19 @@ namespace ImGui.Layout
             }
         }
 
+        /// <summary>
+        /// Debugger view of <see cref="LayoutGroup"/>
+        /// </summary>
+        internal class LayoutGroupDebuggerView
+        {
+            private LayoutGroup group;
+            public LayoutGroupDebuggerView(LayoutGroup entry)
+            {
+                this.group = entry;
+            }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+            public List<LayoutEntry> Entries => group.Entries;
+        }
     }
 }
