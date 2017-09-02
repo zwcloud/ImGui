@@ -22,11 +22,10 @@ namespace ImGui.Layout
             this.ApplyStyle();
         }
 
-        public void Init(int id, bool isVertical, Size contentSize, LayoutOptions? options)
+        public void Init(int id, bool isVertical, LayoutOptions? options)
         {
             this.Id = id;
-            this.ContentWidth = contentSize.Width;
-            this.ContentHeight = contentSize.Height;
+            //NOTE content size is always a calculated value
 
             this.IsVertical = isVertical;
 

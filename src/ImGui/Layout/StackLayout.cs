@@ -76,12 +76,12 @@ namespace ImGui.Layout
             }
         }
 
-        public void BeginLayoutGroup(int id, bool isVertical, Size size, LayoutOptions? options)
+        public void BeginLayoutGroup(int id, bool isVertical, LayoutOptions? options)
         {
             // build group for next frame
             {
                 var group = GroupPool.Get();
-                group.Init(id, isVertical, size, options);
+                group.Init(id, isVertical, options);
                 this.WritingStack.Peek().Add(group);
                 this.WritingStack.Push(group);
             }

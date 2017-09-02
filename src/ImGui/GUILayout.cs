@@ -70,23 +70,17 @@ namespace ImGui
 
         public static void BeginHorizontal(string str_id)
         {
-            BeginHorizontal(str_id, Size.Zero, ExpandWidth(true));
+            BeginHorizontal(str_id, ExpandWidth(true));
         }
 
         public static void BeginHorizontal(string str_id, LayoutOptions? options = null)
         {
-            BeginHorizontal(str_id, Size.Zero, options);
-        }
-
-        public static void BeginHorizontal(string str_id, Size size, LayoutOptions? options = null)
-        {
             Window window = GetCurrentWindow();
-            var styleStack = Form.current.uiContext.StyleStack;
 
             int id = window.GetID(str_id);
             PushID(id);
 
-            window.StackLayout.BeginLayoutGroup(id, false, size, options);
+            window.StackLayout.BeginLayoutGroup(id, false, options);
         }
 
         public static void EndHorizontal()
@@ -115,7 +109,7 @@ namespace ImGui
             int id = window.GetID(str_id);
             PushID(id);
 
-            window.StackLayout.BeginLayoutGroup(id, true, size, options);
+            window.StackLayout.BeginLayoutGroup(id, true, options);
         }
 
         public static void EndVertical()
