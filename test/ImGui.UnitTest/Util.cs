@@ -28,7 +28,7 @@ namespace ImGui.UnitTest
 
         public static void OpenImage(string path)
         {
-            if (!Directory.Exists(path))
+            if (!File.Exists(path))
             {
                 throw new FileNotFoundException(path);
             }

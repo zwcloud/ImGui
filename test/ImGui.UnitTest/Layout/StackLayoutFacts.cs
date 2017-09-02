@@ -44,6 +44,8 @@ namespace ImGui.UnitTest.Layout
                 Size smallSize = new Size(0.5, 0.6);
                 layout.Begin();
 
+                //TODO see the commented out code at the beginning of StackLayout.GetRect.
+
                 Assert.Throws<ArgumentOutOfRangeException>("contentSize", () =>
                 {
                     layout.GetRect(1, zeroSize);
@@ -63,11 +65,12 @@ namespace ImGui.UnitTest.Layout
                 var size = new Size(200, 300);
                 var style = new GUIStyle();
                 style.Padding = (1, 2, 3, 4);
+                //FIXME per-entry style modification
 
                 layout.Begin();
-                layout.GetRect(1, size, style);
+                layout.GetRect(1, size);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, style);
+                var rect = layout.GetRect(1, size);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -82,11 +85,12 @@ namespace ImGui.UnitTest.Layout
                 var size = new Size(200, 300);
                 var style = new GUIStyle();
                 style.Border = (1, 2, 3, 4);
+                //FIXME per-entry style modification
 
                 layout.Begin();
-                layout.GetRect(1, size, style);
+                layout.GetRect(1, size);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, style);
+                var rect = layout.GetRect(1, size);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -102,11 +106,12 @@ namespace ImGui.UnitTest.Layout
                 var style = new GUIStyle();
                 style.Border = (1, 2, 3, 4);
                 style.Padding = (5, 6, 7, 8);
+                //FIXME per-entry style modification
 
                 layout.Begin();
-                layout.GetRect(1, size, style);
+                layout.GetRect(1, size);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, style);
+                var rect = layout.GetRect(1, size);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -121,12 +126,12 @@ namespace ImGui.UnitTest.Layout
                 var size = new Size(200, 300);
                 const int fixedWidth = 100;
                 const int fixedHeight = 200;
-                var options = new[] {GUILayout.Width(fixedWidth), GUILayout.Height(fixedHeight) };
+                var options = GUILayout.Width(fixedWidth).Height(fixedHeight);
 
                 layout.Begin();
-                layout.GetRect(1, size, null, options);
+                layout.GetRect(1, size, options);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, null, options);
+                var rect = layout.GetRect(1, size, options);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
@@ -142,13 +147,12 @@ namespace ImGui.UnitTest.Layout
             {
                 var layout = new StackLayout(0, new Size(800, 600));
                 var size = new Size(200, 300);
-                var options = new[] { GUILayout.ExpandWidth(expandWidth),
-                    GUILayout.ExpandHeight(expandHeight) };
+                var options = GUILayout.ExpandWidth(expandWidth).ExpandHeight(expandHeight);
 
                 layout.Begin();
-                layout.GetRect(1, size, null, options);
+                layout.GetRect(1, size, options);
                 layout.Layout();
-                var rect = layout.GetRect(1, size, null, options);
+                var rect = layout.GetRect(1, size, options);
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);

@@ -21,9 +21,8 @@ namespace ImGui.UnitTest
 
             [Theory]
             [InlineData("msjh.ttf", 'D', 400)]
-            [InlineData("Helvetica.ttf", 'o', 400)]
+            [InlineData("DroidSans.ttf", 'o', 400)]
             [InlineData("msjh.ttf", '乐', 400)]
-            [InlineData("unifont-9.0.06.ttf", 'D', 400)]
             public void Read(string fontFileName, char character, int fontSize)
             {
                 Typeface typeFace;
@@ -34,16 +33,11 @@ namespace ImGui.UnitTest
                 }
 
                 Glyph glyph = typeFace.Lookup(character);
-                var points = glyph.GlyphPoints;
-                var endPoints = glyph.EndPoints;
-                var offsetX = 0;
-                var offsetY = 0;
-                var scale = typeFace.CalculateToPixelScaleFromPointSize(fontSize);
 
                 // read polygons and bezier segments
                 var polygons = new List<List<Point>>();
                 var bezierSegments = new List<(Point, Point, Point)>();
-                GlyphReader.Read(points, endPoints, offsetX, offsetY, 1, out polygons, out bezierSegments, flipY: false);
+                GlyphLoader.Read(glyph, out polygons, out bezierSegments);
 
                 //print to test output
                 for (int i = 0; i < polygons.Count; i++)
@@ -66,6 +60,8 @@ namespace ImGui.UnitTest
                 }
 
                 o.WriteLine("");
+
+                //FIXME move/scale the rendered glyph to visible region of the cairo surface.
 
                 // draw to an image
                 using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, 2000, 2000))
@@ -98,7 +94,7 @@ namespace ImGui.UnitTest
                     g.SetSourceColor(new Cairo.Color(0.5, 0.5, 0));
                     g.Stroke();
 
-                    var path = string.Format("D:\\ImGui.UnitTest\\GlyphReaderFacts+TheReadMethod.Read{0}_{1}_{2}.png",
+                    var path = string.Format("D:\\ImGui.UnitTest\\GlyphReaderFacts.TheReadMethod.Read_{0}_{1}_{2}.png",
                         fontFileName, character, fontSize);
                     surface.WriteToPng(path);
 

@@ -32,16 +32,15 @@ namespace ImGui.UnitTest
 
             [Theory]
             [InlineData("msjh.ttf", "A", 400)]
-            [InlineData("Helvetica.ttf", "A", 400)]
-            [InlineData("unifont-9.0.06.ttf", "A", 400)]
+            [InlineData("DroidSans.ttf", "A", 400)]
             public void RenderAGlyph(string fontName, string text, int fontSize)
             {
                 Application.Run(new Form1(() => {
-                    GUIStyle labelStyle = "Label";
-                    labelStyle.Set<double>(GUIStyleName.FontSize, fontSize);
-                    labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + fontName);
-                    labelStyle.Set<Color>(GUIStyleName.FontColor, Color.Rgb(253, 79, 10));
+                    GUILayout.PushFontSize(fontSize);
+                    GUILayout.PushFontFamily(Utility.FontDir + fontName);
+                    GUILayout.PushFontColor(Color.Rgb(253, 79, 10));
                     GUILayout.Label(text, GUILayout.Height(410), GUILayout.Width(410));
+                    GUILayout.PopStyleVar(3);
                 }));
             }
 
@@ -53,11 +52,11 @@ namespace ImGui.UnitTest
             public void RenderText(string fontName, string text, int fontSize)
             {
                 Application.Run(new Form1(() => {
-                    GUIStyle labelStyle = "Label";
-                    labelStyle.Set<double>(GUIStyleName.FontSize, fontSize);
-                    labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + fontName);
-                    labelStyle.Set<Color>(GUIStyleName.FontColor, Color.Rgb(253, 79, 10));
+                    GUILayout.PushFontSize(fontSize);
+                    GUILayout.PushFontFamily(Utility.FontDir + fontName);
+                    GUILayout.PushFontColor(Color.Rgb(253, 79, 10));
                     GUILayout.Label(text, GUILayout.Height(410), GUILayout.Width(410));
+                    GUILayout.PopStyleVar(3);
                 }));
             }
 
@@ -66,13 +65,13 @@ namespace ImGui.UnitTest
             public void RenderTextSegments(string fontName, string[] textSegments, int fontSize)
             {
                 Application.Run(new Form1(() => {
-                    GUIStyle labelStyle = "Label";
-                    labelStyle.Set<double>(GUIStyleName.FontSize, fontSize);
-                    labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + fontName);
+                    GUILayout.PushFontSize(fontSize);
+                    GUILayout.PushFontFamily(Utility.FontDir + fontName);
                     for (int i = 0; i < textSegments.Length; i++)
                     {
                         GUILayout.Label(textSegments[i], GUILayout.Height(60), GUILayout.Width(410));
                     }
+                    GUILayout.PopStyleVar(2);
                 }));
             }
 

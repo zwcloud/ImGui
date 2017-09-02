@@ -79,7 +79,7 @@ namespace ImGui.Layout
             }
         }
 
-        public void BeginLayoutGroup(int id, bool isVertical, LayoutOptions? options, string str_id = null)
+        public void BeginLayoutGroup(int id, bool isVertical, LayoutOptions? options = null, string str_id = null)
         {
             // build group for next frame
             {

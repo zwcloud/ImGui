@@ -19,7 +19,11 @@ namespace ImGui.UnitTest
             }
 
             [Theory]
+            [InlineData("DroidSans.ttf", 'D')]
             [InlineData("msjh.ttf", 'D')]
+            [InlineData("msjh.ttf", '啊')]
+            [InlineData("msjh.ttf", 'あ')]
+            [InlineData("msjh.ttf", '아')]
             public void GetGlyphPoints(string fontFile, char character)
             {
                 Typeface typeFace;
@@ -45,7 +49,6 @@ namespace ImGui.UnitTest
                     o.WriteLine(end.ToString());
                 }
             }
-
 
         }
     }
