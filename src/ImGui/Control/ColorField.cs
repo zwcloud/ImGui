@@ -33,9 +33,9 @@ namespace ImGui
 
             Rect rectR, rectG, rectB, rectA, rectColor;
 
-            BeginHorizontal("#RGBA&Color", GUILayout.Width((int)GUISkin.Instance.FieldWidth).Height(100));
+            using (HScope("#RGBA&Color", GUILayout.Width((int)GUISkin.Instance.FieldWidth).Height(100)))
             {
-                BeginVertical(label + "#RGBA", GUILayout.ExpandWidth(true));
+                using (VScope(label + "#RGBA"))
                 {
                     using (HScope("#RGB"))
                     {
@@ -52,11 +52,9 @@ namespace ImGui
                     aId = window.GetID("#A");
                     rectA = window.GetRect(aId, (0, 10), GUILayout.ExpandWidth(true));
                 }
-                EndVertical();
+                colorId = window.GetID("#Color");
+                rectColor = window.GetRect(colorId, (20, 20));
             }
-            colorId = window.GetID("#Color");
-            rectColor = window.GetRect(colorId, (20, 20));
-            EndHorizontal();
 
             // interact
             value.R = GUIBehavior.SliderBehavior(rectR, rId, true, value.R, 0, 1.0, out bool R_hovered, out bool R_held);

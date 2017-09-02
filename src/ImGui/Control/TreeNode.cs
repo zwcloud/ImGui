@@ -12,9 +12,7 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
 
-            PushHStretchFactor(1);
             BeginVertical(label + "_Tree");
-            PopStyleVar(1);
 
                 var id = window.GetID(label);
 
@@ -72,9 +70,7 @@ namespace ImGui
 
                 BeginHorizontal("#Content");
                     Space("Space", 20);
-                    PushHStretchFactor(1);
                     BeginVertical("#Items");
-                    PopStyleVar(1);
             return open;
         }
 

@@ -6,9 +6,23 @@ namespace ImGui
 {
     public struct GUILayoutScope : IDisposable
     {
+        private readonly bool isVertical;
+
+        public GUILayoutScope(bool isVertical)
+        {
+            this.isVertical = isVertical;
+        }
+
         public void Dispose()
         {
-            GUILayout.EndHorizontal();
+            if (this.isVertical)
+            {
+                GUILayout.EndVertical();
+            }
+            else
+            {
+                GUILayout.EndHorizontal();
+            }
         }
     }
 
@@ -59,13 +73,25 @@ namespace ImGui
         public static GUILayoutScope HScope(string str_id)
         {
             BeginHorizontal(str_id);
-            return new GUILayoutScope();
+            return new GUILayoutScope(false);
+        }
+
+        public static GUILayoutScope HScope(string str_id, LayoutOptions? options)
+        {
+            BeginHorizontal(str_id, options);
+            return new GUILayoutScope(false);
         }
 
         public static GUILayoutScope VScope(string str_id)
         {
             BeginVertical(str_id);
-            return new GUILayoutScope();
+            return new GUILayoutScope(true);
+        }
+
+        public static GUILayoutScope VScope(string str_id, LayoutOptions? options)
+        {
+            BeginVertical(str_id, options);
+            return new GUILayoutScope(true);
         }
 
         public static void BeginHorizontal(string str_id)
@@ -73,14 +99,14 @@ namespace ImGui
             BeginHorizontal(str_id, ExpandWidth(true));
         }
 
-        public static void BeginHorizontal(string str_id, LayoutOptions? options = null)
+        public static void BeginHorizontal(string str_id, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
 
             int id = window.GetID(str_id);
             PushID(id);
 
-            window.StackLayout.BeginLayoutGroup(id, false, options);
+            window.StackLayout.BeginLayoutGroup(id, false, options, str_id);
         }
 
         public static void EndHorizontal()
@@ -93,23 +119,17 @@ namespace ImGui
 
         public static void BeginVertical(string str_id)
         {
-            BeginVertical(str_id, Size.Zero, ExpandWidth(true));
+            BeginVertical(str_id, ExpandWidth(true));
         }
 
-        public static void BeginVertical(string str_id, LayoutOptions? options = null)
-        {
-            BeginVertical(str_id, Size.Zero, options);
-        }
-
-        public static void BeginVertical(string str_id, Size size, LayoutOptions? options)
+        public static void BeginVertical(string str_id, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
-            var styleStack = Form.current.uiContext.StyleStack;
 
             int id = window.GetID(str_id);
             PushID(id);
 
-            window.StackLayout.BeginLayoutGroup(id, true, options);
+            window.StackLayout.BeginLayoutGroup(id, true, options, str_id);
         }
 
         public static void EndVertical()

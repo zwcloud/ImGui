@@ -295,9 +295,9 @@ namespace ImGui
         /// <param name="size">size of content, border and padding NOT included</param>
         /// <param name="style">style that will apply to requested rect</param>
         /// <returns></returns>
-        public Rect GetRect(int id, Size size, LayoutOptions? options = null)
+        public Rect GetRect(int id, Size size, LayoutOptions? options = null, string str_id = null)
         {
-            var rect = StackLayout.GetRect(id, size, options);
+            var rect = StackLayout.GetRect(id, size, options, str_id);
 
             if(rect != StackLayout.DummyRect)
             {
