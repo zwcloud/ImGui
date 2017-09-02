@@ -166,6 +166,16 @@ label:
             GUILayout.PopID();
         }
 
+        using (GUILayout.HScope("MyGroupHXXX~~"))
+        {
+            GUILayout.Button("B1");
+            using (GUILayout.VScope("MyGroupHXXX~~"))
+            {
+                GUILayout.Button("B2");
+                GUILayout.Button("B3");
+            }
+        }
+
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))
         {
             GUILayout.PushID("_Widgets");
@@ -302,7 +312,7 @@ label:
             }
             GUILayout.TreePop();
 
-            GUILayout.BeginHorizontal("HGroup~button_show_text");
+            using (GUILayout.HScope("HGroup~button_show_text"))
             {
                 if (GUILayout.Button("Button"))
                 {
@@ -314,7 +324,6 @@ label:
                     GUILayout.Label("Thanks for clicking me!");
                 }
             }
-            GUILayout.EndHorizontal();
 
             check = GUILayout.CheckBox("checkbox", check);
 

@@ -4,11 +4,20 @@ using ImGui.Layout;
 
 namespace ImGui
 {
+    public struct GUILayoutScope : IDisposable
+    {
+        public void Dispose()
+        {
+            GUILayout.EndHorizontal();
+        }
+    }
+
     /// <summary>
     /// The interface for GUI with automatic layout.
     /// </summary>
     public partial class GUILayout
     {
+
         #region ID
 
         public static void PushID(int int_id)
@@ -46,6 +55,18 @@ namespace ImGui
         }
 
         #region stack-layout
+
+        public static GUILayoutScope HScope(string str_id)
+        {
+            BeginHorizontal(str_id);
+            return new GUILayoutScope();
+        }
+
+        public static GUILayoutScope VScope(string str_id)
+        {
+            BeginVertical(str_id);
+            return new GUILayoutScope();
+        }
 
         public static void BeginHorizontal(string str_id)
         {

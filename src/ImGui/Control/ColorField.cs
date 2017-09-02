@@ -24,7 +24,6 @@ namespace ImGui
             var style = s.Style;
 
             // rect
-            var boxSize = new Size(50, 50);
 
             int rId;
             int gId;
@@ -38,7 +37,7 @@ namespace ImGui
             {
                 BeginVertical(label + "#RGBA", GUILayout.ExpandWidth(true));
                 {
-                    BeginHorizontal("#RGB");
+                    using (HScope("#RGB"))
                     {
                         PushHStretchFactor(1);
                         rId = window.GetID("#R");
@@ -49,7 +48,6 @@ namespace ImGui
                         rectB = window.GetRect(bId, (0, 50));
                         PopStyleVar(1);
                     }
-                    EndHorizontal();
 
                     aId = window.GetID("#A");
                     rectA = window.GetRect(aId, (0, 10), GUILayout.ExpandWidth(true));
