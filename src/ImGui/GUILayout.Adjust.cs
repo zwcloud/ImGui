@@ -123,12 +123,28 @@ namespace ImGui
             var styleStack = g.StyleStack;
             styleStack.PushBgColor(color);
         }
+        #endregion
 
+        #region font
         public static void PushFontColor(Color color)
         {
             var g = GetCurrentContext();
             var styleStack = g.StyleStack;
             styleStack.PushFontColor(color);
+        }
+
+        public static void PushFontSize(double fontSize)
+        {
+            var g = GetCurrentContext();
+            var styleStack = g.StyleStack;
+            styleStack.PushFontSize(fontSize);
+        }
+
+        public static void PushFontFamily(string fontFamily)
+        {
+            var g = GetCurrentContext();
+            var styleStack = g.StyleStack;
+            styleStack.PushFontFamily(fontFamily);
         }
         #endregion
     }

@@ -7,7 +7,8 @@ namespace ImGui
     {
         @int,
         @double,
-        Color
+        Color,
+        @string,
     }
 
     class StyleModifier
@@ -19,10 +20,12 @@ namespace ImGui
         public int intOriginal;
         public double doubleOriginal;
         public Color colorOriginal;
+        public string stringOriginal;
 
         public int intValue;
         public double doubleValue;
         public Color colorValue;
+        public string stringValue;
 
         public StyleModifier(GUIStyleName name, StyleType styleType, int value, GUIState state = GUIState.Normal)
         {
@@ -47,6 +50,14 @@ namespace ImGui
             this.colorValue = value;
         }
 
+        public StyleModifier(GUIStyleName name, StyleType styleType, string value, GUIState state = GUIState.Normal)
+        {
+            this.name = name;
+            this.styleType = styleType;
+            this.state = state;
+            this.stringValue = value;
+        }
+
         public void Modify(GUIStyle style)
         {
             switch (styleType)
@@ -62,6 +73,10 @@ namespace ImGui
                 case StyleType.Color:
                     this.colorOriginal = style.Get<Color>(this.name, this.state);
                     style.Set<Color>(name, this.colorValue, this.state);
+                    break;
+                case StyleType.@string:
+                    this.stringOriginal = style.Get<string>(this.name, this.state);
+                    style.Set<string>(name, this.stringValue, this.state);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -80,6 +95,9 @@ namespace ImGui
                     break;
                 case StyleType.Color:
                     style.Set<Color>(name, this.colorOriginal, this.state);
+                    break;
+                case StyleType.@string:
+                    style.Set<string>(name, this.stringOriginal, this.state);
                     break;
                 default:
                     throw new NotImplementedException();

@@ -156,6 +156,12 @@ namespace ImGui
             Push(modifier);
         }
 
+        public void PushFontFamily(string fontFamily, GUIState state = GUIState.Normal)
+        {
+            var modifier = new StyleModifier(GUIStyleName.FontFamily, StyleType.@string, fontFamily, state);
+            Push(modifier);
+        }
+
         #endregion
 
         #region text
