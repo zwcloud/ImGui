@@ -42,7 +42,7 @@ namespace ImGui.Layout
         {
             base.ApplyStyle();
 
-            var style = Form.current.uiContext.StyleStack.Style;
+            var style = GUIStyle.Basic;
 
             var csh = style.CellSpacingHorizontal;
             if(csh >= 0)

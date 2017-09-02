@@ -136,7 +136,7 @@ namespace ImGui.Layout
 
         protected virtual void ApplyStyle()
         {
-            var style = Form.current.uiContext.StyleStack.Style;
+            var style = GUIStyle.Basic;
 
             this.MinWidth = MathEx.Clamp(style.MinWidth, 1, 9999);
             this.MaxWidth = MathEx.Clamp(style.MaxWidth, 1, 9999);
@@ -189,7 +189,7 @@ namespace ImGui.Layout
 
         protected void ApplyOptions(LayoutOptions options)
         {
-            var style = Form.current.uiContext.StyleStack.Style;
+            var style = GUIStyle.Basic;
                 
             if(options.MinWidth.HasValue && options.MaxWidth.HasValue)
             {
