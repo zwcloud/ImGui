@@ -1,6 +1,6 @@
 namespace ImGui
 {
-    public enum GUIStyleName
+    public enum GUIStyleName//FIXME rename to StyleProperty(Name)
     {
         #region Box model
         MinWidth,

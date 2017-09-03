@@ -52,6 +52,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Style\GUIStyle.Option.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Control\Window.*.cs">
       <DependentUpon>Control\Window.cs</DependentUpon>
     </Compile>

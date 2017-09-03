@@ -66,6 +66,9 @@ namespace ImGui
             // style
             var style = GUIStyle.Basic;
             style.Save();
+
+            style.ApplyOption(options);
+
             style.PushBorder(1.0);
             style.PushPadding(5.0);
 

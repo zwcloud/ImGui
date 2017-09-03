@@ -1,4 +1,5 @@
 ﻿using System;
+using ImGui.Common.Primitive;
 
 namespace ImGui
 {
@@ -12,6 +13,10 @@ namespace ImGui
         internal double? MaxHeight;
         internal int? HorizontalStretchFactor;
         internal int? VerticalStretchFactor;
+
+        internal Color? fontColor;
+        internal double? fontSize;
+        internal string fontFamily;
 
         public LayoutOptions Width(double width)
         {
@@ -52,5 +57,25 @@ namespace ImGui
             this.VerticalStretchFactor = factor;
             return this;
         }
+
+        public LayoutOptions FontFamily(string family)
+        {
+            this.fontFamily = family;
+            return this;
+        }
+
+        public LayoutOptions FontSize(double size)
+        {
+            this.fontSize = size;
+            return this;
+        }
+
+        public LayoutOptions FontColor(Color color)
+        {
+            this.fontColor = color;
+            return this;
+        }
+
+
     }
 }
