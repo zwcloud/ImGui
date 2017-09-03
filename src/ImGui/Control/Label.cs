@@ -17,8 +17,7 @@ namespace ImGui
                 return;
 
             // style apply
-            var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             // rect
             rect = window.GetRect(rect);
@@ -45,8 +44,7 @@ namespace ImGui
             int id = window.GetID(text);
 
             // style
-            var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             // rect
             Size contentSize = style.CalcSize(text, GUIState.Normal);
@@ -118,8 +116,7 @@ namespace ImGui
             int id = window.GetID(str_id);
 
             // style
-            var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             // rect
             var lineHeight = style.GetLineHeight();
@@ -144,8 +141,7 @@ namespace ImGui
             int id = window.GetID(text);
 
             // style
-            var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             // rect
             Size contentSize = style.CalcSize(text, GUIState.Normal);

@@ -23,7 +23,7 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var style = g.StyleStack.Style;
+            var style = GUIStyle.Basic;
             s.PushBorder(1.0);//+4
             s.PushPadding(5.0);//+4
 
@@ -67,7 +67,7 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            var style = g.StyleStack.Style;
+            var style = GUIStyle.Basic;
             s.PushBorder(1.0);//+4
             s.PushPadding(5.0);//+4
 
@@ -106,7 +106,7 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
             s.PushBorder(1.0);//+4
             s.PushPadding(5.0);//+4
 

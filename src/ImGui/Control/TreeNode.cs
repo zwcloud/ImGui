@@ -18,7 +18,7 @@ namespace ImGui
 
                 // style apply
                 var s = g.StyleStack;
-                var style = s.Style;
+                var style = GUIStyle.Basic;
                 s.PushStretchFactor(false, 1);//+1, always expand width
                 s.PushPadding((1, 1, 1, 5));//+4
 

@@ -22,9 +22,6 @@ namespace ImGui
 
             int id = window.GetID(label);
 
-            // style apply
-            var s = g.StyleStack;
-
             // rect
             rect = window.GetRect(rect);
 
@@ -66,11 +63,8 @@ namespace ImGui
 
             int id = window.GetID(label);
 
-            // style
-            var s = g.StyleStack;
-
             // rect
-            var style = g.StyleStack.Style;
+            var style = GUIStyle.Basic;
             var textSize = style.CalcSize(label, GUIState.Normal);
             var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
             var rect = window.GetRect(id, size);
@@ -146,8 +140,7 @@ namespace ImGui
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
-            StyleStack s = g.StyleStack;
-            GUIStyle style = s.Style;
+            GUIStyle style = GUIStyle.Basic;
             DrawList d = window.DrawList;
 
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);

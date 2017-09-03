@@ -15,8 +15,7 @@ namespace ImGui
             int id = window.GetID(label);
 
             // style
-            var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             Size label_size = style.CalcSize(label, GUIState.Normal);
 

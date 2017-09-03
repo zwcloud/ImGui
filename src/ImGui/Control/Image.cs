@@ -19,7 +19,7 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
             s.PushBorder(1.0);//+4
 
             // rect
@@ -48,7 +48,7 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
             s.PushBorder(1.0);
 
             // rect
@@ -80,7 +80,7 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
             s.PushBorder(1.0);
 
             // rect
@@ -110,7 +110,7 @@ namespace ImGui
             s.PushBorder(1.0);//+4
 
             // rect
-            var style = s.Style;
+            var style = GUIStyle.Basic;
             Size size = style.CalcSize(texture, GUIState.Normal);
             var rect = window.GetRect(id, size);
 

@@ -19,10 +19,6 @@ namespace ImGui
             if (window.SkipItems)
                 return value;
 
-            GUIContext g = GetCurrentContext();
-            var s = g.StyleStack;
-            var style = s.Style;
-
             // rect
 
             int rId;
@@ -81,7 +77,7 @@ namespace ImGui
             Window window = g.WindowManager.CurrentWindow;
 
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
             var d = window.DrawList;
 
             s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1

@@ -18,7 +18,7 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            var style = g.StyleStack.Style;
+            var style = GUIStyle.Basic;
             s.PushStretchFactor(false, 1);//+1
 
             // rect

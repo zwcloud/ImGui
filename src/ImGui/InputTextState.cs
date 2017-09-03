@@ -51,7 +51,7 @@ namespace ImGui
             var g = Form.current.uiContext;
 
             var rect = textBox.Rect;
-            var style = g.StyleStack.Style;
+            var style = GUIStyle.Basic;
             ITextContext textContext = TextMeshUtil.GetTextContext(textBox.Text, rect.Size, style, GUIState.Normal);
 
             var contentRect = style.GetContentRect(rect);
@@ -105,7 +105,7 @@ namespace ImGui
 
             var rect = textBox.Rect;
             var text = textBox.Text;
-            var style = g.StyleStack.Style;
+            var style = GUIStyle.Basic;
             var textContext = TextMeshUtil.GetTextContext(text, rect.Size, style, GUIState.Normal);
 
             var contentRect = style.GetContentRect(rect);

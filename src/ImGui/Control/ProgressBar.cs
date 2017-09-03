@@ -16,7 +16,7 @@ namespace ImGui
 
             // style
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             // rect
             var rect = window.GetRect(id, size);
@@ -45,7 +45,7 @@ namespace ImGui
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
             StyleStack s = g.StyleStack;
-            GUIStyle style = s.Style;
+            GUIStyle style = GUIStyle.Basic;
             DrawList d = window.DrawList;
 
             s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1

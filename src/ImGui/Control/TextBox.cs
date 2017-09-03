@@ -94,7 +94,7 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
             s.PushBorder(0);//+4
             s.PushPadding(3.0);//+4
 
@@ -150,9 +150,6 @@ namespace ImGui
         /// <returns>(modified) text</returns>
         public static string InputText(string label, string text, InputTextFlags flags = 0, Func<char, bool> checker = null)
         {
-            var g = GetCurrentContext();
-            var s = g.StyleStack;
-            var style = s.Style;
             return TextBox(label, GUISkin.Instance.FieldWidth, text, flags, checker);
         }
 
@@ -316,7 +313,7 @@ namespace ImGui
             Window window = w.CurrentWindow;
 
             var d = window.DrawList;
-            var style = g.StyleStack.Style;
+            var style = GUIStyle.Basic;
             var contentRect = style.GetContentRect(rect);
             d.PushClipRect(rect, true);
 

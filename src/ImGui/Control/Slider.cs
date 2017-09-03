@@ -25,9 +25,6 @@ namespace ImGui
 
             int id = window.GetID(label);
 
-            // style apply
-            var s = g.StyleStack;
-
             // rect
             rect = window.GetRect(rect);
 
@@ -78,9 +75,6 @@ namespace ImGui
                 return value;
 
             int id = window.GetID(label);
-
-            // style apply
-            var s = g.StyleStack;
 
             // rect
             rect = window.GetRect(rect);
@@ -136,7 +130,7 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             // rect
             Size size = style.CalcSize(label, GUIState.Normal);
@@ -200,7 +194,7 @@ namespace ImGui
 
             // style apply
             var s = g.StyleStack;
-            var style = s.Style;
+            var style = GUIStyle.Basic;
 
             // rect
             Size size = style.CalcSize(label, GUIState.Normal);
@@ -314,7 +308,7 @@ namespace ImGui
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
             StyleStack s = g.StyleStack;
-            GUIStyle style = s.Style;
+            GUIStyle style = GUIStyle.Basic;
             DrawList d = window.DrawList;
 
             var colorForLineUsed = Color.Rgb(0, 151, 167);
@@ -369,7 +363,7 @@ namespace ImGui
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
             StyleStack s = g.StyleStack;
-            GUIStyle style = s.Style;
+            GUIStyle style = GUIStyle.Basic;
             DrawList d = window.DrawList;
 
             var colorForLineUsed = Color.Rgb(0, 151, 167);
