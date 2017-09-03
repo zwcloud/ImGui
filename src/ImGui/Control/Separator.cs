@@ -17,9 +17,8 @@ namespace ImGui
             int id = window.GetID(str_id);
 
             // style
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushStretchFactor(false, 1);//+1
+            style.PushStretchFactor(false, 1);//+1
 
             // rect
             var rect = window.GetRect(id, new Size(0, 1));
@@ -31,7 +30,7 @@ namespace ImGui
             var end = rect.Center + offset;
             d.AddLine(start, end, style.StrokeColor);
 
-            s.PopStyle();//-1
+            style.PopStyle();//-1
         }
     }
 }

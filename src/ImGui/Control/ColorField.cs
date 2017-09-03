@@ -76,13 +76,12 @@ namespace ImGui
             GUIContext g = Form.current.uiContext;
             Window window = g.WindowManager.CurrentWindow;
 
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
             var d = window.DrawList;
 
-            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
+            style.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
             d.AddRectFilled(rect, style.BackgroundColor);
-            s.PopStyle();//-1
+            style.PopStyle();//-1
 
             string text;
             text = string.Format("{0}:{1,3}", colorChar, (int)(value * 255));

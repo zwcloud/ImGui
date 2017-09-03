@@ -16,8 +16,8 @@ namespace ImGui
             var id = window.GetID(label);
 
             // style
-            var s = g.StyleStack;
-            s.PushPadding(10.0);//+4
+            var style = GUIStyle.Basic;
+            style.PushPadding(10.0);//+4
 
             // rect
             rect = window.GetRect(rect);
@@ -29,7 +29,7 @@ namespace ImGui
             // render
             GUIAppearance.DrawTextBox(rect, id, text, context);
 
-            s.PopStyle(4);
+            style.PopStyle(4);
 
             return text;
         }
@@ -54,8 +54,8 @@ namespace ImGui
             int id = window.GetID(str_id);
 
             // style
-            var s = g.StyleStack;
-            s.PushPadding(10.0);//+4
+            var style = GUIStyle.Basic;
+            style.PushPadding(10.0);//+4
 
             // rect
             Rect rect = window.GetRect(id, size);
@@ -65,11 +65,11 @@ namespace ImGui
             text = GUIBehavior.TextBoxBehavior(id, rect, text, out context);
 
             // render
-            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
+            style.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
             GUIAppearance.DrawTextBox(rect, id, text, context);
-            s.PopStyle();//-1
+            style.PopStyle();//-1
 
-            s.PopStyle(4);//-4
+            style.PopStyle(4);//-4
 
             return text;
         }
@@ -93,10 +93,9 @@ namespace ImGui
             int id = window.GetID(label);
 
             // style apply
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushBorder(0);//+4
-            s.PushPadding(3.0);//+4
+            style.PushBorder(0);//+4
+            style.PushPadding(3.0);//+4
 
             // rect
             var height = style.GetLineHeight();
@@ -112,7 +111,7 @@ namespace ImGui
 
             // render
             var d = window.DrawList;
-            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
+            style.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
             if (flags.HaveFlag(InputTextFlags.Password))
             {
                 var dotText = new string('*', text.Length);//FIXME bad performance
@@ -122,11 +121,11 @@ namespace ImGui
             {
                 GUIAppearance.DrawTextBox(boxRect, id, text, context);
             }
-            s.PopStyle();//-1
+            style.PopStyle();//-1
             d.DrawBoxModel(labelRect, label, style);
 
 
-            s.PopStyle(4 + 4);//-4-4
+            style.PopStyle(4 + 4);//-4-4
 
             return text;
         }

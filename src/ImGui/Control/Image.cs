@@ -18,9 +18,8 @@ namespace ImGui
                 return;
 
             // style apply
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushBorder(1.0);//+4
+            style.PushBorder(1.0);//+4
 
             // rect
             rect = window.GetRect(rect);
@@ -28,10 +27,10 @@ namespace ImGui
             // render
             var texture = TextureUtil.GetTexture(filePath);
             DrawList d = window.DrawList;
-            s.PushBorderColor(Color.Black);//+4
+            style.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            s.PopStyle(4+4);
+            style.PopStyle(4+4);
         }
 
         /// <summary>
@@ -47,19 +46,18 @@ namespace ImGui
                 return;
 
             // style
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushBorder(1.0);
+            style.PushBorder(1.0);
 
             // rect
             rect = window.GetRect(rect);
 
             // render
             DrawList d = window.DrawList;
-            s.PushBorderColor(Color.Black);//+4
+            style.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            s.PopStyle(4+4);
+            style.PopStyle(4+4);
         }
     }
 
@@ -79,9 +77,8 @@ namespace ImGui
             var id = window.GetID(filePath);
 
             // style
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushBorder(1.0);
+            style.PushBorder(1.0);
 
             // rect
             var texture = TextureUtil.GetTexture(filePath);
@@ -90,10 +87,10 @@ namespace ImGui
 
             // render
             DrawList d = window.DrawList;
-            s.PushBorderColor(Color.Black);//+4
+            style.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            s.PopStyle(4 + 4);
+            style.PopStyle(4 + 4);
         }
 
         public static void Image(ITexture texture)
@@ -106,20 +103,19 @@ namespace ImGui
             var id = window.GetID(texture);
 
             // style
-            var s = g.StyleStack;
-            s.PushBorder(1.0);//+4
+            var style = GUIStyle.Basic;
+            style.PushBorder(1.0);//+4
 
             // rect
-            var style = GUIStyle.Basic;
             Size size = style.CalcSize(texture, GUIState.Normal);
             var rect = window.GetRect(id, size);
 
             // render
             DrawList d = window.DrawList;
-            s.PushBorderColor(Color.Black);//+4
+            style.PushBorderColor(Color.Black);//+4
             d.DrawBoxModel(rect, texture, style);
 
-            s.PopStyle(4+4);
+            style.PopStyle(4+4);
         }
     }
 }

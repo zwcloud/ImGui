@@ -12,9 +12,8 @@ namespace ImGui
         /// <param name="state">which state will this style be apply to</param>
         public static void PushStyleColor(GUIStyleName name, Color color, GUIState state = GUIState.Normal)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.Push(new StyleModifier(name, StyleType.Color, color, state));
+            var style = GUIStyle.Basic;
+            style.Push(new StyleModifier(name, StyleType.Color, color, state));
         }
 
         /// <summary>
@@ -23,9 +22,8 @@ namespace ImGui
         /// <param name="number">number of style modifiers</param>
         public static void PopStyleVar(int number = 1)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PopStyle(number);
+            var style = GUIStyle.Basic;
+            style.PopStyle(number);
         }
 
 
@@ -38,17 +36,15 @@ namespace ImGui
         #region min/max width
         public static void PushMinMaxWidth((double, double) width)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushWidth(width);
+            var style = GUIStyle.Basic;
+            style.PushWidth(width);
         }
         public static void PopMinMaxWidth() => PopStyleVar(2);
 
         public static void PushMinMaxHeight((double, double) height)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushHeight(height);
+            var style = GUIStyle.Basic;
+            style.PushHeight(height);
         }
         public static void PopMinMaxHeight() => PopStyleVar(2);
         #endregion
@@ -56,95 +52,83 @@ namespace ImGui
         #region stretch factor
         public static void PushHStretchFactor(int factor)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushStretchFactor(false, factor);
+            var style = GUIStyle.Basic;
+            style.PushStretchFactor(false, factor);
         }
 
         public static void PushVStretchFactor(int factor)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushStretchFactor(true, factor);
+            var style = GUIStyle.Basic;
+            style.PushStretchFactor(true, factor);
         }
         #endregion
 
         #region cell spacing
         public static void PushHCellSpacing(double spacing)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushCellSpacing(false, spacing);
+            var style = GUIStyle.Basic;
+            style.PushCellSpacing(false, spacing);
         }
 
         public static void PushVCellSpacing(double spacing)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushCellSpacing(true, spacing);
+            var style = GUIStyle.Basic;
+            style.PushCellSpacing(true, spacing);
         }
         #endregion
 
         #region alignment
         public static void PushHAlign(Alignment alignment)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushAlignment(false, alignment);
+            var style = GUIStyle.Basic;
+            style.PushAlignment(false, alignment);
         }
         public static void PushVAlign(Alignment alignment)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushAlignment(true, alignment);
+            var style = GUIStyle.Basic;
+            style.PushAlignment(true, alignment);
         }
         #endregion
 
         #region box model
         public static void PushBorder((double, double, double, double) border)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushBorder(border);
+            var style = GUIStyle.Basic;
+            style.PushBorder(border);
         }
 
         public static void PushPadding((double, double, double, double) padding)
         {
-            var context = GetCurrentContext();
-            var styleStack = context.StyleStack;
-            styleStack.PushPadding(padding);
+            var style = GUIStyle.Basic;
+            style.PushPadding(padding);
         }
         #endregion
 
         #region color
         public static void PushBgColor(Color color)
         {
-            var g = GetCurrentContext();
-            var styleStack = g.StyleStack;
-            styleStack.PushBgColor(color);
+            var style = GUIStyle.Basic;
+            style.PushBgColor(color);
         }
         #endregion
 
         #region font
         public static void PushFontColor(Color color)
         {
-            var g = GetCurrentContext();
-            var styleStack = g.StyleStack;
-            styleStack.PushFontColor(color);
+            var style = GUIStyle.Basic;
+            style.PushFontColor(color);
         }
 
         public static void PushFontSize(double fontSize)
         {
-            var g = GetCurrentContext();
-            var styleStack = g.StyleStack;
-            styleStack.PushFontSize(fontSize);
+            var style = GUIStyle.Basic;
+            style.PushFontSize(fontSize);
         }
 
         public static void PushFontFamily(string fontFamily)
         {
-            var g = GetCurrentContext();
-            var styleStack = g.StyleStack;
-            styleStack.PushFontFamily(fontFamily);
+            var style = GUIStyle.Basic;
+            style.PushFontFamily(fontFamily);
         }
         #endregion
     }

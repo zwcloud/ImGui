@@ -4,16 +4,14 @@ using ImGui.Common.Primitive;
 
 namespace ImGui
 {
-    internal class StyleStack
+    internal partial class GUIStyle
     {
-        GUIStyle target = GUIStyle.Basic;
-
         Stack<StyleModifier> ModifierStack { get; } = new Stack<StyleModifier>();
 
         public void Push(StyleModifier modifier)
         {
             this.ModifierStack.Push(modifier);
-            modifier.Modify(this.target);
+            modifier.Modify(this);
         }
 
         public void PushRange(StyleModifier[] modifiers)
@@ -21,7 +19,7 @@ namespace ImGui
             foreach (var modifier in modifiers)
             {
                 this.ModifierStack.Push(modifier);
-                modifier.Modify(this.target);
+                modifier.Modify(this);
             }
         }
 
@@ -30,7 +28,7 @@ namespace ImGui
             for (int i = 0; i < number; i++)
             {
                 var modifier = this.ModifierStack.Pop();
-                modifier.Restore(this.target);
+                modifier.Restore(this);
             }
         }
 

@@ -129,12 +129,11 @@ namespace ImGui
             var id = window.GetID(label);
 
             // style apply
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
 
             // rect
             Size size = style.CalcSize(label, GUIState.Normal);
-            s.PushStretchFactor(false, 1);//+1
+            style.PushStretchFactor(false, 1);//+1
             {
                 var minSilderWidth = 200;
                 size.Width += minSilderWidth;
@@ -169,7 +168,7 @@ namespace ImGui
             GUIAppearance.DrawSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelWidth);
 
             // style restore
-            s.PopStyle();//-1
+            style.PopStyle();//-1
 
             return value;
         }
@@ -193,12 +192,11 @@ namespace ImGui
             var id = window.GetID(label);
 
             // style apply
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
 
             // rect
             Size size = style.CalcSize(label, GUIState.Normal);
-            s.PushStretchFactor(true, 1);//+1
+            style.PushStretchFactor(true, 1);//+1
             {
                 var minSilderHeight = 200;
                 size.Width = 20;
@@ -234,7 +232,7 @@ namespace ImGui
             GUIAppearance.DrawVSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelHeight);
 
             // style restore
-            s.PopStyle();//-1
+            style.PopStyle();//-1
 
             return value;
         }
@@ -307,7 +305,6 @@ namespace ImGui
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
-            StyleStack s = g.StyleStack;
             GUIStyle style = GUIStyle.Basic;
             DrawList d = window.DrawList;
 
@@ -348,12 +345,12 @@ namespace ImGui
                 labelWidth, rect.Height);
             d.DrawText(labelRect, label, style, state);
 
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
             d.PathFill(fillColor);
-            s.PopStyle(3);
+            style.PopStyle(3);
         }
 
         public static void DrawVSlider(Rect rect, string label, double value, double minValue, double maxValue, GUIState state,
@@ -362,7 +359,6 @@ namespace ImGui
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
-            StyleStack s = g.StyleStack;
             GUIStyle style = GUIStyle.Basic;
             DrawList d = window.DrawList;
 
@@ -403,12 +399,12 @@ namespace ImGui
                 rect.Width, labelHeight);
             d.DrawText(labelRect, label, style, state);
 
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
             d.PathFill(fillColor);
-            s.PopStyle(3);
+            style.PopStyle(3);
         }
     }
 

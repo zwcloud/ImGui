@@ -22,10 +22,9 @@ namespace ImGui
             int id = window.GetID(text);
 
             // style apply
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushBorder(1.0);//+4
-            s.PushPadding(5.0);//+4
+            style.PushBorder(1.0);//+4
+            style.PushPadding(5.0);//+4
 
             // rect
             rect = window.GetRect(rect);
@@ -37,14 +36,14 @@ namespace ImGui
             // render
             var d = window.DrawList;
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            s.PushBorderColor(Color.Black);//+4
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
+            style.PushBorderColor(Color.Black);//+4
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             d.DrawBoxModel(rect, text, style, state);
-            s.PopStyle(4 + 1 + 1 + 1);//-4-1-1-1
+            style.PopStyle(4 + 1 + 1 + 1);//-4-1-1-1
 
-            s.PopStyle(4 + 4);//-4-4
+            style.PopStyle(4 + 4);//-4-4
 
             return pressed;
         }
@@ -56,7 +55,8 @@ namespace ImGui
         /// Create an auto-layout button. When the user click it, something will happen immediately.
         /// </summary>
         /// <param name="text">text to display on the button</param>
-        public static bool Button(string text)
+        /// <param name="options"></param>
+        public static bool Button(string text, LayoutOptions? options)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
@@ -66,10 +66,9 @@ namespace ImGui
             int id = window.GetID(text);
 
             // style
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushBorder(1.0);//+4
-            s.PushPadding(5.0);//+4
+            style.PushBorder(1.0);//+4
+            style.PushPadding(5.0);//+4
 
             // rect
             Rect rect;
@@ -82,17 +81,22 @@ namespace ImGui
 
             // render
             var d = window.DrawList;
-            s.PushBorderColor(Color.Black);//+4
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
+            style.PushBorderColor(Color.Black);//+4
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to specify style like this. There should be a better way to do this.
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             d.DrawBoxModel(rect, text, style, state);
 
-            s.PopStyle(4+1+1+1);//-4-1-1-1
-            s.PopStyle(4+4);//-4-4
+            style.PopStyle(4+1+1+1);//-4-1-1-1
+            style.PopStyle(4+4);//-4-4
 
             return pressed;
+        }
+
+        public static bool Button(string text)
+        {
+            return Button(text, null);
         }
 
         public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1, Color tintColor)
@@ -105,10 +109,9 @@ namespace ImGui
             GUIContext g = GetCurrentContext();
 
             // style
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushBorder(1.0);//+4
-            s.PushPadding(5.0);//+4
+            style.PushBorder(1.0);//+4
+            style.PushPadding(5.0);//+4
 
             // rect
             var texture = TextureUtil.GetTexture(filePath);
@@ -119,7 +122,7 @@ namespace ImGui
             var rect = window.GetRect(id, size);
             if(rect == Layout.StackLayout.DummyRect)
             {
-                s.PopStyle(4 + 4);//-4-4
+                style.PopStyle(4 + 4);//-4-4
                 return false;
             }
 
@@ -130,18 +133,18 @@ namespace ImGui
             // render
             // TODO implement this with DrawBoxModel
             var d = window.DrawList;
-            s.PushBorderColor(Color.Black);//+4
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1
-            s.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            s.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
+            style.PushBorderColor(Color.Black);//+4
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
+            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             d.AddRectFilled(rect.Min, rect.Max, style.Get<Color>(GUIStyleName.BackgroundColor, state));
             rect.Offset(style.PaddingLeft + style.BorderLeft, style.PaddingTop + style.BorderTop);
             rect.Size = new Size(rect.Size.Width - style.PaddingHorizontal, rect.Size.Height - style.PaddingVertical);
             d.AddImage(texture, rect.TopLeft, rect.BottomRight, uv0, uv1, tintColor);
 
-            s.PopStyle(4 + 1+1+1);//-4-1-1-1
-            s.PopStyle(4 + 4);//-4-4
+            style.PopStyle(4 + 1+1+1);//-4-1-1-1
+            style.PopStyle(4 + 4);//-4-4
 
             return pressed;
         }

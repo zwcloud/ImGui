@@ -6,7 +6,7 @@ using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
-    public class GUIStyle
+    internal partial class GUIStyle
     {
         private struct NameState
         {

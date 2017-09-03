@@ -32,16 +32,16 @@ namespace ImGui
                 return;
 
             // style apply
-            var s = g.StyleStack;
+            var style = GUIStyle.Basic;
             var layout = window.StackLayout;
-            s.PushStretchFactor(layout.TopGroup.IsVertical, stretchFactor);
+            style.PushStretchFactor(layout.TopGroup.IsVertical, stretchFactor);
 
             // rect
             int id = window.GetID(str_id);
             window.GetRect(id, Size.Zero);
 
             // style restore
-            s.PopStyle();
+            style.PopStyle();
         }
     }
 }

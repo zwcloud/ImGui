@@ -15,7 +15,6 @@ namespace ImGui
             int id = window.GetID(str_id);
 
             // style
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
 
             // rect
@@ -28,9 +27,9 @@ namespace ImGui
             GUIAppearance.DrawProgressBar(rect, percent);
             if(overlayText != null)
             {
-                s.PushTextAlignment(TextAlignment.Center);
+                style.PushTextAlignment(TextAlignment.Center);
                 d.DrawBoxModel(rect, overlayText, style);
-                s.PopStyle();
+                style.PopStyle();
             }
 
             return percent;
@@ -44,18 +43,17 @@ namespace ImGui
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
-            StyleStack s = g.StyleStack;
             GUIStyle style = GUIStyle.Basic;
             DrawList d = window.DrawList;
 
-            s.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
+            style.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
             d.AddRectFilled(rect, style.BackgroundColor);
-            s.PopStyle();//-1
+            style.PopStyle();//-1
             var fillWidth = rect.Width * percent;
             var fillRect = new Rect(rect.X, rect.Y, fillWidth, rect.Height);
-            s.PushFillColor(new Color(0.90f, 0.70f, 0.00f, 1.00f));//+1
+            style.PushFillColor(new Color(0.90f, 0.70f, 0.00f, 1.00f));//+1
             d.AddRectFilled(fillRect, style.FillColor);
-            s.PopStyle();//-1
+            style.PopStyle();//-1
         }
     }
 }

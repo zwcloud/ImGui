@@ -17,10 +17,9 @@ namespace ImGui
                 var id = window.GetID(label);
 
                 // style apply
-                var s = g.StyleStack;
                 var style = GUIStyle.Basic;
-                s.PushStretchFactor(false, 1);//+1, always expand width
-                s.PushPadding((1, 1, 1, 5));//+4
+                style.PushStretchFactor(false, 1);//+1, always expand width
+                style.PushPadding((1, 1, 1, 5));//+4
 
                 do
                 {
@@ -46,12 +45,12 @@ namespace ImGui
                         var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
                         if(hovered || held)
                         {
-                            s.PushBgColor(new Color(0.40f, 0.40f, 0.90f, 0.45f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-                            s.PushBgColor(new Color(0.45f, 0.45f, 0.90f, 0.80f), GUIState.Hover);//+1
-                            s.PushBgColor(new Color(0.53f, 0.53f, 0.87f, 0.80f), GUIState.Active);//+1
+                            style.PushBgColor(new Color(0.40f, 0.40f, 0.90f, 0.45f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+                            style.PushBgColor(new Color(0.45f, 0.45f, 0.90f, 0.80f), GUIState.Hover);//+1
+                            style.PushBgColor(new Color(0.53f, 0.53f, 0.87f, 0.80f), GUIState.Active);//+1
                             var color = style.Get<Color>(GUIStyleName.BackgroundColor, state);
                             d.RenderFrame(rect.Min, rect.Max, color, false, 0);
-                            s.PopStyle(3);//-3
+                            style.PopStyle(3);//-3
                         }
                         d.RenderCollapseTriangle(rect.Min + new Vector(0+style.PaddingTop, lineHeight * 0.15f), open, lineHeight, Color.White, 0.7);
                         rect.X += rect.Height;
@@ -65,8 +64,8 @@ namespace ImGui
                 }while(false);
 
                 // style restore
-                s.PopStyle();//-1
-                s.PopStyle(4);//-4
+                style.PopStyle();//-1
+                style.PopStyle(4);//-4
 
                 BeginHorizontal("#Content");
                     Space("Space", 20);

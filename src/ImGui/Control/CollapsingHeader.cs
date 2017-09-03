@@ -21,18 +21,17 @@ namespace ImGui
             var id = window.GetID(text);
 
             // style apply
-            var s = g.StyleStack;
             var style = GUIStyle.Basic;
-            s.PushStretchFactor(false, 1);//+1, always expand width
-            s.PushPadding(2);//4
+            style.PushStretchFactor(false, 1);//+1, always expand width
+            style.PushPadding(2);//4
 
             // rect
             var height = style.GetLineHeight();
             Rect rect = window.GetRect(id, new Size(0, height));
             if (rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
             {
-                s.PopStyle();//-1
-                s.PopStyle(4);//-4
+                style.PopStyle();//-1
+                style.PopStyle(4);//-4
                 return false;
             }
 
@@ -47,13 +46,13 @@ namespace ImGui
             // render
             {
                 DrawList d = window.DrawList;
-                s.PushBgColor(new Color(0.40f, 0.40f, 0.90f, 0.45f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-                s.PushBgColor(new Color(0.45f, 0.45f, 0.90f, 0.80f), GUIState.Hover);//+1
-                s.PushBgColor(new Color(0.53f, 0.53f, 0.87f, 0.80f), GUIState.Active);//+1
+                style.PushBgColor(new Color(0.40f, 0.40f, 0.90f, 0.45f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
+                style.PushBgColor(new Color(0.45f, 0.45f, 0.90f, 0.80f), GUIState.Hover);//+1
+                style.PushBgColor(new Color(0.53f, 0.53f, 0.87f, 0.80f), GUIState.Active);//+1
                 var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
                 Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
                 d.RenderFrame(rect.Min, rect.Max, col, false, 0);
-                s.PopStyle(3);
+                style.PopStyle(3);
                 d.RenderCollapseTriangle(rect.Min, open, rect.Height, Color.White, scale);
                 rect.X += rect.Height;
                 var delta = rect.Width - rect.Height;
@@ -65,8 +64,8 @@ namespace ImGui
             }
 
             // style restore
-            s.PopStyle();//-1
-            s.PopStyle(4);//-4
+            style.PopStyle();//-1
+            style.PopStyle(4);//-4
 
             return open;
         }
