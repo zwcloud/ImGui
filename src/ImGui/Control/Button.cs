@@ -14,7 +14,6 @@ namespace ImGui
         /// <returns>true when the users clicks the button.</returns>
         public static bool Button(Rect rect, string text)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
@@ -58,7 +57,6 @@ namespace ImGui
         /// <param name="options"></param>
         public static bool Button(string text, LayoutOptions? options)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
@@ -67,8 +65,9 @@ namespace ImGui
 
             // style
             var style = GUIStyle.Basic;
-            style.PushBorder(1.0);//+4
-            style.PushPadding(5.0);//+4
+            style.Save();
+            style.PushBorder(1.0);
+            style.PushPadding(5.0);
 
             // rect
             Rect rect;
@@ -82,15 +81,13 @@ namespace ImGui
             // render
             var d = window.DrawList;
             style.PushBorderColor(Color.Black);//+4
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to specify style like this. There should be a better way to do this.
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);// TODO It's stupid to specify style like this. There should be a better way to do this.
+            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
+            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             d.DrawBoxModel(rect, text, style, state);
 
-            style.PopStyle(4+1+1+1);//-4-1-1-1
-            style.PopStyle(4+4);//-4-4
-
+            style.Restore();
             return pressed;
         }
 
@@ -106,12 +103,12 @@ namespace ImGui
                 return false;
 
             var id = window.GetID(filePath);
-            GUIContext g = GetCurrentContext();
 
             // style
             var style = GUIStyle.Basic;
-            style.PushBorder(1.0);//+4
-            style.PushPadding(5.0);//+4
+            style.Save();
+            style.PushBorder(1.0);
+            style.PushPadding(5.0);
 
             // rect
             var texture = TextureUtil.GetTexture(filePath);
@@ -122,7 +119,7 @@ namespace ImGui
             var rect = window.GetRect(id, size);
             if(rect == Layout.StackLayout.DummyRect)
             {
-                style.PopStyle(4 + 4);//-4-4
+                style.Restore();
                 return false;
             }
 
@@ -143,8 +140,7 @@ namespace ImGui
             rect.Size = new Size(rect.Size.Width - style.PaddingHorizontal, rect.Size.Height - style.PaddingVertical);
             d.AddImage(texture, rect.TopLeft, rect.BottomRight, uv0, uv1, tintColor);
 
-            style.PopStyle(4 + 1+1+1);//-4-1-1-1
-            style.PopStyle(4 + 4);//-4-4
+            style.Restore();
 
             return pressed;
         }

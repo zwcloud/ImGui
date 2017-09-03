@@ -6,28 +6,45 @@ namespace ImGui
 {
     internal partial class GUIStyle
     {
-        Stack<StyleModifier> ModifierStack { get; } = new Stack<StyleModifier>();
+        private readonly Stack<StyleModifier> modifierStack = new Stack<StyleModifier>();
+
+        #region Save/Restore
+
+        private int savedCount;
+
+        public void Save()
+        {
+            this.savedCount = this.modifierStack.Count;
+        }
+
+        public void Restore()
+        {
+            if (this.modifierStack.Count == 0)
+            {
+                throw new InvalidOperationException("No style modified.");
+            }
+
+            while (this.modifierStack.Count != this.savedCount)
+            {
+                PopStyle();
+            }
+        }
+
+        #endregion
+
+        #region Push/Pop
 
         public void Push(StyleModifier modifier)
         {
-            this.ModifierStack.Push(modifier);
+            this.modifierStack.Push(modifier);
             modifier.Modify(this);
-        }
-
-        public void PushRange(StyleModifier[] modifiers)
-        {
-            foreach (var modifier in modifiers)
-            {
-                this.ModifierStack.Push(modifier);
-                modifier.Modify(this);
-            }
         }
 
         public void PopStyle(int number = 1)
         {
             for (int i = 0; i < number; i++)
             {
-                var modifier = this.ModifierStack.Pop();
+                var modifier = this.modifierStack.Pop();
                 modifier.Restore(this);
             }
         }
@@ -185,6 +202,8 @@ namespace ImGui
             var modifier = new StyleModifier(GUIStyleName.StrokeColor, StyleType.Color, color, state);
             Push(modifier);
         }
+
+        #endregion
 
         #endregion
     }
