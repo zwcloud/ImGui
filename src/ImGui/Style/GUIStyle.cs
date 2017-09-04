@@ -127,9 +127,9 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Hover }] = Color.Clear,
                 [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Active }] = Color.Clear,
 
-                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
-                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Hover }] = new Color(0.90, 0.90, 0.90),
-                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = new Color(0.90, 0.90, 0.90),
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = Color.Black,
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Hover }] = Color.Black,
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = Color.Black,
 
                 [new NameState { Name = GUIStyleName.GradientLeftColor, State = GUIState.Normal }] = Color.Rgb(247, 247, 247),
                 [new NameState { Name = GUIStyleName.GradientLeftColor, State = GUIState.Hover }] = Color.Rgb(247, 247, 247),
@@ -249,11 +249,11 @@ namespace ImGui
 
                 [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Normal }] = Color.Clear,
 
-                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = Color.Rgb(66, 66, 66),
 
-                [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+                [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Normal }] = Color.Rgb(66, 66, 66),
 
-                [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+                [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Normal }] = Color.Rgb(66, 66, 66),
 
                 [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Normal }] = Color.Rgb(247, 247, 247),
 
@@ -617,6 +617,12 @@ namespace ImGui
                 Set<double>(GUIStyleName.BorderImageSliceBottom, bottom);
                 Set<double>(GUIStyleName.BorderImageSliceLeft, left);
             }
+        }
+
+        public Color GetBorderColor(GUIState state)
+        {
+            //TODO check if all border color under state is the same
+            return this.Get<Color>(GUIStyleName.BorderTopColor, state);
         }
         #endregion Border
 

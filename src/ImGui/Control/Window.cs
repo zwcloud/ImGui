@@ -277,35 +277,27 @@ namespace ImGui
                 // Borders
                 if (flags.HaveFlag(WindowFlags.ShowBorders))
                 {
+                    // window border
                     var borderColor = window.Style.Get<Color>(GUIStyleName.WindowBorderColor);
-                    var borderShadowColor = window.Style.Get<Color>(GUIStyleName.WindowShadowColor);
-                    window.DrawList.AddRect(window.Position + new Vector(1, 1),
-                        window.Position + new Vector(window.Size.Width, window.Size.Height) + new Vector(1, 1),
-                        borderShadowColor, window_rounding);
                     window.DrawList.AddRect(window.Position, window.Position + new Vector(window.Size.Width, window.Size.Height),
                         borderColor, window_rounding);
-                    if (!(flags.HaveFlag(WindowFlags.NoTitleBar)))
-                    {
-                        window.DrawList.AddLine(title_bar_rect.BottomLeft + new Vector(1, 0), title_bar_rect.BottomRight - new Vector(1, 0), borderColor);
-                    }
-                }
-
-                // window shadow
+                    // window shadow
 #if false
-                {
-                    var state = w.FocusedWindow == window ? GUIState.Active : GUIState.Normal;
-                    var shadowColor = window.Style.Get<Color>(GUIStyleName.WindowShadowColor, state);
-                    var shadowWidth = window.Style.Get<double>(GUIStyleName.WindowShadowWidth, state);
-                    var d = window.DrawList;
+                    {
+                        var state = w.FocusedWindow == window ? GUIState.Active : GUIState.Normal;
+                        var shadowColor = window.Style.Get<Color>(GUIStyleName.WindowShadowColor, state);
+                        var shadowWidth = window.Style.Get<double>(GUIStyleName.WindowShadowWidth, state);
+                        var d = window.DrawList;
 
-                    //top-left corner
+                        //top-left corner
 
-                    d.AddRectFilledGradientTopLeftToBottomRight(window.Rect.TopLeft + new Vector(-shadowWidth, -shadowWidth), window.Rect.TopLeft, Color.Clear, shadowColor);
-                    //top
-                    d.AddRectFilledGradient(window.Rect.TopLeft + new Vector(0, -shadowWidth), window.Rect.TopRight, Color.Clear, shadowColor);
-                    d.AddRectFilledGradient(window.Rect.BottomLeft, window.Rect.BottomRight + new Vector(0, shadowWidth), shadowColor, Color.Clear);
-                }
+                        d.AddRectFilledGradientTopLeftToBottomRight(window.Rect.TopLeft + new Vector(-shadowWidth, -shadowWidth), window.Rect.TopLeft, Color.Clear, shadowColor);
+                        //top
+                        d.AddRectFilledGradient(window.Rect.TopLeft + new Vector(0, -shadowWidth), window.Rect.TopRight, Color.Clear, shadowColor);
+                        d.AddRectFilledGradient(window.Rect.BottomLeft, window.Rect.BottomRight + new Vector(0, shadowWidth), shadowColor, Color.Clear);
+                    }
 #endif
+                }
 
                 // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
                 window.WindowClippedRect = window.Rect;

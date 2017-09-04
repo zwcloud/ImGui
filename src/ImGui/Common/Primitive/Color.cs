@@ -98,6 +98,12 @@ namespace ImGui.Common.Primitive
             return new Color(r / 255.0, g / 255.0, b / 255.0, 1.0);
         }
 
+        public static Color Rgb(byte all)
+        {
+            var grey = all / 255.0;
+            return new Color(grey, grey, grey, 1.0);
+        }
+
         public static Color Argb(byte a, byte r, byte g, byte b)
         {
             return new Color(r / 255.0, g / 255.0, b / 255.0, a / 255.0);

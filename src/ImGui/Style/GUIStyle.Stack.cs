@@ -19,7 +19,7 @@ namespace ImGui
 
         public void Restore()
         {
-            if (this.modifierStack.Count == 0)
+            if (this.modifierStack.Count == 0 || this.modifierStack.Count <= this.savedCount)
             {
                 throw new InvalidOperationException("No style modified.");
             }

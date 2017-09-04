@@ -17,6 +17,7 @@ namespace ImGui
 
             // style
             var style = GUIStyle.Basic;
+            style.Save();
             style.PushPadding(10.0);//+4
 
             // rect
@@ -24,12 +25,16 @@ namespace ImGui
 
             // interact
             InputTextContext context;
-            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context);
+            text = GUIBehavior.TextBoxBehavior(id, rect, text, out bool hovered, out bool active, out context);
 
             // render
-            GUIAppearance.DrawTextBox(rect, id, text, context);
+            var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            style.PushBorderColor(Color.Rgb(112), GUIState.Normal);
+            style.PushBorderColor(Color.Rgb(23), GUIState.Hover);
+            style.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
+            GUIAppearance.DrawTextBox(rect, id, text, context, state);
 
-            style.PopStyle(4);
+            style.Restore();
 
             return text;
         }
@@ -55,6 +60,7 @@ namespace ImGui
 
             // style
             var style = GUIStyle.Basic;
+            style.Save();
             style.PushPadding(10.0);//+4
 
             // rect
@@ -62,14 +68,16 @@ namespace ImGui
 
             // interact
             InputTextContext context;
-            text = GUIBehavior.TextBoxBehavior(id, rect, text, out context);
+            text = GUIBehavior.TextBoxBehavior(id, rect, text, out bool hovered, out bool active, out context);
 
             // render
-            style.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
-            GUIAppearance.DrawTextBox(rect, id, text, context);
-            style.PopStyle();//-1
+            var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            style.PushBorderColor(Color.Rgb(112), GUIState.Normal);
+            style.PushBorderColor(Color.Rgb(23), GUIState.Hover);
+            style.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
+            GUIAppearance.DrawTextBox(rect, id, text, context, state);
 
-            style.PopStyle(4);//-4
+            style.Restore();
 
             return text;
         }
@@ -94,8 +102,9 @@ namespace ImGui
 
             // style apply
             var style = GUIStyle.Basic;
-            style.PushBorder(0);//+4
-            style.PushPadding(3.0);//+4
+            style.Save();
+            style.PushPadding(3.0);
+            style.PushBorder(1);//+4
 
             // rect
             var height = style.GetLineHeight();
@@ -107,25 +116,28 @@ namespace ImGui
 
             // interact
             InputTextContext context;
-            text = GUIBehavior.TextBoxBehavior(id, boxRect, text, out context, flags, checker);
+            text = GUIBehavior.TextBoxBehavior(id, boxRect, text, out bool hovered, out bool active, out context, flags, checker);
 
             // render
             var d = window.DrawList;
-            style.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
+            var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            style.PushBorderColor(Color.Rgb(112), GUIState.Normal);
+            style.PushBorderColor(Color.Rgb(23), GUIState.Hover);
+            style.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
             if (flags.HaveFlag(InputTextFlags.Password))
             {
                 var dotText = new string('*', text.Length);//FIXME bad performance
-                GUIAppearance.DrawTextBox(boxRect, id, dotText, context);
+                GUIAppearance.DrawTextBox(boxRect, id, dotText, context, state);
             }
             else
             {
-                GUIAppearance.DrawTextBox(boxRect, id, text, context);
+                GUIAppearance.DrawTextBox(boxRect, id, text, context, state);
             }
-            style.PopStyle();//-1
+
+            style.PushBorder(0);
             d.DrawBoxModel(labelRect, label, style);
 
-
-            style.PopStyle(4 + 4);//-4-4
+            style.Restore();
 
             return text;
         }
@@ -209,11 +221,12 @@ namespace ImGui
 
     internal partial class GUIBehavior
     {
-        public static string TextBoxBehavior(int id, Rect rect, string text, out InputTextContext context, InputTextFlags flags = 0, Func<char, bool> checker = null)
+        public static string TextBoxBehavior(int id, Rect rect, string text, out bool hovered, out bool active, out InputTextContext context, InputTextFlags flags = 0, Func<char, bool> checker = null)
         {
             GUIContext g = Form.current.uiContext;
 
-            var hovered = g.IsHovered(rect, id);
+            active = false;
+            hovered = g.IsHovered(rect, id);
             if (hovered)
             {
                 g.SetHoverID(id);
@@ -254,6 +267,8 @@ namespace ImGui
             context = null;
             if (g.ActiveId == id)
             {
+                active = true;
+
                 var stateMachine = g.InputTextState.stateMachine;
                 context = g.InputTextState.inputTextContext;
                 context.Rect = rect;
@@ -305,7 +320,7 @@ namespace ImGui
 
     internal partial class GUIAppearance
     {
-        public static void DrawTextBox(Rect rect, int id, string text, InputTextContext context)
+        public static void DrawTextBox(Rect rect, int id, string text, InputTextContext context, GUIState state)
         {
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
@@ -313,14 +328,9 @@ namespace ImGui
 
             var d = window.DrawList;
             var style = GUIStyle.Basic;
+            // draw text, selection and caret
             var contentRect = style.GetContentRect(rect);
-            d.PushClipRect(rect, true);
-
-            //Draw the box
-            {
-                d.AddRectFilled(rect.Min, rect.Max, style.BackgroundColor);
-            }
-
+            d.PushClipRect(contentRect, true);
             if (g.ActiveId == id)
             {
                 //Calculate positions and sizes
@@ -432,13 +442,18 @@ namespace ImGui
                 //Draw caret
                 d.PathMoveTo(caretTopPoint);
                 d.PathLineTo(caretBottomPoint);
-                d.PathStroke(Color.Argb(caretAlpha, 255, 255, 255), false, 2);
+                d.PathStroke(Color.Argb(caretAlpha, 0, 0, 0), false, 2);
             }
             else
             {
                 d.DrawText(contentRect, text, style, GUIState.Normal);
             }
             d.PopClipRect();
+
+            // draw the box
+            {
+                d.AddRect(rect.Min, rect.Max, style.GetBorderColor(state));
+            }
         }
     }
 

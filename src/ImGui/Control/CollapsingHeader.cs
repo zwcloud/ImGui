@@ -53,7 +53,7 @@ namespace ImGui
                 Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
                 d.RenderFrame(rect.Min, rect.Max, col, false, 0);
                 style.PopStyle(3);
-                d.RenderCollapseTriangle(rect.Min, open, rect.Height, Color.White, scale);
+                d.RenderCollapseTriangle(rect.Min, open, rect.Height, Color.Black, scale);
                 rect.X += rect.Height;
                 var delta = rect.Width - rect.Height;
                 if (delta > 0)
