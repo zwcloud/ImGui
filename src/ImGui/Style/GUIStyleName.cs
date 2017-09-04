@@ -39,6 +39,7 @@ namespace ImGui
 
         BackgroundColor,
         BackgroundImage,
+        BackgroundGradient,
 
         TextAlignment,
         AlignmentHorizontal,
@@ -56,6 +57,9 @@ namespace ImGui
 
         StrokeColor,
         FillColor,
+
+        GradientTopColor,
+        GradientBottomColor,
 
         _FieldWidth,
         _ControlLabelSpacing,

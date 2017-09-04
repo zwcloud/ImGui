@@ -1,6 +1,7 @@
 ﻿//#define DrawPaddingBox
 //#define DrawContentBox
 
+using System;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
@@ -77,7 +78,21 @@ namespace ImGui
             var contentBoxRect = new Rect(ctl, cbr);
 
             // draw background in padding-box
-            drawList.AddRectFilled(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight, style.Get<Color>(GUIStyleName.BackgroundColor, state));
+            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient, state);
+            if (gradient == Gradient.None)
+            {
+                drawList.AddRectFilled(paddingBoxRect, style.Get<Color>(GUIStyleName.BackgroundColor, state));
+            }
+            else if (gradient == Gradient.TopBottom)
+            {
+                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor, state);
+                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor, state);
+                drawList.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
 
             //Content
             //Content-box

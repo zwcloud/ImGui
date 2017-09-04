@@ -83,10 +83,13 @@ namespace ImGui
 
             // render
             var d = window.DrawList;
-            style.PushBorderColor(Color.Black);//+4
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);// TODO It's stupid to specify style like this. There should be a better way to do this.
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
-            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
+            style.PushBorderColor(Color.Rgb(166, 166, 166), GUIState.Normal);
+            style.PushBorderColor(Color.Rgb(123, 123, 123), GUIState.Hover);
+            style.PushBorderColor(Color.Rgb(148, 148, 148), GUIState.Active);
+            style.PushBgGradient(Gradient.TopBottom);
+            style.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal);// TODO It's stupid to specify style like this. There should be a better way to do this.
+            style.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Hover);
+            style.PushGradientColor(Color.Rgb(222, 222, 222), Color.Rgb(248, 248, 248), GUIState.Active);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             d.DrawBoxModel(rect, text, style, state);
 

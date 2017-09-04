@@ -111,7 +111,7 @@ namespace ImGui
                 style.Set(GUIStyleName.PaddingLeft, 10.0);
                 style.Set(GUIStyleName.WindowBorderColor, new Color(0.70f, 0.70f, 0.70f, 0.65f));
                 style.Set(GUIStyleName.WindowBorderShadowColor, new Color(0.00f, 0.00f, 0.00f, 0.00f));
-                style.Set(GUIStyleName.BackgroundColor, new Color(0.30f, 0.30f, 0.30f, 0.70f));
+                style.Set(GUIStyleName.BackgroundColor, Color.White);
                 style.Set(GUIStyleName.ResizeGripSize, 20.0);
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
                 style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);

@@ -137,12 +137,12 @@ namespace ImGui
 
         #region image, color
 
-        public void PushBorderColor(Color color)
+        public void PushBorderColor(Color color, GUIState state = GUIState.Normal)
         {
-            var modifier1 = new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, color);
-            var modifier2 = new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, color);
-            var modifier3 = new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, color);
-            var modifier4 = new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, color);
+            var modifier1 = new StyleModifier(GUIStyleName.BorderTopColor, StyleType.Color, color, state);
+            var modifier2 = new StyleModifier(GUIStyleName.BorderRightColor, StyleType.Color, color, state);
+            var modifier3 = new StyleModifier(GUIStyleName.BorderLeftColor, StyleType.Color, color, state);
+            var modifier4 = new StyleModifier(GUIStyleName.BorderBottomColor, StyleType.Color, color, state);
             Push(modifier1);
             Push(modifier2);
             Push(modifier3);
@@ -153,6 +153,20 @@ namespace ImGui
         {
             var modifier = new StyleModifier(GUIStyleName.BackgroundColor, StyleType.Color, color, state);
             Push(modifier);
+        }
+
+        public void PushBgGradient(Gradient gradient, GUIState state = GUIState.Normal)
+        {
+            var modifier = new StyleModifier(GUIStyleName.BackgroundGradient, StyleType.@int, (int)gradient, state);
+            Push(modifier);
+        }
+
+        public void PushGradientColor(Color topColor, Color bottomColor, GUIState state = GUIState.Normal)
+        {
+            var modifier1 = new StyleModifier(GUIStyleName.GradientTopColor, StyleType.Color, topColor, state);
+            var modifier2 = new StyleModifier(GUIStyleName.GradientBottomColor, StyleType.Color, bottomColor, state);
+            Push(modifier1);
+            Push(modifier2);
         }
 
         #endregion

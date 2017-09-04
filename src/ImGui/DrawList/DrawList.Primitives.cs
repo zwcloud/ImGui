@@ -163,6 +163,27 @@ namespace ImGui
             this.ShapeMesh.currentIdx += 4;
         }
 
+        private void PrimRectGradient(Point a, Point c, Color topColor, Color bottomColor)
+        {
+            Point b = new Point(c.X, a.Y);
+            Point d = new Point(a.X, c.Y);
+            Point uv = Point.Zero;
+
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = a, uv = Point.Zero, color = topColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = b, uv = Point.Zero, color = topColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = c, uv = Point.Zero, color = bottomColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = d, uv = Point.Zero, color = bottomColor });
+
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(1);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(3);
+
+            this.ShapeMesh.currentIdx += 4;
+        }
+
         private void PrimRectUV(Point a, Point c, Point uvA, Point uvC, Color color)
         {
             Point b = new Point(c.X, a.Y);
@@ -202,6 +223,11 @@ namespace ImGui
             PathStroke(color, true, thickness);
         }
 
+        public void AddRect(Rect rect, Color color, float rounding = 0.0f, int roundingCorners = 0x0F, float thickness = 1.0f)
+        {
+            AddRect(rect.Min, rect.Max, color, rounding, roundingCorners, thickness);
+        }
+
         /// <summary>
         /// Add a filled rectangle. Note 1 px sized rectangles won't be rendered properly.
         /// </summary>
@@ -229,6 +255,20 @@ namespace ImGui
         public void AddRectFilled(Rect rect, Color color, float rounding = 0.0f, int roundingCorners = 0x0F)
         {
             AddRectFilled(rect.TopLeft, rect.BottomRight, color, rounding, roundingCorners);
+        }
+
+        public void AddRectFilledGradient(Point a, Point b, Color topColor, Color bottomColor)
+        {
+            if (MathEx.AmostZero(topColor.A) && MathEx.AmostZero(bottomColor.A))
+                return;
+
+            this.ShapeMesh.PrimReserve(6, 4);
+            PrimRectGradient(a, b, topColor, bottomColor);
+        }
+
+        public void AddRectFilledGradient(Rect rect, Color topColor, Color bottomColor)
+        {
+            AddRectFilledGradient(rect.Min, rect.Max, topColor, bottomColor);
         }
 
         /// <summary>

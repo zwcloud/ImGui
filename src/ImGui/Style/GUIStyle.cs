@@ -130,6 +130,14 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Hover }] = new Color(0.90, 0.90, 0.90),
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = new Color(0.90, 0.90, 0.90),
+
+                [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Normal }] = Color.Rgb(247, 247, 247),
+                [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Hover }] = Color.Rgb(247, 247, 247),
+                [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Active }] = Color.Rgb(247, 247, 247),
+
+                [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Normal }] = Color.Rgb(221, 221, 221),
+                [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Hover }] = Color.Rgb(221, 221, 221),
+                [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Active }] = Color.Rgb(221, 221, 221),
             };
 
             style.imageStyles = new Dictionary<NameState, ITexture>
@@ -171,6 +179,10 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Normal }] = (int)Alignment.Start,
                 [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Hover }] = (int)Alignment.Start,
                 [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Active }] = (int)Alignment.Start,
+
+                [new NameState { Name = GUIStyleName.BackgroundGradient, State = GUIState.Normal }] = (int)Gradient.None,
+                [new NameState { Name = GUIStyleName.BackgroundGradient, State = GUIState.Hover }] = (int)Gradient.None,
+                [new NameState { Name = GUIStyleName.BackgroundGradient, State = GUIState.Active }] = (int)Gradient.None,
             };
 
             style.strStyles = new Dictionary<NameState, string>
@@ -178,7 +190,7 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Active }] = DefaultFontFamily,
-            };
+            };            
 
             return style;
         }
@@ -234,6 +246,10 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
 
                 [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Normal }] = new Color(0.90, 0.90, 0.90),
+
+                [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Normal }] = Color.Rgb(247, 247, 247),
+
+                [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Normal }] = Color.Rgb(221, 221, 221),
             };
 
             style.imageStyles = new Dictionary<NameState, ITexture>
@@ -259,6 +275,8 @@ namespace ImGui
 
                 [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Normal }] = (int)Alignment.Start,
                 [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Normal }] = (int)Alignment.Start,
+
+                [new NameState { Name = GUIStyleName.BackgroundGradient, State = GUIState.Normal }] = (int)Gradient.None,
             };
 
             style.strStyles = new Dictionary<NameState, string>
@@ -654,10 +672,19 @@ namespace ImGui
         public Color StrokeColor => Get<Color>(GUIStyleName.StrokeColor);
         public Color FillColor => Get<Color>(GUIStyleName.FillColor);
 
+        public Color GradientTopColor => Get<Color>(GUIStyleName.GradientTopColor);
+        public Color GradientBottomColor => Get<Color>(GUIStyleName.GradientBottomColor);
+
         public Color BackgroundColor
         {
             get => Get<Color>(GUIStyleName.BackgroundColor);
             set => Set<Color>(GUIStyleName.BackgroundColor, value);
+        }
+
+        public Gradient BackgroundGradient
+        {
+            get => (Gradient)Get<int>(GUIStyleName.BackgroundGradient);
+            set => Set<int>(GUIStyleName.BackgroundGradient, (int)value);
         }
 
         public string FontFamily
