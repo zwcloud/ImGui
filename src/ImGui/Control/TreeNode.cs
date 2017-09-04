@@ -73,7 +73,7 @@ namespace ImGui
             return open;
         }
 
-        public static void TreePop()
+        public static void TreePop()//TODO using/IDisposable based tree?
         {
                     EndVertical();
                 EndHorizontal();

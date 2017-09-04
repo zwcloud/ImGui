@@ -85,6 +85,8 @@ label:
     bool layoutOn = false;
     bool childRegionsOpen = false;
     int line = 50;
+    bool stackLayoutOpen = false;
+    bool layoutScopesOpen = false;
     #endregion
 
     #endregion
@@ -412,6 +414,8 @@ label:
 
             if (GUILayout.TreeNode("Child regions", ref childRegionsOpen))
             {
+                GUILayout.Text("Child region implementation is buggy and being fixed.");
+#if false
                 GUILayout.Text("Without border");
                 bool goto_line = GUILayout.Button("Goto");
 
@@ -446,42 +450,68 @@ label:
                 }
                 GUILayout.EndChild();
                 GUILayout.EndHorizontal();
-
+#endif
             }
             GUILayout.TreePop();
 
-            GUILayout.Label("Three buttons of default size.");
-            GUILayout.BeginHorizontal("H~~~1");
+            if (GUILayout.TreeNode("Stack layout", ref stackLayoutOpen))
             {
-                GUILayout.Button("1~");
-                GUILayout.Button("2~~");
-                GUILayout.Button("3~~~");
+                GUILayout.Label("Three buttons of default size.");
+                GUILayout.BeginHorizontal("H~~~1");
+                {
+                    GUILayout.Button("1~");
+                    GUILayout.Button("2~~");
+                    GUILayout.Button("3~~~");
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.Label("Three fixed-width (100 pixels) buttons.");
+                GUILayout.BeginHorizontal("H~~~2");
+                {
+                    GUILayout.PushFixedWidth(100);
+                    GUILayout.Button("1");
+                    GUILayout.Button("2");
+                    GUILayout.Button("3");
+                    GUILayout.PopStyleVar(2);
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.Label("Three stretched sized buttons with 1/2/3 stretch factor.");
+                GUILayout.BeginHorizontal("H~~~3");
+                {
+                    GUILayout.PushHStretchFactor(1);
+                    GUILayout.Button("1");
+                    GUILayout.PopStyleVar();
+                    GUILayout.PushHStretchFactor(2);
+                    GUILayout.Button("2");
+                    GUILayout.PopStyleVar();
+                    GUILayout.PushHStretchFactor(3);
+                    GUILayout.Button("3");
+                    GUILayout.PopStyleVar();
+                }
+                GUILayout.EndHorizontal();
             }
-            GUILayout.EndHorizontal();
-            GUILayout.Label("Three fixed-width (100 pixels) buttons.");
-            GUILayout.BeginHorizontal("H~~~2");
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("Layout scopes", ref layoutScopesOpen))
             {
-                GUILayout.PushFixedWidth(100);
-                GUILayout.Button("1");
-                GUILayout.Button("2");
-                GUILayout.Button("3");
-                GUILayout.PopStyleVar(2);
+                /*
+                 * H(V)Scope is a wrapper of BeginHorizontal(Vertical)/EndHorizontal(Vertical) API.
+                 * It employs IDisposable so we don't need to call EndHorizontal(Vertical),
+                 * because it is called automatically when H(V)Scope goes out of scope.
+                 */
+                using (GUILayout.HScope("HorizontalScope~", GUILayout.ExpandWidth(false)))
+                {
+                    GUILayout.Button("H1");
+                    using (GUILayout.VScope("VerticalScope~", GUILayout.ExpandWidth(false)))
+                    {
+                        GUILayout.Button("V1");
+                        GUILayout.Button("V2");
+                    }
+                    GUILayout.Button("H2");
+                    GUILayout.Button("H3");
+                }
             }
-            GUILayout.EndHorizontal();
-            GUILayout.Label("Three stretched sized buttons with 1/2/3 stretch factor.");
-            GUILayout.BeginHorizontal("H~~~3");
-            {
-                GUILayout.PushHStretchFactor(1);
-                GUILayout.Button("1");
-                GUILayout.PopStyleVar();
-                GUILayout.PushHStretchFactor(2);
-                GUILayout.Button("2");
-                GUILayout.PopStyleVar();
-                GUILayout.PushHStretchFactor(3);
-                GUILayout.Button("3");
-                GUILayout.PopStyleVar();
-            }
-            GUILayout.EndHorizontal();
+            GUILayout.TreePop();
+
             GUILayout.PopID();
         }
 
