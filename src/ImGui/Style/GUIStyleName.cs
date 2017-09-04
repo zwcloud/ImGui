@@ -58,7 +58,9 @@ namespace ImGui
         StrokeColor,
         FillColor,
 
+        GradientLeftColor,
         GradientTopColor,
+        GradientRightColor,
         GradientBottomColor,
 
         _FieldWidth,
@@ -70,7 +72,8 @@ namespace ImGui
         ResizeGripSize,
         ResizeGripColor,
         WindowBorderColor,
-        WindowBorderShadowColor,
+        WindowShadowColor,
+        WindowShadowWidth,
 
         ScrollBarWidth,
         ScrollBarBackgroundColor,

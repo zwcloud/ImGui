@@ -186,5 +186,10 @@ namespace ImGui.Common.Primitive
             return new Color(red, green, blue, color.a);
         }
 
+        public static Color Lerp(Color a, Color b, double k)
+        {
+            k = MathEx.Clamp01(k);
+            return new Color(a.r + (b.r - a.r) * k, a.g + (b.g - a.g) * k, a.b + (b.b - a.b) * k, a.a + (b.a - a.a) * k);
+        }
     }
 }

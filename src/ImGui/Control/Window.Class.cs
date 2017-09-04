@@ -109,13 +109,15 @@ namespace ImGui
                 style.Set(GUIStyleName.PaddingRight, 10.0);
                 style.Set(GUIStyleName.PaddingBottom, 5.0);
                 style.Set(GUIStyleName.PaddingLeft, 10.0);
-                style.Set(GUIStyleName.WindowBorderColor, new Color(0.70f, 0.70f, 0.70f, 0.65f));
-                style.Set(GUIStyleName.WindowBorderShadowColor, new Color(0.00f, 0.00f, 0.00f, 0.00f));
+                style.Set(GUIStyleName.WindowBorderColor, Color.Rgb(170, 170, 170), GUIState.Normal);
+                style.Set(GUIStyleName.WindowBorderColor, Color.Rgb(24, 131, 215), GUIState.Active);
+                style.Set(GUIStyleName.WindowShadowColor, Color.Argb(100, 227, 227, 227));
+                style.Set(GUIStyleName.WindowShadowWidth, 15.0);
                 style.Set(GUIStyleName.BackgroundColor, Color.White);
                 style.Set(GUIStyleName.ResizeGripSize, 20.0);
-                style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.30f));
-                style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.60f), GUIState.Hover);
-                style.Set(GUIStyleName.ResizeGripColor, new Color(1.00f, 1.00f, 1.00f, 0.90f), GUIState.Active);
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(75, 102, 102, 102));
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(150, 102, 102, 102), GUIState.Hover);
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(225, 102, 102, 102), GUIState.Active);
                 style.Set(GUIStyleName.WindowRounding, 3.0);
                 style.Set(GUIStyleName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
                 style.Set(GUIStyleName.ScrollBarBackgroundColor, Color.Metal);
@@ -128,16 +130,17 @@ namespace ImGui
             // window header styles
             {
                 var style = new GUIStyle();
-                style.Set(GUIStyleName.BackgroundColor, new Color(0.27f, 0.27f, 0.54f, 0.83f));
-                style.Set(GUIStyleName.BackgroundColor, new Color(0.32f, 0.32f, 0.63f, 0.87f), GUIState.Active);
-                style.Set(GUIStyleName.BackgroundColor, new Color(0.40f, 0.40f, 0.80f, 0.20f), GUIState.Disabled);
+                style.Set(GUIStyleName.BackgroundColor, Color.White);
+                style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Active);
+                style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Disabled);
                 style.Set(GUIStyleName.PaddingTop, 8.0);
                 style.Set(GUIStyleName.PaddingRight, 8.0);
                 style.Set(GUIStyleName.PaddingBottom, 8.0);
                 style.Set(GUIStyleName.PaddingLeft, 8.0);
-                style.Set(GUIStyleName.FontColor, Color.White);
+                style.Set(GUIStyleName.FontColor, Color.Black, GUIState.Normal);
+                style.Set(GUIStyleName.FontColor, Color.Rgb(153, 153, 153), GUIState.Active);
                 style.FontFamily = GUIStyle.Default.FontFamily;
-                style.FontSize = 20.0;
+                style.FontSize = 12.0;
                 this.TitleBarStyle = style;
             }
 

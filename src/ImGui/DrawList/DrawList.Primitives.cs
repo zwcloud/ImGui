@@ -184,6 +184,29 @@ namespace ImGui
             this.ShapeMesh.currentIdx += 4;
         }
 
+        private void PrimRectGradientTopLeftToBottomRight(Point a, Point c, Color topLeftColor, Color bottomRightColor)
+        {
+            Point b = new Point(c.X, a.Y);
+            Point d = new Point(a.X, c.Y);
+            Point uv = Point.Zero;
+
+            var middleColor = Color.Lerp(topLeftColor, bottomRightColor, 0.5);
+
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = a, uv = Point.Zero, color = topLeftColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = b, uv = Point.Zero, color = middleColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = c, uv = Point.Zero, color = bottomRightColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = d, uv = Point.Zero, color = middleColor });
+
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(1);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(3);
+
+            this.ShapeMesh.currentIdx += 4;
+        }
+        
         private void PrimRectUV(Point a, Point c, Point uvA, Point uvC, Color color)
         {
             Point b = new Point(c.X, a.Y);
@@ -264,6 +287,15 @@ namespace ImGui
 
             this.ShapeMesh.PrimReserve(6, 4);
             PrimRectGradient(a, b, topColor, bottomColor);
+        }
+
+        public void AddRectFilledGradientTopLeftToBottomRight(Point a, Point b, Color topLeftColor, Color bottomRightColor)
+        {
+            if (MathEx.AmostZero(topLeftColor.A) && MathEx.AmostZero(bottomRightColor.A))
+                return;
+
+            this.ShapeMesh.PrimReserve(6, 4);
+            PrimRectGradientTopLeftToBottomRight(a, b, topLeftColor, bottomRightColor);
         }
 
         public void AddRectFilledGradient(Rect rect, Color topColor, Color bottomColor)

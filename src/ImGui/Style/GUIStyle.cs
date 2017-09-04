@@ -131,9 +131,17 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Hover }] = new Color(0.90, 0.90, 0.90),
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = new Color(0.90, 0.90, 0.90),
 
+                [new NameState { Name = GUIStyleName.GradientLeftColor, State = GUIState.Normal }] = Color.Rgb(247, 247, 247),
+                [new NameState { Name = GUIStyleName.GradientLeftColor, State = GUIState.Hover }] = Color.Rgb(247, 247, 247),
+                [new NameState { Name = GUIStyleName.GradientLeftColor, State = GUIState.Active }] = Color.Rgb(247, 247, 247),
+
                 [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Normal }] = Color.Rgb(247, 247, 247),
                 [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Hover }] = Color.Rgb(247, 247, 247),
                 [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Active }] = Color.Rgb(247, 247, 247),
+
+                [new NameState { Name = GUIStyleName.GradientRightColor, State = GUIState.Normal }] = Color.Rgb(221, 221, 221),
+                [new NameState { Name = GUIStyleName.GradientRightColor, State = GUIState.Hover }] = Color.Rgb(221, 221, 221),
+                [new NameState { Name = GUIStyleName.GradientRightColor, State = GUIState.Active }] = Color.Rgb(221, 221, 221),
 
                 [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Normal }] = Color.Rgb(221, 221, 221),
                 [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Hover }] = Color.Rgb(221, 221, 221),
