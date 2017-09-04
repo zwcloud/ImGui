@@ -133,6 +133,8 @@ namespace ImGui
                 style.Set(GUIStyleName.BackgroundColor, Color.White);
                 style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Active);
                 style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Disabled);
+                style.Set<double>(GUIStyleName.BorderTopLeftRadius, 3.0);
+                style.Set<double>(GUIStyleName.BorderTopRightRadius, 3.0);
                 style.Set(GUIStyleName.PaddingTop, 8.0);
                 style.Set(GUIStyleName.PaddingRight, 8.0);
                 style.Set(GUIStyleName.PaddingBottom, 8.0);

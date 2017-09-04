@@ -21,11 +21,18 @@ namespace ImGui
         BorderRightColor,
         BorderBottomColor,
         BorderLeftColor,
+
         BorderImageSource,
         BorderImageSliceTop,
         BorderImageSliceRight,
         BorderImageSliceBottom,
         BorderImageSliceLeft,
+
+        BorderTopLeftRadius,
+        BorderTopRightRadius,
+        BorderBottomRightRadius,
+        BorderBottomLeftRadius,
+
 
         OutlineWidth,
         OutlineColor,

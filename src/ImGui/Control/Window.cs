@@ -14,7 +14,12 @@ namespace ImGui
     {
         public static bool Begin(string name, ref bool open)
         {
-            return Begin(name, ref open, Point.Zero, new Size(400, 300), 1, WindowFlags.VerticalScrollbar);
+            return Begin(name, ref open, Point.Zero, new Size(400, 300));//TODO stack newly added window automatically
+        }
+
+        public static bool Begin(string name, ref bool open, Point position, Size size)
+        {
+            return Begin(name, ref open, position, size, 1, WindowFlags.ShowBorders);
         }
 
         public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha = 1, WindowFlags flags = WindowFlags.VerticalScrollbar)
@@ -45,8 +50,6 @@ namespace ImGui
             {
                 flags = window.Flags;
             }
-
-            //flags |= WindowFlags.NoTitleBar;
 
             // Add to stack
             Window parent_window = w.WindowStack.Count != 0 ? w.WindowStack[w.WindowStack.Count - 1] : null;
@@ -277,8 +280,9 @@ namespace ImGui
                 // Borders
                 if (flags.HaveFlag(WindowFlags.ShowBorders))
                 {
+                    var state = w.FocusedWindow == window ? GUIState.Active : GUIState.Normal;
                     // window border
-                    var borderColor = window.Style.Get<Color>(GUIStyleName.WindowBorderColor);
+                    var borderColor = window.Style.Get<Color>(GUIStyleName.WindowBorderColor, state);
                     window.DrawList.AddRect(window.Position, window.Position + new Vector(window.Size.Width, window.Size.Height),
                         borderColor, window_rounding);
                     // window shadow

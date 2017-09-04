@@ -74,6 +74,18 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Hover }] = 0,
                 [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopLeftRadius, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopLeftRadius, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopLeftRadius, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopRightRadius, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopRightRadius, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopRightRadius, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomRightRadius, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomRightRadius, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomRightRadius, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomLeftRadius, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomLeftRadius, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomLeftRadius, State = GUIState.Active }] = 0,
 
                 [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Hover }] = 0,
@@ -222,6 +234,10 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.BorderImageSliceRight, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.BorderImageSliceBottom, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopLeftRadius, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderTopRightRadius, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomRightRadius, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.BorderBottomLeftRadius, State = GUIState.Normal }] = 0,
 
                 [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.PaddingRight, State = GUIState.Normal }] = 0,
@@ -618,6 +634,14 @@ namespace ImGui
                 Set<double>(GUIStyleName.BorderImageSliceLeft, left);
             }
         }
+
+        public (double topLeft, double topRight, double bottomRight, double bottomLeft) BorderRadius =>
+            (
+                Get<double>(GUIStyleName.BorderTopLeftRadius),
+                Get<double>(GUIStyleName.BorderTopRightRadius),
+                Get<double>(GUIStyleName.BorderBottomRightRadius),
+                Get<double>(GUIStyleName.BorderBottomLeftRadius)
+            );
 
         public Color GetBorderColor(GUIState state)
         {

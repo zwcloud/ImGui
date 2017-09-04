@@ -81,7 +81,9 @@ namespace ImGui
             var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient, state);
             if (gradient == Gradient.None)
             {
-                drawList.AddRectFilled(paddingBoxRect, style.Get<Color>(GUIStyleName.BackgroundColor, state));
+                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+                var borderRounding = style.BorderRadius.topLeft;//FIXME
+                drawList.AddRectFilled(paddingBoxRect, bgColor, (float)borderRounding);//TODO drawing method needed: rect with custom rounding at each corner
             }
             else if (gradient == Gradient.TopBottom)
             {

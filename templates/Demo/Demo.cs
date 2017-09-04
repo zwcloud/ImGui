@@ -19,7 +19,7 @@ public class Demo
     #region Window Options
     bool windowsOptionsOn;
     bool no_titlebar = false;
-    bool no_border = true;
+    bool no_border = false;
     bool no_resize = false;
     bool no_move = false;
     bool no_scrollbar = false;
@@ -164,16 +164,6 @@ label:
             GUILayout.TreePop();
             //TODO logging
             GUILayout.PopID();
-        }
-
-        using (GUILayout.HScope("MyGroupHXXX~~"))
-        {
-            GUILayout.Button("B1");
-            using (GUILayout.VScope("MyGroupHXXX~~"))
-            {
-                GUILayout.Button("B2");
-                GUILayout.Button("B3");
-            }
         }
 
         if (GUILayout.CollapsingHeader("Widgets", ref widgetsOn))

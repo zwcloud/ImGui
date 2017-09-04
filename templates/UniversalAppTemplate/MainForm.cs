@@ -15,13 +15,12 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            GUILayout.InputText("MyText", "text");
             //using (GUILayout.HScope("V1"))
             //{
             //    GUILayout.Button("MyButton1", this.smallRed);
             //    GUILayout.Button("MyButton2", new LayoutOptions().FontColor(Color.Blue).FontSize(40));
             //}
-            //demo.OnGUI();
+            demo.OnGUI();
         }
     }
 }
