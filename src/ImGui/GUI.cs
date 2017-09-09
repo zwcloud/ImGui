@@ -1,4 +1,5 @@
 ﻿using ImGui.OSAbstraction.Graphics;
+using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -39,6 +40,17 @@ namespace ImGui
         }
 
         #endregion
+
+        public static void SetSkin(Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> rules)
+        {
+            GUISkin skin = new GUISkin(rules);
+            GUISkin.Current = skin;
+        }
+
+        public static void SetDefaultSkin()
+        {
+            GUISkin.Current = GUISkin.Instance;
+        }
     }
 
 }

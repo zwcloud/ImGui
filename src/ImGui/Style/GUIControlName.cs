@@ -1,6 +1,6 @@
 namespace ImGui
 {
-    internal enum GUIControlName
+    public enum GUIControlName
     {
         Label,
         Image,

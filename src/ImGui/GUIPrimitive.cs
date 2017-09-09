@@ -195,6 +195,9 @@ namespace ImGui
         /// <param name="state"></param>
         public static void DrawBoxModel(this DrawList drawList, Rect rect, ITexture texture, GUIStyle style, GUIState state = GUIState.Normal)
         {
+            if (rect == Layout.StackLayout.DummyRect)
+            { return; }
+
             //Widths of border
             var bt = style.Get<double>(GUIStyleName.BorderTop, state);
             var br = style.Get<double>(GUIStyleName.BorderRight, state);
@@ -219,6 +222,7 @@ namespace ImGui
             var ptr = new Point(btr.X - br, btr.Y + bt);
             var pbr = new Point(bbr.X - br, bbr.Y - bb);
             var pbl = new Point(bbl.X + bl, bbl.Y - bb);
+            //if (ptl.X > ptr.X) return;//TODO what if (ptl.X > ptr.X) happens?
             var paddingBoxRect = new Rect(ptl, pbr);
 
             //4 corner of the content-box
@@ -229,16 +233,33 @@ namespace ImGui
             var contentBoxRect = new Rect(ctl, cbr);
 
             // draw background in padding-box
-            drawList.AddRectFilled(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight, style.Get<Color>(GUIStyleName.BackgroundColor, state));
+            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient, state);
+            if (gradient == Gradient.None)
+            {
+                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+                var borderRounding = style.BorderRadius.topLeft;//FIXME
+                drawList.AddRectFilled(paddingBoxRect, bgColor, (float)borderRounding);//TODO drawing method needed: rect with custom rounding at each corner
+            }
+            else if (gradient == Gradient.TopBottom)
+            {
+                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor, state);
+                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor, state);
+                drawList.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
 
             //Content
             //Content-box
             if (texture != null && ctl.X < ctr.X)//content should not be visible when ctl.X > ctr.X
             {
-                drawList.DrawImage(contentBoxRect, texture, style);
+                drawList.DrawImage(contentBoxRect, texture, style, state);
             }
 
             //Border
+            //TODO move BorderImageSource and BorderImageSlice here
             //  Top
             if (!MathEx.AmostZero(bt))
             {
@@ -356,19 +377,18 @@ namespace ImGui
         /// <param name="rect">the rect to draw this image content</param>
         /// <param name="texture">the texture</param>
         /// <param name="style">style of the image content</param>
-        public static void DrawImage(this DrawList drawList, Rect rect, ITexture texture, GUIStyle style)
+        public static void DrawImage(this DrawList drawList, Rect rect, ITexture texture, GUIStyle style, GUIState state)
         {
-            var (top, right, bottom, left) = style.BorderImageSlice;
-
-            if (MathEx.AmostEqual(top, 0)
-                && MathEx.AmostEqual(left, 0)
-                && MathEx.AmostEqual(right, 0)
-                && MathEx.AmostEqual(bottom, 0))
+            var uvMin = new Point(
+                style.Get<double>(GUIStyleName.MinTextureCoordinateU, state),
+                style.Get<double>(GUIStyleName.MinTextureCoordinateV, state));
+            var uvMax = new Point(
+                style.Get<double>(GUIStyleName.MaxTextureCoordinateU, state),
+                style.Get<double>(GUIStyleName.MaxTextureCoordinateV, state));
+            drawList.AddImage(texture, rect.TopLeft, rect.BottomRight, uvMin, uvMax, Color.White);//TODO apply tint color
+#if false
             {
-                drawList.AddImage(texture, rect.TopLeft, rect.BottomRight, Point.Zero, new Point(1,1), Color.White);
-            }
-            else
-            {
+                var (top, right, bottom, left) = style.BorderImageSlice;
                 Point uv0 = new Point(left / texture.Width, top / texture.Height);
                 Point uv1 = new Point(1 - right / texture.Width, 1 - bottom / texture.Height);
 
@@ -428,6 +448,7 @@ namespace ImGui
                 drawList.AddImage(texture, i, m, uv_i, uv_m, Color.White);//8
                 drawList.AddImage(texture, j, n, uv_j, uv_n, Color.White);//9
             }
+#endif
         }
 
     }

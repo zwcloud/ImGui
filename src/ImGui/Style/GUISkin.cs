@@ -31,13 +31,28 @@ namespace ImGui
             return this.styles[control];
         }
 
-        private readonly Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> styles = new Dictionary<GUIControlName, IReadOnlyList<StyleModifier>>();
+        private readonly Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> styles;
 
         public GUIStyle InternalStyle;
 
-        private GUISkin()
+        public GUISkin()
         {
-            this.InternalStyle = new GUIStyle();//internal styles
+            styles = new Dictionary<GUIControlName, IReadOnlyList<StyleModifier>>();
+
+            this.InternalStyle = new GUIStyle();
+            {
+                this.InternalStyle.Set<double>(GUIStyleName._FieldWidth, 200);
+                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);
+                this.InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
+                this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
+            }
+        }
+
+        public GUISkin(Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> rules)
+        {
+            styles = rules;
+
+            this.InternalStyle = new GUIStyle();
             {
                 this.InternalStyle.Set<double>(GUIStyleName._FieldWidth, 200);
                 this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);

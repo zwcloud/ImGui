@@ -115,6 +115,19 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Hover }] = DefaultFontSize,
                 [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Active }] = DefaultFontSize,
 
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateU, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateU, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateU, State = GUIState.Active }] = 0,
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateV, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateV, State = GUIState.Hover }] = 0,
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateV, State = GUIState.Active }] = 0,
+
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateU, State = GUIState.Normal }] = 1,
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateU, State = GUIState.Hover }] = 1,
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateU, State = GUIState.Active }] = 1,
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Normal }] = 1,
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Hover }] = 1,
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Active }] = 1,
             };
 
             style.colorStyles = new Dictionary<NameState, Color>
@@ -251,6 +264,10 @@ namespace ImGui
 
                 [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Normal }] = DefaultFontSize,
 
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateU, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.MinTextureCoordinateV, State = GUIState.Normal }] = 0,
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateU, State = GUIState.Normal }] = 1,
+                [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Normal }] = 1,
             };
 
             style.colorStyles = new Dictionary<NameState, Color>

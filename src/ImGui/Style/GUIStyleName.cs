@@ -70,6 +70,11 @@ namespace ImGui
         GradientRightColor,
         GradientBottomColor,
 
+        MinTextureCoordinateU,
+        MaxTextureCoordinateU,
+        MinTextureCoordinateV,
+        MaxTextureCoordinateV,
+
         _FieldWidth,
         _ControlLabelSpacing,
         _LabelWidth,

@@ -3,7 +3,7 @@ using ImGui.Common.Primitive;
 
 namespace ImGui
 {
-    enum StyleType
+    public enum StyleType
     {
         @int,
         @double,
@@ -11,7 +11,7 @@ namespace ImGui
         @string,
     }
 
-    class StyleModifier
+    public class StyleModifier
     {
         public GUIStyleName name;
         public StyleType styleType;
@@ -58,7 +58,7 @@ namespace ImGui
             this.stringValue = value;
         }
 
-        public void Modify(GUIStyle style)
+        internal void Modify(GUIStyle style)
         {
             switch (styleType)
             {
@@ -83,7 +83,7 @@ namespace ImGui
             }
         }
 
-        public void Restore(GUIStyle style)
+        internal void Restore(GUIStyle style)
         {
             switch (styleType)
             {

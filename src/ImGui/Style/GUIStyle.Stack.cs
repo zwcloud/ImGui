@@ -169,6 +169,18 @@ namespace ImGui
             Push(modifier2);
         }
 
+        public void PushUV(Point uvMin, Point uvMax, GUIState state = GUIState.Normal)
+        {
+            var modifier1 = new StyleModifier(GUIStyleName.MinTextureCoordinateU, StyleType.@double, uvMin.X, state);
+            var modifier2 = new StyleModifier(GUIStyleName.MinTextureCoordinateV, StyleType.@double, uvMin.Y, state);
+            var modifier3 = new StyleModifier(GUIStyleName.MaxTextureCoordinateU, StyleType.@double, uvMax.X, state);
+            var modifier4 = new StyleModifier(GUIStyleName.MaxTextureCoordinateV, StyleType.@double, uvMax.Y, state);
+            Push(modifier1);
+            Push(modifier2);
+            Push(modifier3);
+            Push(modifier4);
+        }
+
         #endregion
 
         #region font

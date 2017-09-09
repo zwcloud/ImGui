@@ -23,8 +23,8 @@ namespace ImGui
 
             // style apply
             var style = GUIStyle.Basic;
-            style.PushBorder(1.0);//+4
-            style.PushPadding(5.0);//+4
+            style.Save();
+            style.ApplySkin(GUIControlName.Button);
 
             // rect
             rect = window.GetRect(rect);
@@ -36,14 +36,9 @@ namespace ImGui
             // render
             var d = window.DrawList;
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            style.PushBorderColor(Color.Black);//+4
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             d.DrawBoxModel(rect, text, style, state);
-            style.PopStyle(4 + 1 + 1 + 1);//-4-1-1-1
 
-            style.PopStyle(4 + 4);//-4-4
+            style.Restore();
 
             return pressed;
         }
@@ -93,7 +88,7 @@ namespace ImGui
             return Button(text, null);
         }
 
-        public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1, Color tintColor)
+        public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1)
         {
             Window window = GetCurrentWindow();
             if (window.SkipItems)
@@ -104,8 +99,7 @@ namespace ImGui
             // style
             var style = GUIStyle.Basic;
             style.Save();
-            style.PushBorder(1.0);
-            style.PushPadding(5.0);
+            style.ApplySkin(GUIControlName.Button);
 
             // rect
             var texture = TextureUtil.GetTexture(filePath);
@@ -125,26 +119,19 @@ namespace ImGui
             bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
 
             // render
-            // TODO implement this with DrawBoxModel
+            style.PushUV(uv0, uv1);
             var d = window.DrawList;
-            style.PushBorderColor(Color.Black);//+4
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            d.AddRectFilled(rect.Min, rect.Max, style.Get<Color>(GUIStyleName.BackgroundColor, state));
-            rect.Offset(style.PaddingLeft + style.BorderLeft, style.PaddingTop + style.BorderTop);
-            rect.Size = new Size(rect.Size.Width - style.PaddingHorizontal, rect.Size.Height - style.PaddingVertical);
-            d.AddImage(texture, rect.TopLeft, rect.BottomRight, uv0, uv1, tintColor);
+            d.DrawBoxModel(rect, texture, style, state);
 
             style.Restore();
 
             return pressed;
         }
 
-        public static bool ImageButton(string filePath, Color tintColor)
+        public static bool ImageButton(string filePath)
         {
-            return ImageButton(filePath, Size.Empty, Point.Zero, Point.One, tintColor);
+            return ImageButton(filePath, Size.Empty, Point.Zero, Point.One);
         }
     }
 
