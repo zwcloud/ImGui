@@ -1,6 +1,7 @@
 ﻿using System;
 using ImGui.Common.Primitive;
 using ImGui.Input;
+using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -66,11 +67,8 @@ namespace ImGui
             // style
             var style = GUIStyle.Basic;
             style.Save();
-
+            style.ApplySkin(GUIControlName.Button);
             style.ApplyOption(options);
-
-            style.PushBorder(1.0);
-            style.PushPadding(5.0);
 
             // rect
             Rect rect;
@@ -83,13 +81,6 @@ namespace ImGui
 
             // render
             var d = window.DrawList;
-            style.PushBorderColor(Color.Rgb(166, 166, 166), GUIState.Normal);
-            style.PushBorderColor(Color.Rgb(123, 123, 123), GUIState.Hover);
-            style.PushBorderColor(Color.Rgb(148, 148, 148), GUIState.Active);
-            style.PushBgGradient(Gradient.TopBottom);
-            style.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal);// TODO It's stupid to specify style like this. There should be a better way to do this.
-            style.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Hover);
-            style.PushGradientColor(Color.Rgb(222, 222, 222), Color.Rgb(248, 248, 248), GUIState.Active);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             d.DrawBoxModel(rect, text, style, state);
 
@@ -239,6 +230,25 @@ namespace ImGui
             out_held = held;
 
             return pressed;
+        }
+    }
+
+    internal partial class GUISkin
+    {
+        partial void InitDefaultSkin()
+        {
+            StyleModifierBuilder builder = new StyleModifierBuilder();
+            builder.PushBorder(1.0);
+            builder.PushPadding(5.0);
+            builder.PushBorderColor(Color.Rgb(166, 166, 166), GUIState.Normal);
+            builder.PushBorderColor(Color.Rgb(123, 123, 123), GUIState.Hover);
+            builder.PushBorderColor(Color.Rgb(148, 148, 148), GUIState.Active);
+            builder.PushBgGradient(Gradient.TopBottom);
+            builder.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal);
+            builder.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Hover);
+            builder.PushGradientColor(Color.Rgb(222, 222, 222), Color.Rgb(248, 248, 248), GUIState.Active);
+
+            this.styles.Add(GUIControlName.Button, builder.ToArray());
         }
     }
 

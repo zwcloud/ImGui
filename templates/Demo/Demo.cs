@@ -102,7 +102,7 @@ label:
             if (GUILayout.Button("Show Demo Window")) showDemoWindow = !showDemoWindow;
             if (GUILayout.Button("Show Another Window")) showAnotherWindow = !showAnotherWindow;
             //var fps = Form.current.uiContext.fps;
-            //GUILayout.Label(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000.0f / fps, fps)); //removed, will be added again when textmesh cache is solved
+            //GUILayout.Label(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000.0f / fps, fps));//FIXME Showing text that keeps updating is slow.
         }
 
         // 2. Show another simple window, this time using an explicit Begin/End pair
