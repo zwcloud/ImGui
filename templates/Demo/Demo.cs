@@ -2,6 +2,7 @@
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
+using System.Collections.Generic;
 
 public class Demo
 {
@@ -87,6 +88,13 @@ label:
     int line = 50;
     bool stackLayoutOpen = false;
     bool layoutScopesOpen = false;
+    #endregion
+
+    #region Skin
+    bool skinOn = false;
+    bool defaultSkinOpen = false;
+    bool dearImGuiSkinOpen = false;
+    bool win10SkinOpen = false;
     #endregion
 
     #endregion
@@ -515,6 +523,52 @@ label:
             GUILayout.PopID();
         }
 
+        if (GUILayout.CollapsingHeader("Skin", ref skinOn))
+        {
+            GUILayout.PushID("_Skin");
+
+            if (GUILayout.TreeNode("Default", ref defaultSkinOpen))
+            {
+                using (GUILayout.HScope("HorizontalScope~", GUILayout.ExpandWidth(false)))
+                {
+                    GUILayout.Button("Button 1");
+                    GUILayout.Button("Button 2");
+                    GUILayout.Button("Button 3");
+                }
+            }
+            GUILayout.TreePop();
+
+            if (GUILayout.TreeNode("dear imgui", ref dearImGuiSkinOpen))
+            {
+                GUI.SetSkin(dearImGuiSkinRules);
+                using (GUILayout.HScope("HorizontalScope~", GUILayout.ExpandWidth(false)))
+                {
+                    GUILayout.Button("Button 1");
+                    GUILayout.Button("Button 2");
+                    GUILayout.Button("Button 3");
+                }
+            }
+            GUILayout.TreePop();
+
+            GUI.SetDefaultSkin();
+
+            if (GUILayout.TreeNode("Windows 10", ref win10SkinOpen))
+            {
+                GUI.SetSkin(win10SkinRules);
+                using (GUILayout.HScope("HorizontalScope~", GUILayout.ExpandWidth(false)))
+                {
+                    GUILayout.Button("Button 1");
+                    GUILayout.Button("Button 2");
+                    GUILayout.Button("Button 3");
+                }
+            }
+            GUILayout.TreePop();
+
+            GUI.SetDefaultSkin();
+
+            GUILayout.PopID();
+        }
+
         GUI.End();
     }
 
@@ -553,5 +607,50 @@ label:
         Form.current.BackgroundColor = bgColor;
 
         GUILayout.PopID();
+    }
+
+    private static Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> dearImGuiSkinRules;
+    private static Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> win10SkinRules;
+
+    private static void InitDearImGuiSkin()
+    {
+        StyleModifierBuilder builder = new StyleModifierBuilder();
+
+        dearImGuiSkinRules = new Dictionary<GUIControlName, IReadOnlyList<StyleModifier>>();
+        builder.PushBorder(1);
+        builder.PushPadding(5);
+        builder.PushBorderColor(new Color(0.70f, 0.70f, 0.70f, 0.65f));
+        builder.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);
+        builder.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
+        builder.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
+        dearImGuiSkinRules.Add(GUIControlName.Button, builder.ToArray());
+
+        builder.Clear();
+        //TODO other controls
+    }
+
+    private static void InitWin10Skin()
+    {
+        StyleModifierBuilder builder = new StyleModifierBuilder();
+
+        win10SkinRules = new Dictionary<GUIControlName, IReadOnlyList<StyleModifier>>();
+        builder.PushBorder(1);
+        builder.PushPadding(5);
+        builder.PushBorderColor(Color.Rgb(173), GUIState.Normal);
+        builder.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Hover);
+        builder.PushBorderColor(Color.Rgb(0, 84, 153), GUIState.Active);
+        builder.PushBgColor(Color.Rgb(225), GUIState.Normal);
+        builder.PushBgColor(Color.Rgb(229, 241, 251), GUIState.Hover);
+        builder.PushBgColor(Color.Rgb(204, 228, 247), GUIState.Active);
+        win10SkinRules.Add(GUIControlName.Button, builder.ToArray());
+
+        builder.Clear();
+        //TODO other controls
+    }
+
+    static Demo()
+    {
+        InitDearImGuiSkin();
+        InitWin10Skin();
     }
 }

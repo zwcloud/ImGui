@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    internal class StyleModifierBuilder
+    public class StyleModifierBuilder
     {
         private List<StyleModifier> modifiers = new List<StyleModifier>();
 
