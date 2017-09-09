@@ -69,6 +69,9 @@ label:
     int i0 = 123;
     float f0 = 0.001f;
 
+    string[] boxItems = { "Item0", "Item1", "Item2", "Item3", "Item4" };
+    int boxItemsSelectedIndex = 0;
+
     #region Sliders
     double sliderValue = 0.01;
     double vSliderValue = 0.01;
@@ -334,6 +337,8 @@ label:
                 GUILayout.RadioButton("Radio 2", ref active_id, 2);
             }
             GUILayout.EndHorizontal();
+
+            boxItemsSelectedIndex = GUILayout.ListBox<string>("Items", boxItems, boxItemsSelectedIndex);
 
             // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
             GUILayout.BeginHorizontal("HGroup~click buttons");
