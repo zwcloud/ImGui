@@ -222,7 +222,7 @@ namespace ImGui
 
     internal partial class GUISkin
     {
-        partial void InitDefaultSkin()
+        private void InitButtonStyles()
         {
             StyleModifierBuilder builder = new StyleModifierBuilder();
             builder.PushBorder(1.0);

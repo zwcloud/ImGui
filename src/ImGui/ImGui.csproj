@@ -48,7 +48,6 @@
     <Compile Remove="Control\Box.cs" />
     <Compile Remove="Control\HoverButton.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
-    <Compile Remove="Control\ToggleButton.cs" />
   </ItemGroup>
 
   <ItemGroup>

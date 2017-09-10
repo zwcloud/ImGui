@@ -12,14 +12,17 @@ namespace ImGui
                 return selectedIndex;
 
             int id = window.GetID(label);
+            PushID("ListboxField" + id);
 
             var style = GUIStyle.Basic;
             style.Save();
 
-            GUILayout.Label(label);
-            BeginVertical("ListBox");
+            BeginHorizontal("Field");
+            BeginVertical("ListBox", GUILayout.Width((int)GUISkin.Current.FieldWidth));
             {
-                style.ApplySkin(GUIControlName.Button);
+                style.ApplySkin(GUIControlName.ListBox);
+                style.PushStretchFactor(false, 1);
+                style.PushCellSpacing(true, 0);
                 for (var i = 0; i < items.Count; i++)
                 {
                     var item = items[i];
@@ -39,11 +42,32 @@ namespace ImGui
                     var state = on ? GUIState.Active : GUIState.Normal;
                     d.DrawBoxModel(itemRect, itemText, style, state);
                 }
+                style.PopStyle(2);
             }
             EndVertical();
+            GUILayout.Space("FieldSpacing", GUISkin.Current.FieldSpacing);
+            GUILayout.Label(label);
+            EndHorizontal();
+
             style.Restore();
 
+            PopID();
+
             return selectedIndex;
+        }
+    }
+
+    internal partial class GUISkin
+    {
+        private void InitListBoxStyles()
+        {
+            StyleModifierBuilder builder = new StyleModifierBuilder();
+            builder.PushPadding(2.0);
+            builder.PushBgColor(Color.Clear, GUIState.Normal);
+            builder.PushBgColor(Color.Rgb(206, 220, 236), GUIState.Hover);
+            builder.PushBgColor(Color.Rgb(30, 144, 255), GUIState.Active);
+
+            this.styles.Add(GUIControlName.ListBox, builder.ToArray());
         }
     }
 }

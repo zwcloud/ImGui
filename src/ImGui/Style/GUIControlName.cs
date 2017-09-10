@@ -15,9 +15,11 @@ namespace ImGui
         Toggle,
         ComboBox,
         TextBox,
+        Selectable,
         Slider,
         PolygonButton,
         CollapsingHeader,
         ColorField,
+        ListBox,
     }
 }

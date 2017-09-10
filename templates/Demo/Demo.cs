@@ -38,6 +38,11 @@ public class Demo
     bool[] openChild = new bool[5]{ false, false, false, false, false};
     bool closable_group = true;
 
+    #region Selectable
+    bool basicSelectableOpen = false;
+    bool[] selected = { false, true, false, false };
+    #endregion
+
     #region Filtered Text Input
     string defaultText = "";
     string decimalText = "";
@@ -69,8 +74,8 @@ label:
     int i0 = 123;
     float f0 = 0.001f;
 
-    string[] boxItems = { "Item0", "Item1", "Item2", "Item3", "Item4" };
-    int boxItemsSelectedIndex = 0;
+    string[] listBoxItems = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
+    int currentListBoxItem = 0;
 
     #region Sliders
     double sliderValue = 0.01;
@@ -277,8 +282,15 @@ label:
 
             if (GUILayout.TreeNode("Selectables", ref open11))
             {
-                //TODO
-                GUILayout.Label("TODO");
+                if (GUILayout.TreeNode("Basic", ref basicSelectableOpen))
+                {
+                    selected[0] = GUILayout.Selectable("1. I am selectable", selected[0]);
+                    selected[1] = GUILayout.Selectable("2. I am selectable", selected[1]);
+                    GUILayout.Text("3. I am not selectable");
+                    selected[2] = GUILayout.Selectable("4. I am selectable", selected[2]);
+                }
+                GUILayout.TreePop();
+                GUILayout.Label("more TODO");
             }
             GUILayout.TreePop();
 
@@ -338,7 +350,7 @@ label:
             }
             GUILayout.EndHorizontal();
 
-            boxItemsSelectedIndex = GUILayout.ListBox<string>("Items", boxItems, boxItemsSelectedIndex);
+            currentListBoxItem = GUILayout.ListBox<string>("Items", listBoxItems, currentListBoxItem);
 
             // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
             GUILayout.BeginHorizontal("HGroup~click buttons");
