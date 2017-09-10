@@ -34,7 +34,7 @@ namespace ImGui
         /// Create an auto-layout label.
         /// </summary>
         /// <param name="text">text to display</param>
-        public static void Label(string text)
+        public static void Label(string text, LayoutOptions? options)
         {
             GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
@@ -45,6 +45,8 @@ namespace ImGui
 
             // style
             var style = GUIStyle.Basic;
+            style.Save();
+            style.ApplyOption(options);
 
             // rect
             Size contentSize = style.CalcSize(text, GUIState.Normal);
@@ -53,6 +55,17 @@ namespace ImGui
             // rendering
             DrawList d = window.DrawList;
             d.DrawBoxModel(rect, text, style);
+
+            style.Restore();
+        }
+
+        /// <summary>
+        /// Create an auto-layout label.
+        /// </summary>
+        /// <param name="text">text to display</param>
+        public static void Label(string text)
+        {
+            Label(text, options: null);
         }
 
         /// <summary>
@@ -99,6 +112,29 @@ namespace ImGui
         public static void Text(string text) => Label(text);
 
         public static void Text(string format, params object[] args) => Label(format, args);
+
+        /// <summary>
+        /// Create a labeled text.
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static void LabelText(string label, string text)
+        {
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return;
+
+            var id = window.GetID(label);
+
+            BeginHorizontal("FieldGroup~"+id);
+            {
+                Label(text, GUILayout.ExpandWidth(true));
+                Space("FieldSpacing", GUISkin.Current.FieldSpacing);
+                Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
+            }
+            EndHorizontal();
+        }
 
         #region Bullets
 

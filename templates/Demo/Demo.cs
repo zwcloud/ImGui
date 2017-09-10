@@ -31,7 +31,7 @@ public class Demo
     #endregion
 
     #region Widgets
-    bool widgetsOn = true;
+    bool widgetsOn = false;
     bool a = false;
     int pressed_count = 0;
     bool open1, open2, open3, open4, open5, open6, open7, open8, open9, open10, open11, open12, open13, open14;
@@ -296,7 +296,6 @@ label:
 
             if (GUILayout.TreeNode("Filtered Text Input", ref open12))
             {
-                GUILayout.Label("TODO");
                 defaultText = GUILayout.InputText("default", defaultText);
                 decimalText = GUILayout.InputText("decimal", decimalText, InputTextFlags.CharsDecimal);
                 hexadecimalText = GUILayout.InputText("hexadecimal", hexadecimalText, InputTextFlags.CharsHexadecimal | InputTextFlags.CharsUppercase);
@@ -350,8 +349,6 @@ label:
             }
             GUILayout.EndHorizontal();
 
-            currentListBoxItem = GUILayout.ListBox<string>("Items", listBoxItems, currentListBoxItem);
-
             // Color buttons, demonstrate using PushID() to add unique identifier in the ID stack, and changing style.
             GUILayout.BeginHorizontal("HGroup~click buttons");
             {
@@ -384,11 +381,15 @@ label:
 
             GUILayout.Separator("Separator~1");
 
+            GUILayout.LabelText("label", "Value");
+
             //TODO combo
 
             str0 = GUILayout.InputText("input text", str0);
             i0 = GUILayout.InputInt("input int", i0);
             f0 = GUILayout.InputFloat("input float", f0);
+
+            currentListBoxItem = GUILayout.ListBox<string>("listbox\n(single select)", listBoxItems, currentListBoxItem);
 
             if (GUILayout.TreeNode("Sliders", ref open14))
             {

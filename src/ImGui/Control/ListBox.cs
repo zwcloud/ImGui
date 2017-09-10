@@ -15,11 +15,11 @@ namespace ImGui
             PushID("ListboxField" + id);
 
             var style = GUIStyle.Basic;
-            style.Save();
 
             BeginHorizontal("Field");
-            BeginVertical("ListBox", GUILayout.Width((int)GUISkin.Current.FieldWidth));
+            BeginVertical("Items", GUILayout.ExpandWidth(true));
             {
+                style.Save();
                 style.ApplySkin(GUIControlName.ListBox);
                 style.PushStretchFactor(false, 1);
                 style.PushCellSpacing(true, 0);
@@ -42,14 +42,12 @@ namespace ImGui
                     var state = on ? GUIState.Active : GUIState.Normal;
                     d.DrawBoxModel(itemRect, itemText, style, state);
                 }
-                style.PopStyle(2);
+                style.Restore();
             }
             EndVertical();
             GUILayout.Space("FieldSpacing", GUISkin.Current.FieldSpacing);
-            GUILayout.Label(label);
+            GUILayout.Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
             EndHorizontal();
-
-            style.Restore();
 
             PopID();
 

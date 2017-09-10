@@ -29,7 +29,7 @@ namespace ImGui.Layout
         private LayoutGroup CreateRootGroup(int rootId, Size size)
         {
             var rootGroup = new LayoutGroup();
-            rootGroup.Init(rootId, true, GUILayout.Width((int)size.Width).Height(size.Height));
+            rootGroup.Init(rootId, true, null);
             rootGroup.ContentWidth = size.Width;
             rootGroup.ContentHeight = size.Height;
             rootGroup.HorizontalStretchFactor = 1;
@@ -166,12 +166,12 @@ namespace ImGui.Layout
         {
             {
                 var rootGroup = this.ReadingStack.Peek();
-                rootGroup.MinWidth = rootGroup.MaxWidth = rootGroup.ContentWidth = size.Width;
+                rootGroup.ContentWidth = size.Width;
                 rootGroup.ContentHeight = size.Height;
             }
             {
                 var rootGroup = this.WritingStack.Peek();
-                rootGroup.MinWidth = rootGroup.MaxWidth = rootGroup.ContentWidth = size.Width;
+                rootGroup.ContentWidth = size.Width;
                 rootGroup.ContentHeight = size.Height;
             }
         }

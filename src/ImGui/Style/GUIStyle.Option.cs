@@ -15,21 +15,54 @@
         {
             if (!options.HasValue) return;
 
-            var optionValue = options.Value;
-            if (optionValue.fontSize.HasValue)
+            var o = options.Value;
+
+            if(o.HorizontalStretchFactor.HasValue)
             {
-                PushFontSize(optionValue.fontSize.Value);
+                PushStretchFactor(false, o.HorizontalStretchFactor.Value);
             }
 
-            if (optionValue.fontColor.HasValue)
+            if (o.VerticalStretchFactor.HasValue)
             {
-                PushFontColor(optionValue.fontColor.Value);
+                PushStretchFactor(true, o.VerticalStretchFactor.Value);
             }
 
-            if (optionValue.fontFamily != null)
+            if(o.MinWidth.HasValue)
             {
-                PushFontFamily(optionValue.fontFamily);
+                PushMinWidth(o.MinWidth.Value);
             }
+
+            if (o.MaxWidth.HasValue)
+            {
+                PushMaxWidth(o.MaxWidth.Value);
+            }
+
+            if (o.MinHeight.HasValue)
+            {
+                PushMinHeight(o.MinHeight.Value);
+            }
+
+            if (o.MaxHeight.HasValue)
+            {
+                PushMaxHeight(o.MaxHeight.Value);
+            }
+
+            if (o.fontSize.HasValue)
+            {
+                PushFontSize(o.fontSize.Value);
+            }
+
+            if (o.fontColor.HasValue)
+            {
+                PushFontColor(o.fontColor.Value);
+            }
+
+            if (o.fontFamily != null)
+            {
+                PushFontFamily(o.fontFamily);
+            }
+
+
         }
 
     }

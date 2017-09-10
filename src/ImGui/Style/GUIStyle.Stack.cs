@@ -21,7 +21,7 @@ namespace ImGui
         {
             if (this.modifierStack.Count == 0 || this.modifierStack.Count <= this.savedCount)
             {
-                throw new InvalidOperationException("No style modified.");
+                return;
             }
 
             while (this.modifierStack.Count != this.savedCount)
@@ -53,12 +53,36 @@ namespace ImGui
 
         #region min/max width/height
 
+        public void PushMinWidth(double width)
+        {
+            var modifier1 = new StyleModifier(GUIStyleName.MinWidth, StyleType.@double, width);
+            Push(modifier1);
+        }
+
+        public void PushMaxWidth(double width)
+        {
+            var modifier1 = new StyleModifier(GUIStyleName.MaxWidth, StyleType.@double, width);
+            Push(modifier1);
+        }
+
         public void PushWidth((double, double) width)
         {
             var modifier1 = new StyleModifier(GUIStyleName.MinWidth, StyleType.@double, width.Item1);
             var modifier2 = new StyleModifier(GUIStyleName.MaxWidth, StyleType.@double, width.Item2);
             Push(modifier1);
             Push(modifier2);
+        }
+
+        public void PushMinHeight(double height)
+        {
+            var modifier1 = new StyleModifier(GUIStyleName.MinHeight, StyleType.@double, height);
+            Push(modifier1);
+        }
+
+        public void PushMaxHeight(double height)
+        {
+            var modifier1 = new StyleModifier(GUIStyleName.MaxHeight, StyleType.@double, height);
+            Push(modifier1);
         }
 
         public void PushHeight((double, double) height)

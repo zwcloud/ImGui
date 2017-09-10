@@ -50,7 +50,7 @@ namespace ImGui
             {
                 this.InternalStyle.Set<double>(GUIStyleName._FieldWidth, 200);
                 this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
-                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);
+                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 80);
                 this.InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
             }
         }
@@ -63,7 +63,7 @@ namespace ImGui
             {
                 this.InternalStyle.Set<double>(GUIStyleName._FieldWidth, 200);
                 this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
-                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 60);
+                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 80);
                 this.InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
             }
         }
@@ -74,18 +74,20 @@ namespace ImGui
          * # Field and label design
          * 
          * single-line:
-         * +------------+         +---------+
-         * |   field    | spacing |  label  |
-         * +------------+         +---------+
+         * +-----------+         +---------+
+         * | ~ field ~ | spacing |  label  |
+         * +-----------+         +---------+
          * 
          * multiple-line:
-         * +------------+         +---------+
-         * |   field    | spacing |  label  |
-         * |            |         +---------+
-         * |            |
-         * |            |
-         * |            |
-         * +------------+
+         * +-----------+         +---------+
+         * | ~ field ~ | spacing |  label  |
+         * |           |         +---------+
+         * |           |
+         * |           |
+         * |           |
+         * +-----------+
+         * 
+         * Field is horizontally stretched. Spacing and label is fix-sized.
          */
 
         public double FieldWidth
@@ -99,6 +101,13 @@ namespace ImGui
             get => InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
             set => InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, value);
         }
+
+        public double LabelWidth
+        {
+            get => InternalStyle.Get<double>(GUIStyleName._LabelWidth);
+            set => InternalStyle.Set<double>(GUIStyleName._LabelWidth, value);
+        }
+
         #endregion
     }
 }
