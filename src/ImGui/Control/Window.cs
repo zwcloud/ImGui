@@ -70,50 +70,55 @@ namespace ImGui
             if (first_begin_of_the_frame)
             {
                 window.Active = true;
+                window.BeginCount = 0;
                 window.ClipRect = Rect.Big;
                 window.LastActiveFrame = current_frame;
 
+                // clear draw list, setup outer clip rect
                 window.DrawList.Clear();
                 window.DrawList.Init();
-                Rect fullScreenRect = new Rect(0, 0, form.Rect.Size);
+                Rect fullScreenRect = new Rect(0, 0, form.ClientSize);
                 if (flags.HaveFlag(WindowFlags.ChildWindow) && !flags.HaveFlag(WindowFlags.ComboBox | WindowFlags.Popup))
                 {
                     window.DrawList.PushClipRect(parent_window.ClipRect, true);
-                    window.ClipRect = parent_window.ClipRect;
+                    window.ClipRect = window.DrawList.GetCurrentClipRect();
                 }
                 else
                 {
                     window.DrawList.PushClipRect(fullScreenRect, true);
-                    window.ClipRect = fullScreenRect;
+                    window.ClipRect = window.DrawList.GetCurrentClipRect();
                 }
 
+                // draw outer clip rect
                 //window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Blue);//test only
 
                 // Collapse window by double-clicking on title bar
-                if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Mouse.Instance.LeftButtonDoubleClicked)
+                if (!(flags.HaveFlag(WindowFlags.NoTitleBar)) && !(flags.HaveFlag(WindowFlags.NoCollapse)))
                 {
-                    window.Collapsed = !window.Collapsed;
+                    if (w.HoveredWindow == window && g.IsMouseHoveringRect(window.TitleBarRect) && Mouse.Instance.LeftButtonDoubleClicked)
+                    {
+                        window.Collapsed = !window.Collapsed;
+                        w.FocusWindow(window);
+                    }
+                }
+                else
+                {
+                    window.Collapsed = false;
                 }
 
                 #region size
-
                 window.ApplySize(window.FullSize);
                 window.Size = window.Collapsed ? window.TitleBarRect.Size : window.FullSize;
-
-                if (flags.HaveFlag(WindowFlags.ChildWindow))
-                {
-                    window.Position = window.PosFloat = position;
-                    window.Size = window.FullSize = size; // 'size' as provided by user passed via BeginChild()->Begin().
-                }
-
                 #endregion
 
                 #region position
-
                 window.Position = new Point((int)window.PosFloat.X, (int)window.PosFloat.Y);
-
+                if (flags.HaveFlag(WindowFlags.ChildWindow))
+                {
+                    window.Position = window.PosFloat = position;
+                    window.Size = window.FullSize = size; // 'size' provided by user passed via BeginChild()->Begin().
+                }
                 #endregion
-
 
                 // Draw window + handle manual resize
                 GUIStyle style = window.Style;
@@ -330,6 +335,14 @@ namespace ImGui
             if (first_begin_of_the_frame)
                 window.Accessed = false;
             window.BeginCount++;
+
+            // Child window can be out of sight and have "negative" clip windows.
+            // Mark them as collapsed so commands are skipped earlier (we can't manually collapse because they have no title bar).
+            if (flags.HaveFlag(WindowFlags.ChildWindow))
+            {
+                Debug.Assert(flags.HaveFlag(WindowFlags.NoTitleBar));
+                window.Collapsed = parent_window != null && parent_window.Collapsed;
+            }
 
             window.StackLayout.Begin();
 

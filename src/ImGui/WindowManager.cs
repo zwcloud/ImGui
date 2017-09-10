@@ -234,7 +234,7 @@ namespace ImGui
             for (int i = 0; i < Windows.Count; i++)
             {
                 var window = Windows[i];
-                if (window.Flags.HaveFlag(WindowFlags.ChildWindow))
+                if (window.Active && window.Flags.HaveFlag(WindowFlags.ChildWindow))
                 {
                     childWindows.Add(window);
                 }

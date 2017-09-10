@@ -13,15 +13,6 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            //if(GUILayout.BeginChild("Child", (200,400), true, WindowFlags.Default))
-            //{
-            //    GUILayout.Button("Button~1");
-            //    GUILayout.Button("Button~2");
-            //    GUILayout.Button("Button~3");
-            //    GUILayout.Button("Button~4");
-            //    GUILayout.EndChild();
-            //}
-
             demo.OnGUI();
         }
     }

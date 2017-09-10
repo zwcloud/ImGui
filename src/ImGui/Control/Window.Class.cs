@@ -146,12 +146,10 @@ namespace ImGui
                 this.TitleBarStyle = style;
             }
 
-            this.TitleBarHeight = TitleBarStyle.PaddingVertical + 30;
-
             var scrollBarWidth = this.Style.Get<double>(GUIStyleName.ScrollBarWidth);
             var clientSize = new Size(
                 this.Size.Width - scrollBarWidth - this.Style.PaddingHorizontal - this.Style.BorderHorizontal,
-                this.Size.Height - this.Style.PaddingVertical - this.Style.BorderVertical);
+                this.Size.Height - this.Style.PaddingVertical - this.Style.BorderVertical - this.TitleBarHeight);
             this.StackLayout = new StackLayout(this.ID, clientSize);
         }
 
@@ -163,7 +161,18 @@ namespace ImGui
         /// <summary>
         /// Gets the height of the title bar
         /// </summary>
-        public double TitleBarHeight { get; }
+        public double TitleBarHeight
+        {
+            get
+            {
+                if(this.Flags.HaveFlag(WindowFlags.NoTitleBar))
+                {
+                    return 0;
+                }
+
+                return TitleBarStyle.PaddingVertical + 30;
+            }
+        }
 
         /// <summary>
         /// Gets the rect of the title bar

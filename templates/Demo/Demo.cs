@@ -442,8 +442,6 @@ label:
 
             if (GUILayout.TreeNode("Child regions", ref childRegionsOpen))
             {
-                //GUILayout.Text("Child region implementation is buggy and being fixed.");
-
                 GUILayout.Text("Without border");
                 bool goto_line = GUILayout.Button("Goto");
                 GUILayout.PushFixedWidth(100);//+2
@@ -473,7 +471,7 @@ label:
                         GUILayout.EndChild();
                     }
 
-                    if (GUILayout.BeginChild("Sub2", new Size(0, 300), 0, GUILayout.Height(300).ExpandWidth(true)))
+                    if (GUILayout.BeginChild("Sub2", (0, 300), 0, GUILayout.Height(300).ExpandWidth(true)))
                     {
                         GUILayout.Text("With border");
                         for (int i = 0; i < 50; i++)
