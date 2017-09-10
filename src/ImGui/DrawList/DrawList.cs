@@ -182,5 +182,10 @@ namespace ImGui
             }
         }
 
+        public Rect GetCurrentClipRect()
+        {
+            Rect currentClipRect = this.clipRectStack[this.clipRectStack.Count - 1];
+            return currentClipRect;
+        }
     }
 }

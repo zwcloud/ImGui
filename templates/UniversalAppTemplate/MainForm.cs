@@ -11,15 +11,17 @@ namespace UniversalAppTemplate
 
         Demo demo = new Demo();
 
-        LayoutOptions smallRed = new LayoutOptions().FontColor(Color.Red).FontSize(20);
-
         protected override void OnGUI()
         {
-            //using (GUILayout.HScope("V1"))
+            //if(GUILayout.BeginChild("Child", (200,400), true, WindowFlags.Default))
             //{
-            //    GUILayout.Button("MyButton1", this.smallRed);
-            //    GUILayout.Button("MyButton2", new LayoutOptions().FontColor(Color.Blue).FontSize(40));
+            //    GUILayout.Button("Button~1");
+            //    GUILayout.Button("Button~2");
+            //    GUILayout.Button("Button~3");
+            //    GUILayout.Button("Button~4");
+            //    GUILayout.EndChild();
             //}
+
             demo.OnGUI();
         }
     }

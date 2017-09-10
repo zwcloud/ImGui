@@ -8,24 +8,26 @@ namespace ImGui
 {
     public partial class GUILayout
     {
-        public static bool BeginChild(string str_id, Size size, bool border, WindowFlags extra_flags)
+        public static bool BeginChild(string str_id, Size size, WindowFlags extra_flags, LayoutOptions? options)
         {
             var window = GetCurrentWindow();
             WindowFlags flags = WindowFlags.NoTitleBar | WindowFlags.NoResize | WindowFlags.ChildWindow | WindowFlags.VerticalScrollbar;
 
             string name = string.Format("{0}.{1}", window.Name, str_id);
             int id = window.GetID(name);
+
+            GUIStyle style = GUIStyle.Basic;
+            style.Save();
+            style.ApplyOption(options);
             var rect = window.GetRect(id, size);
+            style.Restore();
+            if (rect == Layout.StackLayout.DummyRect)
+            {
+                return false;
+            }
 
-            bool open = true;//dummy
+            bool open = true;
             return GUI.Begin(name, ref open, rect.TopLeft, rect.Size, 1.0, flags | extra_flags);
-        }
-
-        public static bool BeginChild(int id, Size size, bool border, WindowFlags extra_flags)
-        {
-            string str_id = string.Format("child_{0:0x8}", id);
-            bool ret = BeginChild(str_id, size, border, extra_flags);
-            return ret;
         }
 
         public static void EndChild()

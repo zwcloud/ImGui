@@ -98,11 +98,13 @@ label:
     bool layoutScopesOpen = false;
     #endregion
 
-    #region Skin
+    #region Style & Skin
     bool skinOn = false;
+    LayoutOptions smallRed = new LayoutOptions().FontColor(Color.Red).FontSize(20);
     bool defaultSkinOpen = false;
     bool dearImGuiSkinOpen = false;
     bool win10SkinOpen = false;
+
     #endregion
 
     #endregion
@@ -440,43 +442,47 @@ label:
 
             if (GUILayout.TreeNode("Child regions", ref childRegionsOpen))
             {
-                GUILayout.Text("Child region implementation is buggy and being fixed.");
-#if false
+                //GUILayout.Text("Child region implementation is buggy and being fixed.");
+
                 GUILayout.Text("Without border");
                 bool goto_line = GUILayout.Button("Goto");
-
-                GUILayout.BeginHorizontal("HGroup~1");
                 GUILayout.PushFixedWidth(100);//+2
                 var newLine = GUILayout.InputInt("##Line", line);
-                if(newLine != line)
+                if (newLine != line)
                 {
                     goto_line = true;
                 }
                 GUILayout.PopStyleVar(2);//-2
-                GUILayout.BeginChild("Sub1", new Size(GUILayout.GetWindowClientRect().Width * 0.5f, 300), false, 0);
-                for (int i = 0; i < 100; i++)
+
+                using (GUILayout.HScope("HGroup~1"))
                 {
-                    GUILayout.Text("{0,4}: scrollable region", i);
-                    if (goto_line && line == i)
+                    if (GUILayout.BeginChild("Sub1", (0, 300), 0, GUILayout.Height(300).ExpandWidth(true)))
                     {
-                        //SetScrollHere();//TODO
+                        for (int i = 0; i < 50; i++)
+                        {
+                            GUILayout.Text("{0,4}: scrollable region", i);
+                            if (goto_line && line == i)
+                            {
+                                //SetScrollHere();//TODO
+                            }
+                        }
+                        if (goto_line && line >= 10)
+                        {
+                            //SetScrollHere();//TODO
+                        }
+                        GUILayout.EndChild();
+                    }
+
+                    if (GUILayout.BeginChild("Sub2", new Size(0, 300), 0, GUILayout.Height(300).ExpandWidth(true)))
+                    {
+                        GUILayout.Text("With border");
+                        for (int i = 0; i < 50; i++)
+                        {
+                            GUILayout.Button(string.Format("0x{0:X8}", i * 5731));
+                        }
+                        GUILayout.EndChild();
                     }
                 }
-                if (goto_line && line >= 100)
-                {
-                    //SetScrollHere();//TODO
-                }
-                GUILayout.EndChild();
-
-                GUILayout.BeginChild("Sub2", new Size(0, 300), true, 0);
-                GUILayout.Text("With border");
-                for (int i = 0; i < 100; i++)
-                {
-                    GUILayout.Button(string.Format("0x{0:X8}", i * 5731));
-                }
-                GUILayout.EndChild();
-                GUILayout.EndHorizontal();
-#endif
             }
             GUILayout.TreePop();
 
@@ -541,9 +547,12 @@ label:
             GUILayout.PopID();
         }
 
-        if (GUILayout.CollapsingHeader("Skin", ref skinOn))
+        if (GUILayout.CollapsingHeader("Style & Skin", ref skinOn))
         {
             GUILayout.PushID("_Skin");
+
+            GUILayout.Button("MyButton1", this.smallRed);
+            GUILayout.Button("MyButton2", new LayoutOptions().FontColor(Color.Blue).FontSize(40));
 
             if (GUILayout.TreeNode("Default", ref defaultSkinOpen))
             {

@@ -17,6 +17,10 @@ namespace ImGui
         /// <param name="color">tint color</param>
         public void AddImage(ITexture texture, Point a, Point b, Point uvA, Point uvB, Color color)
         {
+            if (GetCurrentClipRect().IsEmpty)
+            {
+                return;
+            }
             if (MathEx.AmostZero(color.A))
                 return;
             AddImageDrawCommand(texture);
