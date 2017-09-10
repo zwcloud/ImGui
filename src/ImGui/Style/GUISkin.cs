@@ -29,6 +29,7 @@ namespace ImGui
             skin.InitButtonStyles();
             skin.InitSelectableStyles();
             skin.InitListBoxStyles();
+            skin.InitTextBoxStyles();
 
             return skin;
         }

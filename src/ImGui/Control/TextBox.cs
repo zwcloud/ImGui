@@ -8,7 +8,6 @@ namespace ImGui
     {
         public static string Textbox(Rect rect, string label, string text)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return text;
@@ -18,7 +17,7 @@ namespace ImGui
             // style
             var style = GUIStyle.Basic;
             style.Save();
-            style.PushPadding(10.0);//+4
+            style.ApplySkin(GUIControlName.TextBox);
 
             // rect
             rect = window.GetRect(rect);
@@ -29,9 +28,6 @@ namespace ImGui
 
             // render
             var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            style.PushBorderColor(Color.Rgb(112), GUIState.Normal);
-            style.PushBorderColor(Color.Rgb(23), GUIState.Hover);
-            style.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
             GUIAppearance.DrawTextBox(rect, id, text, context, state);
 
             style.Restore();
@@ -49,9 +45,8 @@ namespace ImGui
         /// <param name="size">size</param>
         /// <param name="text">text</param>
         /// <returns>(modified) text</returns>
-        public static string TextBox(string str_id, Size size, string text)
+        public static string TextBox(string str_id, Size size, string text, LayoutOptions? options)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return text;
@@ -61,7 +56,8 @@ namespace ImGui
             // style
             var style = GUIStyle.Basic;
             style.Save();
-            style.PushPadding(10.0);//+4
+            style.ApplySkin(GUIControlName.TextBox);
+            style.ApplyOption(options);
 
             // rect
             Rect rect = window.GetRect(id, size);
@@ -72,9 +68,6 @@ namespace ImGui
 
             // render
             var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            style.PushBorderColor(Color.Rgb(112), GUIState.Normal);
-            style.PushBorderColor(Color.Rgb(23), GUIState.Hover);
-            style.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
             GUIAppearance.DrawTextBox(rect, id, text, context, state);
 
             style.Restore();
@@ -91,9 +84,8 @@ namespace ImGui
         /// <param name="flags">filter flags</param>
         /// <param name="checker">custom checker per char</param>
         /// <returns>(modified) text</returns>
-        public static string TextBox(string label, double width, string text, InputTextFlags flags = 0, Func<char, bool> checker = null)
+        public static string TextBox(string label, double width, string text, InputTextFlags flags, Func<char, bool> checker, LayoutOptions? options)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return text;
@@ -103,43 +95,39 @@ namespace ImGui
             // style apply
             var style = GUIStyle.Basic;
             style.Save();
-            style.PushPadding(3.0);
-            style.PushBorder(1);//+4
+            style.ApplySkin(GUIControlName.TextBox);
+            style.ApplyOption(options);
 
             // rect
             var height = style.GetLineHeight();
             var size = new Size(width, height);
-            var labelWidth = style.CalcSize(label, GUIState.Normal).Width;
-            Rect rect = window.GetRect(id, size + new Vector(labelWidth, 0));
-            Rect boxRect = new Rect(rect.TopLeft, width, height);
-            Rect labelRect = new Rect(boxRect.TopRight, labelWidth, height);
+            Rect rect = window.GetRect(id, size);
 
             // interact
             InputTextContext context;
-            text = GUIBehavior.TextBoxBehavior(id, boxRect, text, out bool hovered, out bool active, out context, flags, checker);
+            text = GUIBehavior.TextBoxBehavior(id, rect, text, out bool hovered, out bool active, out context, flags, checker);
 
             // render
             var d = window.DrawList;
             var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            style.PushBorderColor(Color.Rgb(112), GUIState.Normal);
-            style.PushBorderColor(Color.Rgb(23), GUIState.Hover);
-            style.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
             if (flags.HaveFlag(InputTextFlags.Password))
             {
                 var dotText = new string('*', text.Length);//FIXME bad performance
-                GUIAppearance.DrawTextBox(boxRect, id, dotText, context, state);
+                GUIAppearance.DrawTextBox(rect, id, dotText, context, state);
             }
             else
             {
-                GUIAppearance.DrawTextBox(boxRect, id, text, context, state);
+                GUIAppearance.DrawTextBox(rect, id, text, context, state);
             }
-
-            style.PushBorder(0);
-            d.DrawBoxModel(labelRect, label, style);
 
             style.Restore();
 
             return text;
+        }
+
+        public static string TextBox(string label, double width, string text, InputTextFlags flags, Func<char, bool> checker)
+        {
+            return TextBox(label, width, text, flags, checker, null);
         }
 
         /// <summary>
@@ -149,7 +137,7 @@ namespace ImGui
         /// <param name="size">size</param>
         /// <param name="text">text</param>
         /// <returns>(modified) text</returns>
-        public static string InputTextMultiline(string str_id, Size size, string text) => TextBox(str_id, size, text);
+        public static string InputTextMultiline(string str_id, Size size, string text) => TextBox(str_id, size, text, null);
 
         /// <summary>
         /// Create a single-line text box.
@@ -161,7 +149,22 @@ namespace ImGui
         /// <returns>(modified) text</returns>
         public static string InputText(string label, string text, InputTextFlags flags = 0, Func<char, bool> checker = null)
         {
-            return TextBox(label, GUISkin.Instance.FieldWidth, text, flags, checker);
+            Window window = GetCurrentWindow();
+            if (window.SkipItems)
+                return text;
+
+            var id = window.GetID(label);
+
+            string result;
+            BeginHorizontal("FieldGroup~" + id);
+            {
+                result = TextBox(text, GUISkin.Instance.FieldWidth, text, flags, checker, GUILayout.ExpandWidth(true));
+                Space("FieldSpacing", GUISkin.Current.FieldSpacing);
+                Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
+            }
+            EndHorizontal();
+
+            return result;
         }
 
         /// <summary>
@@ -454,6 +457,21 @@ namespace ImGui
             {
                 d.AddRect(rect.Min, rect.Max, style.GetBorderColor(state));
             }
+        }
+    }
+
+    internal partial class GUISkin
+    {
+        private void InitTextBoxStyles()
+        {
+            StyleModifierBuilder builder = new StyleModifierBuilder();
+            builder.PushPadding(3.0);
+            builder.PushBorder(1);//+4
+            builder.PushBorderColor(Color.Rgb(112), GUIState.Normal);
+            builder.PushBorderColor(Color.Rgb(23), GUIState.Hover);
+            builder.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
+
+            this.styles.Add(GUIControlName.TextBox, builder.ToArray());
         }
     }
 
