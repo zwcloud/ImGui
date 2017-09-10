@@ -73,7 +73,8 @@ label:
     string str0 = "Hello, world!";
     int i0 = 123;
     float f0 = 0.001f;
-
+    Color col1 = new Color(1.0f, 0.0f, 0.2f);
+    Color col2 = new Color(0.4f, 0.7f, 0.0f, 0.5f);
     string[] listBoxItems = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
     int currentListBoxItem = 0;
 
@@ -390,7 +391,8 @@ label:
             str0 = GUILayout.InputText("input text", str0);
             i0 = GUILayout.InputInt("input int", i0);
             f0 = GUILayout.InputFloat("input float", f0);
-
+            col1 = GUILayout.ColorField("color 1", col1);//TODO no alpha color field
+            col2 = GUILayout.ColorField("color 2", col2);
             currentListBoxItem = GUILayout.ListBox<string>("listbox\n(single select)", listBoxItems, currentListBoxItem);
 
             if (GUILayout.TreeNode("Sliders", ref open14))
