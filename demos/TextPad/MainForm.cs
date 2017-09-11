@@ -20,12 +20,12 @@ namespace HostEditor
             GUILayout.Label("Only *.txt file smaller than 1KB are supported.");
             if(!fileOpened)
             {
-                filePath = GUILayout.TextBox("Path", 300, filePath);
+                filePath = GUILayout.InputText("Path", filePath);
             }
             else
             {
                 GUILayout.PushFontColor(Color.TextDisabled);
-                GUILayout.TextBox("Path", 300, filePath);
+                GUILayout.InputText("Path", filePath);
                 GUILayout.PopStyleVar();
             }
 

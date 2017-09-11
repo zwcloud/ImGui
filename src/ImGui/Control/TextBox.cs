@@ -75,6 +75,8 @@ namespace ImGui
             return text;
         }
 
+        public static string TextBox(string str_id, Size size, string text) => TextBox(str_id, size, text, null);
+
         /// <summary>
         /// Create a single-line text box.
         /// </summary>
