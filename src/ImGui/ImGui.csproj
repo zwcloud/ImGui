@@ -30,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
+    <NoWarn>1701;1702;1705;0162</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -40,11 +41,16 @@
 
   <ItemGroup>
     <Compile Remove="Control\tobefixed\**" />
+    <Compile Remove="DrawList\Font\**" />
     <EmbeddedResource Remove="Control\tobefixed\**" />
+    <EmbeddedResource Remove="DrawList\Font\**" />
     <None Remove="Control\tobefixed\**" />
+    <None Remove="DrawList\Font\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Common\IO.cs" />
+    <Compile Remove="Common\ListEx.cs" />
     <Compile Remove="Control\Box.cs" />
     <Compile Remove="Control\HoverButton.cs" />
     <Compile Remove="Control\PolygonButton.cs" />

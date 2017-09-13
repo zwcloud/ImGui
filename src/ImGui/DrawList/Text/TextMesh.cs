@@ -28,7 +28,7 @@ namespace ImGui
         /// when adding Glyph triangles and curve segments _frequently_ to the TextMesh.
         /// See important not below.
         /// </remarks>
-        public UnsafeList<DrawVertex> VertexBuffer { get; set; } = new UnsafeList<DrawVertex>(100000);
+        public VertexBuffer VertexBuffer { get; set; } = new VertexBuffer(100000);
 
         /// <summary>
         /// index buffer
@@ -36,7 +36,7 @@ namespace ImGui
         /// <remarks>
         /// (same as vertex buffer)
         /// </remarks>
-        public UnsafeList<DrawIndex> IndexBuffer { get; set; } = new UnsafeList<DrawIndex>(100000);
+        public IndexBuffer IndexBuffer { get; set; } = new IndexBuffer(100000);
 
         /*
          * Important Note:

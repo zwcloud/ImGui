@@ -19,6 +19,8 @@ namespace CSharpGL
             _glBindVertexArray = GetDelegateFor<glBindVertexArray>();
             _glBindBuffer = GetDelegateFor<glBindBuffer>();
             _glBufferData = GetDelegateFor<glBufferData>();
+            _glMapBuffer = GetDelegateFor<glMapBuffer>();
+            _glUnmapBuffer = GetDelegateFor<glUnmapBuffer>();
             _glActiveTexture = GetDelegateFor<glActiveTexture>();
             _glBlendEquationSeparate = GetDelegateFor<glBlendEquationSeparate>();
             _glBlendFuncSeparate = GetDelegateFor<glBlendFuncSeparate>();
@@ -67,6 +69,8 @@ namespace CSharpGL
         private static glBindVertexArray _glBindVertexArray;
         private static glBindBuffer _glBindBuffer;
         private static glBufferData _glBufferData;
+        private static glMapBuffer _glMapBuffer;
+        private static glUnmapBuffer _glUnmapBuffer;
         private static glActiveTexture _glActiveTexture;
         private static glUseProgram _glUseProgram;
         private static glBlendEquationSeparate _glBlendEquationSeparate;
@@ -1075,7 +1079,7 @@ namespace CSharpGL
         }
         public static IntPtr MapBuffer(uint target, uint access)
         {
-            return GetDelegateFor<glMapBuffer>()(target, access);
+            return _glMapBuffer(target, access);
         }
         public static IntPtr MapBufferRange(uint target, int offset, int length, uint access)
         {
@@ -1083,7 +1087,7 @@ namespace CSharpGL
         }
         public static bool UnmapBuffer(uint target)
         {
-            return GetDelegateFor<glUnmapBuffer>()(target);
+            return _glUnmapBuffer(target);
         }
         public static void GetBufferParameter(uint target, uint pname, int[] parameters)
         {

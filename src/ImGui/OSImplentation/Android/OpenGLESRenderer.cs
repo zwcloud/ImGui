@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using CSharpGLES;
-using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 
@@ -140,8 +139,8 @@ void main()
         private static void DrawMesh(Material material, Mesh mesh, int width, int height)
         {
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
-            UnsafeList<DrawVertex> vertexBuffer = mesh.VertexBuffer;
-            UnsafeList<DrawIndex> indexBuffer = mesh.IndexBuffer;
+            VertexBuffer vertexBuffer = mesh.VertexBuffer;
+            IndexBuffer indexBuffer = mesh.IndexBuffer;
 
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
