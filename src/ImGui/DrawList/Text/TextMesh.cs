@@ -112,18 +112,18 @@ namespace ImGui
                 var p0 = polygon[0];
                 p0.x += glyphOffsetX;
                 p0.y += glyphOffsetY;
-                p0 = ApplyOffsetScale(p0, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref p0, positionOffsetX, positionOffsetY, scaleF, flipY);
                 PrimReserve(3 * (polygon.Count - 1), 3 * (polygon.Count - 1));
                 for (int i = 0; i < polygon.Count - 1; i++)
                 {
                     var p1 = polygon[i];
                     p1.x += glyphOffsetX;
                     p1.y += glyphOffsetY;
-                    p1 = ApplyOffsetScale(p1, positionOffsetX, positionOffsetY, scaleF, flipY);
+                    ApplyOffsetScale(ref p1, positionOffsetX, positionOffsetY, scaleF, flipY);
                     var p2 = polygon[i + 1];
                     p2.x += glyphOffsetX;
                     p2.y += glyphOffsetY;
-                    p2 = ApplyOffsetScale(p2, positionOffsetX, positionOffsetY, scaleF, flipY);
+                    ApplyOffsetScale(ref p2, positionOffsetX, positionOffsetY, scaleF, flipY);
                     AppendVertex(new DrawVertex { pos = p0, uv = Point.Zero, color = color });
                     AppendVertex(new DrawVertex { pos = p1, uv = Point.Zero, color = color });
                     AppendVertex(new DrawVertex { pos = p2, uv = Point.Zero, color = color });
@@ -154,17 +154,17 @@ namespace ImGui
                 var startPoint = segment.Item1;
                 startPoint.x += glyphOffsetX;
                 startPoint.y += glyphOffsetY;
-                startPoint = ApplyOffsetScale(startPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref startPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
 
                 var controlPoint = segment.Item2;
                 controlPoint.x += glyphOffsetX;
                 controlPoint.y += glyphOffsetY;
-                controlPoint = ApplyOffsetScale(controlPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref controlPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
 
                 var endPoint = segment.Item3;
                 endPoint.x += glyphOffsetX;
                 endPoint.y += glyphOffsetY;
-                endPoint = ApplyOffsetScale(endPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref endPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
 
                 AppendVertex(new DrawVertex { pos = startPoint, uv = uv0, color = color });
                 AppendVertex(new DrawVertex { pos = controlPoint, uv = uv1, color = color });
@@ -177,9 +177,12 @@ namespace ImGui
             }
         }
 
-        private static Point ApplyOffsetScale(Point point, float offsetX, float offsetY, float scale, bool flipY)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void ApplyOffsetScale(ref Point point, float offsetX, float offsetY, float scale, bool flipY)
         {
-            return new Point(point.x * scale + offsetX, point.y * scale * (flipY ? -1 : 1)+ offsetY);
+            point._x = point._x * scale + offsetX;
+            point._y = point._y * scale * (flipY ? -1 : 1) + offsetY;
+            //return new Point(point.x * scale + offsetX, point.y * scale * (flipY ? -1 : 1)+ offsetY);
         }
 
         internal void Build(Point position, ITextContext textContext)
