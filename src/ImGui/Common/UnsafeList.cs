@@ -14,7 +14,7 @@ namespace ImGui.Common
     [DebuggerStepThrough]
     [DebuggerDisplay("Count = {Count}")]
     [Serializable]
-    internal class UnsafeList<T> : IList<T>, System.Collections.IList, IReadOnlyList<T>
+    internal class UnsafeList<T> : IList<T>, System.Collections.IList, IReadOnlyList<T> where T:struct
     {
         private const int _defaultCapacity = 4;
 
@@ -193,11 +193,11 @@ namespace ImGui.Common
 
             set
             {
-                //if ((uint)index >= (uint)_size)
-                //{
-                //    throw new ArgumentOutOfRangeException();
-                //}
-                //Contract.EndContractBlock();
+                if ((uint)index >= (uint)_size)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                Contract.EndContractBlock();
                 _items[index] = value;
                 _version++;
             }
@@ -207,7 +207,7 @@ namespace ImGui.Common
         {
             // Non-null values are fine.  Only accept nulls if T is a class or Nullable<U>.
             // Note that default(T) is not equal to null for value types except when T is Nullable<U>. 
-            return ((value is T) || (value == null && default(T) == null));
+            return ((value is T) || (value == null));
         }
 
         Object System.Collections.IList.this[int index]
@@ -328,7 +328,7 @@ namespace ImGui.Common
         {
             if (_size > 0)
             {
-                Array.Clear(_items, 0, _size); // Don't need to doc this but we clear the elements so that the gc can reclaim the references.
+                //Array.Clear(_items, 0, _size); // Don't need to doc this but we clear the elements so that the gc can reclaim the references.
                 _size = 0;
             }
             _version++;
@@ -1279,8 +1279,7 @@ namespace ImGui.Common
         /// Resize the list
         /// </summary>
         /// <param name="size">desired new size</param>
-        /// <param name="element">default value to insert</param>
-        public void Resize(int size, T element = default(T))
+        public void Resize(int size)
         {
             int count = this.Count;
 
