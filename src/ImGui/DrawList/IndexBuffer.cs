@@ -14,16 +14,35 @@ namespace ImGui
 
         public int Capacity => capacity;
 
+        private GCHandle handle;//TODO free this handle finally
+        private unsafe DrawIndex* ptr;
+
         public IndexBuffer(int capacity)
         {
             this.data = new DrawIndex[capacity];
             this.capacity = capacity;
             this.size = 0;
+            UpdatePointer();
         }
 
         public IntPtr Pointer
         {
-            get { return Marshal.UnsafeAddrOfPinnedArrayElement(data, 0); }
+            get;
+            set;
+        }
+
+        void UpdatePointer()
+        {
+            if (this.handle.IsAllocated)
+            {
+                this.handle.Free();
+            }
+            this.handle = GCHandle.Alloc(this.data, GCHandleType.Pinned);
+            this.Pointer = handle.AddrOfPinnedObject();
+            unsafe
+            {
+                this.ptr = (DrawIndex*)this.Pointer.ToPointer();
+            }
         }
 
         public unsafe DrawIndex this[int index]
@@ -31,18 +50,12 @@ namespace ImGui
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                fixed (DrawIndex* ptr = data)
-                {
-                    return *(ptr + index);
-                }
+                return *(ptr + index);
             }
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                fixed (DrawIndex* ptr = data)
-                {
-                    *(ptr + index) = value;
-                }
+                *(ptr + index) = value;
             }
         }
 
@@ -85,6 +98,7 @@ namespace ImGui
             this.data = null;
             this.data = new_data;
             this.capacity = new_capacity;
+            UpdatePointer();
         }
 
         private int _grow_capacity(int newSize)
