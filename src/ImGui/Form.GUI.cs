@@ -38,11 +38,6 @@ namespace ImGui
                 g.lastFPSUpdateTime = g.Time;
             }
 
-            if(g.DeltaTime < 17)//limit fps to about 60
-            {
-                System.Threading.Thread.Sleep((int)(17 - g.DeltaTime));
-            }
-
             #region Input
             // Process input
             #region mouse position

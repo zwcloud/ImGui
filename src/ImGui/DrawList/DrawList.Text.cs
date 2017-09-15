@@ -11,7 +11,7 @@ namespace ImGui
         /// </summary>
         public void AddText(Rect rect, string text, GUIStyle style, GUIState state)
         {
-            if(GetCurrentClipRect().IsEmpty)
+            if (GetCurrentClipRect().IsEmpty)
             {
                 return;
             }

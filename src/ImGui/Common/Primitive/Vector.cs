@@ -15,12 +15,23 @@ namespace ImGui.Common.Primitive
         /// <summary>
         /// Constructor which sets the vector's initial values
         /// </summary>
+        /// <param name="x"> float - The initial X </param>
+        /// <param name="y"> float - THe initial Y </param>
+        public Vector(float x, float y)
+        {
+            _x = x;
+            _y = y;
+        }
+
+        /// <summary>
+        /// Constructor which sets the vector's initial values
+        /// </summary>
         /// <param name="x"> double - The initial X </param>
         /// <param name="y"> double - THe initial Y </param>
         public Vector(double x, double y)
         {
-            _x = x;
-            _y = y;
+            _x = (float)x;
+            _y = (float)y;
         }
 
         #endregion
@@ -427,7 +438,7 @@ namespace ImGui.Common.Primitive
 
             set
             {
-                _x = value;
+                _x = (float)value;
             }
 
         }
@@ -444,7 +455,7 @@ namespace ImGui.Common.Primitive
 
             set
             {
-                _y = value;
+                _y = (float)value;
             }
 
         }
@@ -517,8 +528,8 @@ namespace ImGui.Common.Primitive
         }
 
 
-        internal double _x;
-        internal double _y;
+        internal float _x;
+        internal float _y;
 
     }
 }

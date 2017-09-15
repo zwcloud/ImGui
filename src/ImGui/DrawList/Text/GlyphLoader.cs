@@ -81,8 +81,7 @@ namespace Typography.OpenFont
             for (int i = 0; i < glyphPointList.Count; i++)//for each contour
             {
                 var contourPoints = glyphPointList[i];
-                polygons.Add(new List<Point>());
-                var polygon = polygons[polygons.Count - 1];
+                var polygon = new List<Point>();
                 for (int j = 0; j < contourPoints.Count; j++)
                 {
                     var glyphpoint = contourPoints[j];
@@ -100,6 +99,11 @@ namespace Typography.OpenFont
                         bezierSegments.Add((prev, point, next));
                     }
                 }
+                if (polygon.Count < 3)//don't add degenerated contour
+                {
+                    continue;
+                }
+                polygons.Add(polygon);
             }
 
         }

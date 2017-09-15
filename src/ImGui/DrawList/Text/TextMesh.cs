@@ -95,35 +95,31 @@ namespace ImGui
         }
 
         private void AddTriangles(List<List<Point>> polygons, Color color,
-            Vector positionOffset, Vector glyphOffset, double scale, bool flipY)
+            Vector positionOffset, Vector glyphOffset, float scale, bool flipY)
         {
-            float glyphOffsetX = (float)glyphOffset.X;
-            float glyphOffsetY = (float)glyphOffset.Y;
-            float positionOffsetX = (float)positionOffset.X;
-            float positionOffsetY = (float)positionOffset.Y;
-            float scaleF = (float)scale;
+            float positionOffsetX = positionOffset._x;
+            float positionOffsetY = positionOffset._y;
+            float glyphOffsetX = glyphOffset._x;
+            float glyphOffsetY = glyphOffset._y;
 
-            foreach (var polygon in polygons)
+            for (var i = 0; i < polygons.Count; ++i)
             {
-                if (polygon == null || polygon.Count < 3)
-                {
-                    continue;
-                }
+                var polygon = polygons[i];
                 var p0 = polygon[0];
                 p0.x += glyphOffsetX;
                 p0.y += glyphOffsetY;
-                ApplyOffsetScale(ref p0, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref p0, positionOffsetX, positionOffsetY, scale, flipY);
                 PrimReserve(3 * (polygon.Count - 1), 3 * (polygon.Count - 1));
-                for (int i = 0; i < polygon.Count - 1; i++)
+                for (int k = 0; k < polygon.Count - 1; k++)
                 {
-                    var p1 = polygon[i];
+                    var p1 = polygon[k];
                     p1.x += glyphOffsetX;
                     p1.y += glyphOffsetY;
-                    ApplyOffsetScale(ref p1, positionOffsetX, positionOffsetY, scaleF, flipY);
-                    var p2 = polygon[i + 1];
+                    ApplyOffsetScale(ref p1, positionOffsetX, positionOffsetY, scale, flipY);
+                    var p2 = polygon[k + 1];
                     p2.x += glyphOffsetX;
                     p2.y += glyphOffsetY;
-                    ApplyOffsetScale(ref p2, positionOffsetX, positionOffsetY, scaleF, flipY);
+                    ApplyOffsetScale(ref p2, positionOffsetX, positionOffsetY, scale, flipY);
                     AppendVertex(new DrawVertex { pos = p0, uv = Point.Zero, color = color });
                     AppendVertex(new DrawVertex { pos = p1, uv = Point.Zero, color = color });
                     AppendVertex(new DrawVertex { pos = p2, uv = Point.Zero, color = color });
@@ -135,17 +131,17 @@ namespace ImGui
             }
         }
 
-        public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color, Vector positionOffset, Vector glyphOffset, double scale = 1, bool flipY = true)
+        public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color, Vector positionOffset, Vector glyphOffset, float scale = 1, bool flipY = true)
         {
             PrimReserve(segments.Count * 3, segments.Count * 3);
             var uv0 = new Point(0, 0);
             var uv1 = new Point(0.5, 0);
             var uv2 = new Point(1, 1);
-            float glyphOffsetX = (float)glyphOffset.X;
-            float glyphOffsetY = (float)glyphOffset.Y;
-            float positionOffsetX = (float)positionOffset.X;
-            float positionOffsetY = (float)positionOffset.Y;
-            float scaleF = (float)scale;
+
+            float positionOffsetX = positionOffset._x;
+            float positionOffsetY = positionOffset._y;
+            float glyphOffsetX = glyphOffset._x;
+            float glyphOffsetY = glyphOffset._y;
 
             for (int i = 0; i < segments.Count; i++)
             {
@@ -154,17 +150,17 @@ namespace ImGui
                 var startPoint = segment.Item1;
                 startPoint.x += glyphOffsetX;
                 startPoint.y += glyphOffsetY;
-                ApplyOffsetScale(ref startPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref startPoint, positionOffsetX, positionOffsetY, scale, flipY);
 
                 var controlPoint = segment.Item2;
                 controlPoint.x += glyphOffsetX;
                 controlPoint.y += glyphOffsetY;
-                ApplyOffsetScale(ref controlPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref controlPoint, positionOffsetX, positionOffsetY, scale, flipY);
 
                 var endPoint = segment.Item3;
                 endPoint.x += glyphOffsetX;
                 endPoint.y += glyphOffsetY;
-                ApplyOffsetScale(ref endPoint, positionOffsetX, positionOffsetY, scaleF, flipY);
+                ApplyOffsetScale(ref endPoint, positionOffsetX, positionOffsetY, scale, flipY);
 
                 AppendVertex(new DrawVertex { pos = startPoint, uv = uv0, color = color });
                 AppendVertex(new DrawVertex { pos = controlPoint, uv = uv1, color = color });
@@ -182,7 +178,6 @@ namespace ImGui
         {
             point._x = point._x * scale + offsetX;
             point._y = point._y * scale * (flipY ? -1 : 1) + offsetY;
-            //return new Point(point.x * scale + offsetX, point.y * scale * (flipY ? -1 : 1)+ offsetY);
         }
 
         internal void Build(Point position, ITextContext textContext)
@@ -190,7 +185,7 @@ namespace ImGui
             textContext.Build(position);
         }
 
-        public void Append(Vector positionOffset, GlyphData glyphData, Vector glyphOffset, double scale, Color color, bool flipY)
+        public void Append(Vector positionOffset, GlyphData glyphData, Vector glyphOffset, float scale, Color color, bool flipY)
         {
             var polygons = glyphData.Polygons;
             var segments = glyphData.QuadraticCurveSegments;

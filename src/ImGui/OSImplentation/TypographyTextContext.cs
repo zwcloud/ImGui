@@ -45,7 +45,7 @@ namespace ImGui.OSImplentation
             return glyph;
         }
 
-        public static double GetScale(string fontFamily, double fontSize)
+        public static float GetScale(string fontFamily, double fontSize)
         {
             Typeface typeFace = GetTypeFace(fontFamily);
             var scale = typeFace.CalculateToPixelScaleFromPointSize((float)fontSize);
