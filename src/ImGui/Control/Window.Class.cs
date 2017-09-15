@@ -353,7 +353,7 @@ namespace ImGui
             this.Scroll.Y = newScrollY;
         }
 
-        public void Setup(string name, Point position, Size size, double bg_alpha, WindowFlags flags,
+        public void Setup(string name, Point position, Size size, ref bool open, double bg_alpha, WindowFlags flags,
             long current_frame, Window parent_window)
         {
             Form form = Form.current;
@@ -585,8 +585,15 @@ namespace ImGui
             // draw title bar text
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
+                // title text
                 var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
                 this.DrawList.DrawBoxModel(title_bar_rect, name, titleBarStyle, state);
+
+                // close button
+                if (CloseButton(this.GetID("#CLOSE"), new Rect(title_bar_rect.TopRight + new Vector(-45, 0), title_bar_rect.BottomRight)))
+                {
+                    open = false;
+                }
             }
 
             // Borders
@@ -620,5 +627,34 @@ namespace ImGui
             this.WindowClippedRect.Intersect(this.ClipRect);
         }
 
+        bool CloseButton(int id, Rect rect)
+        {
+            Window window = GUI.GetCurrentWindow();
+
+            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out bool hovered, out bool held);
+
+            GUIStyle style = GUIStyle.Basic;
+            style.Save();
+            style.ApplySkin(GUIControlName.Button);
+            style.PushBgColor(Color.White, GUIState.Normal);
+            style.PushBgColor(Color.Rgb(232, 17, 35), GUIState.Hover);
+            style.PushBgColor(Color.Rgb(241, 112, 122), GUIState.Active);
+
+            // Render
+            var d = window.DrawList;
+            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            var color = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+            d.AddRectFilled(rect, color);
+
+            Point center = rect.Center;
+            float cross_extent = (15 * 0.7071f) - 1.0f;
+            var fontColor = style.Get<Color>(GUIStyleName.FontColor, state);
+            d.AddLine(center + new Vector(+cross_extent, +cross_extent), center + new Vector(-cross_extent, -cross_extent), fontColor);
+            d.AddLine(center + new Vector(+cross_extent, -cross_extent), center + new Vector(-cross_extent, +cross_extent), fontColor);
+
+            style.Restore();
+
+            return pressed;
+        }
     }
 }
