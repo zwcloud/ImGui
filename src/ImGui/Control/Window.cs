@@ -227,7 +227,8 @@ namespace ImGui
                             Point scroll_TopLeft = new Point(
                                 window.Rect.Right - scrollBarWidth - window.Style.BorderRight - window.Style.PaddingRight,
                                 window.Rect.Top + window.TitleBarHeight + window.Style.BorderTop + window.Style.PaddingTop);
-                            var sH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical - resize_corner_size;
+                            var sH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical
+                                + (flags.HaveFlag(WindowFlags.NoResize)? 0 : - resize_corner_size);
                             var vH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical;
                             Point scroll_BottomRight = scroll_TopLeft + new Vector(scrollBarWidth, sH);
                             Rect bgRect = new Rect(scroll_TopLeft, scroll_BottomRight);
