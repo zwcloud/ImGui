@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ImGui.Layout;
 using System.Diagnostics;
+using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
@@ -348,6 +351,273 @@ namespace ImGui
         public void SetWindowScrollY(double newScrollY)
         {
             this.Scroll.Y = newScrollY;
+        }
+
+        public void Setup(string name, Point position, Size size, double bg_alpha, WindowFlags flags,
+            long current_frame, Window parent_window)
+        {
+            Form form = Form.current;
+            GUIContext g = form.uiContext;
+            WindowManager w = g.WindowManager;
+
+            this.Active = true;
+            this.BeginCount = 0;
+            this.ClipRect = Rect.Big;
+            this.LastActiveFrame = current_frame;
+
+            // clear draw list, setup outer clip rect
+            this.DrawList.Clear();
+            this.DrawList.Init();
+            Rect fullScreenRect = new Rect(0, 0, form.ClientSize);
+            if (flags.HaveFlag(WindowFlags.ChildWindow) && !flags.HaveFlag(WindowFlags.ComboBox | WindowFlags.Popup))
+            {
+                this.DrawList.PushClipRect(parent_window.ClipRect, true);
+                this.ClipRect = this.DrawList.GetCurrentClipRect();
+            }
+            else
+            {
+                this.DrawList.PushClipRect(fullScreenRect, true);
+                this.ClipRect = this.DrawList.GetCurrentClipRect();
+            }
+
+            // draw outer clip rect
+            //this.DrawList.AddRect(this.ClipRect.TopLeft, this.ClipRect.BottomRight, Color.Blue);//test only
+
+            // Collapse window by double-clicking on title bar
+            if (!(flags.HaveFlag(WindowFlags.NoTitleBar)) && !(flags.HaveFlag(WindowFlags.NoCollapse)))
+            {
+                if (w.HoveredWindow == this && g.IsMouseHoveringRect(this.TitleBarRect) &&
+                    Mouse.Instance.LeftButtonDoubleClicked)
+                {
+                    this.Collapsed = !this.Collapsed;
+                    w.FocusWindow(this);
+                }
+            }
+            else
+            {
+                this.Collapsed = false;
+            }
+
+            #region size
+
+            this.ApplySize(this.FullSize);
+            this.Size = this.Collapsed ? this.TitleBarRect.Size : this.FullSize;
+
+            #endregion
+
+            #region position
+
+            this.Position = new Point((int)this.PosFloat.X, (int)this.PosFloat.Y);
+            if (flags.HaveFlag(WindowFlags.ChildWindow))
+            {
+                this.Position = this.PosFloat = position;
+                this.Size = this.FullSize = size; // 'size' provided by user passed via BeginChild()->Begin().
+            }
+
+            #endregion
+
+            // Draw window + handle manual resize
+            GUIStyle style = this.Style;
+            GUIStyle titleBarStyle = this.TitleBarStyle;
+            Rect title_bar_rect = this.TitleBarRect;
+            float window_rounding = (float)style.Get<double>(GUIStyleName.WindowRounding);
+            if (this.Collapsed)
+            {
+                // Draw title bar only
+                this.DrawList.AddRectFilled(title_bar_rect.Min, title_bar_rect.Max, new Color(0.40f, 0.40f, 0.80f, 0.50f));
+            }
+            else
+            {
+                Color resize_col = Color.Clear;
+                double rezie_size = this.Style.Get<double>(GUIStyleName.ResizeGripSize);
+                double resize_corner_size = Math.Max(rezie_size * 1.35, window_rounding + 1.0 + rezie_size * 0.2);
+                if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
+                {
+                    // Manual resize
+                    var br = this.Rect.BottomRight;
+                    Rect resize_rect = new Rect(br - new Vector(resize_corner_size * 0.75f, resize_corner_size * 0.75f), br);
+                    int resize_id = this.GetID("#RESIZE");
+                    bool hovered, held;
+                    GUIBehavior.ButtonBehavior(resize_rect, resize_id, out hovered, out held, ButtonFlags.FlattenChilds);
+                    resize_col =
+                        held
+                            ? style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active)
+                            : hovered
+                                ? style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover)
+                                : style.Get<Color>(GUIStyleName.ResizeGripColor);
+
+                    if (hovered || held)
+                    {
+                        //Mouse.Instance.Cursor = Cursor.NeswResize;
+                    }
+
+                    if (held)
+                    {
+                        // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
+                        var t = Mouse.Instance.Position - g.ActiveIdClickOffset - this.Position;
+                        var new_size_width = t.X + resize_rect.Width;
+                        var new_size_height = t.Y + resize_rect.Height;
+                        new_size_width =
+                            MathEx.Clamp(new_size_width, 330, fullScreenRect.Width); //min size of a window is 145x235
+                        new_size_height = MathEx.Clamp(new_size_height, 150, fullScreenRect.Height);
+                        Size resize_size = new Size(new_size_width, new_size_height);
+                        this.ApplySize(resize_size);
+
+                        // adjust scroll parameters
+                        var contentSize = this.ContentRect.Size;
+                        if (contentSize != Size.Zero)
+                        {
+                            var vH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical -
+                                     this.Style.PaddingVertical;
+                            var cH = contentSize.Height;
+                            if (cH > vH)
+                            {
+                                var oldScrollY = this.Scroll.Y;
+                                oldScrollY = MathEx.Clamp(oldScrollY, 0, cH - vH);
+                                this.Scroll.Y = oldScrollY;
+                            }
+                        }
+                    }
+
+                    this.Size = this.FullSize;
+                    title_bar_rect = this.TitleBarRect;
+                }
+
+
+                // Window background
+                Color bg_color = style.BackgroundColor;
+                if (bg_alpha >= 0.0f)
+                    bg_color.A = bg_alpha;
+                if (bg_color.A > 0.0f)
+                    this.DrawList.AddRectFilled(this.Position + new Vector(0, this.TitleBarHeight),
+                        this.Rect.BottomRight, bg_color, window_rounding,
+                        flags.HaveFlag(WindowFlags.NoTitleBar) ? 15 : 4 | 8);
+
+                // Title bar
+                if (!flags.HaveFlag(WindowFlags.NoTitleBar))
+                {
+                    this.DrawList.AddRectFilled(title_bar_rect.TopLeft, title_bar_rect.BottomRight,
+                        w.FocusedWindow == this
+                            ? titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active)
+                            : titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor), window_rounding, 1 | 2);
+                }
+
+                // Render resize grip
+                // (after the input handling so we don't have a frame of latency)
+                if (!flags.HaveFlag(WindowFlags.NoResize))
+                {
+                    Point br = this.Rect.BottomRight;
+                    var borderBottom = this.Style.BorderBottom;
+                    var borderRight = this.Style.BorderRight;
+                    this.DrawList.PathLineTo(br + new Vector(-resize_corner_size, -borderBottom));
+                    this.DrawList.PathLineTo(br + new Vector(-borderRight, -resize_corner_size));
+                    this.DrawList.PathArcToFast(
+                        new Point(br.X - window_rounding - borderRight, br.Y - window_rounding - borderBottom), window_rounding,
+                        0, 3);
+                    this.DrawList.PathFill(resize_col);
+                }
+
+                // Scroll bar
+                if (flags.HaveFlag(WindowFlags.VerticalScrollbar))
+                {
+                    //get content size without clip
+                    var contentPosition = this.ContentRect.TopLeft;
+                    var contentSize = this.ContentRect.Size;
+                    if (contentSize != Size.Zero)
+                    {
+                        int id = this.GetID("#SCROLLY");
+
+                        double scrollBarWidth = this.Style.Get<double>(GUIStyleName.ScrollBarWidth);
+                        Point scroll_TopLeft = new Point(
+                            this.Rect.Right - scrollBarWidth - this.Style.BorderRight - this.Style.PaddingRight,
+                            this.Rect.Top + this.TitleBarHeight + this.Style.BorderTop + this.Style.PaddingTop);
+                        var sH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical -
+                                 this.Style.PaddingVertical
+                                 + (flags.HaveFlag(WindowFlags.NoResize) ? 0 : -resize_corner_size);
+                        var vH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical -
+                                 this.Style.PaddingVertical;
+                        Point scroll_BottomRight = scroll_TopLeft + new Vector(scrollBarWidth, sH);
+                        Rect bgRect = new Rect(scroll_TopLeft, scroll_BottomRight);
+
+                        var cH = contentSize.Height;
+                        var top = this.Scroll.Y * sH / cH;
+                        var height = sH * vH / cH;
+
+                        if (height < sH)
+                        {
+                            // handle mouse click/drag
+                            bool held = false;
+                            bool hovered = false;
+                            bool previously_held = (g.ActiveId == id);
+                            GUIBehavior.ButtonBehavior(bgRect, id, out hovered, out held);
+                            if (held)
+                            {
+                                top = Mouse.Instance.Position.Y - bgRect.Y - 0.5 * height;
+                                top = MathEx.Clamp(top, 0, sH - height);
+                                var targetScrollY = top * cH / sH;
+                                this.SetWindowScrollY(targetScrollY);
+                            }
+
+                            Point scrollButton_TopLeft = scroll_TopLeft + new Vector(0, top);
+                            Point scrllButton_BottomRight = scrollButton_TopLeft + new Vector(scrollBarWidth, height);
+                            Rect buttonRect = new Rect(scrollButton_TopLeft, scrllButton_BottomRight);
+
+                            //Draw vertical scroll bar and button
+                            {
+                                var bgColor = this.Style.Get<Color>(GUIStyleName.ScrollBarBackgroundColor);
+                                var buttonColor = this.Style.Get<Color>(GUIStyleName.ScrollBarButtonColor,
+                                    held ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal);
+                                this.DrawList.AddRectFilled(bgRect.TopLeft, buttonRect.TopRight, bgColor);
+                                this.DrawList.AddRectFilled(buttonRect.TopLeft, buttonRect.BottomRight, buttonColor);
+                                this.DrawList.AddRectFilled(buttonRect.BottomLeft, bgRect.BottomRight, bgColor);
+                            }
+                        }
+                        else
+                        {
+                            var bgColor = this.Style.Get<Color>(GUIStyleName.ScrollBarBackgroundColor);
+                            this.DrawList.AddRectFilled(bgRect.TopLeft, bgRect.BottomRight, bgColor);
+                        }
+                    }
+                }
+                this.ContentRect = Rect.Zero;
+            }
+
+            // draw title bar text
+            if (!flags.HaveFlag(WindowFlags.NoTitleBar))
+            {
+                var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
+                this.DrawList.DrawBoxModel(title_bar_rect, name, titleBarStyle, state);
+            }
+
+            // Borders
+            if (flags.HaveFlag(WindowFlags.ShowBorders))
+            {
+                var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
+                // window border
+                var borderColor = this.Style.Get<Color>(GUIStyleName.WindowBorderColor, state);
+                this.DrawList.AddRect(this.Position, this.Position + new Vector(this.Size.Width, this.Size.Height),
+                    borderColor, window_rounding);
+                // window shadow
+#if false
+                    {
+                        var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
+                        var shadowColor = this.Style.Get<Color>(GUIStyleName.WindowShadowColor, state);
+                        var shadowWidth = this.Style.Get<double>(GUIStyleName.WindowShadowWidth, state);
+                        var d = this.DrawList;
+
+                        //top-left corner
+
+                        d.AddRectFilledGradientTopLeftToBottomRight(this.Rect.TopLeft + new Vector(-shadowWidth, -shadowWidth), this.Rect.TopLeft, Color.Clear, shadowColor);
+                        //top
+                        d.AddRectFilledGradient(this.Rect.TopLeft + new Vector(0, -shadowWidth), this.Rect.TopRight, Color.Clear, shadowColor);
+                        d.AddRectFilledGradient(this.Rect.BottomLeft, this.Rect.BottomRight + new Vector(0, shadowWidth), shadowColor, Color.Clear);
+                    }
+#endif
+            }
+
+            // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
+            this.WindowClippedRect = this.Rect;
+            this.WindowClippedRect.Intersect(this.ClipRect);
         }
 
     }
