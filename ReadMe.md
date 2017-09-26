@@ -1,3 +1,6 @@
+# Development Paused Notification
+Development of Hello ImGui is paused because I'm preparing for the National Postgraduate Entrance Examination in China. I'll restart the development once the exam is over on 26th of December.
+
 Hello ImGui,
 =====
 
