@@ -1,6 +1,3 @@
-# Development Paused Notification
-Development of Hello ImGui is paused because I'm preparing for the National Postgraduate Entrance Examination in China. I'll restart the development once the exam is over on 26th of December.
-
 Hello ImGui,
 =====
 
@@ -10,7 +7,7 @@ Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](http
 
 Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms). MAC and iphone are not supported because I don't have them.
 
-Please be infromed that ImGui is just released. There's a lack of usability and documentation. But all will be improved gradually.
+Please be informed that ImGui is just released. There's a lack of usability and documentation. But all will be improved gradually.
 
 Please note that the API is unstable and will change at any time.
 
@@ -20,7 +17,7 @@ Please note that the API is unstable and will change at any time.
 
 1. Preparation
     * Download msjh.ttf to directory `ImGui\src\ImGui\assets\fonts`. See [font note](https://github.com/zwcloud/ImGui/blob/master/src/ImGui/assets/fonts/ReadMe.md).
-    * Add a local directory as a new nuget package source and put [`ImageSharp.1.0.0-alpha9.nupkg`](https://github.com/zwcloud/ImGui/blob/master/packages/ImageSharp.1.0.0-alpha9/ImageSharp.1.0.0-alpha9.nupkg) inside. (The offical ImageSharp package is a dummy one on nuget.org. This is a modified version of the lastest ImageSharp so it supports .NET Standard 2.0.)
+    * Add a local directory as a new nuget package source and put [`ImageSharp.1.0.0-alpha9.nupkg`](https://github.com/zwcloud/ImGui/blob/master/packages/ImageSharp.1.0.0-alpha9/ImageSharp.1.0.0-alpha9.nupkg) inside. (The official ImageSharp package is a dummy one on nuget.org. This is a modified version of the latest ImageSharp that supports .NET Standard 2.0.)
 
 2. Create a .NET Core 2.0 project and reference _ImGui_.
 
@@ -82,10 +79,10 @@ Please note that the API is unstable and will change at any time.
 ### For Android
 
 1. Preparation
-    * Add a local directory as a new nuget package source and put [`ImageSharp.1.0.0-alpha9.nupkg`](https://github.com/zwcloud/ImGui/blob/master/packages/ImageSharp.1.0.0-alpha9/ImageSharp.1.0.0-alpha9.nupkg) inside. (The offical ImageSharp package is a dummy one on nuget.org. This is a modified version of the lastest ImageSharp so it supports .NET Standard 2.0.)
+    * Add a local directory as a new nuget package source and put [`ImageSharp.1.0.0-alpha9.nupkg`](https://github.com/zwcloud/ImGui/blob/master/packages/ImageSharp.1.0.0-alpha9/ImageSharp.1.0.0-alpha9.nupkg) inside. (The official ImageSharp package is a dummy one on nuget.org. This is a modified version of the latest ImageSharp that supports .NET Standard 2.0.)
 2. Copy [Android Templates project](https://github.com/zwcloud/ImGui/tree/master/templates/AndroidTemplate). The referenced Demo can be removed if you don't need that.
 3. Add your GUI code in `MainForm.OnGUI`.
-4. Build and depoly it to your Android device.
+4. Build and deploy it to your Android device.
 
 For now, please refer to [the shared project __Demo__](https://github.com/zwcloud/ImGui/tree/master/templates/Demo) for how to use Hello ImGui.
 
@@ -102,7 +99,7 @@ A Real Universal GUI Framework.
 
 DroidSans.ttf, Droid Sans is a humanist sans serif typeface designed by Steve Matteson [licenced under Apache 2](https://github.com/google/fonts/blob/master/apache/droidsans/LICENSE.txt).
 
-*ImGui doesn't depends on following projects, code used by ImGui are taken from them.*
+*ImGui doesn't depend on following projects, some code used by ImGui are taken from them.*
 
 * [Typography](https://github.com/LayoutFarm/Typography): C# Font Reader (TrueType / OpenType / OpenFont) , Glyphs Layout and Rendering
 * [OpenTK](https://github.com/opentk/opentk): low-level C# wrapper for OpenGL
