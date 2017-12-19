@@ -4,14 +4,15 @@ using System.Runtime.InteropServices;
 using CSharpGLES;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
+using SixLabors.ImageSharp;
 
 namespace ImGui.OSImplentation.Android
 {
     internal class OpenGLESTexture : ITexture
     {
-        private ImageSharp.Image<ImageSharp.Rgba32> image;
+        private Image<Rgba32> image;
         private readonly uint[] textureIdBuffer = {0};
-        private ImageSharp.Rgba32[] textureData;
+        private Rgba32[] textureData;
         
         public void LoadImage(byte[] data)
         {
@@ -27,8 +28,9 @@ namespace ImGui.OSImplentation.Android
             // check file header, save texture data to buffer
             using (Stream stream = Utility.ReadFile(filePath))
             {
-                this.image = ImageSharp.Image.Load<ImageSharp.Rgba32>(stream);
-                this.textureData = this.image.Pixels.ToArray();
+                this.image = Image.Load<Rgba32>(stream);
+                textureData = new Rgba32[this.image.Width * this.image.Height * 4];
+                this.image.SavePixelData<Rgba32>(this.textureData);
             }
 
             // create opengl texture object

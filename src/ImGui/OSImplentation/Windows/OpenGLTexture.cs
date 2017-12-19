@@ -4,14 +4,15 @@ using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
+using SixLabors.ImageSharp;
 
 namespace ImGui.OSImplentation.Windows
 {
     internal class OpenGLTexture : ITexture
     {
-        private ImageSharp.Image<ImageSharp.Rgba32> image;
+        private Image<Rgba32> image;
         private readonly uint[] textureIdBuffer = {0};
-        private ImageSharp.Rgba32[] textureData;
+        private Rgba32[] textureData;
         
         public void LoadImage(byte[] data)
         {
@@ -27,8 +28,9 @@ namespace ImGui.OSImplentation.Windows
             // check file header, save texture data to buffer
             using (FileStream stream = File.OpenRead(filePath))
             {
-                this.image = ImageSharp.Image.Load<ImageSharp.Rgba32>(stream);
-                this.textureData = this.image.Pixels.ToArray();
+                this.image = Image.Load<Rgba32>(stream);
+                textureData = new Rgba32[this.image.Width * this.image.Height * 4];
+                this.image.SavePixelData<Rgba32>(this.textureData);
             }
 
             // create opengl texture object
