@@ -29,7 +29,7 @@ namespace ImGui.OSImplentation.Windows
             using (FileStream stream = File.OpenRead(filePath))
             {
                 this.image = Image.Load<Rgba32>(stream);
-                textureData = new Rgba32[this.image.Width * this.image.Height * 4];
+                textureData = new Rgba32[this.image.Width * this.image.Height];
                 this.image.SavePixelData<Rgba32>(this.textureData);
             }
 
