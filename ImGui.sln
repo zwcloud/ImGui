@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "demos\Calcula
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5F2276E6-BDAC-489C-A620-7C14D78B4BEB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cairo", "..\CairoSharp\Cairo\Cairo.csproj", "{401F7675-F982-4650-B59F-A91A3AFC4FFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cairo", "..\CairoSharp\source\CairoSharp\CairoSharp.csproj"", "{401F7675-F982-4650-B59F-A91A3AFC4FFC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutTest", "test\LayoutTest\LayoutTest.csproj", "{8F10F86C-F924-48BA-9E54-54073C1616CB}"
 EndProject

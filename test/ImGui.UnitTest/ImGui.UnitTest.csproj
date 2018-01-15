@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\VS2017\CairoSharp\Cairo\Cairo.csproj" />
+    <ProjectReference Include="..\..\..\CairoSharp\source\CairoSharp\CairoSharp.csproj" />
     <ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
 
