@@ -53,8 +53,22 @@
     <Compile Remove="Common\IO.cs" />
     <Compile Remove="Common\ListEx.cs" />
     <Compile Remove="Control\Box.cs" />
+    <Compile Remove="Control\CollapsingHeader.cs" />
+    <Compile Remove="Control\ColorField.cs" />
     <Compile Remove="Control\HoverButton.cs" />
+    <Compile Remove="Control\Image.cs" />
+    <Compile Remove="Control\Label.cs" />
+    <Compile Remove="Control\ListBox.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
+    <Compile Remove="Control\ProgressBar.cs" />
+    <Compile Remove="Control\RadioButton.cs" />
+    <Compile Remove="Control\Selectable.cs" />
+    <Compile Remove="Control\Separator.cs" />
+    <Compile Remove="Control\Slider.cs" />
+    <Compile Remove="Control\Space.cs" />
+    <Compile Remove="Control\TextBox.cs" />
+    <Compile Remove="Control\Toggle.cs" />
+    <Compile Remove="Control\TreeNode.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,11 +9,9 @@ namespace UniversalAppTemplate
         {
         }
 
-        Demo demo = new Demo();
-
         protected override void OnGUI()
         {
-            demo.OnGUI();
+            GUILayout.Button("123");
         }
     }
 }
