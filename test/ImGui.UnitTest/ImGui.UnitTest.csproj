@@ -5,18 +5,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="OSImplentation\Windows\Win32OpenGLRendererFacts.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="SharpCairo" Version="1.15.6-alpha" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CairoSharp\source\CairoSharp\CairoSharp.csproj" />
     <ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="OSImplentation\Windows\" />
   </ItemGroup>
 
 </Project>

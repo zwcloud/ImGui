@@ -18,15 +18,11 @@ namespace ImGui.Rendering
         public Rect Rect { get; set; }
         public GUIStyle Style { get; set; }
 
-        LayoutGroup Group;
-        LayoutEntry Entry;
+        private LayoutGroup Group { get; set; }
+        private LayoutEntry Entry { get; set; }
 
-        public Node()
-        {
-        }
-
-        static ObjectPool<LayoutEntry> EntryPool = new ObjectPool<LayoutEntry>(1024);
-        static ObjectPool<LayoutGroup> GroupPool = new ObjectPool<LayoutGroup>(1024);
+        private static readonly ObjectPool<LayoutEntry> EntryPool = new ObjectPool<LayoutEntry>(1024);
+        private static readonly ObjectPool<LayoutGroup> GroupPool = new ObjectPool<LayoutGroup>(1024);
 
         /// <summary>
         /// Make this node a group
@@ -46,7 +42,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// Make this node an entry
         /// </summary>
-        public void AttachLayoutEntry(string str_id, Size contentSize, LayoutOptions options)
+        public void AttachLayoutEntry(Size contentSize, LayoutOptions options)
         {
             var entry = EntryPool.Get();
             entry.Init(id, contentSize, options);
@@ -63,7 +59,10 @@ namespace ImGui.Rendering
         /// </summary>
         public void Layout()
         {
-
+            this.Group.CalcWidth(this.Group.ContentWidth);
+            this.Group.CalcHeight(this.Group.ContentHeight);
+            this.Group.SetX(this.Rect.X);
+            this.Group.SetY(this.Rect.Y);
         }
     }
 }
