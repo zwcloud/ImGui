@@ -5,53 +5,45 @@ using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
 {
-    internal class Node
+    internal partial class Node
     {
-        public int id { get; set; }
-        public string str_id { get; set; }
+        /// <summary>
+        /// identifier number of the node
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// string identifier of the node
+        /// </summary>
+        public string StrId { get; set; }
 
         #region hierarchy
         public Node Parent { get; set; }
         public List<Node> Children { get; set; }
         #endregion
 
-        public Rect Rect { get; set; }
+        /// <summary>
+        /// border-box, the layout result
+        /// </summary>
+        public Rect Rect;
+
         public GUIStyle Style { get; set; }
-
-        private LayoutGroup Group { get; set; }
-        private LayoutEntry Entry { get; set; }
-
-        private static readonly ObjectPool<LayoutEntry> EntryPool = new ObjectPool<LayoutEntry>(1024);
-        private static readonly ObjectPool<LayoutGroup> GroupPool = new ObjectPool<LayoutGroup>(1024);
 
         /// <summary>
         /// Make this node a group
         /// </summary>
         public void AttachLayoutGroup(bool isVertical, LayoutOptions? options = null)
         {
-            var group = GroupPool.Get();
-            group.Init(this.id, isVertical, options);
-            group.StrId = this.str_id;
-            this.Group = group;
-            if(this.Entry != null)
-            {
-                EntryPool.Put(this.Entry);
-            }
+            this.Group_Init(this.Id, isVertical, options);
+            //TODO delete entry?
         }
 
         /// <summary>
         /// Make this node an entry
         /// </summary>
-        public void AttachLayoutEntry(Size contentSize, LayoutOptions options)
+        public void AttachLayoutEntry(Size contentSize, LayoutOptions? options = null)
         {
-            var entry = EntryPool.Get();
-            entry.Init(id, contentSize, options);
-            entry.StrId = str_id;
-            this.Entry = entry;
-            if (this.Group != null)
-            {
-                GroupPool.Put(this.Group);
-            }
+            this.Entry_Init(Id, contentSize, options);
         }
 
         /// <summary>
@@ -59,10 +51,59 @@ namespace ImGui.Rendering
         /// </summary>
         public void Layout()
         {
-            this.Group.CalcWidth(this.Group.ContentWidth);
-            this.Group.CalcHeight(this.Group.ContentHeight);
-            this.Group.SetX(this.Rect.X);
-            this.Group.SetY(this.Rect.Y);
+            this.Group_CalcWidth(this.ContentWidth);
+            this.Group_CalcHeight(this.ContentHeight);
+            this.Group_SetX(this.Rect.X);
+            this.Group_SetY(this.Rect.Y);
+        }
+
+        private void CalcWidth(double unitPartWidth = -1)
+        {
+            if (this.Children == null)
+            {
+                this.Entry_CalcWidth(unitPartWidth);
+            }
+            else
+            {
+                this.Group_CalcWidth(unitPartWidth);
+            }
+        }
+
+        private void CalcHeight(double unitPartHeight = -1)
+        {
+            if (this.Children == null)
+            {
+                this.Entry_CalcHeight(unitPartHeight);
+            }
+            else
+            {
+                this.Group_CalcHeight(unitPartHeight);
+            }
+        }
+
+        private void SetX(double x)
+        {
+            if (this.Children == null)
+            {
+                this.Entry_SetX(x);
+            }
+            else
+            {
+                this.Group_SetX(x);
+            }
+        }
+
+        
+        private void SetY(double y)
+        {
+            if (this.Children == null)
+            {
+                this.Entry_SetY(y);
+            }
+            else
+            {
+                this.Group_SetY(y);
+            }
         }
     }
 }

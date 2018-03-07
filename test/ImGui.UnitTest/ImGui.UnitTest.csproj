@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Layout\**" />
+    <EmbeddedResource Remove="Layout\**" />
+    <None Remove="Layout\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="OSImplentation\Windows\Win32OpenGLRendererFacts.cs" />
   </ItemGroup>
 
