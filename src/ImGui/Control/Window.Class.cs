@@ -6,6 +6,7 @@ using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -63,6 +64,8 @@ namespace ImGui
         /// </summary>
         public DrawList DrawList;
 
+        private RenderTree renderTree;
+
         public Rect ClipRect;
 
         /// <summary>
@@ -98,6 +101,7 @@ namespace ImGui
             this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
             this.Size = this.FullSize = size;
             this.DrawList = new DrawList();
+            this.renderTree = new RenderTree(this.ID, this.Size);
             this.MoveID = GetID("#MOVE");
             this.Active = WasActive = false;
 
@@ -312,11 +316,30 @@ namespace ImGui
         /// <param name="size">size of content, border and padding NOT included</param>
         /// <param name="style">style that will apply to requested rect</param>
         /// <returns></returns>
-        public Rect GetRect(int id, Size size, LayoutOptions? options = null, string str_id = null)
+        public Rect GetRect(int id, Size size, LayoutOptions? options = null, string str_id = null, bool isGroup = false)
         {
-            var rect = StackLayout.GetRect(id, size, options, str_id);
+            //var rect = StackLayout.GetRect(id, size, options, str_id);
 
-            if(rect != StackLayout.DummyRect)
+            var node = this.renderTree.GetNode(id);
+            if(node == null)
+            {
+                node = new Node();
+                node.Id = id;
+                node.StrId = str_id;
+                if (isGroup)
+                {
+                    node.AttachLayoutGroup(true, options);
+                }
+                else
+                {
+                    node.AttachLayoutEntry(size, options);
+                }
+                this.renderTree.CurrentContainer.Add(node);
+            }
+
+            var rect = node.Rect;
+
+            if(rect == StackLayout.DummyRect)
             {
                 Rect newContentRect = ContentRect;
                 newContentRect.Union(rect);

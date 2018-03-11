@@ -29,6 +29,7 @@ namespace ImGui.Rendering
 
         public GUIStyle Style { get; set; }
 
+        #region Layout
         /// <summary>
         /// Make this node a group
         /// </summary>
@@ -105,5 +106,40 @@ namespace ImGui.Rendering
                 this.Group_SetY(y);
             }
         }
+        #endregion
+
+        #region Hierarchy
+        public Node GetNodeById(int id)
+        {
+            foreach (var node in this.Children)
+            {
+                if (node.Id == id)
+                {
+                    return node;
+                }
+                else
+                {
+                    return node.GetNodeById(id);
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region Style
+
+        public void ComputeStyle()
+        {
+            
+        }
+
+        #endregion
+
+        #region Primitive
+
+        private Primitive primitive;
+
+        #endregion
+
     }
 }
