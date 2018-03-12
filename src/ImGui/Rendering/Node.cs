@@ -17,17 +17,10 @@ namespace ImGui.Rendering
         /// </summary>
         public string StrId { get; set; }
 
-        #region hierarchy
-        public Node Parent { get; set; }
-        public List<Node> Children { get; set; }
-        #endregion
-
         /// <summary>
         /// border-box, the layout result
         /// </summary>
         public Rect Rect;
-
-        public GUIStyle Style { get; set; }
 
         #region Layout
         /// <summary>
@@ -109,6 +102,10 @@ namespace ImGui.Rendering
         #endregion
 
         #region Hierarchy
+        public Node Parent { get; set; }
+
+        public List<Node> Children { get; set; }
+
         public Node GetNodeById(int id)
         {
             foreach (var node in this.Children)
@@ -127,6 +124,7 @@ namespace ImGui.Rendering
         #endregion
 
         #region Style
+        public GUIStyle Style { get; set; }
 
         public void ComputeStyle()
         {
