@@ -6,7 +6,7 @@ namespace ImGui.GraphicsImplementation
 {
     internal class CairoPrimitiveRenderer : IPrimitiveRenderer
     {
-        public void Draw(List<Primitive> primitives)
+        public void Draw(Primitive primitive)
         {
             throw new System.NotImplementedException();
         }

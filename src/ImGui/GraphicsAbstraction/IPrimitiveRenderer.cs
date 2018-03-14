@@ -5,6 +5,6 @@ namespace ImGui.GraphicsAbstraction
 {
     internal interface IPrimitiveRenderer
     {
-        void Draw(List<Primitive> primitives);
+        void Draw(Primitive primitive);
     }
 }
