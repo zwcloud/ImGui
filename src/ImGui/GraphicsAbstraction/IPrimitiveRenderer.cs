@@ -5,6 +5,8 @@ namespace ImGui.GraphicsAbstraction
 {
     internal interface IPrimitiveRenderer
     {
-        void Draw(Primitive primitive);
+        void Stroke(Primitive primitive, Brush brush, StrokeStyle strokeStyle);
+
+        void Fill(Primitive primitive, Brush brush);
     }
 }

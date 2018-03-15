@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.Rendering;
@@ -8,6 +9,74 @@ namespace ImGui.GraphicsImplementation
 {
     internal class BuiltinPrimitiveRenderer : IPrimitiveRenderer
     {
+        #region Mesh
+
+        /// <summary>
+        /// Mesh (colored triangles)
+        /// </summary>
+        public Mesh ShapeMesh { get; } = new Mesh();
+
+        /// <summary>
+        /// Add a poly line.
+        /// </summary>
+        /// <param name="points">points</param>
+        /// <param name="color">color</param>
+        /// <param name="close">Should this method close the polyline for you? A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public void AddPolyline(IList<Point> points, Color color, bool close, double thickness, bool antiAliased = false)
+        {
+            var pointsCount = points.Count;
+            if (pointsCount < 2)
+                return;
+
+            int count = pointsCount;
+            if (!close)
+                count = pointsCount - 1;
+
+            if (antiAliased)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // Non Anti-aliased Stroke
+                int idxCount = count * 6;
+                int vtxCount = count * 4; // FIXME: Not sharing edges
+                this.ShapeMesh.PrimReserve(idxCount, vtxCount);
+
+                for (int i1 = 0; i1 < count; i1++)
+                {
+                    int i2 = (i1 + 1) == pointsCount ? 0 : i1 + 1;
+                    Point p1 = points[i1];
+                    Point p2 = points[i2];
+                    Vector diff = p2 - p1;
+                    diff *= MathEx.InverseLength(diff, 1.0f);
+
+                    float dx = (float)(diff.X * (thickness * 0.5f));
+                    float dy = (float)(diff.Y * (thickness * 0.5f));
+                    var vertex0 = new DrawVertex { pos = new Point(p1.X + dy, p1.Y - dx), uv = Point.Zero, color = color };
+                    var vertex1 = new DrawVertex { pos = new Point(p2.X + dy, p2.Y - dx), uv = Point.Zero, color = color };
+                    var vertex2 = new DrawVertex { pos = new Point(p2.X - dy, p2.Y + dx), uv = Point.Zero, color = color };
+                    var vertex3 = new DrawVertex { pos = new Point(p1.X - dy, p1.Y + dx), uv = Point.Zero, color = color };
+                    this.ShapeMesh.AppendVertex(vertex0);
+                    this.ShapeMesh.AppendVertex(vertex1);
+                    this.ShapeMesh.AppendVertex(vertex2);
+                    this.ShapeMesh.AppendVertex(vertex3);
+
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(1);
+                    this.ShapeMesh.AppendIndex(2);
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(2);
+                    this.ShapeMesh.AppendIndex(3);
+
+                    this.ShapeMesh.currentIdx += 4;
+                }
+            }
+        }
+        #endregion
+
         #region Path APIs
 
         private static readonly List<Point> Path = new List<Point>();
@@ -106,19 +175,42 @@ namespace ImGui.GraphicsImplementation
             Path.Add(Path[0]);
         }
 
-        #endregion
-
-
         /// <summary>
-        /// Add a primitive to the draw list
+        /// Clears the current path.
         /// </summary>
-        public void Draw(Primitive primitive)
+        public void PathClear()
+        {
+            Path.Clear();
+        }
+        
+        /// <summary>
+        /// Strokes the current path.
+        /// </summary>
+        /// <param name="color">color</param>
+        /// <param name="close">Set to true if you want the path be closed. A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        public void PathStroke(Color color, bool close, double thickness = 1)
+        {
+            AddPolyline(Path, color, close, thickness);
+            PathClear();
+        }
+
+        #endregion
+        
+        /// <summary>
+        /// Stroke a primitive and merge the result to the mesh.
+        /// </summary>
+        /// <param name="primitive"></param>
+        /// <param name="brush"></param>
+        /// <param name="strokeStyle"></param>
+        public void Stroke(Primitive primitive, Brush brush, StrokeStyle strokeStyle)
         {
             var offset = primitive.Offset;
-            //TODO PathOffset
+            //TODO apply offset, brush and strokeStyle
             var pathPrimitive = primitive as PathPrimitive;
             if (pathPrimitive == null) return;
 
+            //build path
             var path = pathPrimitive.Path;
             foreach (var cmd in path)
             {
@@ -134,12 +226,25 @@ namespace ImGui.GraphicsImplementation
                         PathBezierCurveTo(cmd.Points[0], cmd.Points[1], cmd.Points[2]);
                         break;
                     case PathDataType.PathClosePath:
-                        PathClose();
+                        PathClose(); 
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
+            
+            //construct and merge the mesh of this Path into ShapeMesh
+            PathStroke(brush.LineColor, true, brush.LineWidth);
+        }
+
+        /// <summary>
+        /// Fill a primitive and merge the result to the mesh.
+        /// </summary>
+        /// <param name="primitive"></param>
+        /// <param name="brush"></param>
+        public void Fill(Primitive primitive, Brush brush)
+        {
+
         }
     }
 }
