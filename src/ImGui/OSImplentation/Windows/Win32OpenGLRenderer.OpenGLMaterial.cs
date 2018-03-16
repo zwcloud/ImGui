@@ -6,7 +6,7 @@ namespace ImGui.OSImplentation.Windows
 {
     internal partial class Win32OpenGLRenderer
     {
-        private class OpenGLMaterial
+        internal class OpenGLMaterial
         {
             private readonly string vertexShaderSource;
             private readonly string fragmentShaderSource;

@@ -135,7 +135,7 @@ namespace ImGui.Rendering
 
         #region Primitive
 
-        private Primitive primitive;
+        //private Primitive primitive;
 
         #endregion
 

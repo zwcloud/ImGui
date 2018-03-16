@@ -101,7 +101,7 @@ namespace ImGui
             this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
             this.Size = this.FullSize = size;
             this.DrawList = new DrawList();
-            this.renderTree = new RenderTree(this.ID, this.Size);
+            this.renderTree = new RenderTree(this.ID, this.Position, this.ClientRect.Size);
             this.MoveID = GetID("#MOVE");
             this.Active = WasActive = false;
 

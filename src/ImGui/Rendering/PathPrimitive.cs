@@ -26,6 +26,7 @@ namespace ImGui.Rendering
         {
             var pathData = new PathData(PathDataType.PathLineTo);
             pathData.Points[0] = point;
+            Path.Add(pathData);
         }
 
         /// <summary>
@@ -46,6 +47,7 @@ namespace ImGui.Rendering
             pathData.Points[0] = control0;
             pathData.Points[1] = control1;
             pathData.Points[2] = end;
+            Path.Add(pathData);
         }
 
         //TODO PathArcTo and other path APIs

@@ -4,7 +4,7 @@ namespace ImGui.GraphicsAbstraction
 {
     internal class Brush
     {
-        public Color LineColor { get; set; }
-        public float LineWidth { get; set; }
+        public Color LineColor { get; set; } = Color.Black;
+        public float LineWidth { get; set; } = 1;
     }
 }
