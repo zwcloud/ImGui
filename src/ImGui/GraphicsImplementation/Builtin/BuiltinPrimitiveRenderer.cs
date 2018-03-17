@@ -75,6 +75,42 @@ namespace ImGui.GraphicsImplementation
                 }
             }
         }
+
+        /// <summary>
+        /// Add a filled convex polygon.
+        /// </summary>
+        /// <param name="points">points</param>
+        /// <param name="color">color</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public void AddConvexPolyFilled(IList<Point> points, Color color, bool antiAliased)
+        {
+            antiAliased = false;//TODO remove this when antiAliased branch is implemented
+
+            var pointsCount = points.Count;
+            if (antiAliased)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // Non Anti-aliased Fill
+                int idxCount = (pointsCount - 2) * 3;
+                int vtxCount = pointsCount;
+                this.ShapeMesh.PrimReserve(idxCount, vtxCount);
+                for (int i = 0; i < vtxCount; i++)
+                {
+                    this.ShapeMesh.AppendVertex(new DrawVertex { pos = points[i], uv = Point.Zero, color = color });
+                }
+                for (int i = 2; i < pointsCount; i++)
+                {
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(i - 1);
+                    this.ShapeMesh.AppendIndex(i);
+                }
+                this.ShapeMesh.currentIdx += vtxCount;
+            }
+        }
+
         #endregion
 
         #region Path APIs
@@ -195,8 +231,18 @@ namespace ImGui.GraphicsImplementation
             PathClear();
         }
 
+        /// <summary>
+        /// Fills the current path. The path must be a convex.
+        /// </summary>
+        /// <param name="color">fill color</param>
+        public void PathFill(Color color)
+        {
+            AddConvexPolyFilled(Path, color, true);
+            PathClear();
+        }
+
         #endregion
-        
+
         /// <summary>
         /// Stroke a primitive and merge the result to the mesh.
         /// </summary>
@@ -244,7 +290,36 @@ namespace ImGui.GraphicsImplementation
         /// <param name="brush"></param>
         public void Fill(Primitive primitive, Brush brush)
         {
+            var offset = primitive.Offset;
+            //TODO apply offset, brush and strokeStyle
+            var pathPrimitive = primitive as PathPrimitive;
+            if (pathPrimitive == null) return;
 
+            //build path
+            var path = pathPrimitive.Path;
+            foreach (var cmd in path)
+            {
+                switch (cmd.Type)
+                {
+                    case PathDataType.PathMoveTo:
+                        PathMoveTo(cmd.Points[0]);
+                        break;
+                    case PathDataType.PathLineTo:
+                        PathLineTo(cmd.Points[0]);
+                        break;
+                    case PathDataType.PathCurveTo:
+                        PathBezierCurveTo(cmd.Points[0], cmd.Points[1], cmd.Points[2]);
+                        break;
+                    case PathDataType.PathClosePath:
+                        PathClose();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            //construct and merge the mesh of this Path into ShapeMesh
+            PathFill(brush.FillColor);
         }
     }
 }
