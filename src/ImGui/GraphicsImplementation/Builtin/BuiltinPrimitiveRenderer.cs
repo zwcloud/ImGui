@@ -11,6 +11,7 @@ namespace ImGui.GraphicsImplementation
     {
         #region Mesh
 
+        #region Shape
         /// <summary>
         /// Mesh (colored triangles)
         /// </summary>
@@ -110,6 +111,14 @@ namespace ImGui.GraphicsImplementation
                 this.ShapeMesh.currentIdx += vtxCount;
             }
         }
+
+        #endregion
+
+        #region Text
+
+        public TextMesh TextMesh { get; } = new TextMesh();
+
+        #endregion
 
         #endregion
 
@@ -320,6 +329,55 @@ namespace ImGui.GraphicsImplementation
 
             //construct and merge the mesh of this Path into ShapeMesh
             PathFill(brush.FillColor);
+        }
+
+        /// <summary>
+        /// Draw a text primitive and merge the result to the text mesh.
+        /// </summary>
+        /// <param name="primitive"></param>
+        /// <param name="brush"></param>
+        public void DrawText(TextPrimitive primitive, GUIStyle style)
+        {
+            //FIXME Should each text segment consume a draw call? NO!
+
+            //add a new draw command
+            DrawCommand cmd = new DrawCommand();
+            cmd.ClipRect = Rect.Big;
+            cmd.TextureData = null;
+            this.TextMesh.Commands.Add(cmd);
+
+            var oldIndexBufferCount = this.TextMesh.IndexBuffer.Count;
+
+            string fontFamily = style.FontFamily;
+            double fontSize = style.FontSize;
+            Color fontColor = style.FontColor;
+
+            var scale = OSImplentation.TypographyTextContext.GetScale(fontFamily, fontSize);
+
+            int index = -1;
+
+            // get glyph data from typeface
+            FontStyle fontStyle = style.FontStyle;
+            FontWeight fontWeight = style.FontWeight;
+            foreach (var character in primitive.Text)
+            {
+                index++;
+                if (char.IsWhiteSpace(character))
+                {
+                    continue;
+                }
+
+                var glyphData = primitive.Glyphs[index];
+                Vector glyphOffset = primitive.Offsets[index];
+                this.TextMesh.Append(primitive.Offset, glyphData, glyphOffset, scale, fontColor, false);
+            }
+
+            var newIndexBufferCount = this.TextMesh.IndexBuffer.Count;
+
+            // Update command
+            var command = this.TextMesh.Commands[this.TextMesh.Commands.Count - 1];
+            command.ElemCount += newIndexBufferCount - oldIndexBufferCount;
+            this.TextMesh.Commands[this.TextMesh.Commands.Count - 1] = command;
         }
     }
 }

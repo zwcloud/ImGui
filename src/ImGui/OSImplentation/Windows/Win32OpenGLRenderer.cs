@@ -67,7 +67,7 @@ void main()
 "
             );
 
-        private readonly OpenGLMaterial glyphMaterial = new OpenGLMaterial(
+        internal readonly OpenGLMaterial glyphMaterial = new OpenGLMaterial(
     vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -132,7 +132,7 @@ void main()
             DrawMesh(this.shapeMaterial, drawList.ShapeMesh, width, height);
             DrawMesh(this.imageMaterial, drawList.ImageMesh, width, height);
 
-            DrawTextMesh(drawList.TextMesh, width, height);
+            DrawTextMesh(this.glyphMaterial, drawList.TextMesh, width, height);
         }
 
         internal static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
@@ -225,7 +225,7 @@ void main()
         /// <summary>
         /// Draw text mesh
         /// </summary>
-        private void DrawTextMesh(TextMesh textMesh, int width, int height)
+        internal static void DrawTextMesh(OpenGLMaterial glyphMaterial, TextMesh textMesh, int width, int height)
         {
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
@@ -257,7 +257,7 @@ void main()
             GLM.mat4 ortho_projection = GLM.glm.ortho(0.0f, width, height, 0.0f, -5.0f, 5.0f);
             GL.Viewport(0, 0, width, height);
 
-            var material = this.glyphMaterial;
+            var material = glyphMaterial;
             var vertexBuffer = textMesh.VertexBuffer;
             var indexBuffer = textMesh.IndexBuffer;
 
