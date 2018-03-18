@@ -7,5 +7,6 @@ namespace ImGui.GraphicsAbstraction
         public Color LineColor { get; set; } = Color.Black;
         public float LineWidth { get; set; } = 1;
         public Color FillColor { get; set; } = Color.Black;
+        Image Image { get; set; } = null;
     }
 }

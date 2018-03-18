@@ -179,5 +179,44 @@ namespace ImGui.UnitTest.Rendering
                 }
             }
         }
+
+        [Fact]
+        public void DrawImage()
+        {
+            var window = new Win32Window();
+            window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+            var renderer = new Win32OpenGLRenderer();
+            renderer.Init(window.Pointer, window.ClientSize);
+
+            var image = new Image(@"assets\images\logo.png");
+            var primitive = new ImagePrimitive();
+            primitive.Image = image;
+            primitive.Offset = new Vector(10, 10);
+
+            var primitiveRenderer = new BuiltinPrimitiveRenderer();
+            var imageMesh = primitiveRenderer.ImageMesh;
+
+            var brush = new Brush();
+            brush.FillColor = Color.White;
+
+            primitiveRenderer.DrawImage(primitive, brush);
+
+
+            while (true)
+            {
+                window.MainLoop(() =>
+                {
+                    renderer.Clear(Color.FrameBg);
+                    Win32OpenGLRenderer.DrawMesh(renderer.imageMaterial, imageMesh,
+                        (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                    renderer.SwapBuffers();
+                });
+                if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                {
+                    break;
+                }
+            }
+        }
     }
 }

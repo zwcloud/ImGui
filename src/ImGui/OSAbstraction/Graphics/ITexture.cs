@@ -15,6 +15,12 @@ namespace ImGui.OSAbstraction.Graphics
         void LoadImage(byte[] data);
 
         /// <summary>
+        /// Load image data from ImageSharp pixels into the texture
+        /// </summary>
+        /// <param name="data"></param>
+        void LoadImage(SixLabors.ImageSharp.Rgba32[] data, int width, int height);
+
+        /// <summary>
         /// Load image data from a file into the texture.
         /// </summary>
         /// <returns>succeeded?true:false</returns>

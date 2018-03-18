@@ -38,7 +38,7 @@ void main()
 "
             );
 
-        private readonly OpenGLMaterial imageMaterial = new OpenGLMaterial(
+        internal readonly OpenGLMaterial imageMaterial = new OpenGLMaterial(
             vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;

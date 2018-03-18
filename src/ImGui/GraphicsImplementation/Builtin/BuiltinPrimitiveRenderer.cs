@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
+using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
@@ -116,8 +117,47 @@ namespace ImGui.GraphicsImplementation
 
         #region Text
 
+        /// <summary>
+        /// Text mesh
+        /// </summary>
         public TextMesh TextMesh { get; } = new TextMesh();
 
+        #endregion
+
+        #region Image
+
+        /// <summary>
+        /// Mesh (textured triangles)
+        /// </summary>
+        public Mesh ImageMesh { get; } = new Mesh();
+
+        /// <summary>
+        /// Add textured rect, used for rendering images parts.
+        /// </summary>
+        /// <param name="a">top-left point</param>
+        /// <param name="c">bottom-right point</param>
+        /// <param name="uvA">texture coordinate of point a</param>
+        /// <param name="uvC">texture coordinate of point c</param>
+        /// <param name="color">tint color</param>
+        private void AddImageRect(Point a, Point c, Point uvA, Point uvC, Color color)
+        {
+            Point b = new Point(c.X, a.Y);
+            Point d = new Point(a.X, c.Y);
+            Point uvB = new Point(uvC.X, uvA.Y);
+            Point uvD = new Point(uvA.X, uvC.Y);
+
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = a, uv = uvA, color = color });
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = b, uv = uvB, color = color });
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = c, uv = uvC, color = color });
+            this.ImageMesh.AppendVertex(new DrawVertex { pos = d, uv = uvD, color = color });
+            this.ImageMesh.AppendIndex(0);
+            this.ImageMesh.AppendIndex(1);
+            this.ImageMesh.AppendIndex(2);
+            this.ImageMesh.AppendIndex(0);
+            this.ImageMesh.AppendIndex(2);
+            this.ImageMesh.AppendIndex(3);
+            this.ImageMesh.currentIdx += 4;
+        }
         #endregion
 
         #endregion
@@ -378,6 +418,36 @@ namespace ImGui.GraphicsImplementation
             var command = this.TextMesh.Commands[this.TextMesh.Commands.Count - 1];
             command.ElemCount += newIndexBufferCount - oldIndexBufferCount;
             this.TextMesh.Commands[this.TextMesh.Commands.Count - 1] = command;
+        }
+
+        /// <summary>
+        /// Draw an image primitive and merge the result to the image mesh.
+        /// </summary>
+        /// <param name="primitive"></param>
+        /// <param name="brush"></param>
+        public void DrawImage(ImagePrimitive primitive, Brush brush)
+        {
+            var offset = primitive.Offset;
+
+            //TODO check if we need to add a new draw command
+            //add a new draw command
+            DrawCommand cmd = new DrawCommand();
+            cmd.ClipRect = Rect.Big;
+            cmd.TextureData = null;
+            this.ImageMesh.CommandBuffer.Add(cmd);
+
+            var texture = new OSImplentation.Windows.OpenGLTexture();
+            texture.LoadImage(primitive.Image.Data, primitive.Image.Width, primitive.Image.Height);
+
+            //construct and merge the mesh of this Path into ShapeMesh
+            var uvMin = new Point(0,0);
+            var uvMax = new Point(1,1);
+
+            this.ImageMesh.PrimReserve(6, 4);
+            AddImageRect(
+                (Point)primitive.Offset,
+                (Point)primitive.Offset + new Vector(primitive.Image.Width, primitive.Image.Height),
+                uvMin, uvMax, brush.FillColor);
         }
     }
 }

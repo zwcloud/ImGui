@@ -19,6 +19,27 @@ namespace ImGui.OSImplentation.Windows
             throw new NotImplementedException();
         }
 
+        public void LoadImage(Rgba32[] data, int width, int height)
+        {
+            this.textureData = data;
+            this.Width = width;
+            this.Height = height;
+
+            // create opengl texture object
+            GL.ActiveTexture(GL.GL_TEXTURE0);
+            GL.GenTextures(1, this.textureIdBuffer);
+            var textureHandle = this.textureIdBuffer[0];
+            GL.BindTexture(GL.GL_TEXTURE_2D, textureHandle);
+            var textureDataPtr = Marshal.UnsafeAddrOfPinnedArrayElement(this.textureData, 0);
+            GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, this.Width, this.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, textureDataPtr);
+            //sampler settings
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
+            Utility.CheckGLError();
+        }
+
         /// <summary>
         /// Load an image from a file.
         /// </summary>
@@ -31,6 +52,8 @@ namespace ImGui.OSImplentation.Windows
                 this.image = Image.Load<Rgba32>(stream);
                 textureData = new Rgba32[this.image.Width * this.image.Height];
                 this.image.SavePixelData<Rgba32>(this.textureData);
+                this.Width = this.image.Width;
+                this.Height = this.image.Height;
             }
 
             // create opengl texture object
@@ -51,12 +74,12 @@ namespace ImGui.OSImplentation.Windows
         /// <summary>
         /// Width of the texture in pixels. (Read Only)
         /// </summary>
-        public int Width => this.image.Width;
+        public int Width { get; private set; }
 
         /// <summary>
         /// Height of the texture in pixels. (Read Only)
         /// </summary>
-        public int Height => this.image.Height;
+        public int Height { get; private set; }
 
         /// <summary>
         /// Size of the texture in pixels. (Read Only)
