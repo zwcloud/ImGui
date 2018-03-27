@@ -152,9 +152,8 @@ namespace ImGui.UnitTest.Rendering
 
             }
 
-
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
-            primitiveRenderer.DrawText(primitive, style);
+            primitiveRenderer.DrawText(primitive, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
 
             //render text
 

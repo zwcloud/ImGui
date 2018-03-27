@@ -138,6 +138,5 @@ namespace ImGui.UnitTest.Rendering
                 }
             }
         }
-
     }
 }

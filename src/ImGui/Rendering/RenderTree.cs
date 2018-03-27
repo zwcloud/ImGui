@@ -7,7 +7,7 @@ namespace ImGui.Rendering
 {
     internal class RenderTree
     {
-        Node Root { get; }
+        public Node Root { get; }
 
         private Node currentContainer;
         public Node CurrentContainer
@@ -34,10 +34,5 @@ namespace ImGui.Rendering
         {
             return Root.GetNodeById(id);
         }
-
-        #region Layout
-
-        
-        #endregion
     }
 }

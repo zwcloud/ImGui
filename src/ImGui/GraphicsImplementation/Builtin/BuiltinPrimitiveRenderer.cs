@@ -375,8 +375,13 @@ namespace ImGui.GraphicsImplementation
         /// Draw a text primitive and merge the result to the text mesh.
         /// </summary>
         /// <param name="primitive"></param>
-        /// <param name="brush"></param>
-        public void DrawText(TextPrimitive primitive, GUIStyle style)
+        /// <param name="fontFamily"></param>
+        /// <param name="fontSize"></param>
+        /// <param name="fontColor"></param>
+        /// <param name="fontStyle"></param>
+        /// <param name="fontWeight"></param>
+        public void DrawText(TextPrimitive primitive, string fontFamily, double fontSize, Color fontColor,
+            FontStyle fontStyle, FontWeight fontWeight)
         {
             //FIXME Should each text segment consume a draw call? NO!
 
@@ -388,17 +393,11 @@ namespace ImGui.GraphicsImplementation
 
             var oldIndexBufferCount = this.TextMesh.IndexBuffer.Count;
 
-            string fontFamily = style.FontFamily;
-            double fontSize = style.FontSize;
-            Color fontColor = style.FontColor;
-
             var scale = OSImplentation.TypographyTextContext.GetScale(fontFamily, fontSize);
 
             int index = -1;
 
             // get glyph data from typeface
-            FontStyle fontStyle = style.FontStyle;
-            FontWeight fontWeight = style.FontWeight;
             foreach (var character in primitive.Text)
             {
                 index++;

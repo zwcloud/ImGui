@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ImGui.Layout;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
@@ -16,6 +17,15 @@ namespace ImGui.Rendering
         /// string identifier of the node
         /// </summary>
         public string StrId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Dirty
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// border-box, the layout result
@@ -122,20 +132,43 @@ namespace ImGui.Rendering
             return null;
         }
         #endregion
+        
+        #region Draw
 
-        #region Style
-        public GUIStyle Style { get; set; }
+        internal Primitive Primitive { get; set; }
+        internal bool IsFill { get; set; }
+        internal Brush Brush { get; set; }
+        internal StrokeStyle StrokeStyle { get; set; }
 
-        public void ComputeStyle()
+        public void Draw(IPrimitiveRenderer renderer)
         {
-            //TODO needed?
+            switch (this.Primitive)
+            {
+                case PathPrimitive p:
+                {
+                    if (this.IsFill)
+                    {
+                        renderer.Fill(p, this.Brush);
+                    }
+                    else
+                    {
+                        renderer.Stroke(p, this.Brush, this.StrokeStyle);
+                    }
+                }
+                break;
+                case TextPrimitive t:
+                {
+                    var style = GUIStyle.Default;//FIXME TEMP
+                    renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+                    break;
+                }
+                case ImagePrimitive i:
+                {
+                    renderer.DrawImage(i, this.Brush);
+                    break;
+                }
+            }
         }
-
-        #endregion
-
-        #region Primitive
-
-        //private Primitive primitive;
 
         #endregion
 
