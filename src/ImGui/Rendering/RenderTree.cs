@@ -34,5 +34,22 @@ namespace ImGui.Rendering
         {
             return Root.GetNodeById(id);
         }
+
+        public void Foreach(Action<Node> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            foreach (var node in Root.Children)
+            {
+                action(node);
+                if (node.Children!=null && node.Children.Count != 0)
+                {
+                    node.Foreach(action);
+                }
+            }
+        }
     }
 }

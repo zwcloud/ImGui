@@ -9,7 +9,7 @@ namespace ImGui.OSImplentation.Windows
 {
     internal partial class Win32OpenGLRenderer : IRenderer
     {
-        internal readonly OpenGLMaterial shapeMaterial = new OpenGLMaterial(
+        public readonly OpenGLMaterial shapeMaterial = new OpenGLMaterial(
             vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -38,7 +38,7 @@ void main()
 "
             );
 
-        internal readonly OpenGLMaterial imageMaterial = new OpenGLMaterial(
+        public readonly OpenGLMaterial imageMaterial = new OpenGLMaterial(
             vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -67,7 +67,7 @@ void main()
 "
             );
 
-        internal readonly OpenGLMaterial glyphMaterial = new OpenGLMaterial(
+        public readonly OpenGLMaterial glyphMaterial = new OpenGLMaterial(
     vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -135,7 +135,7 @@ void main()
             DrawTextMesh(this.glyphMaterial, drawList.TextMesh, width, height);
         }
 
-        internal static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
+        public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
         {
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
             VertexBuffer vertexBuffer = mesh.VertexBuffer;

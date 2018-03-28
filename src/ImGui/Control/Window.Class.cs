@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using ImGui.Layout;
 using System.Diagnostics;
+using System.Threading;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
 using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
@@ -64,7 +66,10 @@ namespace ImGui
         /// </summary>
         public DrawList DrawList;
 
-        private RenderTree renderTree;
+        /// <summary>
+        /// Render tree
+        /// </summary>
+        public RenderTree RenderTree;
 
         public Rect ClipRect;
 
@@ -101,7 +106,7 @@ namespace ImGui
             this.Position = new Point((int)PosFloat.X, (int)PosFloat.Y);
             this.Size = this.FullSize = size;
             this.DrawList = new DrawList();
-            this.renderTree = new RenderTree(this.ID, this.Position, this.ClientRect.Size);
+            this.RenderTree = new RenderTree(this.ID, this.Position, this.ClientRect.Size);
             this.MoveID = GetID("#MOVE");
             this.Active = WasActive = false;
 
@@ -194,7 +199,7 @@ namespace ImGui
         /// <summary>
         /// Gets or sets if the window is collapsed.
         /// </summary>
-        public bool Collapsed { get; set; } = false;
+        public bool Collapsed { get; set; } = true;//FIXME TEMP collapsed
 
         /// <summary>
         /// Gets or sets if the window is active
@@ -320,7 +325,7 @@ namespace ImGui
         {
             //var rect = StackLayout.GetRect(id, size, options, str_id);
 
-            var node = this.renderTree.GetNode(id);
+            var node = this.RenderTree.GetNode(id);
             if(node == null)
             {
                 node = new Node();
@@ -334,7 +339,7 @@ namespace ImGui
                 {
                     node.AttachLayoutEntry(size, options);
                 }
-                this.renderTree.CurrentContainer.Add(node);
+                this.RenderTree.CurrentContainer.Add(node);
             }
 
             var rect = node.Rect;
@@ -446,8 +451,24 @@ namespace ImGui
             float window_rounding = (float)style.Get<double>(GUIStyleName.WindowRounding);
             if (this.Collapsed)
             {
-                // Draw title bar only
-                this.DrawList.AddRectFilled(title_bar_rect.Min, title_bar_rect.Max, new Color(0.40f, 0.40f, 0.80f, 0.50f));
+                var titlebarID = this.GetID(this.Name + "#titlebar");
+                Node node = this.RenderTree.GetNode(titlebarID);
+                if (node != null)
+                {
+
+                }
+                else
+                {
+                    node = new Node();
+                    node.Id = titlebarID;
+                    var primitive = new PathPrimitive();
+                    primitive.PathRect(title_bar_rect.Min, title_bar_rect.Max);
+                    var brush = new Brush();
+                    brush.FillColor = new Color(0.40f, 0.40f, 0.80f, 0.50f);
+                    node.Primitive = primitive;
+                    node.Brush = brush;
+                    this.RenderTree.Root.Add(node);
+                }
             }
             else
             {

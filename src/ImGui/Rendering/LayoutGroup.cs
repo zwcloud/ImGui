@@ -87,6 +87,11 @@ namespace ImGui.Rendering
         /// <param name="item"></param>
         public void Add(Node item)
         {
+            if (this.Children == null)
+            {
+                this.Children = new List<Node>();
+            }
+
             if (this.IsFixedWidth)
             {
                 Debug.Assert(!this.HorizontallyStretched);

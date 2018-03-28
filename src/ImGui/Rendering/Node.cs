@@ -131,6 +131,24 @@ namespace ImGui.Rendering
             }
             return null;
         }
+        
+        public void Foreach(Action<Node> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            foreach (var node in this.Children)
+            {
+                action(node);
+                if (node.Children!=null && node.Children.Count != 0)
+                {
+                    node.Foreach(action);
+                }
+            }
+        }
+
         #endregion
         
         #region Draw

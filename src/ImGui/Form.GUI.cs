@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsImplementation;
 using ImGui.Input;
 
 namespace ImGui
@@ -118,8 +119,10 @@ namespace ImGui
 
             // Hide implicit "Debug" window if it hasn't been used
             Debug.Assert(w.WindowStack.Count == 1);    // Mismatched Begin()/End() calls
-            if (w.CurrentWindow!=null && !w.CurrentWindow.Accessed)
-                w.CurrentWindow.Active = false;
+            if (w.CurrentWindow != null && !w.CurrentWindow.Accessed)
+            {
+                //w.CurrentWindow.Active = false;
+            }
             GUI.End();
 
             w.EndFrame(g);
@@ -149,6 +152,20 @@ namespace ImGui
 
             Log();
         }
+
+        //FIXME TEMP
+        private BuiltinPrimitiveRenderer bpRenderer = initBuildinRenderer();
+
+        private static BuiltinPrimitiveRenderer initBuildinRenderer()
+        {
+            var r = new BuiltinPrimitiveRenderer();
+            DrawCommand cmd = new DrawCommand();
+            cmd.ClipRect = Rect.Big;
+            cmd.TextureData = null;
+            r.ShapeMesh.CommandBuffer.Add(cmd);
+            return r;
+        }
+
         internal void Render()
         {
             GUIContext g = this.uiContext;
@@ -165,13 +182,29 @@ namespace ImGui
             {
                 if(window.Active)
                 {
-                    this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+                    //this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
                 }
             }
 
-            this.renderer.RenderDrawList(this.OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+            //this.renderer.RenderDrawList(this.OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
             this.OverlayDrawList.Clear();
             this.OverlayDrawList.Init();
+            
+            foreach (var window in w.Windows)
+            {
+                if(window.Active)
+                {
+                    window.RenderTree.Foreach(node =>
+                    {
+                        node.Draw(bpRenderer);
+                        //FIXME TEMP
+                        var win32Renderer = (OSImplentation.Windows.Win32OpenGLRenderer) renderer;
+                        var shapeMesh = bpRenderer.ShapeMesh;
+                        OSImplentation.Windows.Win32OpenGLRenderer.DrawMesh(win32Renderer.shapeMaterial, shapeMesh,
+                            (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+                    });
+                }
+            }
 
             this.renderer.SwapBuffers();
         }
