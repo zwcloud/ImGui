@@ -160,13 +160,15 @@ namespace ImGui.Rendering
                 {
                     var style = GUIStyle.Default;//FIXME TEMP
                     renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
-                    break;
                 }
+                break;
                 case ImagePrimitive i:
                 {
                     renderer.DrawImage(i, this.Brush);
-                    break;
                 }
+                break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

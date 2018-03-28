@@ -1,5 +1,9 @@
 ﻿using System;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
+using ImGui.GraphicsImplementation;
+using ImGui.Input;
+using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using Xunit;
 
@@ -134,6 +138,56 @@ namespace ImGui.UnitTest.Rendering
                         context.Save();
                         Draw(context, innerGroup);
                         context.Restore();
+                    }
+                }
+            }
+        }
+
+        public class TheDrawMethod
+        {
+            [Fact]
+            public void DrawANode()
+            {
+                Node node = new Node();
+
+                var primitive = new PathPrimitive();
+                primitive.PathMoveTo(new Point(10, 10));
+                primitive.PathLineTo(new Point(10, 100));
+                primitive.PathLineTo(new Point(100, 100));
+                primitive.PathLineTo(new Point(100, 10));
+                primitive.PathClose();
+
+                node.Primitive = primitive;
+                node.IsFill = true;
+                node.Brush = new Brush();
+                
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var shapeMesh = primitiveRenderer.ShapeMesh;
+                DrawCommand cmd = new DrawCommand();
+                cmd.ClipRect = Rect.Big;
+                cmd.TextureData = null;
+                shapeMesh.CommandBuffer.Add(cmd);
+                
+                node.Draw(primitiveRenderer);
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                while (true)
+                {
+                    window.MainLoop(() =>
+                    {
+                        renderer.Clear(Color.FrameBg);
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, shapeMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    {
+                        break;
                     }
                 }
             }
