@@ -162,12 +162,6 @@ namespace ImGui.UnitTest.Rendering
                 node.Brush = new Brush();
                 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
-                var shapeMesh = primitiveRenderer.ShapeMesh;
-                DrawCommand cmd = new DrawCommand();
-                cmd.ClipRect = Rect.Big;
-                cmd.TextureData = null;
-                shapeMesh.CommandBuffer.Add(cmd);
-                
                 node.Draw(primitiveRenderer);
 
                 var window = new Win32Window();
@@ -181,7 +175,7 @@ namespace ImGui.UnitTest.Rendering
                     window.MainLoop(() =>
                     {
                         renderer.Clear(Color.FrameBg);
-                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, shapeMesh,
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
                             (int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });

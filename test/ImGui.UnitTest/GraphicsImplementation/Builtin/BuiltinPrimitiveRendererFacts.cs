@@ -24,12 +24,6 @@ namespace ImGui.UnitTest.Rendering
             primitive.PathClose();
 
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
-            var shapeMesh = primitiveRenderer.ShapeMesh;
-            DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
-            cmd.TextureData = null;
-            shapeMesh.CommandBuffer.Add(cmd);
-
             var brush = new Brush();
             brush.LineColor = Color.Red;
 
@@ -46,7 +40,7 @@ namespace ImGui.UnitTest.Rendering
                 window.MainLoop(() =>
                 {
                     renderer.Clear(Color.FrameBg);
-                    Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, shapeMesh,
+                    Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
                         (int)window.ClientSize.Width, (int)window.ClientSize.Height);
                     renderer.SwapBuffers();
                 });
@@ -68,15 +62,8 @@ namespace ImGui.UnitTest.Rendering
             primitive.PathClose();
 
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
-            var shapeMesh = primitiveRenderer.ShapeMesh;
-            DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
-            cmd.TextureData = null;
-            shapeMesh.CommandBuffer.Add(cmd);
-
             var brush = new Brush();
             brush.LineColor = Color.Red;
-
             primitiveRenderer.Fill(primitive, brush);
 
             var window = new Win32Window();
@@ -90,7 +77,7 @@ namespace ImGui.UnitTest.Rendering
                 window.MainLoop(() =>
                 {
                     renderer.Clear(Color.FrameBg);
-                    Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, shapeMesh,
+                    Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
                         (int)window.ClientSize.Width, (int)window.ClientSize.Height);
                     renderer.SwapBuffers();
                 });
@@ -130,26 +117,20 @@ namespace ImGui.UnitTest.Rendering
 
             primitive.Offsets.AddRange(textContext.GlyphOffsets);
 
-            int index = -1;
-            
             foreach (var character in primitive.Text)
             {
-                index++;
                 if (char.IsWhiteSpace(character))
                 {
                     continue;
                 }
 
                 Typography.OpenFont.Glyph glyph = TypographyTextContext.LookUpGlyph(fontFamily, character);
-                var polygons = new List<List<Point>>();
-                var bezierSegments = new List<(Point, Point, Point)>();
-                Typography.OpenFont.GlyphLoader.Read(glyph, out polygons, out bezierSegments);
+                Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
                 GlyphCache.Default.AddGlyph(character, fontFamily, fontStyle, fontWeight, polygons, bezierSegments);
                 var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
                 Debug.Assert(glyphData != null);
 
                 primitive.Glyphs.Add(glyphData);
-
             }
 
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
@@ -194,8 +175,6 @@ namespace ImGui.UnitTest.Rendering
             primitive.Offset = new Vector(10, 10);
 
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
-            var imageMesh = primitiveRenderer.ImageMesh;
-
             var brush = new Brush();
             brush.FillColor = Color.White;
 
@@ -207,7 +186,7 @@ namespace ImGui.UnitTest.Rendering
                 window.MainLoop(() =>
                 {
                     renderer.Clear(Color.FrameBg);
-                    Win32OpenGLRenderer.DrawMesh(renderer.imageMaterial, imageMesh,
+                    Win32OpenGLRenderer.DrawMesh(renderer.imageMaterial, primitiveRenderer.ImageMesh,
                         (int)window.ClientSize.Width, (int)window.ClientSize.Height);
                     renderer.SwapBuffers();
                 });

@@ -453,11 +453,7 @@ namespace ImGui
             {
                 var titlebarID = this.GetID(this.Name + "#titlebar");
                 Node node = this.RenderTree.GetNode(titlebarID);
-                if (node != null)
-                {
-
-                }
-                else
+                if (node == null)
                 {
                     node = new Node();
                     node.Id = titlebarID;

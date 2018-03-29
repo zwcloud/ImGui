@@ -10,6 +10,15 @@ namespace ImGui.GraphicsImplementation
 {
     internal class BuiltinPrimitiveRenderer : IPrimitiveRenderer
     {
+        public BuiltinPrimitiveRenderer()
+        {
+            DrawCommand cmd = new DrawCommand();
+            cmd.ClipRect = Rect.Big;
+            cmd.TextureData = null;
+            this.ShapeMesh.CommandBuffer.Add(cmd);
+        }
+
+
         #region Mesh
 
         #region Shape
