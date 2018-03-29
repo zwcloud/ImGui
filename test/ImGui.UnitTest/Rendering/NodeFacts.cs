@@ -185,6 +185,69 @@ namespace ImGui.UnitTest.Rendering
                     }
                 }
             }
+
+            [Fact]
+            public void UpdateANode()
+            {
+                Node node = new Node();
+
+                var primitive = new PathPrimitive();
+                primitive.PathMoveTo(new Point(10, 10));
+                primitive.PathLineTo(new Point(10, 100));
+                primitive.PathLineTo(new Point(100, 100));
+                primitive.PathLineTo(new Point(100, 10));
+                primitive.PathClose();
+
+                node.Primitive = primitive;
+                node.IsFill = true;
+                node.Brush = new Brush();
+                
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                node.Draw(primitiveRenderer);
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                while (true)
+                {
+                    window.MainLoop(() =>
+                    {
+                        if (node.Dirty)
+                        {
+                            primitiveRenderer.ShapeMesh.Clear();
+                            DrawCommand cmd = new DrawCommand();
+                            cmd.ClipRect = Rect.Big;
+                            cmd.TextureData = null;
+                            primitiveRenderer.ShapeMesh.CommandBuffer.Add(cmd);
+                            node.Draw(primitiveRenderer);
+                            node.Dirty = false;
+                        }
+
+                        renderer.Clear(Color.FrameBg);
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad1))
+                    {
+                        node.Brush.FillColor = Color.Red;
+                        node.Dirty = true;
+                    }
+                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad2))
+                    {
+                        node.Brush.FillColor = Color.Blue;
+                        node.Dirty = true;
+                    }
+
+                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    {
+                        break;
+                    }
+                }
+            }
         }
     }
 }
