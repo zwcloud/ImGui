@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
@@ -240,6 +241,95 @@ namespace ImGui.UnitTest.Rendering
                     {
                         node.Brush.FillColor = Color.Blue;
                         node.Dirty = true;
+                    }
+
+                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    {
+                        break;
+                    }
+                }
+            }
+            
+            [Fact]
+            public void UpdateTwoNode()
+            {
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var nodes = new List<Node>();
+                {
+                    Node node = new Node();
+                    nodes.Add(node);
+                    var primitive = new PathPrimitive();
+                    primitive.PathMoveTo(new Point(10, 10));
+                    primitive.PathLineTo(new Point(10, 100));
+                    primitive.PathLineTo(new Point(100, 100));
+                    primitive.PathLineTo(new Point(100, 10));
+                    primitive.PathClose();
+
+                    node.Primitive = primitive;
+                    node.IsFill = true;
+                    node.Brush = new Brush();
+
+                    node.Draw(primitiveRenderer);
+                }
+                {
+                    Node node = new Node();
+                    nodes.Add(node);
+                    var primitive = new PathPrimitive();
+                    primitive.PathMoveTo(new Point(110, 10));
+                    primitive.PathLineTo(new Point(110, 100));
+                    primitive.PathLineTo(new Point(200, 100));
+                    primitive.PathLineTo(new Point(200, 10));
+                    primitive.PathClose();
+
+                    node.Primitive = primitive;
+                    node.IsFill = true;
+                    node.Brush = new Brush();
+
+                    node.Draw(primitiveRenderer);
+                }
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                while (true)
+                {
+                    window.MainLoop(() =>
+                    {
+                        foreach (var node in nodes)
+                        {
+                            if (node.Dirty)
+                            {
+                                primitiveRenderer.ShapeMesh.Clear();
+                                DrawCommand cmd = new DrawCommand();
+                                cmd.ClipRect = Rect.Big;
+                                cmd.TextureData = null;
+                                primitiveRenderer.ShapeMesh.CommandBuffer.Add(cmd);
+                                node.Draw(primitiveRenderer);
+                                node.Dirty = false;
+                            }
+                        }
+
+                        renderer.Clear(Color.FrameBg);
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad1))
+                    {
+                        nodes[0].Brush.FillColor = Color.Red;
+                        nodes[0].Dirty = true;
+                        nodes[1].Brush.FillColor = Color.Blue;
+                        nodes[1].Dirty = true;
+                    }
+                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad2))
+                    {
+                        nodes[0].Brush.FillColor = Color.Green;
+                        nodes[0].Dirty = true;
+                        nodes[1].Brush.FillColor = Color.Orange;
+                        nodes[1].Dirty = true;
                     }
 
                     if (Input.Keyboard.Instance.KeyDown(Key.Escape))
