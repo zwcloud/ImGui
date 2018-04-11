@@ -195,5 +195,10 @@ namespace ImGui
             // quadratic bezier segments
             AddBezierSegments(segments, color, positionOffset, glyphOffset, scale, flipY);
         }
+
+        public void Append(TextMesh anotherTextMesh)
+        {
+
+        }
     }
 }

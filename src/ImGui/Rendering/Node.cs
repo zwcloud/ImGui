@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ImGui.Layout;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
@@ -160,10 +161,18 @@ namespace ImGui.Rendering
 
         public void Draw(IPrimitiveRenderer renderer)
         {
+            //TEMP regard all renderer as the built-in renderer
+            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            Debug.Assert(r != null);
             switch (this.Primitive)
             {
                 case PathPrimitive p:
                 {
+                    if (r.ShapeMesh == null)
+                    {
+                        var mesh = MeshPool.ShapeMeshPool.Get();
+                        r.SetShapeMesh(mesh);
+                    }
                     if (this.IsFill)
                     {
                         renderer.Fill(p, this.Brush);
@@ -172,17 +181,30 @@ namespace ImGui.Rendering
                     {
                         renderer.Stroke(p, this.Brush, this.StrokeStyle);
                     }
+                    MeshList.ShapeMeshes.Add(r.ShapeMesh);
                 }
                 break;
                 case TextPrimitive t:
                 {
+                    if (r.TextMesh == null)
+                    {
+                        var textMesh = MeshPool.TextMeshPool.Get();
+                        r.SetTextMesh(textMesh);
+                    }
                     var style = GUIStyle.Default;//FIXME TEMP
                     renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+                    MeshList.TextMeshes.Add(r.TextMesh);
                 }
                 break;
                 case ImagePrimitive i:
                 {
+                    if (r.ImageMesh == null)
+                    {
+                        var mesh = MeshPool.ImageMeshPool.Get();
+                        r.SetImageMesh(mesh);
+                    }
                     renderer.DrawImage(i, this.Brush);
+                    MeshList.ImageMeshes.Add(r.ImageMesh);
                 }
                 break;
                 default:
@@ -192,5 +214,10 @@ namespace ImGui.Rendering
 
         #endregion
 
+        /// <summary>
+        /// internal render context refers to a context object from _Layer 4 basic rendering API implementation_.
+        /// This is used to link this node to corresponding _Layer 4_ object.
+        /// </summary>
+        internal object RenderContext;
     }
 }

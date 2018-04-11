@@ -163,6 +163,9 @@ namespace ImGui.UnitTest.Rendering
                 node.Brush = new Brush();
                 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                mesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.SetShapeMesh(mesh);
                 node.Draw(primitiveRenderer);
 
                 var window = new Win32Window();
@@ -204,6 +207,9 @@ namespace ImGui.UnitTest.Rendering
                 node.Brush = new Brush();
                 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                mesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.SetShapeMesh(mesh);
                 node.Draw(primitiveRenderer);
 
                 var window = new Win32Window();
@@ -298,22 +304,37 @@ namespace ImGui.UnitTest.Rendering
                 {
                     window.MainLoop(() =>
                     {
+                        //update nodes
                         foreach (var node in nodes)
                         {
                             if (node.Dirty)
                             {
-                                primitiveRenderer.ShapeMesh.Clear();
-                                DrawCommand cmd = new DrawCommand();
-                                cmd.ClipRect = Rect.Big;
-                                cmd.TextureData = null;
-                                primitiveRenderer.ShapeMesh.CommandBuffer.Add(cmd);
                                 node.Draw(primitiveRenderer);
                                 node.Dirty = false;
                             }
                         }
 
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        foreach (var mesh in MeshList.ShapeMeshes)
+                        {
+                            MeshBuffer.ShapeMesh.Append(mesh);
+                        }
+                        foreach (var textMesh in MeshList.TextMeshes)
+                        {
+                            MeshBuffer.TextMesh.Append(textMesh);
+                        }
+                        foreach (var mesh in MeshList.ImageMeshes)
+                        {
+                            MeshBuffer.ImageMesh.Append(mesh);
+                        }
+
                         renderer.Clear(Color.FrameBg);
-                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, MeshBuffer.ShapeMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, MeshBuffer.ImageMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        Win32OpenGLRenderer.DrawTextMesh(renderer.glyphMaterial, MeshBuffer.TextMesh,
                             (int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });

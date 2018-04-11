@@ -26,6 +26,10 @@ namespace ImGui.UnitTest.Rendering
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
             var brush = new Brush();
             brush.LineColor = Color.Red;
+            
+            var mesh = new Mesh();
+            mesh.CommandBuffer.Add(DrawCommand.Default);
+            primitiveRenderer.SetShapeMesh(mesh);
 
             primitiveRenderer.Stroke(primitive, brush, new StrokeStyle());
 
@@ -64,6 +68,9 @@ namespace ImGui.UnitTest.Rendering
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
             var brush = new Brush();
             brush.LineColor = Color.Red;
+            var mesh = new Mesh();
+            mesh.CommandBuffer.Add(DrawCommand.Default);
+            primitiveRenderer.SetShapeMesh(mesh);
             primitiveRenderer.Fill(primitive, brush);
 
             var window = new Win32Window();
@@ -134,6 +141,8 @@ namespace ImGui.UnitTest.Rendering
             }
 
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+            var textMesh = new TextMesh();
+            primitiveRenderer.SetTextMesh(textMesh);
             primitiveRenderer.DrawText(primitive, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
 
             //render text
@@ -178,6 +187,9 @@ namespace ImGui.UnitTest.Rendering
             var brush = new Brush();
             brush.FillColor = Color.White;
 
+            var mesh = new Mesh();
+            mesh.CommandBuffer.Add(DrawCommand.Default);
+            primitiveRenderer.SetImageMesh(mesh);
             primitiveRenderer.DrawImage(primitive, brush);
 
 

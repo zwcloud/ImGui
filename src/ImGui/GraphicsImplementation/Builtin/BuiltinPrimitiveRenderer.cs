@@ -10,22 +10,28 @@ namespace ImGui.GraphicsImplementation
 {
     internal class BuiltinPrimitiveRenderer : IPrimitiveRenderer
     {
-        public BuiltinPrimitiveRenderer()
+        #region Mesh
+
+        public void SetShapeMesh(Mesh mesh)
         {
-            DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
-            cmd.TextureData = null;
-            this.ShapeMesh.CommandBuffer.Add(cmd);
+            this.ShapeMesh = mesh;
+        }
+        
+        public void SetImageMesh(Mesh mesh)
+        {
+            this.ImageMesh = mesh;
         }
 
-
-        #region Mesh
+        public void SetTextMesh(TextMesh textMesh)
+        {
+            this.TextMesh = textMesh;
+        }
 
         #region Shape
         /// <summary>
         /// Mesh (colored triangles)
         /// </summary>
-        public Mesh ShapeMesh { get; } = new Mesh();
+        public Mesh ShapeMesh { get; private set; }
 
         /// <summary>
         /// Add a poly line.
@@ -129,7 +135,7 @@ namespace ImGui.GraphicsImplementation
         /// <summary>
         /// Text mesh
         /// </summary>
-        public TextMesh TextMesh { get; } = new TextMesh();
+        public TextMesh TextMesh { get; private set; }
 
         #endregion
 
@@ -138,7 +144,7 @@ namespace ImGui.GraphicsImplementation
         /// <summary>
         /// Mesh (textured triangles)
         /// </summary>
-        public Mesh ImageMesh { get; } = new Mesh();
+        public Mesh ImageMesh { get; private set; }
 
         /// <summary>
         /// Add textured rect, used for rendering images parts.

@@ -88,5 +88,11 @@ namespace ImGui
             this.idxWritePosition = 0;
             this.currentIdx = 0;
         }
+
+        public void Append(Mesh anotherMesh)
+        {
+
+        }
+
     }
 }

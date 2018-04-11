@@ -21,5 +21,10 @@ namespace ImGui
         /// texture data
         /// </summary>
         public ITexture TextureData { get; set; }
+
+        /// <summary>
+        /// The default big and empty draw command without texture
+        /// </summary>
+        public static DrawCommand Default = new DrawCommand {ClipRect = Rect.Big, ElemCount = 0, TextureData = null};
     }
 }
