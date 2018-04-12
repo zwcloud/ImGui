@@ -322,7 +322,7 @@ namespace ImGui.UnitTest.Rendering
                         }
                         foreach (var textMesh in MeshList.TextMeshes)
                         {
-                            MeshBuffer.TextMesh.Append(textMesh);
+                            MeshBuffer.TextMesh.Append(textMesh, Vector.Zero);
                         }
                         foreach (var mesh in MeshList.ImageMeshes)
                         {

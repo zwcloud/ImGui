@@ -78,6 +78,13 @@ namespace ImGui
             this.size = newSize;
         }
 
+        public void Append(VertexBuffer vertexBuffer)
+        {
+            var original_size = this.size;
+            this.Resize(this.Count + vertexBuffer.Count);
+            Array.Copy(vertexBuffer.data, 0, this.data, original_size, vertexBuffer.size);
+        }
+
         private void Reserve(int new_capacity)
         {
             if (new_capacity <= capacity) return;

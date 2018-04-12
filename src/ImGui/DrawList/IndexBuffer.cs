@@ -77,6 +77,13 @@ namespace ImGui
             }
             this.size = newSize;
         }
+        
+        public void Append(IndexBuffer indexBuffer)
+        {
+            var original_size = this.size;
+            this.Resize(this.Count + indexBuffer.Count);
+            Array.Copy(indexBuffer.data, 0, this.data, original_size, indexBuffer.size);
+        }
 
         private void Reserve(int new_capacity)
         {

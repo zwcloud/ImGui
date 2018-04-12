@@ -61,7 +61,7 @@ namespace ImGui
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void AppendVertex(DrawVertex vertex)
+        public void AppendVertex(DrawVertex vertex)
         {
             this.VertexBuffer[this.vtxWritePosition] = vertex;
             this.vtxWritePosition++;
@@ -78,6 +78,7 @@ namespace ImGui
             this.idxWritePosition++;
         }
 
+        //FIXME use the same parameter order as Mesh.PrimReserve
         public void PrimReserve(int vtxCount, int idxCount)
         {
             if (vtxCount == 0)
@@ -196,9 +197,40 @@ namespace ImGui
             AddBezierSegments(segments, color, positionOffset, glyphOffset, scale, flipY);
         }
 
-        public void Append(TextMesh anotherTextMesh)
+        public void Append(TextMesh textMesh, Vector offset)
         {
+            var oldVertexCount = this.VertexBuffer.Count;
+            var oldIndexCount = this.IndexBuffer.Count;
+            // Update added command
+            var command = this.Commands[this.Commands.Count - 1];
+            command.ElemCount = textMesh.IndexBuffer.Count;
+            this.Commands[this.Commands.Count - 1] = command;
 
+            // TODO merge command with previous one if they share the same clip rect.
+
+            // Append mesh data
+            {
+                this.VertexBuffer.Append(textMesh.VertexBuffer);
+                this.IndexBuffer.Append(textMesh.IndexBuffer);
+                var newIndexCount = this.IndexBuffer.Count;
+                for (int i = oldIndexCount; i < newIndexCount; i++)
+                {
+                    var index = this.IndexBuffer[i].Index;
+                    index += oldVertexCount;
+                    this.IndexBuffer[i] = new DrawIndex {Index = index};
+                }
+            }
+
+            // Apply offset to appended part
+            if (!MathEx.AmostZero(offset.X) || !MathEx.AmostZero(offset.Y))
+            {
+                for (int i = oldVertexCount; i < this.VertexBuffer.Count; i++)
+                {
+                    var vertex = this.VertexBuffer[i];
+                    vertex.pos = new Point(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
+                    this.VertexBuffer[i] = vertex;
+                }
+            }
         }
     }
 }

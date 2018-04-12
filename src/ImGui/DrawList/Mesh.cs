@@ -88,10 +88,49 @@ namespace ImGui
             this.idxWritePosition = 0;
             this.currentIdx = 0;
         }
-
-        public void Append(Mesh anotherMesh)
+        
+        /// <summary>
+        /// Append a mesh to this mesh
+        /// </summary>
+        /// <param name="mesh"></param>
+        public void Append(Mesh mesh)
         {
+            var vertexBuffer = mesh.VertexBuffer;
+            var indexBuffer = mesh.IndexBuffer;
 
+            DrawCommand drawCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
+            var idxCount = indexBuffer.Count;
+            var vtxCount = vertexBuffer.Count;
+            if (idxCount != 0 && vtxCount != 0)
+            {
+                drawCommand.ElemCount += idxCount;
+                this.CommandBuffer[this.CommandBuffer.Count - 1] = drawCommand;
+
+                var vertexCountBefore = this.VertexBuffer.Count;
+
+                int vtxBufferSize = this.VertexBuffer.Count;
+                this.vtxWritePosition = vtxBufferSize + vtxCount;
+                this.VertexBuffer.Append(vertexBuffer);
+
+                int idxBufferSize = this.IndexBuffer.Count;
+                this.idxWritePosition = idxBufferSize + idxCount;
+
+                var sizeBefore = this.IndexBuffer.Count;
+                this.IndexBuffer.Append(indexBuffer);
+                var sizeAfter = this.IndexBuffer.Count;
+
+                if (vertexCountBefore != 0)
+                {
+                    for (int i = sizeBefore; i < sizeAfter; i++)
+                    {
+                        this.IndexBuffer[i] = new DrawIndex
+                        {
+                            Index = this.IndexBuffer[i].Index + vertexCountBefore
+                        };
+                    }
+                }
+                this.currentIdx += vtxCount;
+            }
         }
 
     }
