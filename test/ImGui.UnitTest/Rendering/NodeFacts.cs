@@ -300,6 +300,8 @@ namespace ImGui.UnitTest.Rendering
                 var renderer = new Win32OpenGLRenderer();
                 renderer.Init(window.Pointer, window.ClientSize);
 
+                window.Show();
+
                 while (true)
                 {
                     window.MainLoop(() =>
@@ -316,6 +318,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //rebuild mesh buffer
                         MeshBuffer.Clear();
+                        MeshBuffer.Init();
                         foreach (var mesh in MeshList.ShapeMeshes)
                         {
                             MeshBuffer.ShapeMesh.Append(mesh);

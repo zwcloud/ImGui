@@ -162,17 +162,28 @@ namespace ImGui.Rendering
         public void Draw(IPrimitiveRenderer renderer)
         {
             //TEMP regard all renderer as the built-in renderer
-            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
-            Debug.Assert(r != null);
+            var builtinPrimitiveRenderer = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            Debug.Assert(builtinPrimitiveRenderer != null);
             switch (this.Primitive)
             {
                 case PathPrimitive p:
                 {
-                    if (r.ShapeMesh == null)
+                    Mesh mesh = null;
+
+                    if (this.RenderContext == null)
                     {
-                        var mesh = MeshPool.ShapeMeshPool.Get();
-                        r.SetShapeMesh(mesh);
+                        mesh = MeshPool.ShapeMeshPool.Get();
+                        mesh.Clear();
+                        mesh.CommandBuffer.Add(DrawCommand.Default);
+                        this.RenderContext = mesh;
                     }
+                    else
+                    {
+                        mesh = (Mesh) this.RenderContext;
+                    }
+                    
+                    builtinPrimitiveRenderer.SetShapeMesh(mesh);
+
                     if (this.IsFill)
                     {
                         renderer.Fill(p, this.Brush);
@@ -181,30 +192,68 @@ namespace ImGui.Rendering
                     {
                         renderer.Stroke(p, this.Brush, this.StrokeStyle);
                     }
-                    MeshList.ShapeMeshes.Add(r.ShapeMesh);
+                    var foundNode = MeshList.ShapeMeshes.Find(mesh);
+                    if (foundNode == null)
+                    {
+                        MeshList.ShapeMeshes.AddFirst(mesh);
+                    }
+
+                    builtinPrimitiveRenderer.SetShapeMesh(null);
                 }
                 break;
                 case TextPrimitive t:
                 {
-                    if (r.TextMesh == null)
+                    TextMesh mesh = null;
+
+                    if (this.RenderContext == null)
                     {
-                        var textMesh = MeshPool.TextMeshPool.Get();
-                        r.SetTextMesh(textMesh);
+                        mesh = MeshPool.TextMeshPool.Get();
+                        mesh.Clear();
+                        this.RenderContext = mesh;
                     }
+                    else
+                    {
+                        mesh = (TextMesh) this.RenderContext;
+                    }
+                    
+                    builtinPrimitiveRenderer.SetTextMesh(mesh);
+
                     var style = GUIStyle.Default;//FIXME TEMP
                     renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
-                    MeshList.TextMeshes.Add(r.TextMesh);
+                    var foundNode = MeshList.TextMeshes.Find(mesh);
+                    if (foundNode == null)
+                    {
+                        MeshList.TextMeshes.AddFirst(mesh);
+                    }
+
+                    builtinPrimitiveRenderer.SetTextMesh(null);
                 }
                 break;
                 case ImagePrimitive i:
                 {
-                    if (r.ImageMesh == null)
+                    Mesh mesh = null;
+
+                    if (this.RenderContext == null)
                     {
-                        var mesh = MeshPool.ImageMeshPool.Get();
-                        r.SetImageMesh(mesh);
+                        mesh = MeshPool.ImageMeshPool.Get();
+                        mesh.Clear();
+                        this.RenderContext = mesh;
                     }
+                    else
+                    {
+                        mesh = (Mesh) this.RenderContext;
+                    }
+                    
+                    builtinPrimitiveRenderer.SetImageMesh(mesh);
+
                     renderer.DrawImage(i, this.Brush);
-                    MeshList.ImageMeshes.Add(r.ImageMesh);
+                    var foundNode = MeshList.ImageMeshes.Find(mesh);
+                    if (foundNode == null)
+                    {
+                        MeshList.ImageMeshes.AddFirst(mesh);
+                    }
+                    
+                    builtinPrimitiveRenderer.SetImageMesh(null);
                 }
                 break;
                 default:
@@ -215,9 +264,11 @@ namespace ImGui.Rendering
         #endregion
 
         /// <summary>
-        /// internal render context refers to a context object from _Layer 4 basic rendering API implementation_.
-        /// This is used to link this node to corresponding _Layer 4_ object.
+        /// internal render context refers to a context object. For built-in renderer, this is a <see cref="Mesh"/>.
         /// </summary>
+        /// <remarks>
+        /// This object is used as the context between the node and _Layer 4 basic rendering API implementation_.
+        /// </remarks>
         internal object RenderContext;
     }
 }

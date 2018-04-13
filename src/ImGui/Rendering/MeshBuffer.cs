@@ -14,5 +14,10 @@
             TextMesh.Clear();
             ImageMesh.Clear();
         }
+
+        public static void Init()
+        {
+            ShapeMesh.CommandBuffer.Add(DrawCommand.Default);
+        }
     }
 }

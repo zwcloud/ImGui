@@ -12,16 +12,27 @@ namespace ImGui.GraphicsImplementation
     {
         #region Mesh
 
+        /// <summary>
+        /// Set the shape mesh that will be rendered into.
+        /// </summary>
+        /// <param name="mesh"></param>
         public void SetShapeMesh(Mesh mesh)
         {
             this.ShapeMesh = mesh;
         }
-        
+        /// <summary>
+        /// Set the image mesh that will be rendered into.
+        /// </summary>
+        /// <param name="mesh"></param>
         public void SetImageMesh(Mesh mesh)
         {
             this.ImageMesh = mesh;
         }
 
+        /// <summary>
+        /// Set the text mesh that will be rendered into.
+        /// </summary>
+        /// <param name="textMesh"></param>
         public void SetTextMesh(TextMesh textMesh)
         {
             this.TextMesh = textMesh;

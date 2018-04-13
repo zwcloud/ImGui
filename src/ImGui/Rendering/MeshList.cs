@@ -4,10 +4,10 @@ namespace ImGui.Rendering
 {
     internal static class MeshList
     {
-        public static List<Mesh> ShapeMeshes { get; } = new List<Mesh>();
+        public static LinkedList<Mesh> ShapeMeshes { get; } = new LinkedList<Mesh>();
 
-        public static List<TextMesh> TextMeshes { get; } = new List<TextMesh>();
+        public static LinkedList<TextMesh> TextMeshes { get; } = new LinkedList<TextMesh>();
 
-        public static List<Mesh> ImageMeshes { get; } = new List<Mesh>();
+        public static LinkedList<Mesh> ImageMeshes { get; } = new LinkedList<Mesh>();
     }
 }
