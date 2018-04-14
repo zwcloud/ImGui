@@ -159,6 +159,11 @@ namespace ImGui.Rendering
         internal Brush Brush { get; set; }
         internal StrokeStyle StrokeStyle { get; set; }
 
+        /// <summary>
+        /// Redraw the node's primitive.
+        /// </summary>
+        /// <param name="renderer"></param>
+        /// <remarks>A node can only have one single primitive.</remarks>
         public void Draw(IPrimitiveRenderer renderer)
         {
             //TEMP regard all renderer as the built-in renderer
@@ -173,15 +178,15 @@ namespace ImGui.Rendering
                     if (this.RenderContext == null)
                     {
                         mesh = MeshPool.ShapeMeshPool.Get();
-                        mesh.Clear();
-                        mesh.CommandBuffer.Add(DrawCommand.Default);
                         this.RenderContext = mesh;
                     }
                     else
                     {
                         mesh = (Mesh) this.RenderContext;
                     }
-                    
+                    mesh.Clear();
+                    mesh.CommandBuffer.Add(DrawCommand.Default);
+
                     builtinPrimitiveRenderer.SetShapeMesh(mesh);
 
                     if (this.IsFill)
@@ -208,13 +213,13 @@ namespace ImGui.Rendering
                     if (this.RenderContext == null)
                     {
                         mesh = MeshPool.TextMeshPool.Get();
-                        mesh.Clear();
                         this.RenderContext = mesh;
                     }
                     else
                     {
                         mesh = (TextMesh) this.RenderContext;
                     }
+                    mesh.Clear();
                     
                     builtinPrimitiveRenderer.SetTextMesh(mesh);
 
@@ -236,13 +241,13 @@ namespace ImGui.Rendering
                     if (this.RenderContext == null)
                     {
                         mesh = MeshPool.ImageMeshPool.Get();
-                        mesh.Clear();
                         this.RenderContext = mesh;
                     }
                     else
                     {
                         mesh = (Mesh) this.RenderContext;
                     }
+                    mesh.Clear();
                     
                     builtinPrimitiveRenderer.SetImageMesh(mesh);
 
