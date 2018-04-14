@@ -26,7 +26,7 @@ namespace ImGui
         /// <remarks>
         /// Specifiy a big capacity to forbid frequent GC due to List reallocation
         /// when adding Glyph triangles and curve segments _frequently_ to the TextMesh.
-        /// See important not below.
+        /// See *important note* below.
         /// </remarks>
         public VertexBuffer VertexBuffer { get; set; } = new VertexBuffer(100000);
 
@@ -45,6 +45,9 @@ namespace ImGui
          * Otherwise, when adding Glyph triangles and curve segments _frequently_ to the TextMesh, 
          * List reallocation will happen frequently and creates many garbages(discarded old `UsafeList._items` buffer of about 200KB-600KB).
          * Those garbages will lead to Generation 2 GC which uses much CPU time and stuck the application.
+         *
+         * TODO check if this is still a problem after the render-tree based rendering is implemented.
+         * It's ridiculous to use a initial capacity of 100000 for the vertex/index buffer
          */
 
         public List<DrawCommand> Commands { get; set; } = new List<DrawCommand>(2);

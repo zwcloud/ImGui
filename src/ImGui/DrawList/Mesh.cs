@@ -19,12 +19,12 @@ namespace ImGui
         /// <summary>
         /// Index buffer. Each command consume DrawCommand.ElemCount of those
         /// </summary>
-        public IndexBuffer IndexBuffer { get; } = new IndexBuffer(10000);
+        public IndexBuffer IndexBuffer { get; } = new IndexBuffer(128);
 
         /// <summary>
         /// Vertex buffer
         /// </summary>
-        public VertexBuffer VertexBuffer { get; } = new VertexBuffer(10000);
+        public VertexBuffer VertexBuffer { get; } = new VertexBuffer(128);
 
         /// <summary>
         /// Append a vertex to the VertexBuffer
