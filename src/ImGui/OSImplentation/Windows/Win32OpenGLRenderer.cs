@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.Rendering;
 
 namespace ImGui.OSImplentation.Windows
 {
@@ -133,6 +134,13 @@ void main()
             DrawMesh(this.imageMaterial, drawList.ImageMesh, width, height);
 
             DrawTextMesh(this.glyphMaterial, drawList.TextMesh, width, height);
+        }
+
+        public void DrawMeshes(int width, int height)
+        {
+            DrawMesh(shapeMaterial, MeshBuffer.ShapeMesh, width, height);
+            DrawMesh(shapeMaterial, MeshBuffer.ImageMesh, width, height);
+            DrawTextMesh(glyphMaterial, MeshBuffer.TextMesh, width, height);
         }
 
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)

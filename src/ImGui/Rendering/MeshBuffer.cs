@@ -1,4 +1,6 @@
-﻿namespace ImGui.Rendering
+﻿using ImGui.Common.Primitive;
+
+namespace ImGui.Rendering
 {
     internal static class MeshBuffer
     {
@@ -18,6 +20,22 @@
         public static void Init()
         {
             ShapeMesh.CommandBuffer.Add(DrawCommand.Default);
+        }
+
+        public static void Build()
+        {
+            foreach (var mesh in MeshList.ShapeMeshes)
+            {
+                ShapeMesh.Append(mesh);
+            }
+            foreach (var mesh in MeshList.ImageMeshes)
+            {
+                ImageMesh.Append(mesh);
+            }
+            foreach (var textMesh in MeshList.TextMeshes)
+            {
+                TextMesh.Append(textMesh, Vector.Zero);
+            }
         }
     }
 }

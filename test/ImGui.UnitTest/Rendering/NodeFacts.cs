@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
@@ -12,6 +13,8 @@ namespace ImGui.UnitTest.Rendering
 {
     public class NodeFacts
     {
+        private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0,2) + "\\my\\ImGui.UnitTest.Output";
+
         public class TheLayoutMethod
         {
             [Fact]
@@ -104,13 +107,12 @@ namespace ImGui.UnitTest.Rendering
                 {
                     Draw(context, node);
 
-                    string outputPath = "D:\\my\\ImGui.UnitTest.Output";
-                    if (!System.IO.Directory.Exists(outputPath))
+                    if (!System.IO.Directory.Exists(OutputPath))
                     {
-                        System.IO.Directory.CreateDirectory(outputPath);
+                        System.IO.Directory.CreateDirectory(OutputPath);
                     }
 
-                    string filePath = outputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
+                    string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
                     surface.WriteToPng(filePath);
                     Util.OpenImage(filePath);
                 }
@@ -178,9 +180,14 @@ namespace ImGui.UnitTest.Rendering
                 {
                     window.MainLoop(() =>
                     {
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
-                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
                     if (Input.Keyboard.Instance.KeyDown(Key.Escape))
@@ -222,20 +229,21 @@ namespace ImGui.UnitTest.Rendering
                 {
                     window.MainLoop(() =>
                     {
+                        //update nodes
                         if (node.Dirty)
                         {
-                            primitiveRenderer.ShapeMesh.Clear();
-                            DrawCommand cmd = new DrawCommand();
-                            cmd.ClipRect = Rect.Big;
-                            cmd.TextureData = null;
-                            primitiveRenderer.ShapeMesh.CommandBuffer.Add(cmd);
                             node.Draw(primitiveRenderer);
                             node.Dirty = false;
                         }
 
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
-                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
                     if (Input.Keyboard.Instance.KeyDown(Key.NumPad1))
@@ -319,26 +327,11 @@ namespace ImGui.UnitTest.Rendering
                         //rebuild mesh buffer
                         MeshBuffer.Clear();
                         MeshBuffer.Init();
-                        foreach (var mesh in MeshList.ShapeMeshes)
-                        {
-                            MeshBuffer.ShapeMesh.Append(mesh);
-                        }
-                        foreach (var textMesh in MeshList.TextMeshes)
-                        {
-                            MeshBuffer.TextMesh.Append(textMesh, Vector.Zero);
-                        }
-                        foreach (var mesh in MeshList.ImageMeshes)
-                        {
-                            MeshBuffer.ImageMesh.Append(mesh);
-                        }
+                        MeshBuffer.Build();
 
+                        //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, MeshBuffer.ShapeMesh,
-                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, MeshBuffer.ImageMesh,
-                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-                        Win32OpenGLRenderer.DrawTextMesh(renderer.glyphMaterial, MeshBuffer.TextMesh,
-                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
                     if (Input.Keyboard.Instance.KeyDown(Key.NumPad1))
