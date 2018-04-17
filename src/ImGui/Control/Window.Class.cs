@@ -105,6 +105,7 @@ namespace ImGui
         {
             Form form = Form.current;
             GUIContext g = form.uiContext;
+            WindowManager w = g.WindowManager;
 
             this.ID = name.GetHashCode();
             this.Name = name;
@@ -179,7 +180,7 @@ namespace ImGui
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.TitleBarRect.Min, this.TitleBarRect.Max);
                 var brush = new Brush();
-                brush.FillColor = this.TitleBarStyle.FillColor;
+                brush.FillColor = this.TitleBarStyle.Get<Color>(GUIStyleName.BackgroundColor);
                 node.Primitive = primitive;
                 node.Brush = brush;
                 this.RenderTree.Root.Add(node);
@@ -187,6 +188,7 @@ namespace ImGui
             }
 
             //background node
+            if(!Collapsed)
             {
                 var node = new Node();
                 node.Id = this.GetID(this.Name + "#" + this.ID + "#WindowBackground");
@@ -207,32 +209,33 @@ namespace ImGui
             WindowFlags flags,
             long currentFrame, Window parentWindow)
         {
+            //short names
             var form = Form.current;
             var g = form.uiContext;
             var w = g.WindowManager;
+
+            //record old properties that will make any nodes dirty
+            var oldCollapsed = this.Collapsed;
+            var oldRect = this.Rect;
 
             Active = true;
             BeginCount = 0;
             ClipRect = Rect.Big;
             LastActiveFrame = currentFrame;
 
-            // clear draw list, setup outer clip rect
-            DrawList.Clear();
-            DrawList.Init();
             var fullScreenRect = new Rect(0, 0, form.ClientSize);
             if (flags.HaveFlag(WindowFlags.ChildWindow) && !flags.HaveFlag(WindowFlags.ComboBox | WindowFlags.Popup))
             {
-                DrawList.PushClipRect(parentWindow.ClipRect, true);
-                ClipRect = DrawList.GetCurrentClipRect();
+                //PushClipRect(parentWindow.ClipRect, true);
+                //ClipRect = GetCurrentClipRect();
             }
             else
             {
-                DrawList.PushClipRect(fullScreenRect, true);
-                ClipRect = DrawList.GetCurrentClipRect();
+                //PushClipRect(fullScreenRect, true);
+                //ClipRect = GetCurrentClipRect();
             }
 
-            // draw outer clip rect
-            //this.DrawList.AddRect(this.ClipRect.TopLeft, this.ClipRect.BottomRight, Color.Blue);//test only
+            // (draw outer clip rect for test only here)
 
             // Collapse window by double-clicking on title bar
             if (!flags.HaveFlag(WindowFlags.NoTitleBar) && !flags.HaveFlag(WindowFlags.NoCollapse))
@@ -274,20 +277,6 @@ namespace ImGui
             var windowRounding = (float) style.Get<double>(GUIStyleName.WindowRounding);
             if (Collapsed)
             {
-                var titlebarId = GetID(Name + "#titlebar");
-                var node = RenderTree.GetNodeById(titlebarId);
-                if (node == null)
-                {
-                    node = new Node();
-                    node.Id = titlebarId;
-                    var primitive = new PathPrimitive();
-                    primitive.PathRect(titleBarRect.Min, titleBarRect.Max);
-                    var brush = new Brush();
-                    brush.FillColor = new Color(0.40f, 0.40f, 0.80f, 0.50f);
-                    node.Primitive = primitive;
-                    node.Brush = brush;
-                    RenderTree.Root.Add(node);
-                }
             }
             else
             {

@@ -69,6 +69,7 @@
     <Compile Remove="Control\TextBox.cs" />
     <Compile Remove="Control\Toggle.cs" />
     <Compile Remove="Control\TreeNode.cs" />
+    <Compile Remove="Control\Window.Self.cs" />
   </ItemGroup>
 
   <ItemGroup>

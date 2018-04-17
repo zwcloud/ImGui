@@ -135,7 +135,7 @@ namespace ImGui.Rendering
             }
             return null;
         }
-        
+
         public void Foreach(Action<Node> action)
         {
             if (action == null)
@@ -153,8 +153,12 @@ namespace ImGui.Rendering
             }
         }
 
+        public bool RemoveChild(Node node)
+        {
+            return this.Children.Remove(node);
+        }
         #endregion
-        
+
         #region Draw
 
         internal Primitive Primitive { get; set; }
