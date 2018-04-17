@@ -325,7 +325,7 @@ namespace ImGui
         {
             //var rect = StackLayout.GetRect(id, size, options, str_id);
 
-            var node = this.RenderTree.GetNode(id);
+            var node = this.RenderTree.GetNodeById(id);
             if(node == null)
             {
                 node = new Node();
@@ -452,7 +452,7 @@ namespace ImGui
             if (this.Collapsed)
             {
                 var titlebarID = this.GetID(this.Name + "#titlebar");
-                Node node = this.RenderTree.GetNode(titlebarID);
+                Node node = this.RenderTree.GetNodeById(titlebarID);
                 if (node == null)
                 {
                     node = new Node();
