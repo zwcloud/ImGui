@@ -7,6 +7,7 @@ using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
+    [DebuggerDisplay("#{" + nameof(Id) + "}")]
     internal partial class Node
     {
         /// <summary>
@@ -20,13 +21,9 @@ namespace ImGui.Rendering
         public string StrId { get; set; }
 
         /// <summary>
-        /// 
+        /// Dirty flag: Should this node be re-drawn.
         /// </summary>
-        public bool Dirty
-        {
-            get;
-            set;
-        }
+        public bool Dirty { get; set; } = true;
 
         /// <summary>
         /// border-box, the layout result
@@ -119,15 +116,21 @@ namespace ImGui.Rendering
 
         public Node GetNodeById(int id)
         {
+            if (this.Children == null)
+            {
+                return null;
+            }
             foreach (var node in this.Children)
             {
                 if (node.Id == id)
                 {
                     return node;
                 }
-                else
+
+                Node child = node.GetNodeById(id);
+                if (child != null)
                 {
-                    return node.GetNodeById(id);
+                    return child;
                 }
             }
             return null;

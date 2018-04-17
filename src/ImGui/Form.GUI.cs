@@ -3,6 +3,8 @@ using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
+using ImGui.OSImplentation.Windows;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -11,6 +13,9 @@ namespace ImGui
         private bool debugWindowOpen = true;
 
         public Color BackgroundColor { get; set; } = Color.Argb(255, 114, 144, 154);
+
+        //FIXME TEMP
+        private readonly BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
 
         internal void NewFrame()
         {
@@ -153,19 +158,6 @@ namespace ImGui
             Log();
         }
 
-        //FIXME TEMP
-        private BuiltinPrimitiveRenderer bpRenderer = initBuildinRenderer();
-
-        private static BuiltinPrimitiveRenderer initBuildinRenderer()
-        {
-            var r = new BuiltinPrimitiveRenderer();
-            DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
-            cmd.TextureData = null;
-            r.ShapeMesh.CommandBuffer.Add(cmd);
-            return r;
-        }
-
         internal void Render()
         {
             GUIContext g = this.uiContext;
@@ -177,36 +169,49 @@ namespace ImGui
                 EndFrame();
             g.FrameCountRendered = g.FrameCount;
 
+#if old_draw_list
             this.renderer.Clear(this.BackgroundColor);
             foreach (var window in w.Windows)
             {
                 if(window.Active)
                 {
-                    //this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+                    this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
                 }
             }
 
-            //this.renderer.RenderDrawList(this.OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+            this.renderer.RenderDrawList(this.OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
             this.OverlayDrawList.Clear();
             this.OverlayDrawList.Init();
-            
+
+            this.renderer.SwapBuffers();
+
+#else//render-tree approach
+            var openGLRenderer = (Win32OpenGLRenderer) renderer;//FIXME TEMP
+            openGLRenderer.Clear(this.BackgroundColor);
             foreach (var window in w.Windows)
             {
                 if(window.Active)
                 {
                     window.RenderTree.Foreach(node =>
                     {
-                        node.Draw(bpRenderer);
-                        //FIXME TEMP
-                        var win32Renderer = (OSImplentation.Windows.Win32OpenGLRenderer) renderer;
-                        var shapeMesh = bpRenderer.ShapeMesh;
-                        OSImplentation.Windows.Win32OpenGLRenderer.DrawMesh(win32Renderer.shapeMaterial, shapeMesh,
-                            (int)this.ClientSize.Width, (int)this.ClientSize.Height);
+                        if (node.Dirty)
+                        {
+                            node.Draw(primitiveRenderer);
+                            node.Dirty = false;
+                        }
                     });
+
+                    //rebuild mesh buffer
+                    MeshBuffer.Clear();
+                    MeshBuffer.Init();
+                    MeshBuffer.Build();
+
+                    //draw mesh buffer
+                    openGLRenderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height);
                 }
             }
-
-            this.renderer.SwapBuffers();
+            openGLRenderer.SwapBuffers();
+#endif
         }
 
         internal void Log()

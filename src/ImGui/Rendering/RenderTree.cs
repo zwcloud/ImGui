@@ -30,7 +30,7 @@ namespace ImGui.Rendering
             Root.AttachLayoutGroup(true);
         }
 
-        public Node GetNode(int id)
+        public Node GetNodeById(int id)
         {
             return Root.GetNodeById(id);
         }
