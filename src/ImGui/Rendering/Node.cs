@@ -21,7 +21,7 @@ namespace ImGui.Rendering
         public string StrId { get; set; }
 
         /// <summary>
-        /// Dirty flag: Should this node be re-drawn.
+        /// Dirty flag: Should this node be re-drawn, default value: true.
         /// </summary>
         public bool Dirty { get; set; } = true;
 

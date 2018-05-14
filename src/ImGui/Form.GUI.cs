@@ -194,11 +194,7 @@ namespace ImGui
                 {
                     window.RenderTree.Foreach(node =>
                     {
-                        if (node.Dirty)
-                        {
-                            node.Draw(primitiveRenderer);
-                            node.Dirty = false;
-                        }
+                        node.Draw(primitiveRenderer);
                     });
 
                     //rebuild mesh buffer

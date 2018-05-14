@@ -69,7 +69,7 @@ namespace ImGui
             // When reusing window again multiple times a frame, just append content (don't need to setup again)
             if (first_begin_of_the_frame)
             {
-                window.Setup(name, position, size, ref open, bg_alpha, flags, current_frame, parent_window);
+                window.FirstUpdate(name, position, size, ref open, bg_alpha, flags, current_frame, parent_window);
             }
 
             // Inner clipping rectangle
