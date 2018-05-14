@@ -128,6 +128,11 @@ namespace ImGui.Rendering
             }
         }
 
+        public void PathClear()
+        {
+            this.Path.Clear();
+        }
+
         //TODO PathArcTo and other path APIs
     }
 }

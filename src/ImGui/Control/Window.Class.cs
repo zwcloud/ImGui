@@ -339,18 +339,27 @@ namespace ImGui
                     }
                     if (bgColor.A > 0.0f)
                     {
-                        DrawList.AddRectFilled(Position + new Vector(0, TitleBarHeight),
-                            Rect.BottomRight, bgColor, windowRounding,
-                            flags.HaveFlag(WindowFlags.NoTitleBar) ? 15 : 4 | 8);
+                        this.backgroundNode.Brush.FillColor = bgColor;
+                        var primitive = (PathPrimitive)this.backgroundNode.Primitive;
+                        Debug.Assert(primitive != null);
+                        primitive.PathClear();
+                        primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
+                            this.Rect.BottomRight);
                     }
                 }
 
                 // Title bar
                 if (!flags.HaveFlag(WindowFlags.NoTitleBar))
-                    DrawList.AddRectFilled(titleBarRect.TopLeft, titleBarRect.BottomRight,
-                        w.FocusedWindow == this
-                            ? titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active)
-                            : titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor), windowRounding, 1 | 2);
+                {
+                    var brush = this.titleBarNode.Brush;
+                    brush.FillColor = w.FocusedWindow == this
+                        ? titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active)
+                        : titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor);
+
+                    var primitive = (PathPrimitive)this.titleBarNode.Primitive;
+                    Debug.Assert(primitive != null);
+                    primitive.PathRect(titleBarRect.TopLeft, titleBarRect.BottomRight, windowRounding, 1 | 2);
+                }
 
                 // Render resize grip
                 // (after the input handling so we don't have a frame of latency)
