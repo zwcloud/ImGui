@@ -214,10 +214,6 @@ namespace ImGui
             var g = form.uiContext;
             var w = g.WindowManager;
 
-            //record old properties that will make any nodes dirty
-            var oldCollapsed = this.Collapsed;
-            var oldRect = this.Rect;
-
             Active = true;
             BeginCount = 0;
             ClipRect = Rect.Big;
@@ -275,10 +271,7 @@ namespace ImGui
             var titleBarStyle = TitleBarStyle;
             var titleBarRect = TitleBarRect;
             var windowRounding = (float) style.Get<double>(GUIStyleName.WindowRounding);
-            if (Collapsed)
-            {
-            }
-            else
+            if (!Collapsed)
             {
                 var resizeGripColor = Color.Clear;
                 var resizeGripSize = Style.Get<double>(GUIStyleName.ResizeGripSize);
@@ -341,11 +334,15 @@ namespace ImGui
                 {
                     var bgColor = style.BackgroundColor;
                     if (backgroundAlpha >= 0.0f)
+                    {
                         bgColor.A = backgroundAlpha;
+                    }
                     if (bgColor.A > 0.0f)
+                    {
                         DrawList.AddRectFilled(Position + new Vector(0, TitleBarHeight),
                             Rect.BottomRight, bgColor, windowRounding,
                             flags.HaveFlag(WindowFlags.NoTitleBar) ? 15 : 4 | 8);
+                    }
                 }
 
                 // Title bar
