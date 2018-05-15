@@ -231,7 +231,7 @@ namespace ImGui.Rendering
                     builtinPrimitiveRenderer.SetTextMesh(mesh);
 
                     var style = GUIStyle.Default;//FIXME TEMP
-                    renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+                    renderer.DrawText(t, this.Rect, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
                     var foundNode = MeshList.TextMeshes.Find(mesh);
                     if (foundNode == null)
                     {

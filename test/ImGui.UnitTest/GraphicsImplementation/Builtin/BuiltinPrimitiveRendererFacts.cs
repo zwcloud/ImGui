@@ -104,46 +104,10 @@ namespace ImGui.UnitTest.Rendering
             Rect rect = new Rect(10, 10, 500, 40);
             var style = GUIStyle.Default;
 
-            var fontSize = style.FontSize = 32;
-            var fontFamily = style.FontFamily;
-            var fontStyle = style.FontStyle;
-            var fontWeight = style.FontWeight;
-
-            primitive.Offset = (Vector)rect.TopLeft;
-
-            var textContext = new TypographyTextContext(primitive.Text,
-                fontFamily,
-                (float)fontSize,
-                FontStretch.Normal,
-                fontStyle,
-                fontWeight,
-                (int)rect.Size.Width,
-                (int)rect.Size.Height,
-                TextAlignment.Leading);
-            textContext.Build((Point)primitive.Offset);
-
-            primitive.Offsets.AddRange(textContext.GlyphOffsets);
-
-            foreach (var character in primitive.Text)
-            {
-                if (char.IsWhiteSpace(character))
-                {
-                    continue;
-                }
-
-                Typography.OpenFont.Glyph glyph = TypographyTextContext.LookUpGlyph(fontFamily, character);
-                Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
-                GlyphCache.Default.AddGlyph(character, fontFamily, fontStyle, fontWeight, polygons, bezierSegments);
-                var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
-                Debug.Assert(glyphData != null);
-
-                primitive.Glyphs.Add(glyphData);
-            }
-
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             var textMesh = new TextMesh();
             primitiveRenderer.SetTextMesh(textMesh);
-            primitiveRenderer.DrawText(primitive, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+            primitiveRenderer.DrawText(primitive, rect, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
 
             //render text
 

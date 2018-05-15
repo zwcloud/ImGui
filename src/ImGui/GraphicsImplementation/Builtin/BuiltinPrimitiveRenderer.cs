@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
@@ -401,14 +402,47 @@ namespace ImGui.GraphicsImplementation
         /// Draw a text primitive and merge the result to the text mesh.
         /// </summary>
         /// <param name="primitive"></param>
+        /// <param name="rect"></param>
         /// <param name="fontFamily"></param>
         /// <param name="fontSize"></param>
         /// <param name="fontColor"></param>
         /// <param name="fontStyle"></param>
         /// <param name="fontWeight"></param>
-        public void DrawText(TextPrimitive primitive, string fontFamily, double fontSize, Color fontColor,
+        public void DrawText(TextPrimitive primitive, Rect rect, string fontFamily, double fontSize, Color fontColor,
             FontStyle fontStyle, FontWeight fontWeight)
         {
+
+            primitive.Offset = (Vector)rect.TopLeft;
+
+            var textContext = new OSImplentation.TypographyTextContext(primitive.Text,
+                fontFamily,
+                (float)fontSize,
+                FontStretch.Normal,
+                fontStyle,
+                fontWeight,
+                (int)rect.Size.Width,
+                (int)rect.Size.Height,
+                TextAlignment.Leading);
+            textContext.Build((Point)primitive.Offset);
+
+            primitive.Offsets.AddRange(textContext.GlyphOffsets);
+
+            foreach (var character in primitive.Text)
+            {
+                if (char.IsWhiteSpace(character))
+                {
+                    continue;
+                }
+
+                Typography.OpenFont.Glyph glyph = ImGui.OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
+                Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
+                GlyphCache.Default.AddGlyph(character, fontFamily, fontStyle, fontWeight, polygons, bezierSegments);
+                var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
+                Debug.Assert(glyphData != null);
+
+                primitive.Glyphs.Add(glyphData);
+            }
+
             //FIXME Should each text segment consume a draw call? NO!
 
             //add a new draw command
