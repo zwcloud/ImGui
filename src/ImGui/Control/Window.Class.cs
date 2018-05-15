@@ -96,10 +96,7 @@ namespace ImGui
         #region Window original sub nodes
 
         private Node titleBarNode;
-
         private Node frameNode;
-        private Node backgroundNode;
-        private Node borderNode;
 
         #endregion
 
@@ -177,31 +174,50 @@ namespace ImGui
 
             //title bar node
             {
+                var node = new Node();
+                node.StrId = "TitleBar";
+                node.Id = this.GetID(node.StrId);
+                this.titleBarNode = node;
+            }
+            this.IDStack.Push(this.titleBarNode.Id);
+            {
                 Node node = new Node();
-                node.Id = this.GetID(this.Name + "#" + this.ID + "#Titlebar");
+                node.StrId = "Background";
+                node.Id = this.GetID(node.StrId);
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.TitleBarRect.Min, this.TitleBarRect.Max);
                 var brush = new Brush();
                 brush.FillColor = this.TitleBarStyle.Get<Color>(GUIStyleName.BackgroundColor);
                 node.Primitive = primitive;
                 node.Brush = brush;
-                this.titleBarNode = node;
+                this.titleBarNode.Add(node);
             }
+            {
+                var node = new Node();
+                node.StrId = "TitleText";
+                node.Id = this.GetID(node.StrId);
+                var primitive = new TextPrimitive();
+                primitive.Text = this.Name;
+                this.titleBarNode.Add(node);
+            }
+            this.IDStack.Pop();
             this.RenderTree.Root.Add(this.titleBarNode);
 
             //Window frame node
             if(!Collapsed)
             {
-                //create nodes
                 {
                     var node = new Node();
-                    node.Id = this.GetID(this.Name + "#" + this.ID + "#WindowFrame");
+                    node.StrId = "WindowFrame";
+                    node.Id = this.GetID(node.StrId);
                     this.frameNode = node;
                 }
+                this.IDStack.Push(this.titleBarNode.Id);
                 //background
                 {
                     var node = new Node();
-                    node.Id = this.GetID(this.Name + "#" + this.ID + "#WindowBackground");
+                    node.StrId = "Background";
+                    node.Id = this.GetID(node.StrId);
                     var primitive = new PathPrimitive();
                     primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
                         this.Rect.BottomRight);
@@ -209,23 +225,22 @@ namespace ImGui
                     brush.FillColor = this.Style.BackgroundColor;
                     node.Primitive = primitive;
                     node.Brush = brush;
-                    this.backgroundNode = node;
+                    this.frameNode.Add(node);
                 }
                 //border
                 {
                     var node = new Node();
-                    node.Id = this.GetID(this.Name + "#" + this.ID + "WindowBorder");
+                    node.StrId = "WindowBorder";
+                    node.Id = this.GetID(node.StrId);
                     var primitive = new PathPrimitive();
                     primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight), this.Rect.BottomRight);
                     var strokeStyle = new StrokeStyle();
                     node.IsFill = false;
                     node.Primitive = primitive;
                     node.StrokeStyle = strokeStyle;
-                    this.borderNode = node;
+                    this.frameNode.Add(node);
                 }
-                //hierchary
-                this.frameNode.Add(this.backgroundNode);
-                this.frameNode.Add(this.borderNode);
+                this.IDStack.Pop();
                 this.RenderTree.Root.Add(this.frameNode);
             }
 
@@ -371,7 +386,7 @@ namespace ImGui
                     }
                     if (bgColor.A > 0.0f)
                     {
-                        this.backgroundNode.Brush.FillColor = bgColor;
+                        this.GetNodeById().Brush.FillColor = bgColor;
                         var primitive = (PathPrimitive)this.backgroundNode.Primitive;
                         Debug.Assert(primitive != null);
                         primitive.PathClear();
@@ -480,6 +495,7 @@ namespace ImGui
             {
                 // title text
                 var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
+                
                 //DrawList.DrawBoxModel(titleBarRect, name, titleBarStyle, state);
 
                 // close button

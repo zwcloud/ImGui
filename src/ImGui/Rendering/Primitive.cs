@@ -11,7 +11,7 @@ namespace ImGui.Rendering
     internal class Primitive
     {
         /// <summary>
-        /// Offset to the position of the <see cref="Node"/>.
+        /// Offset relative to the position of the <see cref="Node"/>.
         /// </summary>
         public Vector Offset { get; set; }
     }
