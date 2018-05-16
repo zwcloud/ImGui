@@ -136,7 +136,7 @@ namespace ImGui.Rendering
             return null;
         }
 
-        public void Foreach(Action<Node> action)
+        public void Foreach(Func<Node, bool> action)
         {
             if (action == null)
             {
@@ -145,7 +145,10 @@ namespace ImGui.Rendering
 
             foreach (var node in this.Children)
             {
-                action(node);
+                if (!action(node))
+                {
+                    return;
+                }
                 if (node.Children!=null && node.Children.Count != 0)
                 {
                     node.Foreach(action);
@@ -161,10 +164,11 @@ namespace ImGui.Rendering
 
         #region Draw
 
+        internal bool Visible { get; set; } = true;
         internal Primitive Primitive { get; set; }
-        internal bool IsFill { get; set; }
-        internal Brush Brush { get; set; }
-        internal StrokeStyle StrokeStyle { get; set; }
+        internal bool IsFill { get; set; } = false;
+        internal Brush Brush { get; set; } = new Brush();
+        internal StrokeStyle StrokeStyle { get; set; } = new StrokeStyle();
 
         /// <summary>
         /// Redraw the node's primitive.
@@ -173,6 +177,10 @@ namespace ImGui.Rendering
         /// <remarks>A node can only have one single primitive.</remarks>
         public void Draw(IPrimitiveRenderer renderer)
         {
+            if (this.Primitive == null)
+            {
+                return;
+            }
             //TEMP regard all renderer as the built-in renderer
             var builtinPrimitiveRenderer = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(builtinPrimitiveRenderer != null);
@@ -231,7 +239,7 @@ namespace ImGui.Rendering
                     builtinPrimitiveRenderer.SetTextMesh(mesh);
 
                     var style = GUIStyle.Default;//FIXME TEMP
-                    renderer.DrawText(t, this.Rect, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+                    renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
                     var foundNode = MeshList.TextMeshes.Find(mesh);
                     if (foundNode == null)
                     {

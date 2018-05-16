@@ -100,14 +100,13 @@ namespace ImGui.UnitTest.Rendering
         {
             TextPrimitive primitive = new TextPrimitive();
             primitive.Text = "Hello你好こんにちは";
-
-            Rect rect = new Rect(10, 10, 500, 40);
+            primitive.Rect = new Rect(10, 10, 500, 40);
             var style = GUIStyle.Default;
 
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             var textMesh = new TextMesh();
             primitiveRenderer.SetTextMesh(textMesh);
-            primitiveRenderer.DrawText(primitive, rect, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+            primitiveRenderer.DrawText(primitive, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
 
             //render text
 

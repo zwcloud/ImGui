@@ -194,7 +194,13 @@ namespace ImGui
                 {
                     window.RenderTree.Foreach(node =>
                     {
-                        node.Draw(primitiveRenderer);
+                        if (!node.Visible)
+                        {
+                            return false;
+                        }
+
+                        node.Draw(this.primitiveRenderer);
+                        return true;
                     });
 
                     //rebuild mesh buffer

@@ -24,6 +24,11 @@ namespace ImGui
 
         public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha = 1, WindowFlags flags = WindowFlags.VerticalScrollbar)
         {
+            if (bg_alpha < 0.0f)
+            {
+                throw new ArgumentOutOfRangeException(nameof(bg_alpha), nameof(bg_alpha) + " cannot be negative.");
+            }
+
             Form form = Form.current;
             GUIContext g = form.uiContext;
             WindowManager w = g.WindowManager;

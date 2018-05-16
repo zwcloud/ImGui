@@ -408,10 +408,10 @@ namespace ImGui.GraphicsImplementation
         /// <param name="fontColor"></param>
         /// <param name="fontStyle"></param>
         /// <param name="fontWeight"></param>
-        public void DrawText(TextPrimitive primitive, Rect rect, string fontFamily, double fontSize, Color fontColor,
+        public void DrawText(TextPrimitive primitive, string fontFamily, double fontSize, Color fontColor,
             FontStyle fontStyle, FontWeight fontWeight)
         {
-
+            Rect rect = primitive.Rect;
             primitive.Offset = (Vector)rect.TopLeft;
 
             var textContext = new OSImplentation.TypographyTextContext(primitive.Text,
@@ -460,12 +460,11 @@ namespace ImGui.GraphicsImplementation
             // get glyph data from typeface
             foreach (var character in primitive.Text)
             {
-                index++;
                 if (char.IsWhiteSpace(character))
                 {
                     continue;
                 }
-
+                index++;
                 var glyphData = primitive.Glyphs[index];
                 Vector glyphOffset = primitive.Offsets[index];
                 this.TextMesh.Append(primitive.Offset, glyphData, glyphOffset, scale, fontColor, false);

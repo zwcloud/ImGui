@@ -4,6 +4,6 @@ namespace ImGui.GraphicsAbstraction
 {
     internal class StrokeStyle
     {
-        Color Color { get; set; }
+        public Color Color { get; set; }
     }
 }

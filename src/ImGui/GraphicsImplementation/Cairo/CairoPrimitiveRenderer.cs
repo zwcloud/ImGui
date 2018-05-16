@@ -17,7 +17,7 @@ namespace ImGui.GraphicsImplementation
             throw new System.NotImplementedException();
         }
 
-        public void DrawText(TextPrimitive primitive, Rect rect, string fontFamily, double fontSize, Color fontColor,
+        public void DrawText(TextPrimitive primitive, string fontFamily, double fontSize, Color fontColor,
             FontStyle fontStyle, FontWeight fontWeight)
         {
             throw new System.NotImplementedException();

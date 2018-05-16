@@ -9,7 +9,7 @@ namespace ImGui.GraphicsAbstraction
 
         void Fill(Primitive primitive, Brush brush);
 
-        void DrawText(TextPrimitive primitive, Rect rect, string fontFamily, double fontSize, Color fontColor,
+        void DrawText(TextPrimitive primitive, string fontFamily, double fontSize, Color fontColor,
             FontStyle fontStyle, FontWeight fontWeight);
 
         void DrawImage(ImagePrimitive primitive, Brush brush);

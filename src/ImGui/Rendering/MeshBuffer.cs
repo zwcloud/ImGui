@@ -20,6 +20,7 @@ namespace ImGui.Rendering
         public static void Init()
         {
             ShapeMesh.CommandBuffer.Add(DrawCommand.Default);
+            TextMesh.Commands.Add(DrawCommand.Default);
         }
 
         public static void Build()
