@@ -52,6 +52,9 @@ namespace ImGui.Rendering
             Path.Add(pathData);
         }
 
+        public void PathRect(Rect rect, float rounding = 0.0f, int roundingCorners = 0x0F) =>
+            this.PathRect(rect.Min, rect.Max, rounding, roundingCorners);
+
         /// <summary>
         /// Adds a rectangle to the path.
         /// </summary>
