@@ -93,6 +93,8 @@ namespace ImGui
         /// </summary>
         public Stack<int> IDStack { get; set; } = new Stack<int>();
 
+        private Dictionary<string, Node> identifiedNodeMap = new Dictionary<string, Node>(16);
+
         #region Window original sub nodes
 
         private Node titleBarNode;
@@ -178,11 +180,12 @@ namespace ImGui
                 node.StrId = "TitleBar";
                 node.Id = this.GetID(node.StrId);
                 this.titleBarNode = node;
+                this.identifiedNodeMap[node.StrId] = node;
             }
             this.IDStack.Push(this.titleBarNode.Id);
             {
                 Node node = new Node();
-                node.StrId = "Background";
+                node.StrId = "TitleBar_Background";
                 node.Id = this.GetID(node.StrId);
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.TitleBarRect.Min, this.TitleBarRect.Max);
@@ -191,14 +194,16 @@ namespace ImGui
                 node.Primitive = primitive;
                 node.Brush = brush;
                 this.titleBarNode.Add(node);
+                this.identifiedNodeMap[node.StrId] = node;
             }
             {
                 var node = new Node();
-                node.StrId = "TitleText";
+                node.StrId = "TitleBar_Text";
                 node.Id = this.GetID(node.StrId);
                 var primitive = new TextPrimitive();
                 primitive.Text = this.Name;
                 this.titleBarNode.Add(node);
+                this.identifiedNodeMap[node.StrId] = node;
             }
             this.IDStack.Pop();
             this.RenderTree.Root.Add(this.titleBarNode);
@@ -208,15 +213,16 @@ namespace ImGui
             {
                 {
                     var node = new Node();
-                    node.StrId = "WindowFrame";
+                    node.StrId = "Frame";
                     node.Id = this.GetID(node.StrId);
                     this.frameNode = node;
+                    this.identifiedNodeMap[node.StrId] = node;
                 }
                 this.IDStack.Push(this.titleBarNode.Id);
                 //background
                 {
                     var node = new Node();
-                    node.StrId = "Background";
+                    node.StrId = "Frame_Background";
                     node.Id = this.GetID(node.StrId);
                     var primitive = new PathPrimitive();
                     primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
@@ -226,11 +232,12 @@ namespace ImGui
                     node.Primitive = primitive;
                     node.Brush = brush;
                     this.frameNode.Add(node);
+                    this.identifiedNodeMap[node.StrId] = node;
                 }
                 //border
                 {
                     var node = new Node();
-                    node.StrId = "WindowBorder";
+                    node.StrId = "Frame_Border";
                     node.Id = this.GetID(node.StrId);
                     var primitive = new PathPrimitive();
                     primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight), this.Rect.BottomRight);
@@ -239,6 +246,7 @@ namespace ImGui
                     node.Primitive = primitive;
                     node.StrokeStyle = strokeStyle;
                     this.frameNode.Add(node);
+                    this.identifiedNodeMap[node.StrId] = node;
                 }
                 this.IDStack.Pop();
                 this.RenderTree.Root.Add(this.frameNode);
@@ -386,8 +394,9 @@ namespace ImGui
                     }
                     if (bgColor.A > 0.0f)
                     {
-                        this.GetNodeById().Brush.FillColor = bgColor;
-                        var primitive = (PathPrimitive)this.backgroundNode.Primitive;
+                        var node = this.GetNodeByStrId("Frame_Background");
+                        node.Brush.FillColor = bgColor;
+                        var primitive = (PathPrimitive)node.Primitive;
                         Debug.Assert(primitive != null);
                         primitive.PathClear();
                         primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
@@ -398,12 +407,13 @@ namespace ImGui
                 // Title bar
                 if (!flags.HaveFlag(WindowFlags.NoTitleBar))
                 {
-                    var brush = this.titleBarNode.Brush;
+                    var node = this.GetNodeByStrId("TitleBar_Background");
+                    var brush = node.Brush;
                     brush.FillColor = w.FocusedWindow == this
                         ? titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active)
                         : titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor);
 
-                    var primitive = (PathPrimitive)this.titleBarNode.Primitive;
+                    var primitive = (PathPrimitive)node.Primitive;
                     Debug.Assert(primitive != null);
                     primitive.PathRect(titleBarRect.TopLeft, titleBarRect.BottomRight, windowRounding, 1 | 2);
                 }
@@ -516,6 +526,12 @@ namespace ImGui
             // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
             WindowClippedRect = Rect;
             WindowClippedRect.Intersect(ClipRect);
+        }
+
+        private Node GetNodeByStrId(string strId)
+        {
+            this.identifiedNodeMap.TryGetValue(strId, out var node);
+            return node;
         }
 
         /// <summary>
