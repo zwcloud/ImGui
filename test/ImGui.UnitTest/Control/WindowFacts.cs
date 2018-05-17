@@ -29,10 +29,10 @@ namespace ImGui.UnitTest
             [Fact]
             public void TheWindowShouldBeDrawn()
             {
-                bool open = true;
+                //bool open = true;
                 Application.Run(new Form1(() => {
-                    GUI.Begin("test window", ref open);
-                    GUI.End();
+                    //GUI.Begin("test window", ref open);
+                    //GUI.End();
                 }));
             }
         }
