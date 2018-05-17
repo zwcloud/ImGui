@@ -317,10 +317,9 @@ namespace ImGui.UnitTest.Rendering
                         //update nodes
                         foreach (var node in nodes)
                         {
-                            if (node.Dirty)
+                            if (node.Visible)
                             {
                                 node.Draw(primitiveRenderer);
-                                node.Dirty = false;
                             }
                         }
 
@@ -347,6 +346,73 @@ namespace ImGui.UnitTest.Rendering
                         nodes[0].Dirty = true;
                         nodes[1].Brush.FillColor = Color.Orange;
                         nodes[1].Dirty = true;
+                    }
+
+                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            [Fact]
+            public void ShowHideANode()
+            {
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var nodes = new List<Node>();
+                {
+                    Node node = new Node();
+                    nodes.Add(node);
+                    var primitive = new PathPrimitive();
+                    primitive.PathMoveTo(new Point(10, 10));
+                    primitive.PathLineTo(new Point(10, 100));
+                    primitive.PathLineTo(new Point(100, 100));
+                    primitive.PathLineTo(new Point(100, 10));
+                    primitive.PathClose();
+
+                    node.Primitive = primitive;
+                    node.IsFill = true;
+                    node.Brush = new Brush();
+                    node.Brush.FillColor = Color.Red;
+
+                    node.Draw(primitiveRenderer);
+                }
+                var theNode = nodes[0];
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                window.Show();
+
+                while (true)
+                {
+                    window.MainLoop(() =>
+                    {
+                        //update nodes
+                        foreach (var node in nodes)
+                        {
+                            if (node.Visible)
+                            {
+                                node.Draw(primitiveRenderer);
+                            }
+                        }
+
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+                    if (Input.Keyboard.Instance.KeyDown(Key.Space))
+                    {
+                        theNode.Visible = !theNode.Visible;
                     }
 
                     if (Input.Keyboard.Instance.KeyDown(Key.Escape))
