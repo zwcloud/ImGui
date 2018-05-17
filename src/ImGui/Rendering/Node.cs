@@ -7,7 +7,7 @@ using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
-    [DebuggerDisplay("#{" + nameof(Id) + "}")]
+    [DebuggerDisplay("#{" + nameof(Id) + "} " + "{" + nameof(StrId) +"}")]
     internal partial class Node
     {
         /// <summary>
@@ -136,22 +136,19 @@ namespace ImGui.Rendering
             return null;
         }
 
-        public void Foreach(Func<Node, bool> action)
+        public void Foreach(Func<Node, bool> func)
         {
-            if (action == null)
+            if (func == null)
             {
                 throw new ArgumentNullException();
             }
 
             foreach (var node in this.Children)
             {
-                if (!action(node))
+                var continueWithChildren = func(node);
+                if (continueWithChildren && node.Children!=null && node.Children.Count != 0)
                 {
-                    return;
-                }
-                if (node.Children!=null && node.Children.Count != 0)
-                {
-                    node.Foreach(action);
+                    node.Foreach(func);
                 }
             }
         }

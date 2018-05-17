@@ -37,22 +37,7 @@ namespace ImGui.Rendering
 
         public void Foreach(Func<Node, bool> func)
         {
-            if (func == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            foreach (var node in Root.Children)
-            {
-                if (!func(node))
-                {
-                    return;
-                }
-                if (node.Children!=null && node.Children.Count != 0)
-                {
-                    node.Foreach(func);
-                }
-            }
+            Root.Foreach(func);
         }
     }
 }
