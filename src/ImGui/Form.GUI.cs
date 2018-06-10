@@ -45,7 +45,7 @@ namespace ImGui
             }
 
             #region Input
-            // Process input
+
             #region mouse position
             if (Mouse.Instance.Position.X < 0 && Mouse.Instance.Position.Y < 0)
                 Mouse.Instance.Position = new Point(-9999.0f, -9999.0f);
@@ -136,6 +136,19 @@ namespace ImGui
             Mouse.Instance.MouseWheel = 0;
             Ime.ImeBuffer.Clear();
 
+            
+            #region keyborad
+            //save current key states to last key states
+            var lastKeyStates = Keyboard.Instance.lastKeyStates;
+            var keyStates = Keyboard.Instance.keyStates;
+            for (var i = 0; i < keyStates.Length; i++)
+            {
+                var keyState = keyStates[i];
+                lastKeyStates[i] = keyState;
+            }
+
+            #endregion
+
             g.FrameCountEnded = g.FrameCount;
         }
 
@@ -169,23 +182,6 @@ namespace ImGui
                 EndFrame();
             g.FrameCountRendered = g.FrameCount;
 
-#if old_draw_list
-            this.renderer.Clear(this.BackgroundColor);
-            foreach (var window in w.Windows)
-            {
-                if(window.Active)
-                {
-                    this.renderer.RenderDrawList(window.DrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
-                }
-            }
-
-            this.renderer.RenderDrawList(this.OverlayDrawList, (int)this.ClientSize.Width, (int)this.ClientSize.Height);
-            this.OverlayDrawList.Clear();
-            this.OverlayDrawList.Init();
-
-            this.renderer.SwapBuffers();
-
-#else//render-tree approach
             var openGLRenderer = (Win32OpenGLRenderer) renderer;//FIXME TEMP
             openGLRenderer.Clear(this.BackgroundColor);
             foreach (var window in w.Windows)
@@ -213,7 +209,6 @@ namespace ImGui
                 }
             }
             openGLRenderer.SwapBuffers();
-#endif
         }
 
         internal void Log()

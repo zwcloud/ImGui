@@ -358,6 +358,9 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void ShowHideANode()
             {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 {
@@ -391,6 +394,26 @@ namespace ImGui.UnitTest.Rendering
                 {
                     window.MainLoop(() =>
                     {
+                        if (Input.Keyboard.Instance.KeyPressed(Key.Space))
+                        {
+                            theNode.Visible = !theNode.Visible;
+                            Log.Msg("Key.Space Pressed");
+                        }
+
+                        if (Input.Keyboard.Instance.KeyDown(Key.Space))
+                        {
+                            //Log.Msg("KeySpace Down");
+                        }
+                        else
+                        {
+                            //Log.Msg("KeySpace Up");
+                        }
+
+                        if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
                         //update nodes
                         foreach (var node in nodes)
                         {
@@ -410,15 +433,6 @@ namespace ImGui.UnitTest.Rendering
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
-                    if (Input.Keyboard.Instance.KeyDown(Key.Space))
-                    {
-                        theNode.Visible = !theNode.Visible;
-                    }
-
-                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
-                    {
-                        break;
-                    }
                 }
             }
         }

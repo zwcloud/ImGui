@@ -58,11 +58,12 @@ namespace ImGui
             // load logger
             if (IsRunningInUnitTest)
             {
-                Logger = new DebugLogger();
+                Logger = new EchoLogger();
+                EchoLogger.Show();
             }
             else
             {
-                Logger = new DefaultLogger();
+                Logger = new DebugLogger();
             }
             Log.Init(Logger);
 
@@ -114,6 +115,7 @@ namespace ImGui
                 }
                 _deltaTime = Time - _frameStartTime;
             }
+
         }
 
         public static void Init(Form mainForm)
@@ -148,6 +150,10 @@ namespace ImGui
         /// </summary>
         public static void Quit()
         {
+            if (IsRunningInUnitTest)
+            {
+                EchoLogger.Close();
+            }
             RequestQuit = true;
         }
 
