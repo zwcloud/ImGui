@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.Core;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
@@ -30,7 +31,7 @@ namespace ImGui
             }
 
             // Time
-            g.DeltaTime = Application.DeltaTime;
+            g.DeltaTime = Time.deltaTime;
             g.Time += g.DeltaTime;
             g.FrameCount++;
 

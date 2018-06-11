@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ImGui.Core;
 
 namespace ImGui
 {
@@ -29,32 +30,10 @@ namespace ImGui
         internal static OSAbstraction.PlatformContext PlatformContext;
         private static readonly Stopwatch _applicationWatch = new Stopwatch();
 
-        /// <summary>
-        /// The time in ms since the application started.
-        /// </summary>
-        internal static long Time
-        {
-            get
-            {
-                if(!_applicationWatch.IsRunning)
-                {
-                    throw new InvalidOperationException(
-                        "The application's time cannot be obtained because it isn't running. Call Application.Run to run it first.");
-                }
-                return _applicationWatch.ElapsedMilliseconds;
-            }
-        }
-
-        private static long _frameStartTime;
-        private static long _deltaTime;
-
-        /// <summary>
-        /// The time in ms it took to complete the last frame
-        /// </summary>
-        public static long DeltaTime => _deltaTime;
-
         internal static void InitSysDependencies()
         {
+            Time.Init();
+
             // load logger
             if (IsRunningInUnitTest)
             {
@@ -103,7 +82,7 @@ namespace ImGui
 
             while (!mainForm.Closed)
             {
-                _frameStartTime = Time;
+                Time.OnFrameBegin();
 
                 foreach (Form childForm in Forms)
                 {
@@ -113,7 +92,8 @@ namespace ImGui
                 {
                     break;
                 }
-                _deltaTime = Time - _frameStartTime;
+
+                Time.OnFrameEnd();
             }
 
         }
@@ -126,22 +106,18 @@ namespace ImGui
                 throw new ArgumentNullException(nameof(mainForm));
             }
 
-            //Time
-            _applicationWatch.Start();
-
             Forms.Add(mainForm);
 
             //Show main form
             mainForm.Show();
 
-            _frameStartTime = Time;
         }
 
         public static void RunLoop(Form form)
         {
-            _frameStartTime = Time;
+            Time.OnFrameBegin();
             form.MainLoop(form.GUILoop);
-            _deltaTime = Time - _frameStartTime;
+            Time.OnFrameEnd();
         }
 
 

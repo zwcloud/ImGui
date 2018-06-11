@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ImGui.Common.Primitive;
+using ImGui.Core;
 using ImGui.Input;
 using ImGui.OSAbstraction.Text;
 
@@ -402,13 +403,13 @@ namespace ImGui
             {
                 if (HoldAlpha && holdingTime < 100)
                 {
-                    holdingTime += Application.DeltaTime;
+                    holdingTime += Time.deltaTime;
                     return 255;
                 }
 
                 HoldAlpha = false;
                 holdingTime = 0;
-                var result = (byte)(Application.Time % 1060 / 1060.0f * 255);
+                var result = (byte)(Time.time % 1060 / 1060.0f * 255);
                 result = (byte)(result < 100 ? 0 : 255);
                 return result;
             }

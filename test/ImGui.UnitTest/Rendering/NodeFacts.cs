@@ -7,6 +7,7 @@ using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
+using ImGui.Core;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -392,6 +393,7 @@ namespace ImGui.UnitTest.Rendering
 
                 while (true)
                 {
+                    Time.OnFrameBegin();
                     window.MainLoop(() =>
                     {
                         if (Input.Keyboard.Instance.KeyPressed(Key.Space))
@@ -433,6 +435,13 @@ namespace ImGui.UnitTest.Rendering
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
+                    
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Time.OnFrameEnd();
                 }
             }
         }
