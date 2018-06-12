@@ -1,13 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Net;
+using System.Net.Sockets;
 
 namespace ImGui.UnitTest
 {
     public static class Util
     {
+        public static void CheckEchoLogger()
+        {
+            var processes = Process.GetProcessesByName("EchoLogger.Server");
+            if (processes.Length == 0)
+            {
+                throw new InvalidOperationException("EchoLogger.Server not started.");
+            }
+        }
+
         public static void SelectFile(string path)
         {
             if (!Directory.Exists(path))

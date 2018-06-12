@@ -8,12 +8,13 @@ namespace ImGui.UnitTest
 {
     public class KeyboardFacts
     {
-
         public class TheKeypressedMethod
         {
             [Fact]
             public void KeypressedIsWorking()
             {
+                Util.CheckEchoLogger();
+
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
