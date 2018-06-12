@@ -137,19 +137,6 @@ namespace ImGui
             Mouse.Instance.MouseWheel = 0;
             Ime.ImeBuffer.Clear();
 
-            
-            #region keyborad
-            //save current key states to last key states
-            var lastKeyStates = Keyboard.Instance.lastKeyStates;
-            var keyStates = Keyboard.Instance.keyStates;
-            for (var i = 0; i < keyStates.Length; i++)
-            {
-                var keyState = keyStates[i];
-                lastKeyStates[i] = keyState;
-            }
-
-            #endregion
-
             g.FrameCountEnded = g.FrameCount;
         }
 
