@@ -37,7 +37,7 @@ namespace ImGui
             {
                 return;
             }
-            Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes(message+'\n');
             stream.Write(data, 0, data.Length);
         }
 
