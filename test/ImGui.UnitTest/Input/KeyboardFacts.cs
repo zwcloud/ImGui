@@ -1,4 +1,5 @@
-﻿using ImGui.Common.Primitive;
+﻿using System.Threading;
+using ImGui.Common.Primitive;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
 using ImGui.Core;
@@ -13,7 +14,7 @@ namespace ImGui.UnitTest
             [Fact]
             public void KeypressedIsWorking()
             {
-                Util.CheckEchoLogger();
+                //Util.CheckEchoLogger();
 
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
@@ -33,16 +34,16 @@ namespace ImGui.UnitTest
                     {
                         if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
-                            //Log.Msg("Key.Space Pressed");
+                            Log.Msg("Key.Space Pressed");
                         }
 
                         if (Keyboard.Instance.KeyDown(Key.Space))
                         {
-                            Log.Msg("KeySpace Down");
+                            //Log.Msg("KeySpace Down");
                         }
                         else
                         {
-                            Log.Msg("KeySpace Up");
+                            //Log.Msg("KeySpace Up");
                         }
 
                         if (Keyboard.Instance.KeyDown(Key.Escape))
@@ -55,6 +56,8 @@ namespace ImGui.UnitTest
                     {
                         break;
                     }
+
+                    Thread.Sleep(16);
 
                     Time.OnFrameEnd();
                 }
