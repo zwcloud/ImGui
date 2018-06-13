@@ -130,5 +130,20 @@ namespace ImGui.Input
             }
             return false;
         }
+
+        public void OnFrameBegin()
+        {
+        }
+
+        public void OnFrameEnd()
+        {
+            //save current key states to last key states
+            for (var i = 0; i < keyStates.Length; i++)
+            {
+                lastKeyStates[i] = keyStates[i];
+            }
+        }
+
+
     }
 }

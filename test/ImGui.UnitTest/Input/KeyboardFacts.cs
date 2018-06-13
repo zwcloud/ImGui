@@ -30,21 +30,16 @@ namespace ImGui.UnitTest
                 while (true)
                 {
                     Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
                     window.MainLoop(() =>
                     {
                         if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
                             Log.Msg("Key.Space Pressed");
                         }
-
-                        if (Keyboard.Instance.KeyDown(Key.Space))
-                        {
-                            //Log.Msg("KeySpace Down");
-                        }
-                        else
-                        {
-                            //Log.Msg("KeySpace Up");
-                        }
+                        
+                        Log.Msg("Key.Space "+Keyboard.Instance.keyStates[(int) Key.Space] + ", last Key.Space " + Keyboard.Instance.lastKeyStates[(int) Key.Space]);
 
                         if (Keyboard.Instance.KeyDown(Key.Escape))
                         {
@@ -58,7 +53,8 @@ namespace ImGui.UnitTest
                     }
 
                     Thread.Sleep(16);
-
+                    
+                    Keyboard.Instance.OnFrameEnd();
                     Time.OnFrameEnd();
                 }
             }

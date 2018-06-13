@@ -399,16 +399,16 @@ namespace ImGui.UnitTest.Rendering
                         if (Input.Keyboard.Instance.KeyPressed(Key.Space))
                         {
                             theNode.Visible = !theNode.Visible;
-                            Log.Msg("Key.Space Pressed");
+                            //Log.Msg("Key.Space Pressed");
                         }
 
                         if (Input.Keyboard.Instance.KeyDown(Key.Space))
                         {
-                            //Log.Msg("KeySpace Down");
+                            Log.Msg("KeySpace Down");
                         }
                         else
                         {
-                            //Log.Msg("KeySpace Up");
+                            Log.Msg("KeySpace Up");
                         }
 
                         if (Input.Keyboard.Instance.KeyDown(Key.Escape))

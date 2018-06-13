@@ -136,6 +136,7 @@ namespace ImGui
             // Clear Input data for next frame
             Mouse.Instance.MouseWheel = 0;
             Ime.ImeBuffer.Clear();
+            
 
             g.FrameCountEnded = g.FrameCount;
         }
