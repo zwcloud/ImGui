@@ -394,24 +394,16 @@ namespace ImGui.UnitTest.Rendering
                 while (true)
                 {
                     Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
                     window.MainLoop(() =>
                     {
-                        if (Input.Keyboard.Instance.KeyPressed(Key.Space))
+                        if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
                             theNode.Visible = !theNode.Visible;
-                            //Log.Msg("Key.Space Pressed");
+                            Log.Msg("Key.Space Pressed. theNode becomes " + (theNode.Visible ? "visible" : "invisible"));
                         }
 
-                        if (Input.Keyboard.Instance.KeyDown(Key.Space))
-                        {
-                            Log.Msg("KeySpace Down");
-                        }
-                        else
-                        {
-                            Log.Msg("KeySpace Up");
-                        }
-
-                        if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
                         {
                             Application.Quit();
                         }
@@ -440,7 +432,8 @@ namespace ImGui.UnitTest.Rendering
                     {
                         break;
                     }
-
+                    
+                    Keyboard.Instance.OnFrameEnd();
                     Time.OnFrameEnd();
                 }
             }
