@@ -20,7 +20,7 @@ namespace ImGui
         private int idxWritePosition;
         private int currentIdx;
         
-        public bool Visible { get; set; }
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// vertex buffer
