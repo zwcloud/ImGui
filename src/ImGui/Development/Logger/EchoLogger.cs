@@ -22,6 +22,7 @@ namespace ImGui
 
         public static void Close()
         {
+            SendMessage("q\n");
             stream.Close();
             client.Close();
         }
@@ -31,7 +32,7 @@ namespace ImGui
             //dummy
         }
 
-        private void SendMessage(string message)
+        private static void SendMessage(string message)
         {
             if (!stream.CanWrite)
             {
