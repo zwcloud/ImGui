@@ -409,9 +409,6 @@ namespace ImGui.UnitTest.Rendering
                         }
 
                         //update nodes
-                        MeshList.ShapeMeshes.Clear();
-                        MeshList.ImageMeshes.Clear();
-                        MeshList.TextMeshes.Clear();
                         foreach (var node in nodes)
                         {
                             if (node.Visible)

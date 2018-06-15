@@ -27,15 +27,24 @@ namespace ImGui.Rendering
         {
             foreach (var mesh in MeshList.ShapeMeshes)
             {
-                ShapeMesh.Append(mesh);
+                if (mesh.Visible)
+                {
+                    ShapeMesh.Append(mesh);
+                }
             }
             foreach (var mesh in MeshList.ImageMeshes)
             {
-                ImageMesh.Append(mesh);
+                if (mesh.Visible)
+                {
+                    ImageMesh.Append(mesh);
+                }
             }
             foreach (var textMesh in MeshList.TextMeshes)
             {
-                TextMesh.Append(textMesh, Vector.Zero);
+                if (textMesh.Visible)
+                {
+                    TextMesh.Append(textMesh, Vector.Zero);
+                }
             }
         }
     }

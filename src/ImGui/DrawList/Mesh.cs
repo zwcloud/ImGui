@@ -10,6 +10,8 @@ namespace ImGui
         private int idxWritePosition;
         public int currentIdx;
 
+        public bool Visible { get; set; }
+
         /// <summary>
         /// Commands. Typically 1 command = 1 gpu draw call.
         /// </summary>

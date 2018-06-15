@@ -19,6 +19,8 @@ namespace ImGui
         private int vtxWritePosition;
         private int idxWritePosition;
         private int currentIdx;
+        
+        public bool Visible { get; set; }
 
         /// <summary>
         /// vertex buffer

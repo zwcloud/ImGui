@@ -161,7 +161,19 @@ namespace ImGui.Rendering
 
         #region Draw
 
-        internal bool Visible { get; set; } = true;
+        internal bool Visible
+        {
+            get => this.visible;
+            set
+            {
+                this.visible = value;
+                if (this.RenderContext is Mesh mesh)
+                {
+                    mesh.Visible = value;
+                }
+            }
+        }
+
         internal Primitive Primitive { get; set; }
         internal bool IsFill { get; set; } = false;
         internal Brush Brush { get; set; } = new Brush();
@@ -287,5 +299,7 @@ namespace ImGui.Rendering
         /// This object is used as the context between the node and _Layer 4 basic rendering API implementation_.
         /// </remarks>
         internal object RenderContext;
+
+        private bool visible = true;
     }
 }
