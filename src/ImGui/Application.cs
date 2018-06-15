@@ -133,7 +133,10 @@ namespace ImGui
             RequestQuit = true;
         }
 
-        public static bool IsRunningInUnitTest { get; set; } = false;
+        /// <summary>
+        /// Helper property for the unit-test.
+        /// </summary>
+        internal static bool IsRunningInUnitTest { get; set; } = false;
 
         internal static ILogger Logger;
     }
