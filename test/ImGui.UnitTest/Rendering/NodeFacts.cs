@@ -152,6 +152,11 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawANode()
             {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
                 Node node = new Node();
 
                 var primitive = new PathPrimitive();
@@ -165,10 +170,6 @@ namespace ImGui.UnitTest.Rendering
                 node.IsFill = true;
                 node.Brush = new Brush();
                 
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-                var mesh = new Mesh();
-                mesh.CommandBuffer.Add(DrawCommand.Default);
-                primitiveRenderer.SetShapeMesh(mesh);
                 node.Draw(primitiveRenderer);
 
                 var window = new Win32Window();
@@ -176,65 +177,19 @@ namespace ImGui.UnitTest.Rendering
 
                 var renderer = new Win32OpenGLRenderer();
                 renderer.Init(window.Pointer, window.ClientSize);
-
-                while (true)
-                {
-                    window.MainLoop(() =>
-                    {
-                        //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
-                        renderer.SwapBuffers();
-                    });
-                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
-                    {
-                        break;
-                    }
-                }
-            }
-
-            [Fact]
-            public void UpdateANode()
-            {
-                Node node = new Node();
-
-                var primitive = new PathPrimitive();
-                primitive.PathMoveTo(new Point(10, 10));
-                primitive.PathLineTo(new Point(10, 100));
-                primitive.PathLineTo(new Point(100, 100));
-                primitive.PathLineTo(new Point(100, 10));
-                primitive.PathClose();
-
-                node.Primitive = primitive;
-                node.IsFill = true;
-                node.Brush = new Brush();
                 
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-                var mesh = new Mesh();
-                mesh.CommandBuffer.Add(DrawCommand.Default);
-                primitiveRenderer.SetShapeMesh(mesh);
-                node.Draw(primitiveRenderer);
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
+                window.Show();
 
                 while (true)
                 {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
                     window.MainLoop(() =>
                     {
-                        //update nodes
-                        if (node.Dirty)
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
                         {
-                            node.Draw(primitiveRenderer);
-                            node.Dirty = false;
+                            Application.Quit();
                         }
 
                         //rebuild mesh buffer
@@ -247,27 +202,106 @@ namespace ImGui.UnitTest.Rendering
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
-                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad1))
-                    {
-                        node.Brush.FillColor = Color.Red;
-                        node.Dirty = true;
-                    }
-                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad2))
-                    {
-                        node.Brush.FillColor = Color.Blue;
-                        node.Dirty = true;
-                    }
 
-                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    if (Application.RequestQuit)
                     {
                         break;
                     }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+
+            [Fact]
+            public void UpdateANode()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+                
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+                Node node = new Node();
+                
+                var primitive = new PathPrimitive();
+                primitive.PathMoveTo(new Point(10, 10));
+                primitive.PathLineTo(new Point(10, 100));
+                primitive.PathLineTo(new Point(100, 100));
+                primitive.PathLineTo(new Point(100, 10));
+                primitive.PathClose();
+                
+                node.Primitive = primitive;
+                node.IsFill = true;
+                node.Brush = new Brush();
+
+                node.Draw(primitiveRenderer);
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+                
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.D1))
+                        {
+                            node.Brush.FillColor = Color.Red;
+                        }
+                        if (Keyboard.Instance.KeyDown(Key.D2))
+                        {
+                            node.Brush.FillColor = Color.Green;
+                        }
+                        if (Keyboard.Instance.KeyDown(Key.D3))
+                        {
+                            node.Brush.FillColor = Color.Blue;
+                        }
+
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        //update nodes
+                        if (node.Visible)//this is actually always true
+                        {
+                            node.Draw(primitiveRenderer);
+                        }
+
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+                    
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
                 }
             }
             
             [Fact]
             public void UpdateTwoNode()
             {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 {
@@ -313,8 +347,27 @@ namespace ImGui.UnitTest.Rendering
 
                 while (true)
                 {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
                     window.MainLoop(() =>
                     {
+                        if (Keyboard.Instance.KeyDown(Key.NumPad1))
+                        {
+                            nodes[0].Brush.FillColor = Color.Red;
+                            nodes[1].Brush.FillColor = Color.Blue;
+                        }
+                        if (Keyboard.Instance.KeyDown(Key.NumPad2))
+                        {
+                            nodes[0].Brush.FillColor = Color.Green;
+                            nodes[1].Brush.FillColor = Color.Orange;
+                        }
+
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
                         //update nodes
                         foreach (var node in nodes)
                         {
@@ -334,25 +387,14 @@ namespace ImGui.UnitTest.Rendering
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
-                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad1))
-                    {
-                        nodes[0].Brush.FillColor = Color.Red;
-                        nodes[0].Dirty = true;
-                        nodes[1].Brush.FillColor = Color.Blue;
-                        nodes[1].Dirty = true;
-                    }
-                    if (Input.Keyboard.Instance.KeyDown(Key.NumPad2))
-                    {
-                        nodes[0].Brush.FillColor = Color.Green;
-                        nodes[0].Dirty = true;
-                        nodes[1].Brush.FillColor = Color.Orange;
-                        nodes[1].Dirty = true;
-                    }
 
-                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    if (Application.RequestQuit)
                     {
                         break;
                     }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
                 }
             }
 
