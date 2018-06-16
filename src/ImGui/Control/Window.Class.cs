@@ -219,7 +219,7 @@ namespace ImGui
                 this.frameNode = node;
                 this.identifiedNodeMap[node.StrId] = node;
             }
-            this.IDStack.Push(this.titleBarNode.Id);
+            this.IDStack.Push(this.frameNode.Id);
             //background
             {
                 var node = new Node();
@@ -365,6 +365,7 @@ namespace ImGui
             if (this.Collapsed)
             {
                 //TODO need to do something here?
+
             }
             else//show and update window frame
             {

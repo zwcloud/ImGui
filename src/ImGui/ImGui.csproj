@@ -72,6 +72,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="*.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Style\GUIStyle.Option.cs" />
   </ItemGroup>
 

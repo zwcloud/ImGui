@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Core;
+using ImGui.Input;
 
 namespace ImGui
 {
@@ -83,6 +84,7 @@ namespace ImGui
             while (!mainForm.Closed)
             {
                 Time.OnFrameBegin();
+                Keyboard.Instance.OnFrameBegin();
 
                 foreach (Form childForm in Forms)
                 {
@@ -92,7 +94,8 @@ namespace ImGui
                 {
                     break;
                 }
-
+                
+                Keyboard.Instance.OnFrameEnd();
                 Time.OnFrameEnd();
             }
 
@@ -116,7 +119,9 @@ namespace ImGui
         public static void RunLoop(Form form)
         {
             Time.OnFrameBegin();
+            Keyboard.Instance.OnFrameBegin();
             form.MainLoop(form.GUILoop);
+            Keyboard.Instance.OnFrameEnd();
             Time.OnFrameEnd();
         }
 
