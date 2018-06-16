@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ImGui.Common;
 using System.Runtime.CompilerServices;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -11,6 +12,8 @@ namespace ImGui
         public int currentIdx;
 
         public bool Visible { get; set; } = true;
+
+        public Node Node { get; set; }
 
         /// <summary>
         /// Commands. Typically 1 command = 1 gpu draw call.

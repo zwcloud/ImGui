@@ -179,7 +179,7 @@ namespace ImGui
                 {
                     window.RenderTree.Foreach(node =>
                     {
-                        if (!node.Visible)
+                        if (!node.ActiveInTree)
                         {
                             return false;
                         }

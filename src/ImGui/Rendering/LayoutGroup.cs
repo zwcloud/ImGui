@@ -132,6 +132,7 @@ namespace ImGui.Rendering
                 item.VerticalStretchFactor = 0;
             }
 
+            item.Parent = this;
             this.Entries.Add(item);
         }
 

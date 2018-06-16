@@ -7,7 +7,7 @@ using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
-    [DebuggerDisplay("#{" + nameof(Id) + "} " + "{" + nameof(StrId) +"}")]
+    [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(StrId) +"}")]
     internal partial class Node
     {
         /// <summary>
@@ -19,11 +19,6 @@ namespace ImGui.Rendering
         /// string identifier of the node
         /// </summary>
         public string StrId { get; set; }
-
-        /// <summary>
-        /// Dirty flag: Should this node be re-drawn, default value: true.
-        /// </summary>
-        public bool Dirty { get; set; } = true;
 
         /// <summary>
         /// border-box, the layout result
@@ -161,12 +156,41 @@ namespace ImGui.Rendering
 
         #region Draw
 
-        internal bool Visible
+        internal bool ActiveInTree
         {
-            get => this.visible;
+            get
+            {
+                //already deactived
+                if (!ActiveSelf)
+                {
+                    return false;
+                }
+
+                //check if all ancestors are active
+                Node ancestorNode = this;
+                do
+                {
+                    ancestorNode = ancestorNode.Parent;
+                    if (ancestorNode == null)
+                    {
+                        break;
+                    }
+                    if (!ancestorNode.ActiveSelf)
+                    {
+                        return false;
+                    }
+                } while (ancestorNode.ActiveSelf);
+
+                return true;
+            }
+        }
+
+        internal bool ActiveSelf
+        {
+            get => this.activeSelf;
             set
             {
-                this.visible = value;
+                this.activeSelf = value;
                 if (this.RenderContext is Mesh mesh)
                 {
                     mesh.Visible = value;
@@ -208,8 +232,10 @@ namespace ImGui.Rendering
                     {
                         mesh = (Mesh) this.RenderContext;
                     }
+                    
                     mesh.Clear();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
+                    mesh.Node = this;
 
                     builtinPrimitiveRenderer.SetShapeMesh(mesh);
 
@@ -244,8 +270,8 @@ namespace ImGui.Rendering
                         mesh = (TextMesh) this.RenderContext;
                     }
                     mesh.Clear();
-                    
                     builtinPrimitiveRenderer.SetTextMesh(mesh);
+                    mesh.Node = this;
 
                     var style = GUIStyle.Default;//FIXME TEMP
                     renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
@@ -271,9 +297,10 @@ namespace ImGui.Rendering
                     {
                         mesh = (Mesh) this.RenderContext;
                     }
+
                     mesh.Clear();
-                    
                     builtinPrimitiveRenderer.SetImageMesh(mesh);
+                    mesh.Node = this;
 
                     renderer.DrawImage(i, this.Brush);
                     var foundNode = MeshList.ImageMeshes.Find(mesh);
@@ -300,6 +327,6 @@ namespace ImGui.Rendering
         /// </remarks>
         internal object RenderContext;
 
-        private bool visible = true;
+        private bool activeSelf = true;
     }
 }

@@ -3,6 +3,7 @@ using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Text;
 using System.Runtime.CompilerServices;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -21,6 +22,8 @@ namespace ImGui
         private int currentIdx;
         
         public bool Visible { get; set; } = true;
+        
+        public Node Node { get; set; }
 
         /// <summary>
         /// vertex buffer

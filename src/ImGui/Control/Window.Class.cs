@@ -253,8 +253,8 @@ namespace ImGui
             this.IDStack.Pop();
             this.RenderTree.Root.Add(this.frameNode);
 
-            this.titleBarNode.Visible = true;
-            this.frameNode.Visible = !this.Collapsed;
+            this.titleBarNode.ActiveSelf = true;
+            this.frameNode.ActiveSelf = !this.Collapsed;
         }
 
         public void FirstUpdate(string name, Point position, Size size, ref bool open, double backgroundAlpha,
@@ -361,7 +361,7 @@ namespace ImGui
                 }
             }
 
-            this.frameNode.Visible = !this.Collapsed;
+            this.frameNode.ActiveSelf = !this.Collapsed;
             if (this.Collapsed)
             {
                 //TODO need to do something here?

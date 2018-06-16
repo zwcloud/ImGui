@@ -270,7 +270,7 @@ namespace ImGui.UnitTest.Rendering
                         }
 
                         //update nodes
-                        if (node.Visible)//this is actually always true
+                        if (node.ActiveInTree)//this is actually always true
                         {
                             node.Draw(primitiveRenderer);
                         }
@@ -371,7 +371,7 @@ namespace ImGui.UnitTest.Rendering
                         //update nodes
                         foreach (var node in nodes)
                         {
-                            if (node.Visible)
+                            if (node.ActiveInTree)
                             {
                                 node.Draw(primitiveRenderer);
                             }
@@ -441,8 +441,8 @@ namespace ImGui.UnitTest.Rendering
                     {
                         if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
-                            theNode.Visible = !theNode.Visible;
-                            Log.Msg("Key.Space Pressed. theNode becomes " + (theNode.Visible ? "visible" : "invisible"));
+                            theNode.ActiveSelf = !theNode.ActiveSelf;
+                            Log.Msg("Key.Space Pressed. theNode becomes " + (theNode.ActiveSelf ? "visible" : "invisible"));
                         }
 
                         if (Keyboard.Instance.KeyDown(Key.Escape))
@@ -453,7 +453,7 @@ namespace ImGui.UnitTest.Rendering
                         //update nodes
                         foreach (var node in nodes)
                         {
-                            if (node.Visible)
+                            if (node.ActiveInTree)
                             {
                                 node.Draw(primitiveRenderer);
                             }
