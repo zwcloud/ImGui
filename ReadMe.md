@@ -1,4 +1,4 @@
-__Note__: ImGui is being heavily refactored to employ a render-tree based architecture, so most features described below are not working for now. If you are interested in a working ImGui implementation, check out the old version, that rebuilds and repaints everything, is at [commit 80ab55](https://github.com/zwcloud/ImGui/tree/80ab55b73c8857a328949ef5e13415d202f0c34d).
+__Note__: ImGui is being heavily refactored to employ a render-tree based architecture, so most features described below are not working for now. If you are interested in a working ImGui implementation, check out [the old version](https://github.com/zwcloud/ImGui/tree/80ab55b73c8857a328949ef5e13415d202f0c34d), that rebuilds and repaints everything every frame.
 
 Hello ImGui,
 ============
