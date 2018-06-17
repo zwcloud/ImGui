@@ -1,3 +1,5 @@
+NOTE: ImGui is being actively developed on the branch [render_tree](https://github.com/zwcloud/ImGui/tree/render_tree).
+
 Hello ImGui,
 =====
 
