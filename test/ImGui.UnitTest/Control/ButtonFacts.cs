@@ -1,22 +1,25 @@
-﻿using Xunit;
+﻿using ImGui.Common.Primitive;
+using Xunit;
 
 namespace ImGui.UnitTest
 {
     public partial class GUIFacts
     {
-        public class TheBeginEndMethods
+        public class TheButtonMethod
         {
             [Fact]
-            public void TheWindowShouldBeDrawn()
+            public void ShowAButton()
             {
+                Application.IsRunningInUnitTest = true;
                 Application.Init();
 
                 var form = new MainForm();
-                bool open = true;
                 form.OnGUIAction = () =>
                 {
-                    GUI.Begin("test window", ref open);
-                    GUI.End();
+                    if (GUI.Button(new Rect(5, 5, 100, 30), "Apply"))
+                    {
+                        Log.Msg("clicked");
+                    }
                 };
 
                 Application.Run(form);

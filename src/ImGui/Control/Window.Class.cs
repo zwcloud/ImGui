@@ -100,6 +100,8 @@ namespace ImGui
         private Node titleBarNode;
         private Node frameNode;
 
+        public Node FrameNode => this.frameNode;
+
         #endregion
 
         public Window(string name, Point position, Size size, WindowFlags Flags)

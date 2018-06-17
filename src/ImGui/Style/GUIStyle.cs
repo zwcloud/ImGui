@@ -660,6 +660,9 @@ namespace ImGui
                 Get<double>(GUIStyleName.BorderBottomLeftRadius)
             );
 
+        /// <summary>
+        /// Get the border color. Throws InvalidOperationException when all borders' colors are not the same.
+        /// </summary>
         public Color GetBorderColor(GUIState state)
         {
             //TODO check if all border color under state is the same

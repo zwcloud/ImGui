@@ -109,6 +109,7 @@ namespace ImGui.Rendering
 
         public List<Node> Children { get; set; }
 
+        //TODO maybe we should use an extra dictionary to retrive node by id, O(1) but occupies more memory
         public Node GetNodeById(int id)
         {
             if (this.Children == null)
@@ -250,7 +251,7 @@ namespace ImGui.Rendering
                     var foundNode = MeshList.ShapeMeshes.Find(mesh);
                     if (foundNode == null)
                     {
-                        MeshList.ShapeMeshes.AddFirst(mesh);
+                        MeshList.ShapeMeshes.AddLast(mesh);
                     }
 
                     builtinPrimitiveRenderer.SetShapeMesh(null);
@@ -278,7 +279,7 @@ namespace ImGui.Rendering
                     var foundNode = MeshList.TextMeshes.Find(mesh);
                     if (foundNode == null)
                     {
-                        MeshList.TextMeshes.AddFirst(mesh);
+                        MeshList.TextMeshes.AddLast(mesh);
                     }
 
                     builtinPrimitiveRenderer.SetTextMesh(null);
@@ -306,7 +307,7 @@ namespace ImGui.Rendering
                     var foundNode = MeshList.ImageMeshes.Find(mesh);
                     if (foundNode == null)
                     {
-                        MeshList.ImageMeshes.AddFirst(mesh);
+                        MeshList.ImageMeshes.AddLast(mesh);
                     }
                     
                     builtinPrimitiveRenderer.SetImageMesh(null);

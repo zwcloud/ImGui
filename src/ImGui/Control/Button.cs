@@ -2,6 +2,8 @@
 using ImGui.Common.Primitive;
 using ImGui.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -21,22 +23,45 @@ namespace ImGui
 
             int id = window.GetID(text);
 
+            var t = window.RenderTree.CurrentContainer;
+
+            var node = t.GetNodeById(id);
+            if (node == null)
+            {
+                node = new Node();
+                node.Id = id;
+                node.StrId = text;
+                t.Add(node);
+            }
+            node.IsFill = true;
+
+            if (node.Primitive == null)
+            {
+                node.Primitive = new PathPrimitive();
+            }
+            
+            // rect
+            node.Rect = window.GetRect(rect);
+
+            var primitive = node.Primitive as PathPrimitive;
+            Debug.Assert(primitive != null, nameof(primitive) + " != null");
+            primitive.PathClear();
+            primitive.PathRect(node.Rect);
+
             // style apply
             var style = GUIStyle.Basic;
             style.Save();
             style.ApplySkin(GUIControlName.Button);
 
-            // rect
-            rect = window.GetRect(rect);
-
             // interact
-            bool hovered, held;
-            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
-
-            // render
-            var d = window.DrawList;
+            bool pressed = GUIBehavior.ButtonBehavior(node.Rect, id, out var hovered, out var held, 0);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            d.DrawBoxModel(rect, text, style, state);
+
+            var brush = node.Brush;
+            brush.FillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+
+            var strokeStyle = node.StrokeStyle;
+            strokeStyle.Color = style.GetBorderColor(state);
 
             style.Restore();
 
@@ -230,11 +255,18 @@ namespace ImGui
             builder.PushBorderColor(Color.Rgb(166, 166, 166), GUIState.Normal);
             builder.PushBorderColor(Color.Rgb(123, 123, 123), GUIState.Hover);
             builder.PushBorderColor(Color.Rgb(148, 148, 148), GUIState.Active);
+
+            builder.PushBgColor(Color.Rgb(0x65a9d7), GUIState.Normal);
+            builder.PushBgColor(Color.Rgb(0x28597a), GUIState.Hover);
+            builder.PushBgColor(Color.Rgb(0x1b435e), GUIState.Active);
+
+            //TODO use gradient color for background
+            /*
             builder.PushBgGradient(Gradient.TopBottom);
             builder.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal);
             builder.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Hover);
             builder.PushGradientColor(Color.Rgb(222, 222, 222), Color.Rgb(248, 248, 248), GUIState.Active);
-
+            */
             this.styles.Add(GUIControlName.Button, builder.ToArray());
         }
     }
