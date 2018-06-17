@@ -1,7 +1,7 @@
-NOTE: ImGui is being actively developed on the branch [render_tree](https://github.com/zwcloud/ImGui/tree/render_tree).
+__Note__: ImGui is being heavily refactored to employ a render-tree based architecture, most features described below are not working for now. If you are interested in a working ImGui implementation, check out the old version, that rebuilds and repaints everything, is at [commit 80ab55](https://github.com/zwcloud/ImGui/tree/80ab55b73c8857a328949ef5e13415d202f0c34d).
 
 Hello ImGui,
-=====
+============
 
 Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](https://docs.unity3d.com/Manual/GUIScriptingGuide.html) and [dear imgui](https://github.com/ocornut/imgui).
 
