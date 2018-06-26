@@ -13,7 +13,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// identifier number of the node
         /// </summary>
-        public int Id { get; set; }
+        public int Id { get; private set; }
 
         /// <summary>
         /// string identifier of the node
@@ -24,6 +24,17 @@ namespace ImGui.Rendering
         /// border-box, the layout result
         /// </summary>
         public Rect Rect;
+
+        public Node(int id)
+        {
+            this.Id = id;
+        }
+        
+        public Node(int id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
 
         #region Layout
         /// <summary>

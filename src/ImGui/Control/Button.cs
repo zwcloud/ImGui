@@ -28,8 +28,7 @@ namespace ImGui
             var node = t.GetNodeById(id);
             if (node == null)
             {
-                node = new Node();
-                node.Id = id;
+                node = new Node(id);
                 node.Name = text;
                 t.Add(node);
             }

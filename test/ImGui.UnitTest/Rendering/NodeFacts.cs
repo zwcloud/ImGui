@@ -21,18 +21,15 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void ShowANodeWithTwoChildren() // Add rect; Add rect then remove rect
             {
-                Node a = new Node();
-                a.Id = 1;
+                Node a = new Node(1);
                 a.Rect = new Rect(0, 0, 300, 400);
                 a.AttachLayoutGroup(true);
                 
-                Node b = new Node();
-                b.Id = 2;
+                Node b = new Node(2);
                 b.Rect = new Rect(0, 0, 100, 100);
                 b.AttachLayoutEntry(new Size(100, 100));
                 
-                Node c = new Node();
-                c.Id = 3;
+                Node c = new Node(3);
                 c.Rect = new Rect(0, 0, 100, 200);
                 c.AttachLayoutEntry(new Size(100, 200));
 
@@ -47,10 +44,10 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void ShowAHorizontalGroupOf3ItemsWithDifferentStretchFactors()
             {
-                Node group = new Node(); group.AttachLayoutGroup(false, GUILayout.Width(600));
-                Node item1 = new Node(); item1.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(1).Height(50));
-                Node item2 = new Node(); item2.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(2).Height(60));
-                Node item3 = new Node(); item3.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(1).Height(30));
+                Node group = new Node(0); group.AttachLayoutGroup(false, GUILayout.Width(600));
+                Node item1 = new Node(1); item1.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(1).Height(50));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(2).Height(60));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(1).Height(30));
                 group.Add(item1);
                 group.Add(item2);
                 group.Add(item3);
@@ -64,23 +61,23 @@ namespace ImGui.UnitTest.Rendering
             void ShowAThreeLayerGroup()
             {
                 // layer 1
-                Node group1 = new Node(); group1.AttachLayoutGroup(true, GUILayout.Width(400).Height(400));
+                Node group1 = new Node(1); group1.AttachLayoutGroup(true, GUILayout.Width(400).Height(400));
 
                 // layer 2
-                Node group2 = new Node(); group2.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group3 = new Node(); group3.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group4 = new Node(); group4.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group2 = new Node(2); group2.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group3 = new Node(3); group3.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group4 = new Node(4); group4.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
 
                 // layer3
-                Node group5 =  new Node(); group5.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group6 =  new Node(); group6.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group7 =  new Node(); group7.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group8 =  new Node(); group8.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group9 =  new Node(); group9.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group10 = new Node(); group10.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group11 = new Node(); group11.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group12 = new Node(); group12.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group13 = new Node(); group13.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group5 =  new Node(5); group5.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group6 =  new Node(6); group6.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group7 =  new Node(7); group7.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group8 =  new Node(8); group8.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group9 =  new Node(9); group9.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group10 = new Node(10); group10.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group11 = new Node(11); group11.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group12 = new Node(12); group12.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group13 = new Node(13); group13.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
 
                 group1.Add(group2);
                 group1.Add(group3);
@@ -157,7 +154,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
-                Node node = new Node();
+                Node node = new Node(1);
 
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(new Point(10, 10));
@@ -221,7 +218,7 @@ namespace ImGui.UnitTest.Rendering
                 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
-                Node node = new Node();
+                Node node = new Node(1);
                 
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(new Point(10, 10));
@@ -305,7 +302,7 @@ namespace ImGui.UnitTest.Rendering
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 {
-                    Node node = new Node();
+                    Node node = new Node(1);
                     nodes.Add(node);
                     var primitive = new PathPrimitive();
                     primitive.PathMoveTo(new Point(10, 10));
@@ -321,7 +318,7 @@ namespace ImGui.UnitTest.Rendering
                     node.Draw(primitiveRenderer);
                 }
                 {
-                    Node node = new Node();
+                    Node node = new Node(1);
                     nodes.Add(node);
                     var primitive = new PathPrimitive();
                     primitive.PathMoveTo(new Point(110, 10));
@@ -407,7 +404,7 @@ namespace ImGui.UnitTest.Rendering
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 {
-                    Node node = new Node();
+                    Node node = new Node(1);
                     nodes.Add(node);
                     var primitive = new PathPrimitive();
                     primitive.PathMoveTo(new Point(10, 10));
