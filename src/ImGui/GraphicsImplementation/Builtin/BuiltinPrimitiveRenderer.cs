@@ -4,7 +4,6 @@ using System.Diagnostics;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
-using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
@@ -402,7 +401,6 @@ namespace ImGui.GraphicsImplementation
         /// Draw a text primitive and merge the result to the text mesh.
         /// </summary>
         /// <param name="primitive"></param>
-        /// <param name="rect"></param>
         /// <param name="fontFamily"></param>
         /// <param name="fontSize"></param>
         /// <param name="fontColor"></param>
@@ -434,7 +432,7 @@ namespace ImGui.GraphicsImplementation
                     continue;
                 }
 
-                Typography.OpenFont.Glyph glyph = ImGui.OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
+                Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
                 Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
                 GlyphCache.Default.AddGlyph(character, fontFamily, fontStyle, fontWeight, polygons, bezierSegments);
                 var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
