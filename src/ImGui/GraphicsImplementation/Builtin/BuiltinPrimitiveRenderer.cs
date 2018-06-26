@@ -397,48 +397,96 @@ namespace ImGui.GraphicsImplementation
             PathFill(brush.FillColor);
         }
 
+        private bool CheckTextPrimitive(TextPrimitive primitive, string fontFamily, double fontSize,
+            FontStyle fontStyle, FontWeight fontWeight)
+        {
+            do
+            {
+                if (!MathEx.AmostEqual(primitive.FontSize, fontSize))
+                {
+                    break;
+                }
+
+                if (primitive.FontFamily != fontFamily)
+                {
+                    break;
+                }
+
+                if (primitive.FontStyle != fontStyle)
+                {
+                    break;
+                }
+
+                if (primitive.FontWeight != fontWeight)
+                {
+                    break;
+                }
+
+                //
+                return false;
+            } while (false);
+
+            return true;
+        }
+
         /// <summary>
         /// Draw a text primitive and merge the result to the text mesh.
         /// </summary>
         /// <param name="primitive"></param>
-        /// <param name="fontFamily"></param>
-        /// <param name="fontSize"></param>
-        /// <param name="fontColor"></param>
-        /// <param name="fontStyle"></param>
-        /// <param name="fontWeight"></param>
+        /// <param name="fontFamily">font file path</param>
+        /// <param name="fontSize">font pixel size</param>
+        /// <param name="fontColor">font color</param>
+        /// <param name="fontStyle">italic or normal. Oblique will not be supported for now.</param>
+        /// <param name="fontWeight">bold or normal.</param>
+        /// TODO apply text alignment
         public void DrawText(TextPrimitive primitive, string fontFamily, double fontSize, Color fontColor,
             FontStyle fontStyle, FontWeight fontWeight)
         {
             Rect rect = primitive.Rect;
             primitive.Offset = (Vector)rect.TopLeft;
 
-            var textContext = new OSImplentation.TypographyTextContext(primitive.Text,
-                fontFamily,
-                (float)fontSize,
-                FontStretch.Normal,
-                fontStyle,
-                fontWeight,
-                (int)rect.Size.Width,
-                (int)rect.Size.Height,
-                TextAlignment.Leading);
-            textContext.Build((Point)primitive.Offset);
+            //check if we need to rebuild the glyph data of this text primitive
+            var needRebuild = this.CheckTextPrimitive(primitive, fontFamily, fontSize, fontStyle, fontWeight);
 
-            primitive.Offsets.AddRange(textContext.GlyphOffsets);
-
-            foreach (var character in primitive.Text)
+            //build text mesh
+            if (needRebuild)
             {
-                if (char.IsWhiteSpace(character))
+                primitive.FontFamily = fontFamily;//
+                primitive.FontSize = fontSize;
+                primitive.FontStyle = fontStyle;//No effect in current Typography.
+                primitive.FontWeight = fontWeight;//No effect in current Typography.
+
+                var textContext = new OSImplentation.TypographyTextContext(primitive.Text,
+                    fontFamily,
+                    (float)fontSize,
+                    FontStretch.Normal,
+                    fontStyle,
+                    fontWeight,
+                    (int)rect.Size.Width,
+                    (int)rect.Size.Height,
+                    TextAlignment.Leading);
+                textContext.Build((Point)primitive.Offset);
+
+                primitive.Offsets.AddRange(textContext.GlyphOffsets);
+
+                foreach (var character in primitive.Text)
                 {
-                    continue;
+                    if (char.IsWhiteSpace(character))
+                    {
+                        continue;
+                    }
+
+                    Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
+                    Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
+                    var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
+                    if (glyphData == null)
+                    {
+                        glyphData = GlyphCache.Default.AddGlyph(character, fontFamily, fontStyle, fontWeight, polygons, bezierSegments);
+                    }
+                    Debug.Assert(glyphData != null);
+
+                    primitive.Glyphs.Add(glyphData);
                 }
-
-                Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
-                Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
-                GlyphCache.Default.AddGlyph(character, fontFamily, fontStyle, fontWeight, polygons, bezierSegments);
-                var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
-                Debug.Assert(glyphData != null);
-
-                primitive.Glyphs.Add(glyphData);
             }
 
             //FIXME Should each text segment consume a draw call? NO!

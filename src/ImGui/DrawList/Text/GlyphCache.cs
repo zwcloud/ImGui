@@ -46,7 +46,7 @@ namespace ImGui
             return hash;
         }
 
-        public void AddGlyph(char character, string fontFamily, FontStyle fontStyle, FontWeight fontWeight,
+        public GlyphData AddGlyph(char character, string fontFamily, FontStyle fontStyle, FontWeight fontWeight,
             List<List<Point>> polygons,
             List<(Point, Point, Point)> quadraticCurveSegments)
         {
@@ -56,6 +56,8 @@ namespace ImGui
             int key = CalcKey(character, fontFamily, fontStyle, fontWeight);
 
             cache.Set<GlyphData>(key, glyph);
+
+            return glyph;
         }
 
         public GlyphData GetGlyph(char character, string fontFamily, FontStyle fontStyle, FontWeight fontWeight)
