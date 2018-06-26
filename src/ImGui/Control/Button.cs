@@ -30,7 +30,7 @@ namespace ImGui
             {
                 node = new Node();
                 node.Id = id;
-                node.StrId = text;
+                node.Name = text;
                 t.Add(node);
             }
             node.IsFill = true;

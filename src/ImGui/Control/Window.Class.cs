@@ -179,17 +179,17 @@ namespace ImGui
             //title bar node
             {
                 var node = new Node();
-                node.StrId = "TitleBar";
-                node.Id = this.GetID(node.StrId);
+                node.Name = "TitleBar";
+                node.Id = this.GetID(node.Name);
                 this.titleBarNode = node;
-                this.identifiedNodeMap[node.StrId] = node;
+                this.identifiedNodeMap[node.Name] = node;
             }
             this.IDStack.Push(this.titleBarNode.Id);
             {
                 Node node = new Node();
-                node.StrId = "TitleBar_Background";
+                node.Name = "TitleBar_Background";
                 node.IsFill = true;
-                node.Id = this.GetID(node.StrId);
+                node.Id = this.GetID(node.Name);
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.TitleBarRect);
                 var brush = new Brush();
@@ -197,18 +197,18 @@ namespace ImGui
                 node.Primitive = primitive;
                 node.Brush = brush;
                 this.titleBarNode.Add(node);
-                this.identifiedNodeMap[node.StrId] = node;
+                this.identifiedNodeMap[node.Name] = node;
             }
             {
                 var node = new Node();
-                node.StrId = "TitleBar_Text";
-                node.Id = this.GetID(node.StrId);
+                node.Name = "TitleBar_Text";
+                node.Id = this.GetID(node.Name);
                 var primitive = new TextPrimitive();
                 primitive.Text = this.Name;
                 primitive.Rect = this.TitleBarRect;
                 node.Primitive = primitive;
                 this.titleBarNode.Add(node);
-                this.identifiedNodeMap[node.StrId] = node;
+                this.identifiedNodeMap[node.Name] = node;
             }
             this.IDStack.Pop();
             this.RenderTree.Root.Add(this.titleBarNode);
@@ -216,17 +216,17 @@ namespace ImGui
             //Window frame node
             {
                 var node = new Node();
-                node.StrId = "Frame";
-                node.Id = this.GetID(node.StrId);
+                node.Name = "Frame";
+                node.Id = this.GetID(node.Name);
                 this.frameNode = node;
-                this.identifiedNodeMap[node.StrId] = node;
+                this.identifiedNodeMap[node.Name] = node;
             }
             this.IDStack.Push(this.frameNode.Id);
             //background
             {
                 var node = new Node();
-                node.StrId = "Frame_Background";
-                node.Id = this.GetID(node.StrId);
+                node.Name = "Frame_Background";
+                node.Id = this.GetID(node.Name);
                 node.IsFill = true;
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
@@ -236,13 +236,13 @@ namespace ImGui
                 node.Primitive = primitive;
                 node.Brush = brush;
                 this.frameNode.Add(node);
-                this.identifiedNodeMap[node.StrId] = node;
+                this.identifiedNodeMap[node.Name] = node;
             }
             //border
             {
                 var node = new Node();
-                node.StrId = "Frame_Border";
-                node.Id = this.GetID(node.StrId);
+                node.Name = "Frame_Border";
+                node.Id = this.GetID(node.Name);
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight), this.Rect.BottomRight);
                 var strokeStyle = new StrokeStyle();
@@ -250,7 +250,7 @@ namespace ImGui
                 node.Primitive = primitive;
                 node.StrokeStyle = strokeStyle;
                 this.frameNode.Add(node);
-                this.identifiedNodeMap[node.StrId] = node;
+                this.identifiedNodeMap[node.Name] = node;
             }
             this.IDStack.Pop();
             this.RenderTree.Root.Add(this.frameNode);
@@ -704,7 +704,7 @@ namespace ImGui
             {
                 node = new Node();
                 node.Id = id;
-                node.StrId = str_id;
+                node.Name = str_id;
                 if (isGroup)
                 {
                     node.AttachLayoutGroup(true, options);

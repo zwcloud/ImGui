@@ -7,7 +7,7 @@ using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
-    [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(StrId) +"}")]
+    [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(Name) +"}")]
     internal partial class Node
     {
         /// <summary>
@@ -18,7 +18,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// string identifier of the node
         /// </summary>
-        public string StrId { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// border-box, the layout result

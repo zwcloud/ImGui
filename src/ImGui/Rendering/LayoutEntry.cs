@@ -87,7 +87,7 @@ namespace ImGui.Rendering
         protected void Entry_Reset()
         {
             this.Id = 0;
-            this.StrId = null;
+            this.Name = null;
             this.ContentWidth = 0;
             this.ContentHeight = 0;
             this.Rect = Rect.Zero;
