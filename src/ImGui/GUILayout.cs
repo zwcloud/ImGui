@@ -36,20 +36,17 @@ namespace ImGui
 
         public static void PushID(int int_id)
         {
-            Window window = GetCurrentWindow();
-            window.IDStack.Push(window.GetID(int_id));
+            //dummy, to be removed
         }
 
         public static void PushID(string str_id)
         {
-            Window window = GetCurrentWindow();
-            window.IDStack.Push(window.GetID(str_id));
+            //dummy, to be removed
         }
 
         public static void PopID()
         {
-            Window window = GetCurrentWindow();
-            window.IDStack.Pop();
+            //dummy, to be removed
         }
 
         #endregion

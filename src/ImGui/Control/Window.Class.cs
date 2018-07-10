@@ -112,7 +112,6 @@ namespace ImGui
 
             this.ID = name.GetHashCode();
             this.Name = name;
-            this.IDStack.Push(this.ID);
             this.Flags = Flags;
             this.PosFloat = position;
             this.Position = new Point((int) this.PosFloat.X, (int) this.PosFloat.Y);
@@ -183,7 +182,6 @@ namespace ImGui
                 this.titleBarNode = node;
                 this.identifiedNodeMap[node.Name] = node;
             }
-            this.IDStack.Push(this.titleBarNode.Id);
             {
                 var id = this.GetID("TitleBar_Background");
                 Node node = new Node(id, "TitleBar_Background");
@@ -207,7 +205,6 @@ namespace ImGui
                 this.titleBarNode.Add(node);
                 this.identifiedNodeMap[node.Name] = node;
             }
-            this.IDStack.Pop();
             this.RenderTree.Root.Add(this.titleBarNode);
 
             //Window frame node
@@ -217,7 +214,6 @@ namespace ImGui
                 this.frameNode = node;
                 this.identifiedNodeMap[node.Name] = node;
             }
-            this.IDStack.Push(this.frameNode.Id);
             //background
             {
                 var id = this.GetID("Frame_Background");
@@ -246,7 +242,6 @@ namespace ImGui
                 this.frameNode.Add(node);
                 this.identifiedNodeMap[node.Name] = node;
             }
-            this.IDStack.Pop();
             this.RenderTree.Root.Add(this.frameNode);
 
             this.titleBarNode.ActiveSelf = true;
