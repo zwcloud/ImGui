@@ -620,45 +620,25 @@ namespace ImGui
         public bool Accessed { get; internal set; }
 
         #region ID
-        private int Hash(int seed, int int_id)
-        {
-            int hash = seed + 17;
-            hash = hash * 23 + this.ID.GetHashCode();
-            var result = hash * 23 + int_id;
-            return result;
-        }
+
+        int lastId = 0;
 
         public int GetID(int int_id)
         {
-            int seed = this.IDStack.Peek();
-            var id = this.Hash(seed, int_id);
-
-            GUIContext g = Form.current.uiContext;
-            g.KeepAliveID(id);
-            return id;
+            lastId++;
+            return lastId;
         }
 
         public int GetID(string str_id)
         {
-            int seed = this.IDStack.Peek();
-            int int_id = str_id.GetHashCode();
-            var id = this.Hash(seed, int_id);
-
-            GUIContext g = Form.current.uiContext;
-            g.KeepAliveID(id);
-
-            return id;
+            lastId++;
+            return lastId;
         }
 
         public int GetID(ITexture texture)
         {
-            int seed = this.IDStack.Peek();
-            int int_id = texture.GetHashCode();
-            var id = this.Hash(seed, int_id);
-
-            GUIContext g = Form.current.uiContext;
-            g.KeepAliveID(id);
-            return id;
+            lastId++;
+            return lastId;
         }
         #endregion
 

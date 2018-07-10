@@ -28,8 +28,7 @@ namespace ImGui
             var node = t.GetNodeById(id);
             if (node == null)
             {
-                node = new Node(id);
-                node.Name = text;
+                node = new Node(id, "ButtonText");
                 t.Add(node);
             }
             node.IsFill = true;
