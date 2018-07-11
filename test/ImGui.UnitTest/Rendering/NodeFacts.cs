@@ -476,6 +476,87 @@ namespace ImGui.UnitTest.Rendering
                     Time.OnFrameEnd();
                 }
             }
+
+            [Fact]
+            public void DrawTwoTextNode()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var nodes = new List<Node>();
+                {
+                    Node node = new Node(1);
+                    nodes.Add(node);
+                    var primitive = new TextPrimitive();
+                    primitive.Text = "TextA";
+                    node.Primitive = primitive;
+                    node.Draw(primitiveRenderer);
+                    node.Rect.X = 1;
+                    node.Rect.Y = 1;
+                    primitive.Rect = node.Rect;
+                }
+                {
+                    Node node = new Node(1);
+                    nodes.Add(node);
+                    var primitive = new TextPrimitive();
+                    primitive.Text = "TextB";
+                    node.Primitive = primitive;
+                    node.Draw(primitiveRenderer);
+                    node.Rect.X = 1;
+                    node.Rect.Y = 40;
+                    primitive.Rect = node.Rect;
+                }
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        //update nodes
+                        foreach (var node in nodes)
+                        {
+                            if (node.ActiveInTree)
+                            {
+                                node.Draw(primitiveRenderer);
+                            }
+                        }
+
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
         }
     }
 }
