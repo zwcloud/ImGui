@@ -21,31 +21,53 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
 
+
+
+            //get or create the root node
             int id = window.GetID(text);
-
             var t = window.RenderTree.CurrentContainer;
-
-            var node = t.GetNodeById(id);
+            Node node = t.GetNodeById(id);
+            Node backgroundNode = null, textNode = null;
             if (node == null)
             {
-                node = new Node(id);
-                node.Name = text;
+                //create button node
+                node = new Node(id, $"Button<{text}>");
                 t.Add(node);
-            }
-            node.IsFill = true;
+                window.IDStack.Push(id);
 
-            if (node.Primitive == null)
-            {
-                node.Primitive = new PathPrimitive();
+                //background
+                var backgroundNodeId = window.GetID("Background");
+                backgroundNode = new Node(backgroundNodeId, "Background");
+                backgroundNode.Primitive = new PathPrimitive();
+                backgroundNode.IsFill = true;
+
+                //text
+                var textNodeId = window.GetID("Text");
+                textNode = new Node(textNodeId, "Text");
+                var textPrimitive = new TextPrimitive();
+                textPrimitive.Text = text;
+                textNode.Primitive = textPrimitive;
+
+                node.Add(backgroundNode);
+                node.Add(textNode);
+                window.IDStack.Pop();
             }
+            else
+            {
+                backgroundNode = node.GetNodeByName("Background");
+                textNode = node.GetNodeByName("Text");
+            }
+
+            Debug.Assert(backgroundNode != null);
+            Debug.Assert(textNode != null);            
             
             // rect
-            node.Rect = window.GetRect(rect);
+            backgroundNode.Rect = window.GetRect(rect);
 
-            var primitive = node.Primitive as PathPrimitive;
+            var primitive = backgroundNode.Primitive as PathPrimitive;
             Debug.Assert(primitive != null, nameof(primitive) + " != null");
             primitive.PathClear();
-            primitive.PathRect(node.Rect);
+            primitive.PathRect(backgroundNode.Rect);
 
             // style apply
             var style = GUIStyle.Basic;
@@ -53,16 +75,18 @@ namespace ImGui
             style.ApplySkin(GUIControlName.Button);
 
             // interact
-            bool pressed = GUIBehavior.ButtonBehavior(node.Rect, id, out var hovered, out var held, 0);
+            bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
-            var brush = node.Brush;
+            var brush = backgroundNode.Brush;
             brush.FillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
 
-            var strokeStyle = node.StrokeStyle;
+            var strokeStyle = backgroundNode.StrokeStyle;
             strokeStyle.Color = style.GetBorderColor(state);
 
             style.Restore();
+            
+
 
             return pressed;
         }

@@ -143,6 +143,31 @@ namespace ImGui.Rendering
             return null;
         }
 
+        /// <summary>
+        /// Get the first child node of the specified name
+        /// </summary>
+        public Node GetNodeByName(string name)
+        {
+            if (this.Children == null)
+            {
+                return null;
+            }
+            foreach (var node in this.Children)
+            {
+                if (node.Name == name)
+                {
+                    return node;
+                }
+
+                Node child = node.GetNodeByName(name);
+                if (child != null)
+                {
+                    return child;
+                }
+            }
+            return null;
+        }
+
         public void Foreach(Func<Node, bool> func)
         {
             if (func == null)
