@@ -14,7 +14,7 @@ namespace ImGui.UnitTest.Rendering
 {
     public class NodeFacts
     {
-        private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0,2) + "\\my\\ImGui.UnitTest.Output";
+        private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0,2) + "\\ImGui.UnitTest.Output";
 
         public class TheLayoutMethod
         {
@@ -24,11 +24,11 @@ namespace ImGui.UnitTest.Rendering
                 Node a = new Node(1);
                 a.Rect = new Rect(0, 0, 300, 400);
                 a.AttachLayoutGroup(true);
-                
+
                 Node b = new Node(2);
                 b.Rect = new Rect(0, 0, 100, 100);
                 b.AttachLayoutEntry(new Size(100, 100));
-                
+
                 Node c = new Node(3);
                 c.Rect = new Rect(0, 0, 100, 200);
                 c.AttachLayoutEntry(new Size(100, 200));
@@ -51,7 +51,7 @@ namespace ImGui.UnitTest.Rendering
                 group.Add(item1);
                 group.Add(item2);
                 group.Add(item3);
-                
+
                 group.Layout();
 
                 DrawNode(group);
@@ -92,7 +92,7 @@ namespace ImGui.UnitTest.Rendering
                 group4.Add(group11);
                 group4.Add(group12);
                 group4.Add(group13);
-                
+
                 group1.Layout();
 
                 DrawNode(group1);
@@ -166,7 +166,7 @@ namespace ImGui.UnitTest.Rendering
                 node.Primitive = primitive;
                 node.IsFill = true;
                 node.Brush = new Brush();
-                
+
                 node.Draw(primitiveRenderer);
 
                 var window = new Win32Window();
@@ -174,7 +174,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var renderer = new Win32OpenGLRenderer();
                 renderer.Init(window.Pointer, window.ClientSize);
-                
+
                 window.Show();
 
                 while (true)
@@ -215,18 +215,18 @@ namespace ImGui.UnitTest.Rendering
             {
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
-                
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
                 Node node = new Node(1);
-                
+
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(new Point(10, 10));
                 primitive.PathLineTo(new Point(10, 100));
                 primitive.PathLineTo(new Point(100, 100));
                 primitive.PathLineTo(new Point(100, 10));
                 primitive.PathClose();
-                
+
                 node.Primitive = primitive;
                 node.IsFill = true;
                 node.Brush = new Brush();
@@ -238,7 +238,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var renderer = new Win32OpenGLRenderer();
                 renderer.Init(window.Pointer, window.ClientSize);
-                
+
                 window.Show();
 
                 while (true)
@@ -282,7 +282,7 @@ namespace ImGui.UnitTest.Rendering
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
-                    
+
                     if (Application.RequestQuit)
                     {
                         break;
@@ -292,7 +292,7 @@ namespace ImGui.UnitTest.Rendering
                     Time.OnFrameEnd();
                 }
             }
-            
+
             [Fact]
             public void UpdateTwoNode()
             {
@@ -466,12 +466,12 @@ namespace ImGui.UnitTest.Rendering
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
                         renderer.SwapBuffers();
                     });
-                    
+
                     if (Application.RequestQuit)
                     {
                         break;
                     }
-                    
+
                     Keyboard.Instance.OnFrameEnd();
                     Time.OnFrameEnd();
                 }
@@ -489,7 +489,7 @@ namespace ImGui.UnitTest.Rendering
                     Node node = new Node(1);
                     nodes.Add(node);
                     var primitive = new TextPrimitive();
-                    primitive.Text = "TextA";
+                    primitive.Text = "AAA";
                     node.Primitive = primitive;
                     node.Draw(primitiveRenderer);
                     node.Rect.X = 1;
@@ -500,7 +500,7 @@ namespace ImGui.UnitTest.Rendering
                     Node node = new Node(1);
                     nodes.Add(node);
                     var primitive = new TextPrimitive();
-                    primitive.Text = "TextB";
+                    primitive.Text = "B";
                     node.Primitive = primitive;
                     node.Draw(primitiveRenderer);
                     node.Rect.X = 1;
