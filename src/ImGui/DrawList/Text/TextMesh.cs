@@ -20,9 +20,9 @@ namespace ImGui
         private int vtxWritePosition;
         private int idxWritePosition;
         private int currentIdx;
-        
+
         public bool Visible { get; set; } = true;
-        
+
         public Node Node { get; set; }
 
         /// <summary>
@@ -45,9 +45,9 @@ namespace ImGui
 
         /*
          * Important Note:
-         * 
+         *
          * The initial capacity of VertexBuffer and IndexBuffer should be big enough.
-         * Otherwise, when adding Glyph triangles and curve segments _frequently_ to the TextMesh, 
+         * Otherwise, when adding Glyph triangles and curve segments _frequently_ to the TextMesh,
          * List reallocation will happen frequently and creates many garbages(discarded old `UsafeList._items` buffer of about 200KB-600KB).
          * Those garbages will lead to Generation 2 GC which uses much CPU time and stuck the application.
          *
@@ -211,7 +211,7 @@ namespace ImGui
             var oldIndexCount = this.IndexBuffer.Count;
             // Update added command
             var command = this.Commands[this.Commands.Count - 1];
-            command.ElemCount = textMesh.IndexBuffer.Count;
+            command.ElemCount += textMesh.IndexBuffer.Count;
             this.Commands[this.Commands.Count - 1] = command;
 
             // TODO merge command with previous one if they share the same clip rect.
