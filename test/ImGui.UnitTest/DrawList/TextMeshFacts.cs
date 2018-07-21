@@ -10,8 +10,11 @@ namespace ImGui.UnitTest.DrawList
             [Fact]
             public void AppendOneToAnother()
             {
+                const int elementCount0 = 3;
+                const int elementCount1 = 6;
+
                 var mesh = new TextMesh();
-                mesh.Commands.Add(DrawCommand.Default);
+                mesh.Commands.Add(new DrawCommand { ElemCount = elementCount0 });
                 mesh.PrimReserve(3, 3);
                 mesh.AppendIndex(0);
                 mesh.AppendIndex(1);
@@ -21,7 +24,7 @@ namespace ImGui.UnitTest.DrawList
                 mesh.AppendVertex(new DrawVertex{pos=new Point(2,0)});
 
                 var meshToAppend = new TextMesh();
-                meshToAppend.Commands.Add(DrawCommand.Default);
+                meshToAppend.Commands.Add(new DrawCommand { ElemCount = elementCount1 });
                 meshToAppend.PrimReserve(3, 6);
                 meshToAppend.AppendIndex(0);
                 meshToAppend.AppendIndex(1);
@@ -35,6 +38,9 @@ namespace ImGui.UnitTest.DrawList
 
                 mesh.Append(meshToAppend, Vector.Zero);
 
+                Assert.Single(mesh.Commands);
+                Assert.Equal(elementCount0 + elementCount1, mesh.Commands[0].ElemCount);
+
                 Assert.Equal(6, mesh.VertexBuffer.Count);
                 Assert.Equal(9, mesh.IndexBuffer.Count);
 
@@ -44,7 +50,7 @@ namespace ImGui.UnitTest.DrawList
                 Assert.Equal(4, mesh.IndexBuffer[6]);
                 Assert.Equal(5, mesh.IndexBuffer[7]);
                 Assert.Equal(3, mesh.IndexBuffer[8]);
-                
+
                 Assert.Equal(0, mesh.VertexBuffer[0].pos.x);
                 Assert.Equal(1, mesh.VertexBuffer[1].pos.x);
                 Assert.Equal(2, mesh.VertexBuffer[2].pos.x);
