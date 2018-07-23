@@ -21,8 +21,6 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
 
-
-
             //get or create the root node
             int id = window.GetID(text);
             var t = window.RenderTree.CurrentContainer;
@@ -59,8 +57,8 @@ namespace ImGui
             }
 
             Debug.Assert(backgroundNode != null);
-            Debug.Assert(textNode != null);            
-            
+            Debug.Assert(textNode != null);
+
             // rect
             backgroundNode.Rect = window.GetRect(rect);
 
@@ -85,8 +83,6 @@ namespace ImGui
             strokeStyle.Color = style.GetBorderColor(state);
 
             style.Restore();
-            
-
 
             return pressed;
         }
@@ -234,7 +230,7 @@ namespace ImGui
                         g.SetActiveID(0);
                     }
 
-                    // 'Repeat' mode acts when held regardless of _PressedOn flags (see table above). 
+                    // 'Repeat' mode acts when held regardless of _PressedOn flags (see table above).
                     // Relies on repeat logic of IsMouseClicked() but we may as well do it ourselves if we end up exposing finer RepeatDelay/RepeatRate settings.
                     if (flags.HaveFlag(ButtonFlags.Repeat) && g.ActiveId == id && Mouse.Instance.LeftButtonDownDuration > 0.0f && g.IsMouseLeftButtonClicked(true))
                         pressed = true;
