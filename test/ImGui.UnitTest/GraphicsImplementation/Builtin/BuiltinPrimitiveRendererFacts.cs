@@ -26,7 +26,7 @@ namespace ImGui.UnitTest.Rendering
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
             var brush = new Brush();
             brush.LineColor = Color.Red;
-            
+
             var mesh = new Mesh();
             mesh.CommandBuffer.Add(DrawCommand.Default);
             primitiveRenderer.SetShapeMesh(mesh);
@@ -100,13 +100,12 @@ namespace ImGui.UnitTest.Rendering
         {
             TextPrimitive primitive = new TextPrimitive();
             primitive.Text = "Hello你好こんにちは";
-            primitive.Rect = new Rect(10, 10, 500, 40);
             var style = GUIStyle.Default;
 
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             var textMesh = new TextMesh();
             primitiveRenderer.SetTextMesh(textMesh);
-            primitiveRenderer.DrawText(primitive, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+            primitiveRenderer.DrawText(primitive, new Rect(10, 10, 500, 40), style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
 
             //render text
 

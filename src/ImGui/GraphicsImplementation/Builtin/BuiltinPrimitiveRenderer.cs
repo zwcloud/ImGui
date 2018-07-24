@@ -219,7 +219,7 @@ namespace ImGui.GraphicsImplementation
             Path.Add(p);
         }
 
-        
+
         private static void PathBezierToCasteljau(IList<Point> path, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double tessTol, int level)
         {
             double dx = x4 - x1;
@@ -277,7 +277,7 @@ namespace ImGui.GraphicsImplementation
                 }
             }
         }
-        
+
         /// <summary>
         /// Closes the current path.
         /// </summary>
@@ -293,7 +293,7 @@ namespace ImGui.GraphicsImplementation
         {
             Path.Clear();
         }
-        
+
         /// <summary>
         /// Strokes the current path.
         /// </summary>
@@ -347,13 +347,13 @@ namespace ImGui.GraphicsImplementation
                         PathBezierCurveTo(cmd.Points[0], cmd.Points[1], cmd.Points[2]);
                         break;
                     case PathDataType.PathClosePath:
-                        PathClose(); 
+                        PathClose();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            
+
             //construct and merge the mesh of this Path into ShapeMesh
             PathStroke(brush.LineColor, true, brush.LineWidth);
         }
@@ -439,10 +439,9 @@ namespace ImGui.GraphicsImplementation
         /// <param name="fontStyle">italic or normal. Oblique will not be supported for now.</param>
         /// <param name="fontWeight">bold or normal.</param>
         /// TODO apply text alignment
-        public void DrawText(TextPrimitive primitive, string fontFamily, double fontSize, Color fontColor,
+        public void DrawText(TextPrimitive primitive, Rect rect, string fontFamily, double fontSize, Color fontColor,
             FontStyle fontStyle, FontWeight fontWeight)
         {
-            Rect rect = primitive.Rect;
             primitive.Offset = (Vector)rect.TopLeft;
 
             //check if we need to rebuild the glyph data of this text primitive

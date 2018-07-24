@@ -29,7 +29,7 @@ namespace ImGui.Rendering
         {
             this.Id = id;
         }
-        
+
         public Node(int id, string name)
         {
             this.Id = id;
@@ -101,7 +101,7 @@ namespace ImGui.Rendering
             }
         }
 
-        
+
         private void SetY(double y)
         {
             if (this.Children == null)
@@ -269,7 +269,7 @@ namespace ImGui.Rendering
                     {
                         mesh = (Mesh) this.RenderContext;
                     }
-                    
+
                     mesh.Clear();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
                     mesh.Node = this;
@@ -311,7 +311,7 @@ namespace ImGui.Rendering
                     mesh.Node = this;
 
                     var style = GUIStyle.Default;//FIXME TEMP
-                    renderer.DrawText(t, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+                    renderer.DrawText(t, this.Rect, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
                     var foundNode = MeshList.TextMeshes.Find(mesh);
                     if (foundNode == null)
                     {
@@ -345,7 +345,7 @@ namespace ImGui.Rendering
                     {
                         MeshList.ImageMeshes.AddLast(mesh);
                     }
-                    
+
                     builtinPrimitiveRenderer.SetImageMesh(null);
                 }
                 break;

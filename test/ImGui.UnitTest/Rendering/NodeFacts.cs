@@ -491,7 +491,6 @@ namespace ImGui.UnitTest.Rendering
                 node.Draw(primitiveRenderer);
                 node.Rect.X = 1;
                 node.Rect.Y = 1;
-                primitive.Rect = node.Rect;
 
                 var window = new Win32Window();
                 window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
@@ -557,7 +556,6 @@ namespace ImGui.UnitTest.Rendering
                     node.Draw(primitiveRenderer);
                     node.Rect.X = 1;
                     node.Rect.Y = 1;
-                    primitive.Rect = node.Rect;
                 }
                 {
                     Node node = new Node(1);
@@ -568,7 +566,6 @@ namespace ImGui.UnitTest.Rendering
                     node.Draw(primitiveRenderer);
                     node.Rect.X = 1;
                     node.Rect.Y = 40;
-                    primitive.Rect = node.Rect;
                 }
 
                 var window = new Win32Window();
@@ -598,6 +595,69 @@ namespace ImGui.UnitTest.Rendering
                             {
                                 node.Draw(primitiveRenderer);
                             }
+                        }
+
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+
+
+            [Fact]
+            public void DrawOneTextNodeAtPosition()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                Node node = new Node(1);
+                var primitive = new TextPrimitive();
+                primitive.Text = "AAA";
+                node.Primitive = primitive;
+                node.Draw(primitiveRenderer);
+                node.Rect.X = 100;
+                node.Rect.Y = 30;
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        //update the node
+                        if (node.ActiveInTree)
+                        {
+                            node.Draw(primitiveRenderer);
                         }
 
                         //rebuild mesh buffer

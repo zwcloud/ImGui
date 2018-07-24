@@ -61,6 +61,7 @@ namespace ImGui
 
             // rect
             backgroundNode.Rect = window.GetRect(rect);
+            textNode.Rect = backgroundNode.Rect;
 
             var primitive = backgroundNode.Primitive as PathPrimitive;
             Debug.Assert(primitive != null, nameof(primitive) + " != null");

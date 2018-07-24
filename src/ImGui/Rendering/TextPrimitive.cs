@@ -11,7 +11,6 @@ namespace ImGui.Rendering
         public FontStyle FontStyle;
         public FontWeight FontWeight;
 
-        public Rect Rect { get; set; }
         public List<Vector> Offsets { get; set; } = new List<Vector>();
         public List<GlyphData> Glyphs { get; set; } = new List<GlyphData>();
     }

@@ -200,9 +200,9 @@ namespace ImGui
             {
                 var id = this.GetID("TitleBar_Text");
                 var node = new Node(id, "TitleBar_Text");
+                node.Rect = this.TitleBarRect;
                 var primitive = new TextPrimitive();
                 primitive.Text = this.Name;
-                primitive.Rect = this.TitleBarRect;
                 node.Primitive = primitive;
                 this.titleBarNode.Add(node);
                 this.identifiedNodeMap[node.Name] = node;
@@ -339,10 +339,10 @@ namespace ImGui
                 //text
                 {
                     var node = this.GetNodeByStrId("TitleBar_Text");
+                    node.Rect = titleBarRect;
                     // title text
                     var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
                     var textPrimitive = (TextPrimitive)node.Primitive;
-                    textPrimitive.Rect = titleBarRect;
                     if (textPrimitive.Text != this.Name)
                     {
                         textPrimitive.Text = this.Name;
@@ -350,7 +350,7 @@ namespace ImGui
                 }
 
                 //close button
-                if (this.CloseButton(this.GetID("#CLOSE"), 
+                if (this.CloseButton(this.GetID("#CLOSE"),
                     new Rect(titleBarRect.TopRight + new Vector(-45, 0), titleBarRect.BottomRight)))
                 {
                     open = false;
@@ -420,7 +420,7 @@ namespace ImGui
                     this.Size = this.FullSize;
                     titleBarRect = this.TitleBarRect;
                 }
-                
+
                 //frame backgound
                 var backgroundColor = this.Style.BackgroundColor;
                 backgroundColor.A = backgroundAlpha;
