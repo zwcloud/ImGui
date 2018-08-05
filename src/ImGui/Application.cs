@@ -38,12 +38,22 @@ namespace ImGui
             // load logger
             if (IsRunningInUnitTest)
             {
-                Logger = new EchoLogger();
-                EchoLogger.Show();
+                try
+                {
+                    Logger = new EchoLogger();
+                    EchoLogger.Show();
+                    Logger.Enabled = true;
+                }
+                catch (System.Net.Sockets.SocketException)
+                {
+                    Debug.WriteLine("Failed to connect to EchoLogger. The program will continue without logging.");
+                    Logger.Enabled = false;
+                }
             }
             else
             {
                 Logger = new DebugLogger();
+                Logger.Enabled = true;
             }
             Log.Init(Logger);
 
@@ -94,7 +104,7 @@ namespace ImGui
                 {
                     break;
                 }
-                
+
                 Keyboard.Instance.OnFrameEnd();
                 Time.OnFrameEnd();
             }

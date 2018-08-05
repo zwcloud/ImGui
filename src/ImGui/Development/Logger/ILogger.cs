@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ImGui
+﻿namespace ImGui
 {
-    interface ILogger
+    internal interface ILogger
     {
+        bool Enabled { get; set; }
         void Clear();
         void Msg(string format, params object[] args);
         void Warning(string format, params object[] args);

@@ -5,8 +5,6 @@ namespace ImGui
 {
     internal class GUIContext
     {
-        public bool LogEnabled = false;
-
         public long Time;
         public long FrameCount = 0;
 

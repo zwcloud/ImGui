@@ -93,7 +93,7 @@ namespace ImGui
             Mouse.Instance.RightButtonPressed = Mouse.Instance.RightButtonState == KeyState.Down && Mouse.Instance.RightButtonDownDuration < 0;
             Mouse.Instance.RightButtonReleased = Mouse.Instance.RightButtonState == KeyState.Up && Mouse.Instance.RightButtonDownDuration >= 0;
             Mouse.Instance.RightButtonDownDuration = Mouse.Instance.RightButtonState == KeyState.Down ? (Mouse.Instance.RightButtonDownDuration < 0 ? 0 : Mouse.Instance.RightButtonDownDuration + g.DeltaTime) : -1;
-            
+
             if (Mouse.Instance.RightButtonPressed) ++Mouse.Instance.RightButtonPressedTimes;
             if (Mouse.Instance.RightButtonReleased) ++Mouse.Instance.RightButtonReleasedTimes;
             #endregion
@@ -136,7 +136,6 @@ namespace ImGui
             // Clear Input data for next frame
             Mouse.Instance.MouseWheel = 0;
             Ime.ImeBuffer.Clear();
-            
 
             g.FrameCountEnded = g.FrameCount;
         }
@@ -206,9 +205,9 @@ namespace ImGui
 
             this.nativeWindow.Title = string.Format("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
 
-            if (g.LogEnabled)
+            var l = Application.Logger;
+            if (l.Enabled && ImGui.Log.LogStatus)
             {
-                var l = Application.Logger;
                 WindowManager w = g.WindowManager;
                 l.Clear();
                 l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
