@@ -8,7 +8,7 @@ namespace ImGui.UnitTest
         public class TheButtonMethod
         {
             [Fact]
-            public void ShowAButton()
+            public void ShowOneFixedButton()
             {
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
@@ -26,7 +26,7 @@ namespace ImGui.UnitTest
             }
 
             [Fact]
-            public void ShowTwoButtons()
+            public void ShowTwoFixedButtons()
             {
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
@@ -41,6 +41,24 @@ namespace ImGui.UnitTest
                     if (GUI.Button(new Rect(5, 50, 100, 40), "Button2"))
                     {
                         Log.Msg("clicked Button2");
+                    }
+                };
+
+                Application.Run(form);
+            }
+
+            [Fact]
+            public void ShowOneLayoutButton()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.Init();
+
+                var form = new MainForm();
+                form.OnGUIAction = () =>
+                {
+                    if (GUILayout.Button("Apply"))
+                    {
+                        Log.Msg("clicked");
                     }
                 };
 

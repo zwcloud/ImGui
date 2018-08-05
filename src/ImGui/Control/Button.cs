@@ -102,29 +102,77 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
 
-            int id = window.GetID(text);
-
-            // style
+            // style apply
             var style = GUIStyle.Basic;
             style.Save();
             style.ApplySkin(GUIControlName.Button);
             style.ApplyOption(options);
 
+            //get or create the root node
+            int id = window.GetID(text);
+            var t = window.RenderTree.CurrentContainer;
+            Node node = t.GetNodeById(id);
+            Node backgroundNode = null, textNode = null;
+            if (node == null)
+            {
+                //create button node
+                node = new Node(id, $"Button<{text}>");
+                var contentSize = style.CalcSize(text, GUIState.Normal);//TEMP: GUI state should be de-coupled from GUI style
+                node.AttachLayoutEntry(contentSize, options);
+                t.Add(node);
+                window.IDStack.Push(id);
+
+                //background
+                var backgroundNodeId = window.GetID("Background");
+                backgroundNode = new Node(backgroundNodeId, "Background");
+                backgroundNode.Primitive = new PathPrimitive();
+                backgroundNode.IsFill = true;
+
+                //text
+                var textNodeId = window.GetID("Text");
+                textNode = new Node(textNodeId, "Text");
+                var textPrimitive = new TextPrimitive();
+                textPrimitive.Text = text;
+                textNode.Primitive = textPrimitive;
+
+                node.Add(backgroundNode);
+                node.Add(textNode);
+                window.IDStack.Pop();
+            }
+            else
+            {
+                backgroundNode = node.GetNodeByName("Background");
+                textNode = node.GetNodeByName("Text");
+            }
+
+            Debug.Assert(backgroundNode != null);
+            Debug.Assert(textNode != null);
+
+
             // rect
-            Rect rect;
-            Size size = style.CalcSize(text, GUIState.Normal);
-            rect = window.GetRect(id, size);
+            Rect rect = window.GetRect(id);//************* rect got is incorrect
+            backgroundNode.Rect = rect;
+            textNode.Rect = backgroundNode.Rect;
+
+            var primitive = backgroundNode.Primitive as PathPrimitive;
+            Debug.Assert(primitive != null, nameof(primitive) + " != null");
+            primitive.PathClear();
+            primitive.PathRect(backgroundNode.Rect);
+
 
             // interact
-            bool hovered, held;
-            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
-
-            // render
-            var d = window.DrawList;
+            bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            d.DrawBoxModel(rect, text, style, state);
 
+            var brush = backgroundNode.Brush;
+            brush.FillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+
+            var strokeStyle = backgroundNode.StrokeStyle;
+            strokeStyle.Color = style.GetBorderColor(state);
+
+            //style restore
             style.Restore();
+
             return pressed;
         }
 
@@ -152,7 +200,7 @@ namespace ImGui
             {
                 size = style.CalcSize(texture, GUIState.Normal);
             }
-            var rect = window.GetRect(id, size);
+            var rect = window.GetRect(id);
             if(rect == Layout.StackLayout.DummyRect)
             {
                 style.Restore();
