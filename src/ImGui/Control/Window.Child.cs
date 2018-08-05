@@ -19,7 +19,7 @@ namespace ImGui
             GUIStyle style = GUIStyle.Basic;
             style.Save();
             style.ApplyOption(options);
-            var rect = window.GetRect(id, size, null, null, true);
+            var rect = window.GetRect(id);
             style.Restore();
             if (rect == Layout.StackLayout.DummyRect)
             {

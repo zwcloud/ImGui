@@ -50,7 +50,7 @@ namespace ImGui
 
             // rect
             Size contentSize = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id, contentSize);
+            Rect rect = window.GetRect(id);
 
             // rendering
             DrawList d = window.DrawList;
@@ -156,7 +156,7 @@ namespace ImGui
 
             // rect
             var lineHeight = style.GetLineHeight();
-            Rect rect = window.GetRect(id, new Size(lineHeight, lineHeight));
+            Rect rect = window.GetRect(id);
 
             // Render
             var d = window.DrawList;
@@ -182,7 +182,7 @@ namespace ImGui
             // rect
             Size contentSize = style.CalcSize(text, GUIState.Normal);
             var lineHeight = style.GetLineHeight();
-            Rect rect = window.GetRect(id, contentSize);
+            Rect rect = window.GetRect(id);
 
             // Render
             var d = window.DrawList;

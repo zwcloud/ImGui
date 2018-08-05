@@ -19,8 +19,8 @@ namespace ImGui
 
             Size label_size = style.CalcSize(label, GUIState.Normal);
 
-            Rect check_bb = window.GetRect(window.GetID(label + "_check"), new Size(label_size.Height, label_size.Height));
-            Rect text_bb = window.GetRect(id, label_size);
+            Rect check_bb = window.GetRect(window.GetID(label + "_check"));
+            Rect text_bb = window.GetRect(id);
 
             Rect total_bb = Rect.Union(check_bb, text_bb);
 

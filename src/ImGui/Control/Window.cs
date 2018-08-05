@@ -108,12 +108,10 @@ namespace ImGui
                 window.Collapsed = parent_window != null && parent_window.Collapsed;
             }
 
-            window.StackLayout.Begin();
-
             // Return false if we don't intend to display anything to allow user to perform an early out optimization
             window.SkipItems = window.Collapsed || !window.Active;
 
-            window.RenderTree.CurrentContainer = window.FrameNode; 
+            window.RenderTree.CurrentContainer = window.FrameNode;
 
             return !window.SkipItems;
         }
@@ -121,17 +119,16 @@ namespace ImGui
 
         public static void End()
         {
-
             Form form = Form.current;
             GUIContext g = form.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
 
             window.DrawList.PopClipRect();
-            
+
             window.RenderTree.CurrentContainer = window.RenderTree.Root;
 
-            window.StackLayout.Layout();
+            window.RenderTree.Root.Layout();
 
             // Pop
             w.WindowStack.RemoveAt(w.WindowStack.Count - 1);

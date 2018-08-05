@@ -29,7 +29,7 @@ namespace ImGui
                     string itemText = item.ToString();
                     var itemId = window.GetID(string.Format("Item_{0}_{1}", i, itemText));
                     var textSize = style.CalcSize(itemText, GUIState.Normal);
-                    var itemRect = window.GetRect(itemId, textSize);
+                    var itemRect = window.GetRect(itemId);
 
                     bool hovered;
                     bool on = GUIBehavior.ToggleBehavior(itemRect, id, selectedIndex == i, out hovered);

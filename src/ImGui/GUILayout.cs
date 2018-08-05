@@ -140,12 +140,6 @@ namespace ImGui
             PopID();
         }
 
-        public static Rect GetWindowClientRect()
-        {
-            Window window = GetCurrentWindow();
-            return window.ClientRect;
-        }
-
         #endregion
 
         #region layout option short-cuts

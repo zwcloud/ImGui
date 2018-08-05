@@ -21,7 +21,7 @@ namespace ImGui
             style.PushStretchFactor(false, 1);//+1
 
             // rect
-            var rect = window.GetRect(id, new Size(0, 1));
+            var rect = window.GetRect(id);
 
             // render
             var d = window.DrawList;

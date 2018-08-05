@@ -136,7 +136,7 @@ namespace ImGui
                 {
                     if (!this.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove))
                     {
-                        this.MovedWindow.PosFloat += Mouse.Instance.MouseDelta;
+                        this.MovedWindow.Position += Mouse.Instance.MouseDelta;
                     }
                     this.FocusWindow(this.MovedWindow);
                 }

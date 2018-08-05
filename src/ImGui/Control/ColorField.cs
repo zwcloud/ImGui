@@ -48,17 +48,17 @@ namespace ImGui
                                 rId = window.GetID("#R");
                                 gId = window.GetID("#G");
                                 bId = window.GetID("#B");
-                                rectR = window.GetRect(rId, (0, labelHeight));
-                                rectG = window.GetRect(gId, (0, labelHeight));
-                                rectB = window.GetRect(bId, (0, labelHeight));
+                                rectR = window.GetRect(rId);
+                                rectG = window.GetRect(gId);
+                                rectB = window.GetRect(bId);
                                 PopStyleVar(1);
                             }
 
                             aId = window.GetID("#A");
-                            rectA = window.GetRect(aId, (0, labelHeight * 0.25), GUILayout.ExpandWidth(true));
+                            rectA = window.GetRect(aId);
                         }
                         colorId = window.GetID("#Color");
-                        rectColor = window.GetRect(colorId, (labelHeight * 1.25f, labelHeight * 1.25f));
+                        rectColor = window.GetRect(colorId);
                     }
 
                     // interact

@@ -67,7 +67,7 @@ namespace ImGui
             var style = GUIStyle.Basic;
             var textSize = style.CalcSize(label, GUIState.Normal);
             var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
-            var rect = window.GetRect(id, size);
+            var rect = window.GetRect(id);
 
             // interact
             bool hovered;

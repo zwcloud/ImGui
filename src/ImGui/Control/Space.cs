@@ -18,7 +18,7 @@ namespace ImGui
 
             // rect
             var layout = window.StackLayout;
-            layout.GetRect(id, layout.TopGroup.IsVertical ? new Size(0, size) : new Size(size, 0));
+            layout.GetRect(id, window.RenderTree.CurrentContainer.IsVertical ? new Size(0, size) : new Size(size, 0));
         }
 
         /// <summary>
@@ -34,11 +34,11 @@ namespace ImGui
             // style apply
             var style = GUIStyle.Basic;
             var layout = window.StackLayout;
-            style.PushStretchFactor(layout.TopGroup.IsVertical, stretchFactor);
+            style.PushStretchFactor(window.RenderTree.CurrentContainer.IsVertical, stretchFactor);
 
             // rect
             int id = window.GetID(str_id);
-            window.GetRect(id, Size.Zero);
+            window.GetRect(id);
 
             // style restore
             style.PopStyle();

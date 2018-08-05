@@ -18,7 +18,7 @@ namespace ImGui
             var style = GUIStyle.Basic;
 
             // rect
-            var rect = window.GetRect(id, size);
+            var rect = window.GetRect(id);
 
             percent = MathEx.Clamp01(percent);
 

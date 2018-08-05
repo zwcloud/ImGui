@@ -60,7 +60,7 @@ namespace ImGui
             style.ApplyOption(options);
 
             // rect
-            Rect rect = window.GetRect(id, size);
+            Rect rect = window.GetRect(id);
 
             // interact
             InputTextContext context;
@@ -103,7 +103,7 @@ namespace ImGui
             // rect
             var height = style.GetLineHeight();
             var size = new Size(width, height);
-            Rect rect = window.GetRect(id, size);
+            Rect rect = window.GetRect(id);
 
             // interact
             InputTextContext context;

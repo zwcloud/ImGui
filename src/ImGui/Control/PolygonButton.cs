@@ -118,7 +118,7 @@ namespace ImGui
                 var point = points[i];
                 rect.Union(point);
             }
-            rect = window.GetRect(id, rect.Size, style, options);
+            rect = window.GetRect(id);
             return GUI.PolygonButton(rect, points, textRect, text);
         }
     }

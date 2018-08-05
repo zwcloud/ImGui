@@ -139,7 +139,7 @@ namespace ImGui
                 size.Width += minSilderWidth;
                 size.Height = 20;
             }
-            var rect = window.GetRect(id, size);
+            var rect = window.GetRect(id);
 
             // interact
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
@@ -202,7 +202,7 @@ namespace ImGui
                 size.Width = 20;
                 size.Height += minSilderHeight;
             }
-            var rect = window.GetRect(id, size);
+            var rect = window.GetRect(id);
 
             // interact
             var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);

@@ -83,7 +83,7 @@ namespace ImGui
             // rect
             var texture = TextureUtil.GetTexture(filePath);
             Size size = style.CalcSize(texture, GUIState.Normal);
-            var rect = window.GetRect(id, size);
+            var rect = window.GetRect(id);
 
             // render
             DrawList d = window.DrawList;
@@ -108,7 +108,7 @@ namespace ImGui
 
             // rect
             Size size = style.CalcSize(texture, GUIState.Normal);
-            var rect = window.GetRect(id, size);
+            var rect = window.GetRect(id);
 
             // render
             DrawList d = window.DrawList;

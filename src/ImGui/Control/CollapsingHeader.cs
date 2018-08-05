@@ -27,7 +27,7 @@ namespace ImGui
 
             // rect
             var height = style.GetLineHeight();
-            Rect rect = window.GetRect(id, new Size(0, height));
+            Rect rect = window.GetRect(id);
             if (rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
             {
                 style.PopStyle();//-1

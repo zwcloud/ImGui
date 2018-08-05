@@ -66,7 +66,7 @@ namespace ImGui
 
             // rect
             Size size = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id, size);
+            Rect rect = window.GetRect(id);
 
             // interact
             selected = GUIBehavior.SelectableBehavior(rect, id, selected, out bool hovered, out bool held);
