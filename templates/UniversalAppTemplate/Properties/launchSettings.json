@@ -2,7 +2,8 @@
   "profiles": {
     "UniversalAppTemplate": {
       "commandName": "Project",
-      "workingDirectory": "$(OutDir)"
+      "workingDirectory": "$(OutDir)",
+      "nativeDebugging": true
     }
   }
 }
