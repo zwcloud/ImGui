@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using ImGui.Common.Primitive;
 using ImGui.Core;
 using ImGui.GraphicsImplementation;
@@ -157,6 +158,11 @@ namespace ImGui
             Render();
 
             Log();
+
+            if (ImGui.Log.logger is ConsoleLogger && ImGui.Log.LogStatus)
+            {
+                Thread.Sleep(20);
+            }
         }
 
         internal void Render()

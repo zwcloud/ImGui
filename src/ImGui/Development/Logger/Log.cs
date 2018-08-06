@@ -4,9 +4,9 @@ namespace ImGui
 {
     static class Log
     {
-        private static ILogger logger;
+        internal static ILogger logger;
 
-        public static bool LogStatus { get; set; } = false;
+        public static bool LogStatus { get; set; } = true;
 
         public static void Init(ILogger logger)
         {

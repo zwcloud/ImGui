@@ -52,7 +52,7 @@ namespace ImGui
             }
             else
             {
-                Logger = new DebugLogger();
+                Logger = new ConsoleLogger();
                 Logger.Enabled = true;
             }
             Log.Init(Logger);

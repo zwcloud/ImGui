@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ImGui.Layout;
 using ImGui.Common.Primitive;
 
@@ -26,7 +27,11 @@ namespace ImGui.Rendering
         {
             Root = new Node(rootId);
             Root.Rect = new Rect(position, size);
-            Root.AttachLayoutGroup(true);
+            Root.AttachLayoutGroup(true, GUILayout.Width((int)size.Width).Height((int)size.Height));
+
+            Debug.Assert(Root.IsFixedWidth);
+            Debug.Assert(Root.IsFixedHeight);
+            Debug.Assert(Root.IsVertical);
         }
 
         public Node GetNodeById(int id)
