@@ -66,6 +66,14 @@ namespace ImGui.Rendering
         /// </summary>
         public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
 
+        public bool IsDefaultWidth => !IsFixedWidth && !HorizontallyStretched;
+
+        public bool IsDefaultHeight => !IsFixedWidth && !VerticallyStretched;
+
+        public bool IsStretchedWidth => HorizontallyStretched;
+
+        public bool IsStretchedHeight => VerticallyStretched;
+
         public (double, double, double, double) Border = (0, 0, 0, 0);
 
         public (double, double, double, double) Padding = (0, 0, 0, 0);
@@ -86,8 +94,6 @@ namespace ImGui.Rendering
 
         protected void Entry_Reset()
         {
-            this.Id = 0;
-            this.Name = null;
             this.ContentWidth = 0;
             this.ContentHeight = 0;
             this.Rect = Rect.Zero;
@@ -173,7 +179,7 @@ namespace ImGui.Rendering
         protected void ApplyOptions(LayoutOptions options)
         {
             var style = GUIStyle.Basic;
-                
+
             if(options.MinWidth.HasValue && options.MaxWidth.HasValue)
             {
                 var value = options.MinWidth.Value;

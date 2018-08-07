@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
+using System.Reflection;
+using ImGui.Rendering;
 
 namespace ImGui.UnitTest
 {
     public static class Util
     {
+        private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0, 2) + "\\ImGui.UnitTest.Output";
+
         public static void CheckEchoLogger()
         {
             var processes = Process.GetProcessesByName("EchoLogger.Server");
@@ -61,5 +63,52 @@ namespace ImGui.UnitTest
             }
             Process.Start(ModelViewerPath, path);
         }
+
+
+        internal static void DrawNode(Node node, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
+        {
+            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
+            using (Cairo.Context context = new Cairo.Context(surface))
+            {
+                Draw(context, node);
+
+                if (!System.IO.Directory.Exists(OutputPath))
+                {
+                    System.IO.Directory.CreateDirectory(OutputPath);
+                }
+
+                string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
+                surface.WriteToPng(filePath);
+                Util.OpenImage(filePath);
+            }
+        }
+
+        private static void Draw(Cairo.Context context, Node node)
+        {
+            foreach (var entry in node.Children)
+            {
+                if (entry.HorizontallyStretched || entry.VerticallyStretched)
+                {
+                    context.FillRectangle(entry.Rect, CairoEx.ColorLightBlue);
+                }
+                else if (entry.IsFixedWidth || entry.IsFixedHeight)
+                {
+                    context.FillRectangle(entry.Rect, CairoEx.ColorOrange);
+                }
+                else
+                {
+                    context.FillRectangle(entry.Rect, CairoEx.ColorPink);
+                }
+                context.StrokeRectangle(entry.Rect, CairoEx.ColorBlack);
+                var innerGroup = entry;
+                if (innerGroup.Children != null)
+                {
+                    context.Save();
+                    Draw(context, innerGroup);
+                    context.Restore();
+                }
+            }
+        }
+
     }
 }

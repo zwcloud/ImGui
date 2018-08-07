@@ -14,8 +14,6 @@ namespace ImGui.UnitTest.Rendering
 {
     public class NodeFacts
     {
-        private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0,2) + "\\ImGui.UnitTest.Output";
-
         public class TheLayoutMethod
         {
             [Fact]
@@ -38,7 +36,7 @@ namespace ImGui.UnitTest.Rendering
 
                 a.Layout();
 
-                DrawNode(a);
+                Util.DrawNode(a);
             }
 
             [Fact]
@@ -54,7 +52,7 @@ namespace ImGui.UnitTest.Rendering
 
                 group.Layout();
 
-                DrawNode(group);
+                Util.DrawNode(group);
             }
 
             [Fact]
@@ -95,53 +93,53 @@ namespace ImGui.UnitTest.Rendering
 
                 group1.Layout();
 
-                DrawNode(group1);
+                Util.DrawNode(group1);
             }
 
-            private void DrawNode(Node node, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
+            [Fact]
+            void LayoutDefaultSizedNodeInDefaultSizedGroup()
             {
-                using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
-                using (Cairo.Context context = new Cairo.Context(surface))
-                {
-                    Draw(context, node);
+                Node a = new Node(1);
+                a.AttachLayoutGroup(true);
 
-                    if (!System.IO.Directory.Exists(OutputPath))
-                    {
-                        System.IO.Directory.CreateDirectory(OutputPath);
-                    }
+                Node b = new Node(2);
+                b.AttachLayoutEntry(new Size(100, 100));
 
-                    string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
-                    surface.WriteToPng(filePath);
-                    Util.OpenImage(filePath);
-                }
+                Node c = new Node(3);
+                c.AttachLayoutEntry(new Size(100, 200));
+
+                a.Add(b);
+                a.Add(c);
+
+                a.Layout();
+
+                Util.DrawNode(a);
             }
 
-            private static void Draw(Cairo.Context context, Node node)
+            [Fact]
+            void LayoutDefaultSizedNodeInFixedSizedGroup()
             {
-                foreach (var entry in node.Children)
-                {
-                    if (entry.HorizontallyStretched || entry.VerticallyStretched)
-                    {
-                        context.FillRectangle(entry.Rect, CairoEx.ColorLightBlue);
-                    }
-                    else if (entry.IsFixedWidth || entry.IsFixedHeight)
-                    {
-                        context.FillRectangle(entry.Rect, CairoEx.ColorOrange);
-                    }
-                    else
-                    {
-                        context.FillRectangle(entry.Rect, CairoEx.ColorPink);
-                    }
-                    context.StrokeRectangle(entry.Rect, CairoEx.ColorBlack);
-                    var innerGroup = entry;
-                    if (innerGroup.Children != null)
-                    {
-                        context.Save();
-                        Draw(context, innerGroup);
-                        context.Restore();
-                    }
-                }
+                Node a = new Node(1);
+                a.AttachLayoutGroup(true, GUILayout.Width(200).Height(200));
+
+                Assert.True(a.IsFixedWidth);
+                Assert.True(a.IsFixedHeight);
+
+                Node b = new Node(2);
+                b.AttachLayoutEntry(new Size(100, 100));
+
+                Node c = new Node(3);
+                c.AttachLayoutEntry(new Size(100, 200));
+
+                a.Add(b);
+                a.Add(c);
+
+                a.Layout();
+
+                Util.DrawNode(a);
             }
+
+
         }
 
         public class TheDrawMethod

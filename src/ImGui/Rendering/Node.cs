@@ -30,10 +30,21 @@ namespace ImGui.Rendering
             this.Id = id;
         }
 
-        public Node(int id, string name)
+        public Node(int id, string name) : this(id)
         {
-            this.Id = id;
             this.Name = name;
+        }
+
+        public Node(int id, string name, bool isGroup, bool isVertical = true) : this(id, name)
+        {
+            if (!isGroup)
+            {
+                AttachLayoutEntry(Size.Empty);
+            }
+            else
+            {
+                AttachLayoutGroup(isVertical);
+            }
         }
 
         #region Layout
