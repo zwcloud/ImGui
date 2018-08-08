@@ -6,6 +6,8 @@ namespace ImGui
     {
         internal static ILogger logger;
 
+        public static bool Enabled { get; set; } = false;
+
         public static bool LogStatus { get; set; } = true;
 
         public static void Init(ILogger logger)
@@ -15,20 +17,20 @@ namespace ImGui
 
         public static void Msg(string format, params string[] args)
         {
+            if (!Enabled) return;
             if (logger == null) throw new InvalidOperationException("The logger hasn't been initialized.");
-            if (!logger.Enabled) return;
             logger.Msg(format, args);
         }
         public static void Warning(string format, params string[] args)
         {
+            if (!Enabled) return;
             if (logger == null) throw new InvalidOperationException("The logger hasn't been initialized.");
-            if (!logger.Enabled) return;
             logger.Warning(format, args);
         }
         public static void Error(string format, params string[] args)
         {
+            if (!Enabled) return;
             if (logger == null) throw new InvalidOperationException("The logger hasn't been initialized.");
-            if (!logger.Enabled) return;
             logger.Error(format, args);
         }
 

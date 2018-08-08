@@ -6,8 +6,6 @@ namespace ImGui
 {
     public class EchoLogger : ILogger
     {
-        public bool Enabled { get; set; }
-
         private static TcpClient client;
         private static NetworkStream stream;
 

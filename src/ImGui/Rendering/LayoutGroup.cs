@@ -144,8 +144,8 @@ namespace ImGui.Rendering
                 this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
                 if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
                 {
-                    Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
-                    return;
+                    throw new InvalidOperationException(
+                        $"The width of Group<{this.Id}> is too small to hold any children.");
                 }
                 this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 

@@ -42,18 +42,18 @@ namespace ImGui
                 {
                     Logger = new EchoLogger();
                     EchoLogger.Show();
-                    Logger.Enabled = true;
+                    Log.Enabled = true;
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
                     Debug.WriteLine("Failed to connect to EchoLogger. The program will continue without logging.");
-                    Logger.Enabled = false;
+                    Log.Enabled = false;
                 }
             }
             else
             {
                 Logger = new ConsoleLogger();
-                Logger.Enabled = true;
+                Log.Enabled = true;
             }
             Log.Init(Logger);
 

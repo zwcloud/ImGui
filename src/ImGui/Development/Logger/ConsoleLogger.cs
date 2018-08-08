@@ -5,8 +5,6 @@ namespace ImGui
 {
     public class ConsoleLogger : ILogger
     {
-        public bool Enabled { get; set; }
-
         public void Clear()
         {
             Console.Clear();

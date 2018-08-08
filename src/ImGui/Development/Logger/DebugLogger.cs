@@ -2,10 +2,8 @@
 
 namespace ImGui
 {
-    class DebugLogger : ILogger
+    internal class DebugLogger : ILogger
     {
-        public bool Enabled { get; set; }
-
         public void Clear()
         {
             //dummy, too hard to implement in Visual Studio
