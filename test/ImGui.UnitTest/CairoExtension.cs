@@ -72,13 +72,15 @@ namespace ImGui.UnitTest
             g.ClosePath();
             g.Fill();
         }
-        
+
         #region Color
 
         public static readonly Color ColorClear = ColorArgb(0, 0, 0, 0);
         public static readonly Color ColorBlack = ColorRgb(0, 0, 0);
         public static readonly Color ColorWhite = ColorRgb(255, 255, 255);
         public static readonly Color ColorMetal = ColorRgb(192, 192, 192);
+        public static readonly Color ColorRed = ColorRgb(255, 0, 0);
+        public static readonly Color ColorGreen = ColorRgb(0, 255, 0);
         public static readonly Color ColorBlue = ColorRgb(0, 0, 255);
         public static readonly Color ColorLightBlue = ColorRgb(46, 167, 224);
         public static readonly Color ColorDarkBlue = ColorRgb(3, 110, 184);

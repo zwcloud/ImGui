@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Cairo;
 using ImGui.Rendering;
 
 namespace ImGui.UnitTest
@@ -83,9 +84,11 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static void Draw(Cairo.Context context, Node node)
+        private static void Draw(Context context, Node entry)
         {
-            foreach (var entry in node.Children)
+            var isGroup = entry.Children != null;
+
+            if (!isGroup)
             {
                 if (entry.HorizontallyStretched || entry.VerticallyStretched)
                 {
@@ -97,18 +100,20 @@ namespace ImGui.UnitTest
                 }
                 else
                 {
-                    context.FillRectangle(entry.Rect, CairoEx.ColorPink);
-                }
-                context.StrokeRectangle(entry.Rect, CairoEx.ColorBlack);
-                var innerGroup = entry;
-                if (innerGroup.Children != null)
-                {
-                    context.Save();
-                    Draw(context, innerGroup);
-                    context.Restore();
+                    context.FillRectangle(entry.Rect, CairoEx.ColorGreen);
                 }
             }
-        }
 
+            context.StrokeRectangle(entry.Rect, CairoEx.ColorBlack);
+
+            if (!isGroup) return;
+
+            context.Save();
+            foreach (var childNode in entry.Children)
+            {
+                Draw(context, childNode);
+            }
+            context.Restore();
+        }
     }
 }
