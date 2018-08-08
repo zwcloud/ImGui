@@ -56,7 +56,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            void ShowAThreeLayerGroup()
+            public void ShowAThreeLayerGroup()
             {
                 // layer 1
                 Node group1 = new Node(1); group1.AttachLayoutGroup(true, GUILayout.Width(400).Height(400));
@@ -97,16 +97,22 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            void LayoutDefaultSizedNodeInDefaultSizedGroup()
+            public void LayoutDefaultSizedNodeInDefaultSizedGroup()
             {
                 Node a = new Node(1);
                 a.AttachLayoutGroup(true);
+                Assert.True(a.IsDefaultWidth);
+                Assert.True(a.IsDefaultHeight);
 
                 Node b = new Node(2);
                 b.AttachLayoutEntry(new Size(100, 100));
+                Assert.True(b.IsDefaultWidth);
+                Assert.True(b.IsDefaultHeight);
 
                 Node c = new Node(3);
                 c.AttachLayoutEntry(new Size(100, 200));
+                Assert.True(c.IsDefaultWidth);
+                Assert.True(c.IsDefaultHeight);
 
                 a.Add(b);
                 a.Add(c);
@@ -121,15 +127,18 @@ namespace ImGui.UnitTest.Rendering
             {
                 Node a = new Node(1);
                 a.AttachLayoutGroup(true, GUILayout.Width(200).Height(200));
-
                 Assert.True(a.IsFixedWidth);
                 Assert.True(a.IsFixedHeight);
 
                 Node b = new Node(2);
                 b.AttachLayoutEntry(new Size(100, 100));
+                Assert.True(b.IsDefaultWidth);
+                Assert.True(b.IsDefaultHeight);
 
                 Node c = new Node(3);
                 c.AttachLayoutEntry(new Size(100, 200));
+                Assert.True(c.IsDefaultWidth);
+                Assert.True(c.IsDefaultHeight);
 
                 a.Add(b);
                 a.Add(c);
@@ -139,7 +148,61 @@ namespace ImGui.UnitTest.Rendering
                 Util.DrawNode(a);
             }
 
+            [Fact]
+            void LayoutDefaultSizedNodeInStretchSizedGroup_ShouldThrowException()
+            {
 
+                Action action = () =>
+                {
+                    Node a = new Node(1);
+                    a.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    Assert.True(a.IsStretchedWidth);
+                    Assert.True(a.IsStretchedHeight);
+
+                    Node b = new Node(2);
+                    b.AttachLayoutEntry(new Size(100, 100));
+                    Assert.True(b.IsDefaultWidth);
+                    Assert.True(b.IsDefaultHeight);
+
+                    Node c = new Node(3);
+                    c.AttachLayoutEntry(new Size(100, 200));
+                    Assert.True(c.IsDefaultWidth);
+                    Assert.True(c.IsDefaultHeight);
+
+                    a.Add(b);
+                    a.Add(c);
+
+                    a.Layout();
+                };
+
+                Assert.Throws<InvalidOperationException>(action);
+            }
+
+            [Fact]
+            void LayoutFixedSizedNodeInFixedSizedGroup()
+            {
+                Node a = new Node(1);
+                a.AttachLayoutGroup(true, GUILayout.Width(500).Height(500));
+                Assert.True(a.IsFixedWidth);
+                Assert.True(a.IsFixedHeight);
+
+                Node b = new Node(2);
+                b.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(100).Height(200));
+                Assert.True(b.IsFixedWidth);
+                Assert.True(b.IsFixedHeight);
+
+                Node c = new Node(3);
+                c.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(200).Height(100));
+                Assert.True(c.IsFixedWidth);
+                Assert.True(c.IsFixedHeight);
+
+                a.Add(b);
+                a.Add(c);
+
+                a.Layout();
+
+                Util.DrawNode(a);
+            }
         }
 
         public class TheDrawMethod
