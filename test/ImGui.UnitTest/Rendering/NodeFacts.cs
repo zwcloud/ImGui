@@ -96,6 +96,8 @@ namespace ImGui.UnitTest.Rendering
                 Util.DrawNode(group1);
             }
 
+            //default sized children
+
             [Fact]
             public void LayoutDefaultSizedNodeInDefaultSizedGroup()
             {
@@ -123,7 +125,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            void LayoutDefaultSizedNodeInFixedSizedGroup()
+            public void LayoutDefaultSizedNodeInFixedSizedGroup()
             {
                 Node a = new Node(1);
                 a.AttachLayoutGroup(true, GUILayout.Width(200).Height(200));
@@ -149,7 +151,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            void LayoutDefaultSizedNodeInStretchSizedGroup_ShouldThrowException()
+            public void LayoutDefaultSizedNodeInStretchSizedGroup_ShouldThrowException()
             {
 
                 Action action = () =>
@@ -178,8 +180,36 @@ namespace ImGui.UnitTest.Rendering
                 Assert.Throws<InvalidOperationException>(action);
             }
 
+            //fixed sized children
+
             [Fact]
-            void LayoutFixedSizedNodeInFixedSizedGroup()
+            public void LayoutFixedSizedNodeInDefaultSizedGroup()
+            {
+                Node a = new Node(1);
+                a.AttachLayoutGroup(true);
+                Assert.True(a.IsDefaultWidth);
+                Assert.True(a.IsDefaultHeight);
+
+                Node b = new Node(2);
+                b.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(100).Height(200));
+                Assert.True(b.IsFixedWidth);
+                Assert.True(b.IsFixedHeight);
+
+                Node c = new Node(3);
+                c.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(200).Height(100));
+                Assert.True(c.IsFixedWidth);
+                Assert.True(c.IsFixedHeight);
+
+                a.Add(b);
+                a.Add(c);
+
+                a.Layout();
+
+                Util.DrawNode(a);
+            }
+
+            [Fact]
+            public void LayoutFixedSizedNodeInFixedSizedGroup()
             {
                 Node a = new Node(1);
                 a.AttachLayoutGroup(true, GUILayout.Width(500).Height(500));
@@ -203,6 +233,125 @@ namespace ImGui.UnitTest.Rendering
 
                 Util.DrawNode(a);
             }
+
+            [Fact]
+            public void LayoutFixedSizedNodeInStretchedSizedGroup_ShouldThrowException()
+            {
+                Action action = () =>
+                {
+                    Node a = new Node(1);
+                    a.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    Assert.True(a.IsStretchedWidth);
+                    Assert.True(a.IsStretchedHeight);
+
+                    Node b = new Node(2);
+                    b.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(100).Height(200));
+                    Assert.True(b.IsFixedWidth);
+                    Assert.True(b.IsFixedHeight);
+
+                    Node c = new Node(3);
+                    c.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(200).Height(100));
+                    Assert.True(c.IsFixedWidth);
+                    Assert.True(c.IsFixedHeight);
+
+                    a.Add(b);
+                    a.Add(c);
+
+                    a.Layout();
+                };
+
+                Assert.Throws<InvalidOperationException>(action);
+            }
+
+            //stretched sized children
+
+            [Fact]
+            public void LayoutStretchedSizedNodeInDefaultSizedGroup_ShouldThrowException()
+            {
+                Action action = () =>
+                {
+                    Node a = new Node(1);
+                    a.AttachLayoutGroup(true);
+                    Assert.True(a.IsDefaultWidth);
+                    Assert.True(a.IsDefaultHeight);
+
+                    Node b = new Node(2);
+                    b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    Assert.True(b.IsStretchedWidth);
+                    Assert.True(b.IsStretchedHeight);
+
+                    Node c = new Node(3);
+                    c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    Assert.True(c.IsStretchedWidth);
+                    Assert.True(c.IsStretchedHeight);
+
+                    a.Add(b);
+                    a.Add(c);
+
+                    a.Layout();
+                };
+
+                Assert.Throws<InvalidOperationException>(action);
+                //TODO this should throw InvalidOperationException, because a default-sized group cannot have stretched-sized children
+            }
+
+            [Fact]
+            public void LayoutStretchedSizedNodeInFixedSizedGroup()
+            {
+                Node a = new Node(1);
+                a.AttachLayoutGroup(true, GUILayout.Width(500).Height(500));
+                Assert.True(a.IsFixedWidth);
+                Assert.True(a.IsFixedHeight);
+
+                Node b = new Node(2);
+                b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Assert.True(b.IsStretchedWidth);
+                Assert.True(b.IsStretchedHeight);
+
+                Node c = new Node(3);
+                c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Assert.True(c.IsStretchedWidth);
+                Assert.True(c.IsStretchedHeight);
+
+                a.Add(b);
+                a.Add(c);
+
+                a.Layout();
+
+                Util.DrawNode(a);
+            }
+
+            [Fact]
+            public void LayoutStretchedSizedNodeInStretchedSizedGroup_ShouldThrowException()
+            {
+                Action action = () =>
+                {
+                    Node a = new Node(1);
+                    a.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    Assert.True(a.IsStretchedWidth);
+                    Assert.True(a.IsStretchedHeight);
+
+                    Node b = new Node(2);
+                    b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    Assert.True(b.IsStretchedWidth);
+                    Assert.True(b.IsStretchedHeight);
+
+                    Node c = new Node(3);
+                    c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    Assert.True(c.IsStretchedWidth);
+                    Assert.True(c.IsStretchedHeight);
+
+                    a.Add(b);
+                    a.Add(c);
+
+                    a.Layout();
+                };
+
+                Assert.Throws<InvalidOperationException>(action);
+                //This should throw InvalidOperationException, because a stretched-sized group cannot have stretched-sized children
+            }
+
+
         }
 
         public class TheDrawMethod
