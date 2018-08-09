@@ -291,7 +291,7 @@ namespace ImGui.UnitTest.Rendering
                 };
 
                 Assert.Throws<LayoutException>(action);
-                //TODO this should throw InvalidOperationException, because a default-sized group is not allowed to have stretched-sized children
+                //this should throw LayoutException, because a default-sized group is not allowed to have stretched-sized children
             }
 
             [Fact]
@@ -347,7 +347,7 @@ namespace ImGui.UnitTest.Rendering
                 };
 
                 Assert.Throws<LayoutException>(action);
-                //This should throw InvalidOperationException, because a stretched-sized group cannot have stretched-sized children
+                //This should throw LayoutException, because a stretched-sized group cannot have stretched-sized children
             }
 
 
