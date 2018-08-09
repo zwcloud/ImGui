@@ -149,7 +149,7 @@ namespace ImGui.Rendering
                 var fixedWidth = MinWidth;
                 if(fixedWidth < horizontalSpace)
                 {
-                    throw new InvalidOperationException(
+                    throw new LayoutException(
                         string.Format("Specified width is too small. It must bigger than the horizontal padding and border size ({0}).", horizontalSpace));
                 }
                 this.HorizontalStretchFactor = 0;
@@ -165,7 +165,7 @@ namespace ImGui.Rendering
                 var fixedHeight = MinHeight;
                 if (fixedHeight < verticalSpace)
                 {
-                    throw new InvalidOperationException(
+                    throw new LayoutException(
                         string.Format("Specified height is too small. It must bigger than the vertical padding and border size ({0}).", verticalSpace));
                 }
                 this.VerticalStretchFactor = 0;
@@ -185,7 +185,7 @@ namespace ImGui.Rendering
                 var value = options.MinWidth.Value;
                 if (value < style.PaddingHorizontal + style.BorderHorizontal)
                 {
-                    throw new InvalidOperationException(
+                    throw new LayoutException(
                         string.Format(
                             "The specified width is too small. It must bigger than the horizontal padding and border size ({0}).",
                             style.PaddingHorizontal + style.BorderHorizontal));
@@ -198,7 +198,7 @@ namespace ImGui.Rendering
                 var value = options.MinHeight.Value;
                 if (value < style.PaddingVertical + style.BorderVertical)
                 {
-                    throw new InvalidOperationException(
+                    throw new LayoutException(
                         string.Format(
                             "The specified height is too small. It must bigger than the vertical padding and border size ({0}).",
                             style.PaddingVertical + style.BorderVertical));
@@ -278,7 +278,7 @@ namespace ImGui.Rendering
         {
             if(this.IsFixedWidth)
             {
-                throw new Exception("Cannot get default width of a fixed size entry.");
+                throw new LayoutException("Cannot get default width of a fixed size entry.");
             }
             return this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
         }
@@ -287,7 +287,7 @@ namespace ImGui.Rendering
         {
             if (this.IsFixedHeight)
             {
-                throw new Exception("Cannot get default width of a fixed height entry.");
+                throw new LayoutException("Cannot get default width of a fixed height entry.");
             }
             return this.ContentHeight + this.PaddingVertical + this.BorderVertical;
         }

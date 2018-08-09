@@ -144,7 +144,7 @@ namespace ImGui.Rendering
                 this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
                 if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
                 {
-                    throw new InvalidOperationException(
+                    throw new LayoutException(
                         $"The width of Group<{this.Id}> is too small to hold any children.");
                 }
                 this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
@@ -159,7 +159,7 @@ namespace ImGui.Rendering
 
                 if (this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
                 {
-                    Log.Warning(string.Format("The width of Group<{0}> is too small to hold any children.", this.Id));
+                    throw new LayoutException($"The width of Group<{this.Id}> is too small to hold any children.");
                     return;
                 }
                 this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
@@ -223,9 +223,8 @@ namespace ImGui.Rendering
                 var cellSpacingWidth = this.CellSpacingHorizontal * (childCount - 1);
                 if(cellSpacingWidth >= this.ContentWidth)
                 {
-                    Log.Warning(string.Format("Group<{0}> doesn't have enough width for horizontal-cell-spacing<{1}> with {2} children.",
-                        this.Id, this.CellSpacingHorizontal, childCount));
-                    return;
+                    throw new LayoutException(
+                        $"Group<{this.Id}> doesn't have enough width for horizontal-cell-spacing<{this.CellSpacingHorizontal}> with {childCount} children.");
                 }
 
                 var widthWithoutCellSpacing = this.ContentWidth - cellSpacingWidth;
@@ -313,8 +312,7 @@ namespace ImGui.Rendering
                 this.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
                 if (this.Rect.Height - this.PaddingVertical - this.BorderVertical < 1)
                 {
-                    Log.Warning(string.Format("The height of Group<{0}> is too small to hold any children.", this.Id));
-                    return;
+                    throw new LayoutException($"The height of Group<{this.Id}> is too small to hold any children.");
                 }
                 this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
@@ -328,8 +326,7 @@ namespace ImGui.Rendering
 
                 if (this.Rect.Height - this.PaddingVertical - this.BorderVertical < 1)
                 {
-                    Log.Warning(string.Format("The height of Group<{0}> is too small to hold any children.", this.Id));
-                    return;
+                    throw new LayoutException($"The height of Group<{this.Id}> is too small to hold any children.");
                 }
                 this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
@@ -375,9 +372,8 @@ namespace ImGui.Rendering
                 var cellSpacingHeight = (childCount - 1) * this.CellSpacingVertical;
                 if(cellSpacingHeight >= this.ContentWidth)
                 {
-                    Log.Warning(string.Format("Group<{0}> doesn't have enough height for vertical-cell-spacing<{1}> with {2} children.",
-                        this.Id, this.CellSpacingVertical, childCount));
-                    return;
+                    throw new LayoutException(
+                        $"Group<{this.Id}> doesn't have enough height for vertical-cell-spacing<{this.CellSpacingVertical}> with {childCount} children.");
                 }
 
                 var heightWithoutCellSpacing = this.ContentHeight - cellSpacingHeight;

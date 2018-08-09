@@ -153,7 +153,6 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void LayoutDefaultSizedNodeInStretchSizedGroup_ShouldThrowException()
             {
-
                 Action action = () =>
                 {
                     Node a = new Node(1);
@@ -177,7 +176,7 @@ namespace ImGui.UnitTest.Rendering
                     a.Layout();
                 };
 
-                Assert.Throws<InvalidOperationException>(action);
+                Assert.Throws<LayoutException>(action);
             }
 
             //fixed sized children
@@ -260,7 +259,7 @@ namespace ImGui.UnitTest.Rendering
                     a.Layout();
                 };
 
-                Assert.Throws<InvalidOperationException>(action);
+                Assert.Throws<LayoutException>(action);
             }
 
             //stretched sized children
@@ -291,8 +290,8 @@ namespace ImGui.UnitTest.Rendering
                     a.Layout();
                 };
 
-                Assert.Throws<InvalidOperationException>(action);
-                //TODO this should throw InvalidOperationException, because a default-sized group cannot have stretched-sized children
+                Assert.Throws<LayoutException>(action);
+                //TODO this should throw InvalidOperationException, because a default-sized group is not allowed to have stretched-sized children
             }
 
             [Fact]
@@ -347,7 +346,7 @@ namespace ImGui.UnitTest.Rendering
                     a.Layout();
                 };
 
-                Assert.Throws<InvalidOperationException>(action);
+                Assert.Throws<LayoutException>(action);
                 //This should throw InvalidOperationException, because a stretched-sized group cannot have stretched-sized children
             }
 
