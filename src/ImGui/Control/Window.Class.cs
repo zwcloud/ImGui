@@ -188,7 +188,7 @@ namespace ImGui
             //title bar node
             {
                 var id = this.GetID("TitleBar");
-                var node = new Node(id,"TitleBar");
+                var node = new Node(id, "TitleBar");
                 this.titleBarNode = node;
             }
             this.IDStack.Push(this.titleBarNode.Id);

@@ -118,7 +118,7 @@ namespace ImGui
                 //create button node
                 node = new Node(id, $"Button<{text}>");
                 var contentSize = style.CalcSize(text, GUIState.Normal);//TEMP: GUI state should be de-coupled from GUI style
-                node.AttachLayoutEntry(contentSize, options);
+                node.AttachLayoutEntry(contentSize, options);//TODO *************** properly assign layout entry and group to every node that needs layout!!!
                 t.Add(node);
                 window.IDStack.Push(id);
 

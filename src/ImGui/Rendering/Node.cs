@@ -25,26 +25,52 @@ namespace ImGui.Rendering
         /// </summary>
         public Rect Rect;
 
+        /// <summary>
+        /// Create a manually positioned node.
+        /// </summary>
         public Node(int id)
         {
             this.Id = id;
         }
 
+        /// <summary>
+        /// Create a manually positioned node.
+        /// </summary>
         public Node(int id, string name) : this(id)
         {
             this.Name = name;
         }
 
-        public Node(int id, string name, bool isGroup, bool isVertical = true) : this(id, name)
+        /// <summary>
+        /// Create a automatic-layout node.
+        /// </summary>
+        public Node(int id, LayoutOptions? options = null) : this(id)
         {
-            if (!isGroup)
-            {
-                AttachLayoutEntry(Size.Empty);
-            }
-            else
-            {
-                AttachLayoutGroup(isVertical);
-            }
+            AttachLayoutEntry(Size.Zero, options);
+        }
+
+        /// <summary>
+        /// Create a automatic-layout node.
+        /// </summary>
+        public Node(int id, string name, LayoutOptions? options) : this(id, name)
+        {
+            AttachLayoutEntry(Size.Zero, options);
+        }
+
+        /// <summary>
+        /// Create a automatic-layout node as a group.
+        /// </summary>
+        public Node(int id, bool isVertical, LayoutOptions? options) : this(id)
+        {
+            AttachLayoutGroup(isVertical, options);
+        }
+
+        /// <summary>
+        /// Create a automatic-layout node as a group.
+        /// </summary>
+        public Node(int id, string name, bool isVertical, LayoutOptions? options) : this(id, name)
+        {
+            AttachLayoutGroup(isVertical, options);
         }
 
         #region Layout
