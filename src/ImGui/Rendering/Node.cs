@@ -102,7 +102,28 @@ namespace ImGui.Rendering
 
         public void Add(Node node)
         {
-            this.LayoutGroup.Add(node);
+            //FIXME Make sure that the behaviour when adding a node is correct.
+            //Node types: a plain node, a node with LayoutEntry only, a node with LayoutGroup
+            //There are 6 use cases.
+
+            if (!(this.LayoutEntry is LayoutGroup) && this.LayoutEntry != null)
+            {
+                throw new LayoutException("Cannot add node to a layout entry.");
+            }
+
+            if (this.LayoutEntry is LayoutGroup @group)
+            {
+                group.Add(node);
+            }
+            else
+            {
+                if (this.Children == null)
+                {
+                    this.Children = new List<Node>();
+                }
+                node.Parent = node;
+                this.Children.Add(node);
+            }
         }
 
         //TODO maybe we should use an extra dictionary to retrive node by id, O(1) but occupies more memory
