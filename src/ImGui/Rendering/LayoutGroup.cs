@@ -67,20 +67,6 @@ namespace ImGui.Rendering
 
         public bool IsVertical { get; private set; }
 
-        public List<Node> Entries => this.Children;
-
-        public Node GetEntry(int id)
-        {
-            foreach (var entry in this.Entries)
-            {
-                if (entry.Id == id)
-                {
-                    return entry;
-                }
-            }
-            return null;
-        }
-
         /// <summary>
         /// Append child entry to this group
         /// </summary>
@@ -133,7 +119,7 @@ namespace ImGui.Rendering
             }
 
             item.Parent = this;
-            this.Entries.Add(item);
+            this.Children.Add(item);
         }
 
         public void Group_CalcWidth(double unitPartWidth = -1)
@@ -150,7 +136,7 @@ namespace ImGui.Rendering
                 this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
                 // calculate the width of children
-                CalcChildrenWidth();
+                this.CalcChildrenWidth();
             }
             else if (this.IsFixedWidth)//fixed width
             {
@@ -165,7 +151,7 @@ namespace ImGui.Rendering
                 this.ContentWidth = this.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
                 // calculate the width of children
-                CalcChildrenWidth();
+                this.CalcChildrenWidth();
             }
             else // default width
             {
@@ -173,7 +159,7 @@ namespace ImGui.Rendering
                 {
                     var temp = 0d;
                     // get the max width of children
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         entry.CalcWidth();
                         temp = Math.Max(temp, entry.Rect.Width);
@@ -183,7 +169,7 @@ namespace ImGui.Rendering
                 else
                 {
                     var temp = 0d;
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         entry.CalcWidth();
                         temp += entry.Rect.Width + this.CellSpacingHorizontal;
@@ -199,7 +185,7 @@ namespace ImGui.Rendering
         {
             if (this.IsVertical) //vertical group
             {
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     if (entry.HorizontallyStretched)
                     {
@@ -219,7 +205,7 @@ namespace ImGui.Rendering
                 // calculate the unitPartWidth for stretched children
                 // calculate the width of fixed-size children
 
-                var childCount = this.Entries.Count;
+                var childCount = this.Children.Count;
                 var cellSpacingWidth = this.CellSpacingHorizontal * (childCount - 1);
                 if(cellSpacingWidth >= this.ContentWidth)
                 {
@@ -231,7 +217,7 @@ namespace ImGui.Rendering
 
                 double minWidthOfEntries = 0;
                 double minStretchedWidth = 0;
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     if (entry.HorizontallyStretched)
                     {
@@ -252,7 +238,7 @@ namespace ImGui.Rendering
                 if(minWidthOfEntries > widthWithoutCellSpacing)//overflow
                 {
                     var factor = 0;
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         if (entry.HorizontallyStretched)
                         {
@@ -261,7 +247,7 @@ namespace ImGui.Rendering
                     }
                     var unit = minStretchedWidth / factor;
                     // change all HorizontallyStretched entries to fixed width
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         if (entry.HorizontallyStretched)
                         {
@@ -274,7 +260,7 @@ namespace ImGui.Rendering
                 else
                 {
                     var factor = 0;
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         if (entry.HorizontallyStretched)
                         {
@@ -291,7 +277,7 @@ namespace ImGui.Rendering
                         var stretchedWidth = widthWithoutCellSpacing - minWidthOfEntries + minStretchedWidth;
                         var unit = stretchedWidth / factor;
                         // calculate the width of stretched children
-                        foreach (var entry in this.Entries)
+                        foreach (var entry in this.Children)
                         {
                             if (entry.HorizontallyStretched)
                             {
@@ -317,7 +303,7 @@ namespace ImGui.Rendering
                 this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
                 // calculate the height of children
-                CalcChildrenHeight();
+                this.CalcChildrenHeight();
             }
             else if (this.IsFixedHeight)//fixed height
             {
@@ -331,14 +317,14 @@ namespace ImGui.Rendering
                 this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
 
                 // calculate the height of children
-                CalcChildrenHeight();
+                this.CalcChildrenHeight();
             }
             else // default height
             {
                 if (this.IsVertical) // vertical group
                 {
                     var temp = 0d;
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         entry.CalcHeight();
                         temp += entry.Rect.Height + this.CellSpacingVertical;
@@ -350,7 +336,7 @@ namespace ImGui.Rendering
                 {
                     var temp = 0d;
                     // get the max height of children
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         entry.CalcHeight();
                         temp = Math.Max(temp, entry.Rect.Height);
@@ -368,7 +354,7 @@ namespace ImGui.Rendering
                 // calculate the unitPartHeight for stretched children
                 // calculate the height of fixed-size children
 
-                var childCount = this.Entries.Count;
+                var childCount = this.Children.Count;
                 var cellSpacingHeight = (childCount - 1) * this.CellSpacingVertical;
                 if(cellSpacingHeight >= this.ContentWidth)
                 {
@@ -380,7 +366,7 @@ namespace ImGui.Rendering
 
                 double minHeightOfEntries = 0;
                 double minStretchedHeight = 0;
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     if (entry.VerticallyStretched)
                     {
@@ -401,7 +387,7 @@ namespace ImGui.Rendering
                 if (minHeightOfEntries > heightWithoutCellSpacing)//overflow
                 {
                     var factor = 0;
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         if (entry.VerticallyStretched)
                         {
@@ -410,7 +396,7 @@ namespace ImGui.Rendering
                     }
                     var unit = minStretchedHeight / factor;
                     // change all VerticallyStretched entries to fixed height
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         if (entry.VerticallyStretched)
                         {
@@ -423,7 +409,7 @@ namespace ImGui.Rendering
                 else
                 {
                     var factor = 0;
-                    foreach (var entry in this.Entries)
+                    foreach (var entry in this.Children)
                     {
                         if (entry.VerticallyStretched)
                         {
@@ -440,7 +426,7 @@ namespace ImGui.Rendering
                         var stretchedHeight = heightWithoutCellSpacing - minHeightOfEntries + minStretchedHeight;
                         var unit = stretchedHeight / factor;
                         // calculate the height of stretched children
-                        foreach (var entry in this.Entries)
+                        foreach (var entry in this.Children)
                         {
                             if (entry.VerticallyStretched)
                             {
@@ -453,7 +439,7 @@ namespace ImGui.Rendering
             }
             else // horizontal group
             {
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     if (entry.VerticallyStretched)
                     {
@@ -476,7 +462,7 @@ namespace ImGui.Rendering
             if (this.IsVertical)
             {
                 var childX = 0d;
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     switch (this.AlignmentHorizontal)
                     {
@@ -501,7 +487,7 @@ namespace ImGui.Rendering
 
                 var childWidthWithCellSpcaing = 0d;
                 var childWidthWithoutCellSpcaing = 0d;
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     childWidthWithCellSpcaing += entry.Rect.Width + this.CellSpacingHorizontal;
                     childWidthWithoutCellSpcaing += entry.Rect.Width;
@@ -521,7 +507,7 @@ namespace ImGui.Rendering
                         break;
                     case Alignment.SpaceAround:
                         nextX = x + this.BorderLeft + this.PaddingLeft +
-                                (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Entries.Count + 1);
+                                (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Children.Count + 1);
                         break;
                     case Alignment.SpaceBetween:
                         nextX = x + this.BorderLeft + this.PaddingLeft;
@@ -530,7 +516,7 @@ namespace ImGui.Rendering
                         throw new ArgumentOutOfRangeException();
                 }
 
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     entry.SetX(nextX);
                     switch (this.AlignmentHorizontal)
@@ -541,10 +527,10 @@ namespace ImGui.Rendering
                             nextX += entry.Rect.Width + this.CellSpacingHorizontal;
                             break;
                         case Alignment.SpaceAround:
-                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Entries.Count + 1);
+                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Children.Count + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Entries.Count - 1);
+                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.Children.Count - 1);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -562,7 +548,7 @@ namespace ImGui.Rendering
 
                 var childHeightWithCellSpcaing = 0d;
                 var childHeightWithoutCellSpcaing = 0d;
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     childHeightWithCellSpcaing += entry.Rect.Height + this.CellSpacingVertical;
                     childHeightWithoutCellSpcaing += entry.Rect.Height;
@@ -582,7 +568,7 @@ namespace ImGui.Rendering
                         break;
                     case Alignment.SpaceAround:
                         nextY = y + this.BorderTop + this.PaddingTop +
-                                (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Entries.Count + 1);
+                                (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Children.Count + 1);
                         break;
                     case Alignment.SpaceBetween:
                         nextY = y + this.BorderTop + this.PaddingTop;
@@ -591,7 +577,7 @@ namespace ImGui.Rendering
                         throw new ArgumentOutOfRangeException();
                 }
 
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     entry.SetY(nextY);
                     switch (this.AlignmentVertical)
@@ -602,10 +588,10 @@ namespace ImGui.Rendering
                             nextY += entry.Rect.Height + this.CellSpacingVertical;
                             break;
                         case Alignment.SpaceAround:
-                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Entries.Count + 1);
+                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Children.Count + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Entries.Count - 1);
+                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.Children.Count - 1);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -615,7 +601,7 @@ namespace ImGui.Rendering
             else
             {
                 var childY = 0d;
-                foreach (var entry in this.Entries)
+                foreach (var entry in this.Children)
                 {
                     switch (this.AlignmentVertical)
                     {
