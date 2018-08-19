@@ -277,12 +277,12 @@ namespace ImGui.Rendering
             }
         }
 
-        public void Entry_SetX(double x)
+        public virtual void SetX(double x)
         {
             this.node.Rect.X = x;
         }
 
-        public void Entry_SetY(double y)
+        public virtual void SetY(double y)
         {
             this.node.Rect.Y = y;
         }

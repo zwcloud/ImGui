@@ -458,7 +458,7 @@ namespace ImGui.Rendering
             }
         }
 
-        public void SetX(double x)
+        public override void SetX(double x)
         {
             this.node.Rect.X = x;
             if (this.IsVertical)
@@ -541,7 +541,7 @@ namespace ImGui.Rendering
             }
         }
 
-        public void SetY(double y)
+        public override void SetY(double y)
         {
             this.node.Rect.Y = y;
             if (this.IsVertical)

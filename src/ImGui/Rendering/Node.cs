@@ -106,7 +106,7 @@ namespace ImGui.Rendering
         {
             if (this.Children == null)
             {
-                this.LayoutEntry.Entry_SetX(x);
+                this.LayoutEntry.SetX(x);
             }
             else
             {
@@ -119,7 +119,7 @@ namespace ImGui.Rendering
         {
             if (this.Children == null)
             {
-                this.LayoutEntry.Entry_SetY(y);
+                this.LayoutEntry.SetY(y);
             }
             else
             {
