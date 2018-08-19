@@ -163,7 +163,7 @@ namespace ImGui.Rendering
                 if(fixedWidth < horizontalSpace)
                 {
                     throw new LayoutException(
-                        string.Format("Specified width is too small. It must bigger than the horizontal padding and border size ({0}).", horizontalSpace));
+                        $"Specified width is too small. It must bigger than the horizontal padding and border size ({horizontalSpace}).");
                 }
                 this.HorizontalStretchFactor = 0;
             }
@@ -179,7 +179,7 @@ namespace ImGui.Rendering
                 if (fixedHeight < verticalSpace)
                 {
                     throw new LayoutException(
-                        string.Format("Specified height is too small. It must bigger than the vertical padding and border size ({0}).", verticalSpace));
+                        $"Specified height is too small. It must bigger than the vertical padding and border size ({verticalSpace}).");
                 }
                 this.VerticalStretchFactor = 0;
             }
@@ -199,9 +199,7 @@ namespace ImGui.Rendering
                 if (value < style.PaddingHorizontal + style.BorderHorizontal)
                 {
                     throw new LayoutException(
-                        string.Format(
-                            "The specified width is too small. It must bigger than the horizontal padding and border size ({0}).",
-                            style.PaddingHorizontal + style.BorderHorizontal));
+                        $"The specified width is too small. It must bigger than the horizontal padding and border size ({style.PaddingHorizontal + style.BorderHorizontal}).");
                 }
                 this.MinWidth = this.MaxWidth = value;
                 this.HorizontalStretchFactor = 0;
@@ -212,9 +210,7 @@ namespace ImGui.Rendering
                 if (value < style.PaddingVertical + style.BorderVertical)
                 {
                     throw new LayoutException(
-                        string.Format(
-                            "The specified height is too small. It must bigger than the vertical padding and border size ({0}).",
-                            style.PaddingVertical + style.BorderVertical));
+                        $"The specified height is too small. It must bigger than the vertical padding and border size ({style.PaddingVertical + style.BorderVertical}).");
                 }
                 this.MinHeight = this.MaxHeight = value;
                 this.VerticalStretchFactor = 0;

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ImGui.Layout;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
     [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(Name) +"}")]
-    internal partial class Node
+    internal class Node
     {
         /// <summary>
         /// identifier number of the node
@@ -77,51 +76,22 @@ namespace ImGui.Rendering
 
         public void CalcWidth(double unitPartWidth = -1)
         {
-            if (this.Children == null)
-            {
-                this.LayoutEntry.CalcWidth(unitPartWidth);
-            }
-            else
-            {
-                this.LayoutGroup.CalcWidth(unitPartWidth);
-            }
+            this.LayoutEntry.CalcWidth(unitPartWidth);
         }
 
         public void CalcHeight(double unitPartHeight = -1)
         {
-            if (this.Children == null)
-            {
-                this.LayoutEntry.CalcHeight(unitPartHeight);
-            }
-            else
-            {
-                this.LayoutGroup.CalcHeight(unitPartHeight);
-            }
+            this.LayoutEntry.CalcHeight(unitPartHeight);
         }
 
         public void SetX(double x)
         {
-            if (this.Children == null)
-            {
-                this.LayoutEntry.SetX(x);
-            }
-            else
-            {
-                this.LayoutGroup.SetX(x);
-            }
+            this.LayoutEntry.SetX(x);
         }
-
 
         public void SetY(double y)
         {
-            if (this.Children == null)
-            {
-                this.LayoutEntry.SetY(y);
-            }
-            else
-            {
-                this.LayoutGroup.SetY(y);
-            }
+            this.LayoutEntry.SetY(y);
         }
         #endregion
 
