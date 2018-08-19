@@ -41,38 +41,6 @@ namespace ImGui.Rendering
             this.Name = name;
         }
 
-        /// <summary>
-        /// Create a automatic-layout node.
-        /// </summary>
-        public Node(int id, LayoutOptions? options = null) : this(id)
-        {
-            AttachLayoutEntry(Size.Zero, options);
-        }
-
-        /// <summary>
-        /// Create a automatic-layout node.
-        /// </summary>
-        public Node(int id, string name, LayoutOptions? options) : this(id, name)
-        {
-            AttachLayoutEntry(Size.Zero, options);
-        }
-
-        /// <summary>
-        /// Create a automatic-layout node as a group.
-        /// </summary>
-        public Node(int id, bool isVertical, LayoutOptions? options) : this(id)
-        {
-            AttachLayoutGroup(isVertical, options);
-        }
-
-        /// <summary>
-        /// Create a automatic-layout node as a group.
-        /// </summary>
-        public Node(int id, string name, bool isVertical, LayoutOptions? options) : this(id, name)
-        {
-            AttachLayoutGroup(isVertical, options);
-        }
-
         #region Layout
         /// <summary>
         /// Make this node a group
