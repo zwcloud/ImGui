@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
 {
-    internal partial class Node
+    internal class LayoutEntry
     {
+        protected Node node;
+
+        protected List<Node> Children
+        {
+            get => this.node.Children;
+            set => this.node.Children = value;
+        }
+
         /// <summary>
         /// exact content width, externally pre-calculated from content and style
         /// </summary>
@@ -91,12 +100,17 @@ namespace ImGui.Rendering
         public double PaddingLeft => Padding.Item4;
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
+        
+        public LayoutEntry(Node node)
+        {
+            this.node = node;
+        }
 
         protected void Entry_Reset()
         {
             this.ContentWidth = 0;
             this.ContentHeight = 0;
-            this.Rect = Rect.Zero;
+            this.node.Rect = Rect.Zero;
             this.MinWidth = 1;
             this.MaxWidth = 9999;
             this.MinHeight = 1;
@@ -107,12 +121,11 @@ namespace ImGui.Rendering
             this.Padding = (0, 0, 0, 0);
         }
 
-        public void Entry_Init(int id, Size contentSize, LayoutOptions? options)
+        public void Entry_Init(Size contentSize, LayoutOptions? options)
         {
             this.Children = null;
             this.Entry_Reset();
 
-            this.Id = id;
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
 
@@ -216,13 +229,13 @@ namespace ImGui.Rendering
             }
         }
 
-        public void Entry_CalcWidth(double unitPartWidth = -1d)
+        public virtual void CalcWidth(double unitPartWidth = -1d)
         {
             if (this.HorizontallyStretched)
             {
                 if (unitPartWidth > 0)
                 {
-                    this.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
+                    this.node.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
                 }
                 else
                 {
@@ -231,22 +244,22 @@ namespace ImGui.Rendering
             }
             else if (this.IsFixedWidth)
             {
-                this.Rect.Width = this.MinWidth;
+                this.node.Rect.Width = this.MinWidth;
             }
             else
             {
-                this.Rect.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
+                this.node.Rect.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
             }
         }
 
-        public void Entry_CalcHeight(double unitPartHeight = -1d)
+        public virtual void CalcHeight(double unitPartHeight = -1d)
         {
             if (this.VerticallyStretched)
             {
                 if (unitPartHeight > 0)
                 {
-                    this.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
-                    this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
+                    this.node.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
+                    this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
                 }
                 else
                 {
@@ -255,23 +268,23 @@ namespace ImGui.Rendering
             }
             else if (this.IsFixedHeight)
             {
-                this.Rect.Height = this.MinHeight;
-                this.ContentHeight = this.Rect.Height - this.PaddingVertical - this.BorderVertical;
+                this.node.Rect.Height = this.MinHeight;
+                this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
             }
             else
             {
-                this.Rect.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
+                this.node.Rect.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
             }
         }
 
         public void Entry_SetX(double x)
         {
-            this.Rect.X = x;
+            this.node.Rect.X = x;
         }
 
         public void Entry_SetY(double y)
         {
-            this.Rect.Y = y;
+            this.node.Rect.Y = y;
         }
 
         public double GetDefaultWidth()

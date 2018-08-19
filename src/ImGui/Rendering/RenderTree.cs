@@ -29,9 +29,9 @@ namespace ImGui.Rendering
             Root.Rect = new Rect(position, size);
             Root.AttachLayoutGroup(true, GUILayout.Width((int)size.Width).Height((int)size.Height));
 
-            Debug.Assert(Root.IsFixedWidth);
-            Debug.Assert(Root.IsFixedHeight);
-            Debug.Assert(Root.IsVertical);
+            Debug.Assert(Root.LayoutEntry.IsFixedWidth);
+            Debug.Assert(Root.LayoutEntry.IsFixedHeight);
+            Debug.Assert(Root.LayoutGroup.IsVertical);
         }
 
         public Node GetNodeById(int id)

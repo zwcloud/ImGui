@@ -84,32 +84,32 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static void Draw(Context context, Node entry)
+        private static void Draw(Context context, Node node)
         {
-            var isGroup = entry.Children != null;
+            var isGroup = node.Children != null;
 
             if (!isGroup)
             {
-                if (entry.HorizontallyStretched || entry.VerticallyStretched)
+                if (node.LayoutEntry.HorizontallyStretched || node.LayoutEntry.VerticallyStretched)
                 {
-                    context.FillRectangle(entry.Rect, CairoEx.ColorLightBlue);
+                    context.FillRectangle(node.Rect, CairoEx.ColorLightBlue);
                 }
-                else if (entry.IsFixedWidth || entry.IsFixedHeight)
+                else if (node.LayoutEntry.IsFixedWidth || node.LayoutEntry.IsFixedHeight)
                 {
-                    context.FillRectangle(entry.Rect, CairoEx.ColorOrange);
+                    context.FillRectangle(node.Rect, CairoEx.ColorOrange);
                 }
                 else
                 {
-                    context.FillRectangle(entry.Rect, CairoEx.ColorGreen);
+                    context.FillRectangle(node.Rect, CairoEx.ColorGreen);
                 }
             }
 
-            context.StrokeRectangle(entry.Rect, CairoEx.ColorBlack);
+            context.StrokeRectangle(node.Rect, CairoEx.ColorBlack);
 
             if (!isGroup) return;
 
             context.Save();
-            foreach (var childNode in entry.Children)
+            foreach (var childNode in node.Children)
             {
                 Draw(context, childNode);
             }

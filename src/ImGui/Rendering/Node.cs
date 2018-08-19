@@ -13,7 +13,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// identifier number of the node
         /// </summary>
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// string identifier of the node
@@ -42,12 +42,19 @@ namespace ImGui.Rendering
         }
 
         #region Layout
+
+        public LayoutEntry layoutEntry;
+
+        public LayoutGroup LayoutGroup => this.layoutEntry as LayoutGroup;
+        public LayoutEntry LayoutEntry => this.layoutEntry as LayoutEntry;
+
         /// <summary>
         /// Make this node a group
         /// </summary>
         public void AttachLayoutGroup(bool isVertical, LayoutOptions? options = null)
         {
-            this.Group_Init(this.Id, isVertical, options);
+            this.layoutEntry = new LayoutGroup(this);
+            this.LayoutGroup.Group_Init(isVertical, options);
             //TODO delete entry?
         }
 
@@ -56,7 +63,8 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutEntry(Size contentSize, LayoutOptions? options = null)
         {
-            this.Entry_Init(Id, contentSize, options);
+            this.layoutEntry = new LayoutEntry(this);
+            this.LayoutEntry.Entry_Init(contentSize, options);
         }
 
         /// <summary>
@@ -64,58 +72,58 @@ namespace ImGui.Rendering
         /// </summary>
         public void Layout()
         {
-            this.Group_CalcWidth(this.ContentWidth);
-            this.Group_CalcHeight(this.ContentHeight);
-            this.Group_SetX(this.Rect.X);
-            this.Group_SetY(this.Rect.Y);
+            this.LayoutGroup.CalcWidth(this.LayoutEntry.ContentWidth);
+            this.LayoutGroup.CalcHeight(this.LayoutEntry.ContentHeight);
+            this.LayoutGroup.SetX(this.Rect.X);
+            this.LayoutGroup.SetY(this.Rect.Y);
         }
 
-        private void CalcWidth(double unitPartWidth = -1)
+        public void CalcWidth(double unitPartWidth = -1)
         {
             if (this.Children == null)
             {
-                this.Entry_CalcWidth(unitPartWidth);
+                this.LayoutEntry.CalcWidth(unitPartWidth);
             }
             else
             {
-                this.Group_CalcWidth(unitPartWidth);
+                this.LayoutGroup.CalcWidth(unitPartWidth);
             }
         }
 
-        private void CalcHeight(double unitPartHeight = -1)
+        public void CalcHeight(double unitPartHeight = -1)
         {
             if (this.Children == null)
             {
-                this.Entry_CalcHeight(unitPartHeight);
+                this.LayoutEntry.CalcHeight(unitPartHeight);
             }
             else
             {
-                this.Group_CalcHeight(unitPartHeight);
+                this.LayoutGroup.CalcHeight(unitPartHeight);
             }
         }
 
-        private void SetX(double x)
+        public void SetX(double x)
         {
             if (this.Children == null)
             {
-                this.Entry_SetX(x);
+                this.LayoutEntry.Entry_SetX(x);
             }
             else
             {
-                this.Group_SetX(x);
+                this.LayoutGroup.SetX(x);
             }
         }
 
 
-        private void SetY(double y)
+        public void SetY(double y)
         {
             if (this.Children == null)
             {
-                this.Entry_SetY(y);
+                this.LayoutEntry.Entry_SetY(y);
             }
             else
             {
-                this.Group_SetY(y);
+                this.LayoutGroup.SetY(y);
             }
         }
         #endregion
@@ -124,6 +132,11 @@ namespace ImGui.Rendering
         public Node Parent { get; set; }
 
         public List<Node> Children { get; set; }
+
+        public void Add(Node node)
+        {
+            this.LayoutGroup.Add(node);
+        }
 
         //TODO maybe we should use an extra dictionary to retrive node by id, O(1) but occupies more memory
         public Node GetNodeById(int id)
