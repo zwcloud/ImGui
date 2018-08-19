@@ -11,6 +11,8 @@ namespace ImGui.Rendering
         public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
         public Alignment AlignmentVertical { get; set; } = Alignment.Start;
 
+        public bool IsVertical { get; private set; }
+
         protected void Group_Reset()
         {
             Entry_Reset();
@@ -64,8 +66,6 @@ namespace ImGui.Rendering
             this.AlignmentHorizontal = style.AlignmentHorizontal;
             this.AlignmentVertical = style.AlignmentVertical;
         }
-
-        public bool IsVertical { get; private set; }
 
         /// <summary>
         /// Append child entry to this group
