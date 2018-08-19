@@ -43,19 +43,16 @@ namespace ImGui.Rendering
 
         #region Layout
 
-        public LayoutEntry layoutEntry;
-
-        public LayoutGroup LayoutGroup => this.layoutEntry as LayoutGroup;
-        public LayoutEntry LayoutEntry => this.layoutEntry as LayoutEntry;
+        public LayoutEntry LayoutEntry { get; private set; }
+        public LayoutGroup LayoutGroup => this.LayoutEntry as LayoutGroup;
 
         /// <summary>
         /// Make this node a group
         /// </summary>
         public void AttachLayoutGroup(bool isVertical, LayoutOptions? options = null)
         {
-            this.layoutEntry = new LayoutGroup(this);
+            this.LayoutEntry = new LayoutGroup(this);
             this.LayoutGroup.Group_Init(isVertical, options);
-            //TODO delete entry?
         }
 
         /// <summary>
@@ -63,7 +60,7 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutEntry(Size contentSize, LayoutOptions? options = null)
         {
-            this.layoutEntry = new LayoutEntry(this);
+            this.LayoutEntry = new LayoutEntry(this);
             this.LayoutEntry.Entry_Init(contentSize, options);
         }
 

@@ -84,41 +84,41 @@ namespace ImGui.Rendering
             if (this.IsFixedWidth)
             {
                 Debug.Assert(!this.HorizontallyStretched);
-                if (this.IsVertical && item.layoutEntry.HorizontalStretchFactor > 1)
+                if (this.IsVertical && item.LayoutEntry.HorizontalStretchFactor > 1)
                 {
-                    item.layoutEntry.HorizontalStretchFactor = 1;
+                    item.LayoutEntry.HorizontalStretchFactor = 1;
                 }
             }
             else if (this.HorizontallyStretched)
             {
-                if (this.IsVertical && item.layoutEntry.HorizontalStretchFactor > 1)
+                if (this.IsVertical && item.LayoutEntry.HorizontalStretchFactor > 1)
                 {
-                    item.layoutEntry.HorizontalStretchFactor = 1;
+                    item.LayoutEntry.HorizontalStretchFactor = 1;
                 }
             }
             else
             {
-                item.layoutEntry.HorizontalStretchFactor = 0;
+                item.LayoutEntry.HorizontalStretchFactor = 0;
             }
 
             if (this.IsFixedHeight)
             {
                 Debug.Assert(!this.VerticallyStretched);
-                if (!this.IsVertical && item.layoutEntry.VerticalStretchFactor > 1)
+                if (!this.IsVertical && item.LayoutEntry.VerticalStretchFactor > 1)
                 {
-                    item.layoutEntry.VerticalStretchFactor = 1;
+                    item.LayoutEntry.VerticalStretchFactor = 1;
                 }
             }
             else if (this.VerticallyStretched)
             {
-                if (!this.IsVertical && item.layoutEntry.VerticalStretchFactor > 1)
+                if (!this.IsVertical && item.LayoutEntry.VerticalStretchFactor > 1)
                 {
-                    item.layoutEntry.VerticalStretchFactor = 1;
+                    item.LayoutEntry.VerticalStretchFactor = 1;
                 }
             }
             else
             {
-                item.layoutEntry.VerticalStretchFactor = 0;
+                item.LayoutEntry.VerticalStretchFactor = 0;
             }
 
             item.Parent = this.node;
@@ -189,7 +189,7 @@ namespace ImGui.Rendering
             {
                 foreach (var childNode in this.node.Children)
                 {
-                    if (childNode.layoutEntry.HorizontallyStretched)
+                    if (childNode.LayoutEntry.HorizontallyStretched)
                     {
                         childNode.CalcWidth(this.ContentWidth);
                         //the unitPartWidth
@@ -221,19 +221,19 @@ namespace ImGui.Rendering
                 double minStretchedWidth = 0;
                 foreach (var childNode in this.node.Children)
                 {
-                    if (childNode.layoutEntry.HorizontallyStretched)
+                    if (childNode.LayoutEntry.HorizontallyStretched)
                     {
-                        var defaultWidth = childNode.layoutEntry.GetDefaultWidth();
+                        var defaultWidth = childNode.LayoutEntry.GetDefaultWidth();
                         minWidthOfEntries += defaultWidth;
                         minStretchedWidth += defaultWidth;
                     }
-                    else if(childNode.layoutEntry.IsFixedWidth)
+                    else if(childNode.LayoutEntry.IsFixedWidth)
                     {
-                        minWidthOfEntries += childNode.layoutEntry.MinWidth;
+                        minWidthOfEntries += childNode.LayoutEntry.MinWidth;
                     }
                     else
                     {
-                        minWidthOfEntries += childNode.layoutEntry.GetDefaultWidth();
+                        minWidthOfEntries += childNode.LayoutEntry.GetDefaultWidth();
                     }
                 }
 
@@ -242,19 +242,19 @@ namespace ImGui.Rendering
                     var factor = 0;
                     foreach (var entry in this.node.Children)
                     {
-                        if (entry.layoutEntry.HorizontallyStretched)
+                        if (entry.LayoutEntry.HorizontallyStretched)
                         {
-                            factor += entry.layoutEntry.HorizontalStretchFactor;
+                            factor += entry.LayoutEntry.HorizontalStretchFactor;
                         }
                     }
                     var unit = minStretchedWidth / factor;
                     // change all HorizontallyStretched entries to fixed width
                     foreach (var childNode in this.node.Children)
                     {
-                        if (childNode.layoutEntry.HorizontallyStretched)
+                        if (childNode.LayoutEntry.HorizontallyStretched)
                         {
-                            childNode.layoutEntry.MinWidth = childNode.layoutEntry.MaxWidth = unit * childNode.layoutEntry.HorizontalStretchFactor;
-                            childNode.layoutEntry.HorizontalStretchFactor = 0;
+                            childNode.LayoutEntry.MinWidth = childNode.LayoutEntry.MaxWidth = unit * childNode.LayoutEntry.HorizontalStretchFactor;
+                            childNode.LayoutEntry.HorizontalStretchFactor = 0;
                         }
                         childNode.CalcWidth();
                     }
@@ -264,9 +264,9 @@ namespace ImGui.Rendering
                     var factor = 0;
                     foreach (var childNode in this.node.Children)
                     {
-                        if (childNode.layoutEntry.HorizontallyStretched)
+                        if (childNode.LayoutEntry.HorizontallyStretched)
                         {
-                            factor += childNode.layoutEntry.HorizontalStretchFactor;
+                            factor += childNode.LayoutEntry.HorizontalStretchFactor;
                         }
                         else
                         {
@@ -281,7 +281,7 @@ namespace ImGui.Rendering
                         // calculate the width of stretched children
                         foreach (var childNode in this.node.Children)
                         {
-                            if (childNode.layoutEntry.HorizontallyStretched)
+                            if (childNode.LayoutEntry.HorizontallyStretched)
                             {
                                 childNode.CalcWidth(unit);
                             }
@@ -370,19 +370,19 @@ namespace ImGui.Rendering
                 double minStretchedHeight = 0;
                 foreach (var entry in this.node.Children)
                 {
-                    if (entry.layoutEntry.VerticallyStretched)
+                    if (entry.LayoutEntry.VerticallyStretched)
                     {
-                        var defaultHeight = entry.layoutEntry.GetDefaultHeight();
+                        var defaultHeight = entry.LayoutEntry.GetDefaultHeight();
                         minHeightOfEntries += defaultHeight;
                         minStretchedHeight += defaultHeight;
                     }
-                    else if (entry.layoutEntry.IsFixedHeight)
+                    else if (entry.LayoutEntry.IsFixedHeight)
                     {
-                        minHeightOfEntries += entry.layoutEntry.MinHeight;
+                        minHeightOfEntries += entry.LayoutEntry.MinHeight;
                     }
                     else
                     {
-                        minHeightOfEntries += entry.layoutEntry.GetDefaultHeight();
+                        minHeightOfEntries += entry.LayoutEntry.GetDefaultHeight();
                     }
                 }
 
@@ -391,19 +391,19 @@ namespace ImGui.Rendering
                     var factor = 0;
                     foreach (var entry in this.node.Children)
                     {
-                        if (entry.layoutEntry.VerticallyStretched)
+                        if (entry.LayoutEntry.VerticallyStretched)
                         {
-                            factor += entry.layoutEntry.VerticalStretchFactor;
+                            factor += entry.LayoutEntry.VerticalStretchFactor;
                         }
                     }
                     var unit = minStretchedHeight / factor;
                     // change all VerticallyStretched entries to fixed height
                     foreach (var entry in this.node.Children)
                     {
-                        if (entry.layoutEntry.VerticallyStretched)
+                        if (entry.LayoutEntry.VerticallyStretched)
                         {
-                            entry.layoutEntry.MinHeight = entry.layoutEntry.MaxHeight = unit * entry.layoutEntry.VerticalStretchFactor;
-                            entry.layoutEntry.VerticalStretchFactor = 0;
+                            entry.LayoutEntry.MinHeight = entry.LayoutEntry.MaxHeight = unit * entry.LayoutEntry.VerticalStretchFactor;
+                            entry.LayoutEntry.VerticalStretchFactor = 0;
                         }
                         entry.CalcHeight();
                     }
@@ -413,9 +413,9 @@ namespace ImGui.Rendering
                     var factor = 0;
                     foreach (var entry in this.node.Children)
                     {
-                        if (entry.layoutEntry.VerticallyStretched)
+                        if (entry.LayoutEntry.VerticallyStretched)
                         {
-                            factor += entry.layoutEntry.VerticalStretchFactor;
+                            factor += entry.LayoutEntry.VerticalStretchFactor;
                         }
                         else
                         {
@@ -430,7 +430,7 @@ namespace ImGui.Rendering
                         // calculate the height of stretched children
                         foreach (var entry in this.node.Children)
                         {
-                            if (entry.layoutEntry.VerticallyStretched)
+                            if (entry.LayoutEntry.VerticallyStretched)
                             {
                                 entry.CalcHeight(unit);
                             }
@@ -443,7 +443,7 @@ namespace ImGui.Rendering
             {
                 foreach (var entry in this.node.Children)
                 {
-                    if (entry.layoutEntry.VerticallyStretched)
+                    if (entry.LayoutEntry.VerticallyStretched)
                     {
                         entry.CalcHeight(this.ContentHeight);
                         //the unitPartHeight
