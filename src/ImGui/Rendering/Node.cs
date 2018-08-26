@@ -104,7 +104,7 @@ namespace ImGui.Rendering
         {
             //FIXME Make sure that the behaviour when adding a node is correct.
             //Node types: a plain node, a node with LayoutEntry only, a node with LayoutGroup
-            //There are 6 use cases.
+            //There are 9 use cases.
 
             if (!(this.LayoutEntry is LayoutGroup) && this.LayoutEntry != null)
             {
