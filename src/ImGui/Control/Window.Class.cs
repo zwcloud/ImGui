@@ -202,7 +202,7 @@ namespace ImGui
                 brush.FillColor = this.TitleBarStyle.BackgroundColor;
                 node.Primitive = primitive;
                 node.Brush = brush;
-                this.titleBarNode.Add(node);
+                this.titleBarNode.AppendChild(node);
             }
             {
                 var id = this.GetID("TitleBar_Text");
@@ -211,10 +211,10 @@ namespace ImGui
                 var primitive = new TextPrimitive();
                 primitive.Text = this.Name;
                 node.Primitive = primitive;
-                this.titleBarNode.Add(node);
+                this.titleBarNode.AppendChild(node);
             }
             this.IDStack.Pop();
-            this.RenderTree.Root.Add(this.titleBarNode);
+            this.RenderTree.Root.AppendChild(this.titleBarNode);
 
             //Window frame node
             {
@@ -235,7 +235,7 @@ namespace ImGui
                 brush.FillColor = this.Style.BackgroundColor;
                 node.Primitive = primitive;
                 node.Brush = brush;
-                this.frameNode.Add(node);
+                this.frameNode.AppendChild(node);
             }
             //border
             {
@@ -247,10 +247,10 @@ namespace ImGui
                 node.IsFill = false;
                 node.Primitive = primitive;
                 node.StrokeStyle = strokeStyle;
-                this.frameNode.Add(node);
+                this.frameNode.AppendChild(node);
             }
             this.IDStack.Pop();
-            this.RenderTree.Root.Add(this.frameNode);
+            this.RenderTree.Root.AppendChild(this.frameNode);
 
             this.titleBarNode.ActiveSelf = true;
             this.frameNode.ActiveSelf = !this.Collapsed;

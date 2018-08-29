@@ -30,7 +30,7 @@ namespace ImGui
             {
                 //create button node
                 node = new Node(id, $"Button<{text}>");
-                t.Add(node);
+                t.AppendChild(node);
                 window.IDStack.Push(id);
 
                 //background
@@ -46,8 +46,8 @@ namespace ImGui
                 textPrimitive.Text = text;
                 textNode.Primitive = textPrimitive;
 
-                node.Add(backgroundNode);
-                node.Add(textNode);
+                node.AppendChild(backgroundNode);
+                node.AppendChild(textNode);
                 window.IDStack.Pop();
             }
             else
@@ -119,7 +119,7 @@ namespace ImGui
                 node = new Node(id, $"Button<{text}>");
                 var contentSize = style.CalcSize(text, GUIState.Normal);//TEMP: GUI state should be de-coupled from GUI style
                 node.AttachLayoutEntry(contentSize, options);//TODO *************** properly assign layout entry and group to every node that needs layout!!!
-                t.Add(node);
+                t.AppendChild(node);
                 window.IDStack.Push(id);
 
                 //background
@@ -135,8 +135,8 @@ namespace ImGui
                 textPrimitive.Text = text;
                 textNode.Primitive = textPrimitive;
 
-                node.Add(backgroundNode);
-                node.Add(textNode);
+                node.AppendChild(backgroundNode);
+                node.AppendChild(textNode);
                 window.IDStack.Pop();
             }
             else

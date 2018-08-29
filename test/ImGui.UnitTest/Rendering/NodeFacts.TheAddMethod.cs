@@ -16,7 +16,7 @@ namespace ImGui.UnitTest.Rendering
                 Node plainNode1 = new Node(1);
                 Node plainNode2 = new Node(2);
 
-                plainNode1.Add(plainNode2);
+                plainNode1.AppendChild(plainNode2);
 
                 Assert.Equal(plainNode1, plainNode2.Parent);
                 Assert.Contains(plainNode2, plainNode1.Children);
@@ -31,7 +31,7 @@ namespace ImGui.UnitTest.Rendering
                     Node entryNode = new Node(2);
                     entryNode.AttachLayoutEntry(new Size(100, 100));
 
-                    entryNode.Add(plainNode);
+                    entryNode.AppendChild(plainNode);
                 };
 
                 Assert.Throws<LayoutException>(action);
@@ -44,7 +44,7 @@ namespace ImGui.UnitTest.Rendering
                 Node groupNode = new Node(2);
                 groupNode.AttachLayoutGroup(true);
 
-                groupNode.Add(plainNode);
+                groupNode.AppendChild(plainNode);
 
                 Assert.Equal(groupNode, plainNode.Parent);
                 Assert.Contains(plainNode, groupNode.Children);
@@ -58,7 +58,7 @@ namespace ImGui.UnitTest.Rendering
                 entryNode.AttachLayoutEntry(new Size(100, 100));
                 Node plainNode = new Node(2);
 
-                plainNode.Add(entryNode);
+                plainNode.AppendChild(entryNode);
 
                 Assert.Equal(plainNode, entryNode.Parent);
                 Assert.Contains(entryNode, plainNode.Children);
@@ -74,7 +74,7 @@ namespace ImGui.UnitTest.Rendering
                     Node entryNode2 = new Node(2);
                     entryNode2.AttachLayoutEntry(new Size(100, 100));
 
-                    entryNode1.Add(entryNode2);
+                    entryNode1.AppendChild(entryNode2);
                 };
 
                 Assert.Throws<LayoutException>(action);
@@ -88,7 +88,7 @@ namespace ImGui.UnitTest.Rendering
                 Node groupNode = new Node(2);
                 groupNode.AttachLayoutGroup(true);
 
-                groupNode.Add(entryNode);
+                groupNode.AppendChild(entryNode);
 
                 Assert.Equal(groupNode, entryNode.Parent);
                 Assert.Contains(entryNode, groupNode.Children);
@@ -101,7 +101,7 @@ namespace ImGui.UnitTest.Rendering
                 groupNode.AttachLayoutGroup(true);
                 Node plainNode = new Node(2);
 
-                plainNode.Add(groupNode);
+                plainNode.AppendChild(groupNode);
 
                 Assert.Equal(plainNode, groupNode.Parent);
                 Assert.Contains(groupNode, plainNode.Children);
@@ -117,7 +117,7 @@ namespace ImGui.UnitTest.Rendering
                     Node entryNode = new Node(2);
                     entryNode.AttachLayoutEntry(new Size(100, 100));
 
-                    entryNode.Add(groupNode);
+                    entryNode.AppendChild(groupNode);
                 };
 
                 Assert.Throws<LayoutException>(action);
@@ -131,7 +131,7 @@ namespace ImGui.UnitTest.Rendering
                 Node groupNode2 = new Node(2);
                 groupNode2.AttachLayoutGroup(true);
 
-                groupNode1.Add(groupNode2);
+                groupNode1.AppendChild(groupNode2);
 
                 Assert.Equal(groupNode1, groupNode2.Parent);
                 Assert.Contains(groupNode2, groupNode1.Children);

@@ -26,8 +26,8 @@ namespace ImGui.UnitTest.Rendering
                 c.Rect = new Rect(0, 0, 100, 200);
                 c.AttachLayoutEntry(new Size(100, 200));
 
-                a.Add(b);
-                a.Add(c);
+                a.AppendChild(b);
+                a.AppendChild(c);
 
                 a.Layout();
 
@@ -41,9 +41,9 @@ namespace ImGui.UnitTest.Rendering
                 Node item1 = new Node(1); item1.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(1).Height(50));
                 Node item2 = new Node(2); item2.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(2).Height(60));
                 Node item3 = new Node(3); item3.AttachLayoutEntry(new Size(20, 10), GUILayout.StretchWidth(1).Height(30));
-                group.Add(item1);
-                group.Add(item2);
-                group.Add(item3);
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+                group.AppendChild(item3);
 
                 group.Layout();
 
@@ -72,19 +72,19 @@ namespace ImGui.UnitTest.Rendering
                 Node group12 = new Node(12); group12.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
                 Node group13 = new Node(13); group13.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
 
-                group1.Add(group2);
-                group1.Add(group3);
-                group1.Add(group4);
+                group1.AppendChild(group2);
+                group1.AppendChild(group3);
+                group1.AppendChild(group4);
 
-                group2.Add(group5);
-                group2.Add(group6);
-                group2.Add(group7);
-                group3.Add(group8);
-                group3.Add(group9);
-                group3.Add(group10);
-                group4.Add(group11);
-                group4.Add(group12);
-                group4.Add(group13);
+                group2.AppendChild(group5);
+                group2.AppendChild(group6);
+                group2.AppendChild(group7);
+                group3.AppendChild(group8);
+                group3.AppendChild(group9);
+                group3.AppendChild(group10);
+                group4.AppendChild(group11);
+                group4.AppendChild(group12);
+                group4.AppendChild(group13);
 
                 group1.Layout();
 
@@ -111,8 +111,8 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(c.LayoutEntry.IsDefaultWidth);
                 Assert.True(c.LayoutEntry.IsDefaultHeight);
 
-                a.Add(b);
-                a.Add(c);
+                a.AppendChild(b);
+                a.AppendChild(c);
 
                 a.Layout();
 
@@ -137,8 +137,8 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(c.LayoutEntry.IsDefaultWidth);
                 Assert.True(c.LayoutEntry.IsDefaultHeight);
 
-                a.Add(b);
-                a.Add(c);
+                a.AppendChild(b);
+                a.AppendChild(c);
 
                 a.Layout();
 
@@ -165,8 +165,8 @@ namespace ImGui.UnitTest.Rendering
                     Assert.True(c.LayoutEntry.IsDefaultWidth);
                     Assert.True(c.LayoutEntry.IsDefaultHeight);
 
-                    a.Add(b);
-                    a.Add(c);
+                    a.AppendChild(b);
+                    a.AppendChild(c);
 
                     a.Layout();
                 };
@@ -194,8 +194,8 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(c.LayoutEntry.IsFixedWidth);
                 Assert.True(c.LayoutEntry.IsFixedHeight);
 
-                a.Add(b);
-                a.Add(c);
+                a.AppendChild(b);
+                a.AppendChild(c);
 
                 a.Layout();
 
@@ -220,8 +220,8 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(c.LayoutEntry.IsFixedWidth);
                 Assert.True(c.LayoutEntry.IsFixedHeight);
 
-                a.Add(b);
-                a.Add(c);
+                a.AppendChild(b);
+                a.AppendChild(c);
 
                 a.Layout();
 
@@ -248,8 +248,8 @@ namespace ImGui.UnitTest.Rendering
                     Assert.True(c.LayoutEntry.IsFixedWidth);
                     Assert.True(c.LayoutEntry.IsFixedHeight);
 
-                    a.Add(b);
-                    a.Add(c);
+                    a.AppendChild(b);
+                    a.AppendChild(c);
 
                     a.Layout();
                 };
@@ -279,8 +279,8 @@ namespace ImGui.UnitTest.Rendering
                     Assert.True(c.LayoutEntry.IsStretchedWidth);
                     Assert.True(c.LayoutEntry.IsStretchedHeight);
 
-                    a.Add(b);
-                    a.Add(c);
+                    a.AppendChild(b);
+                    a.AppendChild(c);
 
                     a.Layout();
                 };
@@ -307,8 +307,8 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(c.LayoutEntry.IsStretchedWidth);
                 Assert.True(c.LayoutEntry.IsStretchedHeight);
 
-                a.Add(b);
-                a.Add(c);
+                a.AppendChild(b);
+                a.AppendChild(c);
 
                 a.Layout();
 
@@ -335,8 +335,8 @@ namespace ImGui.UnitTest.Rendering
                     Assert.True(c.LayoutEntry.IsStretchedWidth);
                     Assert.True(c.LayoutEntry.IsStretchedHeight);
 
-                    a.Add(b);
-                    a.Add(c);
+                    a.AppendChild(b);
+                    a.AppendChild(c);
 
                     a.Layout();
                 };

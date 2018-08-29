@@ -129,7 +129,7 @@ namespace ImGui.Rendering
             return nodeType;
         }
 
-        public void Add(Node node)
+        public void AppendChild(Node node)
         {
             //FIXME Make sure that the behaviour when adding a node is correct.
             //Node types: a plain node, a node with LayoutEntry only, a node with LayoutGroup
