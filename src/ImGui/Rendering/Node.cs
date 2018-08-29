@@ -131,11 +131,8 @@ namespace ImGui.Rendering
 
         public void AppendChild(Node node)
         {
-            //FIXME Make sure that the behaviour when adding a node is correct.
-            //Node types: a plain node, a node with LayoutEntry only, a node with LayoutGroup
-            //There are 9 use cases.
+            //FIXME Carefully consider the influence on the ancestors and descendants when adding a node
 
-            //get node type
             NodeType nodeType = GetNodeType(this);
 
             switch (nodeType)
@@ -161,10 +158,13 @@ namespace ImGui.Rendering
             switch (nodeType)
             {
                 case NodeType.Plain:
+                    //TODO consider this
                     break;
                 case NodeType.LayoutEntry:
+                    //TODO consider this
                     break;
                 case NodeType.LayoutGroup:
+                    //TODO consider this
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -189,7 +189,7 @@ namespace ImGui.Rendering
             switch (nodeType)
             {
                 case NodeType.Plain:
-                    //TODO consider this case carefully!
+                    //TODO consider this
                     break;
                 case NodeType.LayoutEntry:
                 case NodeType.LayoutGroup:
