@@ -8,10 +8,10 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
-        public class TheAddMethod
+        public class TheAppendToMethod
         {
             [Fact]
-            public void AddAPlainNodeToAPlainNode()
+            public void AppendAPlainNodeToAPlainNode()
             {
                 Node plainNode1 = new Node(1);
                 Node plainNode2 = new Node(2);
@@ -23,7 +23,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AddAPlainNodeToALayoutEntryNode_NotAllowed()
+            public void AppendAPlainNodeToALayoutEntryNode_NotAllowed()
             {
                 Action action = () =>
                 {
@@ -38,7 +38,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AddAPlainNodeToALayoutGroupNode()
+            public void AppendAPlainNodeToALayoutGroupNode()
             {
                 Node plainNode = new Node(1);
                 Node groupNode = new Node(2);
@@ -52,7 +52,7 @@ namespace ImGui.UnitTest.Rendering
 
 
             [Fact]
-            public void AddALayoutEntryNodeToAPlainNode()
+            public void AppendALayoutEntryNodeToAPlainNode()
             {
                 Node entryNode = new Node(1);
                 entryNode.AttachLayoutEntry(new Size(100, 100));
@@ -65,7 +65,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AddALayoutEntryNodeToALayoutEntryNode_NotAllowed()
+            public void AppendALayoutEntryNodeToALayoutEntryNode_NotAllowed()
             {
                 Action action = () =>
                 {
@@ -81,7 +81,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AddALayoutEntryNodeToALayoutGroupNode()
+            public void AppendALayoutEntryNodeToALayoutGroupNode()
             {
                 Node entryNode = new Node(1);
                 entryNode.AttachLayoutEntry(new Size(100, 100));
@@ -95,7 +95,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AddALayoutGroupNodeToAPlainNode()
+            public void AppendALayoutGroupNodeToAPlainNode()
             {
                 Node groupNode = new Node(1);
                 groupNode.AttachLayoutGroup(true);
@@ -108,7 +108,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AddALayoutGroupNodeToALayoutEntryNode_NotAllowed()
+            public void AppendALayoutGroupNodeToALayoutEntryNode_NotAllowed()
             {
                 Action action = () =>
                 {
@@ -124,7 +124,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AddALayoutGroupNodeToALayoutGroupNode()
+            public void AppendALayoutGroupNodeToALayoutGroupNode()
             {
                 Node groupNode1 = new Node(1);
                 groupNode1.AttachLayoutGroup(true);
