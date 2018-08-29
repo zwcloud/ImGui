@@ -13,53 +13,55 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void AddAPlainNodeToAPlainNode()
             {
-                Node node1 = new Node(1);
-                Node node2 = new Node(2);
+                Node plainNode1 = new Node(1);
+                Node plainNode2 = new Node(2);
 
-                node1.Add(node2);
+                plainNode1.Add(plainNode2);
 
-                Assert.Equal(node1, node2.Parent);
-                Assert.Contains(node2, node1.Children);
+                Assert.Equal(plainNode1, plainNode2.Parent);
+                Assert.Contains(plainNode2, plainNode1.Children);
             }
 
             [Fact]
-            public void AddAPlainNodeToALayoutEntryNode()
+            public void AddAPlainNodeToALayoutEntryNode_NotAllowed()
             {
-                Node node1 = new Node(1);
-                Node node2 = new Node(2);
-                node2.AttachLayoutEntry(new Size(100,100));
+                Action action = () =>
+                {
+                    Node plainNode = new Node(1);
+                    Node entryNode = new Node(2);
+                    entryNode.AttachLayoutEntry(new Size(100, 100));
 
-                node1.Add(node2);
+                    entryNode.Add(plainNode);
+                };
 
-                Assert.Equal(node1, node2.Parent);
-                Assert.Contains(node2, node1.Children);
+                Assert.Throws<LayoutException>(action);
             }
 
             [Fact]
             public void AddAPlainNodeToALayoutGroupNode()
             {
-                Node node1 = new Node(1);
-                Node node2 = new Node(2);
-                node2.AttachLayoutGroup(true);
+                Node plainNode = new Node(1);
+                Node groupNode = new Node(2);
+                groupNode.AttachLayoutGroup(true);
 
-                node1.Add(node2);
+                groupNode.Add(plainNode);
 
-                Assert.Equal(node1, node2.Parent);
-                Assert.Contains(node2, node1.Children);
+                Assert.Equal(groupNode, plainNode.Parent);
+                Assert.Contains(plainNode, groupNode.Children);
             }
 
 
             [Fact]
             public void AddALayoutEntryNodeToAPlainNode()
             {
-                Node node1 = new Node(1);
-                node1.AttachLayoutEntry(new Size(100, 100));
-                Node node2 = new Node(2);
+                Node entryNode = new Node(1);
+                entryNode.AttachLayoutEntry(new Size(100, 100));
+                Node plainNode = new Node(2);
 
-                node1.Add(node2);
+                plainNode.Add(entryNode);
 
-                Assert.Equal(node1, node2.Parent);
-                Assert.Contains(node2, node1.Children);
+                Assert.Equal(plainNode, entryNode.Parent);
+                Assert.Contains(entryNode, plainNode.Children);
             }
 
             [Fact]
@@ -67,15 +69,12 @@ namespace ImGui.UnitTest.Rendering
             {
                 Action action = () =>
                 {
-                    Node node1 = new Node(1);
-                    node1.AttachLayoutEntry(new Size(100, 100));
-                    Node node2 = new Node(2);
-                    node2.AttachLayoutEntry(new Size(100, 100));
+                    Node entryNode1 = new Node(1);
+                    entryNode1.AttachLayoutEntry(new Size(100, 100));
+                    Node entryNode2 = new Node(2);
+                    entryNode2.AttachLayoutEntry(new Size(100, 100));
 
-                    node1.Add(node2);
-
-                    Assert.Equal(node1, node2.Parent);
-                    Assert.Contains(node2, node1.Children);
+                    entryNode1.Add(entryNode2);
                 };
 
                 Assert.Throws<LayoutException>(action);
@@ -84,28 +83,28 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void AddALayoutEntryNodeToALayoutGroupNode()
             {
-                Node node1 = new Node(1);
-                node1.AttachLayoutEntry(new Size(100, 100));
-                Node node2 = new Node(2);
-                node2.AttachLayoutGroup(true);
+                Node entryNode = new Node(1);
+                entryNode.AttachLayoutEntry(new Size(100, 100));
+                Node groupNode = new Node(2);
+                groupNode.AttachLayoutGroup(true);
 
-                node1.Add(node2);
+                groupNode.Add(entryNode);
 
-                Assert.Equal(node1, node2.Parent);
-                Assert.Contains(node2, node1.Children);
+                Assert.Equal(groupNode, entryNode.Parent);
+                Assert.Contains(entryNode, groupNode.Children);
             }
 
             [Fact]
             public void AddALayoutGroupNodeToAPlainNode()
             {
-                Node node1 = new Node(1);
-                node1.AttachLayoutGroup(true);
-                Node node2 = new Node(2);
+                Node groupNode = new Node(1);
+                groupNode.AttachLayoutGroup(true);
+                Node plainNode = new Node(2);
 
-                node1.Add(node2);
+                plainNode.Add(groupNode);
 
-                Assert.Equal(node1, node2.Parent);
-                Assert.Contains(node2, node1.Children);
+                Assert.Equal(plainNode, groupNode.Parent);
+                Assert.Contains(groupNode, plainNode.Children);
             }
 
             [Fact]
@@ -113,12 +112,12 @@ namespace ImGui.UnitTest.Rendering
             {
                 Action action = () =>
                 {
-                    Node node1 = new Node(1);
-                    node1.AttachLayoutGroup(true);
-                    Node node2 = new Node(2);
-                    node2.AttachLayoutEntry(new Size(100, 100));
+                    Node groupNode = new Node(1);
+                    groupNode.AttachLayoutGroup(true);
+                    Node entryNode = new Node(2);
+                    entryNode.AttachLayoutEntry(new Size(100, 100));
 
-                    node1.Add(node2);
+                    entryNode.Add(groupNode);
                 };
 
                 Assert.Throws<LayoutException>(action);
@@ -127,15 +126,15 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void AddALayoutGroupNodeToALayoutGroupNode()
             {
-                Node node1 = new Node(1);
-                node1.AttachLayoutGroup(true);
-                Node node2 = new Node(2);
-                node2.AttachLayoutGroup(true);
+                Node groupNode1 = new Node(1);
+                groupNode1.AttachLayoutGroup(true);
+                Node groupNode2 = new Node(2);
+                groupNode2.AttachLayoutGroup(true);
 
-                node1.Add(node2);
+                groupNode1.Add(groupNode2);
 
-                Assert.Equal(node1, node2.Parent);
-                Assert.Contains(node2, node1.Children);
+                Assert.Equal(groupNode1, groupNode2.Parent);
+                Assert.Contains(groupNode2, groupNode1.Children);
             }
         }
     }

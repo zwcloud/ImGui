@@ -100,30 +100,117 @@ namespace ImGui.Rendering
 
         public List<Node> Children { get; set; }
 
+
+        enum NodeType
+        {
+            Plain,
+            LayoutEntry,
+            LayoutGroup
+        }
+
+        private static NodeType GetNodeType(Node node)
+        {
+            NodeType nodeType = NodeType.Plain;
+            do
+            {
+                if (node.LayoutEntry is LayoutGroup)
+                {
+                    nodeType = NodeType.LayoutGroup;
+                    break;
+                }
+
+                if (node.LayoutEntry != null)
+                {
+                    nodeType = NodeType.LayoutEntry;
+                    break;
+                }
+            } while (false);
+
+            return nodeType;
+        }
+
         public void Add(Node node)
         {
             //FIXME Make sure that the behaviour when adding a node is correct.
             //Node types: a plain node, a node with LayoutEntry only, a node with LayoutGroup
             //There are 9 use cases.
 
-            if (!(this.LayoutEntry is LayoutGroup) && this.LayoutEntry != null)
+            //get node type
+            NodeType nodeType = GetNodeType(this);
+
+            switch (nodeType)
             {
-                throw new LayoutException("Cannot add node to a layout entry.");
+                case NodeType.Plain:
+                    this.AddToPlainNode(node);
+                    break;
+                case NodeType.LayoutEntry:
+                    throw new LayoutException("It's not allowed to add any node to a LayoutEntry node");
+                    break;
+                case NodeType.LayoutGroup:
+                    this.AddToLayoutGroupNode(node);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void AddToPlainNode(Node node)
+        {
+            NodeType nodeType = GetNodeType(node);
+
+            switch (nodeType)
+            {
+                case NodeType.Plain:
+                    break;
+                case NodeType.LayoutEntry:
+                    break;
+                case NodeType.LayoutGroup:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            if (this.LayoutEntry is LayoutGroup @group)
+            this.SetUpParentChildren(node);
+        }
+
+        private void SetUpParentChildren(Node childNode)
+        {
+            childNode.Parent = this;
+            if (this.Children == null)
             {
-                group.Add(node);
+                this.Children = new List<Node>();
             }
-            else
+            this.Children.Add(childNode);
+        }
+        
+        private void AddToLayoutGroupNode(Node node)
+        {
+            NodeType nodeType = GetNodeType(node);
+            switch (nodeType)
             {
-                if (this.Children == null)
-                {
-                    this.Children = new List<Node>();
-                }
-                node.Parent = node;
-                this.Children.Add(node);
+                case NodeType.Plain:
+                    //TODO consider this case carefully!
+                    break;
+                case NodeType.LayoutEntry:
+                case NodeType.LayoutGroup:
+                    this.LayoutGroup.OnAddLayoutEntry(node.LayoutEntry);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+            this.SetUpParentChildren(node);
+        }
+
+        private Node FindNearestLayoutGroupAncestorNode()
+        {
+            var groupNode = this.Parent;
+            while (groupNode.LayoutEntry is LayoutGroup)
+            {
+                groupNode = groupNode.Parent;
+            }
+            //Even if there is no Group branch node, the root node should be a Group node.
+            Debug.Assert(groupNode.LayoutEntry is LayoutGroup);
+            return groupNode;
         }
 
         //TODO maybe we should use an extra dictionary to retrive node by id, O(1) but occupies more memory

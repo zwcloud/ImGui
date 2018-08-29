@@ -70,59 +70,47 @@ namespace ImGui.Rendering
             this.AlignmentVertical = style.AlignmentVertical;
         }
 
-        /// <summary>
-        /// Append child entry to this group
-        /// </summary>
-        /// <param name="item"></param>
-        public void Add(Node item)
+        public void OnAddLayoutEntry(LayoutEntry layoutEntry)
         {
-            if (this.node.Children == null)
-            {
-                this.node.Children = new List<Node>();
-            }
-
             if (this.IsFixedWidth)
             {
                 Debug.Assert(!this.HorizontallyStretched);
-                if (this.IsVertical && item.LayoutEntry.HorizontalStretchFactor > 1)
+                if (this.IsVertical && layoutEntry.HorizontalStretchFactor > 1)
                 {
-                    item.LayoutEntry.HorizontalStretchFactor = 1;
+                    layoutEntry.HorizontalStretchFactor = 1;
                 }
             }
             else if (this.HorizontallyStretched)
             {
-                if (this.IsVertical && item.LayoutEntry.HorizontalStretchFactor > 1)
+                if (this.IsVertical && layoutEntry.HorizontalStretchFactor > 1)
                 {
-                    item.LayoutEntry.HorizontalStretchFactor = 1;
+                    layoutEntry.HorizontalStretchFactor = 1;
                 }
             }
             else
             {
-                item.LayoutEntry.HorizontalStretchFactor = 0;
+                layoutEntry.HorizontalStretchFactor = 0;
             }
 
             if (this.IsFixedHeight)
             {
                 Debug.Assert(!this.VerticallyStretched);
-                if (!this.IsVertical && item.LayoutEntry.VerticalStretchFactor > 1)
+                if (!this.IsVertical && layoutEntry.VerticalStretchFactor > 1)
                 {
-                    item.LayoutEntry.VerticalStretchFactor = 1;
+                    layoutEntry.VerticalStretchFactor = 1;
                 }
             }
             else if (this.VerticallyStretched)
             {
-                if (!this.IsVertical && item.LayoutEntry.VerticalStretchFactor > 1)
+                if (!this.IsVertical && layoutEntry.VerticalStretchFactor > 1)
                 {
-                    item.LayoutEntry.VerticalStretchFactor = 1;
+                    layoutEntry.VerticalStretchFactor = 1;
                 }
             }
             else
             {
-                item.LayoutEntry.VerticalStretchFactor = 0;
+                layoutEntry.VerticalStretchFactor = 0;
             }
-
-            item.Parent = this.node;
-            this.node.Children.Add(item);
         }
 
         public override void CalcWidth(double unitPartWidth = -1)
