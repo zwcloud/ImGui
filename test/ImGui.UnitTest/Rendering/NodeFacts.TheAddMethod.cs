@@ -19,7 +19,7 @@ namespace ImGui.UnitTest.Rendering
                 node1.Add(node2);
 
                 Assert.Equal(node1, node2.Parent);
-                Assert.True(node1.Children.Contains(node2));
+                Assert.Contains(node2, node1.Children);
             }
 
             [Fact]
@@ -32,7 +32,7 @@ namespace ImGui.UnitTest.Rendering
                 node1.Add(node2);
 
                 Assert.Equal(node1, node2.Parent);
-                Assert.True(node1.Children.Contains(node2));
+                Assert.Contains(node2, node1.Children);
             }
 
             [Fact]
@@ -45,7 +45,7 @@ namespace ImGui.UnitTest.Rendering
                 node1.Add(node2);
 
                 Assert.Equal(node1, node2.Parent);
-                Assert.True(node1.Children.Contains(node2));
+                Assert.Contains(node2, node1.Children);
             }
 
 
@@ -59,7 +59,7 @@ namespace ImGui.UnitTest.Rendering
                 node1.Add(node2);
 
                 Assert.Equal(node1, node2.Parent);
-                Assert.True(node1.Children.Contains(node2));
+                Assert.Contains(node2, node1.Children);
             }
 
             [Fact]
@@ -75,7 +75,7 @@ namespace ImGui.UnitTest.Rendering
                     node1.Add(node2);
 
                     Assert.Equal(node1, node2.Parent);
-                    Assert.True(node1.Children.Contains(node2));
+                    Assert.Contains(node2, node1.Children);
                 };
 
                 Assert.Throws<LayoutException>(action);
@@ -92,7 +92,7 @@ namespace ImGui.UnitTest.Rendering
                 node1.Add(node2);
 
                 Assert.Equal(node1, node2.Parent);
-                Assert.True(node1.Children.Contains(node2));
+                Assert.Contains(node2, node1.Children);
             }
 
             [Fact]
@@ -105,7 +105,7 @@ namespace ImGui.UnitTest.Rendering
                 node1.Add(node2);
 
                 Assert.Equal(node1, node2.Parent);
-                Assert.True(node1.Children.Contains(node2));
+                Assert.Contains(node2, node1.Children);
             }
 
             [Fact]
@@ -135,7 +135,7 @@ namespace ImGui.UnitTest.Rendering
                 node1.Add(node2);
 
                 Assert.Equal(node1, node2.Parent);
-                Assert.True(node1.Children.Contains(node2));
+                Assert.Contains(node2, node1.Children);
             }
         }
     }
