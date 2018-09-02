@@ -38,30 +38,34 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AppendAPlainNodeToALayoutGroupNode()
+            public void AppendAPlainNodeToALayoutGroupNode_NotAllowed()
             {
-                Node plainNode = new Node(1);
-                Node groupNode = new Node(2);
-                groupNode.AttachLayoutGroup(true);
+                Action action = () =>
+                {
+                    Node plainNode = new Node(1);
+                    Node groupNode = new Node(2);
+                    groupNode.AttachLayoutGroup(true);
 
-                groupNode.AppendChild(plainNode);
+                    groupNode.AppendChild(plainNode);
+                };
 
-                Assert.Equal(groupNode, plainNode.Parent);
-                Assert.Contains(plainNode, groupNode.Children);
+                Assert.Throws<LayoutException>(action);
             }
 
 
             [Fact]
-            public void AppendALayoutEntryNodeToAPlainNode()
+            public void AppendALayoutEntryNodeToAPlainNode_NotAllowed()
             {
-                Node entryNode = new Node(1);
-                entryNode.AttachLayoutEntry(new Size(100, 100));
-                Node plainNode = new Node(2);
+                Action action = () =>
+                {
+                    Node entryNode = new Node(1);
+                    entryNode.AttachLayoutEntry(new Size(100, 100));
+                    Node plainNode = new Node(2);
 
-                plainNode.AppendChild(entryNode);
+                    plainNode.AppendChild(entryNode);
+                };
 
-                Assert.Equal(plainNode, entryNode.Parent);
-                Assert.Contains(entryNode, plainNode.Children);
+                Assert.Throws<LayoutException>(action);
             }
 
             [Fact]
@@ -95,16 +99,18 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void AppendALayoutGroupNodeToAPlainNode()
+            public void AppendALayoutGroupNodeToAPlainNode_NotAllowed()
             {
-                Node groupNode = new Node(1);
-                groupNode.AttachLayoutGroup(true);
-                Node plainNode = new Node(2);
+                Action action = () =>
+                {
+                    Node groupNode = new Node(1);
+                    groupNode.AttachLayoutGroup(true);
+                    Node plainNode = new Node(2);
 
-                plainNode.AppendChild(groupNode);
+                    plainNode.AppendChild(groupNode);
+                };
 
-                Assert.Equal(plainNode, groupNode.Parent);
-                Assert.Contains(groupNode, plainNode.Children);
+                Assert.Throws<LayoutException>(action);
             }
 
             [Fact]
