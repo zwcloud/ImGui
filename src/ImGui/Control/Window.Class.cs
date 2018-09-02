@@ -80,7 +80,12 @@ namespace ImGui
         public DrawList DrawList;
 
         /// <summary>
-        /// Render tree
+        /// Root of node tree of plain nodes
+        /// </summary>
+        public Node NodeTreeRoot;
+
+        /// <summary>
+        /// Render tree of layout-ed nodes
         /// </summary>
         public RenderTree RenderTree;
 
@@ -127,6 +132,7 @@ namespace ImGui
             this.IDStack.Push(this.ID);
             this.Flags = Flags;
 
+            this.NodeTreeRoot = new Node(this.ID, "root");
             this.RenderTree = new RenderTree(this.ID, position, size);
 
             this.DrawList = new DrawList();//DUMMY
@@ -185,7 +191,7 @@ namespace ImGui
             #endregion
 
             #region Window nodes
-            //title bar node
+            //title bar node tree
             {
                 var id = this.GetID("TitleBar");
                 var node = new Node(id, "TitleBar");

@@ -182,7 +182,8 @@ namespace ImGui
             {
                 if(window.Active)
                 {
-                    window.RenderTree.Foreach(node =>
+
+                    bool DrawNode(Node node)
                     {
                         if (!node.ActiveInTree)
                         {
@@ -191,7 +192,10 @@ namespace ImGui
 
                         node.Draw(this.primitiveRenderer);
                         return true;
-                    });
+                    }
+                    
+                    window.NodeTreeRoot.Foreach(DrawNode);
+                    window.RenderTree.Foreach(DrawNode);
 
                     //rebuild mesh buffer
                     MeshBuffer.Clear();

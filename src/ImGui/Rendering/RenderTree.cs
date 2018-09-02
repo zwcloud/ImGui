@@ -25,7 +25,7 @@ namespace ImGui.Rendering
 
         public RenderTree(int rootId, Point position, Size size)
         {
-            Root = new Node(rootId);
+            Root = new Node(rootId, "layout-root");
             Root.Rect = new Rect(position, size);
             Root.AttachLayoutGroup(true, GUILayout.Width((int)size.Width).Height((int)size.Height));
 
