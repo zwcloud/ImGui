@@ -156,7 +156,7 @@ namespace ImGui.Rendering
                 switch (nodeType)
                 {
                     case NodeType.Plain:
-                        throw new LayoutException("It's not allowed to add Plain node to a node");
+                        throw new LayoutException("It's not allowed to append a Plain node to a node");
                     case NodeType.LayoutEntry:
                     case NodeType.LayoutGroup:
                         this.LayoutGroup.OnAddLayoutEntry(node.LayoutEntry);
