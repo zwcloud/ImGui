@@ -11,7 +11,7 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            GUILayout.Button("123");
+            //GUILayout.Button("123");
         }
     }
 }

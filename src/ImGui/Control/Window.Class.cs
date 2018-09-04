@@ -29,16 +29,7 @@ namespace ImGui
         /// Position
         /// </summary>
         /// <remarks>Top-left point relative to the form.</remarks>
-        public Point Position
-        {
-            get => this.RenderTree.Root.Rect.Location;
-            set
-            {
-                var rect = this.RenderTree.Root.Rect;
-                rect.Location = value;
-                this.RenderTree.Root.Rect = rect;
-            }
-        }
+        public Point Position { get; set; }
 
         /// <summary>
         /// Size
@@ -48,16 +39,7 @@ namespace ImGui
         /// <summary>
         /// Size when the window is not collapsed.
         /// </summary>
-        public Size FullSize
-        {
-            get => this.RenderTree.Root.Rect.Size;
-            set
-            {
-                var rect = this.RenderTree.Root.Rect;
-                rect.Size = value;
-                this.RenderTree.Root.Rect = rect;
-            }
-        }
+        public Size FullSize { get; set; }
 
         /// <summary>
         /// Window flags. See <see cref="WindowFlags"/>.
@@ -220,7 +202,7 @@ namespace ImGui
                 this.titleBarNode.AppendChild(node);
             }
             this.IDStack.Pop();
-            this.RenderTree.Root.AppendChild(this.titleBarNode);
+            this.NodeTreeRoot.AppendChild(this.titleBarNode);
 
             //Window frame node
             {
@@ -256,7 +238,7 @@ namespace ImGui
                 this.frameNode.AppendChild(node);
             }
             this.IDStack.Pop();
-            this.RenderTree.Root.AppendChild(this.frameNode);
+            this.NodeTreeRoot.AppendChild(this.frameNode);
 
             this.titleBarNode.ActiveSelf = true;
             this.frameNode.ActiveSelf = !this.Collapsed;
