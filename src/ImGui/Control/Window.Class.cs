@@ -100,6 +100,7 @@ namespace ImGui
         private Node TitleBarTextNode { get; }
         private Node ClientAreaBackgroundNode { get; }
         private Node WindowBorderNode { get; }
+        private Node ResizeGripNode { get; set; }
 
         #endregion
 
@@ -161,11 +162,10 @@ namespace ImGui
                 style.Set(GUIStyleName.WindowShadowColor, Color.Argb(100, 227, 227, 227));
                 style.Set(GUIStyleName.WindowShadowWidth, 15.0);
                 style.Set(GUIStyleName.BackgroundColor, Color.White);
-                style.Set(GUIStyleName.ResizeGripSize, 20.0);
                 style.Set(GUIStyleName.ResizeGripColor, Color.Argb(75, 102, 102, 102));
                 style.Set(GUIStyleName.ResizeGripColor, Color.Argb(150, 102, 102, 102), GUIState.Hover);
                 style.Set(GUIStyleName.ResizeGripColor, Color.Argb(225, 102, 102, 102), GUIState.Active);
-                style.Set(GUIStyleName.WindowRounding, 3.0);
+                style.Set(GUIStyleName.WindowRounding, 20.0);
                 style.Set(GUIStyleName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
                 style.Set(GUIStyleName.ScrollBarBackgroundColor, Color.Rgb(240));
                 style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(205), GUIState.Normal);
@@ -176,7 +176,7 @@ namespace ImGui
             #endregion
 
             #region Window nodes
-            //title bar nodes
+            //title bar background
             {
                 var id = this.GetID("TitleBar_Background");
                 Node node = new Node(id, "TitleBar_Background", this.TitleBarRect);
@@ -190,6 +190,8 @@ namespace ImGui
                 this.TitleBarBackgroundNode = node;
                 this.NodeTreeRoot.AppendChild(node);
             }
+
+            //title bar text
             {
                 var id = this.GetID("TitleBar_Text");
                 var node = new Node(id, "TitleBar_Text", this.TitleBarRect);
@@ -200,7 +202,7 @@ namespace ImGui
                 this.NodeTreeRoot.AppendChild(node);
             }
 
-            //background
+            //client area background
             {
                 var id = this.GetID("ClientArea_Background");
                 var node = new Node(id, "ClientArea_Background", this.ClientRect);
@@ -216,12 +218,14 @@ namespace ImGui
                 this.NodeTreeRoot.AppendChild(node);
             }
 
-            //border
+            //resize grip (lasy-initialized)
+
+            //window border
             {
                 var id = this.GetID("Window_Border");
                 var node = new Node(id, "Window_Border", this.ClientRect);
                 var primitive = new PathPrimitive();
-                primitive.PathRect(this.Rect);
+                primitive.PathRect(this.Rect);//FIXME this is incorrect, box-model should be applied instead
                 var strokeStyle = new StrokeStyle();
                 node.IsFill = false;
                 node.Primitive = primitive;
@@ -293,7 +297,6 @@ namespace ImGui
             // set window size and position
             #region size
 
-            this.ApplySize(size);
 
             #endregion
 
@@ -359,16 +362,23 @@ namespace ImGui
             }
             else//show and update window client area
             {
+                if (this.ResizeGripNode == null)
+                {
+                    var id = this.GetID("#RESIZE");
+                    var node = new Node(id, "Window_ResizeGrip");
+                    node.IsFill = true;
+                    node.Brush = new Brush();
+                    node.Primitive = new PathPrimitive();
+                    this.ResizeGripNode = node;
+                    this.NodeTreeRoot.AppendChild(node);
+                }
                 //resize grip
                 var resizeGripColor = Color.Clear;
-                var resizeGripSize = this.Style.Get<double>(GUIStyleName.ResizeGripSize);
-                var resizeCornerSize = Math.Max(resizeGripSize * 1.35, windowRounding + 1.0 + resizeGripSize * 0.2);
                 if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
                 {
                     // Manual resize
                     var br = this.Rect.BottomRight;
-                    var resizeRect = new Rect(br - new Vector(resizeCornerSize * 0.75f, resizeCornerSize * 0.75f),
-                        br);
+                    var resizeRect = new Rect(br - new Vector(windowRounding, windowRounding), br);
                     var resizeId = this.GetID("#RESIZE");
                     GUIBehavior.ButtonBehavior(resizeRect, resizeId, out var hovered, out var held,
                         ButtonFlags.FlattenChilds);
@@ -433,13 +443,14 @@ namespace ImGui
                     var br = this.Rect.BottomRight;
                     var borderBottom = this.Style.BorderBottom;
                     var borderRight = this.Style.BorderRight;
-                    //DrawList.PathLineTo(br + new Vector(-resizeCornerSize, -borderBottom));
-                    //DrawList.PathLineTo(br + new Vector(-borderRight, -resizeCornerSize));
-                    //DrawList.PathArcToFast(
-                    //    new Point(br.X - windowRounding - borderRight, br.Y - windowRounding - borderBottom),
-                    //    windowRounding,
-                    //    0, 3);
-                    //DrawList.PathFill(resizeGripColor);
+                    var node = this.ResizeGripNode;
+                    var brush = node.Brush;
+                    var primitive = (PathPrimitive)node.Primitive;
+                    primitive.PathClear();
+                    brush.FillColor = resizeGripColor;
+                    primitive.PathLineTo(br + new Vector(-borderRight, -borderBottom));
+                    primitive.PathLineTo(br + new Vector(-borderRight, -windowRounding));
+                    primitive.PathArcToFast(br + new Vector(-windowRounding - borderRight, -windowRounding - borderBottom), windowRounding, 0, 3);
                 }
 
                 // Scroll bar
@@ -455,7 +466,7 @@ namespace ImGui
                         var scrollBarWidth = this.Style.Get<double>(GUIStyleName.ScrollBarWidth);
                         var scrollTopLeft = new Point(this.Rect.Right - scrollBarWidth - this.Style.BorderRight - this.Style.PaddingRight, this.Rect.Top + this.TitleBarHeight + this.Style.BorderTop + this.Style.PaddingTop);
                         var sH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical - this.Style.PaddingVertical
-                                 + (flags.HaveFlag(WindowFlags.NoResize) ? 0 : -resizeCornerSize);
+                                 + (flags.HaveFlag(WindowFlags.NoResize) ? 0 : -windowRounding);
                         var vH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical - this.Style.PaddingVertical;
                         var scrollBottomRight = scrollTopLeft + new Vector(scrollBarWidth, sH);
                         var bgRect = new Rect(scrollTopLeft, scrollBottomRight);

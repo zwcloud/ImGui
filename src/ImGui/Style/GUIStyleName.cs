@@ -81,7 +81,6 @@ namespace ImGui
         _LabelHeight,
 
         WindowRounding,
-        ResizeGripSize,
         ResizeGripColor,
         WindowBorderColor,
         WindowShadowColor,

@@ -102,6 +102,7 @@ namespace ImGui.Rendering
         }
         /// <summary>
         /// (Fast) adds an arc from angle1 to angle2 to the current path.
+        /// Starts from +x, then clock-wise to +y, -x,-y, then ends at +x.
         /// </summary>
         /// <param name="center">the center of the arc</param>
         /// <param name="radius">the radius of the arc</param>
