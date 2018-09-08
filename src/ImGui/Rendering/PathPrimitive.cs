@@ -105,8 +105,8 @@ namespace ImGui.Rendering
         /// </summary>
         /// <param name="center">the center of the arc</param>
         /// <param name="radius">the radius of the arc</param>
-        /// <param name="amin">angle1 = amin * π * 1/12</param>
-        /// <param name="amax">angle1 = amax * π * 1/12</param>
+        /// <param name="amin">angle1 = amin * 2π * 1/12</param>
+        /// <param name="amax">angle1 = amax * 2π * 1/12</param>
         public void PathArcToFast(Point center, double radius, int amin, int amax)
         {
             if (amin > amax) return;
