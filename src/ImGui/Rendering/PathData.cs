@@ -1,7 +1,11 @@
-﻿using ImGui.Common.Primitive;
+﻿using System;
+using System.Diagnostics;
+using ImGui.Common.Primitive;
+using ImGui.Development.DebuggerViews;
 
 namespace ImGui.Rendering
 {
+    [DebuggerTypeProxy(typeof(PathDataDebuggerView))]
     internal struct PathData
     {
         private static int[] PointNumbers = { 1, 1, 3, 0 };

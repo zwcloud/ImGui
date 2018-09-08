@@ -9,6 +9,7 @@ namespace ImGui.UnitTest
             [Fact]
             public void TheWindowShouldBeDrawn()
             {
+                Application.IsRunningInUnitTest = true;
                 Application.Init();
 
                 var form = new MainForm();

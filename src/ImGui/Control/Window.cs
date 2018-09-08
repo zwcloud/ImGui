@@ -74,7 +74,7 @@ namespace ImGui
             // When reusing window again multiple times a frame, just append content (don't need to setup again)
             if (first_begin_of_the_frame)
             {
-                window.FirstUpdate(name, position, size, ref open, bg_alpha, flags, current_frame, parent_window);
+                window.FirstUpdate(name, size, ref open, bg_alpha, flags, current_frame, parent_window);
             }
 
             // Inner clipping rectangle
@@ -110,8 +110,6 @@ namespace ImGui
 
             // Return false if we don't intend to display anything to allow user to perform an early out optimization
             window.SkipItems = window.Collapsed || !window.Active;
-
-            window.RenderTree.CurrentContainer = window.FrameNode;
 
             return !window.SkipItems;
         }

@@ -216,7 +216,7 @@ namespace ImGui
             this.nativeWindow.Title = string.Format("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
 
             var l = Application.Logger;
-            if (ImGui.Log.LogStatus)
+            if (ImGui.Log.Enabled && ImGui.Log.LogStatus)
             {
                 WindowManager w = g.WindowManager;
                 l.Clear();

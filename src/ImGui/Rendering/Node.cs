@@ -39,6 +39,14 @@ namespace ImGui.Rendering
         {
             this.Name = name;
         }
+        
+        /// <summary>
+        /// Create a manually positioned node.
+        /// </summary>
+        public Node(int id, string name, Rect rect) : this(id, name)
+        {
+            this.Rect = rect;
+        }
 
         #region Layout
 
