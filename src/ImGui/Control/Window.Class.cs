@@ -371,9 +371,6 @@ namespace ImGui
                         var t = Mouse.Instance.Position - g.ActiveIdClickOffset - this.Position;
                         var newSizeWidth = t.X + resizeRect.Width;
                         var newSizeHeight = t.Y + resizeRect.Height;
-                        newSizeWidth =
-                            MathEx.Clamp(newSizeWidth, 330, fullScreenRect.Width); //min size of a window is 145x235
-                        newSizeHeight = MathEx.Clamp(newSizeHeight, 150, fullScreenRect.Height);
                         var resizeSize = new Size(newSizeWidth, newSizeHeight);
                         this.ApplySize(resizeSize);
 

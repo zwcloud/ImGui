@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using ImGui.Common.Primitive;
+using Xunit;
 
 namespace ImGui.UnitTest
 {
@@ -12,7 +13,7 @@ namespace ImGui.UnitTest
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
 
-                var form = new MainForm();
+                var form = new MainForm(new Rect(320, 180, 300,400));
                 bool open = true;
                 form.OnGUIAction = () =>
                 {
