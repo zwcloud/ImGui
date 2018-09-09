@@ -14,7 +14,10 @@ namespace ImGui.UnitTest.Rendering
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(Point.Zero);
 
-                Assert.Equal(primitive.Path[0].Points[0], Point.Zero);
+                Assert.Single(primitive.Path);
+                Assert.IsType<MoveToCommand>(primitive.Path[0]);
+                var cmd = (MoveToCommand) primitive.Path[0];
+                Assert.Equal(Point.Zero, cmd.Point);
             }
         }
 
@@ -30,10 +33,24 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathLineTo(new Point(10, 0));
 
                 Assert.Equal(4, primitive.Path.Count);
-                Assert.Equal(Point.Zero, primitive.Path[0].Points[0]);
-                Assert.Equal(new Point(0, 10), primitive.Path[1].Points[0]);
-                Assert.Equal(new Point(10, 10), primitive.Path[2].Points[0]);
-                Assert.Equal(new Point(10, 0), primitive.Path[3].Points[0]);
+                Assert.IsType<LineToCommand>(primitive.Path[0]);
+
+                {
+                    var cmd = (LineToCommand)primitive.Path[0];
+                    Assert.Equal(Point.Zero, cmd.Point);
+                }
+                {
+                    var cmd = (LineToCommand)primitive.Path[1];
+                    Assert.Equal(new Point(0, 10), cmd.Point);
+                }
+                {
+                    var cmd = (LineToCommand)primitive.Path[2];
+                    Assert.Equal(new Point(10, 10), cmd.Point);
+                }
+                {
+                    var cmd = (LineToCommand)primitive.Path[3];
+                    Assert.Equal(new Point(10, 0), cmd.Point);
+                }
             }
         }
 
@@ -46,16 +63,19 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathMoveTo(Point.Zero);
                 primitive.PathArcToFast(new Point(10, 0), 10, 3, 6);
 
-                Assert.Equal(Point.Zero, primitive.Path[0].Points[0]);
+                {
+                    var cmd1 = (LineToCommand)primitive.Path[1];
+                    var firstArcPoint = cmd1.Point;
+                    Assert.Equal(10, firstArcPoint.x, precision: 2);
+                    Assert.Equal(10, firstArcPoint.y, precision: 2);
+                }
 
-                var firstArcPoint = primitive.Path[1].Points[0];
-                Assert.Equal(10, firstArcPoint.x, precision: 2);
-                Assert.Equal(10, firstArcPoint.y, precision: 2);
-
-                var lastPathData = primitive.Path[primitive.Path.Count - 1];
-                var lastArcPoint = lastPathData.Points[lastPathData.Points.Length - 1];
-                Assert.Equal(0, lastArcPoint.x, precision: 2);
-                Assert.Equal(0, lastArcPoint.y, precision: 2);
+                {
+                    var lastCmd = (LineToCommand)primitive.Path[primitive.Path.Count - 1];
+                    var lastArcPoint = lastCmd.Point;
+                    Assert.Equal(0, lastArcPoint.x, precision: 2);
+                    Assert.Equal(0, lastArcPoint.y, precision: 2);
+                }
             }
 
             [Fact]
@@ -64,9 +84,9 @@ namespace ImGui.UnitTest.Rendering
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(Point.Zero);
                 primitive.PathArcToFast(new Point(10, 0), 10, 6, 9);
+                primitive.PathStroke(1, Color.Black);
 
                 Util.DrawPathPrimitive(primitive);
-
             }
         }
     }

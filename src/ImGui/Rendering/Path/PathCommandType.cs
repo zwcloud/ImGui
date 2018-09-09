@@ -4,11 +4,13 @@ using System.Text;
 
 namespace ImGui.Rendering
 {
-    internal enum PathDataType
+    internal enum PathCommandType
     {
         PathMoveTo,
         PathLineTo,
         PathCurveTo,
         PathClosePath,
+        Stroke,
+        Fill,
     }
 }

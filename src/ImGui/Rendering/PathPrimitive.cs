@@ -7,7 +7,7 @@ namespace ImGui.Rendering
 {
     internal class PathPrimitive : Primitive
     {
-        public List<PathData> Path { get; set; } = new List<PathData>();
+        public List<PathCommand> Path { get; set; } = new List<PathCommand>();
 
         /// <summary>
         /// Moves the current point of the current path.
@@ -15,9 +15,7 @@ namespace ImGui.Rendering
         /// <param name="point">position that current point will be moved to</param>
         public void PathMoveTo(Point point)
         {
-            var pathData = new PathData(PathDataType.PathMoveTo);
-            pathData.Points[0] = point;
-            Path.Add(pathData);
+            Path.Add(new MoveToCommand(point));
         }
 
         /// <summary>
@@ -26,9 +24,7 @@ namespace ImGui.Rendering
         /// <param name="point">next point</param>
         public void PathLineTo(Point point)
         {
-            var pathData = new PathData(PathDataType.PathLineTo);
-            pathData.Points[0] = point;
-            Path.Add(pathData);
+            Path.Add(new LineToCommand(point));
         }
 
         /// <summary>
@@ -39,17 +35,26 @@ namespace ImGui.Rendering
         /// </summary>
         public void PathClose()
         {
-            var pathData = new PathData(PathDataType.PathClosePath);
-            Path.Add(pathData);
+            Path.Add(new ClosePathCommand());
         }
 
         public void PathCurveTo(Point control0, Point control1, Point end)
         {
-            var pathData = new PathData(PathDataType.PathCurveTo);
-            pathData.Points[0] = control0;
-            pathData.Points[1] = control1;
-            pathData.Points[2] = end;
-            Path.Add(pathData);
+            Path.Add(new CurveToCommand(control0, control1, end));
+        }
+
+        public StrokeCommand PathStroke(double lineWidth, Color lineColor)
+        {
+            var cmd = new StrokeCommand(lineWidth, lineColor);
+            Path.Add(cmd);
+            return cmd;
+        }
+
+        public FillCommand PathFill(Color fillColor)
+        {
+            var cmd = new FillCommand(fillColor);
+            Path.Add(cmd);
+            return cmd;
         }
 
         public void PathRect(Rect rect, float rounding = 0.0f, int roundingCorners = 0x0F) =>

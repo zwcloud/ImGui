@@ -30,10 +30,9 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathLineTo(new Point(100, 100));
                 primitive.PathLineTo(new Point(100, 10));
                 primitive.PathClose();
+                primitive.PathFill(Color.Black);
 
                 node.Primitive = primitive;
-                node.IsFill = true;
-                node.Brush = new Brush();
 
                 node.Draw(primitiveRenderer);
 
@@ -94,10 +93,9 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathLineTo(new Point(100, 100));
                 primitive.PathLineTo(new Point(100, 10));
                 primitive.PathClose();
+                var fillCmd = primitive.PathFill(Color.Black);
 
                 node.Primitive = primitive;
-                node.IsFill = true;
-                node.Brush = new Brush();
 
                 node.Draw(primitiveRenderer);
 
@@ -118,15 +116,15 @@ namespace ImGui.UnitTest.Rendering
                     {
                         if (Keyboard.Instance.KeyDown(Key.D1))
                         {
-                            node.Brush.FillColor = Color.Red;
+                            fillCmd.Color = Color.Red;
                         }
                         if (Keyboard.Instance.KeyDown(Key.D2))
                         {
-                            node.Brush.FillColor = Color.Green;
+                            fillCmd.Color = Color.Green;
                         }
                         if (Keyboard.Instance.KeyDown(Key.D3))
                         {
-                            node.Brush.FillColor = Color.Blue;
+                            fillCmd.Color = Color.Blue;
                         }
 
                         if (Keyboard.Instance.KeyDown(Key.Escape))
@@ -169,8 +167,9 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
+                FillCommand node0FillCmd, node1FillCmd;
                 {
-                    Node node = new Node(1);
+                    Node node = new Node(0);
                     nodes.Add(node);
                     var primitive = new PathPrimitive();
                     primitive.PathMoveTo(new Point(10, 10));
@@ -178,10 +177,8 @@ namespace ImGui.UnitTest.Rendering
                     primitive.PathLineTo(new Point(100, 100));
                     primitive.PathLineTo(new Point(100, 10));
                     primitive.PathClose();
-
+                    node0FillCmd = primitive.PathFill(Color.Black);
                     node.Primitive = primitive;
-                    node.IsFill = true;
-                    node.Brush = new Brush();
 
                     node.Draw(primitiveRenderer);
                 }
@@ -194,10 +191,9 @@ namespace ImGui.UnitTest.Rendering
                     primitive.PathLineTo(new Point(200, 100));
                     primitive.PathLineTo(new Point(200, 10));
                     primitive.PathClose();
+                    node1FillCmd = primitive.PathFill(Color.Black);
 
                     node.Primitive = primitive;
-                    node.IsFill = true;
-                    node.Brush = new Brush();
 
                     node.Draw(primitiveRenderer);
                 }
@@ -219,13 +215,13 @@ namespace ImGui.UnitTest.Rendering
                     {
                         if (Keyboard.Instance.KeyDown(Key.NumPad1))
                         {
-                            nodes[0].Brush.FillColor = Color.Red;
-                            nodes[1].Brush.FillColor = Color.Blue;
+                            node0FillCmd.Color = Color.Red;
+                            node1FillCmd.Color = Color.Blue;
                         }
                         if (Keyboard.Instance.KeyDown(Key.NumPad2))
                         {
-                            nodes[0].Brush.FillColor = Color.Green;
-                            nodes[1].Brush.FillColor = Color.Orange;
+                            node0FillCmd.Color = Color.Green;
+                            node1FillCmd.Color = Color.Orange;
                         }
 
                         if (Keyboard.Instance.KeyDown(Key.Escape))
@@ -280,11 +276,9 @@ namespace ImGui.UnitTest.Rendering
                     primitive.PathLineTo(new Point(100, 100));
                     primitive.PathLineTo(new Point(100, 10));
                     primitive.PathClose();
+                    primitive.PathFill(Color.Red);
 
                     node.Primitive = primitive;
-                    node.IsFill = true;
-                    node.Brush = new Brush();
-                    node.Brush.FillColor = Color.Red;
 
                     node.Draw(primitiveRenderer);
                 }

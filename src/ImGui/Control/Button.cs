@@ -37,7 +37,7 @@ namespace ImGui
                 var backgroundNodeId = window.GetID("Background");
                 backgroundNode = new Node(backgroundNodeId, "Background");
                 backgroundNode.Primitive = new PathPrimitive();
-                backgroundNode.IsFill = true;
+                //TODO implement button rendering with box-model
 
                 //text
                 var textNodeId = window.GetID("Text");
@@ -77,11 +77,9 @@ namespace ImGui
             bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
-            var brush = backgroundNode.Brush;
-            brush.FillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+            var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
 
-            var strokeStyle = backgroundNode.StrokeStyle;
-            strokeStyle.Color = style.GetBorderColor(state);
+            var lineColor = style.GetBorderColor(state);
 
             style.Restore();
 
@@ -126,7 +124,7 @@ namespace ImGui
                 var backgroundNodeId = window.GetID("Background");
                 backgroundNode = new Node(backgroundNodeId, "Background");
                 backgroundNode.Primitive = new PathPrimitive();
-                backgroundNode.IsFill = true;
+                //TODO implement button rendering with box-model
 
                 //text
                 var textNodeId = window.GetID("Text");
@@ -164,11 +162,9 @@ namespace ImGui
             bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
-            var brush = backgroundNode.Brush;
-            brush.FillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
+            var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
 
-            var strokeStyle = backgroundNode.StrokeStyle;
-            strokeStyle.Color = style.GetBorderColor(state);
+            var lineColor = style.GetBorderColor(state);
 
             //style restore
             style.Restore();

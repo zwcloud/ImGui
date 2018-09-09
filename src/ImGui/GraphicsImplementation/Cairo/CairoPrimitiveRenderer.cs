@@ -7,12 +7,7 @@ namespace ImGui.GraphicsImplementation
 {
     internal class CairoPrimitiveRenderer : IPrimitiveRenderer
     {
-        public void Stroke(Primitive primitive, Brush brush, StrokeStyle strokeStyle)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Fill(Primitive primitive, Brush brush)
+        public void DrawPath(PathPrimitive primitive)
         {
             throw new System.NotImplementedException();
         }
@@ -23,7 +18,7 @@ namespace ImGui.GraphicsImplementation
             throw new System.NotImplementedException();
         }
 
-        public void DrawImage(ImagePrimitive primitive, Brush brush)
+        public void DrawImage(ImagePrimitive primitive, Color tintColor)
         {
             throw new System.NotImplementedException();
         }

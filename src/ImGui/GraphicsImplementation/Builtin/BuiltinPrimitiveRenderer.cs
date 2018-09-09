@@ -318,83 +318,50 @@ namespace ImGui.GraphicsImplementation
 
         #endregion
 
-        /// <summary>
-        /// Stroke a primitive and merge the result to the mesh.
-        /// </summary>
-        /// <param name="primitive"></param>
-        /// <param name="brush"></param>
-        /// <param name="strokeStyle"></param>
-        public void Stroke(Primitive primitive, Brush brush, StrokeStyle strokeStyle)
+        public void DrawPath(PathPrimitive primitive)
         {
-            var offset = primitive.Offset;
-            //TODO apply offset, brush and strokeStyle
-            var pathPrimitive = primitive as PathPrimitive;
-            if (pathPrimitive == null) return;
-
-            //build path
-            var path = pathPrimitive.Path;
-            foreach (var cmd in path)
+            foreach (var command in primitive.Path)
             {
-                switch (cmd.Type)
+                switch (command.Type)
                 {
-                    case PathDataType.PathMoveTo:
-                        PathMoveTo(cmd.Points[0]);
+                    case PathCommandType.PathMoveTo:
+                    {
+                        var cmd = (MoveToCommand)command;
+                        this.PathMoveTo(cmd.Point);
                         break;
-                    case PathDataType.PathLineTo:
-                        PathLineTo(cmd.Points[0]);
+                    }
+                    case PathCommandType.PathLineTo:
+                    {
+                        var cmd = (LineToCommand)command;
+                        this.PathLineTo(cmd.Point);
                         break;
-                    case PathDataType.PathCurveTo:
-                        PathBezierCurveTo(cmd.Points[0], cmd.Points[1], cmd.Points[2]);
+                    }
+                    case PathCommandType.PathCurveTo:
+                    {
+                        throw new NotImplementedException();
                         break;
-                    case PathDataType.PathClosePath:
-                        PathClose();
+                    }
+                    case PathCommandType.PathClosePath:
+                    {
+                        this.PathClose();
                         break;
+                    }
+                    case PathCommandType.Stroke:
+                    {
+                        var cmd = (StrokeCommand) command;
+                        this.PathStroke(cmd.Color, false, cmd.LineWidth);
+                        break;
+                    }
+                    case PathCommandType.Fill:
+                    {
+                        var cmd = (FillCommand) command;
+                        this.PathFill(cmd.Color);
+                        break;
+                    }
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
-            //construct and merge the mesh of this Path into ShapeMesh
-            PathStroke(brush.LineColor, true, brush.LineWidth);
-        }
-
-        /// <summary>
-        /// Fill a primitive and merge the result to the mesh.
-        /// </summary>
-        /// <param name="primitive"></param>
-        /// <param name="brush"></param>
-        public void Fill(Primitive primitive, Brush brush)
-        {
-            var offset = primitive.Offset;
-            //TODO apply offset, brush and strokeStyle
-            var pathPrimitive = primitive as PathPrimitive;
-            if (pathPrimitive == null) return;
-
-            //build path
-            var path = pathPrimitive.Path;
-            foreach (var cmd in path)
-            {
-                switch (cmd.Type)
-                {
-                    case PathDataType.PathMoveTo:
-                        PathMoveTo(cmd.Points[0]);
-                        break;
-                    case PathDataType.PathLineTo:
-                        PathLineTo(cmd.Points[0]);
-                        break;
-                    case PathDataType.PathCurveTo:
-                        PathBezierCurveTo(cmd.Points[0], cmd.Points[1], cmd.Points[2]);
-                        break;
-                    case PathDataType.PathClosePath:
-                        PathClose();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            //construct and merge the mesh of this Path into ShapeMesh
-            PathFill(brush.FillColor);
         }
 
         private bool CheckTextPrimitive(TextPrimitive primitive, string fontFamily, double fontSize,
@@ -527,11 +494,9 @@ namespace ImGui.GraphicsImplementation
         /// Draw an image primitive and merge the result to the image mesh.
         /// </summary>
         /// <param name="primitive"></param>
-        /// <param name="brush"></param>
-        public void DrawImage(ImagePrimitive primitive, Brush brush)
+        /// <param name="tintColor"></param>
+        public void DrawImage(ImagePrimitive primitive, Color tintColor)
         {
-            var offset = primitive.Offset;
-
             //TODO check if we need to add a new draw command
             //add a new draw command
             DrawCommand cmd = new DrawCommand();
@@ -550,7 +515,7 @@ namespace ImGui.GraphicsImplementation
             AddImageRect(
                 (Point)primitive.Offset,
                 (Point)primitive.Offset + new Vector(primitive.Image.Width, primitive.Image.Height),
-                uvMin, uvMax, brush.FillColor);
+                uvMin, uvMax, tintColor);
         }
     }
 }

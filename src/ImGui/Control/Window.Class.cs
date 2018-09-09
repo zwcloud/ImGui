@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ImGui.Layout;
 using System.Diagnostics;
-using System.Threading;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
@@ -180,13 +179,10 @@ namespace ImGui
             {
                 var id = this.GetID("TitleBar_Background");
                 Node node = new Node(id, "TitleBar_Background", this.TitleBarRect);
-                node.IsFill = true;
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.TitleBarRect);
-                var brush = new Brush();
-                brush.FillColor = this.TitleBarStyle.BackgroundColor;
+                primitive.PathFill(this.TitleBarStyle.BackgroundColor);
                 node.Primitive = primitive;
-                node.Brush = brush;
                 this.TitleBarBackgroundNode = node;
                 this.NodeTreeRoot.AppendChild(node);
             }
@@ -206,14 +202,11 @@ namespace ImGui
             {
                 var id = this.GetID("ClientArea_Background");
                 var node = new Node(id, "ClientArea_Background", this.ClientRect);
-                node.IsFill = true;
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
                     this.Rect.BottomRight);
-                var brush = new Brush();
-                brush.FillColor = this.Style.BackgroundColor;
+                primitive.PathFill(this.Style.BackgroundColor);
                 node.Primitive = primitive;
-                node.Brush = brush;
                 this.ClientAreaBackgroundNode = node;
                 this.NodeTreeRoot.AppendChild(node);
             }
@@ -226,10 +219,8 @@ namespace ImGui
                 var node = new Node(id, "Window_Border", this.ClientRect);
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.Rect);//FIXME this is incorrect, box-model should be applied instead
-                var strokeStyle = new StrokeStyle();
-                node.IsFill = false;
+                primitive.PathStroke(this.Style.BorderTop, this.Style.BorderColor);//TEMP states and box-model should be taken into consideration
                 node.Primitive = primitive;
-                node.StrokeStyle = strokeStyle;
                 this.WindowBorderNode = node;
                 this.NodeTreeRoot.AppendChild(node);
             }
@@ -294,24 +285,6 @@ namespace ImGui
                 this.Collapsed = false;
             }
 
-            // set window size and position
-            #region size
-
-
-            #endregion
-
-            #region position
-
-            if (flags.HaveFlag(WindowFlags.ChildWindow))
-            {
-                // 'size' provided by user passed via BeginChild()->Begin().
-                //this.RenderTree.Root.Rect = new Rect(position, size);
-            }
-
-            #endregion
-
-            //
-
             //update title bar
             var titleBarStyle = this.TitleBarStyle;
             var titleBarRect = this.TitleBarRect;
@@ -321,8 +294,7 @@ namespace ImGui
                 //background
                 {
                     var node = this.TitleBarBackgroundNode;
-                    var brush = node.Brush;
-                    brush.FillColor = w.FocusedWindow == this
+                    var fillColor = w.FocusedWindow == this
                         ? titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active)
                         : titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor);
 
@@ -330,6 +302,7 @@ namespace ImGui
                     Debug.Assert(primitive != null);
                     primitive.PathClear();
                     primitive.PathRect(titleBarRect);
+                    primitive.PathFill(fillColor);
                 }
 
                 //text
@@ -366,8 +339,6 @@ namespace ImGui
                 {
                     var id = this.GetID("#RESIZE");
                     var node = new Node(id, "Window_ResizeGrip");
-                    node.IsFill = true;
-                    node.Brush = new Brush();
                     node.Primitive = new PathPrimitive();
                     this.ResizeGripNode = node;
                     this.NodeTreeRoot.AppendChild(node);
@@ -428,12 +399,12 @@ namespace ImGui
                 if (backgroundColor.A > 0.0f)
                 {
                     var node = this.ClientAreaBackgroundNode;
-                    node.Brush.FillColor = backgroundColor;
                     var primitive = (PathPrimitive)node.Primitive;
                     Debug.Assert(primitive != null);
                     primitive.PathClear();
                     primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
                         this.Rect.BottomRight);
+                    primitive.PathFill(backgroundColor);
                 }
 
                 // Render resize grip
@@ -444,13 +415,12 @@ namespace ImGui
                     var borderBottom = this.Style.BorderBottom;
                     var borderRight = this.Style.BorderRight;
                     var node = this.ResizeGripNode;
-                    var brush = node.Brush;
                     var primitive = (PathPrimitive)node.Primitive;
                     primitive.PathClear();
-                    brush.FillColor = resizeGripColor;
                     primitive.PathLineTo(br + new Vector(-borderRight, -borderBottom));
                     primitive.PathLineTo(br + new Vector(-borderRight, -windowRounding));
                     primitive.PathArcToFast(br + new Vector(-windowRounding - borderRight, -windowRounding - borderBottom), windowRounding, 0, 3);
+                    primitive.PathFill(resizeGripColor);
                 }
 
                 // Scroll bar
@@ -519,10 +489,12 @@ namespace ImGui
             {
                 var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
                 var node = this.WindowBorderNode;
-                node.Brush.LineColor = this.Style.Get<Color>(GUIStyleName.WindowBorderColor, state);
+                var lineWidth = this.Style.BorderTop;//TMEP box model
+                var lineColor = this.Style.Get<Color>(GUIStyleName.WindowBorderColor, state);
                 var pathPrimitive = (PathPrimitive)node.Primitive;
                 pathPrimitive.PathClear();
                 pathPrimitive.PathRect(this.Rect);
+                pathPrimitive.PathStroke(lineWidth, lineColor);
             }
 
             // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()

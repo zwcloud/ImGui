@@ -149,6 +149,14 @@ namespace ImGui.UnitTest
         }
         #endregion
 
+        public static Color ToCairoColor(this ImGui.Common.Primitive.Color color)
+        {
+            return new Color(color.R, color.G, color.B, color.A);
+        }
 
+        public static PointD ToPointD(this ImGui.Common.Primitive.Point point)
+        {
+            return new PointD(point.x, point.y);
+        }
     }
 }

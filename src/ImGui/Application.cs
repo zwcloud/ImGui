@@ -143,7 +143,10 @@ namespace ImGui
         {
             if (IsRunningInUnitTest)
             {
-                EchoLogger.Close();
+                if (Log.Enabled)
+                {
+                    EchoLogger.Close();
+                }
             }
             RequestQuit = true;
         }

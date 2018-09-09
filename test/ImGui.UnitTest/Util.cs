@@ -5,7 +5,6 @@ using System.Reflection;
 using Cairo;
 using ImGui.Common.Primitive;
 using ImGui.Rendering;
-using Point = ImGui.Common.Primitive.Point;
 
 namespace ImGui.UnitTest
 {
@@ -120,51 +119,106 @@ namespace ImGui.UnitTest
         
         private static void Draw(Context context, PathPrimitive primitive)
         {
-            foreach (var pathData in primitive.Path)
+            foreach (var command in primitive.Path)
             {
-                switch (pathData.Type)
+                switch (command.Type)
                 {
-                    case PathDataType.PathMoveTo:
-                        context.MoveTo(pathData.Points[0].x, pathData.Points[0].y);
+                    case PathCommandType.PathMoveTo:
+                    {
+                        var cmd = (MoveToCommand)command;
+                        context.MoveTo(cmd.Point.ToPointD());
                         break;
-                    case PathDataType.PathLineTo:
-                        context.LineTo(pathData.Points[0].x, pathData.Points[0].y);
+                    }
+                    case PathCommandType.PathLineTo:
+                    {
+                        var cmd = (LineToCommand)command;
+                        context.LineTo(cmd.Point.ToPointD());
                         break;
-                    case PathDataType.PathCurveTo:
-                        context.CurveTo(pathData.Points[0].x, pathData.Points[0].y,
-                            pathData.Points[1].x, pathData.Points[1].y,
-                            pathData.Points[2].x, pathData.Points[2].y);
+                    }
+                    case PathCommandType.PathCurveTo:
+                    {
+                        var cmd = (CurveToCommand) command;
+                        context.CurveTo(cmd.ControlPoint0.ToPointD(), cmd.ControlPoint1.ToPointD(), cmd.EndPoint.ToPointD());
                         break;
-                    case PathDataType.PathClosePath:
+                    }
+                    case PathCommandType.PathClosePath:
+                    {
                         context.ClosePath();
+                        break;
+                    }
+                    case PathCommandType.Stroke:
+                    {
+                        var cmd = (StrokeCommand) command;
+                        context.Color = cmd.Color.ToCairoColor();
+                        context.LineWidth = cmd.LineWidth;
+                        context.Stroke();
+                        break;
+                    }
+                    case PathCommandType.Fill:
+                    {
+                        var cmd = (FillCommand) command;
+                        context.Color = cmd.Color.ToCairoColor();
+                        context.Fill();
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        private static Size GetPrimitiveSize(PathPrimitive primitive, out Common.Primitive.Point min)
+        {
+            var minX = 0.0;
+            var minY = 0.0;
+            var maxX = 0.0;
+            var maxY = 0.0;
+
+            void updateMinMax(Common.Primitive.Point point)
+            {
+                minX = Math.Min(minX, point.x);
+                minY = Math.Min(minY, point.y);
+                maxX = Math.Max(maxX, point.x);
+                maxY = Math.Max(maxY, point.y);
+            }
+            foreach (var command in primitive.Path)
+            {
+                switch (command.Type)
+                {
+                    case PathCommandType.PathMoveTo:
+                    {
+                        var cmd = (MoveToCommand)command;
+                        var point = cmd.Point;
+                        updateMinMax(point);
+                        break;
+                    }
+                    case PathCommandType.PathLineTo:
+                    {
+                        var cmd = (LineToCommand)command;
+                        var point = cmd.Point;
+                        updateMinMax(point);
+                        break;
+                    }
+                    case PathCommandType.PathCurveTo:
+                    {
+                        var cmd = (CurveToCommand) command;
+                        var c0 = cmd.ControlPoint0;
+                        var c1 = cmd.ControlPoint1;
+                        var end = cmd.EndPoint;
+                        updateMinMax(c0);
+                        updateMinMax(c1);
+                        updateMinMax(end);
+                        break;
+                    }
+                    case PathCommandType.PathClosePath:
+                    case PathCommandType.Stroke:
+                    case PathCommandType.Fill:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            context.Color = CairoEx.ColorBlack;
-            context.LineWidth = 1;
-            context.Stroke();
-        }
-
-        private static Size GetPrimitiveSize(PathPrimitive primitive, out Common.Primitive.Point min)
-        {
-            var minX = primitive.Path[0].Points[0].x;
-            var minY = primitive.Path[0].Points[0].y;
-            var maxX = minX;
-            var maxY = minY;
-
-            foreach (var pathData in primitive.Path)
-            {
-                foreach (var point in pathData.Points)
-                {
-                    minX = Math.Min(minX, point.x);
-                    minY = Math.Min(minY, point.y);
-                    maxX = Math.Max(maxX, point.x);
-                    maxY = Math.Max(maxY, point.y);
-                }
-            }
             min = new Common.Primitive.Point(minX, minY);
             return new Size(maxX - minX, maxY - minY);
         }
@@ -172,7 +226,7 @@ namespace ImGui.UnitTest
         internal static void DrawPathPrimitive(PathPrimitive primitive, [System.Runtime.CompilerServices.CallerMemberName]
             string memberName = "")
         {
-            var size = GetPrimitiveSize(primitive, out Point minPoint);
+            var size = GetPrimitiveSize(primitive, out Common.Primitive.Point minPoint);
             using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)size.Width, (int)size.Height))
             using (Cairo.Context context = new Cairo.Context(surface))
             {

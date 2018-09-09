@@ -2,11 +2,8 @@
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
-using ImGui.OSImplentation;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -22,16 +19,15 @@ namespace ImGui.UnitTest.Rendering
             primitive.PathLineTo(new Point(100, 100));
             primitive.PathLineTo(new Point(100, 10));
             primitive.PathClose();
+            primitive.PathStroke(2, Color.Red);
 
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
-            var brush = new Brush();
-            brush.LineColor = Color.Red;
 
             var mesh = new Mesh();
             mesh.CommandBuffer.Add(DrawCommand.Default);
             primitiveRenderer.SetShapeMesh(mesh);
 
-            primitiveRenderer.Stroke(primitive, brush, new StrokeStyle());
+            primitiveRenderer.DrawPath(primitive);
 
             var window = new Win32Window();
             window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
@@ -64,14 +60,13 @@ namespace ImGui.UnitTest.Rendering
             primitive.PathLineTo(new Point(100, 100));
             primitive.PathLineTo(new Point(100, 10));
             primitive.PathClose();
+            primitive.PathFill(Color.Red);
 
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
-            var brush = new Brush();
-            brush.LineColor = Color.Red;
             var mesh = new Mesh();
             mesh.CommandBuffer.Add(DrawCommand.Default);
             primitiveRenderer.SetShapeMesh(mesh);
-            primitiveRenderer.Fill(primitive, brush);
+            primitiveRenderer.DrawPath(primitive);
 
             var window = new Win32Window();
             window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
@@ -146,13 +141,11 @@ namespace ImGui.UnitTest.Rendering
             primitive.Offset = new Vector(10, 10);
 
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
-            var brush = new Brush();
-            brush.FillColor = Color.White;
 
             var mesh = new Mesh();
             mesh.CommandBuffer.Add(DrawCommand.Default);
             primitiveRenderer.SetImageMesh(mesh);
-            primitiveRenderer.DrawImage(primitive, brush);
+            primitiveRenderer.DrawImage(primitive, Color.White);
 
 
             while (true)

@@ -303,9 +303,6 @@ namespace ImGui.Rendering
         }
 
         internal Primitive Primitive { get; set; }
-        internal bool IsFill { get; set; } = false;
-        internal Brush Brush { get; set; } = new Brush();
-        internal StrokeStyle StrokeStyle { get; set; } = new StrokeStyle();
 
         /// <summary>
         /// Redraw the node's primitive.
@@ -343,14 +340,8 @@ namespace ImGui.Rendering
 
                     builtinPrimitiveRenderer.SetShapeMesh(mesh);
 
-                    if (this.IsFill)
-                    {
-                        renderer.Fill(p, this.Brush);
-                    }
-                    else
-                    {
-                        renderer.Stroke(p, this.Brush, this.StrokeStyle);
-                    }
+                    renderer.DrawPath(p);
+
                     var foundNode = MeshList.ShapeMeshes.Find(mesh);
                     if (foundNode == null)
                     {
@@ -406,7 +397,8 @@ namespace ImGui.Rendering
                     builtinPrimitiveRenderer.SetImageMesh(mesh);
                     mesh.Node = this;
 
-                    renderer.DrawImage(i, this.Brush);
+                    var style = GUIStyle.Default;//FIXME TEMP
+                    renderer.DrawImage(i, style.BackgroundColor);
                     var foundNode = MeshList.ImageMeshes.Find(mesh);
                     if (foundNode == null)
                     {
