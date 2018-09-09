@@ -86,10 +86,10 @@ namespace ImGui.Rendering
                 var r1 = (roundingCorners & 2) != 0 ? r : 0.0f;
                 var r2 = (roundingCorners & 4) != 0 ? r : 0.0f;
                 var r3 = (roundingCorners & 8) != 0 ? r : 0.0f;
-                PathArcToFast(new Point(a.X + r0, a.Y + r0), r0, 6, 9);
-                PathArcToFast(new Point(b.X - r1, a.Y + r1), r1, 9, 12);
-                PathArcToFast(new Point(b.X - r2, b.Y - r2), r2, 0, 3);
-                PathArcToFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
+                this.PathArcFast(new Point(a.X + r0, a.Y + r0), r0, 6, 9);
+                this.PathArcFast(new Point(b.X - r1, a.Y + r1), r1, 9, 12);
+                this.PathArcFast(new Point(b.X - r2, b.Y - r2), r2, 0, 3);
+                this.PathArcFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
             }
         }
         
@@ -113,7 +113,7 @@ namespace ImGui.Rendering
         /// <param name="radius">the radius of the arc</param>
         /// <param name="amin">angle1 = amin * 2π * 1/12</param>
         /// <param name="amax">angle1 = amax * 2π * 1/12</param>
-        public void PathArcToFast(Point center, double radius, int amin, int amax)
+        public void PathArcFast(Point center, double radius, int amin, int amax)
         {
             if (amin > amax) return;
             if (MathEx.AmostZero(radius))

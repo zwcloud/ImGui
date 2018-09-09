@@ -124,7 +124,7 @@ namespace ImGui
 
             this.IDStack.Push(this.ID);
             this.MoveID = this.GetID("#MOVE");
-            
+
             #region Window styles
             // window title bar styles
             {
@@ -419,7 +419,7 @@ namespace ImGui
                     primitive.PathClear();
                     primitive.PathLineTo(br + new Vector(-borderRight, -borderBottom));
                     primitive.PathLineTo(br + new Vector(-borderRight, -windowRounding));
-                    primitive.PathArcToFast(br + new Vector(-windowRounding - borderRight, -windowRounding - borderBottom), windowRounding, 0, 3);
+                    primitive.PathArcFast(br + new Vector(-windowRounding - borderRight, -windowRounding - borderBottom), windowRounding, 0, 3);
                     primitive.PathFill(resizeGripColor);
                 }
 

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;

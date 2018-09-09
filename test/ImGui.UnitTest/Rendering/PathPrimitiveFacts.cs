@@ -61,10 +61,10 @@ namespace ImGui.UnitTest.Rendering
             {
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(Point.Zero);
-                primitive.PathArcToFast(new Point(10, 0), 10, 3, 6);
+                primitive.PathArcFast(new Point(10, 0), 10, 3, 6);
 
                 {
-                    var cmd1 = (LineToCommand)primitive.Path[1];
+                    var cmd1 = (MoveToCommand)primitive.Path[1];
                     var firstArcPoint = cmd1.Point;
                     Assert.Equal(10, firstArcPoint.x, precision: 2);
                     Assert.Equal(10, firstArcPoint.y, precision: 2);
@@ -83,7 +83,7 @@ namespace ImGui.UnitTest.Rendering
             {
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(Point.Zero);
-                primitive.PathArcToFast(new Point(10, 0), 10, 6, 9);
+                primitive.PathArcFast(new Point(10, 0), 10, 6, 9);
                 primitive.PathStroke(1, Color.Black);
 
                 Util.DrawPathPrimitive(primitive);
