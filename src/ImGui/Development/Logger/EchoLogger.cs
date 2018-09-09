@@ -30,6 +30,7 @@ namespace ImGui
         public void Clear()
         {
             //dummy
+            SendMessage("cls\n");
         }
 
         private static void SendMessage(string message)
