@@ -479,7 +479,6 @@ namespace ImGui.UnitTest.Rendering
                 }
             }
 
-
             [Fact]
             public void DrawOneTextNodeAtPosition()
             {
@@ -529,6 +528,109 @@ namespace ImGui.UnitTest.Rendering
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+
+            [Fact]
+            public void DrawOverlappedRectangles()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var box0 = new List<Node>();
+                {
+                    {
+                        Node node = new Node(0);
+                        box0.Add(node);
+                        var primitive = new PathPrimitive();
+                        primitive.PathRect(new Point(10, 10), new Point(100, 100));
+                        primitive.PathFill(Color.Orange);
+                        node.Primitive = primitive;
+                    }
+
+                    {
+                        Node node = new Node(1);
+                        box0.Add(node);
+                        var primitive = new PathPrimitive();
+                        primitive.PathRect(new Point(9, 9), new Point(101, 101));
+                        primitive.PathStroke(2, Color.Black);
+                        node.Primitive = primitive;
+                    }
+                }
+                var box1 = new List<Node>();
+                {
+                    {
+                        Node node = new Node(3);
+                        box1.Add(node);
+                        var primitive = new PathPrimitive();
+                        primitive.PathRect(new Point(50, 50), new Point(140, 140));
+                        primitive.PathFill(Color.LightBlue);
+                        node.Primitive = primitive;
+                    }
+                    {
+                        Node node = new Node(4);
+                        box1.Add(node);
+                        var primitive = new PathPrimitive();
+                        primitive.PathRect(new Point(49, 49), new Point(141, 141));
+                        primitive.PathStroke(2, Color.Red);
+                        node.Primitive = primitive;
+                    }
+
+                }
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(400, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        box0.ForEach(n=>n.Draw(primitiveRenderer));
+
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+
+                        box1.ForEach(n=>n.Draw(primitiveRenderer));
+
+                        //rebuild mesh buffer
+                        MeshBuffer.Clear();
+                        MeshBuffer.Init();
+                        MeshBuffer.Build();
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+
                         renderer.SwapBuffers();
                     });
 

@@ -75,10 +75,11 @@ namespace ImGui.Rendering
 
             if (r <= 0.0f || roundingCorners == 0)
             {
-                PathLineTo(a);
+                PathMoveTo(a);
                 PathLineTo(new Point(b.X, a.Y));
                 PathLineTo(b);
                 PathLineTo(new Point(a.X, b.Y));
+                PathLineTo(a);
             }
             else
             {
