@@ -92,6 +92,9 @@ namespace ImGui
         /// </summary>
         public Stack<int> IDStack { get; set; } = new Stack<int>();
 
+        public MeshList MeshList { get; set; } = new MeshList();
+
+        public MeshBuffer MeshBuffer { get; set; } = new MeshBuffer();
 
         #region Window original sub nodes
 

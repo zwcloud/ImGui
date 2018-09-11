@@ -21,6 +21,9 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
                 Node node = new Node(1);
 
                 var primitive = new PathPrimitive();
@@ -33,7 +36,7 @@ namespace ImGui.UnitTest.Rendering
 
                 node.Primitive = primitive;
 
-                node.Draw(primitiveRenderer);
+                node.Draw(primitiveRenderer, meshList);
 
                 var window = new Win32Window();
                 window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
@@ -56,13 +59,13 @@ namespace ImGui.UnitTest.Rendering
                         }
 
                         //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 
@@ -82,6 +85,9 @@ namespace ImGui.UnitTest.Rendering
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
                 Node node = new Node(1);
@@ -92,11 +98,11 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathLineTo(new Point(100, 100));
                 primitive.PathLineTo(new Point(100, 10));
                 primitive.PathClose();
-                var fillCmd = primitive.PathFill(Color.Black);
+                var fillCmd = primitive.PathFill(Color.Green);
 
                 node.Primitive = primitive;
 
-                node.Draw(primitiveRenderer);
+                node.Draw(primitiveRenderer, meshList);
 
                 var window = new Win32Window();
                 window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
@@ -134,17 +140,17 @@ namespace ImGui.UnitTest.Rendering
                         //update nodes
                         if (node.ActiveInTree)//this is actually always true
                         {
-                            node.Draw(primitiveRenderer);
+                            node.Draw(primitiveRenderer, meshList);
                         }
 
                         //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 
@@ -164,6 +170,9 @@ namespace ImGui.UnitTest.Rendering
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 FillCommand node0FillCmd, node1FillCmd;
@@ -176,10 +185,10 @@ namespace ImGui.UnitTest.Rendering
                     primitive.PathLineTo(new Point(100, 100));
                     primitive.PathLineTo(new Point(100, 10));
                     primitive.PathClose();
-                    node0FillCmd = primitive.PathFill(Color.Black);
+                    node0FillCmd = primitive.PathFill(Color.Green);
                     node.Primitive = primitive;
 
-                    node.Draw(primitiveRenderer);
+                    node.Draw(primitiveRenderer, meshList);
                 }
                 {
                     Node node = new Node(1);
@@ -190,11 +199,11 @@ namespace ImGui.UnitTest.Rendering
                     primitive.PathLineTo(new Point(200, 100));
                     primitive.PathLineTo(new Point(200, 10));
                     primitive.PathClose();
-                    node1FillCmd = primitive.PathFill(Color.Black);
+                    node1FillCmd = primitive.PathFill(Color.Orange);
 
                     node.Primitive = primitive;
 
-                    node.Draw(primitiveRenderer);
+                    node.Draw(primitiveRenderer, meshList);
                 }
 
                 var window = new Win32Window();
@@ -233,18 +242,18 @@ namespace ImGui.UnitTest.Rendering
                         {
                             if (node.ActiveInTree)
                             {
-                                node.Draw(primitiveRenderer);
+                                node.Draw(primitiveRenderer, meshList);
                             }
                         }
 
                         //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 
@@ -264,6 +273,9 @@ namespace ImGui.UnitTest.Rendering
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 {
@@ -279,7 +291,7 @@ namespace ImGui.UnitTest.Rendering
 
                     node.Primitive = primitive;
 
-                    node.Draw(primitiveRenderer);
+                    node.Draw(primitiveRenderer, meshList);
                 }
                 var theNode = nodes[0];
 
@@ -297,15 +309,15 @@ namespace ImGui.UnitTest.Rendering
                     Keyboard.Instance.OnFrameBegin();
                     window.MainLoop(() =>
                     {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
                         if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
                             theNode.ActiveSelf = !theNode.ActiveSelf;
                             Log.Msg("Key.Space Pressed. theNode becomes " + (theNode.ActiveSelf ? "visible" : "invisible"));
-                        }
-
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
                         }
 
                         //update nodes
@@ -313,18 +325,18 @@ namespace ImGui.UnitTest.Rendering
                         {
                             if (node.ActiveInTree)
                             {
-                                node.Draw(primitiveRenderer);
+                                node.Draw(primitiveRenderer, meshList);
                             }
                         }
 
                         //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 
@@ -344,12 +356,15 @@ namespace ImGui.UnitTest.Rendering
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1);
                 var primitive = new TextPrimitive();
                 primitive.Text = "AAA";
                 node.Primitive = primitive;
-                node.Draw(primitiveRenderer);
+                node.Draw(primitiveRenderer, meshList);
                 node.Rect.X = 1;
                 node.Rect.Y = 1;
 
@@ -376,17 +391,17 @@ namespace ImGui.UnitTest.Rendering
                         //update the node
                         if (node.ActiveInTree)
                         {
-                            node.Draw(primitiveRenderer);
+                            node.Draw(primitiveRenderer, meshList);
                         }
 
                         //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 
@@ -406,6 +421,9 @@ namespace ImGui.UnitTest.Rendering
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 {
@@ -414,7 +432,7 @@ namespace ImGui.UnitTest.Rendering
                     var primitive = new TextPrimitive();
                     primitive.Text = "AAA";
                     node.Primitive = primitive;
-                    node.Draw(primitiveRenderer);
+                    node.Draw(primitiveRenderer, meshList);
                     node.Rect.X = 1;
                     node.Rect.Y = 1;
                 }
@@ -424,7 +442,7 @@ namespace ImGui.UnitTest.Rendering
                     var primitive = new TextPrimitive();
                     primitive.Text = "B";
                     node.Primitive = primitive;
-                    node.Draw(primitiveRenderer);
+                    node.Draw(primitiveRenderer, meshList);
                     node.Rect.X = 1;
                     node.Rect.Y = 40;
                 }
@@ -454,18 +472,18 @@ namespace ImGui.UnitTest.Rendering
                         {
                             if (node.ActiveInTree)
                             {
-                                node.Draw(primitiveRenderer);
+                                node.Draw(primitiveRenderer, meshList);
                             }
                         }
 
                         //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 
@@ -485,12 +503,15 @@ namespace ImGui.UnitTest.Rendering
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1);
                 var primitive = new TextPrimitive();
                 primitive.Text = "AAA";
                 node.Primitive = primitive;
-                node.Draw(primitiveRenderer);
+                node.Draw(primitiveRenderer, meshList);
                 node.Rect.X = 100;
                 node.Rect.Y = 30;
 
@@ -517,17 +538,17 @@ namespace ImGui.UnitTest.Rendering
                         //update the node
                         if (node.ActiveInTree)
                         {
-                            node.Draw(primitiveRenderer);
+                            node.Draw(primitiveRenderer, meshList);
                         }
 
                         //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 
@@ -548,6 +569,9 @@ namespace ImGui.UnitTest.Rendering
                 Application.InitSysDependencies();
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+                MeshBuffer meshBuffer0 = new MeshBuffer();
+                MeshList meshList0 = new MeshList();
                 var box0 = new List<Node>();
                 {
                     {
@@ -569,6 +593,8 @@ namespace ImGui.UnitTest.Rendering
                     }
                 }
                 var box1 = new List<Node>();
+                MeshBuffer meshBuffer1 = new MeshBuffer();
+                MeshList meshList1 = new MeshList();
                 {
                     {
                         Node node = new Node(3);
@@ -597,6 +623,21 @@ namespace ImGui.UnitTest.Rendering
 
                 window.Show();
 
+                bool switched = false;
+
+                void DrawBox(List<Node> boxNodes, MeshList meshList, MeshBuffer meshBuffer)
+                {
+                    boxNodes.ForEach(n=>n.Draw(primitiveRenderer, meshList));
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                }
+
                 while (true)
                 {
                     Time.OnFrameBegin();
@@ -604,32 +645,28 @@ namespace ImGui.UnitTest.Rendering
 
                     window.MainLoop(() =>
                     {
+                        renderer.Clear(Color.FrameBg);
+
                         if (Keyboard.Instance.KeyDown(Key.Escape))
                         {
                             Application.Quit();
                         }
+                        
+                        if (Keyboard.Instance.KeyPressed(Key.Space))
+                        {
+                            switched = !switched;
+                        }
 
-                        box0.ForEach(n=>n.Draw(primitiveRenderer));
-
-                        //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
-
-                        box1.ForEach(n=>n.Draw(primitiveRenderer));
-
-                        //rebuild mesh buffer
-                        MeshBuffer.Clear();
-                        MeshBuffer.Init();
-                        MeshBuffer.Build();
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        if (switched)
+                        {
+                            DrawBox(box0, meshList0, meshBuffer0);
+                            DrawBox(box1, meshList1, meshBuffer1);
+                        }
+                        else
+                        {
+                            DrawBox(box1, meshList1, meshBuffer1);
+                            DrawBox(box0, meshList0, meshBuffer0);
+                        }
 
                         renderer.SwapBuffers();
                     });

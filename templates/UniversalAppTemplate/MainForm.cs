@@ -9,9 +9,12 @@ namespace UniversalAppTemplate
         {
         }
 
+        private bool open;
         protected override void OnGUI()
         {
             //GUILayout.Button("123");
+            GUI.Begin("test window", ref open);
+            GUI.End();
         }
     }
 }

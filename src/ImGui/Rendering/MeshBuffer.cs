@@ -2,44 +2,44 @@
 
 namespace ImGui.Rendering
 {
-    internal static class MeshBuffer
+    internal class MeshBuffer
     {
-        public static Mesh ShapeMesh { get; } = new Mesh();
+        public Mesh ShapeMesh { get; } = new Mesh();
 
-        public static TextMesh TextMesh { get; } = new TextMesh();
+        public TextMesh TextMesh { get; } = new TextMesh();
 
-        public static Mesh ImageMesh { get; } = new Mesh();
+        public Mesh ImageMesh { get; } = new Mesh();
 
-        public static void Clear()
+        public void Clear()
         {
             ShapeMesh.Clear();
             TextMesh.Clear();
             ImageMesh.Clear();
         }
 
-        public static void Init()
+        public void Init()
         {
             ShapeMesh.CommandBuffer.Add(DrawCommand.Default);
             TextMesh.Commands.Add(DrawCommand.Default);
         }
 
-        public static void Build()
+        public void Build(MeshList meshList)
         {
-            foreach (var mesh in MeshList.ShapeMeshes)
+            foreach (var mesh in meshList.ShapeMeshes)
             {
                 if (mesh.Node.ActiveInTree)
                 {
                     ShapeMesh.Append(mesh);
                 }
             }
-            foreach (var mesh in MeshList.ImageMeshes)
+            foreach (var mesh in meshList.ImageMeshes)
             {
                 if (mesh.Node.ActiveInTree)
                 {
                     ImageMesh.Append(mesh);
                 }
             }
-            foreach (var textMesh in MeshList.TextMeshes)
+            foreach (var textMesh in meshList.TextMeshes)
             {
                 if (textMesh.Node.ActiveInTree)
                 {

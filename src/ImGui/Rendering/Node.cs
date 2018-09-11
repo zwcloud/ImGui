@@ -309,7 +309,7 @@ namespace ImGui.Rendering
         /// </summary>
         /// <param name="renderer"></param>
         /// <remarks>A node can only have one single primitive.</remarks>
-        public void Draw(IPrimitiveRenderer renderer)
+        public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
         {
             if (this.Primitive == null)
             {
@@ -342,10 +342,10 @@ namespace ImGui.Rendering
 
                     renderer.DrawPath(p);
 
-                    var foundNode = MeshList.ShapeMeshes.Find(mesh);
+                    var foundNode = meshList.ShapeMeshes.Find(mesh);
                     if (foundNode == null)
                     {
-                        MeshList.ShapeMeshes.AddLast(mesh);
+                        meshList.ShapeMeshes.AddLast(mesh);
                     }
 
                     builtinPrimitiveRenderer.SetShapeMesh(null);
@@ -370,10 +370,10 @@ namespace ImGui.Rendering
 
                     var style = GUIStyle.Default;//FIXME TEMP
                     renderer.DrawText(t, this.Rect, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
-                    var foundNode = MeshList.TextMeshes.Find(mesh);
+                    var foundNode = meshList.TextMeshes.Find(mesh);
                     if (foundNode == null)
                     {
-                        MeshList.TextMeshes.AddLast(mesh);
+                        meshList.TextMeshes.AddLast(mesh);
                     }
 
                     builtinPrimitiveRenderer.SetTextMesh(null);
@@ -399,10 +399,10 @@ namespace ImGui.Rendering
 
                     var style = GUIStyle.Default;//FIXME TEMP
                     renderer.DrawImage(i, style.BackgroundColor);
-                    var foundNode = MeshList.ImageMeshes.Find(mesh);
+                    var foundNode = meshList.ImageMeshes.Find(mesh);
                     if (foundNode == null)
                     {
-                        MeshList.ImageMeshes.AddLast(mesh);
+                        meshList.ImageMeshes.AddLast(mesh);
                     }
 
                     builtinPrimitiveRenderer.SetImageMesh(null);

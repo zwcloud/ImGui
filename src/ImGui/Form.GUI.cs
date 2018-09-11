@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using ImGui.Common.Primitive;
 using ImGui.Core;
@@ -178,33 +179,32 @@ namespace ImGui
 
             var openGLRenderer = (Win32OpenGLRenderer) renderer;//FIXME TEMP
             openGLRenderer.Clear(this.BackgroundColor);
+
+            bool DrawNode(Node node, MeshList meshList)
+            {
+                if (!node.ActiveInTree)
+                {
+                    return false;
+                }
+
+                node.Draw(this.primitiveRenderer, meshList);
+                return true;
+            }
+
             foreach (var window in w.Windows)
             {
-                if(window.Active)
-                {
+                if (!window.Active) continue;
 
-                    bool DrawNode(Node node)
-                    {
-                        if (!node.ActiveInTree)
-                        {
-                            return false;
-                        }
+                window.NodeTreeRoot.Foreach(n => DrawNode(n, window.MeshList));
+                window.RenderTree.Foreach(n => DrawNode(n, window.MeshList));
 
-                        node.Draw(this.primitiveRenderer);
-                        return true;
-                    }
-                    
-                    window.NodeTreeRoot.Foreach(DrawNode);
-                    window.RenderTree.Foreach(DrawNode);
+                //rebuild mesh buffer
+                window.MeshBuffer.Clear();
+                window.MeshBuffer.Init();
+                window.MeshBuffer.Build(window.MeshList);
 
-                    //rebuild mesh buffer
-                    MeshBuffer.Clear();
-                    MeshBuffer.Init();
-                    MeshBuffer.Build();
-
-                    //draw mesh buffer
-                    openGLRenderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height);
-                }
+                //draw mesh buffer
+                openGLRenderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height, window.MeshBuffer);
             }
             openGLRenderer.SwapBuffers();
         }
@@ -238,7 +238,7 @@ namespace ImGui
                 for (int i = 0; i < w.Windows.Count; i++)
                 {
                     var window = w.Windows[i];
-                    l.Msg("        [{0}]:{1}", i, window.ID);
+                    l.Msg("        [{0}]:{1}, active: {2}", i, window.Name, window.Active);
                 }
             }
         }
