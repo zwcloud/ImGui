@@ -757,13 +757,13 @@ namespace ImGui
             set => Set<double>(GUIStyleName.FontSize, value);
         }
 
-        public FontStyle FontStyle
+        public FontStyle FontStyle//No effect in current Typography.
         {
             get => (FontStyle)Get<int>(GUIStyleName.FontStyle);
             set => Set<int>(GUIStyleName.FontStyle, (int)value);
         }
 
-        public FontWeight FontWeight
+        public FontWeight FontWeight//No effect in current Typography.
         {
             get => (FontWeight)Get<int>(GUIStyleName.FontWeight);
             set => Set<int>(GUIStyleName.FontWeight, (int)value);

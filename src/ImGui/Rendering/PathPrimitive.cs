@@ -93,49 +93,10 @@ namespace ImGui.Rendering
                 this.PathArcFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
             }
         }
-        
-        private static readonly Point[] CirclePoints = InitCirclePoints();
-        private static Point[] InitCirclePoints()
-        {
-            Point[] result = new Point[12];
-            for (int i = 0; i < 12; i++)
-            {
-                var a = (float)i / 12 * 2 * Math.PI;
-                result[i].X = Math.Cos(a);
-                result[i].Y = Math.Sin(a);
-            }
-            return result;
-        }
-        /// <summary>
-        /// (Fast) adds an arc from angle1 to angle2 to the current path.
-        /// Starts from +x, then clock-wise to +y, -x,-y, then ends at +x.
-        /// </summary>
-        /// <param name="center">the center of the arc</param>
-        /// <param name="radius">the radius of the arc</param>
-        /// <param name="amin">angle1 = amin * 2π * 1/12</param>
-        /// <param name="amax">angle1 = amax * 2π * 1/12</param>
+
         public void PathArcFast(Point center, double radius, int amin, int amax)
         {
-            if (amin > amax) return;
-            if (MathEx.AmostZero(radius))
-            {
-                return;
-            }
-
-            Path.Capacity = Path.Count + amax - amin + 1;
-            for (int a = amin; a <= amax; a++)
-            {
-                Point c = CirclePoints[a % CirclePoints.Length];
-                var p = new Point(center.X + c.X * radius, center.Y + c.Y * radius);
-                if (a == amin)
-                {
-                    PathMoveTo(p);
-                }
-                else
-                {
-                    PathLineTo(p);
-                }
-            }
+            Path.Add(new ArcCommand(center, radius, amin, amax));
         }
 
         public void PathClear()
@@ -143,6 +104,7 @@ namespace ImGui.Rendering
             this.Path.Clear();
         }
 
-        //TODO PathArcTo and other path APIs
+        //TODO PathArc and other path APIs
     }
+
 }

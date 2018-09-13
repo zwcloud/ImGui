@@ -369,7 +369,7 @@ namespace ImGui.Rendering
                     mesh.Node = this;
 
                     var style = GUIStyle.Default;//FIXME TEMP
-                    renderer.DrawText(t, this.Rect, style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+                    renderer.DrawText(t, this.Rect, style);
                     var foundNode = meshList.TextMeshes.Find(mesh);
                     if (foundNode == null)
                     {
@@ -398,7 +398,7 @@ namespace ImGui.Rendering
                     mesh.Node = this;
 
                     var style = GUIStyle.Default;//FIXME TEMP
-                    renderer.DrawImage(i, style.BackgroundColor);
+                    renderer.DrawImage(i, this.Rect, style);
                     var foundNode = meshList.ImageMeshes.Find(mesh);
                     if (foundNode == null)
                     {

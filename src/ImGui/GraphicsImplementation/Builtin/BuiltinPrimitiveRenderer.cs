@@ -8,7 +8,7 @@ using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal class BuiltinPrimitiveRenderer : IPrimitiveRenderer
+    internal partial class BuiltinPrimitiveRenderer : IPrimitiveRenderer
     {
         #region Mesh
 
@@ -184,6 +184,9 @@ namespace ImGui.GraphicsImplementation
             this.ImageMesh.AppendIndex(3);
             this.ImageMesh.currentIdx += 4;
         }
+
+        private void AddImageRect(Rect rect, Point uvA, Point uvC, Color color) =>
+            AddImageRect(rect.Min, rect.Max, uvA, uvC, color);
         #endregion
 
         #endregion
@@ -191,6 +194,8 @@ namespace ImGui.GraphicsImplementation
         #region Path APIs
 
         private static readonly List<Point> Path = new List<Point>();
+
+        #region Basic
 
         //TODO confirm PathMoveTo logic
 
@@ -218,7 +223,6 @@ namespace ImGui.GraphicsImplementation
         {
             Path.Add(p);
         }
-
 
         private static void PathBezierToCasteljau(IList<Point> path, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double tessTol, int level)
         {
@@ -315,6 +319,124 @@ namespace ImGui.GraphicsImplementation
             AddConvexPolyFilled(Path, color, true);
             PathClear();
         }
+        
+        #endregion
+
+        #region Compond
+
+        private static readonly Point[] CirclePoints = InitCirclePoints();
+        private static Point[] InitCirclePoints()
+        {
+            Point[] result = new Point[12];
+            for (int i = 0; i < 12; i++)
+            {
+                var a = (float)i / 12 * 2 * Math.PI;
+                result[i].X = Math.Cos(a);
+                result[i].Y = Math.Sin(a);
+            }
+            return result;
+        }
+        /// <summary>
+        /// (Fast) adds an arc from angle1 to angle2 to the current path.
+        /// Starts from +x, then clock-wise to +y, -x,-y, then ends at +x.
+        /// </summary>
+        /// <param name="center">the center of the arc</param>
+        /// <param name="radius">the radius of the arc</param>
+        /// <param name="amin">angle1 = amin * 2π * 1/12</param>
+        /// <param name="amax">angle1 = amax * 2π * 1/12</param>
+        public void PathArcFast(Point center, double radius, int amin, int amax)
+        {
+            if (amin > amax) return;
+            if (MathEx.AmostZero(radius))
+            {
+                return;
+            }
+
+            Path.Capacity = Path.Count + amax - amin + 1;
+            for (int a = amin; a <= amax; a++)
+            {
+                Point c = CirclePoints[a % CirclePoints.Length];
+                var p = new Point(center.X + c.X * radius, center.Y + c.Y * radius);
+                if (a == amin)
+                {
+                    PathMoveTo(p);
+                }
+                else
+                {
+                    PathLineTo(p);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Complex
+
+        public void PathRect(Point a, Point b, float rounding = 0.0f, int roundingCorners = 0x0F)
+        {
+            double r = rounding;
+            r = Math.Min(r, Math.Abs(b.X - a.X) * (((roundingCorners & (1 | 2)) == (1 | 2)) || ((roundingCorners & (4 | 8)) == (4 | 8)) ? 0.5f : 1.0f) - 1.0f);
+            r = Math.Min(r, Math.Abs(b.Y - a.Y) * (((roundingCorners & (1 | 8)) == (1 | 8)) || ((roundingCorners & (2 | 4)) == (2 | 4)) ? 0.5f : 1.0f) - 1.0f);
+
+            if (r <= 0.0f || roundingCorners == 0)
+            {
+                PathLineTo(a);
+                PathLineTo(new Point(b.X, a.Y));
+                PathLineTo(b);
+                PathLineTo(new Point(a.X, b.Y));
+            }
+            else
+            {
+                var r0 = (roundingCorners & 1) != 0 ? r : 0.0f;
+                var r1 = (roundingCorners & 2) != 0 ? r : 0.0f;
+                var r2 = (roundingCorners & 4) != 0 ? r : 0.0f;
+                var r3 = (roundingCorners & 8) != 0 ? r : 0.0f;
+                PathArcFast(new Point(a.X + r0, a.Y + r0), r0, 6, 9);
+                PathArcFast(new Point(b.X - r1, a.Y + r1), r1, 9, 12);
+                PathArcFast(new Point(b.X - r2, b.Y - r2), r2, 0, 3);
+                PathArcFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
+            }
+        }
+        
+        public void PathRect(Rect rect, float rounding = 0.0f, int roundingCorners = 0x0F) =>
+            this.PathRect(rect.Min, rect.Max, rounding, roundingCorners);
+
+        private void PrimRectGradient(Point a, Point c, Color topColor, Color bottomColor)
+        {
+            Point b = new Point(c.X, a.Y);
+            Point d = new Point(a.X, c.Y);
+            Point uv = Point.Zero;
+
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = a, uv = Point.Zero, color = topColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = b, uv = Point.Zero, color = topColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = c, uv = Point.Zero, color = bottomColor });
+            this.ShapeMesh.AppendVertex(new DrawVertex { pos = d, uv = Point.Zero, color = bottomColor });
+
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(1);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(0);
+            this.ShapeMesh.AppendIndex(2);
+            this.ShapeMesh.AppendIndex(3);
+
+            this.ShapeMesh.currentIdx += 4;
+        }
+
+        public void AddRectFilledGradient(Point a, Point b, Color topColor, Color bottomColor)
+        {
+            if (MathEx.AmostZero(topColor.A) && MathEx.AmostZero(bottomColor.A))
+                return;
+
+            this.ShapeMesh.PrimReserve(6, 4);
+            PrimRectGradient(a, b, topColor, bottomColor);
+        }
+        
+        public void AddRectFilledGradient(Rect rect, Color topColor, Color bottomColor)
+        {
+            AddRectFilledGradient(rect.Min, rect.Max, topColor, bottomColor);
+        }
+
+        #endregion
 
         #endregion
 
@@ -346,6 +468,12 @@ namespace ImGui.GraphicsImplementation
                         this.PathClose();
                         break;
                     }
+                    case PathCommandType.PathArc:
+                    {
+                        var cmd = (ArcCommand) command;
+                        this.PathArcFast(cmd.Center, cmd.Radius, cmd.Amin, cmd.Amax);
+                        break;
+                    }
                     case PathCommandType.Stroke:
                     {
                         var cmd = (StrokeCommand) command;
@@ -364,32 +492,34 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
-        private bool CheckTextPrimitive(TextPrimitive primitive, string fontFamily, double fontSize,
-            FontStyle fontStyle, FontWeight fontWeight)
+        private bool CheckTextPrimitive(TextPrimitive primitive, GUIStyle style)
         {
             do
             {
+                double fontSize = style.FontSize;
                 if (!MathEx.AmostEqual(primitive.FontSize, fontSize))
                 {
                     break;
                 }
 
+                string fontFamily = style.FontFamily;
                 if (primitive.FontFamily != fontFamily)
                 {
                     break;
                 }
 
+                FontStyle fontStyle = style.FontStyle;
                 if (primitive.FontStyle != fontStyle)
                 {
                     break;
                 }
 
+                FontWeight fontWeight = style.FontWeight;
                 if (primitive.FontWeight != fontWeight)
                 {
                     break;
                 }
 
-                //
                 return false;
             } while (false);
 
@@ -400,37 +530,37 @@ namespace ImGui.GraphicsImplementation
         /// Draw a text primitive and merge the result to the text mesh.
         /// </summary>
         /// <param name="primitive"></param>
-        /// <param name="fontFamily">font file path</param>
-        /// <param name="fontSize">font pixel size</param>
-        /// <param name="fontColor">font color</param>
-        /// <param name="fontStyle">italic or normal. Oblique will not be supported for now.</param>
-        /// <param name="fontWeight">bold or normal.</param>
+        /// <param name="rect"></param>
+        /// <param name="style"></param>
         /// TODO apply text alignment
-        public void DrawText(TextPrimitive primitive, Rect rect, string fontFamily, double fontSize, Color fontColor,
-            FontStyle fontStyle, FontWeight fontWeight)
+        public void DrawText(TextPrimitive primitive, Rect rect, GUIStyle style)
         {
             primitive.Offset = (Vector)rect.TopLeft;
 
             //check if we need to rebuild the glyph data of this text primitive
-            var needRebuild = this.CheckTextPrimitive(primitive, fontFamily, fontSize, fontStyle, fontWeight);
+            var needRebuild = this.CheckTextPrimitive(primitive, style);
+
+            var fontFamily = style.FontFamily;
+            var fontSize = style.FontSize;
+            var fontColor = style.FontColor;
 
             //build text mesh
             if (needRebuild)
             {
-                primitive.FontFamily = fontFamily;//
-                primitive.FontSize = fontSize;
-                primitive.FontStyle = fontStyle;//No effect in current Typography.
-                primitive.FontWeight = fontWeight;//No effect in current Typography.
+                var fontStretch = FontStretch.Normal;
+                var fontStyle = style.FontStyle;
+                var fontWeight = style.FontWeight;
+                var textAlignment = (TextAlignment) style.Get<int>(GUIStyleName.TextAlignment);
 
                 var textContext = new OSImplentation.TypographyTextContext(primitive.Text,
                     fontFamily,
-                    (float)fontSize,
-                    FontStretch.Normal,
+                    fontSize,
+                    fontStretch,
                     fontStyle,
                     fontWeight,
                     (int)rect.Size.Width,
                     (int)rect.Size.Height,
-                    TextAlignment.Leading);
+                    textAlignment);
                 textContext.Build((Point)primitive.Offset);
 
                 primitive.Offsets.AddRange(textContext.GlyphOffsets);
@@ -494,9 +624,12 @@ namespace ImGui.GraphicsImplementation
         /// Draw an image primitive and merge the result to the image mesh.
         /// </summary>
         /// <param name="primitive"></param>
-        /// <param name="tintColor"></param>
-        public void DrawImage(ImagePrimitive primitive, Color tintColor)
+        /// <param name="rect"></param>
+        /// <param name="style"></param>
+        public void DrawImage(ImagePrimitive primitive, Rect rect, GUIStyle style)
         {
+            Color tintColor = style.BackgroundColor;
+
             //TODO check if we need to add a new draw command
             //add a new draw command
             DrawCommand cmd = new DrawCommand();
@@ -504,6 +637,7 @@ namespace ImGui.GraphicsImplementation
             cmd.TextureData = null;
             this.ImageMesh.CommandBuffer.Add(cmd);
 
+            //BUG The texture is not cached!
             var texture = new OSImplentation.Windows.OpenGLTexture();
             texture.LoadImage(primitive.Image.Data, primitive.Image.Width, primitive.Image.Height);
 
@@ -512,10 +646,7 @@ namespace ImGui.GraphicsImplementation
             var uvMax = new Point(1,1);
 
             this.ImageMesh.PrimReserve(6, 4);
-            AddImageRect(
-                (Point)primitive.Offset,
-                (Point)primitive.Offset + new Vector(primitive.Image.Width, primitive.Image.Height),
-                uvMin, uvMax, tintColor);
+            AddImageRect(rect, uvMin, uvMax, tintColor);
         }
     }
 }

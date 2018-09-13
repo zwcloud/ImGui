@@ -100,12 +100,12 @@ namespace ImGui.UnitTest.Rendering
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             var textMesh = new TextMesh();
             primitiveRenderer.SetTextMesh(textMesh);
-            primitiveRenderer.DrawText(primitive, new Rect(10, 10, 500, 40), style.FontFamily, style.FontSize, style.FontColor, style.FontStyle, style.FontWeight);
+            primitiveRenderer.DrawText(primitive, new Rect(100, 100, 500, 40), style);
 
             //render text
 
             var window = new Win32Window();
-            window.Init(new Point(100, 100), new Size(500, 400), WindowTypes.Regular);
+            window.Init(new Point(100, 100), new Size(500, 500), WindowTypes.Regular);
 
             var renderer = new Win32OpenGLRenderer();
             renderer.Init(window.Pointer, window.ClientSize);
@@ -140,13 +140,15 @@ namespace ImGui.UnitTest.Rendering
             primitive.Image = image;
             primitive.Offset = new Vector(10, 10);
 
+            var style = GUIStyle.Default;
+            style.BackgroundColor = Color.White;
+
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
             var mesh = new Mesh();
             mesh.CommandBuffer.Add(DrawCommand.Default);
             primitiveRenderer.SetImageMesh(mesh);
-            primitiveRenderer.DrawImage(primitive, Color.White);
-
+            primitiveRenderer.DrawImage(primitive, new Rect(10, 10, image.Width, image.Height), style);
 
             while (true)
             {
@@ -160,6 +162,99 @@ namespace ImGui.UnitTest.Rendering
                 if (Input.Keyboard.Instance.KeyDown(Key.Escape))
                 {
                     break;
+                }
+            }
+        }
+
+
+        public class DrawBoxModel
+        {
+            [Fact]
+            public void DrawBoxModelWithTextContent()
+            {
+                TextPrimitive textPrimitive = new TextPrimitive();
+                textPrimitive.Text = "Hello你好こんにちは";
+                var style = GUIStyle.Default;
+                style.BackgroundColor = Color.White;
+                style.Border = (1, 3, 1, 3);
+                style.BorderColor = Color.Black;
+                style.Padding = (10, 5, 10, 5);
+                style.FontSize = 24;
+                style.FontColor = Color.Black;
+
+                BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                mesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.SetShapeMesh(mesh);
+                var textMesh = new TextMesh();
+                primitiveRenderer.SetTextMesh(textMesh);
+                primitiveRenderer.DrawBoxModel(textPrimitive, new Rect(10, 10, 500, 60), style);
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+                
+                while (true)
+                {
+                    window.MainLoop(() =>
+                    {
+                        renderer.Clear(Color.FrameBg);
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        Win32OpenGLRenderer.DrawTextMesh(renderer.glyphMaterial, primitiveRenderer.TextMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            
+            [Fact]
+            public void DrawBoxModelWithImageContent()
+            {
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                var image = new Image(@"assets\images\logo.png");
+                var primitive = new ImagePrimitive();
+                primitive.Image = image;
+                var style = GUIStyle.Default;
+                style.BackgroundColor = Color.White;
+                style.Border = (1, 3, 1, 3);
+                style.BorderColor = Color.LightBlue;
+                style.Padding = (10, 5, 10, 5);
+
+                BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                mesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.SetShapeMesh(mesh);
+                var imageMesh = new Mesh();
+                imageMesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.SetImageMesh(imageMesh);
+                primitiveRenderer.DrawBoxModel(primitive, new Rect(10, 10, 300, 400), style);
+
+                while (true)
+                {
+                    window.MainLoop(() =>
+                    {
+                        renderer.Clear(Color.FrameBg);
+                        Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        Win32OpenGLRenderer.DrawMesh(renderer.imageMaterial, primitiveRenderer.ImageMesh,
+                            (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+                        renderer.SwapBuffers();
+                    });
+                    if (Input.Keyboard.Instance.KeyDown(Key.Escape))
+                    {
+                        break;
+                    }
                 }
             }
         }

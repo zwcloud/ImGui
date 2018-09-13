@@ -72,7 +72,7 @@ namespace ImGui.OSImplentation
 
         private static readonly Dictionary<string, Typeface> TypefaceCache = new Dictionary<string, Typeface>();
 
-        public TypographyTextContext(string text, string fontFamily, float fontSize,
+        public TypographyTextContext(string text, string fontFamily, double fontSize,
             FontStretch stretch, FontStyle style, FontWeight weight,
             int maxWidth, int maxHeight,
             TextAlignment alignment)
@@ -119,7 +119,7 @@ namespace ImGui.OSImplentation
             }
         }
 
-        public float FontSize { get; }
+        public double FontSize { get; }
 
         public TextAlignment Alignment { get; set; }
 
@@ -165,7 +165,7 @@ namespace ImGui.OSImplentation
             //Profile.Start("TypographyTextContext.Measure");
             this.Position = Point.Zero;
             this.glyphLayout.Typeface = this.CurrentTypeFace;
-            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize((float)this.FontSize);
             if (string.IsNullOrEmpty(this.Text))
             {
                 this.Size = Size.Zero;
@@ -265,7 +265,7 @@ namespace ImGui.OSImplentation
 
             // recording line data
             {
-                var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+                var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize((float)this.FontSize);
                 this.LineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender +
                                    this.CurrentTypeFace.LineGap) * scale;
                 this.LineCount = 1;
@@ -355,7 +355,7 @@ namespace ImGui.OSImplentation
 
             //  ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
             // ^CONTENT_OF_THIS_LINE\n$
-            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);//TODO cache scale
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize((float)this.FontSize);//TODO cache scale
             uint characterCountBeforeThisLine = 0;
             for (i = 0; i < lineIndex; i++)
             {
@@ -417,7 +417,7 @@ namespace ImGui.OSImplentation
                 }
             }
 
-            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize(this.FontSize);
+            var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize((float)this.FontSize);
             pointX = (float)this.Position.X;
             pointY = (float)this.Position.Y;
             if(previousCharIndex!=-1)

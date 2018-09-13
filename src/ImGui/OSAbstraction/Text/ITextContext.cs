@@ -11,7 +11,7 @@ namespace ImGui.OSAbstraction.Text
         /// <summary>
         /// size of the font in the text
         /// </summary>
-        float FontSize { get; }
+        double FontSize { get; }
 
         /// <summary>
         /// alignment of the text in the rectangle

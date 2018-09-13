@@ -45,6 +45,21 @@ namespace ImGui.Rendering
         }
     }
 
+    internal class ArcCommand : PathCommand
+    {
+        public Point Center { get; set; }
+        public double Radius { get; }
+        public int Amin { get; set; }
+        public int Amax { get; set; }
+        public ArcCommand(Point center, double radius, int amin, int amax) : base(PathCommandType.PathArc)
+        {
+            this.Center = center;
+            this.Radius = radius;
+            this.Amin = amin;
+            this.Amax = amax;
+        }
+    }
+
     internal class StrokeCommand : PathCommand
     {
         public double LineWidth { get; set;}

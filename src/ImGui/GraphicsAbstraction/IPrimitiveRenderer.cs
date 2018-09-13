@@ -7,9 +7,8 @@ namespace ImGui.GraphicsAbstraction
     {
         void DrawPath(PathPrimitive primitive);
 
-        void DrawText(TextPrimitive primitive, Rect rect, string fontFamily, double fontSize, Color fontColor,
-            FontStyle fontStyle, FontWeight fontWeight);
+        void DrawText(TextPrimitive primitive, Rect rect, GUIStyle style);
 
-        void DrawImage(ImagePrimitive primitive, Color tintColor);
+        void DrawImage(ImagePrimitive primitive, Rect rect, GUIStyle style);
     }
 }

@@ -10,6 +10,7 @@ namespace ImGui.Rendering
         PathLineTo,
         PathCurveTo,
         PathClosePath,
+        PathArc,
         Stroke,
         Fill,
     }
