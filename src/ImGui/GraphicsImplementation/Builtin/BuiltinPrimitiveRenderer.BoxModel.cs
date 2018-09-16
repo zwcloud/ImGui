@@ -1,11 +1,12 @@
 ﻿using System;
 using ImGui.Common;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
 using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal partial class BuiltinPrimitiveRenderer
+    internal partial class BuiltinPrimitiveRenderer : IPrimitiveRenderer
     {
         public void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, GUIStyle style)
         {

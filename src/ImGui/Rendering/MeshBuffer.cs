@@ -21,6 +21,7 @@ namespace ImGui.Rendering
         {
             ShapeMesh.CommandBuffer.Add(DrawCommand.Default);
             TextMesh.Commands.Add(DrawCommand.Default);
+            ImageMesh.CommandBuffer.Add(DrawCommand.Default);
         }
 
         public void Build(MeshList meshList)

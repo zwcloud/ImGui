@@ -629,17 +629,17 @@ namespace ImGui.GraphicsImplementation
         public void DrawImage(ImagePrimitive primitive, Rect rect, GUIStyle style)
         {
             Color tintColor = style.BackgroundColor;
+            
+            //BUG The texture is not cached!
+            var texture = new OSImplentation.Windows.OpenGLTexture();
+            texture.LoadImage(primitive.Image.Data, primitive.Image.Width, primitive.Image.Height);
 
             //TODO check if we need to add a new draw command
             //add a new draw command
             DrawCommand cmd = new DrawCommand();
             cmd.ClipRect = Rect.Big;
-            cmd.TextureData = null;
+            cmd.TextureData = texture;
             this.ImageMesh.CommandBuffer.Add(cmd);
-
-            //BUG The texture is not cached!
-            var texture = new OSImplentation.Windows.OpenGLTexture();
-            texture.LoadImage(primitive.Image.Data, primitive.Image.Width, primitive.Image.Height);
 
             //construct and merge the mesh of this Path into ShapeMesh
             var uvMin = new Point(0,0);

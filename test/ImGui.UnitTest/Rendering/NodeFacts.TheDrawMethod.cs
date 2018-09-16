@@ -5,6 +5,7 @@ using ImGui.Input;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using ImGui.Core;
+using ImGui.GraphicsAbstraction;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -563,6 +564,69 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
+            public void DrawOneImageNode()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(500, 500), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
+                var primitive = new ImagePrimitive();
+                node.Primitive = primitive;
+                primitive.Image = new Image(@"assets\images\logo.png");
+                node.Draw(primitiveRenderer, meshList);
+
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        //update the node
+                        if (node.ActiveInTree)
+                        {
+                            node.Draw(primitiveRenderer, meshList);
+                        }
+
+                        //rebuild mesh buffer
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+
+            [Fact]
             public void DrawOverlappedRectangles()
             {
                 Application.IsRunningInUnitTest = true;
@@ -668,6 +732,132 @@ namespace ImGui.UnitTest.Rendering
                             DrawBox(box0, meshList0, meshBuffer0);
                         }
 
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+
+            [Fact]
+            public void DrawBoxModelText()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                Node node = new Node(1, "textNode", new Rect(10, 10, 300, 40));
+                node.UseBoxModel = true;
+                var primitive = new TextPrimitive();
+                node.Primitive = primitive;
+                primitive.Text = "AAA";
+                node.Draw(primitiveRenderer, meshList);
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        //update the node
+                        if (node.ActiveInTree)
+                        {
+                            node.Draw(primitiveRenderer, meshList);
+                        }
+
+                        //rebuild mesh buffer
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+
+            [Fact]
+            public void DrawBoxModelImage()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
+                var style = GUIStyle.Default;
+                style.Border = (5, 10, 5, 10);
+                style.BorderColor = Color.HotPink;
+                style.Padding = (4, 2, 4, 2);
+                node.UseBoxModel = true;
+                var primitive = new ImagePrimitive();
+                node.Primitive = primitive;
+                primitive.Image = new Image(@"assets\images\logo.png");
+                node.Draw(primitiveRenderer, meshList);
+
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        //rebuild mesh buffer
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
                         renderer.SwapBuffers();
                     });
 

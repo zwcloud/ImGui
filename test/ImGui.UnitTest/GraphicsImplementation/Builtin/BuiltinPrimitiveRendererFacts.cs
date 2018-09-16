@@ -150,6 +150,8 @@ namespace ImGui.UnitTest.Rendering
             primitiveRenderer.SetImageMesh(mesh);
             primitiveRenderer.DrawImage(primitive, new Rect(10, 10, image.Width, image.Height), style);
 
+            window.Show();
+
             while (true)
             {
                 window.MainLoop(() =>

@@ -48,6 +48,8 @@ namespace ImGui.Rendering
             this.Rect = rect;
         }
 
+
+
         #region Layout
 
         public LayoutEntry LayoutEntry { get; private set; }
@@ -107,7 +109,56 @@ namespace ImGui.Rendering
         public Node Parent { get; set; }
 
         public List<Node> Children { get; set; }
+        
+        internal bool ActiveInTree
+        {
+            get
+            {
+                //already deactived
+                if (!ActiveSelf)
+                {
+                    return false;
+                }
 
+                //check if all ancestors are active
+                Node ancestorNode = this;
+                do
+                {
+                    ancestorNode = ancestorNode.Parent;
+                    if (ancestorNode == null)
+                    {
+                        break;
+                    }
+                    if (!ancestorNode.ActiveSelf)
+                    {
+                        return false;
+                    }
+                } while (ancestorNode.ActiveSelf);
+
+                return true;
+            }
+        }
+
+        internal bool ActiveSelf
+        {
+            get => this.activeSelf;
+            set
+            {
+                this.activeSelf = value;
+                if (this.RenderContext.shapeMesh != null)
+                {
+                    this.RenderContext.shapeMesh.Visible = value;
+                }
+                if (this.RenderContext.textMesh != null)
+                {
+                    this.RenderContext.textMesh.Visible = value;
+                }
+                if (this.RenderContext.imageMesh != null)
+                {
+                    this.RenderContext.imageMesh.Visible = value;
+                }
+            }
+        }
 
         enum NodeType
         {
@@ -260,54 +311,15 @@ namespace ImGui.Rendering
 
         #region Draw
 
-        internal bool ActiveInTree
-        {
-            get
-            {
-                //already deactived
-                if (!ActiveSelf)
-                {
-                    return false;
-                }
-
-                //check if all ancestors are active
-                Node ancestorNode = this;
-                do
-                {
-                    ancestorNode = ancestorNode.Parent;
-                    if (ancestorNode == null)
-                    {
-                        break;
-                    }
-                    if (!ancestorNode.ActiveSelf)
-                    {
-                        return false;
-                    }
-                } while (ancestorNode.ActiveSelf);
-
-                return true;
-            }
-        }
-
-        internal bool ActiveSelf
-        {
-            get => this.activeSelf;
-            set
-            {
-                this.activeSelf = value;
-                if (this.RenderContext is Mesh mesh)
-                {
-                    mesh.Visible = value;
-                }
-            }
-        }
-
         internal Primitive Primitive { get; set; }
+
+        internal bool UseBoxModel { get; set; }
 
         /// <summary>
         /// Redraw the node's primitive.
         /// </summary>
         /// <param name="renderer"></param>
+        /// <param name="meshList"></param>
         /// <remarks>A node can only have one single primitive.</remarks>
         public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
         {
@@ -315,97 +327,180 @@ namespace ImGui.Rendering
             {
                 return;
             }
+
             //TEMP regard all renderer as the built-in renderer
-            var builtinPrimitiveRenderer = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
-            Debug.Assert(builtinPrimitiveRenderer != null);
+            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            Debug.Assert(r != null);
+
             switch (this.Primitive)
             {
                 case PathPrimitive p:
                 {
-                    Mesh mesh = null;
-
-                    if (this.RenderContext == null)
+                    //check render context for shape mesh
+                    if (this.RenderContext.shapeMesh == null)
                     {
-                        mesh = MeshPool.ShapeMeshPool.Get();
-                        this.RenderContext = mesh;
-                    }
-                    else
-                    {
-                        mesh = (Mesh) this.RenderContext;
+                        this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                        this.RenderContext.shapeMesh.Node = this;
                     }
 
-                    mesh.Clear();
-                    mesh.CommandBuffer.Add(DrawCommand.Default);
-                    mesh.Node = this;
+                    //get shape mesh
+                    var shapeMesh = this.RenderContext.shapeMesh;
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
 
-                    builtinPrimitiveRenderer.SetShapeMesh(mesh);
-
+                    //draw
+                    r.SetShapeMesh(shapeMesh);
                     renderer.DrawPath(p);
+                    r.SetShapeMesh(null);
 
-                    var foundNode = meshList.ShapeMeshes.Find(mesh);
+                    //save to mesh list
+                    var foundNode = meshList.ShapeMeshes.Find(shapeMesh);
                     if (foundNode == null)
                     {
-                        meshList.ShapeMeshes.AddLast(mesh);
+                        meshList.ShapeMeshes.AddLast(shapeMesh);
                     }
-
-                    builtinPrimitiveRenderer.SetShapeMesh(null);
                 }
                 break;
                 case TextPrimitive t:
                 {
-                    TextMesh mesh = null;
-
-                    if (this.RenderContext == null)
+                    var style = GUIStyle.Default;//FIXME TEMP
+                    if (this.UseBoxModel)
                     {
-                        mesh = MeshPool.TextMeshPool.Get();
-                        this.RenderContext = mesh;
+                        //check render context for textMesh
+                        if (this.RenderContext.textMesh == null)
+                        {
+                            this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
+                            this.RenderContext.textMesh.Node = this;
+                        }
+
+                        //get text mesh
+                        var textMesh = this.RenderContext.textMesh;
+                        textMesh.Clear();
+
+                        //check render context for shape mesh
+                        if (this.RenderContext.shapeMesh == null)
+                        {
+                            this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                            this.RenderContext.shapeMesh.Node = this;
+                        }
+
+                        //get shape mesh
+                        var shapeMesh = this.RenderContext.shapeMesh;
+                        shapeMesh.Clear();
+                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+
+                        //draw
+                        r.SetShapeMesh(shapeMesh);
+                        r.SetTextMesh(textMesh);
+                        r.DrawBoxModel(t, this.Rect, style);
+                        r.SetShapeMesh(null);
+                        r.SetTextMesh(null);
+
+                        //save to mesh list
+                        if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                        {
+                            meshList.ShapeMeshes.AddLast(shapeMesh);
+                        }
+                        if (!meshList.TextMeshes.Contains(textMesh))
+                        {
+                            meshList.TextMeshes.AddLast(textMesh);
+                        }
                     }
                     else
                     {
-                        mesh = (TextMesh) this.RenderContext;
-                    }
-                    mesh.Clear();
-                    builtinPrimitiveRenderer.SetTextMesh(mesh);
-                    mesh.Node = this;
+                        //check render context for textMesh
+                        if (this.RenderContext.textMesh == null)
+                        {
+                            this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
+                            this.RenderContext.textMesh.Node = this;
+                        }
 
-                    var style = GUIStyle.Default;//FIXME TEMP
-                    renderer.DrawText(t, this.Rect, style);
-                    var foundNode = meshList.TextMeshes.Find(mesh);
-                    if (foundNode == null)
-                    {
-                        meshList.TextMeshes.AddLast(mesh);
-                    }
+                        //clear text mesh
+                        var textMesh = this.RenderContext.textMesh;
+                        textMesh.Clear();
 
-                    builtinPrimitiveRenderer.SetTextMesh(null);
+                        //draw
+                        r.SetTextMesh(textMesh);
+                        r.DrawText(t, this.Rect, style);
+                        r.SetTextMesh(null);
+
+                        //save to mesh list
+                        if (!meshList.TextMeshes.Contains(textMesh))
+                        {
+                            meshList.TextMeshes.AddLast(textMesh);
+                        }
+                    }
                 }
                 break;
                 case ImagePrimitive i:
                 {
-                    Mesh mesh = null;
-
-                    if (this.RenderContext == null)
+                    var style = GUIStyle.Default;//FIXME TEMP
+                    style.BackgroundColor = Color.White;//TEMP (default Clear won't show the image!!)
+                    if (this.UseBoxModel)
                     {
-                        mesh = MeshPool.ImageMeshPool.Get();
-                        this.RenderContext = mesh;
+                        //check render context for image mesh
+                        if (this.RenderContext.imageMesh == null)
+                        {
+                            this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
+                            this.RenderContext.imageMesh.Node = this;
+                        }
+
+                        //clear image mesh
+                        var imageMesh = this.RenderContext.imageMesh;
+                        imageMesh.Clear();
+
+                        //check render context for shape mesh
+                        if (this.RenderContext.shapeMesh == null)
+                        {
+                            this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                            this.RenderContext.shapeMesh.Node = this;
+                        }
+
+                        //clear shape mesh
+                        var shapeMesh = this.RenderContext.shapeMesh;
+                        shapeMesh.Clear();
+                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+
+                        //draw
+                        r.SetImageMesh(imageMesh);
+                        r.SetShapeMesh(shapeMesh);
+                        r.DrawBoxModel(i, this.Rect, style);
+                        r.SetShapeMesh(null);
+                        r.SetImageMesh(null);
+
+                        //save to mesh list
+                        if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                        {
+                            meshList.ShapeMeshes.AddLast(shapeMesh);
+                        }
+                        if (!meshList.ImageMeshes.Contains(imageMesh))
+                        {
+                            meshList.ImageMeshes.AddLast(imageMesh);
+                        }
                     }
                     else
                     {
-                        mesh = (Mesh) this.RenderContext;
+                        //check render context for image mesh
+                        if (this.RenderContext.imageMesh == null)
+                        {
+                            this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
+                            this.RenderContext.imageMesh.Node = this;
+                        }
+
+                        //clear image mesh
+                        var imageMesh = this.RenderContext.imageMesh;
+                        imageMesh.Clear();
+
+                        r.SetImageMesh(imageMesh);
+                        renderer.DrawImage(i, this.Rect, style);
+                        r.SetImageMesh(null);
+
+                        //save to mesh list
+                        if (!meshList.ImageMeshes.Contains(imageMesh))
+                        {
+                            meshList.ImageMeshes.AddLast(imageMesh);
+                        }
                     }
-
-                    mesh.Clear();
-                    builtinPrimitiveRenderer.SetImageMesh(mesh);
-                    mesh.Node = this;
-
-                    var style = GUIStyle.Default;//FIXME TEMP
-                    renderer.DrawImage(i, this.Rect, style);
-                    var foundNode = meshList.ImageMeshes.Find(mesh);
-                    if (foundNode == null)
-                    {
-                        meshList.ImageMeshes.AddLast(mesh);
-                    }
-
-                    builtinPrimitiveRenderer.SetImageMesh(null);
                 }
                 break;
                 default:
@@ -416,12 +511,9 @@ namespace ImGui.Rendering
         #endregion
 
         /// <summary>
-        /// internal render context refers to a context object. For built-in renderer, this is a <see cref="Mesh"/>.
+        /// internal render context refers to a context object.
         /// </summary>
-        /// <remarks>
-        /// This object is used as the context between the node and _Layer 4 basic rendering API implementation_.
-        /// </remarks>
-        internal object RenderContext;
+        internal (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) RenderContext;
 
         private bool activeSelf = true;
     }
