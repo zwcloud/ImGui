@@ -139,7 +139,7 @@ void main()
         public void DrawMeshes(int width, int height, MeshBuffer meshBuffer)
         {
             DrawMesh(shapeMaterial, meshBuffer.ShapeMesh, width, height);
-            DrawMesh(shapeMaterial, meshBuffer.ImageMesh, width, height);
+            DrawMesh(imageMaterial, meshBuffer.ImageMesh, width, height);
             DrawTextMesh(glyphMaterial, meshBuffer.TextMesh, width, height);
         }
 
