@@ -628,7 +628,7 @@ namespace ImGui.GraphicsImplementation
         /// <param name="style"></param>
         public void DrawImage(ImagePrimitive primitive, Rect rect, GUIStyle style)
         {
-            Color tintColor = style.BackgroundColor;
+            Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
             
             //BUG The texture is not cached!
             var texture = new OSImplentation.Windows.OpenGLTexture();

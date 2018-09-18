@@ -323,14 +323,39 @@ namespace ImGui.Rendering
         /// <remarks>A node can only have one single primitive.</remarks>
         public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
         {
-            if (this.Primitive == null)
-            {
-                return;
-            }
-
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
+
+            var style = GUIStyle.Basic;
+
+            if (this.Primitive == null)
+            {
+                if (!this.UseBoxModel) return; //check render context for shape mesh
+                if (this.RenderContext.shapeMesh == null)
+                {
+                    this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    this.RenderContext.shapeMesh.Node = this;
+                }
+
+                //clear shape mesh
+                var shapeMesh = this.RenderContext.shapeMesh;
+                shapeMesh.Clear();
+                shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+
+                //draw
+                r.SetShapeMesh(shapeMesh);
+                r.DrawBoxModel(this.Rect, style);
+                r.SetShapeMesh(null);
+
+                //save to mesh list
+                if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                {
+                    meshList.ShapeMeshes.AddLast(shapeMesh);
+                }
+
+                return;
+            }
 
             switch (this.Primitive)
             {
@@ -363,7 +388,6 @@ namespace ImGui.Rendering
                 break;
                 case TextPrimitive t:
                 {
-                    var style = GUIStyle.Default;//FIXME TEMP
                     if (this.UseBoxModel)
                     {
                         //check render context for textMesh
@@ -434,8 +458,6 @@ namespace ImGui.Rendering
                 break;
                 case ImagePrimitive i:
                 {
-                    var style = GUIStyle.Default;//FIXME TEMP
-                    style.BackgroundColor = Color.White;//TEMP (default Clear won't show the image!!)
                     if (this.UseBoxModel)
                     {
                         //check render context for image mesh

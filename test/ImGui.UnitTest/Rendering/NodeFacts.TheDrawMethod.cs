@@ -826,7 +826,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
-                var style = GUIStyle.Default;
+                var style = GUIStyle.Basic;
                 style.Border = (5, 10, 5, 10);
                 style.BorderColor = Color.HotPink;
                 style.Padding = (4, 2, 4, 2);
