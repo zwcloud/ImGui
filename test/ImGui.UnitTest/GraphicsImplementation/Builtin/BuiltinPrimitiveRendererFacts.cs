@@ -93,8 +93,7 @@ namespace ImGui.UnitTest.Rendering
         [Fact]
         public void DrawText()
         {
-            TextPrimitive primitive = new TextPrimitive();
-            primitive.Text = "Hello你好こんにちは";
+            TextPrimitive primitive = new TextPrimitive("Hello你好こんにちは");
             var style = GUIStyle.Default;
 
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
@@ -136,8 +135,7 @@ namespace ImGui.UnitTest.Rendering
             renderer.Init(window.Pointer, window.ClientSize);
 
             var image = new Image(@"assets\images\logo.png");
-            var primitive = new ImagePrimitive();
-            primitive.Image = image;
+            var primitive = new ImagePrimitive(image);
             primitive.Offset = new Vector(10, 10);
 
             var style = GUIStyle.Default;
@@ -174,8 +172,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawBoxModelWithTextContent()
             {
-                TextPrimitive textPrimitive = new TextPrimitive();
-                textPrimitive.Text = "Hello你好こんにちは";
+                TextPrimitive textPrimitive = new TextPrimitive("Hello你好こんにちは");
                 var style = GUIStyle.Default;
                 style.BackgroundColor = Color.White;
                 style.Border = (1, 3, 1, 3);
@@ -224,9 +221,7 @@ namespace ImGui.UnitTest.Rendering
                 var renderer = new Win32OpenGLRenderer();
                 renderer.Init(window.Pointer, window.ClientSize);
 
-                var image = new Image(@"assets\images\logo.png");
-                var primitive = new ImagePrimitive();
-                primitive.Image = image;
+                var primitive = new ImagePrimitive(@"assets\images\logo.png");
                 var style = GUIStyle.Default;
                 style.BackgroundColor = Color.White;
                 style.Border = (1, 3, 1, 3);

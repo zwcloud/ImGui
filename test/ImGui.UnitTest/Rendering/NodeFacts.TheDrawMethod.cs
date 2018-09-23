@@ -362,8 +362,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1);
-                var primitive = new TextPrimitive();
-                primitive.Text = "AAA";
+                var primitive = new TextPrimitive("AAA");
                 node.Primitive = primitive;
                 node.Draw(primitiveRenderer, meshList);
                 node.Rect.X = 1;
@@ -430,8 +429,7 @@ namespace ImGui.UnitTest.Rendering
                 {
                     Node node = new Node(1);
                     nodes.Add(node);
-                    var primitive = new TextPrimitive();
-                    primitive.Text = "AAA";
+                    var primitive = new TextPrimitive("AAA");
                     node.Primitive = primitive;
                     node.Draw(primitiveRenderer, meshList);
                     node.Rect.X = 1;
@@ -440,8 +438,7 @@ namespace ImGui.UnitTest.Rendering
                 {
                     Node node = new Node(1);
                     nodes.Add(node);
-                    var primitive = new TextPrimitive();
-                    primitive.Text = "B";
+                    var primitive = new TextPrimitive("B");
                     node.Primitive = primitive;
                     node.Draw(primitiveRenderer, meshList);
                     node.Rect.X = 1;
@@ -509,8 +506,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1);
-                var primitive = new TextPrimitive();
-                primitive.Text = "AAA";
+                var primitive = new TextPrimitive("AAA");
                 node.Primitive = primitive;
                 node.Draw(primitiveRenderer, meshList);
                 node.Rect.X = 100;
@@ -580,9 +576,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
-                var primitive = new ImagePrimitive();
-                node.Primitive = primitive;
-                primitive.Image = new Image(@"assets\images\logo.png");
+                node.Primitive = new ImagePrimitive(@"assets\images\logo.png");
                 node.Draw(primitiveRenderer, meshList);
 
                 window.Show();
@@ -757,9 +751,8 @@ namespace ImGui.UnitTest.Rendering
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1, "textNode", new Rect(10, 10, 300, 40));
                 node.UseBoxModel = true;
-                var primitive = new TextPrimitive();
+                var primitive = new TextPrimitive("AAA");
                 node.Primitive = primitive;
-                primitive.Text = "AAA";
                 node.Draw(primitiveRenderer, meshList);
 
                 var window = new Win32Window();
@@ -831,9 +824,7 @@ namespace ImGui.UnitTest.Rendering
                 style.BorderColor = Color.HotPink;
                 style.Padding = (4, 2, 4, 2);
                 node.UseBoxModel = true;
-                var primitive = new ImagePrimitive();
-                node.Primitive = primitive;
-                primitive.Image = new Image(@"assets\images\logo.png");
+                node.Primitive = new ImagePrimitive(@"assets\images\logo.png");
                 node.Draw(primitiveRenderer, meshList);
 
                 window.Show();

@@ -327,38 +327,43 @@ namespace ImGui.Rendering
             var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
 
+            //TODO implement three level in GUIStyle.Get<T>():
+            //************************************************************!!!!
+            //1. app level: skin or theme
+            //2. control-instance level:
+            //3. per-node level
+
             var style = GUIStyle.Basic;
-
-            if (this.Primitive == null)
-            {
-                if (!this.UseBoxModel) return; //check render context for shape mesh
-                if (this.RenderContext.shapeMesh == null)
-                {
-                    this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    this.RenderContext.shapeMesh.Node = this;
-                }
-
-                //clear shape mesh
-                var shapeMesh = this.RenderContext.shapeMesh;
-                shapeMesh.Clear();
-                shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-
-                //draw
-                r.SetShapeMesh(shapeMesh);
-                r.DrawBoxModel(this.Rect, style);
-                r.SetShapeMesh(null);
-
-                //save to mesh list
-                if (!meshList.ShapeMeshes.Contains(shapeMesh))
-                {
-                    meshList.ShapeMeshes.AddLast(shapeMesh);
-                }
-
-                return;
-            }
 
             switch (this.Primitive)
             {
+                case null when !this.UseBoxModel:
+                    return; //check render context for shape mesh
+                case null:
+                {
+                    if (this.RenderContext.shapeMesh == null)
+                    {
+                        this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                        this.RenderContext.shapeMesh.Node = this;
+                    }
+
+                    //clear shape mesh
+                    var shapeMesh = this.RenderContext.shapeMesh;
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+
+                    //draw
+                    r.SetShapeMesh(shapeMesh);
+                    r.DrawBoxModel(this.Rect, style);
+                    r.SetShapeMesh(null);
+
+                    //save to mesh list
+                    if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                    {
+                        meshList.ShapeMeshes.AddLast(shapeMesh);
+                    }
+                }
+                break;
                 case PathPrimitive p:
                 {
                     //check render context for shape mesh

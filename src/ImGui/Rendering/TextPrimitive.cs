@@ -13,5 +13,10 @@ namespace ImGui.Rendering
 
         public List<Vector> Offsets { get; set; } = new List<Vector>();
         public List<GlyphData> Glyphs { get; set; } = new List<GlyphData>();
+
+        public TextPrimitive(string text)
+        {
+            this.Text = text;
+        }
     }
 }

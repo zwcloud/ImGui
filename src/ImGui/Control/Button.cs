@@ -42,8 +42,7 @@ namespace ImGui
                 //text
                 var textNodeId = window.GetID("Text");
                 textNode = new Node(textNodeId, "Text");
-                var textPrimitive = new TextPrimitive();
-                textPrimitive.Text = text;
+                var textPrimitive = new TextPrimitive(text);
                 textNode.Primitive = textPrimitive;
 
                 node.AppendChild(backgroundNode);
@@ -129,8 +128,7 @@ namespace ImGui
                 //text
                 var textNodeId = window.GetID("Text");
                 textNode = new Node(textNodeId, "Text");
-                var textPrimitive = new TextPrimitive();
-                textPrimitive.Text = text;
+                var textPrimitive = new TextPrimitive(text);
                 textNode.Primitive = textPrimitive;
 
                 node.AppendChild(backgroundNode);

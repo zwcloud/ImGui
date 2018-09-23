@@ -194,8 +194,7 @@ namespace ImGui
             {
                 var id = this.GetID("TitleBar_Text");
                 var node = new Node(id, "TitleBar_Text", this.TitleBarRect);
-                var primitive = new TextPrimitive();
-                primitive.Text = this.Name;
+                var primitive = new TextPrimitive(this.Name);
                 node.Primitive = primitive;
                 this.TitleBarTextNode = node;
                 this.NodeTreeRoot.AppendChild(node);
