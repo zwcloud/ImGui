@@ -30,6 +30,17 @@ namespace ImGui.UnitTest.Rendering
                 renderer.Init(window.Pointer, window.ClientSize);
 
                 window.Show();
+                
+                bool DrawNode(Node n, MeshList list)
+                {
+                    if (!n.ActiveInTree)
+                    {
+                        return false;
+                    }
+
+                    n.Draw(primitiveRenderer, meshList);
+                    return true;
+                }
 
                 Node node = null;
                 while (true)
@@ -49,19 +60,16 @@ namespace ImGui.UnitTest.Rendering
                             node = new Node(1, "container");
                             node.AttachLayoutGroup(true, GUILayout.Width(300).Height(40));
                             node.UseBoxModel = true;
+                            StyleRuleSetBuilder b = new StyleRuleSetBuilder(node);
+                            b.Border(1)
+                                .BorderColor(Color.Black)
+                                .Padding((top: 1, right: 2, bottom: 1, left: 2))
+                                .BackgroundColor(Color.Silver);
                         }
 
                         {
-                            GUIStyle style = GUIStyle.Basic;
-                            style.Save();
-                            style.PushBorder(1);
-                            style.PushBorderColor(Color.Black);
-                            style.PushPadding((1, 2, 1, 2));
-                            style.PushBgColor(Color.Silver);
-
-                            node.Draw(primitiveRenderer, meshList);
-
-                            style.Restore();
+                            DrawNode(node, meshList);
+                            node.Foreach(n=>DrawNode(n, meshList));
                             node.Layout();
                         }
 
@@ -128,6 +136,11 @@ namespace ImGui.UnitTest.Rendering
                             container = new Node(1, "container");
                             container.AttachLayoutGroup(true, GUILayout.Width(300).Height(40));
                             container.UseBoxModel = true;
+                            StyleRuleSetBuilder b = new StyleRuleSetBuilder(container);
+                            b.Border(1)
+                                .BorderColor(Color.Black)
+                                .Padding((top: 1, right: 2, bottom: 1, left: 2))
+                                .BackgroundColor(Color.Silver);
 
                             icon = new Node(2, "icon");
                             icon.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
@@ -152,16 +165,7 @@ namespace ImGui.UnitTest.Rendering
                         }
 
                         {
-                            GUIStyle style = GUIStyle.Basic;
-                            style.Save();
-                            style.PushBorder(1);
-                            style.PushBorderColor(Color.Black);
-                            style.PushPadding((1, 2, 1, 2));
-                            style.PushBgColor(Color.Silver);
-
                             container.Draw(primitiveRenderer, meshList);
-
-                            style.Restore();
                             container.Layout();
                         }
 

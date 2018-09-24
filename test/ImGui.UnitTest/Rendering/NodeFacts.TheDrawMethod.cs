@@ -750,10 +750,17 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1, "textNode", new Rect(10, 10, 300, 40));
+                StyleRuleSetBuilder ruleSetBuilder = new StyleRuleSetBuilder(node.RuleSet);
+                ruleSetBuilder
+                    .Border((5, 10, 5, 10))
+                    .BorderColor(Color.HotPink)
+                    .BackgroundColor(Color.Azure)
+                    .Padding((4, 2, 4, 2));
                 node.UseBoxModel = true;
                 var primitive = new TextPrimitive("AAA");
                 node.Primitive = primitive;
                 node.Draw(primitiveRenderer, meshList);
+
 
                 var window = new Win32Window();
                 window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
@@ -819,10 +826,11 @@ namespace ImGui.UnitTest.Rendering
 
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
-                var style = GUIStyle.Basic;
-                style.Border = (5, 10, 5, 10);
-                style.BorderColor = Color.HotPink;
-                style.Padding = (4, 2, 4, 2);
+                StyleRuleSetBuilder ruleSetBuilder = new StyleRuleSetBuilder(node.RuleSet);
+                ruleSetBuilder
+                    .Border((5, 10, 5, 10))
+                    .BorderColor(Color.HotPink)
+                    .Padding((4, 2, 4, 2));
                 node.UseBoxModel = true;
                 node.Primitive = new ImagePrimitive(@"assets\images\logo.png");
                 node.Draw(primitiveRenderer, meshList);

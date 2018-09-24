@@ -510,20 +510,24 @@ namespace ImGui
                 Set<double>(GUIStyleName.BorderLeft, left);
             }
         }
-        public (Color top, Color right, Color bottom, Color left) BorderColor
+
+        public Color BorderColor
         {
-            get =>(
-                this.Get<Color>(GUIStyleName.BorderTopColor),
-                this.Get<Color>(GUIStyleName.BorderRightColor),
-                this.Get<Color>(GUIStyleName.BorderBottomColor),
-                this.Get<Color>(GUIStyleName.BorderLeftColor)
-            );
+            get
+            {
+                var color = BorderTopColor;
+                if (color == BorderRightColor && color == BorderBottomColor && color == BorderLeftColor)
+                {
+                    return color;
+                }
+                throw new InvalidOperationException("Not all border share the same color! So we don't know which one should be returned.");
+            }
             set
             {
-                this.Set<Color>(GUIStyleName.BorderTopColor, value.top);
-                this.Set<Color>(GUIStyleName.BorderRightColor, value.right);
-                this.Set<Color>(GUIStyleName.BorderBottomColor, value.bottom);
-                this.Set<Color>(GUIStyleName.BorderLeftColor, value.left);
+                this.Set<Color>(GUIStyleName.BorderTopColor, value);
+                this.Set<Color>(GUIStyleName.BorderRightColor, value);
+                this.Set<Color>(GUIStyleName.BorderBottomColor, value);
+                this.Set<Color>(GUIStyleName.BorderLeftColor, value);
             }
         }
 

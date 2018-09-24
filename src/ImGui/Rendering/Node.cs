@@ -7,7 +7,7 @@ using ImGui.GraphicsAbstraction;
 namespace ImGui.Rendering
 {
     [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(Name) +"}")]
-    internal class Node
+    internal class Node : IStyleRuleSet
     {
         /// <summary>
         /// identifier number of the node
@@ -315,7 +315,7 @@ namespace ImGui.Rendering
 
         internal bool UseBoxModel { get; set; }
 
-        private readonly StyleRuleSet ruleSet = new StyleRuleSet();
+        public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
 
         public GUIState State
         {
@@ -328,7 +328,7 @@ namespace ImGui.Rendering
                 }
 
                 this.state = value;
-                this.ruleSet.SetState(value);
+                this.RuleSet.SetState(value);
             }
         }
 
@@ -363,7 +363,7 @@ namespace ImGui.Rendering
 
                     //draw
                     r.SetShapeMesh(shapeMesh);
-                    renderer.DrawBoxModel(this.Rect, this.ruleSet);
+                    renderer.DrawBoxModel(this.Rect, this.RuleSet);
                     r.SetShapeMesh(null);
 
                     //save to mesh list
@@ -430,7 +430,7 @@ namespace ImGui.Rendering
                         //draw
                         r.SetShapeMesh(shapeMesh);
                         r.SetTextMesh(textMesh);
-                        renderer.DrawBoxModel(t, this.Rect, this.ruleSet);
+                        renderer.DrawBoxModel(t, this.Rect, this.RuleSet);
                         r.SetShapeMesh(null);
                         r.SetTextMesh(null);
 
@@ -459,7 +459,7 @@ namespace ImGui.Rendering
 
                         //draw
                         r.SetTextMesh(textMesh);
-                        renderer.DrawText(t, this.Rect, this.ruleSet);
+                        renderer.DrawText(t, this.Rect, this.RuleSet);
                         r.SetTextMesh(null);
 
                         //save to mesh list
@@ -500,7 +500,7 @@ namespace ImGui.Rendering
                         //draw
                         r.SetImageMesh(imageMesh);
                         r.SetShapeMesh(shapeMesh);
-                        renderer.DrawBoxModel(i, this.Rect, this.ruleSet);
+                        renderer.DrawBoxModel(i, this.Rect, this.RuleSet);
                         r.SetShapeMesh(null);
                         r.SetImageMesh(null);
 
@@ -528,7 +528,7 @@ namespace ImGui.Rendering
                         imageMesh.Clear();
 
                         r.SetImageMesh(imageMesh);
-                        renderer.DrawImage(i, this.Rect, this.ruleSet);
+                        renderer.DrawImage(i, this.Rect, this.RuleSet);
                         r.SetImageMesh(null);
 
                         //save to mesh list

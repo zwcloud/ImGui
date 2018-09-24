@@ -94,14 +94,11 @@ namespace ImGui.UnitTest.Rendering
         public void DrawText()
         {
             TextPrimitive primitive = new TextPrimitive("Hello你好こんにちは");
-            var style = GUIStyle.Default;
 
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             var textMesh = new TextMesh();
             primitiveRenderer.SetTextMesh(textMesh);
-            primitiveRenderer.DrawText(primitive, new Rect(100, 100, 500, 40), style);
-
-            //render text
+            primitiveRenderer.DrawText(primitive, new Rect(100, 100, 500, 40), new StyleRuleSet());
 
             var window = new Win32Window();
             window.Init(new Point(100, 100), new Size(500, 500), WindowTypes.Regular);
@@ -138,15 +135,16 @@ namespace ImGui.UnitTest.Rendering
             var primitive = new ImagePrimitive(image);
             primitive.Offset = new Vector(10, 10);
 
-            var style = GUIStyle.Default;
-            style.BackgroundColor = Color.White;
+            var styleRuleSet = new StyleRuleSet();
+            var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
+            styleRuleSetBuilder.BackgroundColor(Color.White);
 
             var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
             var mesh = new Mesh();
             mesh.CommandBuffer.Add(DrawCommand.Default);
             primitiveRenderer.SetImageMesh(mesh);
-            primitiveRenderer.DrawImage(primitive, new Rect(10, 10, image.Width, image.Height), style);
+            primitiveRenderer.DrawImage(primitive, new Rect(10, 10, image.Width, image.Height), styleRuleSet);
 
             window.Show();
 
@@ -173,13 +171,15 @@ namespace ImGui.UnitTest.Rendering
             public void DrawBoxModelWithTextContent()
             {
                 TextPrimitive textPrimitive = new TextPrimitive("Hello你好こんにちは");
-                var style = GUIStyle.Default;
-                style.BackgroundColor = Color.White;
-                style.Border = (1, 3, 1, 3);
-                style.BorderColor = Color.Black;
-                style.Padding = (10, 5, 10, 5);
-                style.FontSize = 24;
-                style.FontColor = Color.Black;
+                var styleRuleSet = new StyleRuleSet();
+                var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
+                styleRuleSetBuilder
+                    .BackgroundColor(Color.White)
+                    .Border((1, 3, 1, 3))
+                    .BorderColor(Color.Black)
+                    .Padding((10, 5, 10, 5))
+                    .FontSize(24)
+                    .FontColor(Color.Black);
 
                 BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var mesh = new Mesh();
@@ -187,7 +187,7 @@ namespace ImGui.UnitTest.Rendering
                 primitiveRenderer.SetShapeMesh(mesh);
                 var textMesh = new TextMesh();
                 primitiveRenderer.SetTextMesh(textMesh);
-                primitiveRenderer.DrawBoxModel(textPrimitive, new Rect(10, 10, 500, 60), style);
+                primitiveRenderer.DrawBoxModel(textPrimitive, new Rect(10, 10, 500, 60), styleRuleSet);
 
                 var window = new Win32Window();
                 window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
@@ -222,11 +222,14 @@ namespace ImGui.UnitTest.Rendering
                 renderer.Init(window.Pointer, window.ClientSize);
 
                 var primitive = new ImagePrimitive(@"assets\images\logo.png");
-                var style = GUIStyle.Default;
-                style.BackgroundColor = Color.White;
-                style.Border = (1, 3, 1, 3);
-                style.BorderColor = Color.LightBlue;
-                style.Padding = (10, 5, 10, 5);
+
+                var ruleSet = new StyleRuleSet();
+                var styleSetBuilder = new StyleRuleSetBuilder(ruleSet);
+                styleSetBuilder
+                    .BackgroundColor(Color.White)
+                    .Border((top: 1, right: 3, bottom: 1, left: 3))
+                    .BorderColor(Color.LightBlue)
+                    .Padding((10, 5, 10, 5));
 
                 BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var mesh = new Mesh();
@@ -235,7 +238,7 @@ namespace ImGui.UnitTest.Rendering
                 var imageMesh = new Mesh();
                 imageMesh.CommandBuffer.Add(DrawCommand.Default);
                 primitiveRenderer.SetImageMesh(imageMesh);
-                primitiveRenderer.DrawBoxModel(primitive, new Rect(10, 10, 300, 400), style);
+                primitiveRenderer.DrawBoxModel(primitive, new Rect(10, 10, 300, 400), ruleSet);
 
                 while (true)
                 {
