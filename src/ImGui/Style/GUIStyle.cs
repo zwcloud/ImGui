@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
@@ -14,6 +15,9 @@ namespace ImGui
             public GUIState State { get; set; }
         }
 
+        /// <summary>
+        /// The app-level style.
+        /// </summary>
         public static GUIStyle Default { get; }
 
         public static GUIStyle Basic { get; }
@@ -35,8 +39,7 @@ namespace ImGui
                 DefaultFontFamily = Utility.FontDir + "msjh.ttf";
             }
 
-            Default = CreateDefaultStyle();
-            Basic = CreateBasicStyle();
+            Basic = Default = CreateDefaultStyle();
         }
 
         private static GUIStyle CreateDefaultStyle()
@@ -224,106 +227,6 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Active }] = DefaultFontFamily,
             };            
-
-            return style;
-        }
-
-        private static GUIStyle CreateBasicStyle()
-        {
-            var style = new GUIStyle(true);
-
-            style.numberStyles = new Dictionary<NameState, double>
-            {
-                [new NameState { Name = GUIStyleName.MinWidth, State = GUIState.Normal }] = 1,
-                [new NameState { Name = GUIStyleName.MaxWidth, State = GUIState.Normal }] = 9999,
-                [new NameState { Name = GUIStyleName.MinHeight, State = GUIState.Normal }] = 1,
-                [new NameState { Name = GUIStyleName.MaxHeight, State = GUIState.Normal }] = 9999,
-
-                [new NameState { Name = GUIStyleName.BorderTop, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderRight, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderBottom, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderLeft, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderImageSliceTop, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderImageSliceRight, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderImageSliceBottom, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderImageSliceLeft, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderTopLeftRadius, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderTopRightRadius, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderBottomRightRadius, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.BorderBottomLeftRadius, State = GUIState.Normal }] = 0,
-
-                [new NameState { Name = GUIStyleName.PaddingTop, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.PaddingRight, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.PaddingBottom, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.PaddingLeft, State = GUIState.Normal }] = 0,
-
-                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Normal }] = 8,
-                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Normal }] = 4,
-
-                [new NameState { Name = GUIStyleName.OutlineWidth, State = GUIState.Normal }] = 0,
-
-                [new NameState { Name = GUIStyleName.FontSize, State = GUIState.Normal }] = DefaultFontSize,
-
-                [new NameState { Name = GUIStyleName.MinTextureCoordinateU, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.MinTextureCoordinateV, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.MaxTextureCoordinateU, State = GUIState.Normal }] = 1,
-                [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Normal }] = 1,
-            };
-
-            style.colorStyles = new Dictionary<NameState, Color>
-            {
-                [new NameState { Name = GUIStyleName.BorderTopColor, State = GUIState.Normal }] = Color.Black,
-
-                [new NameState { Name = GUIStyleName.BorderRightColor, State = GUIState.Normal }] = Color.Black,
-
-                [new NameState { Name = GUIStyleName.BorderBottomColor, State = GUIState.Normal }] = Color.Black,
-
-                [new NameState { Name = GUIStyleName.BorderLeftColor, State = GUIState.Normal }] = Color.Black,
-
-                [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Normal }] = Color.Clear,
-
-                [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = Color.Rgb(66, 66, 66),
-
-                [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Normal }] = Color.Rgb(66, 66, 66),
-
-                [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Normal }] = Color.Rgb(66, 66, 66),
-
-                [new NameState { Name = GUIStyleName.GradientTopColor, State = GUIState.Normal }] = Color.Rgb(247, 247, 247),
-
-                [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Normal }] = Color.Rgb(221, 221, 221),
-            };
-
-            style.imageStyles = new Dictionary<NameState, ITexture>
-            {
-                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
-
-                [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Normal }] = null,
-
-            };
-
-            style.intStyles = new Dictionary<NameState, int>
-            {
-                [new NameState { Name = GUIStyleName.HorizontalStretchFactor, State = GUIState.Normal }] = 0,
-                [new NameState { Name = GUIStyleName.VerticalStretchFactor, State = GUIState.Normal }] = 0,
-
-                [new NameState { Name = GUIStyleName.TextAlignment, State = GUIState.Normal }] = (int)TextAlignment.Leading,
-
-                [new NameState { Name = GUIStyleName.FontStyle, State = GUIState.Normal }] = (int)FontStyle.Normal,
-
-                [new NameState { Name = GUIStyleName.FontWeight, State = GUIState.Normal }] = (int)FontWeight.Normal,
-
-                [new NameState { Name = GUIStyleName.FontStretch, State = GUIState.Normal }] = (int)FontStretch.Normal,
-
-                [new NameState { Name = GUIStyleName.AlignmentHorizontal, State = GUIState.Normal }] = (int)Alignment.Start,
-                [new NameState { Name = GUIStyleName.AlignmentVertical, State = GUIState.Normal }] = (int)Alignment.Start,
-
-                [new NameState { Name = GUIStyleName.BackgroundGradient, State = GUIState.Normal }] = (int)Gradient.None,
-            };
-
-            style.strStyles = new Dictionary<NameState, string>
-            {
-                [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
-            };
 
             return style;
         }
@@ -675,6 +578,18 @@ namespace ImGui
         public Color OutlineColor => Get<Color>(GUIStyleName.OutlineColor);
         #endregion Outline
 
+        public Color BackgroundColor
+        {
+            get => Get<Color>(GUIStyleName.BackgroundColor);
+            set => Set<Color>(GUIStyleName.BackgroundColor, value);
+        }
+
+        public Gradient BackgroundGradient
+        {
+            get => (Gradient)Get<int>(GUIStyleName.BackgroundGradient);
+            set => Set<int>(GUIStyleName.BackgroundGradient, (int)value);
+        }
+
         #endregion Box model
 
         #region Layout
@@ -725,7 +640,7 @@ namespace ImGui
 
         #endregion Layout
 
-
+        #region Misc
 
         public Color StrokeColor => Get<Color>(GUIStyleName.StrokeColor);
         public Color FillColor => Get<Color>(GUIStyleName.FillColor);
@@ -733,17 +648,9 @@ namespace ImGui
         public Color GradientTopColor => Get<Color>(GUIStyleName.GradientTopColor);
         public Color GradientBottomColor => Get<Color>(GUIStyleName.GradientBottomColor);
 
-        public Color BackgroundColor
-        {
-            get => Get<Color>(GUIStyleName.BackgroundColor);
-            set => Set<Color>(GUIStyleName.BackgroundColor, value);
-        }
+        #endregion
 
-        public Gradient BackgroundGradient
-        {
-            get => (Gradient)Get<int>(GUIStyleName.BackgroundGradient);
-            set => Set<int>(GUIStyleName.BackgroundGradient, (int)value);
-        }
+        #region Font & Text
 
         public string FontFamily
         {
@@ -775,6 +682,7 @@ namespace ImGui
             set => Set<Color>(GUIStyleName.FontColor, value);
         }
 
+        #endregion
 
 #endregion
     }
