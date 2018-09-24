@@ -492,7 +492,7 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
-        private bool CheckTextPrimitive(TextPrimitive primitive, GUIStyle style)
+        private bool CheckTextPrimitive(TextPrimitive primitive, StyleRuleSet style)
         {
             do
             {
@@ -533,7 +533,7 @@ namespace ImGui.GraphicsImplementation
         /// <param name="rect"></param>
         /// <param name="style"></param>
         /// TODO apply text alignment
-        public void DrawText(TextPrimitive primitive, Rect rect, GUIStyle style)
+        public void DrawText(TextPrimitive primitive, Rect rect, StyleRuleSet style)
         {
             primitive.Offset = (Vector)rect.TopLeft;
 
@@ -626,7 +626,7 @@ namespace ImGui.GraphicsImplementation
         /// <param name="primitive"></param>
         /// <param name="rect"></param>
         /// <param name="style"></param>
-        public void DrawImage(ImagePrimitive primitive, Rect rect, GUIStyle style)
+        public void DrawImage(ImagePrimitive primitive, Rect rect, StyleRuleSet style)
         {
             Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
             

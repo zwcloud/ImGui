@@ -221,7 +221,7 @@ namespace ImGui
                 var node = new Node(id, "Window_Border", this.ClientRect);
                 var primitive = new PathPrimitive();
                 primitive.PathRect(this.Rect);//FIXME this is incorrect, box-model should be applied instead
-                primitive.PathStroke(this.Style.BorderTop, this.Style.BorderColor);//TEMP states and box-model should be taken into consideration
+                primitive.PathStroke(this.Style.BorderTop, this.Style.BorderTopColor);//TEMP states and box-model should be taken into consideration
                 node.Primitive = primitive;
                 this.WindowBorderNode = node;
                 this.NodeTreeRoot.AppendChild(node);

@@ -510,25 +510,23 @@ namespace ImGui
                 Set<double>(GUIStyleName.BorderLeft, left);
             }
         }
-        public Color BorderColor
+        public (Color top, Color right, Color bottom, Color left) BorderColor
         {
-            get
-            {
-                var color = BorderTopColor;
-                if (color == BorderRightColor && color == BorderBottomColor && color == BorderLeftColor)
-                {
-                    return color;
-                }
-                throw new InvalidOperationException("Not all border share the same color! So we don't know which one should be returned.");
-            }
+            get =>(
+                this.Get<Color>(GUIStyleName.BorderTopColor),
+                this.Get<Color>(GUIStyleName.BorderRightColor),
+                this.Get<Color>(GUIStyleName.BorderBottomColor),
+                this.Get<Color>(GUIStyleName.BorderLeftColor)
+            );
             set
             {
-                Set<Color>(GUIStyleName.BorderTopColor, value);
-                Set<Color>(GUIStyleName.BorderRightColor, value);
-                Set<Color>(GUIStyleName.BorderBottomColor, value);
-                Set<Color>(GUIStyleName.BorderLeftColor, value);
+                this.Set<Color>(GUIStyleName.BorderTopColor, value.top);
+                this.Set<Color>(GUIStyleName.BorderRightColor, value.right);
+                this.Set<Color>(GUIStyleName.BorderBottomColor, value.bottom);
+                this.Set<Color>(GUIStyleName.BorderLeftColor, value.left);
             }
         }
+
         public Color BorderTopColor => Get<Color>(GUIStyleName.BorderTopColor);
         public Color BorderRightColor => Get<Color>(GUIStyleName.BorderRightColor);
         public Color BorderBottomColor => Get<Color>(GUIStyleName.BorderBottomColor);
@@ -563,14 +561,6 @@ namespace ImGui
                 Get<double>(GUIStyleName.BorderBottomLeftRadius)
             );
 
-        /// <summary>
-        /// Get the border color. Throws InvalidOperationException when all borders' colors are not the same.
-        /// </summary>
-        public Color GetBorderColor(GUIState state)
-        {
-            //TODO check if all border color under state is the same
-            return this.Get<Color>(GUIStyleName.BorderTopColor, state);
-        }
         #endregion Border
 
         #region Outline

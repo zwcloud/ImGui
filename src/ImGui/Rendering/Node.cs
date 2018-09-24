@@ -315,6 +315,23 @@ namespace ImGui.Rendering
 
         internal bool UseBoxModel { get; set; }
 
+        private readonly StyleRuleSet ruleSet = new StyleRuleSet();
+
+        public GUIState State
+        {
+            get => this.state;
+            set
+            {
+                if (this.state == value)
+                {
+                    return;
+                }
+
+                this.state = value;
+                this.ruleSet.SetState(value);
+            }
+        }
+
         /// <summary>
         /// Redraw the node's primitive.
         /// </summary>
@@ -326,14 +343,6 @@ namespace ImGui.Rendering
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
-
-            //TODO implement three level in GUIStyle.Get<T>():
-            //************************************************************!!!!
-            //1. app level: skin or theme
-            //2. control-instance level:
-            //3. per-node level
-
-            var style = GUIStyle.Basic;
 
             switch (this.Primitive)
             {
@@ -354,7 +363,7 @@ namespace ImGui.Rendering
 
                     //draw
                     r.SetShapeMesh(shapeMesh);
-                    r.DrawBoxModel(this.Rect, style);
+                    renderer.DrawBoxModel(this.Rect, this.ruleSet);
                     r.SetShapeMesh(null);
 
                     //save to mesh list
@@ -421,7 +430,7 @@ namespace ImGui.Rendering
                         //draw
                         r.SetShapeMesh(shapeMesh);
                         r.SetTextMesh(textMesh);
-                        r.DrawBoxModel(t, this.Rect, style);
+                        renderer.DrawBoxModel(t, this.Rect, this.ruleSet);
                         r.SetShapeMesh(null);
                         r.SetTextMesh(null);
 
@@ -450,7 +459,7 @@ namespace ImGui.Rendering
 
                         //draw
                         r.SetTextMesh(textMesh);
-                        r.DrawText(t, this.Rect, style);
+                        renderer.DrawText(t, this.Rect, this.ruleSet);
                         r.SetTextMesh(null);
 
                         //save to mesh list
@@ -491,7 +500,7 @@ namespace ImGui.Rendering
                         //draw
                         r.SetImageMesh(imageMesh);
                         r.SetShapeMesh(shapeMesh);
-                        r.DrawBoxModel(i, this.Rect, style);
+                        renderer.DrawBoxModel(i, this.Rect, this.ruleSet);
                         r.SetShapeMesh(null);
                         r.SetImageMesh(null);
 
@@ -519,7 +528,7 @@ namespace ImGui.Rendering
                         imageMesh.Clear();
 
                         r.SetImageMesh(imageMesh);
-                        renderer.DrawImage(i, this.Rect, style);
+                        renderer.DrawImage(i, this.Rect, this.ruleSet);
                         r.SetImageMesh(null);
 
                         //save to mesh list
@@ -543,5 +552,6 @@ namespace ImGui.Rendering
         internal (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) RenderContext;
 
         private bool activeSelf = true;
+        private GUIState state = GUIState.Normal;
     }
 }

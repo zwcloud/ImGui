@@ -8,21 +8,19 @@ namespace ImGui.GraphicsImplementation
 {
     internal partial class BuiltinPrimitiveRenderer : IPrimitiveRenderer
     {
-        public void DrawBoxModel(Rect rect, GUIStyle style)
+        public void DrawBoxModel(Rect rect, StyleRuleSet style)
         {
-            GUIState state = GUIState.Normal;
-
             //Widths of border
-            var bt = style.Get<double>(GUIStyleName.BorderTop, state);
-            var br = style.Get<double>(GUIStyleName.BorderRight, state);
-            var bb = style.Get<double>(GUIStyleName.BorderBottom, state);
-            var bl = style.Get<double>(GUIStyleName.BorderLeft, state);
+            var bt = style.Get<double>(GUIStyleName.BorderTop);
+            var br = style.Get<double>(GUIStyleName.BorderRight);
+            var bb = style.Get<double>(GUIStyleName.BorderBottom);
+            var bl = style.Get<double>(GUIStyleName.BorderLeft);
 
             //Widths of padding
-            var pt = style.Get<double>(GUIStyleName.PaddingTop, state);
-            var pr = style.Get<double>(GUIStyleName.PaddingRight, state);
-            var pb = style.Get<double>(GUIStyleName.PaddingBottom, state);
-            var pl = style.Get<double>(GUIStyleName.PaddingLeft, state);
+            var pt = style.Get<double>(GUIStyleName.PaddingTop);
+            var pr = style.Get<double>(GUIStyleName.PaddingRight);
+            var pb = style.Get<double>(GUIStyleName.PaddingBottom);
+            var pl = style.Get<double>(GUIStyleName.PaddingLeft);
 
             //4 corner of the border-box
             var btl = new Point(rect.Left, rect.Top);
@@ -47,18 +45,18 @@ namespace ImGui.GraphicsImplementation
             var contentBoxRect = new Rect(ctl, cbr);
 
             // draw background in padding-box
-            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient, state);
+            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient);
             if (gradient == Gradient.None)
             {
-                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-                var borderRounding = style.BorderRadius.topLeft;//FIXME
+                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
+                var borderRounding = style.Get<int>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
                 this.PathRect(paddingBoxRect, (float)borderRounding);
                 this.PathFill(bgColor);
             }
             else if (gradient == Gradient.TopBottom)
             {
-                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor, state);
-                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor, state);
+                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor);
+                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor);
                 this.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
             }
             else
@@ -74,7 +72,7 @@ namespace ImGui.GraphicsImplementation
             //  Top
             if (!MathEx.AmostZero(bt))
             {
-                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor, state);
+                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
                 if (!MathEx.AmostZero(borderTopColor.A))
                 {
                     PathLineTo(ptl);
@@ -87,7 +85,7 @@ namespace ImGui.GraphicsImplementation
             //  Right
             if (!MathEx.AmostZero(br))
             {
-                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor, state);
+                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
                 if(!MathEx.AmostZero(borderRightColor.A))
                 {
                     PathLineTo(ptr);
@@ -100,7 +98,7 @@ namespace ImGui.GraphicsImplementation
             //  Bottom
             if (!MathEx.AmostZero(bb))
             {
-                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor, state);
+                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
                 if (!MathEx.AmostZero(borderBottomColor.A))
                 {
                     PathLineTo(pbr);
@@ -113,7 +111,7 @@ namespace ImGui.GraphicsImplementation
             //  Left
             if (!MathEx.AmostZero(bl))
             {
-                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor, state);
+                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
                 if (!MathEx.AmostZero(borderLeftColor.A))
                 {
                     PathLineTo(pbl);
@@ -125,10 +123,10 @@ namespace ImGui.GraphicsImplementation
             }
 
             //Outline
-            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth, state);
+            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
             if (!MathEx.AmostZero(outlineWidth))
             {
-                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor, state);
+                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
                 if(!MathEx.AmostZero(outlineColor.A))
                 {
                     PathRect(btl, bbr);
@@ -147,21 +145,19 @@ namespace ImGui.GraphicsImplementation
 #endif
         }
 
-        public void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, GUIStyle style)
+        public void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, StyleRuleSet style)
         {
-            GUIState state = GUIState.Normal;
-
             //Widths of border
-            var bt = style.Get<double>(GUIStyleName.BorderTop, state);
-            var br = style.Get<double>(GUIStyleName.BorderRight, state);
-            var bb = style.Get<double>(GUIStyleName.BorderBottom, state);
-            var bl = style.Get<double>(GUIStyleName.BorderLeft, state);
+            var bt = style.Get<double>(GUIStyleName.BorderTop);
+            var br = style.Get<double>(GUIStyleName.BorderRight);
+            var bb = style.Get<double>(GUIStyleName.BorderBottom);
+            var bl = style.Get<double>(GUIStyleName.BorderLeft);
 
             //Widths of padding
-            var pt = style.Get<double>(GUIStyleName.PaddingTop, state);
-            var pr = style.Get<double>(GUIStyleName.PaddingRight, state);
-            var pb = style.Get<double>(GUIStyleName.PaddingBottom, state);
-            var pl = style.Get<double>(GUIStyleName.PaddingLeft, state);
+            var pt = style.Get<double>(GUIStyleName.PaddingTop);
+            var pr = style.Get<double>(GUIStyleName.PaddingRight);
+            var pb = style.Get<double>(GUIStyleName.PaddingBottom);
+            var pl = style.Get<double>(GUIStyleName.PaddingLeft);
 
             //4 corner of the border-box
             var btl = new Point(rect.Left, rect.Top);
@@ -186,18 +182,18 @@ namespace ImGui.GraphicsImplementation
             var contentBoxRect = new Rect(ctl, cbr);
 
             // draw background in padding-box
-            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient, state);
+            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient);
             if (gradient == Gradient.None)
             {
-                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-                var borderRounding = style.BorderRadius.topLeft;//FIXME
+                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
+                var borderRounding = style.Get<int>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
                 this.PathRect(paddingBoxRect, (float)borderRounding);
                 this.PathFill(bgColor);
             }
             else if (gradient == Gradient.TopBottom)
             {
-                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor, state);
-                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor, state);
+                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor);
+                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor);
                 this.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
             }
             else
@@ -211,7 +207,7 @@ namespace ImGui.GraphicsImplementation
             {
                 if (textPrimitive != null)
                 {
-                    //var textSize = style.CalcSize(text, state);
+                    //var textSize = style.CalcSize(text);
                     /*HACK Don't check text size because the size calculated by Typography is not accurate. */
                     /*if (textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)*/
                     {
@@ -224,7 +220,7 @@ namespace ImGui.GraphicsImplementation
             //  Top
             if (!MathEx.AmostZero(bt))
             {
-                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor, state);
+                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
                 if (!MathEx.AmostZero(borderTopColor.A))
                 {
                     PathLineTo(ptl);
@@ -237,7 +233,7 @@ namespace ImGui.GraphicsImplementation
             //  Right
             if (!MathEx.AmostZero(br))
             {
-                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor, state);
+                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
                 if(!MathEx.AmostZero(borderRightColor.A))
                 {
                     PathLineTo(ptr);
@@ -250,7 +246,7 @@ namespace ImGui.GraphicsImplementation
             //  Bottom
             if (!MathEx.AmostZero(bb))
             {
-                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor, state);
+                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
                 if (!MathEx.AmostZero(borderBottomColor.A))
                 {
                     PathLineTo(pbr);
@@ -263,7 +259,7 @@ namespace ImGui.GraphicsImplementation
             //  Left
             if (!MathEx.AmostZero(bl))
             {
-                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor, state);
+                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
                 if (!MathEx.AmostZero(borderLeftColor.A))
                 {
                     PathLineTo(pbl);
@@ -275,10 +271,10 @@ namespace ImGui.GraphicsImplementation
             }
 
             //Outline
-            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth, state);
+            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
             if (!MathEx.AmostZero(outlineWidth))
             {
-                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor, state);
+                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
                 if(!MathEx.AmostZero(outlineColor.A))
                 {
                     PathRect(btl, bbr);
@@ -297,21 +293,19 @@ namespace ImGui.GraphicsImplementation
 #endif
         }
 
-        public void DrawBoxModel(ImagePrimitive imagePrimitive, Rect rect, GUIStyle style)
+        public void DrawBoxModel(ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style)
         {
-            GUIState state = GUIState.Normal;
-
             //Widths of border
-            var bt = style.Get<double>(GUIStyleName.BorderTop, state);
-            var br = style.Get<double>(GUIStyleName.BorderRight, state);
-            var bb = style.Get<double>(GUIStyleName.BorderBottom, state);
-            var bl = style.Get<double>(GUIStyleName.BorderLeft, state);
+            var bt = style.Get<double>(GUIStyleName.BorderTop);
+            var br = style.Get<double>(GUIStyleName.BorderRight);
+            var bb = style.Get<double>(GUIStyleName.BorderBottom);
+            var bl = style.Get<double>(GUIStyleName.BorderLeft);
 
             //Widths of padding
-            var pt = style.Get<double>(GUIStyleName.PaddingTop, state);
-            var pr = style.Get<double>(GUIStyleName.PaddingRight, state);
-            var pb = style.Get<double>(GUIStyleName.PaddingBottom, state);
-            var pl = style.Get<double>(GUIStyleName.PaddingLeft, state);
+            var pt = style.Get<double>(GUIStyleName.PaddingTop);
+            var pr = style.Get<double>(GUIStyleName.PaddingRight);
+            var pb = style.Get<double>(GUIStyleName.PaddingBottom);
+            var pl = style.Get<double>(GUIStyleName.PaddingLeft);
 
             //4 corner of the border-box
             var btl = new Point(rect.Left, rect.Top);
@@ -336,18 +330,18 @@ namespace ImGui.GraphicsImplementation
             var contentBoxRect = new Rect(ctl, cbr);
 
             // draw background in padding-box
-            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient, state);
+            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient);
             if (gradient == Gradient.None)
             {
-                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-                var borderRounding = style.BorderRadius.topLeft;//FIXME
+                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
+                var borderRounding = style.Get<int>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
                 this.PathRect(paddingBoxRect, (float)borderRounding);
                 this.PathFill(bgColor);
             }
             else if (gradient == Gradient.TopBottom)
             {
-                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor, state);
-                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor, state);
+                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor);
+                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor);
                 this.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
             }
             else
@@ -369,7 +363,7 @@ namespace ImGui.GraphicsImplementation
             //  Top
             if (!MathEx.AmostZero(bt))
             {
-                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor, state);
+                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
                 if (!MathEx.AmostZero(borderTopColor.A))
                 {
                     PathLineTo(ptl);
@@ -382,7 +376,7 @@ namespace ImGui.GraphicsImplementation
             //  Right
             if (!MathEx.AmostZero(br))
             {
-                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor, state);
+                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
                 if(!MathEx.AmostZero(borderRightColor.A))
                 {
                     PathLineTo(ptr);
@@ -395,7 +389,7 @@ namespace ImGui.GraphicsImplementation
             //  Bottom
             if (!MathEx.AmostZero(bb))
             {
-                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor, state);
+                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
                 if (!MathEx.AmostZero(borderBottomColor.A))
                 {
                     PathLineTo(pbr);
@@ -408,7 +402,7 @@ namespace ImGui.GraphicsImplementation
             //  Left
             if (!MathEx.AmostZero(bl))
             {
-                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor, state);
+                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
                 if (!MathEx.AmostZero(borderLeftColor.A))
                 {
                     PathLineTo(pbl);
@@ -420,10 +414,10 @@ namespace ImGui.GraphicsImplementation
             }
 
             //Outline
-            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth, state);
+            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
             if (!MathEx.AmostZero(outlineWidth))
             {
-                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor, state);
+                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
                 if(!MathEx.AmostZero(outlineColor.A))
                 {
                     PathRect(btl, bbr);

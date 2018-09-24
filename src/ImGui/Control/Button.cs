@@ -76,9 +76,7 @@ namespace ImGui
             bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
-            var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-
-            var lineColor = style.GetBorderColor(state);
+            //TODO fill, border
 
             style.Restore();
 
@@ -160,9 +158,7 @@ namespace ImGui
             bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
-            var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-
-            var lineColor = style.GetBorderColor(state);
+            //TODO fill, border
 
             //style restore
             style.Restore();
