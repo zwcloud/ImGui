@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 
@@ -95,13 +94,9 @@ namespace ImGui.Rendering
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
         
-        public LayoutEntry(Node node)
+        public LayoutEntry(Node node, Size contentSize, LayoutOptions? options)
         {
             this.node = node;
-        }
-
-        protected void Entry_Reset()
-        {
             this.ContentWidth = 0;
             this.ContentHeight = 0;
             this.node.Rect = Rect.Zero;
@@ -113,23 +108,18 @@ namespace ImGui.Rendering
             this.VerticalStretchFactor = 0;
             this.Border = (0, 0, 0, 0);
             this.Padding = (0, 0, 0, 0);
-        }
-
-        public void Entry_Init(Size contentSize, LayoutOptions? options)
-        {
-            this.Entry_Reset();
 
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
 
-            Entry_ApplyStyle();
+            this.ApplyStyle();
             if (options.HasValue)
             {
                 this.ApplyOptions(options.Value);
             }
         }
 
-        protected void Entry_ApplyStyle()
+        protected void ApplyStyle()
         {
             var style = GUIStyle.Basic;
 

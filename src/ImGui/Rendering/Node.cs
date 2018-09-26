@@ -84,8 +84,8 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutGroup(bool isVertical, LayoutOptions? options = null)
         {
-            this.LayoutEntry = new LayoutGroup(this);
-            this.LayoutGroup.Group_Init(isVertical, options);
+            this.LayoutEntry = new LayoutGroup(this, isVertical, options);
+            this.Children = new List<Node>();
         }
 
         /// <summary>
@@ -93,8 +93,8 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutEntry(Size contentSize, LayoutOptions? options = null)
         {
-            this.LayoutEntry = new LayoutEntry(this);
-            this.LayoutEntry.Entry_Init(contentSize, options);
+            this.LayoutEntry = new LayoutEntry(this, contentSize, options);
+            this.Children = null;
         }
 
         /// <summary>

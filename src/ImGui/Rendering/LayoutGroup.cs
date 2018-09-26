@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
 {
@@ -8,52 +8,27 @@ namespace ImGui.Rendering
     {
         public double CellSpacingHorizontal { get; set; } = 0;
         public double CellSpacingVertical { get; set; } = 0;
-        public Alignment AlignmentHorizontal { get; set; } = Alignment.Start;
-        public Alignment AlignmentVertical { get; set; } = Alignment.Start;
+        public Alignment AlignmentHorizontal { get; set; }
+        public Alignment AlignmentVertical { get; set; }
 
         public bool IsVertical { get; private set; }
 
-        public LayoutGroup(Node node) : base(node)
+        public LayoutGroup(Node node, bool isVertical, LayoutOptions? options) : base(node, Size.Zero, options)
         {
-        }
-
-        protected void Group_Reset()
-        {
-            Entry_Reset();
-            if (this.node.Children == null)
-            {
-                this.node.Children = new List<Node>();
-            }
-            else
-            {
-                this.node.Children.Clear();
-            }
-
             this.CellSpacingHorizontal = 0;
             this.CellSpacingVertical = 0;
             this.AlignmentHorizontal = Alignment.Start;
             this.AlignmentVertical = Alignment.Start;
-        }
-
-        public void Group_Init(bool isVertical, LayoutOptions? options)
-        {
-            this.Group_Reset();
 
             //NOTE content size is always a calculated value
 
             this.IsVertical = isVertical;
 
-            this.Group_ApplyStyle();
-            if(options.HasValue)
-            {
-                this.ApplyOptions(options.Value);
-            }
+            this.ApplyStyle();
         }
 
-        protected void Group_ApplyStyle()
+        protected new void ApplyStyle()
         {
-            Entry_ApplyStyle();
-
             var style = GUIStyle.Basic;
 
             var csh = style.CellSpacingHorizontal;
