@@ -30,7 +30,7 @@ namespace ImGui.UnitTest.Rendering
                 renderer.Init(window.Pointer, window.ClientSize);
 
                 window.Show();
-                
+
                 bool DrawNode(Node n, MeshList list)
                 {
                     if (!n.ActiveInTree)
@@ -114,6 +114,17 @@ namespace ImGui.UnitTest.Rendering
 
                 window.Show();
 
+                bool DrawNode(Node n, MeshList list)
+                {
+                    if (!n.ActiveInTree)
+                    {
+                        return false;
+                    }
+
+                    n.Draw(primitiveRenderer, meshList);
+                    return true;
+                }
+
                 Node container = null;
                 Node icon;
                 Node title;
@@ -130,16 +141,16 @@ namespace ImGui.UnitTest.Rendering
                         {
                             Application.Quit();
                         }
-                        
+
                         if (container == null)
                         {
                             container = new Node(1, "container");
-                            container.AttachLayoutGroup(true, GUILayout.Width(300).Height(40));
+                            container.AttachLayoutGroup(false, GUILayout.Width(300).Height(40));
                             container.UseBoxModel = true;
                             StyleRuleSetBuilder b = new StyleRuleSetBuilder(container);
                             b.Border(1)
                                 .BorderColor(Color.Black)
-                                .Padding((top: 1, right: 2, bottom: 1, left: 2))
+                                .Padding((top: 4, right: 3, bottom: 4, left: 3))
                                 .BackgroundColor(Color.Silver);
 
                             icon = new Node(2, "icon");
@@ -165,7 +176,8 @@ namespace ImGui.UnitTest.Rendering
                         }
 
                         {
-                            container.Draw(primitiveRenderer, meshList);
+                            DrawNode(container, meshList);
+                            container.Foreach(n=>DrawNode(n, meshList));
                             container.Layout();
                         }
 
