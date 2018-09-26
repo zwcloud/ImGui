@@ -9,12 +9,6 @@ namespace ImGui.Rendering
     {
         protected Node node;
 
-        protected List<Node> Children
-        {
-            get => this.node.Children;
-            set => this.node.Children = value;
-        }
-
         /// <summary>
         /// exact content width, externally pre-calculated from content and style
         /// </summary>
@@ -123,7 +117,6 @@ namespace ImGui.Rendering
 
         public void Entry_Init(Size contentSize, LayoutOptions? options)
         {
-            this.Children = null;
             this.Entry_Reset();
 
             this.ContentWidth = contentSize.Width;
