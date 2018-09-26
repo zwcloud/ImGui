@@ -21,22 +21,22 @@ namespace ImGui.Rendering
         /// <summary>
         /// minimum width of border-box
         /// </summary>
-        public double MinWidth { get; set; } = 1;
+        public double MinWidth { get; set; }
 
         /// <summary>
         /// maximum width of border-box
         /// </summary>
-        public double MaxWidth { get; set; } = 9999;
+        public double MaxWidth { get; set; }
 
         /// <summary>
         /// minimum height of border-box
         /// </summary>
-        public double MinHeight { get; set; } = 1;
+        public double MinHeight { get; set; }
 
         /// <summary>
         /// maximum height of border-box
         /// </summary>
-        public double MaxHeight { get; set; } = 9999;
+        public double MaxHeight { get; set; }
 
         /// <summary>
         /// horizontal stretch factor
@@ -76,9 +76,9 @@ namespace ImGui.Rendering
 
         public bool IsStretchedHeight => VerticallyStretched;
 
-        public (double, double, double, double) Border = (0, 0, 0, 0);
+        public (double, double, double, double) Border;
 
-        public (double, double, double, double) Padding = (0, 0, 0, 0);
+        public (double, double, double, double) Padding;
 
         public double BorderTop => Border.Item1;
         public double BorderRight => Border.Item2;

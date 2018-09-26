@@ -11,7 +11,7 @@ namespace ImGui.Rendering
         public Alignment AlignmentHorizontal { get; set; }
         public Alignment AlignmentVertical { get; set; }
 
-        public bool IsVertical { get; private set; }
+        public bool IsVertical { get; }
 
         public LayoutGroup(Node node, bool isVertical, LayoutOptions? options) : base(node, Size.Zero, options)
         {
@@ -126,7 +126,7 @@ namespace ImGui.Rendering
                     // get the max width of children
                     foreach (var childNode in this.node.Children)
                     {
-                        childNode.LayoutEntry.CalcWidth(-1);
+                        childNode.LayoutEntry.CalcWidth();
                         temp = Math.Max(temp, childNode.Rect.Width);
                     }
                     this.ContentWidth = temp;
@@ -136,7 +136,7 @@ namespace ImGui.Rendering
                     var temp = 0d;
                     foreach (var entry in this.node.Children)
                     {
-                        entry.LayoutEntry.CalcWidth(-1);
+                        entry.LayoutEntry.CalcWidth();
                         temp += entry.Rect.Width + this.CellSpacingHorizontal;
                     }
                     temp -= this.CellSpacingHorizontal;
@@ -161,7 +161,7 @@ namespace ImGui.Rendering
                     }
                     else
                     {
-                        childNode.LayoutEntry.CalcWidth(-1);
+                        childNode.LayoutEntry.CalcWidth();
                     }
                 }
             }
@@ -220,7 +220,7 @@ namespace ImGui.Rendering
                             childNode.LayoutEntry.HorizontalStretchFactor = 0;
                         }
 
-                        childNode.LayoutEntry.CalcWidth(-1);
+                        childNode.LayoutEntry.CalcWidth();
                     }
                 }
                 else
@@ -234,7 +234,7 @@ namespace ImGui.Rendering
                         }
                         else
                         {
-                            childNode.LayoutEntry.CalcWidth(-1);
+                            childNode.LayoutEntry.CalcWidth();
                         }
                     }
 
@@ -292,7 +292,7 @@ namespace ImGui.Rendering
                     var temp = 0d;
                     foreach (var childNode in this.node.Children)
                     {
-                        childNode.LayoutEntry.CalcHeight(-1);
+                        childNode.LayoutEntry.CalcHeight();
                         temp += childNode.Rect.Height + this.CellSpacingVertical;
                     }
                     temp -= this.CellSpacingVertical;
@@ -304,7 +304,7 @@ namespace ImGui.Rendering
                     // get the max height of children
                     foreach (var entry in this.node.Children)
                     {
-                        entry.LayoutEntry.CalcHeight(-1);
+                        entry.LayoutEntry.CalcHeight();
                         temp = Math.Max(temp, entry.Rect.Height);
                     }
                     this.ContentHeight = temp;
@@ -370,7 +370,7 @@ namespace ImGui.Rendering
                             entry.LayoutEntry.VerticalStretchFactor = 0;
                         }
 
-                        entry.LayoutEntry.CalcHeight(-1);
+                        entry.LayoutEntry.CalcHeight();
                     }
                 }
                 else
@@ -384,7 +384,7 @@ namespace ImGui.Rendering
                         }
                         else
                         {
-                            entry.LayoutEntry.CalcHeight(-1);
+                            entry.LayoutEntry.CalcHeight();
                         }
                     }
 
@@ -417,7 +417,7 @@ namespace ImGui.Rendering
                     }
                     else
                     {
-                        entry.LayoutEntry.CalcHeight(-1);
+                        entry.LayoutEntry.CalcHeight();
                     }
                 }
             }
