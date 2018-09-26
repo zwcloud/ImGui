@@ -7,7 +7,7 @@ using ImGui.GraphicsAbstraction;
 namespace ImGui.Rendering
 {
     [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(Name) +"}")]
-    internal class Node : IStyleRuleSet
+    internal class Node : IStyleRuleSet, IRect
     {
         /// <summary>
         /// identifier number of the node
@@ -23,6 +23,30 @@ namespace ImGui.Rendering
         /// border-box, the layout result
         /// </summary>
         public Rect Rect;
+
+        public double X
+        {
+            get => this.Rect.X;
+            set => this.Rect.X = value;
+        }
+
+        public double Y
+        {
+            get => this.Rect.Y;
+            set => this.Rect.Y = value;
+        }
+
+        public double Width
+        {
+            get => this.Rect.Width;
+            set => this.Rect.Width = value;
+        }
+
+        public double Height
+        {
+            get => this.Rect.Height;
+            set => this.Rect.Height = value;
+        }
 
         /// <summary>
         /// Create a manually positioned node.
@@ -82,26 +106,6 @@ namespace ImGui.Rendering
             this.LayoutGroup.CalcHeight(this.LayoutEntry.ContentHeight);
             this.LayoutGroup.SetX(this.Rect.X);
             this.LayoutGroup.SetY(this.Rect.Y);
-        }
-
-        public void CalcWidth(double unitPartWidth = -1)
-        {
-            this.LayoutEntry.CalcWidth(unitPartWidth);
-        }
-
-        public void CalcHeight(double unitPartHeight = -1)
-        {
-            this.LayoutEntry.CalcHeight(unitPartHeight);
-        }
-
-        public void SetX(double x)
-        {
-            this.LayoutEntry.SetX(x);
-        }
-
-        public void SetY(double y)
-        {
-            this.LayoutEntry.SetY(y);
         }
         #endregion
 
