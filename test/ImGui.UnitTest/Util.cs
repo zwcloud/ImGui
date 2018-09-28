@@ -91,11 +91,11 @@ namespace ImGui.UnitTest
 
             if (!isGroup)
             {
-                if (node.LayoutEntry.HorizontallyStretched || node.LayoutEntry.VerticallyStretched)
+                if (node.RuleSet.HorizontallyStretched || node.RuleSet.VerticallyStretched)
                 {
                     context.FillRectangle(node.Rect, CairoEx.ColorLightBlue);
                 }
-                else if (node.LayoutEntry.IsFixedWidth || node.LayoutEntry.IsFixedHeight)
+                else if (node.RuleSet.IsFixedWidth || node.RuleSet.IsFixedHeight)
                 {
                     context.FillRectangle(node.Rect, CairoEx.ColorOrange);
                 }

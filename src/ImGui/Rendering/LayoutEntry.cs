@@ -1,5 +1,4 @@
 ﻿using System;
-using ImGui.Common;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
@@ -17,68 +16,6 @@ namespace ImGui.Rendering
         /// exact content height, externally pre-calculated from content and style
         /// </summary>
         public double ContentHeight { get; set; }
-
-        /// <summary>
-        /// minimum width of border-box
-        /// </summary>
-        public double MinWidth => this.node.RuleSet.MinWidth;
-
-        /// <summary>
-        /// maximum width of border-box
-        /// </summary>
-        public double MaxWidth => this.node.RuleSet.MaxWidth;
-
-        /// <summary>
-        /// minimum height of border-box
-        /// </summary>
-        public double MinHeight => this.node.RuleSet.MinHeight;
-
-        /// <summary>
-        /// maximum height of border-box
-        /// </summary>
-        public double MaxHeight => this.node.RuleSet.MaxHeight;
-
-        /// <summary>
-        /// horizontal stretch factor
-        /// </summary>
-        public int HorizontalStretchFactor => this.node.RuleSet.HorizontalStretchFactor;
-
-        /// <summary>
-        /// vertical stretch factor
-        /// </summary>
-        public int VerticalStretchFactor => this.node.RuleSet.VerticalStretchFactor;
-
-        /// <summary>
-        /// Is this entry or group horizontally stretched?
-        /// </summary>
-        public bool HorizontallyStretched => !this.IsFixedWidth && this.HorizontalStretchFactor > 0;
-
-        /// <summary>
-        /// Is this entry or group vertically stretched?
-        /// </summary>
-        public bool VerticallyStretched => !this.IsFixedHeight && this.VerticalStretchFactor > 0;
-
-        /// <summary>
-        /// Is this entry or group has a fixed width?
-        /// </summary>
-        public bool IsFixedWidth => MathEx.AmostEqual(this.MinWidth, this.MaxWidth);
-
-        /// <summary>
-        /// Is this entry or group has a fixed height?
-        /// </summary>
-        public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
-
-        public bool IsDefaultWidth => !IsFixedWidth && !HorizontallyStretched;
-
-        public bool IsDefaultHeight => !IsFixedWidth && !VerticallyStretched;
-
-        public bool IsStretchedWidth => HorizontallyStretched;
-
-        public bool IsStretchedHeight => VerticallyStretched;
-
-        public (double, double, double, double) Border => this.node.RuleSet.Border;
-
-        public (double, double, double, double) Padding => this.node.RuleSet.Padding;
 
         public double BorderTop => this.node.RuleSet.BorderTop;
         public double BorderRight => this.node.RuleSet.BorderRight;
@@ -101,10 +38,10 @@ namespace ImGui.Rendering
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
 
-            if (this.IsFixedWidth)
+            if (this.node.RuleSet.IsFixedWidth)
             {
                 double horizontalSpace = this.PaddingHorizontal + this.BorderHorizontal;
-                var fixedWidth = this.MinWidth;
+                var fixedWidth = this.node.RuleSet.MinWidth;
                 if(fixedWidth < horizontalSpace)
                 {
                     throw new LayoutException(
@@ -113,10 +50,10 @@ namespace ImGui.Rendering
                 this.node.RuleSet.HorizontalStretchFactor = 0;
             }
 
-            if (this.IsFixedHeight)
+            if (this.node.RuleSet.IsFixedHeight)
             {
                 double verticalSpace = this.PaddingVertical + this.BorderVertical;
-                var fixedHeight = this.MinHeight;
+                var fixedHeight = this.node.RuleSet.MinHeight;
                 if (fixedHeight < verticalSpace)
                 {
                     throw new LayoutException(
@@ -128,20 +65,20 @@ namespace ImGui.Rendering
 
         public virtual void CalcWidth(double unitPartWidth = -1d)
         {
-            if (this.HorizontallyStretched)
+            if (this.node.RuleSet.HorizontallyStretched)
             {
                 if (unitPartWidth > 0)
                 {
-                    this.node.Rect.Width = unitPartWidth * this.HorizontalStretchFactor;
+                    this.node.Rect.Width = unitPartWidth * this.node.RuleSet.HorizontalStretchFactor;
                 }
                 else
                 {
                     throw new ArgumentException("The unit part width is invalid", nameof(unitPartWidth));
                 }
             }
-            else if (this.IsFixedWidth)
+            else if (this.node.RuleSet.IsFixedWidth)
             {
-                this.node.Rect.Width = this.MinWidth;
+                this.node.Rect.Width = this.node.RuleSet.MinWidth;
             }
             else
             {
@@ -151,11 +88,11 @@ namespace ImGui.Rendering
 
         public virtual void CalcHeight(double unitPartHeight = -1d)
         {
-            if (this.VerticallyStretched)
+            if (this.node.RuleSet.VerticallyStretched)
             {
                 if (unitPartHeight > 0)
                 {
-                    this.node.Rect.Height = unitPartHeight * this.VerticalStretchFactor;
+                    this.node.Rect.Height = unitPartHeight * this.node.RuleSet.VerticalStretchFactor;
                     this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
                 }
                 else
@@ -163,9 +100,9 @@ namespace ImGui.Rendering
                     throw new ArgumentException("The unit part height is invalid", nameof(unitPartHeight));
                 }
             }
-            else if (this.IsFixedHeight)
+            else if (this.node.RuleSet.IsFixedHeight)
             {
-                this.node.Rect.Height = this.MinHeight;
+                this.node.Rect.Height = this.node.RuleSet.MinHeight;
                 this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
             }
             else
@@ -186,7 +123,7 @@ namespace ImGui.Rendering
 
         public double GetDefaultWidth()
         {
-            if(this.IsFixedWidth)
+            if(this.node.RuleSet.IsFixedWidth)
             {
                 throw new LayoutException("Cannot get default width of a fixed size entry.");
             }
@@ -195,7 +132,7 @@ namespace ImGui.Rendering
 
         public double GetDefaultHeight()
         {
-            if (this.IsFixedHeight)
+            if (this.node.RuleSet.IsFixedHeight)
             {
                 throw new LayoutException("Cannot get default width of a fixed height entry.");
             }

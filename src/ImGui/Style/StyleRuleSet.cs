@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
@@ -12,7 +13,7 @@ namespace ImGui
 
     internal class StyleRuleSet
     {
-        private List<IStyleRule> rules;
+        private readonly List<IStyleRule> rules;
         private GUIState currentState = GUIState.Normal;
 
         public StyleRuleSet()
@@ -303,16 +304,46 @@ namespace ImGui
             get => (Alignment)Get<int>(GUIStyleName.AlignmentHorizontal);
             set => Set<int>(GUIStyleName.AlignmentHorizontal, (int)value);
         }
+
         public Alignment AlignmentVertical
         {
             get => (Alignment)Get<int>(GUIStyleName.AlignmentVertical);
             set => Set<int>(GUIStyleName.AlignmentVertical, (int)value);
         }
+
         public (Alignment, Alignment) GroupAlignment
         {
             get => (AlignmentHorizontal, AlignmentVertical);
             set { AlignmentHorizontal = value.Item1; AlignmentVertical = value.Item2; }
         }
+
+        /// <summary>
+        /// Is this entry or group horizontally stretched?
+        /// </summary>
+        public bool HorizontallyStretched => !this.IsFixedWidth && this.HorizontalStretchFactor > 0;
+
+        /// <summary>
+        /// Is this entry or group vertically stretched?
+        /// </summary>
+        public bool VerticallyStretched => !this.IsFixedHeight && this.VerticalStretchFactor > 0;
+
+        /// <summary>
+        /// Is this entry or group has a fixed width?
+        /// </summary>
+        public bool IsFixedWidth => MathEx.AmostEqual(this.MinWidth, this.MaxWidth);
+
+        /// <summary>
+        /// Is this entry or group has a fixed height?
+        /// </summary>
+        public bool IsFixedHeight => MathEx.AmostEqual(this.MinHeight, this.MaxHeight);
+
+        public bool IsDefaultWidth => !IsFixedWidth && !HorizontallyStretched;
+
+        public bool IsDefaultHeight => !IsFixedWidth && !VerticallyStretched;
+
+        public bool IsStretchedWidth => HorizontallyStretched;
+
+        public bool IsStretchedHeight => VerticallyStretched;
 
         #endregion Layout
 
@@ -359,6 +390,9 @@ namespace ImGui
         }
 
         #endregion
+
+
+
 
 #endregion
 

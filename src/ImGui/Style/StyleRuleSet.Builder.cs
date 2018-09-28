@@ -39,10 +39,22 @@ namespace ImGui
             s.Padding = (value, value, value, value);
             return this;
         }
-        
+
         public StyleRuleSetBuilder Padding((double top, double right, double bottom, double left) value)
         {
             s.Padding = value;
+            return this;
+        }
+
+        public StyleRuleSetBuilder AlignmentVertical(Alignment value)
+        {
+            s.AlignmentVertical = value;
+            return this;
+        }
+
+        public StyleRuleSetBuilder AlignmentHorizontal(Alignment value)
+        {
+            s.AlignmentHorizontal = value;
             return this;
         }
 
