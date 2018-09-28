@@ -105,7 +105,6 @@ namespace ImGui.UnitTest.Rendering
                 MeshBuffer meshBuffer = new MeshBuffer();
                 MeshList meshList = new MeshList();
 
-
                 var window = new Win32Window();
                 window.Init(new Point(100, 100), new Size(400, 400), WindowTypes.Regular);
 

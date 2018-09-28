@@ -6,85 +6,59 @@ namespace ImGui.Rendering
 {
     internal class LayoutGroup : LayoutEntry
     {
-        public double CellSpacingHorizontal { get; set; } = 0;
-        public double CellSpacingVertical { get; set; } = 0;
-        public Alignment AlignmentHorizontal { get; set; }
-        public Alignment AlignmentVertical { get; set; }
+        public double CellSpacingHorizontal => node.RuleSet.CellSpacingHorizontal;
+        public double CellSpacingVertical => node.RuleSet.CellSpacingVertical;
+        public Alignment AlignmentHorizontal => node.RuleSet.AlignmentHorizontal;
+        public Alignment AlignmentVertical => node.RuleSet.AlignmentVertical;
 
         public bool IsVertical { get; }
 
-        public LayoutGroup(Node node, bool isVertical, LayoutOptions? options) : base(node, Size.Zero, options)
+        public LayoutGroup(Node node, bool isVertical) : base(node, Size.Zero)
         {
-            this.CellSpacingHorizontal = 0;
-            this.CellSpacingVertical = 0;
-            this.AlignmentHorizontal = Alignment.Start;
-            this.AlignmentVertical = Alignment.Start;
-
             //NOTE content size is always a calculated value
-
             this.IsVertical = isVertical;
-
-            this.ApplyStyle();
         }
 
-        protected new void ApplyStyle()
-        {
-            var style = GUIStyle.Basic;
-
-            var csh = style.CellSpacingHorizontal;
-            if(csh >= 0)
-            {
-                this.CellSpacingHorizontal = csh;
-            }
-            var csv = style.CellSpacingVertical;
-            if (csv >= 0)
-            {
-                this.CellSpacingVertical = csv;
-            }
-            this.AlignmentHorizontal = style.AlignmentHorizontal;
-            this.AlignmentVertical = style.AlignmentVertical;
-        }
-
-        public void OnAddLayoutEntry(LayoutEntry layoutEntry)
+        public void OnAddLayoutEntry(IStyleRuleSet layoutEntry)
         {
             if (this.IsFixedWidth)
             {
                 Debug.Assert(!this.HorizontallyStretched);
-                if (this.IsVertical && layoutEntry.HorizontalStretchFactor > 1)
+                if (this.IsVertical && layoutEntry.RuleSet.HorizontalStretchFactor > 1)
                 {
-                    layoutEntry.HorizontalStretchFactor = 1;
+                    layoutEntry.RuleSet.HorizontalStretchFactor = 1;
                 }
             }
             else if (this.HorizontallyStretched)
             {
-                if (this.IsVertical && layoutEntry.HorizontalStretchFactor > 1)
+                if (this.IsVertical && layoutEntry.RuleSet.HorizontalStretchFactor > 1)
                 {
-                    layoutEntry.HorizontalStretchFactor = 1;
+                    layoutEntry.RuleSet.HorizontalStretchFactor = 1;
                 }
             }
             else
             {
-                layoutEntry.HorizontalStretchFactor = 0;
+                layoutEntry.RuleSet.HorizontalStretchFactor = 0;
             }
 
             if (this.IsFixedHeight)
             {
                 Debug.Assert(!this.VerticallyStretched);
-                if (!this.IsVertical && layoutEntry.VerticalStretchFactor > 1)
+                if (!this.IsVertical && layoutEntry.RuleSet.VerticalStretchFactor > 1)
                 {
-                    layoutEntry.VerticalStretchFactor = 1;
+                    layoutEntry.RuleSet.VerticalStretchFactor = 1;
                 }
             }
             else if (this.VerticallyStretched)
             {
-                if (!this.IsVertical && layoutEntry.VerticalStretchFactor > 1)
+                if (!this.IsVertical && layoutEntry.RuleSet.VerticalStretchFactor > 1)
                 {
-                    layoutEntry.VerticalStretchFactor = 1;
+                    layoutEntry.RuleSet.VerticalStretchFactor = 1;
                 }
             }
             else
             {
-                layoutEntry.VerticalStretchFactor = 0;
+                layoutEntry.RuleSet.VerticalStretchFactor = 0;
             }
         }
 
@@ -216,8 +190,8 @@ namespace ImGui.Rendering
                     {
                         if (childNode.LayoutEntry.HorizontallyStretched)
                         {
-                            childNode.LayoutEntry.MinWidth = childNode.LayoutEntry.MaxWidth = unit * childNode.LayoutEntry.HorizontalStretchFactor;
-                            childNode.LayoutEntry.HorizontalStretchFactor = 0;
+                            childNode.RuleSet.MinWidth = childNode.RuleSet.MaxWidth = unit * childNode.RuleSet.HorizontalStretchFactor;
+                            childNode.RuleSet.HorizontalStretchFactor = 0;
                         }
 
                         childNode.LayoutEntry.CalcWidth();
@@ -366,8 +340,8 @@ namespace ImGui.Rendering
                     {
                         if (entry.LayoutEntry.VerticallyStretched)
                         {
-                            entry.LayoutEntry.MinHeight = entry.LayoutEntry.MaxHeight = unit * entry.LayoutEntry.VerticalStretchFactor;
-                            entry.LayoutEntry.VerticalStretchFactor = 0;
+                            entry.RuleSet.MinHeight = entry.RuleSet.MaxHeight = unit * entry.RuleSet.VerticalStretchFactor;
+                            entry.RuleSet.VerticalStretchFactor = 0;
                         }
 
                         entry.LayoutEntry.CalcHeight();

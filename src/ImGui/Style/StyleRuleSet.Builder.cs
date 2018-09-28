@@ -57,7 +57,7 @@ namespace ImGui
             s.FontSize = value;
             return this;
         }
-        
+
         public StyleRuleSetBuilder FontColor(Color value)
         {
             s.FontColor = value;

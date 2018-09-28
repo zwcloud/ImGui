@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -70,11 +71,53 @@ namespace ImGui
             return rule.Value;
         }
 
+        #region Options
+
+        public void ApplyOptions(LayoutOptions options)
+        {
+            if(options.MinWidth.HasValue && options.MaxWidth.HasValue)
+            {
+                var value = options.MinWidth.Value;
+                if (value < this.PaddingHorizontal + this.BorderHorizontal)
+                {
+                    throw new LayoutException(
+                        $"The specified width is too small. It must bigger than the horizontal padding and border size ({this.PaddingHorizontal + this.BorderHorizontal}).");
+                }
+                this.MinWidth = this.MaxWidth = value;
+                this.HorizontalStretchFactor = 0;
+            }
+            if (options.MinHeight.HasValue && options.MaxHeight.HasValue)
+            {
+                var value = options.MinHeight.Value;
+                if (value < this.PaddingVertical + this.BorderVertical)
+                {
+                    throw new LayoutException(
+                        $"The specified height is too small. It must bigger than the vertical padding and border size ({this.PaddingVertical + this.BorderVertical}).");
+                }
+                this.MinHeight = this.MaxHeight = value;
+                this.VerticalStretchFactor = 0;
+            }
+            if(options.HorizontalStretchFactor.HasValue)
+            {
+                this.HorizontalStretchFactor = options.HorizontalStretchFactor.Value;
+            }
+            if (options.VerticalStretchFactor.HasValue)
+            {
+                this.VerticalStretchFactor = options.VerticalStretchFactor.Value;
+            }
+        }
+
+        #endregion
+
         #region short-cuts
 
         #region Box model
         // We use `box-sizing: border-box;`. So the width and height is the width and height of border-box.
         #region Width & Height
+
+        //TODO limit the range of min/max width/height
+        //TODO ensure correct values of min/max width/height: min value must <= max value
+
         public double MinWidth
         {
             get => Get<double>(GUIStyleName.MinWidth);

@@ -84,7 +84,12 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutGroup(bool isVertical, LayoutOptions? options = null)
         {
-            this.LayoutEntry = new LayoutGroup(this, isVertical, options);
+            if (options.HasValue)
+            {
+                this.RuleSet.ApplyOptions(options.Value);
+            }
+
+            this.LayoutEntry = new LayoutGroup(this, isVertical);
             this.Children = new List<Node>();
         }
 
@@ -93,7 +98,11 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutEntry(Size contentSize, LayoutOptions? options = null)
         {
-            this.LayoutEntry = new LayoutEntry(this, contentSize, options);
+            if (options.HasValue)
+            {
+                this.RuleSet.ApplyOptions(options.Value);
+            }
+            this.LayoutEntry = new LayoutEntry(this, contentSize);
             this.Children = null;
         }
 
@@ -222,7 +231,7 @@ namespace ImGui.Rendering
                         throw new LayoutException("It's not allowed to append a Plain node to a node");
                     case NodeType.LayoutEntry:
                     case NodeType.LayoutGroup:
-                        this.LayoutGroup.OnAddLayoutEntry(node.LayoutEntry);
+                        this.LayoutGroup.OnAddLayoutEntry(node);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

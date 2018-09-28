@@ -21,32 +21,32 @@ namespace ImGui.Rendering
         /// <summary>
         /// minimum width of border-box
         /// </summary>
-        public double MinWidth { get; set; }
+        public double MinWidth => this.node.RuleSet.MinWidth;
 
         /// <summary>
         /// maximum width of border-box
         /// </summary>
-        public double MaxWidth { get; set; }
+        public double MaxWidth => this.node.RuleSet.MaxWidth;
 
         /// <summary>
         /// minimum height of border-box
         /// </summary>
-        public double MinHeight { get; set; }
+        public double MinHeight => this.node.RuleSet.MinHeight;
 
         /// <summary>
         /// maximum height of border-box
         /// </summary>
-        public double MaxHeight { get; set; }
+        public double MaxHeight => this.node.RuleSet.MaxHeight;
 
         /// <summary>
         /// horizontal stretch factor
         /// </summary>
-        public int HorizontalStretchFactor { get; set; }
+        public int HorizontalStretchFactor => this.node.RuleSet.HorizontalStretchFactor;
 
         /// <summary>
         /// vertical stretch factor
         /// </summary>
-        public int VerticalStretchFactor { get; set; }
+        public int VerticalStretchFactor => this.node.RuleSet.VerticalStretchFactor;
 
         /// <summary>
         /// Is this entry or group horizontally stretched?
@@ -76,135 +76,53 @@ namespace ImGui.Rendering
 
         public bool IsStretchedHeight => VerticallyStretched;
 
-        public (double, double, double, double) Border;
+        public (double, double, double, double) Border => this.node.RuleSet.Border;
 
-        public (double, double, double, double) Padding;
+        public (double, double, double, double) Padding => this.node.RuleSet.Padding;
 
-        public double BorderTop => Border.Item1;
-        public double BorderRight => Border.Item2;
-        public double BorderBottom => Border.Item3;
-        public double BorderLeft => Border.Item4;
+        public double BorderTop => this.node.RuleSet.BorderTop;
+        public double BorderRight => this.node.RuleSet.BorderRight;
+        public double BorderBottom => this.node.RuleSet.BorderBottom;
+        public double BorderLeft => this.node.RuleSet.BorderLeft;
         public double BorderHorizontal => BorderLeft + BorderRight;
         public double BorderVertical => BorderTop + BorderBottom;
 
-        public double PaddingTop => Padding.Item1;
-        public double PaddingRight => Padding.Item2;
-        public double PaddingBottom => Padding.Item3;
-        public double PaddingLeft => Padding.Item4;
+        public double PaddingTop => this.node.RuleSet.PaddingTop;
+        public double PaddingRight => this.node.RuleSet.PaddingRight;
+        public double PaddingBottom => this.node.RuleSet.PaddingBottom;
+        public double PaddingLeft => this.node.RuleSet.PaddingLeft;
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
-        
-        public LayoutEntry(Node node, Size contentSize, LayoutOptions? options)
+
+        public LayoutEntry(Node node, Size contentSize)
         {
             this.node = node;
-            this.ContentWidth = 0;
-            this.ContentHeight = 0;
-            this.node.Rect = Rect.Zero;
-            this.MinWidth = 1;
-            this.MaxWidth = 9999;
-            this.MinHeight = 1;
-            this.MaxHeight = 9999;
-            this.HorizontalStretchFactor = 0;
-            this.VerticalStretchFactor = 0;
-            this.Border = (0, 0, 0, 0);
-            this.Padding = (0, 0, 0, 0);
 
             this.ContentWidth = contentSize.Width;
             this.ContentHeight = contentSize.Height;
 
-            this.ApplyStyle();
-            if (options.HasValue)
-            {
-                this.ApplyOptions(options.Value);
-            }
-        }
-
-        protected void ApplyStyle()
-        {
-            var style = GUIStyle.Basic;
-
-            this.MinWidth = MathEx.Clamp(style.MinWidth, 1, 9999);
-            this.MaxWidth = MathEx.Clamp(style.MaxWidth, 1, 9999);
-            this.MinHeight = MathEx.Clamp(style.MinHeight, 1, 9999);
-            this.MaxHeight = MathEx.Clamp(style.MaxHeight, 1, 9999);
-            if (this.MinWidth > this.MaxWidth)
-            {
-                this.MaxWidth = this.MinWidth;
-            }
-            if (this.MinHeight > this.MaxHeight)
-            {
-                this.MaxHeight = this.MinHeight;
-            }
-
-            this.Border = style.Border;
-            this.Padding = style.Padding;
-
-            if (IsFixedWidth)
+            if (this.IsFixedWidth)
             {
                 double horizontalSpace = this.PaddingHorizontal + this.BorderHorizontal;
-                var fixedWidth = MinWidth;
+                var fixedWidth = this.MinWidth;
                 if(fixedWidth < horizontalSpace)
                 {
                     throw new LayoutException(
                         $"Specified width is too small. It must bigger than the horizontal padding and border size ({horizontalSpace}).");
                 }
-                this.HorizontalStretchFactor = 0;
-            }
-            else
-            {
-                this.HorizontalStretchFactor = style.HorizontalStretchFactor;
+                this.node.RuleSet.HorizontalStretchFactor = 0;
             }
 
-            if (IsFixedHeight)
+            if (this.IsFixedHeight)
             {
                 double verticalSpace = this.PaddingVertical + this.BorderVertical;
-                var fixedHeight = MinHeight;
+                var fixedHeight = this.MinHeight;
                 if (fixedHeight < verticalSpace)
                 {
                     throw new LayoutException(
                         $"Specified height is too small. It must bigger than the vertical padding and border size ({verticalSpace}).");
                 }
-                this.VerticalStretchFactor = 0;
-            }
-            else
-            {
-                this.VerticalStretchFactor = style.VerticalStretchFactor;
-            }
-        }
-
-        protected void ApplyOptions(LayoutOptions options)
-        {
-            var style = GUIStyle.Basic;
-
-            if(options.MinWidth.HasValue && options.MaxWidth.HasValue)
-            {
-                var value = options.MinWidth.Value;
-                if (value < style.PaddingHorizontal + style.BorderHorizontal)
-                {
-                    throw new LayoutException(
-                        $"The specified width is too small. It must bigger than the horizontal padding and border size ({style.PaddingHorizontal + style.BorderHorizontal}).");
-                }
-                this.MinWidth = this.MaxWidth = value;
-                this.HorizontalStretchFactor = 0;
-            }
-            if (options.MinHeight.HasValue && options.MaxHeight.HasValue)
-            {
-                var value = options.MinHeight.Value;
-                if (value < style.PaddingVertical + style.BorderVertical)
-                {
-                    throw new LayoutException(
-                        $"The specified height is too small. It must bigger than the vertical padding and border size ({style.PaddingVertical + style.BorderVertical}).");
-                }
-                this.MinHeight = this.MaxHeight = value;
-                this.VerticalStretchFactor = 0;
-            }
-            if(options.HorizontalStretchFactor.HasValue)
-            {
-                this.HorizontalStretchFactor = options.HorizontalStretchFactor.Value;
-            }
-            if (options.VerticalStretchFactor.HasValue)
-            {
-                this.VerticalStretchFactor = options.VerticalStretchFactor.Value;
+                this.node.RuleSet.VerticalStretchFactor = 0;
             }
         }
 
