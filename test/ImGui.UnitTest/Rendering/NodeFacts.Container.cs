@@ -150,7 +150,9 @@ namespace ImGui.UnitTest.Rendering
                             b.Border(1)
                                 .BorderColor(Color.Black)
                                 .Padding((top: 4, right: 3, bottom: 4, left: 3))
-                                .BackgroundColor(Color.Silver);
+                                .BackgroundColor(Color.Silver)
+                                .AlignmentVertical(Alignment.Center)
+                                .AlignmentHorizontal(Alignment.Center);
 
                             icon = new Node(2, "icon");
                             icon.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
