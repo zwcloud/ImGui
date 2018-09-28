@@ -41,8 +41,8 @@ namespace ImGui
         HorizontalStretchFactor,
         VerticalStretchFactor,
 
-        CellingSpacingHorizontal,
-        CellingSpacingVertical,
+        CellSpacingHorizontal,
+        CellSpacingVertical,
 
         BackgroundColor,
         BackgroundImage,

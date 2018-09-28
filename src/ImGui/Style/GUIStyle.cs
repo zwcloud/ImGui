@@ -103,12 +103,12 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.PaddingLeft, State = GUIState.Hover }] = 0,
                 [new NameState { Name = GUIStyleName.PaddingLeft, State = GUIState.Active }] = 0,
 
-                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Normal }] = 8,
-                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Hover }] = 8,
-                [new NameState { Name = GUIStyleName.CellingSpacingHorizontal, State = GUIState.Active }] = 8,
-                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Normal }] = 4,
-                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Hover }] = 4,
-                [new NameState { Name = GUIStyleName.CellingSpacingVertical, State = GUIState.Active }] = 4,
+                [new NameState { Name = GUIStyleName.CellSpacingHorizontal, State = GUIState.Normal }] = 8,
+                [new NameState { Name = GUIStyleName.CellSpacingHorizontal, State = GUIState.Hover }] = 8,
+                [new NameState { Name = GUIStyleName.CellSpacingHorizontal, State = GUIState.Active }] = 8,
+                [new NameState { Name = GUIStyleName.CellSpacingVertical, State = GUIState.Normal }] = 4,
+                [new NameState { Name = GUIStyleName.CellSpacingVertical, State = GUIState.Hover }] = 4,
+                [new NameState { Name = GUIStyleName.CellSpacingVertical, State = GUIState.Active }] = 4,
 
                 [new NameState { Name = GUIStyleName.OutlineWidth, State = GUIState.Normal }] = 0,
                 [new NameState { Name = GUIStyleName.OutlineWidth, State = GUIState.Hover }] = 0,
@@ -602,13 +602,13 @@ namespace ImGui
 
         public double CellSpacingHorizontal
         {
-            get => Get<double>(GUIStyleName.CellingSpacingHorizontal);
-            set => Set<double>(GUIStyleName.CellingSpacingHorizontal, value);
+            get => Get<double>(GUIStyleName.CellSpacingHorizontal);
+            set => Set<double>(GUIStyleName.CellSpacingHorizontal, value);
         }
         public double CellSpacingVertical
         {
-            get => Get<double>(GUIStyleName.CellingSpacingVertical);
-            set => Set<double>(GUIStyleName.CellingSpacingVertical, value);
+            get => Get<double>(GUIStyleName.CellSpacingVertical);
+            set => Set<double>(GUIStyleName.CellSpacingVertical, value);
         }
         public (double, double) CellSpacing
         {

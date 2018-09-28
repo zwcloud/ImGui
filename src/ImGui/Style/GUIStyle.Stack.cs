@@ -109,7 +109,7 @@ namespace ImGui
 
         public void PushCellSpacing(bool isVertical, double spacing)
         {
-            var modifier = new StyleModifier(isVertical ? GUIStyleName.CellingSpacingVertical : GUIStyleName.CellingSpacingHorizontal, StyleType.@double, spacing);
+            var modifier = new StyleModifier(isVertical ? GUIStyleName.CellSpacingVertical : GUIStyleName.CellSpacingHorizontal, StyleType.@double, spacing);
             Push(modifier);
         }
 

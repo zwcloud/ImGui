@@ -241,13 +241,13 @@ namespace ImGui
 
         public double CellSpacingHorizontal
         {
-            get => Get<double>(GUIStyleName.CellingSpacingHorizontal);
-            set => Set<double>(GUIStyleName.CellingSpacingHorizontal, value);
+            get => Get<double>(GUIStyleName.CellSpacingHorizontal);
+            set => Set<double>(GUIStyleName.CellSpacingHorizontal, value);
         }
         public double CellSpacingVertical
         {
-            get => Get<double>(GUIStyleName.CellingSpacingVertical);
-            set => Set<double>(GUIStyleName.CellingSpacingVertical, value);
+            get => Get<double>(GUIStyleName.CellSpacingVertical);
+            set => Set<double>(GUIStyleName.CellSpacingVertical, value);
         }
         public (double, double) CellSpacing
         {
