@@ -7,7 +7,7 @@ using ImGui.GraphicsAbstraction;
 namespace ImGui.Rendering
 {
     [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(Name) +"}")]
-    internal class Node : IStyleRuleSet, IRect
+    internal class Node : IStyleRuleSet
     {
         /// <summary>
         /// identifier number of the node
