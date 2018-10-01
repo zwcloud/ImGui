@@ -5,7 +5,7 @@ namespace ImGui.GraphicsAbstraction
 {
     internal interface IPrimitiveRenderer
     {
-        void DrawPath(PathPrimitive primitive);
+        void DrawPath(PathPrimitive primitive, Vector offset);
 
         void DrawText(TextPrimitive primitive, Rect rect, StyleRuleSet style);
 

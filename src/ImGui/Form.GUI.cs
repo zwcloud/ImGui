@@ -115,7 +115,7 @@ namespace ImGui
             w.NewFrame(g);
 
             // Create implicit window - we will only render it if the user has added something to it.
-            GUI.Begin("Debug", ref this.debugWindowOpen, (70, 30), (400, 400), 0.8);
+            GUI.Begin("Debug", ref this.debugWindowOpen, (0, 0), (400, 400), 0.8);
         }
 
         internal void EndFrame()
@@ -180,14 +180,14 @@ namespace ImGui
             var openGLRenderer = (Win32OpenGLRenderer) renderer;//FIXME TEMP
             openGLRenderer.Clear(this.BackgroundColor);
 
-            bool DrawNode(Node node, MeshList meshList)
+            bool DrawNode(Node node, Vector offset, MeshList meshList)
             {
                 if (!node.ActiveInTree)
                 {
                     return false;
                 }
 
-                node.Draw(this.primitiveRenderer, meshList);
+                node.Draw(this.primitiveRenderer, offset, meshList);
                 return true;
             }
 
@@ -195,8 +195,8 @@ namespace ImGui
             {
                 if (!window.Active) continue;
 
-                window.NodeTreeRoot.Foreach(n => DrawNode(n, window.MeshList));
-                window.RenderTree.Foreach(n => DrawNode(n, window.MeshList));
+                window.RenderTree.Foreach(n => DrawNode(n, (Vector)window.Position, window.MeshList));
+                window.NodeTreeRoot.Foreach(n => DrawNode(n, (Vector)window.Position, window.MeshList));
 
                 //rebuild mesh buffer
                 window.MeshBuffer.Clear();
@@ -238,7 +238,7 @@ namespace ImGui
                 for (int i = 0; i < w.Windows.Count; i++)
                 {
                     var window = w.Windows[i];
-                    l.Msg("        [{0}]:{1}, active: {2}", i, window.Name, window.Active);
+                    l.Msg($"        [{i}]:{window.Name}, active: {window.Active}, rect: {window.Rect}");
                 }
             }
         }

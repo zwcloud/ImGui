@@ -440,7 +440,7 @@ namespace ImGui.GraphicsImplementation
 
         #endregion
 
-        public void DrawPath(PathPrimitive primitive)
+        public void DrawPath(PathPrimitive primitive, Vector offset)
         {
             foreach (var command in primitive.Path)
             {
@@ -449,13 +449,13 @@ namespace ImGui.GraphicsImplementation
                     case PathCommandType.PathMoveTo:
                     {
                         var cmd = (MoveToCommand)command;
-                        this.PathMoveTo(cmd.Point);
+                        this.PathMoveTo(cmd.Point+offset);
                         break;
                     }
                     case PathCommandType.PathLineTo:
                     {
                         var cmd = (LineToCommand)command;
-                        this.PathLineTo(cmd.Point);
+                        this.PathLineTo(cmd.Point+offset);
                         break;
                     }
                     case PathCommandType.PathCurveTo:
@@ -471,7 +471,7 @@ namespace ImGui.GraphicsImplementation
                     case PathCommandType.PathArc:
                     {
                         var cmd = (ArcCommand) command;
-                        this.PathArcFast(cmd.Center, cmd.Radius, cmd.Amin, cmd.Amax);
+                        this.PathArcFast(cmd.Center+offset, cmd.Radius, cmd.Amin, cmd.Amax);
                         break;
                     }
                     case PathCommandType.Stroke:

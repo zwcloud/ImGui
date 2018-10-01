@@ -94,10 +94,6 @@ namespace ImGui.Rendering
         {
             this.Rect = rect;
         }
-
-
-
-
         #region Layout
 
         public LayoutEntry LayoutEntry { get; private set; }
@@ -362,7 +358,7 @@ namespace ImGui.Rendering
 
         internal Primitive Primitive { get; set; }
 
-        internal bool UseBoxModel { get; set; }
+        internal bool UseBoxModel { get; set; } = false;
 
         public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
 
@@ -381,13 +377,15 @@ namespace ImGui.Rendering
             }
         }
 
+        public void Draw(IPrimitiveRenderer renderer, MeshList meshList) => Draw(renderer, Vector.Zero, meshList);
+
         /// <summary>
         /// Redraw the node's primitive.
         /// </summary>
         /// <param name="renderer"></param>
         /// <param name="meshList"></param>
         /// <remarks>A node can only have one single primitive.</remarks>
-        public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
+        public void Draw(IPrimitiveRenderer renderer, Vector offset, MeshList meshList)
         {
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
@@ -396,9 +394,10 @@ namespace ImGui.Rendering
             switch (this.Primitive)
             {
                 case null when !this.UseBoxModel:
-                return; //check render context for shape mesh
+                return;
                 case null:
                     {
+                        //check render context for shape mesh
                         if (this.RenderContext.shapeMesh == null)
                         {
                             this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
@@ -412,7 +411,7 @@ namespace ImGui.Rendering
 
                         //draw
                         r.SetShapeMesh(shapeMesh);
-                        renderer.DrawBoxModel(this.Rect, this.RuleSet);
+                        renderer.DrawBoxModel(Rect.Offset(this.Rect, offset), this.RuleSet);
                         r.SetShapeMesh(null);
 
                         //save to mesh list
@@ -438,7 +437,7 @@ namespace ImGui.Rendering
 
                         //draw
                         r.SetShapeMesh(shapeMesh);
-                        renderer.DrawPath(p);
+                        renderer.DrawPath(p, offset);
                         r.SetShapeMesh(null);
 
                         //save to mesh list
@@ -479,7 +478,7 @@ namespace ImGui.Rendering
                             //draw
                             r.SetShapeMesh(shapeMesh);
                             r.SetTextMesh(textMesh);
-                            renderer.DrawBoxModel(t, this.Rect, this.RuleSet);
+                            renderer.DrawBoxModel(t, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetShapeMesh(null);
                             r.SetTextMesh(null);
 
@@ -508,7 +507,7 @@ namespace ImGui.Rendering
 
                             //draw
                             r.SetTextMesh(textMesh);
-                            renderer.DrawText(t, this.Rect, this.RuleSet);
+                            renderer.DrawText(t, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetTextMesh(null);
 
                             //save to mesh list
@@ -549,7 +548,7 @@ namespace ImGui.Rendering
                             //draw
                             r.SetImageMesh(imageMesh);
                             r.SetShapeMesh(shapeMesh);
-                            renderer.DrawBoxModel(i, this.Rect, this.RuleSet);
+                            renderer.DrawBoxModel(i, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetShapeMesh(null);
                             r.SetImageMesh(null);
 
@@ -577,7 +576,7 @@ namespace ImGui.Rendering
                             imageMesh.Clear();
 
                             r.SetImageMesh(imageMesh);
-                            renderer.DrawImage(i, this.Rect, this.RuleSet);
+                            renderer.DrawImage(i, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetImageMesh(null);
 
                             //save to mesh list

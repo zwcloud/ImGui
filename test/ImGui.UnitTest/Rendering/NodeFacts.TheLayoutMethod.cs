@@ -372,7 +372,6 @@ namespace ImGui.UnitTest.Rendering
 
                 Util.DrawNode(a);
             }
-
         }
     }
 }

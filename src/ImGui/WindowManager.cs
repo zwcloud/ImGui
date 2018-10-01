@@ -176,10 +176,10 @@ namespace ImGui
                     if (!(window.Flags.HaveFlag(WindowFlags.NoScrollWithMouse)))
                     {
                         var newScrollY = window.Scroll.Y - Math.Sign(Mouse.Instance.MouseWheel) * 20/*scroll step*/;
-                        float window_rounding = (float)window.Style.Get<double>(GUIStyleName.WindowRounding);
-                        double resize_corner_size = Math.Max(window.Style.FontSize * 1.35, window_rounding + 1.0 + window.Style.FontSize * 0.2);
+                        float window_rounding = (float)window.WindowContainer.RuleSet.Get<double>(GUIStyleName.WindowRounding);
+                        double resize_corner_size = Math.Max(window.WindowContainer.RuleSet.FontSize * 1.35, window_rounding + 1.0 + window.WindowContainer.RuleSet.FontSize * 0.2);
                         var contentSize = window.ContentRect.Size;
-                        var vH = window.Rect.Height - window.TitleBarHeight - window.Style.BorderVertical - window.Style.PaddingVertical;
+                        var vH = window.Rect.Height - window.TitleBarHeight - window.WindowContainer.RuleSet.BorderVertical - window.WindowContainer.RuleSet.PaddingVertical;
                         var cH = contentSize.Height;
                         if(cH > vH)
                         {

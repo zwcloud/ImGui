@@ -83,7 +83,7 @@ namespace ImGui
                 // Note that if our window is collapsed we will end up with a null clipping rectangle which is the correct behavior.
                 Rect title_bar_rect = window.TitleBarRect;
                 const float border_size = 0;
-                var paddingHorizontal = window.Style.PaddingHorizontal;
+                var paddingHorizontal = window.WindowContainer.RuleSet.PaddingHorizontal;
                 // Force round to ensure that e.g. (int)(max.x-min.x) in user's render code produce correct result.
                 Rect clip_rect = new Rect(
                     new Point(Math.Floor(0.5f + title_bar_rect.Min.X + Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),

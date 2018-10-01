@@ -46,16 +46,6 @@ namespace ImGui
         public WindowFlags Flags;
 
         /// <summary>
-        /// Style
-        /// </summary>
-        public GUIStyle Style;
-
-        /// <summary>
-        /// Style of the title bar
-        /// </summary>
-        public GUIStyle TitleBarStyle;
-
-        /// <summary>
         /// Draw list
         /// </summary>
         public DrawList DrawList;
@@ -100,7 +90,7 @@ namespace ImGui
         private Node titleBarNode { get; }
         private Node titleBarTitleNode { get; }
         private Node ClientAreaBackgroundNode { get; }
-        private Node WindowContainer { get; }
+        internal Node WindowContainer { get; }
         private Node ResizeGripNode { get; set; }
 
         #endregion
@@ -120,7 +110,7 @@ namespace ImGui
             this.Flags = Flags;
 
             this.NodeTreeRoot = new Node(this.ID, "root");
-            this.NodeTreeRoot.AttachLayoutGroup(true);
+            this.NodeTreeRoot.Children = new List<Node>();
             this.RenderTree = new RenderTree(this.ID, position, size);
 
             this.DrawList = new DrawList();//DUMMY
@@ -128,62 +118,15 @@ namespace ImGui
             this.IDStack.Push(this.ID);
             this.MoveID = this.GetID("#MOVE");
 
-            #region Window styles
-            // window title bar styles
-            {
-                var style = new GUIStyle();
-                style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Active);
-                style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Disabled);
-                style.Set<double>(GUIStyleName.BorderTopLeftRadius, 3.0);
-                style.Set<double>(GUIStyleName.BorderTopRightRadius, 3.0);
-                style.Set(GUIStyleName.PaddingTop, 8.0);
-                style.Set(GUIStyleName.PaddingRight, 8.0);
-                style.Set(GUIStyleName.PaddingBottom, 8.0);
-                style.Set(GUIStyleName.PaddingLeft, 8.0);
-                style.Set(GUIStyleName.FontColor, Color.Black, GUIState.Normal);
-                style.Set(GUIStyleName.FontColor, Color.Rgb(153, 153, 153), GUIState.Active);
-                style.FontFamily = GUIStyle.Default.FontFamily;
-                style.FontSize = 12.0;
-                this.TitleBarStyle = style;
-            }
-
-            // window frame styles
-            {
-                var style = new GUIStyle();
-                style.Set(GUIStyleName.BorderTop, 1.0);
-                style.Set(GUIStyleName.BorderRight, 1.0);
-                style.Set(GUIStyleName.BorderBottom, 1.0);
-                style.Set(GUIStyleName.BorderLeft, 1.0);
-                style.Set(GUIStyleName.PaddingTop, 5.0);
-                style.Set(GUIStyleName.PaddingRight, 10.0);
-                style.Set(GUIStyleName.PaddingBottom, 5.0);
-                style.Set(GUIStyleName.PaddingLeft, 10.0);
-                style.Set(GUIStyleName.WindowBorderColor, Color.Rgb(255, 0, 0), GUIState.Normal);
-                style.Set(GUIStyleName.WindowBorderColor, Color.Rgb(0, 0, 255), GUIState.Active);
-                style.Set(GUIStyleName.WindowShadowColor, Color.Argb(100, 227, 227, 227));
-                style.Set(GUIStyleName.WindowShadowWidth, 15.0);
-                style.Set(GUIStyleName.BackgroundColor, Color.White);
-                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(75, 102, 102, 102));
-                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(150, 102, 102, 102), GUIState.Hover);
-                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(225, 102, 102, 102), GUIState.Active);
-                style.Set(GUIStyleName.WindowRounding, 20.0);
-                style.Set(GUIStyleName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
-                style.Set(GUIStyleName.ScrollBarBackgroundColor, Color.Rgb(240));
-                style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(205), GUIState.Normal);
-                style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(166), GUIState.Hover);
-                style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(96), GUIState.Active);
-                this.Style = style;
-            }
-            #endregion
-
             #region Window nodes
             
             {
                 var id = this.GetID("#window");
                 var windowContainer = new Node(id, "window");
-                windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)this.Size.Width).Height(this.Size.Height));
+                windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)size.Width));
                 windowContainer.UseBoxModel = true;
                 windowContainer.RuleSet.BackgroundColor = Color.White;
+                windowContainer.RuleSet.Border = (1, 1, 1, 1);
                 this.WindowContainer = windowContainer;
                 this.RenderTree.Root.AppendChild(windowContainer);
             }
@@ -195,8 +138,7 @@ namespace ImGui
                 titleBarContainer.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).Height(40));
                 titleBarContainer.UseBoxModel = true;
                 StyleRuleSetBuilder b = new StyleRuleSetBuilder(titleBarContainer);
-                b.Border(1)
-                    .Padding((top: 8, right: 8, bottom: 8, left: 8))
+                b.Padding((top: 8, right: 8, bottom: 8, left: 8))
                     .FontColor(Color.Black)
                     .FontSize(12)
                     .BackgroundColor(Color.White)
@@ -223,21 +165,20 @@ namespace ImGui
 
                 titleBarContainer.AppendChild(icon);
                 titleBarContainer.AppendChild(title);
-                titleBarContainer.AppendChild(closeButton);
+                //titleBarContainer.AppendChild(closeButton);
                 this.WindowContainer.AppendChild(titleBarContainer);
             }
 
             //client area background
             {
-                var node = new Node("#ClientArea_Background", this.ClientRect);
-                node.AttachLayoutGroup(true);
+                var node = new Node("#ClientArea_Background");
+                node.AttachLayoutGroup(true, GUILayout.Height((int)this.ClientRect.Height));
                 node.UseBoxModel = true;
                 this.ClientAreaBackgroundNode = node;
                 this.WindowContainer.AppendChild(node);
             }
 
             //resize grip (lasy-initialized)
-
 
             this.ShowWindowTitleBar(true);
             this.ShowWindowClientArea(!this.Collapsed);
@@ -301,7 +242,7 @@ namespace ImGui
 
             //update title bar
             var titleBarRect = this.TitleBarRect;
-            var windowRounding = (float) this.Style.Get<double>(GUIStyleName.WindowRounding);
+            var windowRounding = (float) this.WindowContainer.RuleSet.Get<double>(GUIStyleName.WindowRounding);
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
                 //text
@@ -313,13 +254,6 @@ namespace ImGui
                         textPrimitive.Text = this.Name;
                     }
                 }
-
-                //close button
-                if (this.CloseButton(this.GetID("#CLOSE"),
-                    new Rect(titleBarRect.TopRight + new Vector(-45, 0), titleBarRect.BottomRight)))
-                {
-                    open = false;
-                }
             }
 
             this.ShowWindowClientArea(!this.Collapsed);
@@ -327,11 +261,10 @@ namespace ImGui
             if (this.Collapsed)
             {
                 //TODO need to do something here?
-
             }
             else//show and update window client area
             {
-                if (this.ResizeGripNode == null)
+                if (!flags.HaveFlag(WindowFlags.NoResize) && this.ResizeGripNode == null)
                 {
                     var id = this.GetID("#RESIZE");
                     var node = new Node(id, "Window_ResizeGrip");
@@ -351,10 +284,10 @@ namespace ImGui
                         ButtonFlags.FlattenChilds);
                     resizeGripColor =
                         held
-                            ? this.Style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active)
+                            ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active)
                             : hovered
-                                ? this.Style.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover)
-                                : this.Style.Get<Color>(GUIStyleName.ResizeGripColor);
+                                ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover)
+                                : this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor);
 
                     if (hovered || held)
                     {
@@ -374,7 +307,7 @@ namespace ImGui
                         var contentSize = this.ContentRect.Size;
                         if (contentSize != Size.Zero)
                         {
-                            var vH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical - this.Style.PaddingVertical;
+                            var vH = this.Rect.Height - this.TitleBarHeight - this.WindowContainer.RuleSet.BorderVertical - this.WindowContainer.RuleSet.PaddingVertical;
                             var cH = contentSize.Height;
                             if (cH > vH)
                             {
@@ -386,29 +319,14 @@ namespace ImGui
                     }
                 }
 
-                //client area backgound
-                var backgroundColor = this.Style.BackgroundColor;
-                backgroundColor.A = backgroundAlpha;
-                if (backgroundColor.A > 0.0f)
-                {
-                    var node = this.ClientAreaBackgroundNode;
-                    var primitive = (PathPrimitive)node.Primitive;
-                    Debug.Assert(primitive != null);
-                    primitive.PathClear();
-                    primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
-                        this.Rect.BottomRight);
-                    primitive.PathFill(backgroundColor);
-                }
-
                 // Render resize grip
                 // (after the input handling so we don't have a frame of latency)
                 if (!flags.HaveFlag(WindowFlags.NoResize))
                 {
                     var br = this.Rect.BottomRight;
-                    var borderBottom = this.Style.BorderBottom;
-                    var borderRight = this.Style.BorderRight;
-                    var node = this.ResizeGripNode;
-                    var primitive = (PathPrimitive)node.Primitive;
+                    var borderBottom = this.WindowContainer.RuleSet.BorderBottom;
+                    var borderRight = this.WindowContainer.RuleSet.BorderRight;
+                    var primitive = (PathPrimitive)this.ResizeGripNode.Primitive;
                     primitive.PathClear();
                     primitive.PathLineTo(br + new Vector(-borderRight, -borderBottom));
                     primitive.PathLineTo(br + new Vector(-borderRight, -windowRounding));
@@ -441,7 +359,7 @@ namespace ImGui
                     return 0;
                 }
 
-                return this.TitleBarStyle.PaddingVertical + 30;
+                return this.titleBarNode.Height;
             }
         }
 
@@ -455,12 +373,12 @@ namespace ImGui
         /// </summary>
         /// //TODO consider scroll bar, which is not a part of the client area.
         public Rect ClientRect => new Rect(
-            x: this.Position.X + this.Style.BorderLeft + this.Style.PaddingLeft,
-            y: this.Position.Y + this.Style.BorderTop + this.Style.PaddingTop + this.TitleBarHeight +
-               this.Style.PaddingTop,
-            width: this.FullSize.Width - this.Style.BorderHorizontal - this.Style.PaddingHorizontal,
-            height: this.FullSize.Height - this.Style.BorderVertical - this.Style.PaddingVertical -
-                    this.TitleBarHeight - this.Style.PaddingTop);
+            x: this.Position.X + this.WindowContainer.RuleSet.BorderLeft + this.WindowContainer.RuleSet.PaddingLeft,
+            y: this.Position.Y + this.WindowContainer.RuleSet.BorderTop + this.WindowContainer.RuleSet.PaddingTop + this.TitleBarHeight +
+               this.WindowContainer.RuleSet.PaddingTop,
+            width: this.FullSize.Width - this.WindowContainer.RuleSet.BorderHorizontal - this.WindowContainer.RuleSet.PaddingHorizontal,
+            height: this.FullSize.Height - this.WindowContainer.RuleSet.BorderVertical - this.WindowContainer.RuleSet.PaddingVertical -
+                    this.TitleBarHeight - this.WindowContainer.RuleSet.PaddingTop);
 
         /// <summary>
         /// Gets or sets if the window is collapsed.
@@ -578,8 +496,6 @@ namespace ImGui
         /// Get the rect for an automatic-layout control
         /// </summary>
         /// <param name="id">id of the control</param>
-        /// <param name="style">style that will apply to requested rect</param>
-        /// <returns></returns>
         public Rect GetRect(int id)
         {
             var node = this.RenderTree.GetNodeById(id);

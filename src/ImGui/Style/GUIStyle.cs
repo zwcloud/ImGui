@@ -155,6 +155,10 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Hover }] = Color.Clear,
                 [new NameState { Name = GUIStyleName.BackgroundColor, State = GUIState.Active }] = Color.Clear,
 
+                [new NameState { Name = GUIStyleName.OutlineColor, State = GUIState.Normal }] = Color.Clear,
+                [new NameState { Name = GUIStyleName.OutlineColor, State = GUIState.Hover }] = Color.Clear,
+                [new NameState { Name = GUIStyleName.OutlineColor, State = GUIState.Active }] = Color.Clear,
+
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Normal }] = Color.Black,
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Hover }] = Color.Black,
                 [new NameState { Name = GUIStyleName.FontColor, State = GUIState.Active }] = Color.Black,

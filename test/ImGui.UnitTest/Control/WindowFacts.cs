@@ -13,12 +13,12 @@ namespace ImGui.UnitTest
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
 
-                var form = new MainForm(new Rect(320, 180, 300,400));
+                var form = new MainForm(new Rect(320, 180, 800,600));
                 bool open = true;
                 form.OnGUIAction = () =>
                 {
-                    GUI.Begin("test window", ref open);
-                    GUI.End();
+                    //GUI.Begin("test window", ref open);
+                    //GUI.End();
                 };
 
                 Application.Run(form);
