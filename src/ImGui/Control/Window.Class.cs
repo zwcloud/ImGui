@@ -89,7 +89,7 @@ namespace ImGui
         #region Window original sub nodes
         private Node titleBarNode { get; }
         private Node titleBarTitleNode { get; }
-        private Node ClientAreaBackgroundNode { get; }
+        private Node ClientAreaNode { get; }
         internal Node WindowContainer { get; }
         private Node ResizeGripNode { get; set; }
 
@@ -121,8 +121,7 @@ namespace ImGui
             #region Window nodes
             
             {
-                var id = this.GetID("#window");
-                var windowContainer = new Node(id, "window");
+                var windowContainer = new Node(this.GetID("window"),"window");
                 windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)size.Width));
                 windowContainer.UseBoxModel = true;
                 windowContainer.RuleSet.BackgroundColor = Color.White;
@@ -133,9 +132,9 @@ namespace ImGui
 
             //title bar
             {
-                var titleBarContainer = new Node(1, "titleBar");
+                var titleBarContainer = new Node(this.GetID("titleBar"),"title bar");
                 this.titleBarNode = titleBarContainer;
-                titleBarContainer.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).Height(40));
+                titleBarContainer.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).Height(this.TitleBarHeight));
                 titleBarContainer.UseBoxModel = true;
                 StyleRuleSetBuilder b = new StyleRuleSetBuilder(titleBarContainer);
                 b.Padding((top: 8, right: 8, bottom: 8, left: 8))
@@ -145,18 +144,18 @@ namespace ImGui
                     .AlignmentVertical(Alignment.Center)
                     .AlignmentHorizontal(Alignment.Start);
 
-                var icon = new Node(2, "icon");
+                var icon = new Node(this.GetID("icon"),"icon");
                 icon.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
                 icon.UseBoxModel = false;
                 icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
 
-                var title = new Node(3, "title");
+                var title = new Node(this.GetID("title"),"title");
                 title.AttachLayoutEntry(Size.Zero, GUILayout.Height(20));
                 title.UseBoxModel = false;
                 title.Primitive = new TextPrimitive(this.Name);
                 this.titleBarTitleNode = title;
 
-                var closeButton = new Node(4, "close button");
+                var closeButton = new Node(this.GetID("close button"),"close button");
                 closeButton.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
                 closeButton.UseBoxModel = false;
                 PathPrimitive path = new PathPrimitive();
@@ -169,12 +168,15 @@ namespace ImGui
                 this.WindowContainer.AppendChild(titleBarContainer);
             }
 
-            //client area background
+            //client area
             {
-                var node = new Node("#ClientArea_Background");
-                node.AttachLayoutGroup(true, GUILayout.Height((int)this.ClientRect.Height));
+                var node = new Node(this.GetID("client area"),"client area");
+                node.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).Height(
+                    this.FullSize.Height - this.TitleBarHeight - this.WindowContainer.RuleSet.BorderVertical
+                    - this.WindowContainer.RuleSet.PaddingVertical
+                    - this.WindowContainer.RuleSet.CellSpacingVertical));
                 node.UseBoxModel = true;
-                this.ClientAreaBackgroundNode = node;
+                this.ClientAreaNode = node;
                 this.WindowContainer.AppendChild(node);
             }
 
@@ -193,7 +195,7 @@ namespace ImGui
 
         public void ShowWindowClientArea(bool isShow)
         {
-            this.ClientAreaBackgroundNode.ActiveSelf = isShow;
+            this.ClientAreaNode.ActiveSelf = isShow;
         }
 
         public void FirstUpdate(string name, Size size, ref bool open, double backgroundAlpha,
@@ -359,7 +361,7 @@ namespace ImGui
                     return 0;
                 }
 
-                return this.titleBarNode.Height;
+                return 40;
             }
         }
 
@@ -513,7 +515,7 @@ namespace ImGui
             this.ContentRect = newContentRect;
 
             // apply window client area offset
-            rect.Offset((Vector)this.ClientRect.TopLeft);
+            rect.Offset((Vector)this.ClientAreaNode.Rect.Location);
             // apply scroll offset
             rect.Offset(-this.Scroll);
 

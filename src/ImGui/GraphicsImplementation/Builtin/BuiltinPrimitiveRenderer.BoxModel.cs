@@ -133,15 +133,15 @@ namespace ImGui.GraphicsImplementation
                     PathStroke(outlineColor, true, outlineWidth);
                 }
             }
-
+            
 #if DrawPaddingBox
             PathRect(ptl, pbr);
-            PathStroke(Color.ColorRgb(0, 100, 100), true, 1);
+            PathStroke(Color.Rgb(0, 100, 100), true, 1);
 #endif
 
 #if DrawContentBox
             PathRect(ctl, cbr);
-            PathStroke(Color.ColorRgb(100, 0, 100), true, 1);
+            PathStroke(Color.Rgb(100, 0, 100), true, 1);
 #endif
         }
 
@@ -284,12 +284,12 @@ namespace ImGui.GraphicsImplementation
 
 #if DrawPaddingBox
             PathRect(ptl, pbr);
-            PathStroke(Color.ColorRgb(0, 100, 100), true, 1);
+            PathStroke(Color.Rgb(0, 100, 100), true, 1);
 #endif
 
 #if DrawContentBox
             PathRect(ctl, cbr);
-            PathStroke(Color.ColorRgb(100, 0, 100), true, 1);
+            PathStroke(Color.Rgb(100, 0, 100), true, 1);
 #endif
         }
 
@@ -427,12 +427,12 @@ namespace ImGui.GraphicsImplementation
 
 #if DrawPaddingBox
             PathRect(ptl, pbr);
-            PathStroke(Color.ColorRgb(0, 100, 100), true, 1);
+            PathStroke(Color.Rgb(0, 100, 100), true, 1);
 #endif
 
 #if DrawContentBox
             PathRect(ctl, cbr);
-            PathStroke(Color.ColorRgb(100, 0, 100), true, 1);
+            PathStroke(Color.Rgb(100, 0, 100), true, 1);
 #endif
         }
     }
