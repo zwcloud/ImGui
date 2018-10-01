@@ -491,6 +491,7 @@ namespace ImGui.GraphicsImplementation
                 }
             }
         }
+        public void DrawPath(PathPrimitive primitive) => DrawPath(primitive, Vector.Zero);
 
         private bool CheckTextPrimitive(TextPrimitive primitive, StyleRuleSet style)
         {
