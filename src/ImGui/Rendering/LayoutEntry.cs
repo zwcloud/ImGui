@@ -69,7 +69,7 @@ namespace ImGui.Rendering
             {
                 if (unitPartWidth > 0)
                 {
-                    this.node.Rect.Width = unitPartWidth * this.node.RuleSet.HorizontalStretchFactor;
+                    this.node.Width = unitPartWidth * this.node.RuleSet.HorizontalStretchFactor;
                 }
                 else
                 {
@@ -78,11 +78,11 @@ namespace ImGui.Rendering
             }
             else if (this.node.RuleSet.IsFixedWidth)
             {
-                this.node.Rect.Width = this.node.RuleSet.MinWidth;
+                this.node.Width = this.node.RuleSet.MinWidth;
             }
             else
             {
-                this.node.Rect.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
+                this.node.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
             }
         }
 
@@ -92,8 +92,8 @@ namespace ImGui.Rendering
             {
                 if (unitPartHeight > 0)
                 {
-                    this.node.Rect.Height = unitPartHeight * this.node.RuleSet.VerticalStretchFactor;
-                    this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
+                    this.node.Height = unitPartHeight * this.node.RuleSet.VerticalStretchFactor;
+                    this.ContentHeight = this.node.Height - this.PaddingVertical - this.BorderVertical;
                 }
                 else
                 {
@@ -102,23 +102,23 @@ namespace ImGui.Rendering
             }
             else if (this.node.RuleSet.IsFixedHeight)
             {
-                this.node.Rect.Height = this.node.RuleSet.MinHeight;
-                this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
+                this.node.Height = this.node.RuleSet.MinHeight;
+                this.ContentHeight = this.node.Height - this.PaddingVertical - this.BorderVertical;
             }
             else
             {
-                this.node.Rect.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
+                this.node.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
             }
         }
 
         public virtual void SetX(double x)
         {
-            this.node.Rect.X = x;
+            this.node.X = x;
         }
 
         public virtual void SetY(double y)
         {
-            this.node.Rect.Y = y;
+            this.node.Y = y;
         }
 
         public double GetDefaultWidth()

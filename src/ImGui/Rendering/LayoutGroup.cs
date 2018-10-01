@@ -62,13 +62,13 @@ namespace ImGui.Rendering
             if (this.node.RuleSet.HorizontallyStretched)//stretched width
             {
                 // calculate the width
-                this.node.Rect.Width = unitPartWidth * this.node.RuleSet.HorizontalStretchFactor;
-                if (this.node.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
+                this.node.Width = unitPartWidth * this.node.RuleSet.HorizontalStretchFactor;
+                if (this.node.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
                 {
                     throw new LayoutException(
                         $"The width of Group<{this.node.Id}> is too small to hold any children.");
                 }
-                this.ContentWidth = this.node.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
+                this.ContentWidth = this.node.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
                 // calculate the width of children
                 this.CalcChildrenWidth();
@@ -76,13 +76,13 @@ namespace ImGui.Rendering
             else if (this.node.RuleSet.IsFixedWidth)//fixed width
             {
                 // calculate the width
-                this.node.Rect.Width = this.node.RuleSet.MinWidth;
+                this.node.Width = this.node.RuleSet.MinWidth;
 
-                if (this.node.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
+                if (this.node.Width - this.PaddingHorizontal - this.BorderHorizontal < 1)
                 {
                     throw new LayoutException($"The width of Group<{this.node.Id}> is too small to hold any children.");
                 }
-                this.ContentWidth = this.node.Rect.Width - this.PaddingHorizontal - this.BorderHorizontal;
+                this.ContentWidth = this.node.Width - this.PaddingHorizontal - this.BorderHorizontal;
 
                 // calculate the width of children
                 this.CalcChildrenWidth();
@@ -96,7 +96,7 @@ namespace ImGui.Rendering
                     foreach (var childNode in this.node.Children)
                     {
                         childNode.LayoutEntry.CalcWidth();
-                        temp = Math.Max(temp, childNode.Rect.Width);
+                        temp = Math.Max(temp, childNode.Width);
                     }
                     this.ContentWidth = temp;
                 }
@@ -106,12 +106,12 @@ namespace ImGui.Rendering
                     foreach (var entry in this.node.Children)
                     {
                         entry.LayoutEntry.CalcWidth();
-                        temp += entry.Rect.Width + this.node.RuleSet.CellSpacingHorizontal;
+                        temp += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
                     }
                     temp -= this.node.RuleSet.CellSpacingHorizontal;
                     this.ContentWidth = temp < 0 ? 0 : temp;
                 }
-                this.node.Rect.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
+                this.node.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
             }
         }
 
@@ -230,12 +230,12 @@ namespace ImGui.Rendering
             if (this.node.RuleSet.VerticallyStretched)
             {
                 // calculate the height
-                this.node.Rect.Height = unitPartHeight * this.node.RuleSet.VerticalStretchFactor;
-                if (this.node.Rect.Height - this.PaddingVertical - this.BorderVertical < 1)
+                this.node.Height = unitPartHeight * this.node.RuleSet.VerticalStretchFactor;
+                if (this.node.Height - this.PaddingVertical - this.BorderVertical < 1)
                 {
                     throw new LayoutException($"The height of Group<{this.node.Id}> is too small to hold any children.");
                 }
-                this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
+                this.ContentHeight = this.node.Height - this.PaddingVertical - this.BorderVertical;
 
                 // calculate the height of children
                 this.CalcChildrenHeight();
@@ -243,13 +243,13 @@ namespace ImGui.Rendering
             else if (this.node.RuleSet.IsFixedHeight)//fixed height
             {
                 // calculate the height
-                this.node.Rect.Height = this.node.RuleSet.MinHeight;
+                this.node.Height = this.node.RuleSet.MinHeight;
 
-                if (this.node.Rect.Height - this.PaddingVertical - this.BorderVertical < 1)
+                if (this.node.Height - this.PaddingVertical - this.BorderVertical < 1)
                 {
                     throw new LayoutException($"The height of Group<{this.node.Id}> is too small to hold any children.");
                 }
-                this.ContentHeight = this.node.Rect.Height - this.PaddingVertical - this.BorderVertical;
+                this.ContentHeight = this.node.Height - this.PaddingVertical - this.BorderVertical;
 
                 // calculate the height of children
                 this.CalcChildrenHeight();
@@ -262,7 +262,7 @@ namespace ImGui.Rendering
                     foreach (var childNode in this.node.Children)
                     {
                         childNode.LayoutEntry.CalcHeight();
-                        temp += childNode.Rect.Height + this.node.RuleSet.CellSpacingVertical;
+                        temp += childNode.Height + this.node.RuleSet.CellSpacingVertical;
                     }
                     temp -= this.node.RuleSet.CellSpacingVertical;
                     this.ContentHeight = temp < 0 ? 0 : temp;
@@ -274,11 +274,11 @@ namespace ImGui.Rendering
                     foreach (var entry in this.node.Children)
                     {
                         entry.LayoutEntry.CalcHeight();
-                        temp = Math.Max(temp, entry.Rect.Height);
+                        temp = Math.Max(temp, entry.Height);
                     }
                     this.ContentHeight = temp;
                 }
-                this.node.Rect.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
+                this.node.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
             }
         }
 
@@ -394,7 +394,7 @@ namespace ImGui.Rendering
 
         public override void SetX(double x)
         {
-            this.node.Rect.X = x;
+            this.node.X = x;
             if (this.IsVertical)
             {
                 var childX = 0d;
@@ -408,10 +408,10 @@ namespace ImGui.Rendering
                         case Alignment.Center:
                         case Alignment.SpaceAround:
                         case Alignment.SpaceBetween:
-                            childX = x + this.BorderLeft + this.PaddingLeft + (this.ContentWidth - entry.Rect.Width) / 2;
+                            childX = x + this.BorderLeft + this.PaddingLeft + (this.ContentWidth - entry.Width) / 2;
                             break;
                         case Alignment.End:
-                            childX = x + this.node.Rect.Width - this.BorderRight - this.PaddingRight - entry.Rect.Width;
+                            childX = x + this.node.Width - this.BorderRight - this.PaddingRight - entry.Width;
                             break;
                     }
 
@@ -426,8 +426,8 @@ namespace ImGui.Rendering
                 var childWidthWithoutCellSpcaing = 0d;
                 foreach (var entry in this.node.Children)
                 {
-                    childWidthWithCellSpcaing += entry.Rect.Width + this.node.RuleSet.CellSpacingHorizontal;
-                    childWidthWithoutCellSpcaing += entry.Rect.Width;
+                    childWidthWithCellSpcaing += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
+                    childWidthWithoutCellSpcaing += entry.Width;
                 }
                 childWidthWithCellSpcaing -= this.node.RuleSet.CellSpacingVertical;
 
@@ -440,7 +440,7 @@ namespace ImGui.Rendering
                         nextX = x + this.BorderLeft + this.PaddingLeft + (this.ContentWidth - childWidthWithCellSpcaing) / 2;
                         break;
                     case Alignment.End:
-                        nextX = x + this.node.Rect.Width - this.BorderRight - this.PaddingRight - childWidthWithCellSpcaing;
+                        nextX = x + this.node.Width - this.BorderRight - this.PaddingRight - childWidthWithCellSpcaing;
                         break;
                     case Alignment.SpaceAround:
                         nextX = x + this.BorderLeft + this.PaddingLeft +
@@ -461,13 +461,13 @@ namespace ImGui.Rendering
                         case Alignment.Start:
                         case Alignment.Center:
                         case Alignment.End:
-                            nextX += entry.Rect.Width + this.node.RuleSet.CellSpacingHorizontal;
+                            nextX += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
                             break;
                         case Alignment.SpaceAround:
-                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.node.Children.Count + 1);
+                            nextX += entry.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.node.Children.Count + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextX += entry.Rect.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.node.Children.Count - 1);
+                            nextX += entry.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.node.Children.Count - 1);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -478,7 +478,7 @@ namespace ImGui.Rendering
 
         public override void SetY(double y)
         {
-            this.node.Rect.Y = y;
+            this.node.Y = y;
             if (this.IsVertical)
             {
                 double nextY;
@@ -487,8 +487,8 @@ namespace ImGui.Rendering
                 var childHeightWithoutCellSpcaing = 0d;
                 foreach (var entry in this.node.Children)
                 {
-                    childHeightWithCellSpcaing += entry.Rect.Height + this.node.RuleSet.CellSpacingVertical;
-                    childHeightWithoutCellSpcaing += entry.Rect.Height;
+                    childHeightWithCellSpcaing += entry.Height + this.node.RuleSet.CellSpacingVertical;
+                    childHeightWithoutCellSpcaing += entry.Height;
                 }
                 childHeightWithCellSpcaing -= this.node.RuleSet.CellSpacingVertical;
 
@@ -501,7 +501,7 @@ namespace ImGui.Rendering
                         nextY = y + this.BorderTop + this.PaddingTop + (this.ContentHeight - childHeightWithCellSpcaing) / 2;
                         break;
                     case Alignment.End:
-                        nextY = y + this.node.Rect.Height - this.BorderBottom - this.PaddingBottom - childHeightWithCellSpcaing;
+                        nextY = y + this.node.Height - this.BorderBottom - this.PaddingBottom - childHeightWithCellSpcaing;
                         break;
                     case Alignment.SpaceAround:
                         nextY = y + this.BorderTop + this.PaddingTop +
@@ -522,13 +522,13 @@ namespace ImGui.Rendering
                         case Alignment.Start:
                         case Alignment.Center:
                         case Alignment.End:
-                            nextY += entry.Rect.Height + this.node.RuleSet.CellSpacingVertical;
+                            nextY += entry.Height + this.node.RuleSet.CellSpacingVertical;
                             break;
                         case Alignment.SpaceAround:
-                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.node.Children.Count + 1);
+                            nextY += entry.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.node.Children.Count + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextY += entry.Rect.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.node.Children.Count - 1);
+                            nextY += entry.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.node.Children.Count - 1);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -548,10 +548,10 @@ namespace ImGui.Rendering
                         case Alignment.Center:
                         case Alignment.SpaceAround:
                         case Alignment.SpaceBetween:
-                            childY = y + this.BorderTop + this.PaddingTop + (this.ContentHeight - entry.Rect.Height) / 2;
+                            childY = y + this.BorderTop + this.PaddingTop + (this.ContentHeight - entry.Height) / 2;
                             break;
                         case Alignment.End:
-                            childY += y + this.node.Rect.Height - this.BorderBottom - this.PaddingBottom - entry.Rect.Height;
+                            childY += y + this.node.Height - this.BorderBottom - this.PaddingBottom - entry.Height;
                             break;
                     }
 
