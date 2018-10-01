@@ -49,7 +49,7 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Create a manually positioned node.
+        /// Create a node.
         /// </summary>
         public Node(int id)
         {
@@ -57,20 +57,43 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Create a manually positioned node.
+        /// Create a node.
         /// </summary>
         public Node(int id, string name) : this(id)
         {
             this.Name = name;
         }
-        
+
         /// <summary>
-        /// Create a manually positioned node.
+        /// Create a node.
         /// </summary>
         public Node(int id, string name, Rect rect) : this(id, name)
         {
             this.Rect = rect;
         }
+
+        /// <summary>
+        /// Create a node.
+        /// </summary>
+        public Node(string name)
+        {
+            var idIndex = name.IndexOf('#');
+            if (idIndex < 0)
+            {
+                throw new ArgumentException("No id is specfied in the name.", nameof(name));
+            }
+            this.Id = name.Substring(idIndex).GetHashCode();
+            this.Name = name;
+        }
+
+        /// <summary>
+        /// Create a node.
+        /// </summary>
+        public Node(string name, Rect rect) : this(name)
+        {
+            this.Rect = rect;
+        }
+
 
 
 

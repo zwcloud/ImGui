@@ -60,6 +60,17 @@ namespace ImGui
                 rule.Value = value;
             }
         }
+        
+        public T Get<T>(GUIStyleName styleName, GUIState state)
+        {
+            var rule = this.GetRule<T>(styleName, state);
+            if (rule == null)
+            {
+                return GUIStyle.Default.Get<T>(styleName, this.currentState);
+            }
+
+            return rule.Value;
+        }
 
         public T Get<T>(GUIStyleName styleName)
         {

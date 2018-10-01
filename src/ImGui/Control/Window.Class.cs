@@ -97,11 +97,10 @@ namespace ImGui
         public MeshBuffer MeshBuffer { get; set; } = new MeshBuffer();
 
         #region Window original sub nodes
-
-        private Node TitleBarBackgroundNode { get; }
-        private Node TitleBarTextNode { get; }
+        private Node titleBarNode { get; }
+        private Node titleBarTitleNode { get; }
         private Node ClientAreaBackgroundNode { get; }
-        private Node WindowBorderNode { get; }
+        private Node WindowContainer { get; }
         private Node ResizeGripNode { get; set; }
 
         #endregion
@@ -121,6 +120,7 @@ namespace ImGui
             this.Flags = Flags;
 
             this.NodeTreeRoot = new Node(this.ID, "root");
+            this.NodeTreeRoot.AttachLayoutGroup(true);
             this.RenderTree = new RenderTree(this.ID, position, size);
 
             this.DrawList = new DrawList();//DUMMY
@@ -132,7 +132,6 @@ namespace ImGui
             // window title bar styles
             {
                 var style = new GUIStyle();
-                style.Set(GUIStyleName.BackgroundColor, Color.White);
                 style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Active);
                 style.Set(GUIStyleName.BackgroundColor, Color.White, GUIState.Disabled);
                 style.Set<double>(GUIStyleName.BorderTopLeftRadius, 3.0);
@@ -178,54 +177,67 @@ namespace ImGui
             #endregion
 
             #region Window nodes
-            //title bar background
+            
             {
-                var id = this.GetID("TitleBar_Background");
-                Node node = new Node(id, "TitleBar_Background", this.TitleBarRect);
-                var primitive = new PathPrimitive();
-                primitive.PathRect(this.TitleBarRect);
-                primitive.PathFill(this.TitleBarStyle.BackgroundColor);
-                node.Primitive = primitive;
-                this.TitleBarBackgroundNode = node;
-                this.NodeTreeRoot.AppendChild(node);
+                var id = this.GetID("#window");
+                var windowContainer = new Node(id, "window");
+                windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)this.Size.Width).Height(this.Size.Height));
+                windowContainer.UseBoxModel = true;
+                windowContainer.RuleSet.BackgroundColor = Color.White;
+                this.WindowContainer = windowContainer;
+                this.RenderTree.Root.AppendChild(windowContainer);
             }
 
-            //title bar text
+            //title bar
             {
-                var id = this.GetID("TitleBar_Text");
-                var node = new Node(id, "TitleBar_Text", this.TitleBarRect);
-                var primitive = new TextPrimitive(this.Name);
-                node.Primitive = primitive;
-                this.TitleBarTextNode = node;
-                this.NodeTreeRoot.AppendChild(node);
+                var titleBarContainer = new Node(1, "titleBar");
+                this.titleBarNode = titleBarContainer;
+                titleBarContainer.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).Height(40));
+                titleBarContainer.UseBoxModel = true;
+                StyleRuleSetBuilder b = new StyleRuleSetBuilder(titleBarContainer);
+                b.Border(1)
+                    .Padding((top: 8, right: 8, bottom: 8, left: 8))
+                    .FontColor(Color.Black)
+                    .FontSize(12)
+                    .BackgroundColor(Color.White)
+                    .AlignmentVertical(Alignment.Center)
+                    .AlignmentHorizontal(Alignment.Start);
+
+                var icon = new Node(2, "icon");
+                icon.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                icon.UseBoxModel = false;
+                icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
+
+                var title = new Node(3, "title");
+                title.AttachLayoutEntry(Size.Zero, GUILayout.Height(20));
+                title.UseBoxModel = false;
+                title.Primitive = new TextPrimitive(this.Name);
+                this.titleBarTitleNode = title;
+
+                var closeButton = new Node(4, "close button");
+                closeButton.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                closeButton.UseBoxModel = false;
+                PathPrimitive path = new PathPrimitive();
+                path.PathRect(new Rect(0, 0, 20, 20));
+                closeButton.Primitive = path;
+
+                titleBarContainer.AppendChild(icon);
+                titleBarContainer.AppendChild(title);
+                titleBarContainer.AppendChild(closeButton);
+                this.WindowContainer.AppendChild(titleBarContainer);
             }
 
             //client area background
             {
-                var id = this.GetID("ClientArea_Background");
-                var node = new Node(id, "ClientArea_Background", this.ClientRect);
-                var primitive = new PathPrimitive();
-                primitive.PathRect(this.Position + new Vector(0, this.TitleBarHeight),
-                    this.Rect.BottomRight);
-                primitive.PathFill(this.Style.BackgroundColor);
-                node.Primitive = primitive;
+                var node = new Node("#ClientArea_Background", this.ClientRect);
+                node.AttachLayoutGroup(true);
+                node.UseBoxModel = true;
                 this.ClientAreaBackgroundNode = node;
-                this.NodeTreeRoot.AppendChild(node);
+                this.WindowContainer.AppendChild(node);
             }
 
             //resize grip (lasy-initialized)
 
-            //window border
-            {
-                var id = this.GetID("Window_Border");
-                var node = new Node(id, "Window_Border", this.ClientRect);
-                var primitive = new PathPrimitive();
-                primitive.PathRect(this.Rect);//FIXME this is incorrect, box-model should be applied instead
-                primitive.PathStroke(this.Style.BorderTop, this.Style.BorderTopColor);//TEMP states and box-model should be taken into consideration
-                node.Primitive = primitive;
-                this.WindowBorderNode = node;
-                this.NodeTreeRoot.AppendChild(node);
-            }
 
             this.ShowWindowTitleBar(true);
             this.ShowWindowClientArea(!this.Collapsed);
@@ -234,8 +246,8 @@ namespace ImGui
 
         public void ShowWindowTitleBar(bool isShow)
         {
-            this.TitleBarBackgroundNode.ActiveSelf = isShow;
-            this.TitleBarTextNode.ActiveSelf = isShow;
+            this.titleBarNode.ActiveSelf = isShow;
+            this.titleBarNode.ActiveSelf = isShow;
         }
 
         public void ShowWindowClientArea(bool isShow)
@@ -288,32 +300,14 @@ namespace ImGui
             }
 
             //update title bar
-            var titleBarStyle = this.TitleBarStyle;
             var titleBarRect = this.TitleBarRect;
             var windowRounding = (float) this.Style.Get<double>(GUIStyleName.WindowRounding);
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
-                //background
-                {
-                    var node = this.TitleBarBackgroundNode;
-                    var fillColor = w.FocusedWindow == this
-                        ? titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor, GUIState.Active)
-                        : titleBarStyle.Get<Color>(GUIStyleName.BackgroundColor);
-
-                    var primitive = (PathPrimitive)node.Primitive;
-                    Debug.Assert(primitive != null);
-                    primitive.PathClear();
-                    primitive.PathRect(titleBarRect);
-                    primitive.PathFill(fillColor);
-                }
-
                 //text
                 {
-                    var node = this.TitleBarTextNode;
-                    node.Rect = titleBarRect;
                     // title text
-                    var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
-                    var textPrimitive = (TextPrimitive)node.Primitive;
+                    var textPrimitive = (TextPrimitive)this.titleBarTitleNode.Primitive;
                     if (textPrimitive.Text != this.Name)
                     {
                         textPrimitive.Text = this.Name;
@@ -422,78 +416,7 @@ namespace ImGui
                     primitive.PathFill(resizeGripColor);
                 }
 
-                // Scroll bar
-                if (flags.HaveFlag(WindowFlags.VerticalScrollbar))
-                {
-                    //get content size without clip
-                    var contentPosition = this.ContentRect.TopLeft;
-                    var contentSize = this.ContentRect.Size;
-                    if (contentSize != Size.Zero)
-                    {
-                        var id = this.GetID("#SCROLLY");
-
-                        var scrollBarWidth = this.Style.Get<double>(GUIStyleName.ScrollBarWidth);
-                        var scrollTopLeft = new Point(this.Rect.Right - scrollBarWidth - this.Style.BorderRight - this.Style.PaddingRight, this.Rect.Top + this.TitleBarHeight + this.Style.BorderTop + this.Style.PaddingTop);
-                        var sH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical - this.Style.PaddingVertical
-                                 + (flags.HaveFlag(WindowFlags.NoResize) ? 0 : -windowRounding);
-                        var vH = this.Rect.Height - this.TitleBarHeight - this.Style.BorderVertical - this.Style.PaddingVertical;
-                        var scrollBottomRight = scrollTopLeft + new Vector(scrollBarWidth, sH);
-                        var bgRect = new Rect(scrollTopLeft, scrollBottomRight);
-
-                        var cH = contentSize.Height;
-                        var top = this.Scroll.Y * sH / cH;
-                        var height = sH * vH / cH;
-
-                        if (height < sH)
-                        {
-                            // handle mouse click/drag
-                            var held = false;
-                            var hovered = false;
-                            var previouslyHeld = g.ActiveId == id;
-                            GUIBehavior.ButtonBehavior(bgRect, id, out hovered, out held);
-                            if (held)
-                            {
-                                top = Mouse.Instance.Position.Y - bgRect.Y - 0.5 * height;
-                                top = MathEx.Clamp(top, 0, sH - height);
-                                var targetScrollY = top * cH / sH;
-                                this.SetWindowScrollY(targetScrollY);
-                            }
-
-                            var scrollButtonTopLeft = scrollTopLeft + new Vector(0, top);
-                            var scrllButtonBottomRight = scrollButtonTopLeft + new Vector(scrollBarWidth, height);
-                            var buttonRect = new Rect(scrollButtonTopLeft, scrllButtonBottomRight);
-
-                            //Draw vertical scroll bar and button
-                            {
-                                var bgColor = this.Style.Get<Color>(GUIStyleName.ScrollBarBackgroundColor);
-                                var buttonColor = this.Style.Get<Color>(GUIStyleName.ScrollBarButtonColor,
-                                    held ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal);
-                                //DrawList.AddRectFilled(bgRect.TopLeft, buttonRect.TopRight, bgColor);
-                                //DrawList.AddRectFilled(buttonRect.TopLeft, buttonRect.BottomRight, buttonColor);
-                                //DrawList.AddRectFilled(buttonRect.BottomLeft, bgRect.BottomRight, bgColor);
-                            }
-                        }
-                        else
-                        {
-                            var bgColor = this.Style.Get<Color>(GUIStyleName.ScrollBarBackgroundColor);
-                            //DrawList.AddRectFilled(bgRect.TopLeft, bgRect.BottomRight, bgColor);
-                        }
-                    }
-                }
-
                 this.ContentRect = Rect.Zero;
-            }
-
-            //window border
-            {
-                var state = w.FocusedWindow == this ? GUIState.Active : GUIState.Normal;
-                var node = this.WindowBorderNode;
-                var lineWidth = this.Style.BorderTop;//TMEP box model
-                var lineColor = this.Style.Get<Color>(GUIStyleName.WindowBorderColor, state);
-                var pathPrimitive = (PathPrimitive)node.Primitive;
-                pathPrimitive.PathClear();
-                pathPrimitive.PathRect(this.Rect);
-                pathPrimitive.PathStroke(lineWidth, lineColor);
             }
 
             // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()

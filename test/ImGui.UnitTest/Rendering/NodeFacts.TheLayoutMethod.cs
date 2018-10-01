@@ -346,6 +346,33 @@ namespace ImGui.UnitTest.Rendering
             }
 
 
+            [Fact]
+            public void LayoutNodeWithInactiveChildren()
+            {
+                Node a = new Node(1);
+                a.AttachLayoutGroup(true, GUILayout.Width(500).Height(500));
+                Assert.True(a.RuleSet.IsFixedWidth);
+                Assert.True(a.RuleSet.IsFixedHeight);
+
+                Node b = new Node(2);
+                b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Assert.True(b.RuleSet.IsStretchedWidth);
+                Assert.True(b.RuleSet.IsStretchedHeight);
+                b.ActiveSelf = false;
+
+                Node c = new Node(3);
+                c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Assert.True(c.RuleSet.IsStretchedWidth);
+                Assert.True(c.RuleSet.IsStretchedHeight);
+
+                a.AppendChild(b);
+                a.AppendChild(c);
+
+                a.Layout();
+
+                Util.DrawNode(a);
+            }
+
         }
     }
 }
