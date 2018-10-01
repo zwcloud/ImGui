@@ -90,10 +90,13 @@ namespace ImGui.UnitTest.Rendering
             }
         }
 
-        [Fact]
-        public void DrawText()
+        [Theory]
+        [InlineData("Hello你好こんにちは")]
+        [InlineData("textwithoutspace")]
+        [InlineData("text with space")]
+        public void DrawText(string text)
         {
-            TextPrimitive primitive = new TextPrimitive("Hello你好こんにちは");
+            TextPrimitive primitive = new TextPrimitive(text);
 
             BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             var textMesh = new TextMesh();
