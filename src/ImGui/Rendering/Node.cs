@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
@@ -6,8 +7,25 @@ using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
-    [DebuggerDisplay("{"+ nameof(ActiveSelf) +"?\"[*]\":\"[ ]\"}"+"#{" + nameof(Id) + "} " + "{" + nameof(Name) +"}")]
-    internal class Node : IStyleRuleSet
+    internal interface ILayoutEntry
+    {
+        bool ActiveSelf { get; }
+        double X { get; set; }
+        double Y { get; set; }
+        double Width { get; set; }
+        double Height { get; set; }
+        StyleRuleSet RuleSet { get; }
+        LayoutEntry LayoutEntry { get; }
+        LayoutGroup LayoutGroup { get; }
+    }
+
+    internal interface ILayoutGroup : ILayoutEntry, IEnumerable<ILayoutEntry>
+    {
+        int ChildCount { get; }
+    }
+
+    [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}")]
+    internal class Node : IStyleRuleSet, ILayoutGroup
     {
         /// <summary>
         /// identifier number of the node
@@ -145,7 +163,19 @@ namespace ImGui.Rendering
         public Node Parent { get; set; }
 
         public List<Node> Children { get; set; }
-        
+
+        public int ChildCount => Children.Count;
+
+        public IEnumerator<ILayoutEntry> GetEnumerator()
+        {
+            return this.Children.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
         internal bool ActiveInTree
         {
             get
@@ -175,7 +205,7 @@ namespace ImGui.Rendering
             }
         }
 
-        internal bool ActiveSelf
+        public bool ActiveSelf
         {
             get => this.activeSelf;
             set
@@ -251,13 +281,13 @@ namespace ImGui.Rendering
                 switch (nodeType)
                 {
                     case NodeType.Plain:
-                        throw new LayoutException("It's not allowed to append a Plain node to a node");
+                    throw new LayoutException("It's not allowed to append a Plain node to a node");
                     case NodeType.LayoutEntry:
                     case NodeType.LayoutGroup:
-                        this.LayoutGroup.OnAddLayoutEntry(node);
-                        break;
+                    this.LayoutGroup.OnAddLayoutEntry(node);
+                    break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException();
                 }
             }
 
@@ -332,7 +362,7 @@ namespace ImGui.Rendering
             foreach (var node in this.Children)
             {
                 var continueWithChildren = func(node);
-                if (continueWithChildren && node.Children!=null && node.Children.Count != 0)
+                if (continueWithChildren && node.Children != null && node.Children.Count != 0)
                 {
                     node.Foreach(func);
                 }
@@ -383,74 +413,34 @@ namespace ImGui.Rendering
             switch (this.Primitive)
             {
                 case null when !this.UseBoxModel:
-                    return; //check render context for shape mesh
+                return; //check render context for shape mesh
                 case null:
-                {
-                    if (this.RenderContext.shapeMesh == null)
                     {
-                        this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                        this.RenderContext.shapeMesh.Node = this;
-                    }
-
-                    //clear shape mesh
-                    var shapeMesh = this.RenderContext.shapeMesh;
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-
-                    //draw
-                    r.SetShapeMesh(shapeMesh);
-                    renderer.DrawBoxModel(this.Rect, this.RuleSet);
-                    r.SetShapeMesh(null);
-
-                    //save to mesh list
-                    if (!meshList.ShapeMeshes.Contains(shapeMesh))
-                    {
-                        meshList.ShapeMeshes.AddLast(shapeMesh);
-                    }
-                }
-                break;
-                case PathPrimitive p:
-                {
-                    //check render context for shape mesh
-                    if (this.RenderContext.shapeMesh == null)
-                    {
-                        this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                        this.RenderContext.shapeMesh.Node = this;
-                    }
-
-                    //get shape mesh
-                    var shapeMesh = this.RenderContext.shapeMesh;
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-
-                    //draw
-                    r.SetShapeMesh(shapeMesh);
-                    renderer.DrawPath(p);
-                    r.SetShapeMesh(null);
-
-                    //save to mesh list
-                    var foundNode = meshList.ShapeMeshes.Find(shapeMesh);
-                    if (foundNode == null)
-                    {
-                        meshList.ShapeMeshes.AddLast(shapeMesh);
-                    }
-                }
-                break;
-                case TextPrimitive t:
-                {
-                    if (this.UseBoxModel)
-                    {
-                        //check render context for textMesh
-                        if (this.RenderContext.textMesh == null)
+                        if (this.RenderContext.shapeMesh == null)
                         {
-                            this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
-                            this.RenderContext.textMesh.Node = this;
+                            this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                            this.RenderContext.shapeMesh.Node = this;
                         }
 
-                        //get text mesh
-                        var textMesh = this.RenderContext.textMesh;
-                        textMesh.Clear();
+                        //clear shape mesh
+                        var shapeMesh = this.RenderContext.shapeMesh;
+                        shapeMesh.Clear();
+                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
 
+                        //draw
+                        r.SetShapeMesh(shapeMesh);
+                        renderer.DrawBoxModel(this.Rect, this.RuleSet);
+                        r.SetShapeMesh(null);
+
+                        //save to mesh list
+                        if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                        {
+                            meshList.ShapeMeshes.AddLast(shapeMesh);
+                        }
+                    }
+                    break;
+                case PathPrimitive p:
+                    {
                         //check render context for shape mesh
                         if (this.RenderContext.shapeMesh == null)
                         {
@@ -465,118 +455,158 @@ namespace ImGui.Rendering
 
                         //draw
                         r.SetShapeMesh(shapeMesh);
-                        r.SetTextMesh(textMesh);
-                        renderer.DrawBoxModel(t, this.Rect, this.RuleSet);
+                        renderer.DrawPath(p);
                         r.SetShapeMesh(null);
-                        r.SetTextMesh(null);
 
                         //save to mesh list
-                        if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                        var foundNode = meshList.ShapeMeshes.Find(shapeMesh);
+                        if (foundNode == null)
                         {
                             meshList.ShapeMeshes.AddLast(shapeMesh);
                         }
-                        if (!meshList.TextMeshes.Contains(textMesh))
-                        {
-                            meshList.TextMeshes.AddLast(textMesh);
-                        }
                     }
-                    else
+                    break;
+                case TextPrimitive t:
                     {
-                        //check render context for textMesh
-                        if (this.RenderContext.textMesh == null)
+                        if (this.UseBoxModel)
                         {
-                            this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
-                            this.RenderContext.textMesh.Node = this;
+                            //check render context for textMesh
+                            if (this.RenderContext.textMesh == null)
+                            {
+                                this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
+                                this.RenderContext.textMesh.Node = this;
+                            }
+
+                            //get text mesh
+                            var textMesh = this.RenderContext.textMesh;
+                            textMesh.Clear();
+
+                            //check render context for shape mesh
+                            if (this.RenderContext.shapeMesh == null)
+                            {
+                                this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                                this.RenderContext.shapeMesh.Node = this;
+                            }
+
+                            //get shape mesh
+                            var shapeMesh = this.RenderContext.shapeMesh;
+                            shapeMesh.Clear();
+                            shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+
+                            //draw
+                            r.SetShapeMesh(shapeMesh);
+                            r.SetTextMesh(textMesh);
+                            renderer.DrawBoxModel(t, this.Rect, this.RuleSet);
+                            r.SetShapeMesh(null);
+                            r.SetTextMesh(null);
+
+                            //save to mesh list
+                            if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                            {
+                                meshList.ShapeMeshes.AddLast(shapeMesh);
+                            }
+                            if (!meshList.TextMeshes.Contains(textMesh))
+                            {
+                                meshList.TextMeshes.AddLast(textMesh);
+                            }
                         }
-
-                        //clear text mesh
-                        var textMesh = this.RenderContext.textMesh;
-                        textMesh.Clear();
-
-                        //draw
-                        r.SetTextMesh(textMesh);
-                        renderer.DrawText(t, this.Rect, this.RuleSet);
-                        r.SetTextMesh(null);
-
-                        //save to mesh list
-                        if (!meshList.TextMeshes.Contains(textMesh))
+                        else
                         {
-                            meshList.TextMeshes.AddLast(textMesh);
+                            //check render context for textMesh
+                            if (this.RenderContext.textMesh == null)
+                            {
+                                this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
+                                this.RenderContext.textMesh.Node = this;
+                            }
+
+                            //clear text mesh
+                            var textMesh = this.RenderContext.textMesh;
+                            textMesh.Clear();
+
+                            //draw
+                            r.SetTextMesh(textMesh);
+                            renderer.DrawText(t, this.Rect, this.RuleSet);
+                            r.SetTextMesh(null);
+
+                            //save to mesh list
+                            if (!meshList.TextMeshes.Contains(textMesh))
+                            {
+                                meshList.TextMeshes.AddLast(textMesh);
+                            }
                         }
                     }
-                }
-                break;
+                    break;
                 case ImagePrimitive i:
-                {
-                    if (this.UseBoxModel)
                     {
-                        //check render context for image mesh
-                        if (this.RenderContext.imageMesh == null)
+                        if (this.UseBoxModel)
                         {
-                            this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
-                            this.RenderContext.imageMesh.Node = this;
+                            //check render context for image mesh
+                            if (this.RenderContext.imageMesh == null)
+                            {
+                                this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
+                                this.RenderContext.imageMesh.Node = this;
+                            }
+
+                            //clear image mesh
+                            var imageMesh = this.RenderContext.imageMesh;
+                            imageMesh.Clear();
+
+                            //check render context for shape mesh
+                            if (this.RenderContext.shapeMesh == null)
+                            {
+                                this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
+                                this.RenderContext.shapeMesh.Node = this;
+                            }
+
+                            //clear shape mesh
+                            var shapeMesh = this.RenderContext.shapeMesh;
+                            shapeMesh.Clear();
+                            shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+
+                            //draw
+                            r.SetImageMesh(imageMesh);
+                            r.SetShapeMesh(shapeMesh);
+                            renderer.DrawBoxModel(i, this.Rect, this.RuleSet);
+                            r.SetShapeMesh(null);
+                            r.SetImageMesh(null);
+
+                            //save to mesh list
+                            if (!meshList.ShapeMeshes.Contains(shapeMesh))
+                            {
+                                meshList.ShapeMeshes.AddLast(shapeMesh);
+                            }
+                            if (!meshList.ImageMeshes.Contains(imageMesh))
+                            {
+                                meshList.ImageMeshes.AddLast(imageMesh);
+                            }
                         }
-
-                        //clear image mesh
-                        var imageMesh = this.RenderContext.imageMesh;
-                        imageMesh.Clear();
-
-                        //check render context for shape mesh
-                        if (this.RenderContext.shapeMesh == null)
+                        else
                         {
-                            this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                            this.RenderContext.shapeMesh.Node = this;
-                        }
+                            //check render context for image mesh
+                            if (this.RenderContext.imageMesh == null)
+                            {
+                                this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
+                                this.RenderContext.imageMesh.Node = this;
+                            }
 
-                        //clear shape mesh
-                        var shapeMesh = this.RenderContext.shapeMesh;
-                        shapeMesh.Clear();
-                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                            //clear image mesh
+                            var imageMesh = this.RenderContext.imageMesh;
+                            imageMesh.Clear();
 
-                        //draw
-                        r.SetImageMesh(imageMesh);
-                        r.SetShapeMesh(shapeMesh);
-                        renderer.DrawBoxModel(i, this.Rect, this.RuleSet);
-                        r.SetShapeMesh(null);
-                        r.SetImageMesh(null);
+                            r.SetImageMesh(imageMesh);
+                            renderer.DrawImage(i, this.Rect, this.RuleSet);
+                            r.SetImageMesh(null);
 
-                        //save to mesh list
-                        if (!meshList.ShapeMeshes.Contains(shapeMesh))
-                        {
-                            meshList.ShapeMeshes.AddLast(shapeMesh);
-                        }
-                        if (!meshList.ImageMeshes.Contains(imageMesh))
-                        {
-                            meshList.ImageMeshes.AddLast(imageMesh);
+                            //save to mesh list
+                            if (!meshList.ImageMeshes.Contains(imageMesh))
+                            {
+                                meshList.ImageMeshes.AddLast(imageMesh);
+                            }
                         }
                     }
-                    else
-                    {
-                        //check render context for image mesh
-                        if (this.RenderContext.imageMesh == null)
-                        {
-                            this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
-                            this.RenderContext.imageMesh.Node = this;
-                        }
-
-                        //clear image mesh
-                        var imageMesh = this.RenderContext.imageMesh;
-                        imageMesh.Clear();
-
-                        r.SetImageMesh(imageMesh);
-                        renderer.DrawImage(i, this.Rect, this.RuleSet);
-                        r.SetImageMesh(null);
-
-                        //save to mesh list
-                        if (!meshList.ImageMeshes.Contains(imageMesh))
-                        {
-                            meshList.ImageMeshes.AddLast(imageMesh);
-                        }
-                    }
-                }
-                break;
+                    break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
         }
 

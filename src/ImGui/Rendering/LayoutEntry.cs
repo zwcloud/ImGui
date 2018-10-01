@@ -5,7 +5,7 @@ namespace ImGui.Rendering
 {
     internal class LayoutEntry
     {
-        protected Node node;
+        protected ILayoutEntry node;
 
         /// <summary>
         /// exact content width, externally pre-calculated from content and style
@@ -31,7 +31,7 @@ namespace ImGui.Rendering
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
 
-        public LayoutEntry(Node node, Size contentSize)
+        public LayoutEntry(ILayoutEntry node, Size contentSize)
         {
             this.node = node;
 
