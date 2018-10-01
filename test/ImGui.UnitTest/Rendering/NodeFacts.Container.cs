@@ -160,15 +160,29 @@ namespace ImGui.UnitTest.Rendering
                             icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
 
                             title = new Node(3, "title");
-                            title.AttachLayoutEntry(Size.Zero, GUILayout.Height(20));
+                            var titleTextSize = GUIStyle.Default.CalcSize("title", GUIState.Normal);//TODO consider this
+                            title.AttachLayoutEntry(titleTextSize, GUILayout.Height(20).ExpandWidth(true));
                             title.UseBoxModel = false;
                             title.Primitive = new TextPrimitive("title");
 
                             closeButton = new Node(4, "close button");
-                            closeButton.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                            closeButton.AttachLayoutEntry(new Size(20, 20));
                             closeButton.UseBoxModel = false;
                             PathPrimitive path = new PathPrimitive();
                             path.PathRect(new Rect(0, 0, 20, 20));
+                            path.PathFill(Color.Black);
+                            //path.PathClear();
+
+                            //path.PathMoveTo((0, 0));
+                            //path.PathLineTo((20,20));
+                            //path.PathStroke(1, Color.Black);
+                            //path.PathClear();
+                            //
+                            //path.PathMoveTo((0, 20));
+                            //path.PathLineTo((20,0));
+                            //path.PathStroke(1, Color.Black);
+                            //path.PathClear();
+
                             closeButton.Primitive = path;
 
                             container.AppendChild(icon);

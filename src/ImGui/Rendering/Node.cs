@@ -437,7 +437,7 @@ namespace ImGui.Rendering
 
                         //draw
                         r.SetShapeMesh(shapeMesh);
-                        renderer.DrawPath(p, offset);
+                        renderer.DrawPath(p, (Vector)this.Rect.Location);
                         r.SetShapeMesh(null);
 
                         //save to mesh list
