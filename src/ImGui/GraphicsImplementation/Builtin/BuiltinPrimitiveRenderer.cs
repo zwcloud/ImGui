@@ -568,11 +568,6 @@ namespace ImGui.GraphicsImplementation
 
                 foreach (var character in primitive.Text)
                 {
-                    if (char.IsWhiteSpace(character))
-                    {
-                        continue;
-                    }
-
                     Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
                     Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
                     var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
@@ -603,10 +598,6 @@ namespace ImGui.GraphicsImplementation
             // get glyph data from typeface
             foreach (var character in primitive.Text)
             {
-                if (char.IsWhiteSpace(character))
-                {
-                    continue;
-                }
                 index++;
                 var glyphData = primitive.Glyphs[index];
                 Vector glyphOffset = primitive.Offsets[index];
