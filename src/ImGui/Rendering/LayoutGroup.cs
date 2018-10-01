@@ -96,10 +96,14 @@ namespace ImGui.Rendering
                 {
                     var temp = 0d;
                     // get the max width of children
-                    foreach (var childNode in this.group)
+                    foreach (var entry in this.group)
                     {
-                        childNode.LayoutEntry.CalcWidth();
-                        temp = Math.Max(temp, childNode.Width);
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        entry.LayoutEntry.CalcWidth();
+                        temp = Math.Max(temp, entry.Width);
                     }
                     this.ContentWidth = temp;
                 }
@@ -108,6 +112,10 @@ namespace ImGui.Rendering
                     var temp = 0d;
                     foreach (var entry in this.group)
                     {
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
                         entry.LayoutEntry.CalcWidth();
                         temp += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
                     }
@@ -122,18 +130,22 @@ namespace ImGui.Rendering
         {
             if (this.IsVertical) //vertical group
             {
-                foreach (var childNode in this.group)
+                foreach (var entry in this.group)
                 {
-                    if (childNode.RuleSet.HorizontallyStretched)
+                    if (!entry.ActiveSelf)
                     {
-                        childNode.LayoutEntry.CalcWidth(this.ContentWidth);
+                        continue;
+                    }
+                    if (entry.RuleSet.HorizontallyStretched)
+                    {
+                        entry.LayoutEntry.CalcWidth(this.ContentWidth);
                         //the unitPartWidth
                         //(actually every entry will have this width, because entry.HorizontalStretchFactor is always 1 in this case. See `LayoutGroup.Add`.)
                         //for stretched children is the content-box width of the group
                     }
                     else
                     {
-                        childNode.LayoutEntry.CalcWidth();
+                        entry.LayoutEntry.CalcWidth();
                     }
                 }
             }
@@ -143,6 +155,22 @@ namespace ImGui.Rendering
                 // calculate the width of fixed-size children
 
                 var childCount = this.group.ChildCount;
+
+                //only count active children
+                foreach (var entry in this.group)
+                {
+                    if (!entry.ActiveSelf)
+                    {
+                        childCount--;
+                    }
+                }
+
+                //no child, do nothing
+                if (childCount <= 0)
+                {
+                    return;
+                }
+
                 var cellSpacingWidth = this.node.RuleSet.CellSpacingHorizontal * (childCount - 1);
                 if(cellSpacingWidth >= this.ContentWidth)
                 {
@@ -154,21 +182,25 @@ namespace ImGui.Rendering
 
                 double minWidthOfEntries = 0;
                 double minStretchedWidth = 0;
-                foreach (var childNode in this.group)
+                foreach (var entry in this.group)
                 {
-                    if (childNode.RuleSet.HorizontallyStretched)
+                    if (!entry.ActiveSelf)
                     {
-                        var defaultWidth = childNode.LayoutEntry.GetDefaultWidth();
+                        continue;
+                    }
+                    if (entry.RuleSet.HorizontallyStretched)
+                    {
+                        var defaultWidth = entry.LayoutEntry.GetDefaultWidth();
                         minWidthOfEntries += defaultWidth;
                         minStretchedWidth += defaultWidth;
                     }
-                    else if(childNode.RuleSet.IsFixedWidth)
+                    else if(entry.RuleSet.IsFixedWidth)
                     {
-                        minWidthOfEntries += childNode.RuleSet.MinWidth;
+                        minWidthOfEntries += entry.RuleSet.MinWidth;
                     }
                     else
                     {
-                        minWidthOfEntries += childNode.LayoutEntry.GetDefaultWidth();
+                        minWidthOfEntries += entry.LayoutEntry.GetDefaultWidth();
                     }
                 }
 
@@ -177,6 +209,10 @@ namespace ImGui.Rendering
                     var factor = 0;
                     foreach (var entry in this.group)
                     {
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
                         if (entry.RuleSet.HorizontallyStretched)
                         {
                             factor += entry.RuleSet.HorizontalStretchFactor;
@@ -184,29 +220,37 @@ namespace ImGui.Rendering
                     }
                     var unit = minStretchedWidth / factor;
                     // change all HorizontallyStretched entries to fixed width
-                    foreach (var childNode in this.group)
+                    foreach (var entry in this.group)
                     {
-                        if (childNode.RuleSet.HorizontallyStretched)
+                        if (!entry.ActiveSelf)
                         {
-                            childNode.RuleSet.MinWidth = childNode.RuleSet.MaxWidth = unit * childNode.RuleSet.HorizontalStretchFactor;
-                            childNode.RuleSet.HorizontalStretchFactor = 0;
+                            continue;
+                        }
+                        if (entry.RuleSet.HorizontallyStretched)
+                        {
+                            entry.RuleSet.MinWidth = entry.RuleSet.MaxWidth = unit * entry.RuleSet.HorizontalStretchFactor;
+                            entry.RuleSet.HorizontalStretchFactor = 0;
                         }
 
-                        childNode.LayoutEntry.CalcWidth();
+                        entry.LayoutEntry.CalcWidth();
                     }
                 }
                 else
                 {
                     var factor = 0;
-                    foreach (var childNode in this.group)
+                    foreach (var entry in this.group)
                     {
-                        if (childNode.RuleSet.HorizontallyStretched)
+                        if (!entry.ActiveSelf)
                         {
-                            factor += childNode.RuleSet.HorizontalStretchFactor;
+                            continue;
+                        }
+                        if (entry.RuleSet.HorizontallyStretched)
+                        {
+                            factor += entry.RuleSet.HorizontalStretchFactor;
                         }
                         else
                         {
-                            childNode.LayoutEntry.CalcWidth();
+                            entry.LayoutEntry.CalcWidth();
                         }
                     }
 
@@ -215,11 +259,15 @@ namespace ImGui.Rendering
                         var stretchedWidth = widthWithoutCellSpacing - minWidthOfEntries + minStretchedWidth;
                         var unit = stretchedWidth / factor;
                         // calculate the width of stretched children
-                        foreach (var childNode in this.group)
+                        foreach (var entry in this.group)
                         {
-                            if (childNode.RuleSet.HorizontallyStretched)
+                            if (!entry.ActiveSelf)
                             {
-                                childNode.LayoutEntry.CalcWidth(unit);
+                                continue;
+                            }
+                            if (entry.RuleSet.HorizontallyStretched)
+                            {
+                                entry.LayoutEntry.CalcWidth(unit);
                             }
                         }
                     }
@@ -262,10 +310,14 @@ namespace ImGui.Rendering
                 if (this.IsVertical) // vertical group
                 {
                     var temp = 0d;
-                    foreach (var childNode in this.group)
+                    foreach (var entry in this.group)
                     {
-                        childNode.LayoutEntry.CalcHeight();
-                        temp += childNode.Height + this.node.RuleSet.CellSpacingVertical;
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        entry.LayoutEntry.CalcHeight();
+                        temp += entry.Height + this.node.RuleSet.CellSpacingVertical;
                     }
                     temp -= this.node.RuleSet.CellSpacingVertical;
                     this.ContentHeight = temp < 0 ? 0 : temp;
@@ -276,6 +328,10 @@ namespace ImGui.Rendering
                     // get the max height of children
                     foreach (var entry in this.group)
                     {
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
                         entry.LayoutEntry.CalcHeight();
                         temp = Math.Max(temp, entry.Height);
                     }
@@ -293,6 +349,22 @@ namespace ImGui.Rendering
                 // calculate the height of fixed-size children
 
                 var childCount = this.group.ChildCount;
+                
+                //only count active children
+                foreach (var entry in this.group)
+                {
+                    if (!entry.ActiveSelf)
+                    {
+                        childCount--;
+                    }
+                }
+
+                //no child, do nothing
+                if (childCount <= 0)
+                {
+                    return;
+                }
+
                 var cellSpacingHeight = (childCount - 1) * this.node.RuleSet.CellSpacingVertical;
                 if(cellSpacingHeight >= this.ContentWidth)
                 {
@@ -306,6 +378,10 @@ namespace ImGui.Rendering
                 double minStretchedHeight = 0;
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     if (entry.RuleSet.VerticallyStretched)
                     {
                         var defaultHeight = entry.LayoutEntry.GetDefaultHeight();
@@ -327,6 +403,10 @@ namespace ImGui.Rendering
                     var factor = 0;
                     foreach (var entry in this.group)
                     {
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
                         if (entry.RuleSet.VerticallyStretched)
                         {
                             factor += entry.RuleSet.VerticalStretchFactor;
@@ -336,6 +416,10 @@ namespace ImGui.Rendering
                     // change all VerticallyStretched entries to fixed height
                     foreach (var entry in this.group)
                     {
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
                         if (entry.RuleSet.VerticallyStretched)
                         {
                             entry.RuleSet.MinHeight = entry.RuleSet.MaxHeight = unit * entry.RuleSet.VerticalStretchFactor;
@@ -350,6 +434,10 @@ namespace ImGui.Rendering
                     var factor = 0;
                     foreach (var entry in this.group)
                     {
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
                         if (entry.RuleSet.VerticallyStretched)
                         {
                             factor += entry.RuleSet.VerticalStretchFactor;
@@ -367,6 +455,10 @@ namespace ImGui.Rendering
                         // calculate the height of stretched children
                         foreach (var entry in this.group)
                         {
+                            if (!entry.ActiveSelf)
+                            {
+                                continue;
+                            }
                             if (entry.RuleSet.VerticallyStretched)
                             {
                                 entry.LayoutEntry.CalcHeight(unit);
@@ -380,6 +472,10 @@ namespace ImGui.Rendering
             {
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     if (entry.RuleSet.VerticallyStretched)
                     {
                         entry.LayoutEntry.CalcHeight(this.ContentHeight);
@@ -403,6 +499,10 @@ namespace ImGui.Rendering
                 var childX = 0d;
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     switch (this.node.RuleSet.AlignmentHorizontal)
                     {
                         case Alignment.Start:
@@ -429,6 +529,10 @@ namespace ImGui.Rendering
                 var childWidthWithoutCellSpcaing = 0d;
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     childWidthWithCellSpcaing += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
                     childWidthWithoutCellSpcaing += entry.Width;
                 }
@@ -458,6 +562,10 @@ namespace ImGui.Rendering
 
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     entry.LayoutEntry.SetX(nextX);
                     switch (this.node.RuleSet.AlignmentHorizontal)
                     {
@@ -490,6 +598,10 @@ namespace ImGui.Rendering
                 var childHeightWithoutCellSpcaing = 0d;
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     childHeightWithCellSpcaing += entry.Height + this.node.RuleSet.CellSpacingVertical;
                     childHeightWithoutCellSpcaing += entry.Height;
                 }
@@ -519,6 +631,10 @@ namespace ImGui.Rendering
 
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     entry.LayoutEntry.SetY(nextY);
                     switch (this.node.RuleSet.AlignmentVertical)
                     {
@@ -543,6 +659,10 @@ namespace ImGui.Rendering
                 var childY = 0d;
                 foreach (var entry in this.group)
                 {
+                    if (!entry.ActiveSelf)
+                    {
+                        continue;
+                    }
                     switch (this.node.RuleSet.AlignmentVertical)
                     {
                         case Alignment.Start:

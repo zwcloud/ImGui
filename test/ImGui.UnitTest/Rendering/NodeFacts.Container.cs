@@ -296,7 +296,7 @@ namespace ImGui.UnitTest.Rendering
                             Application.Quit();
                         }
                         
-                        if (Keyboard.Instance.KeyDown(Key.Space))
+                        if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
                             clientArea.ActiveSelf = !clientArea.ActiveSelf;
                         }
