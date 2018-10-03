@@ -263,7 +263,15 @@ namespace ImGui.Rendering
                     throw new LayoutException("It's not allowed to append a Plain node to a node");
                     case NodeType.LayoutEntry:
                     case NodeType.LayoutGroup:
-                    this.LayoutGroup.OnAddLayoutEntry(node);
+                        if (this.RuleSet.IsDefaultWidth && node.RuleSet.IsStretchedWidth)
+                        {
+                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized node");
+                        }
+                        if (this.RuleSet.IsDefaultHeight && node.RuleSet.IsStretchedHeight)
+                        {
+                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized node");
+                        }
+                        this.LayoutGroup.OnAddLayoutEntry(node);
                     break;
                     default:
                     throw new ArgumentOutOfRangeException();

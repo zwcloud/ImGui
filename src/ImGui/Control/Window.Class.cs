@@ -119,7 +119,7 @@ namespace ImGui
             this.MoveID = this.GetID("#MOVE");
 
             #region Window nodes
-            
+
             {
                 var windowContainer = new Node(this.GetID("window"),"window");
                 windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)size.Width));
