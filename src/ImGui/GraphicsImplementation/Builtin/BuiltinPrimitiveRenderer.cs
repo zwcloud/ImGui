@@ -621,16 +621,17 @@ namespace ImGui.GraphicsImplementation
         public void DrawImage(ImagePrimitive primitive, Rect rect, StyleRuleSet style)
         {
             Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
-            
-            //BUG The texture is not cached!
-            var texture = new OSImplentation.Windows.OpenGLTexture();
-            texture.LoadImage(primitive.Image.Data, primitive.Image.Width, primitive.Image.Height);
+
+            if(primitive.Texture == null)
+            {
+                primitive.SendToGPU();
+            }
 
             //TODO check if we need to add a new draw command
             //add a new draw command
             DrawCommand cmd = new DrawCommand();
             cmd.ClipRect = Rect.Big;
-            cmd.TextureData = texture;
+            cmd.TextureData = primitive.Texture;
             this.ImageMesh.CommandBuffer.Add(cmd);
 
             //construct and merge the mesh of this Path into ShapeMesh
