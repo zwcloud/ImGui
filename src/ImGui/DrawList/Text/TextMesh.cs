@@ -87,7 +87,7 @@ namespace ImGui
         }
 
         //FIXME use the same parameter order as Mesh.PrimReserve
-        public void PrimReserve(int vtxCount, int idxCount)
+        public void PrimReserve(int idxCount, int vtxCount)
         {
             if (vtxCount == 0)
             {

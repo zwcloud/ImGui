@@ -25,7 +25,7 @@ namespace ImGui.UnitTest.DrawList
 
                 var meshToAppend = new TextMesh();
                 meshToAppend.Commands.Add(new DrawCommand { ElemCount = elementCount1 });
-                meshToAppend.PrimReserve(3, 6);
+                meshToAppend.PrimReserve(6, 3);
                 meshToAppend.AppendIndex(0);
                 meshToAppend.AppendIndex(1);
                 meshToAppend.AppendIndex(2);
