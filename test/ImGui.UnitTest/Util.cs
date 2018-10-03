@@ -141,6 +141,17 @@ namespace ImGui.UnitTest
                         context.CurveTo(cmd.ControlPoint0.ToPointD(), cmd.ControlPoint1.ToPointD(), cmd.EndPoint.ToPointD());
                         break;
                     }
+                    case PathCommandType.PathArc:
+                    {
+                        var cmd = (ArcCommand)command;
+                        var xc = cmd.Center.x;
+                        var yc = cmd.Center.y;
+                        var r = cmd.Radius;
+                        var angle1 = cmd.Amin * Math.PI / 6;
+                        var angle2 = cmd.Amax * Math.PI / 6;
+                        context.Arc(xc, yc, r, angle1, angle2);
+                        break;
+                    }
                     case PathCommandType.PathClosePath:
                     {
                         context.ClosePath();
@@ -208,6 +219,17 @@ namespace ImGui.UnitTest
                         updateMinMax(c0);
                         updateMinMax(c1);
                         updateMinMax(end);
+                        break;
+                    }
+                    case PathCommandType.PathArc:
+                    {
+                        var cmd = (ArcCommand)command;
+                        var c0 = cmd.Center;
+                        var v = new Vector(cmd.Radius, cmd.Radius);
+                        var minPoint = c0 - v;
+                        var maxPoint = c0 + v;
+                        updateMinMax(minPoint);
+                        updateMinMax(maxPoint);
                         break;
                     }
                     case PathCommandType.PathClosePath:
