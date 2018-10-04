@@ -122,8 +122,7 @@ namespace ImGui
 
             {
                 var windowContainer = new Node(this.GetID("window"),"window");
-                windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)size.Width).Height(size.Height));
-                windowContainer.UseBoxModel = true;
+                this.WindowContainer = windowContainer;
 
                 var style = windowContainer.RuleSet;
                 style.BackgroundColor = Color.White;
@@ -160,7 +159,13 @@ namespace ImGui
                 style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(166), GUIState.Hover);
                 style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(96), GUIState.Active);
 
-                this.WindowContainer = windowContainer;
+                var windowStyleOptions = GUILayout.Width(this.FullSize.Width).Height(
+                    this.Collapsed ? this.CollapsedHeight : this.FullSize.Height
+                    );
+                windowContainer.AttachLayoutGroup(true, windowStyleOptions);
+                windowContainer.UseBoxModel = true;
+
+
                 this.RenderTree.Root.AppendChild(windowContainer);
             }
 
@@ -227,6 +232,14 @@ namespace ImGui
         public void ShowWindowClientArea(bool isShow)
         {
             this.ClientAreaNode.ActiveSelf = isShow;
+            if (!isShow)
+            {
+                this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Height(this.CollapsedHeight));
+            }
+            else
+            {
+                this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Height(this.FullSize.Height));
+            }
         }
 
         public void FirstUpdate(string name, Size size, ref bool open, double backgroundAlpha,
@@ -416,7 +429,11 @@ namespace ImGui
         /// <summary>
         /// Gets or sets if the window is collapsed.
         /// </summary>
-        public bool Collapsed { get; set; } = true;//FIXME TEMP collapsed
+        public bool Collapsed { get; set; } = true;
+
+        public double CollapsedHeight => this.TitleBarHeight
+            + this.WindowContainer.RuleSet.BorderVertical
+            + this.WindowContainer.RuleSet.PaddingVertical;
 
         /// <summary>
         /// Gets or sets if the window is active
