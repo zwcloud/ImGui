@@ -372,6 +372,26 @@ namespace ImGui.UnitTest.Rendering
 
                 Util.DrawNode(a);
             }
+
+            [Fact]
+            public void LayoutDynamicSizedNode()
+            {
+                Node a = new Node(1);
+                a.AttachLayoutGroup(true, GUILayout.Width(500).Height(400));
+                Assert.True(a.RuleSet.IsFixedWidth);
+                Assert.True(a.RuleSet.IsFixedHeight);
+                a.Layout();
+                Assert.Equal(500, a.Rect.Width);
+                Assert.Equal(400, a.Rect.Height);
+                a.RuleSet.ApplyOptions(GUILayout.Width(200));
+                a.Layout();
+                Assert.Equal(200, a.Rect.Width);
+                a.RuleSet.ApplyOptions(GUILayout.Height(200));
+                a.Layout();
+                Assert.Equal(200, a.Rect.Height);
+                Util.DrawNode(a);
+            }
+
         }
     }
 }

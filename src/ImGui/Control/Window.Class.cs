@@ -122,10 +122,44 @@ namespace ImGui
 
             {
                 var windowContainer = new Node(this.GetID("window"),"window");
-                windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)size.Width));
+                windowContainer.AttachLayoutGroup(true, GUILayout.Width((int)size.Width).Height(size.Height));
                 windowContainer.UseBoxModel = true;
-                windowContainer.RuleSet.BackgroundColor = Color.White;
-                windowContainer.RuleSet.Border = (1, 1, 1, 1);
+
+                var style = windowContainer.RuleSet;
+                style.BackgroundColor = Color.White;
+                style.Border = (1, 1, 1, 1);
+                style.BorderColor = (Color.Black, Color.Black, Color.Black, Color.Black);
+                style.Set(GUIStyleName.BorderTopColor, Color.Blue, GUIState.Active);
+                style.Set(GUIStyleName.BorderRightColor, Color.Blue, GUIState.Active);
+                style.Set(GUIStyleName.BorderBottomColor, Color.Blue, GUIState.Active);
+                style.Set(GUIStyleName.BorderLeftColor, Color.Blue, GUIState.Active);
+                style.Set(GUIStyleName.BorderTopColor, Color.Gray, GUIState.Hover);
+                style.Set(GUIStyleName.BorderRightColor, Color.Gray, GUIState.Hover);
+                style.Set(GUIStyleName.BorderBottomColor, Color.Gray, GUIState.Hover);
+                style.Set(GUIStyleName.BorderLeftColor, Color.Gray, GUIState.Hover);
+                style.Set(GUIStyleName.BorderTop, 1.0);
+                style.Set(GUIStyleName.BorderRight, 1.0);
+                style.Set(GUIStyleName.BorderBottom, 1.0);
+                style.Set(GUIStyleName.BorderLeft, 1.0);
+                style.Set(GUIStyleName.PaddingTop, 5.0);
+                style.Set(GUIStyleName.PaddingRight, 10.0);
+                style.Set(GUIStyleName.PaddingBottom, 5.0);
+                style.Set(GUIStyleName.PaddingLeft, 10.0);
+                style.Set(GUIStyleName.WindowBorderColor, Color.Rgb(255, 0, 0), GUIState.Normal);
+                style.Set(GUIStyleName.WindowBorderColor, Color.Rgb(0, 0, 255), GUIState.Active);
+                style.Set(GUIStyleName.WindowShadowColor, Color.Argb(100, 227, 227, 227));
+                style.Set(GUIStyleName.WindowShadowWidth, 15.0);
+                style.Set(GUIStyleName.BackgroundColor, Color.White);
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(75, 102, 102, 102));
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(150, 102, 102, 102), GUIState.Hover);
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(225, 102, 102, 102), GUIState.Active);
+                style.Set(GUIStyleName.WindowRounding, 20.0);
+                style.Set(GUIStyleName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
+                style.Set(GUIStyleName.ScrollBarBackgroundColor, Color.Rgb(240));
+                style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(205), GUIState.Normal);
+                style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(166), GUIState.Hover);
+                style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(96), GUIState.Active);
+
                 this.WindowContainer = windowContainer;
                 this.RenderTree.Root.AppendChild(windowContainer);
             }
@@ -171,10 +205,7 @@ namespace ImGui
             //client area
             {
                 var node = new Node(this.GetID("client area"),"client area");
-                node.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).Height(
-                    this.FullSize.Height - this.TitleBarHeight - this.WindowContainer.RuleSet.BorderVertical
-                    - this.WindowContainer.RuleSet.PaddingVertical
-                    - this.WindowContainer.RuleSet.CellSpacingVertical));
+                node.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
                 node.UseBoxModel = true;
                 this.ClientAreaNode = node;
                 this.WindowContainer.AppendChild(node);
@@ -492,6 +523,8 @@ namespace ImGui
             }
 
             this.FullSize = new_size;
+            this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Width(new_size.Width));
+            this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Height(new_size.Height));
         }
 
         /// <summary>

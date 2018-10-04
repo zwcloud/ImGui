@@ -60,7 +60,21 @@ namespace ImGui
                 rule.Value = value;
             }
         }
-        
+
+        public void Set<T>(GUIStyleName styleName, T value, GUIState state)
+        {
+            var rule = this.GetRule<T>(styleName, state);
+            if (rule == null)
+            {
+                rule = new StyleRule<T>(styleName, value, state);
+                this.AppendRule(rule);
+            }
+            else
+            {
+                rule.Value = value;
+            }
+        }
+
         public T Get<T>(GUIStyleName styleName, GUIState state)
         {
             var rule = this.GetRule<T>(styleName, state);

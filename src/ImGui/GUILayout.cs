@@ -149,14 +149,14 @@ namespace ImGui
         /// </summary>
         /// <param name="width">width value</param>
         /// <returns>A <see cref="LayoutOption"/> that will set the width of a control/group.</returns>
-        public static LayoutOptions Width(int width) => new LayoutOptions().Width(width);
+        public static LayoutOptions Width(double width) => new LayoutOptions().Width(width);
 
         /// <summary>
         /// Set the height of a control.
         /// </summary>
         /// <param name="height">height value</param>
         /// <returns>A <see cref="LayoutOption"/> that will set the height of a control/group.</returns>
-        public static LayoutOptions Height(int height) => new LayoutOptions().Height(height);
+        public static LayoutOptions Height(double height) => new LayoutOptions().Height(height);
 
         /// <summary>
         /// Set whether the width of a control should be expanded to occupy as much space as possible.
