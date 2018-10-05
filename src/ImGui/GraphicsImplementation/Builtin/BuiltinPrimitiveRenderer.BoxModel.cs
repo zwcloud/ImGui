@@ -49,7 +49,7 @@ namespace ImGui.GraphicsImplementation
             if (gradient == Gradient.None)
             {
                 var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                var borderRounding = style.Get<int>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
+                var borderRounding = style.Get<double>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
                 this.PathRect(paddingBoxRect, (float)borderRounding);
                 this.PathFill(bgColor);
             }
@@ -186,7 +186,7 @@ namespace ImGui.GraphicsImplementation
             if (gradient == Gradient.None)
             {
                 var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                var borderRounding = style.Get<int>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
+                var borderRounding = style.Get<double>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
                 this.PathRect(paddingBoxRect, (float)borderRounding);
                 this.PathFill(bgColor);
             }
@@ -334,7 +334,7 @@ namespace ImGui.GraphicsImplementation
             if (gradient == Gradient.None)
             {
                 var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                var borderRounding = style.Get<int>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
+                var borderRounding = style.Get<double>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
                 this.PathRect(paddingBoxRect, (float)borderRounding);
                 this.PathFill(bgColor);
             }

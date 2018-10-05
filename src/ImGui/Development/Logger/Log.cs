@@ -9,7 +9,7 @@ namespace ImGui
 
         public static bool Enabled { get; set; } = false;
 
-        public static bool LogStatus { get; set; } = true;
+        public static bool LogStatus { get; set; } = false;
 
         public static void Init(ILogger logger)
         {

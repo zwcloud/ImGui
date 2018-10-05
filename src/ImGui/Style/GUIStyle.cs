@@ -295,8 +295,7 @@ namespace ImGui
                 }
             }
 
-            Log.Warning("Cannot find the style<{0},{1}>", styleName.ToString(), state.ToString());
-            return default(T);//still not found, get defalut value of that types //FIXME may we should throw an exception instead?
+            throw new InvalidOperationException($"Cannot find the style<{styleName},{state}>");
         }
 
         public void Set<T>(GUIStyleName styleName, T value, GUIState state = GUIState.Normal)

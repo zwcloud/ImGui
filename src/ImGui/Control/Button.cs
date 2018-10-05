@@ -68,11 +68,12 @@ namespace ImGui
             {
                 //create button node
                 node = new Node(id, $"Button<{text}>");
-                container.AppendChild(node);
                 node.AttachLayoutEntry();
+                container.AppendChild(node);
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
                 node.Primitive = new TextPrimitive(text);
             }
+            node.RuleSet.ApplyOptions(options);
 
             // rect
             //************* rect got is incorrect
