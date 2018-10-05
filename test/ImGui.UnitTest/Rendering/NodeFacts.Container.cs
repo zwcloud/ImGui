@@ -157,13 +157,15 @@ namespace ImGui.UnitTest.Rendering
                                 .AlignmentHorizontal(Alignment.Center);
 
                             icon = new Node(2, "icon");
-                            icon.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                            icon.AttachLayoutEntry(new Size(20, 20));
+                            icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                             icon.UseBoxModel = false;
                             icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
 
                             title = new Node(3, "title");
                             var titleTextSize = GUIStyle.Default.CalcSize("title", GUIState.Normal);//TODO consider this
-                            title.AttachLayoutEntry(titleTextSize, GUILayout.Height(20).ExpandWidth(true));
+                            title.AttachLayoutEntry(titleTextSize);
+                            title.RuleSet.ApplyOptions(GUILayout.Height(20).ExpandWidth(true));
                             title.UseBoxModel = false;
                             title.Primitive = new TextPrimitive("title");
 
@@ -272,17 +274,20 @@ namespace ImGui.UnitTest.Rendering
                         .AlignmentHorizontal(Alignment.Start);
 
                     var icon = new Node(2, "#icon");
-                    icon.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                    icon.AttachLayoutEntry(new Size(20, 20));
+                    icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                     icon.UseBoxModel = false;
                     icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
 
                     var title = new Node(3, "#title");
-                    title.AttachLayoutEntry(Size.Zero, GUILayout.Height(20));
+                    title.AttachLayoutEntry(Size.Zero);
+                    title.RuleSet.ApplyOptions(GUILayout.Height(20));
                     title.UseBoxModel = false;
                     title.Primitive = new TextPrimitive("The Window Title");
 
                     var closeButton = new Node(4, "#close button");
-                    closeButton.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                    closeButton.AttachLayoutEntry(new Size(20, 20));
+                    closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                     closeButton.UseBoxModel = false;
                     PathPrimitive path = new PathPrimitive();
                     path.PathRect(new Rect(0, 0, 20, 20));

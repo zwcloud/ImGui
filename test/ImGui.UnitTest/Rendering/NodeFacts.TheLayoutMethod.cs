@@ -58,21 +58,21 @@ namespace ImGui.UnitTest.Rendering
 
                 // layer 2
                 Node group2 = new Node(2); group2.AttachLayoutGroup(false); group2.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group3 = new Node(3); group3.AttachLayoutGroup(true);      group3.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group4 = new Node(4); group4.AttachLayoutGroup(true);      group4.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group3 = new Node(3); group3.AttachLayoutGroup(true); group3.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group4 = new Node(4); group4.AttachLayoutGroup(true); group4.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
 
-           // layer3
-                Node group5 =  new Node(5); group5.AttachLayoutGroup(true);        group5 .RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group6 =  new Node(6); group6.AttachLayoutGroup(true);        group6 .RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group7 =  new Node(7); group7.AttachLayoutGroup(true);        group7 .RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group8 =  new Node(8); group8.AttachLayoutGroup(true);        group8 .RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group9 =  new Node(9); group9.AttachLayoutGroup(true);        group9 .RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group10 = new Node(10); group10.AttachLayoutGroup(true);      group10.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group11 = new Node(11); group11.AttachLayoutGroup(true);      group11.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                Node group12 = new Node(12); group12.AttachLayoutGroup(true);      group12.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                // layer3
+                Node group5 = new Node(5); group5.AttachLayoutGroup(true); group5.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group6 = new Node(6); group6.AttachLayoutGroup(true); group6.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group7 = new Node(7); group7.AttachLayoutGroup(true); group7.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group8 = new Node(8); group8.AttachLayoutGroup(true); group8.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group9 = new Node(9); group9.AttachLayoutGroup(true); group9.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group10 = new Node(10); group10.AttachLayoutGroup(true); group10.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group11 = new Node(11); group11.AttachLayoutGroup(true); group11.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                Node group12 = new Node(12); group12.AttachLayoutGroup(true); group12.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 Node group13 = new Node(13); group13.AttachLayoutGroup(true); group13.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
 
-           group1.AppendChild(group2);
+                group1.AppendChild(group2);
                 group1.AppendChild(group3);
                 group1.AppendChild(group4);
 
@@ -185,12 +185,14 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(a.RuleSet.IsDefaultHeight);
 
                 Node b = new Node(2);
-                b.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(100).Height(200));
+                b.AttachLayoutEntry(new Size(10, 10));
+                b.RuleSet.ApplyOptions(GUILayout.Width(100).Height(200));
                 Assert.True(b.RuleSet.IsFixedWidth);
                 Assert.True(b.RuleSet.IsFixedHeight);
 
                 Node c = new Node(3);
-                c.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(200).Height(100));
+                c.AttachLayoutEntry(new Size(10, 10));
+                c.RuleSet.ApplyOptions(GUILayout.Width(200).Height(100));
                 Assert.True(c.RuleSet.IsFixedWidth);
                 Assert.True(c.RuleSet.IsFixedHeight);
 
@@ -211,12 +213,14 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(a.RuleSet.IsFixedHeight);
 
                 Node b = new Node(2);
-                b.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(100).Height(200));
+                b.AttachLayoutEntry(new Size(10, 10));
+                b.RuleSet.ApplyOptions(GUILayout.Width(100).Height(200));
                 Assert.True(b.RuleSet.IsFixedWidth);
                 Assert.True(b.RuleSet.IsFixedHeight);
 
                 Node c = new Node(3);
-                c.AttachLayoutEntry(new Size(10, 10), GUILayout.Width(200).Height(100));
+                c.AttachLayoutEntry(new Size(10, 10));
+                c.RuleSet.ApplyOptions(GUILayout.Width(200).Height(100));
                 Assert.True(c.RuleSet.IsFixedWidth);
                 Assert.True(c.RuleSet.IsFixedHeight);
 
@@ -235,7 +239,7 @@ namespace ImGui.UnitTest.Rendering
                 {
                     Node a = new Node(1);
                     a.AttachLayoutGroup(true); a.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                     Assert.True(a.RuleSet.IsStretchedWidth);
+                    Assert.True(a.RuleSet.IsStretchedWidth);
                     Assert.True(a.RuleSet.IsStretchedHeight);
 
                     Node b = new Node(2);
@@ -270,12 +274,14 @@ namespace ImGui.UnitTest.Rendering
                     Assert.True(a.RuleSet.IsDefaultHeight);
 
                     Node b = new Node(2);
-                    b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    b.AttachLayoutEntry(new Size(10, 10));
+                    b.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                     Assert.True(b.RuleSet.IsStretchedWidth);
                     Assert.True(b.RuleSet.IsStretchedHeight);
 
                     Node c = new Node(3);
-                    c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    c.AttachLayoutEntry(new Size(10, 10));
+                    c.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                     Assert.True(c.RuleSet.IsStretchedWidth);
                     Assert.True(c.RuleSet.IsStretchedHeight);
 
@@ -298,12 +304,14 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(a.RuleSet.IsFixedHeight);
 
                 Node b = new Node(2);
-                b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                b.AttachLayoutEntry(new Size(10, 10));
+                b.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 Assert.True(b.RuleSet.IsStretchedWidth);
                 Assert.True(b.RuleSet.IsStretchedHeight);
 
                 Node c = new Node(3);
-                c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                c.AttachLayoutEntry(new Size(10, 10));
+                c.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 Assert.True(c.RuleSet.IsStretchedWidth);
                 Assert.True(c.RuleSet.IsStretchedHeight);
 
@@ -326,12 +334,14 @@ namespace ImGui.UnitTest.Rendering
                     Assert.True(a.RuleSet.IsStretchedHeight);
 
                     Node b = new Node(2);
-                    b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    b.AttachLayoutEntry(new Size(10, 10));
+                    b.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                     Assert.True(b.RuleSet.IsStretchedWidth);
                     Assert.True(b.RuleSet.IsStretchedHeight);
 
                     Node c = new Node(3);
-                    c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                    c.AttachLayoutEntry(new Size(10, 10));
+                    c.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                     Assert.True(c.RuleSet.IsStretchedWidth);
                     Assert.True(c.RuleSet.IsStretchedHeight);
 
@@ -355,13 +365,15 @@ namespace ImGui.UnitTest.Rendering
                 Assert.True(a.RuleSet.IsFixedHeight);
 
                 Node b = new Node(2);
-                b.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                b.AttachLayoutEntry(new Size(10, 10));
+                b.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 Assert.True(b.RuleSet.IsStretchedWidth);
                 Assert.True(b.RuleSet.IsStretchedHeight);
                 b.ActiveSelf = false;
 
                 Node c = new Node(3);
-                c.AttachLayoutEntry(new Size(10, 10), GUILayout.ExpandWidth(true).ExpandHeight(true));
+                c.AttachLayoutEntry(new Size(10, 10));
+                c.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 Assert.True(c.RuleSet.IsStretchedWidth);
                 Assert.True(c.RuleSet.IsStretchedHeight);
 

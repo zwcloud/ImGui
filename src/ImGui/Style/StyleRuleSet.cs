@@ -99,6 +99,14 @@ namespace ImGui
 
         #region Options
 
+        public void ApplyOptions(LayoutOptions? options)
+        {
+            if (options.HasValue)
+            {
+                ApplyOptions(options.Value);
+            }
+        }
+
         public void ApplyOptions(LayoutOptions options)
         {
             if(options.MinWidth.HasValue && options.MaxWidth.HasValue)

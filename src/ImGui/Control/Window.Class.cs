@@ -185,18 +185,21 @@ namespace ImGui
                     .AlignmentHorizontal(Alignment.Start);
 
                 var icon = new Node(this.GetID("icon"),"icon");
-                icon.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                icon.AttachLayoutEntry(new Size(20, 20));
+                icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 icon.UseBoxModel = false;
                 icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
 
                 var title = new Node(this.GetID("title"),"title");
-                title.AttachLayoutEntry(Size.Zero, GUILayout.Height(20));
+                title.AttachLayoutEntry(Size.Zero);
+                title.RuleSet.ApplyOptions(GUILayout.Height(20));
                 title.UseBoxModel = false;
                 title.Primitive = new TextPrimitive(this.Name);
                 this.titleBarTitleNode = title;
 
                 var closeButton = new Node(this.GetID("close button"),"close button");
-                closeButton.AttachLayoutEntry(new Size(20, 20), GUILayout.Width(20).Height(20));
+                closeButton.AttachLayoutEntry(new Size(20, 20));
+                closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 closeButton.UseBoxModel = false;
                 PathPrimitive path = new PathPrimitive();
                 path.PathRect(new Rect(0, 0, 20, 20));

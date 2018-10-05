@@ -111,12 +111,8 @@ namespace ImGui.Rendering
         /// <summary>
         /// Make this node an entry
         /// </summary>
-        public void AttachLayoutEntry(Size contentSize, LayoutOptions? options = null)
+        public void AttachLayoutEntry(Size contentSize)
         {
-            if (options.HasValue)
-            {
-                this.RuleSet.ApplyOptions(options.Value);
-            }
             this.LayoutEntry = new LayoutEntry(this, contentSize);
             this.Children = null;
         }
