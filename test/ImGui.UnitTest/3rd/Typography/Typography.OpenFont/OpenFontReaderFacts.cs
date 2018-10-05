@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace ImGui.UnitTest
 {
-    public class GlyphReaderFacts
+    public class OpenFontReaderFacts
     {
         private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0, 2) + "\\ImGui.UnitTest.Output";
 
