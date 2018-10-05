@@ -2,15 +2,6 @@
 {
     internal partial class GUIStyle
     {
-        public void ApplySkin(GUIControlName control)
-        {
-            var modifiers = GUISkin.Current.GetStyleModifiers(control);
-            foreach (var modifier in modifiers)
-            {
-                this.Push(modifier);
-            }
-        }
-
         public void ApplyOption(LayoutOptions? options)
         {
             if (!options.HasValue) return;

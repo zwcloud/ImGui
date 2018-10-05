@@ -228,6 +228,11 @@ namespace ImGui
             #endregion
         }
 
+        internal void Layout()
+        {
+            this.RenderTree.Root.Layout(this.Position);
+        }
+
         public void ShowWindowTitleBar(bool isShow)
         {
             this.titleBarNode.ActiveSelf = isShow;
@@ -388,9 +393,6 @@ namespace ImGui
                 this.ContentRect = Rect.Zero;
             }
 
-            // Save clipped aabb so we can access it in constant-time in FindHoveredWindow()
-            this.WindowClippedRect = this.Rect;
-            this.WindowClippedRect.Intersect(this.ClipRect);
         }
 
         /// <summary>
@@ -467,8 +469,6 @@ namespace ImGui
         /// Gets or sets move ID, equals to <code>window.GetID("#MOVE")</code>.
         /// </summary>
         public int MoveID { get; internal set; }
-
-        public Rect WindowClippedRect { get; internal set; }
 
         /// <summary>
         /// Gets or sets whether the window was active in last frame.
@@ -570,7 +570,7 @@ namespace ImGui
             this.ContentRect = newContentRect;
 
             // apply window client area offset
-            rect.Offset((Vector)this.ClientAreaNode.Rect.Location);
+            rect.Offset(this.ClientRect.X, this.ClientRect.Y);
             // apply scroll offset
             rect.Offset(-this.Scroll);
 
@@ -586,7 +586,7 @@ namespace ImGui
             newContentRect.Union(rect);
             this.ContentRect = newContentRect;
 
-            rect.Offset(this.Position.X, this.Position.Y + this.TitleBarHeight);
+            rect.Offset(this.ClientRect.X, this.ClientRect.Y);
             rect.Offset(-this.Scroll);
             return rect;
         }
@@ -608,7 +608,6 @@ namespace ImGui
 
             GUIStyle style = GUIStyle.Basic;
             style.Save();
-            style.ApplySkin(GUIControlName.Button);
             style.PushBgColor(Color.White, GUIState.Normal);
             style.PushBgColor(Color.Rgb(232, 17, 35), GUIState.Hover);
             style.PushBgColor(Color.Rgb(241, 112, 122), GUIState.Active);

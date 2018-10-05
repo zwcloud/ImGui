@@ -180,14 +180,14 @@ namespace ImGui
             var openGLRenderer = (Win32OpenGLRenderer) renderer;//FIXME TEMP
             openGLRenderer.Clear(this.BackgroundColor);
 
-            bool DrawNode(Node node, Vector offset, MeshList meshList)
+            bool DrawNode(Node node, MeshList meshList)
             {
                 if (!node.ActiveInTree)
                 {
                     return false;
                 }
 
-                node.Draw(this.primitiveRenderer, offset, meshList);
+                node.Draw(this.primitiveRenderer, meshList);
                 return true;
             }
 
@@ -195,8 +195,8 @@ namespace ImGui
             {
                 if (!window.Active) continue;
 
-                window.RenderTree.Foreach(n => DrawNode(n, (Vector)window.Position, window.MeshList));
-                window.NodeTreeRoot.Foreach(n => DrawNode(n, (Vector)window.Position, window.MeshList));
+                window.RenderTree.Foreach(n => DrawNode(n, window.MeshList));
+                window.NodeTreeRoot.Foreach(n => DrawNode(n, window.MeshList));
 
                 //rebuild mesh buffer
                 window.MeshBuffer.Clear();

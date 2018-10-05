@@ -126,7 +126,7 @@ namespace ImGui
 
             window.RenderTree.CurrentContainer = window.RenderTree.Root;
 
-            window.RenderTree.Root.Layout();
+            window.Layout();
 
             // Pop
             w.WindowStack.RemoveAt(w.WindowStack.Count - 1);

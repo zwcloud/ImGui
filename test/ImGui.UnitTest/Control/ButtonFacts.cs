@@ -18,7 +18,7 @@ namespace ImGui.UnitTest
                 {
                     if (GUI.Button(new Rect(5, 5, 100, 30), "Apply"))
                     {
-                        Log.Msg("clicked");
+                        Log.LogToVSOutput("clicked");
                     }
                 };
 

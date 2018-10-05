@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace ImGui
 {
@@ -34,5 +35,14 @@ namespace ImGui
             logger.Error(format, args);
         }
 
+        /// <summary>
+        /// Write log to VS2017 output window.
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="args"></param>
+        public static void LogToVSOutput(string format, params string[] args)
+        {
+            Debug.WriteLine(format, args);
+        }
     }
 }

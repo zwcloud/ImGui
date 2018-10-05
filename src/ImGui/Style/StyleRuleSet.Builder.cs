@@ -28,9 +28,12 @@ namespace ImGui
             return this;
         }
 
-        public StyleRuleSetBuilder BorderColor(Color value)
+        public StyleRuleSetBuilder BorderColor(Color value, GUIState state = GUIState.Normal)
         {
-            s.BorderColor = (value, value, value, value);
+            s.Set(GUIStyleName.BorderTopColor, value, state);
+            s.Set(GUIStyleName.BorderRightColor, value, state);
+            s.Set(GUIStyleName.BorderBottomColor, value, state);
+            s.Set(GUIStyleName.BorderLeftColor, value, state);
             return this;
         }
 
@@ -46,21 +49,41 @@ namespace ImGui
             return this;
         }
 
-        public StyleRuleSetBuilder AlignmentVertical(Alignment value)
+        public StyleRuleSetBuilder AlignmentVertical(Alignment value, GUIState state = GUIState.Normal)
         {
-            s.AlignmentVertical = value;
+            s.Set(GUIStyleName.AlignmentVertical, value, state);
             return this;
         }
 
-        public StyleRuleSetBuilder AlignmentHorizontal(Alignment value)
+        public StyleRuleSetBuilder AlignmentHorizontal(Alignment value, GUIState state = GUIState.Normal)
         {
-            s.AlignmentHorizontal = value;
+            s.Set(GUIStyleName.AlignmentHorizontal, value, state);
             return this;
         }
 
-        public StyleRuleSetBuilder BackgroundColor(Color value)
+        public StyleRuleSetBuilder BackgroundColor(Color value, GUIState state = GUIState.Normal)
         {
-            s.BackgroundColor = value;
+            s.Set(GUIStyleName.BackgroundColor, value, state);
+            return this;
+        }
+
+        public StyleRuleSetBuilder BackgroundGradient(Gradient value, GUIState state = GUIState.Normal)
+        {
+            s.Set(GUIStyleName.BackgroundGradient, value, state);
+            return this;
+        }
+
+        public StyleRuleSetBuilder GradientTopDownColor(Color value1, Color value2, GUIState state = GUIState.Normal)
+        {
+            s.Set(GUIStyleName.GradientTopColor, value1, state);
+            s.Set(GUIStyleName.GradientBottomColor, value2, state);
+            return this;
+        }
+
+        public StyleRuleSetBuilder GradientLeftRightColor(Color value1, Color value2, GUIState state = GUIState.Normal)
+        {
+            s.Set(GUIStyleName.GradientLeftColor, value1, state);
+            s.Set(GUIStyleName.GradientRightColor, value2, state);
             return this;
         }
 

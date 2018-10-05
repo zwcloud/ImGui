@@ -11,17 +11,17 @@ namespace ImGui.Rendering
     internal class Node : IStyleRuleSet, ILayoutGroup
     {
         /// <summary>
-        /// identifier number of the node
+        /// identifier number
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// string identifier of the node
+        /// string identifier
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// border-box, the layout result
+        /// The rectangle this node occupies. Act as the border-box when using box-model.
         /// </summary>
         public Rect Rect;
 
@@ -55,6 +55,7 @@ namespace ImGui.Rendering
         public Node(int id)
         {
             this.Id = id;
+            this.RuleSet = new StyleRuleSet();
         }
 
         /// <summary>
@@ -85,6 +86,7 @@ namespace ImGui.Rendering
             }
             this.Id = name.Substring(idIndex).GetHashCode();
             this.Name = name;
+            this.RuleSet = new StyleRuleSet();
         }
 
         /// <summary>
@@ -109,12 +111,28 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Make this node an entry
+        /// Make this node a layout entry.
         /// </summary>
         public void AttachLayoutEntry(Size contentSize)
         {
             this.LayoutEntry = new LayoutEntry(this, contentSize);
             this.Children = null;
+        }
+
+        /// <summary>
+        /// Make this node a (default-sized) layout entry.
+        /// </summary>
+        public void AttachLayoutEntry() => AttachLayoutEntry(Size.Zero);
+
+        /// <summary>
+        /// Layout the sub-tree rooted at this node: the root node is placed at the specified position.
+        /// </summary>
+        public void Layout(Point p)
+        {
+            this.LayoutGroup.CalcWidth(this.LayoutEntry.ContentWidth);
+            this.LayoutGroup.CalcHeight(this.LayoutEntry.ContentHeight);
+            this.LayoutGroup.SetX(p.X);
+            this.LayoutGroup.SetY(p.Y);
         }
 
         /// <summary>
@@ -251,16 +269,16 @@ namespace ImGui.Rendering
                 switch (nodeType)
                 {
                     case NodeType.Plain:
-                    throw new LayoutException("It's not allowed to append a Plain node to a node");
+                    throw new LayoutException("It's not allowed to append a Plain node to a LayoutGroup node");
                     case NodeType.LayoutEntry:
                     case NodeType.LayoutGroup:
                         if (this.RuleSet.IsDefaultWidth && node.RuleSet.IsStretchedWidth)
                         {
-                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized node");
+                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized LayoutGroup node");
                         }
                         if (this.RuleSet.IsDefaultHeight && node.RuleSet.IsStretchedHeight)
                         {
-                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized node");
+                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized LayoutGroup node");
                         }
                         this.LayoutGroup.OnAddLayoutEntry(node);
                     break;
@@ -359,7 +377,7 @@ namespace ImGui.Rendering
 
         internal bool UseBoxModel { get; set; } = false;
 
-        public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
+        public StyleRuleSet RuleSet { get; }
 
         public GUIState State
         {

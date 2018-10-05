@@ -6,27 +6,30 @@ namespace ImGui
 {
     internal partial class GUISkin
     {
+        /// <summary>
+        /// Current Skin
+        /// </summary>
         public static GUISkin Current { get; set;}
 
         /// <summary>
         /// Default skin
         /// </summary>
-        public static GUISkin Instance { get; }
+        public static GUISkin Default { get; }
 
         static GUISkin()
         {
-            Instance = CreateDefaultSkin();
-            Current = Instance;
+            Default = CreateDefaultSkin();
+            Current = Default;
         }
 
         private static GUISkin CreateDefaultSkin()
         {
             GUISkin skin = new GUISkin();
 
-            //FIXME Maybe there is a better way to init default skin?
-
             // init default rule lists
-            skin.InitButtonStyles();
+            StyleRuleSet button = new StyleRuleSet();
+            skin.InitButtonStyles(button);
+            skin.styles[GUIControlName.Button] = button;
             //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
             //skin.InitTextBoxStyles();
@@ -34,18 +37,13 @@ namespace ImGui
             return skin;
         }
 
-        public IReadOnlyList<StyleModifier> GetStyleModifiers(GUIControlName control)
-        {
-            return this.styles[control];
-        }
-
-        private readonly Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> styles;
+        private readonly Dictionary<GUIControlName, StyleRuleSet> styles;
 
         public GUIStyle InternalStyle;
 
-        public GUISkin()
+        private GUISkin()
         {
-            styles = new Dictionary<GUIControlName, IReadOnlyList<StyleModifier>>();
+            styles = new Dictionary<GUIControlName, StyleRuleSet>();
 
             this.InternalStyle = new GUIStyle();
             {
@@ -56,18 +54,7 @@ namespace ImGui
             }
         }
 
-        public GUISkin(Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> rules)
-        {
-            styles = rules;
-
-            this.InternalStyle = new GUIStyle();
-            {
-                this.InternalStyle.Set<double>(GUIStyleName._FieldWidth, 200);
-                this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
-                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 80);
-                this.InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
-            }
-        }
+        public StyleRuleSet this[GUIControlName name] => this.styles[name];
 
         #region short-cuts
 

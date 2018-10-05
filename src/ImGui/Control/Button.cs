@@ -4,6 +4,7 @@ using ImGui.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Rendering;
+using ImGui.Style;
 
 namespace ImGui
 {
@@ -23,62 +24,24 @@ namespace ImGui
 
             //get or create the root node
             int id = window.GetID(text);
-            var t = window.RenderTree.CurrentContainer;
-            Node node = t.GetNodeById(id);
-            Node backgroundNode = null, textNode = null;
+            var container = window.NodeTreeRoot;
+            Node node = container.GetNodeById(id);
             if (node == null)
             {
                 //create button node
                 node = new Node(id, $"Button<{text}>");
-                t.AppendChild(node);
-                window.IDStack.Push(id);
-
-                //background
-                var backgroundNodeId = window.GetID("Background");
-                backgroundNode = new Node(backgroundNodeId, "Background");
-                backgroundNode.Primitive = new PathPrimitive();
-                //TODO implement button rendering with box-model
-
-                //text
-                var textNodeId = window.GetID("Text");
-                textNode = new Node(textNodeId, "Text");
-                var textPrimitive = new TextPrimitive(text);
-                textNode.Primitive = textPrimitive;
-
-                node.AppendChild(backgroundNode);
-                node.AppendChild(textNode);
-                window.IDStack.Pop();
+                container.AppendChild(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
+                node.Primitive = new TextPrimitive(text);
             }
-            else
-            {
-                backgroundNode = node.GetNodeByName("Background");
-                textNode = node.GetNodeByName("Text");
-            }
-
-            Debug.Assert(backgroundNode != null);
-            Debug.Assert(textNode != null);
 
             // rect
-            backgroundNode.Rect = window.GetRect(rect);
-            textNode.Rect = backgroundNode.Rect;
-
-            var primitive = backgroundNode.Primitive as PathPrimitive;
-            Debug.Assert(primitive != null, nameof(primitive) + " != null");
-            primitive.PathClear();
-            primitive.PathRect(backgroundNode.Rect);
-
-            // style apply
-            var style = GUIStyle.Basic;
-            style.Save();
-            style.ApplySkin(GUIControlName.Button);
+            node.Rect = window.GetRect(rect);
 
             // interact
-            bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
-            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-
-            //TODO fill, border
-
-            style.Restore();
+            bool pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held, 0);
+            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
             return pressed;
         }
@@ -97,126 +60,32 @@ namespace ImGui
             if (window.SkipItems)
                 return false;
 
-            // style apply
-            var style = GUIStyle.Basic;
-            style.Save();
-            style.ApplySkin(GUIControlName.Button);
-            style.ApplyOption(options);
-
             //get or create the root node
             int id = window.GetID(text);
-            var t = window.RenderTree.CurrentContainer;
-            Node node = t.GetNodeById(id);
-            Node backgroundNode = null, textNode = null;
+            var container = window.RenderTree.CurrentContainer;
+            Node node = container.GetNodeById(id);
             if (node == null)
             {
                 //create button node
                 node = new Node(id, $"Button<{text}>");
-                var contentSize = style.CalcSize(text, GUIState.Normal);//TEMP: GUI state should be de-coupled from GUI style
-                node.AttachLayoutEntry(contentSize);//TODO *************** properly assign layout entry and group to every node that needs layout!!!
-                node.RuleSet.ApplyOptions(options);
-                t.AppendChild(node);
-                window.IDStack.Push(id);
-
-                //background
-                var backgroundNodeId = window.GetID("Background");
-                backgroundNode = new Node(backgroundNodeId, "Background");
-                backgroundNode.Primitive = new PathPrimitive();
-                //TODO implement button rendering with box-model
-
-                //text
-                var textNodeId = window.GetID("Text");
-                textNode = new Node(textNodeId, "Text");
-                var textPrimitive = new TextPrimitive(text);
-                textNode.Primitive = textPrimitive;
-
-                node.AppendChild(backgroundNode);
-                node.AppendChild(textNode);
-                window.IDStack.Pop();
+                container.AppendChild(node);
+                node.AttachLayoutEntry();
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
+                node.Primitive = new TextPrimitive(text);
             }
-            else
-            {
-                backgroundNode = node.GetNodeByName("Background");
-                textNode = node.GetNodeByName("Text");
-            }
-
-            Debug.Assert(backgroundNode != null);
-            Debug.Assert(textNode != null);
-
 
             // rect
-            Rect rect = window.GetRect(id);//************* rect got is incorrect
-            backgroundNode.Rect = rect;
-            textNode.Rect = backgroundNode.Rect;
-
-            var primitive = backgroundNode.Primitive as PathPrimitive;
-            Debug.Assert(primitive != null, nameof(primitive) + " != null");
-            primitive.PathClear();
-            primitive.PathRect(backgroundNode.Rect);
-
+            //************* rect got is incorrect
+            node.Rect = window.GetRect(id);
 
             // interact
-            bool pressed = GUIBehavior.ButtonBehavior(backgroundNode.Rect, node.Id, out var hovered, out var held, 0);
-            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-
-            //TODO fill, border
-
-            //style restore
-            style.Restore();
+            bool pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held, 0);
+            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
             return pressed;
         }
 
-        public static bool Button(string text)
-        {
-            return Button(text, null);
-        }
-
-        public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1)
-        {
-            Window window = GetCurrentWindow();
-            if (window.SkipItems)
-                return false;
-
-            var id = window.GetID(filePath);
-
-            // style
-            var style = GUIStyle.Basic;
-            style.Save();
-            style.ApplySkin(GUIControlName.Button);
-
-            // rect
-            var texture = TextureUtil.GetTexture(filePath);
-            if(size == Size.Empty)
-            {
-                size = style.CalcSize(texture, GUIState.Normal);
-            }
-            var rect = window.GetRect(id);
-            if(rect == Layout.StackLayout.DummyRect)
-            {
-                style.Restore();
-                return false;
-            }
-
-            // interact
-            bool hovered, held;
-            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, 0);
-
-            // render
-            style.PushUV(uv0, uv1);
-            var d = window.DrawList;
-            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            d.DrawBoxModel(rect, texture, style, state);
-
-            style.Restore();
-
-            return pressed;
-        }
-
-        public static bool ImageButton(string filePath)
-        {
-            return ImageButton(filePath, Size.Empty, Point.Zero, Point.One);
-        }
+        public static bool Button(string text) => Button(text, null);
     }
 
     internal partial class GUIBehavior
@@ -306,27 +175,28 @@ namespace ImGui
 
     internal partial class GUISkin
     {
-        private void InitButtonStyles()
+        private void InitButtonStyles(StyleRuleSet ruleSet)
         {
-            StyleModifierBuilder builder = new StyleModifierBuilder();
-            builder.PushBorder(1.0);
-            builder.PushPadding(5.0);
-            builder.PushBorderColor(Color.Rgb(166, 166, 166), GUIState.Normal);
-            builder.PushBorderColor(Color.Rgb(123, 123, 123), GUIState.Hover);
-            builder.PushBorderColor(Color.Rgb(148, 148, 148), GUIState.Active);
-
-            builder.PushBgColor(Color.Rgb(0x65a9d7), GUIState.Normal);
-            builder.PushBgColor(Color.Rgb(0x28597a), GUIState.Hover);
-            builder.PushBgColor(Color.Rgb(0x1b435e), GUIState.Active);
-
-            //TODO use gradient color for background
-            /*
-            builder.PushBgGradient(Gradient.TopBottom);
-            builder.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal);
-            builder.PushGradientColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Hover);
-            builder.PushGradientColor(Color.Rgb(222, 222, 222), Color.Rgb(248, 248, 248), GUIState.Active);
-            */
-            this.styles.Add(GUIControlName.Button, builder.ToArray());
+            StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
+            builder
+                .Border(1.0)
+                .Padding(5.0)
+                .BorderColor(Color.Rgb(166, 166, 166), GUIState.Normal)
+                .BorderColor(Color.Rgb(123, 123, 123), GUIState.Hover)
+                .BorderColor(Color.Rgb(148, 148, 148), GUIState.Active)
+                .BackgroundColor(Color.Rgb(0x65a9d7), GUIState.Normal)
+                .BackgroundColor(Color.Rgb(0x28597a), GUIState.Hover)
+                .BackgroundColor(Color.Rgb(0x1b435e), GUIState.Active)
+                .BackgroundGradient(Gradient.TopBottom)
+                .AlignmentVertical(Alignment.Center, GUIState.Normal)
+                .AlignmentVertical(Alignment.Center, GUIState.Hover)
+                .AlignmentVertical(Alignment.Center, GUIState.Active)
+                .AlignmentHorizontal(Alignment.Center, GUIState.Normal)
+                .AlignmentHorizontal(Alignment.Center, GUIState.Hover)
+                .AlignmentHorizontal(Alignment.Center, GUIState.Active)
+                .GradientTopDownColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal)
+                .GradientTopDownColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Hover)
+                .GradientTopDownColor(Color.Rgb(222, 222, 222), Color.Rgb(248, 248, 248), GUIState.Active);
         }
     }
 

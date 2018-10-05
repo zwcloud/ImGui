@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
@@ -59,6 +60,12 @@ namespace ImGui
             {
                 rule.Value = value;
             }
+        }
+
+        internal void Replace(StyleRuleSet styleRuleSet)
+        {
+            this.rules.Clear();
+            this.rules.AddRange(styleRuleSet.rules);
         }
 
         public void Set<T>(GUIStyleName styleName, T value, GUIState state)
@@ -424,10 +431,7 @@ namespace ImGui
 
         #endregion
 
-
-
-
-#endregion
+        #endregion
 
     }
 }
