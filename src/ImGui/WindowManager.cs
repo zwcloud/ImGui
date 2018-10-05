@@ -66,7 +66,7 @@ namespace ImGui
                 if (excluding_childs && window.Flags.HaveFlag(WindowFlags.ChildWindow))
                     continue;
 
-                if (window.WindowClippedRect.Contains(pos))
+                if (window.Rect.Contains(pos))
                     return window;
             }
             return null;

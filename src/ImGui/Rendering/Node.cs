@@ -102,13 +102,8 @@ namespace ImGui.Rendering
         /// <summary>
         /// Make this node a group
         /// </summary>
-        public void AttachLayoutGroup(bool isVertical, LayoutOptions? options = null)
+        public void AttachLayoutGroup(bool isVertical)
         {
-            if (options.HasValue)
-            {
-                this.RuleSet.ApplyOptions(options.Value);
-            }
-
             this.LayoutEntry = new LayoutGroup(this, isVertical);
             this.Children = new List<Node>();
         }

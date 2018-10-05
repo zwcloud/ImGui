@@ -159,12 +159,12 @@ namespace ImGui
                 style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(166), GUIState.Hover);
                 style.Set(GUIStyleName.ScrollBarButtonColor, Color.Rgb(96), GUIState.Active);
 
+                windowContainer.AttachLayoutGroup(true);
+                windowContainer.UseBoxModel = true;
                 var windowStyleOptions = GUILayout.Width(this.FullSize.Width).Height(
                     this.Collapsed ? this.CollapsedHeight : this.FullSize.Height
                     );
-                windowContainer.AttachLayoutGroup(true, windowStyleOptions);
-                windowContainer.UseBoxModel = true;
-
+                windowContainer.RuleSet.ApplyOptions(windowStyleOptions);
 
                 this.RenderTree.Root.AppendChild(windowContainer);
             }
@@ -173,7 +173,8 @@ namespace ImGui
             {
                 var titleBarContainer = new Node(this.GetID("titleBar"),"title bar");
                 this.titleBarNode = titleBarContainer;
-                titleBarContainer.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).Height(this.TitleBarHeight));
+                titleBarContainer.AttachLayoutGroup(false);
+                titleBarContainer.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(this.TitleBarHeight));
                 titleBarContainer.UseBoxModel = true;
                 StyleRuleSetBuilder b = new StyleRuleSetBuilder(titleBarContainer);
                 b.Padding((top: 8, right: 8, bottom: 8, left: 8))
@@ -210,7 +211,8 @@ namespace ImGui
             //client area
             {
                 var node = new Node(this.GetID("client area"),"client area");
-                node.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).ExpandHeight(true));
+                node.AttachLayoutGroup(true);
+                node.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 node.UseBoxModel = true;
                 this.ClientAreaNode = node;
                 this.WindowContainer.AppendChild(node);

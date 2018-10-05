@@ -58,7 +58,8 @@ namespace ImGui.UnitTest.Rendering
                         if (node == null)
                         {
                             node = new Node(1, "container");
-                            node.AttachLayoutGroup(true, GUILayout.Width(300).Height(40));
+                            node.AttachLayoutGroup(true);
+                            node.RuleSet.ApplyOptions(GUILayout.Width(300).Height(40));
                             node.UseBoxModel = true;
                             StyleRuleSetBuilder b = new StyleRuleSetBuilder(node);
                             b.Border(1)
@@ -144,7 +145,8 @@ namespace ImGui.UnitTest.Rendering
                         if (container == null)
                         {
                             container = new Node(1, "container");
-                            container.AttachLayoutGroup(false, GUILayout.Width(300).Height(40));
+                            container.AttachLayoutGroup(false);
+                            container.RuleSet.ApplyOptions(GUILayout.Width(300).Height(40));
                             container.UseBoxModel = true;
                             StyleRuleSetBuilder b = new StyleRuleSetBuilder(container);
                             b.Border(1)
@@ -249,7 +251,8 @@ namespace ImGui.UnitTest.Rendering
 
                 //window
                 var windowContainer = new Node("#window");
-                windowContainer.AttachLayoutGroup(true, GUILayout.Width(400));
+                windowContainer.AttachLayoutGroup(true);
+                windowContainer.RuleSet.ApplyOptions(GUILayout.Width(400));
                 windowContainer.UseBoxModel = true;
                 windowContainer.RuleSet.Border = (1, 1, 1, 1);
                 windowContainer.RuleSet.BackgroundColor = Color.White;
@@ -257,7 +260,8 @@ namespace ImGui.UnitTest.Rendering
                 //title bar
                 {
                     var titleBarContainer = new Node(1, "#titleBar");
-                    titleBarContainer.AttachLayoutGroup(false, GUILayout.ExpandWidth(true).Height(40));
+                    titleBarContainer.AttachLayoutGroup(false);
+                    titleBarContainer.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(40));
                     titleBarContainer.UseBoxModel = true;
                     StyleRuleSetBuilder b = new StyleRuleSetBuilder(titleBarContainer);
                     b.Padding((top: 8, right: 8, bottom: 8, left: 8))
@@ -294,7 +298,8 @@ namespace ImGui.UnitTest.Rendering
                 //client area background
                 {
                     clientArea = new Node("#ClientArea_Background");
-                    clientArea.AttachLayoutGroup(true, GUILayout.ExpandWidth(true).Height(200));
+                    clientArea.AttachLayoutGroup(true);
+                    clientArea.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(200));
                     windowContainer.AppendChild(clientArea);
                 }
 

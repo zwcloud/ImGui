@@ -17,7 +17,7 @@ namespace ImGui.UnitTest
                 bool open = true;
                 form.OnGUIAction = () =>
                 {
-                    GUI.Begin("test window", ref open, Point.Zero, new Size(100, 100));
+                    GUI.Begin("test window", ref open, new Point(100,100), new Size(100, 100));
                     GUI.End();
                 };
 

@@ -160,9 +160,9 @@ namespace ImGui
 
             Log();
 
-            if (ImGui.Log.logger is ConsoleLogger && ImGui.Log.LogStatus)
+            if (ImGui.Log.Enabled)
             {
-                Thread.Sleep(20);
+                Thread.Sleep(40);
             }
         }
 
