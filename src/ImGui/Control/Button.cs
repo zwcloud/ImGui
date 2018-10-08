@@ -69,12 +69,15 @@ namespace ImGui
                 //create button node
                 node = new Node(id, $"Button<{text}>");
                 node.UseBoxModel = true;
-                node.AttachLayoutEntry();
-                container.AppendChild(node);
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
                 node.Primitive = new TextPrimitive(text);
             }
             node.RuleSet.ApplyOptions(options);
+
+            //TODO check if text changes
 
             // rect
             //************* rect got is incorrect
