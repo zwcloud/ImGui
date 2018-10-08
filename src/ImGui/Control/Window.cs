@@ -111,6 +111,8 @@ namespace ImGui
             // Return false if we don't intend to display anything to allow user to perform an early out optimization
             window.SkipItems = window.Collapsed || !window.Active;
 
+            window.RenderTree.CurrentContainer = window.ClientAreaNode;
+
             return !window.SkipItems;
         }
 

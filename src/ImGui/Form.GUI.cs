@@ -115,7 +115,7 @@ namespace ImGui
             w.NewFrame(g);
 
             // Create implicit window - we will only render it if the user has added something to it.
-            GUI.Begin("Debug", ref this.debugWindowOpen, (0, 0), (400, 400), 0.8);
+            GUI.Begin("Debug", ref this.debugWindowOpen, (0, 0), (200, 140), 0.8);
         }
 
         internal void EndFrame()

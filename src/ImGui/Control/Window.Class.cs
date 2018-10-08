@@ -89,7 +89,7 @@ namespace ImGui
         #region Window original sub nodes
         private Node titleBarNode { get; }
         private Node titleBarTitleNode { get; }
-        private Node ClientAreaNode { get; }
+        public Node ClientAreaNode { get; }
         internal Node WindowContainer { get; }
         private Node ResizeGripNode { get; set; }
 

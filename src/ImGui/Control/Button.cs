@@ -68,6 +68,7 @@ namespace ImGui
             {
                 //create button node
                 node = new Node(id, $"Button<{text}>");
+                node.UseBoxModel = true;
                 node.AttachLayoutEntry();
                 container.AppendChild(node);
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
