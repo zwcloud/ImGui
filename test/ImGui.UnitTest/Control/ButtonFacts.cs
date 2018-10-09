@@ -16,7 +16,7 @@ namespace ImGui.UnitTest
                 var form = new MainForm();
                 form.OnGUIAction = () =>
                 {
-                    if (GUI.Button(new Rect(5, 5, 100, 30), "Apply"))
+                    if (GUI.Button(new Rect(0, 0, 100, 30), "Apply"))
                     {
                         Log.Msg("clicked");
                     }

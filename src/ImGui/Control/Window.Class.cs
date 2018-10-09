@@ -228,11 +228,6 @@ namespace ImGui
             #endregion
         }
 
-        internal void Layout()
-        {
-            this.RenderTree.Root.Layout(this.Position);
-        }
-
         public void ShowWindowTitleBar(bool isShow)
         {
             this.titleBarNode.ActiveSelf = isShow;
@@ -549,6 +544,14 @@ namespace ImGui
             this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Height(new_size.Height));
         }
 
+        private Point RenderTreeNodesPivotPoint => this.Position;
+        private Point NodeTreeNodesPivotPoint => this.ClientRect.Location;
+
+        internal void Layout()
+        {
+            this.RenderTree.Root.Layout(this.RenderTreeNodesPivotPoint);
+        }
+
         /// <summary>
         /// Get the rect for an automatic-layout control
         /// </summary>
@@ -570,7 +573,7 @@ namespace ImGui
             this.ContentRect = newContentRect;
 
             // apply window client area offset
-            rect.Offset(this.ClientRect.X, this.ClientRect.Y);
+            rect.Offset(this.RenderTreeNodesPivotPoint.X, this.RenderTreeNodesPivotPoint.Y);
             // apply scroll offset
             rect.Offset(-this.Scroll);
 
@@ -586,7 +589,7 @@ namespace ImGui
             newContentRect.Union(rect);
             this.ContentRect = newContentRect;
 
-            rect.Offset(this.ClientRect.X, this.ClientRect.Y);
+            rect.Offset(this.NodeTreeNodesPivotPoint.X, this.NodeTreeNodesPivotPoint.Y);
             rect.Offset(-this.Scroll);
             return rect;
         }

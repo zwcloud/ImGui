@@ -36,6 +36,8 @@ namespace ImGui
                 node.Primitive = new TextPrimitive(text);
             }
 
+            //TODO check if text changes
+
             // rect
             node.Rect = window.GetRect(rect);
 
@@ -80,7 +82,6 @@ namespace ImGui
             //TODO check if text changes
 
             // rect
-            //************* rect got is incorrect
             node.Rect = window.GetRect(id);
 
             // interact
@@ -184,8 +185,12 @@ namespace ImGui
         {
             StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
             builder
-                .Border(1.0)
-                .Padding(5.0)
+                .Border(1.0, GUIState.Normal)
+                .Border(1.0, GUIState.Hover)
+                .Border(1.0, GUIState.Active)
+                .Padding(5.0, GUIState.Normal)
+                .Padding(5.0, GUIState.Hover)
+                .Padding(5.0, GUIState.Active)
                 .BorderColor(Color.Rgb(166, 166, 166), GUIState.Normal)
                 .BorderColor(Color.Rgb(123, 123, 123), GUIState.Hover)
                 .BorderColor(Color.Rgb(148, 148, 148), GUIState.Active)

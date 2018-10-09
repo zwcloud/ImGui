@@ -16,15 +16,24 @@ namespace ImGui
             this.s = ruleSet;
         }
 
-        public StyleRuleSetBuilder Border(double value)
+        public StyleRuleSetBuilder Border(double value, GUIState state = GUIState.Normal)
         {
-            s.Border = (value, value, value, value);
+            var (top, right, bottom, left) = (value, value, value, value);
+            this.s.Set<double>(GUIStyleName.BorderTop, top, state);
+            this.s.Set<double>(GUIStyleName.BorderRight, right, state);
+            this.s.Set<double>(GUIStyleName.BorderBottom, bottom, state);
+            this.s.Set<double>(GUIStyleName.BorderLeft, left, state);
             return this;
         }
 
-        public StyleRuleSetBuilder Border((double top, double right, double bottom, double left) value)
+        public StyleRuleSetBuilder Border((double top, double right, double bottom, double left) value,
+            GUIState state = GUIState.Normal)
         {
-            s.Border = value;
+            var (top, right, bottom, left) = value;
+            this.s.Set<double>(GUIStyleName.BorderTop, top, state);
+            this.s.Set<double>(GUIStyleName.BorderRight, right, state);
+            this.s.Set<double>(GUIStyleName.BorderBottom, bottom, state);
+            this.s.Set<double>(GUIStyleName.BorderLeft, left, state);
             return this;
         }
 
@@ -37,15 +46,23 @@ namespace ImGui
             return this;
         }
 
-        public StyleRuleSetBuilder Padding(double value)
+        public StyleRuleSetBuilder Padding(double value, GUIState state = GUIState.Normal)
         {
-            s.Padding = (value, value, value, value);
+            var (top, right, bottom, left) = (value, value, value, value);
+            this.s.Set<double>(GUIStyleName.PaddingTop, top, state);
+            this.s.Set<double>(GUIStyleName.PaddingRight, right, state);
+            this.s.Set<double>(GUIStyleName.PaddingBottom, bottom, state);
+            this.s.Set<double>(GUIStyleName.PaddingLeft, left, state);
             return this;
         }
 
-        public StyleRuleSetBuilder Padding((double top, double right, double bottom, double left) value)
+        public StyleRuleSetBuilder Padding((double top, double right, double bottom, double left) value, GUIState state = GUIState.Normal)
         {
-            s.Padding = value;
+            var (top, right, bottom, left) = value;
+            this.s.Set<double>(GUIStyleName.PaddingTop, top, state);
+            this.s.Set<double>(GUIStyleName.PaddingRight, right, state);
+            this.s.Set<double>(GUIStyleName.PaddingBottom, bottom, state);
+            this.s.Set<double>(GUIStyleName.PaddingLeft, left, state);
             return this;
         }
 
