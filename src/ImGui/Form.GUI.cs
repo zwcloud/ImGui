@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using ImGui.Common.Primitive;
 using ImGui.Core;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
-using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 
 namespace ImGui
@@ -160,8 +158,9 @@ namespace ImGui
 
             Log();
 
-            if (ImGui.Log.Enabled)
+            if (ImGui.Log.Enabled && ImGui.Log.LogStatus)
             {
+                //Status logging is time consuming, so we lower down the fps by sleeping here.
                 Thread.Sleep(40);
             }
         }
@@ -174,11 +173,12 @@ namespace ImGui
             Debug.Assert(g.Initialized);   // Make sure that NewFrame() is called.
 
             if (g.FrameCountEnded != g.FrameCount)
-                EndFrame();
+            {
+                this.EndFrame();
+            }
             g.FrameCountRendered = g.FrameCount;
 
-            var openGLRenderer = (Win32OpenGLRenderer) renderer;//FIXME TEMP
-            openGLRenderer.Clear(this.BackgroundColor);
+            this.renderer.Clear(this.BackgroundColor);
 
             bool DrawNode(Node node, MeshList meshList)
             {
@@ -204,10 +204,10 @@ namespace ImGui
                 window.MeshBuffer.Build(window.MeshList);
 
                 //draw mesh buffer
-                openGLRenderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height,
+                this.renderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height,
                     (shapeMesh: window.MeshBuffer.ShapeMesh, imageMesh: window.MeshBuffer.ImageMesh, window.MeshBuffer.TextMesh));
             }
-            openGLRenderer.SwapBuffers();
+            this.renderer.SwapBuffers();
         }
 
         internal void Log()

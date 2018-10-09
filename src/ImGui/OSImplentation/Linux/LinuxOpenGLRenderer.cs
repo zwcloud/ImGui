@@ -147,12 +147,12 @@ void main()
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
         }
 
-        public void RenderDrawList(DrawList drawList, int width, int height)
+        public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
-            DrawMesh(this.shapeMaterial, drawList.ShapeMesh, width, height);
-            DrawMesh(this.imageMaterial, drawList.ImageMesh, width, height);
+            DrawMesh(this.shapeMaterial, meshes.shapeMesh, width, height);
+            DrawMesh(this.imageMaterial, meshes.imageMesh, width, height);
 
-            DrawTextMesh(drawList.TextMesh, width, height);
+            DrawTextMesh(meshes.textMesh, width, height);
         }
 
         private static void DrawMesh(Material material, Mesh mesh, int width, int height)
