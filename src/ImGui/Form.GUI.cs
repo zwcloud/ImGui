@@ -171,7 +171,7 @@ namespace ImGui
             GUIContext g = this.uiContext;
             WindowManager w = g.WindowManager;
 
-            Debug.Assert(g.Initialized);   // Forgot to call NewFrame()
+            Debug.Assert(g.Initialized);   // Make sure that NewFrame() is called.
 
             if (g.FrameCountEnded != g.FrameCount)
                 EndFrame();
@@ -204,7 +204,8 @@ namespace ImGui
                 window.MeshBuffer.Build(window.MeshList);
 
                 //draw mesh buffer
-                openGLRenderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height, window.MeshBuffer);
+                openGLRenderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height,
+                    (shapeMesh: window.MeshBuffer.ShapeMesh, imageMesh: window.MeshBuffer.ImageMesh, window.MeshBuffer.TextMesh));
             }
             openGLRenderer.SwapBuffers();
         }

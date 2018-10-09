@@ -136,11 +136,11 @@ void main()
             DrawTextMesh(this.glyphMaterial, drawList.TextMesh, width, height);
         }
 
-        public void DrawMeshes(int width, int height, MeshBuffer meshBuffer)
+        public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
-            DrawMesh(shapeMaterial, meshBuffer.ShapeMesh, width, height);
-            DrawMesh(imageMaterial, meshBuffer.ImageMesh, width, height);
-            DrawTextMesh(glyphMaterial, meshBuffer.TextMesh, width, height);
+            DrawMesh(this.shapeMaterial, meshes.shapeMesh, width, height);
+            DrawMesh(this.imageMaterial, meshes.imageMesh, width, height);
+            DrawTextMesh(this.glyphMaterial, meshes.textMesh, width, height);
         }
 
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
