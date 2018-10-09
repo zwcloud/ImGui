@@ -13,7 +13,16 @@ namespace ImGui
         static CurrentOS()
         {
             var envars = Environment.GetEnvironmentVariables();
-            IsAndroid = envars.Contains("ANDROID_PROPERTY_WORKSPACE");
+            var keys = envars.Keys;
+            foreach (var key in keys)
+            {
+                var keyString = key as string;
+                if (keyString != null && keyString.StartsWith("android", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    IsAndroid = true;
+                    return;
+                }
+            }
             if (IsAndroid)
             {
                 Platform = Platform.Android;

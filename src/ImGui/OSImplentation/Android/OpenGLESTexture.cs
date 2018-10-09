@@ -5,6 +5,8 @@ using CSharpGLES;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplentation.Android
 {
@@ -50,8 +52,7 @@ namespace ImGui.OSImplentation.Android
             using (Stream stream = Utility.ReadFile(filePath))
             {
                 this.image = Image.Load<Rgba32>(stream);
-                textureData = new Rgba32[this.image.Width * this.image.Height];
-                this.image.SavePixelData<Rgba32>(this.textureData);
+                this.textureData = this.image.GetPixelSpan().ToArray();
                 this.Width = this.image.Width;
                 this.Height = this.image.Height;
             }

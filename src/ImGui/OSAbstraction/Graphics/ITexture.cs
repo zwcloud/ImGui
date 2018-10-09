@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGui.Common.Primitive;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSAbstraction.Graphics
 {
@@ -18,7 +19,7 @@ namespace ImGui.OSAbstraction.Graphics
         /// Load image data from ImageSharp pixels into the texture
         /// </summary>
         /// <param name="data"></param>
-        void LoadImage(SixLabors.ImageSharp.Rgba32[] data, int width, int height);
+        void LoadImage(Rgba32[] data, int width, int height);
 
         /// <summary>
         /// Load image data from a file into the texture.

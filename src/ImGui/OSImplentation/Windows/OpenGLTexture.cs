@@ -5,6 +5,8 @@ using CSharpGL;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplentation.Windows
 {
@@ -50,8 +52,7 @@ namespace ImGui.OSImplentation.Windows
             using (FileStream stream = File.OpenRead(filePath))
             {
                 this.image = Image.Load<Rgba32>(stream);
-                textureData = new Rgba32[this.image.Width * this.image.Height];
-                this.image.SavePixelData<Rgba32>(this.textureData);
+                this.textureData = this.image.GetPixelSpan().ToArray();
                 this.Width = this.image.Width;
                 this.Height = this.image.Height;
             }

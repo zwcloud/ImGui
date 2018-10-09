@@ -188,7 +188,7 @@ namespace ImGui
                 icon.AttachLayoutEntry(new Size(20, 20));
                 icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 icon.UseBoxModel = false;
-                icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
+                icon.Primitive = new ImagePrimitive(@"assets/images/logo.png");
 
                 var title = new Node(this.GetID("title"),"title");
                 title.AttachLayoutEntry(Size.Zero);
