@@ -48,7 +48,7 @@ namespace ImGui.UnitTest
             }
 
             [Fact]
-            public void ShowOneLayoutButton()
+            public void ShowOneLayoutedButton()
             {
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
@@ -65,6 +65,27 @@ namespace ImGui.UnitTest
                 Application.Run(form);
             }
 
+            [Fact]
+            public void ShowTwoLayoutedButton()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.Init();
+
+                var form = new MainForm();
+                form.OnGUIAction = () =>
+                {
+                    if (GUILayout.Button("Apply"))
+                    {
+                        Log.Msg("clicked Apply");
+                    }
+                    if (GUILayout.Button("Revert"))
+                    {
+                        Log.Msg("clicked Revert");
+                    }
+                };
+
+                Application.Run(form);
+            }
         }
     }
 }
