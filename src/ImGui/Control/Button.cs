@@ -1,8 +1,6 @@
 ﻿using System;
 using ImGui.Common.Primitive;
 using ImGui.Input;
-using System.Collections.Generic;
-using System.Diagnostics;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -42,7 +40,7 @@ namespace ImGui
             node.Rect = window.GetRect(rect);
 
             // interact
-            bool pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held, 0);
+            var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
             return pressed;
@@ -85,7 +83,7 @@ namespace ImGui
             node.Rect = window.GetRect(id);
 
             // interact
-            bool pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held, 0);
+            var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
 
             return pressed;
@@ -96,7 +94,7 @@ namespace ImGui
 
     internal partial class GUIBehavior
     {
-        public static bool ButtonBehavior(Rect bb, int id, out bool out_hovered, out bool out_held, ButtonFlags flags = 0)
+        public static bool ButtonBehavior(Rect bb, int id, out bool outHovered, out bool outHeld, ButtonFlags flags = 0)
         {
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
@@ -104,8 +102,8 @@ namespace ImGui
 
             if (flags.HaveFlag(ButtonFlags.Disabled))
             {
-                out_hovered = false;
-                out_held = false;
+                outHovered = false;
+                outHeld = false;
                 if (g.ActiveId == id) g.SetActiveID(0);
                 return false;
             }
@@ -172,8 +170,8 @@ namespace ImGui
             if (hovered && flags.HaveFlag(ButtonFlags.AllowOverlapMode) && (g.HoveredIdPreviousFrame != id && g.HoveredIdPreviousFrame != 0))
                 hovered = pressed = held = false;
 
-            out_hovered = hovered;
-            out_held = held;
+            outHovered = hovered;
+            outHeld = held;
 
             return pressed;
         }
