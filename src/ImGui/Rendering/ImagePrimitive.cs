@@ -20,7 +20,7 @@ namespace ImGui.Rendering
 
         public void SendToGPU()
         {
-            this.Texture = new OSImplentation.Windows.OpenGLTexture();
+            this.Texture = Application.PlatformContext.CreateTexture();
             this.Texture.LoadImage(this.Image.Data, this.Image.Width, this.Image.Height);
         }
     }
