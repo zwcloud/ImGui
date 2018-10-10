@@ -16,7 +16,6 @@ namespace ImGui
 
         internal IRenderer renderer;
         internal GUIContext uiContext = new GUIContext();
-        internal DrawList OverlayDrawList = new DrawList();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form"/> class at specific rectangle.
@@ -35,8 +34,6 @@ namespace ImGui
             this.renderer = Application.PlatformContext.CreateRenderer();
             this.renderer.Init(this.Pointer, this.nativeWindow.ClientSize);
             Profile.End();
-
-            OverlayDrawList.Init();
         }
 
         internal void MainLoop(Action guiMethod)

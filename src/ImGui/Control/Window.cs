@@ -90,7 +90,6 @@ namespace ImGui
                               Math.Floor(0.5f + title_bar_rect.Max.Y + border_size)),
                     new Point(Math.Floor(0.5f + window.Position.X + window.Size.Width - Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
                               Math.Floor(0.5f + window.Position.Y + window.Size.Height - border_size)));
-                window.DrawList.PushClipRect(clip_rect, true);
                 window.ClipRect = clip_rect;
                 //window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Red);//test only
             }
@@ -123,8 +122,6 @@ namespace ImGui
             GUIContext g = form.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
-
-            window.DrawList.PopClipRect();
 
             window.RenderTree.CurrentContainer = window.RenderTree.Root;
 

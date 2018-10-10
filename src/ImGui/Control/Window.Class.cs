@@ -46,11 +46,6 @@ namespace ImGui
         public WindowFlags Flags;
 
         /// <summary>
-        /// Draw list
-        /// </summary>
-        public DrawList DrawList;
-
-        /// <summary>
         /// Root of node tree of plain nodes
         /// </summary>
         public Node NodeTreeRoot;
@@ -112,8 +107,6 @@ namespace ImGui
             this.NodeTreeRoot = new Node(this.ID, "root");
             this.NodeTreeRoot.Children = new List<Node>();
             this.RenderTree = new RenderTree(this.ID, position, size);
-
-            this.DrawList = new DrawList();//DUMMY
 
             this.IDStack.Push(this.ID);
             this.MoveID = this.GetID("#MOVE");
@@ -616,7 +609,6 @@ namespace ImGui
             style.PushBgColor(Color.Rgb(241, 112, 122), GUIState.Active);
 
             // Render
-            var d = window.DrawList;
             var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             var color = style.Get<Color>(GUIStyleName.BackgroundColor, state);
             //d.AddRectFilled(rect, color);

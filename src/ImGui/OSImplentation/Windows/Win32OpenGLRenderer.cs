@@ -128,14 +128,6 @@ void main()
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
         }
 
-        public void RenderDrawList(DrawList drawList, int width, int height)
-        {
-            DrawMesh(this.shapeMaterial, drawList.ShapeMesh, width, height);
-            DrawMesh(this.imageMaterial, drawList.ImageMesh, width, height);
-
-            DrawTextMesh(this.glyphMaterial, drawList.TextMesh, width, height);
-        }
-
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
             DrawMesh(this.shapeMaterial, meshes.shapeMesh, width, height);

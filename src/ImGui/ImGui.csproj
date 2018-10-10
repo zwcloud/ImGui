@@ -42,11 +42,8 @@
 
   <ItemGroup>
     <Compile Remove="Control\tobefixed\**" />
-    <Compile Remove="DrawList\Font\**" />
     <EmbeddedResource Remove="Control\tobefixed\**" />
-    <EmbeddedResource Remove="DrawList\Font\**" />
     <None Remove="Control\tobefixed\**" />
-    <None Remove="DrawList\Font\**" />
   </ItemGroup>
 
   <ItemGroup>
