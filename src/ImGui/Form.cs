@@ -27,10 +27,12 @@ namespace ImGui
 
         internal Form(Point position, Size size, string Title = "ImGui Form")
         {
+            Profile.Start("Create Window");
             this.nativeWindow = Application.PlatformContext.CreateWindow(position, size, WindowTypes.Regular);
             this.nativeWindow.Title = Title;
+            Profile.End();
 
-            Profile.Start("CreateRenderer");
+            Profile.Start("Create Renderer");
             this.renderer = Application.PlatformContext.CreateRenderer();
             this.renderer.Init(this.Pointer, this.nativeWindow.ClientSize);
             Profile.End();
