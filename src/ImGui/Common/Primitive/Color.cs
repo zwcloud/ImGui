@@ -2,7 +2,6 @@
 
 namespace ImGui.Common.Primitive
 {
-    [System.Diagnostics.DebuggerDisplay("R:{R} G:{G} B:{B}  A:{A}")]
     [System.Diagnostics.DebuggerStepThrough]
     public struct Color
     {
@@ -70,7 +69,13 @@ namespace ImGui.Common.Primitive
             return base.GetHashCode();
         }
 
+        public override string ToString()
+        {
+            return $"R:{(int)(this.r*255)} G:{(int)(this.g*255)} B:{(int)(this.b*255)} A:{(int)(this.a*255)}";
+        }
         #endregion
+
+        #region Pre-defined colors
 
         public static readonly Color Clear = Argb(0, 0, 0, 0);
 
@@ -261,6 +266,8 @@ namespace ImGui.Common.Primitive
         public static readonly Color FrameBgHovered = new Color(0.90f, 0.80f, 0.80f, 0.40f);
         public static readonly Color FrameBgActive = new Color(0.90f, 0.65f, 0.65f, 0.45f);
         public static readonly Color CheckMark = new Color(0.90f, 0.90f, 0.90f, 0.50f);
+        #endregion
+
         #endregion
 
         public static Color Rgb(byte r, byte g, byte b)
