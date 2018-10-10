@@ -4,7 +4,6 @@ using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
-using ImGui.Core;
 using ImGui.GraphicsAbstraction;
 using Xunit;
 

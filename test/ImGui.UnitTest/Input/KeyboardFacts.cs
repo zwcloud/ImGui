@@ -2,7 +2,6 @@
 using ImGui.Common.Primitive;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
-using ImGui.Core;
 using Xunit;
 
 namespace ImGui.UnitTest

@@ -3,7 +3,6 @@ using System.Threading;
 using Xunit;
 using ImGui;
 using ImGui.Common.Primitive;
-using ImGui.Core;
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;

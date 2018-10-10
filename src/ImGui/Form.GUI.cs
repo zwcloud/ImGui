@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading;
 using ImGui.Common.Primitive;
-using ImGui.Core;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.Rendering;

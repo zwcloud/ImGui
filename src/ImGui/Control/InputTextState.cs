@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ImGui.Common.Primitive;
-using ImGui.Core;
 using ImGui.Input;
 using ImGui.OSAbstraction.Text;
 

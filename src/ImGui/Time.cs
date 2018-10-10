@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ImGui.Core
+namespace ImGui
 {
     internal static class Time
     {

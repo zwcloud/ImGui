@@ -1,5 +1,4 @@
 ﻿using ImGui.Common.Primitive;
-using ImGui.Core;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
