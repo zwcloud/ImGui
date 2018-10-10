@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using ImGui.Common.Primitive;
+﻿using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
-using ImGui.GraphicsAbstraction;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -65,7 +65,8 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
+                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -150,7 +151,8 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
+                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -253,7 +255,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -336,7 +338,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -400,7 +402,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -480,7 +482,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -544,7 +546,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -605,7 +607,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -684,7 +686,7 @@ namespace ImGui.UnitTest.Rendering
 
                 void DrawBox(List<Node> boxNodes, MeshList meshList, MeshBuffer meshBuffer)
                 {
-                    boxNodes.ForEach(n=>n.Draw(primitiveRenderer, meshList));
+                    boxNodes.ForEach(n => n.Draw(primitiveRenderer, meshList));
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -692,7 +694,7 @@ namespace ImGui.UnitTest.Rendering
                     meshBuffer.Build(meshList);
 
                     //draw mesh buffer to screen
-                    renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                    renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                 }
 
                 while (true)
@@ -708,7 +710,7 @@ namespace ImGui.UnitTest.Rendering
                         {
                             Application.Quit();
                         }
-                        
+
                         if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
                             switched = !switched;
@@ -794,7 +796,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -855,7 +857,7 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 

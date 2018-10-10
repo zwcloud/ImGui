@@ -37,7 +37,7 @@ namespace ImGui.UnitTest.Rendering
                         return false;
                     }
 
-                    n.Draw(primitiveRenderer, meshList);
+                    n.Draw(primitiveRenderer, list);
                     return true;
                 }
 
@@ -69,7 +69,7 @@ namespace ImGui.UnitTest.Rendering
 
                         {
                             DrawNode(node, meshList);
-                            node.Foreach(n=>DrawNode(n, meshList));
+                            node.Foreach(n => DrawNode(n, meshList));
                             node.Layout();
                         }
 
@@ -80,7 +80,8 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
+                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -120,7 +121,7 @@ namespace ImGui.UnitTest.Rendering
                         return false;
                     }
 
-                    n.Draw(primitiveRenderer, meshList);
+                    n.Draw(primitiveRenderer, list);
                     return true;
                 }
 
@@ -195,7 +196,7 @@ namespace ImGui.UnitTest.Rendering
 
                         {
                             DrawNode(container, meshList);
-                            container.Foreach(n=>DrawNode(n, meshList));
+                            container.Foreach(n => DrawNode(n, meshList));
                             container.Layout();
                         }
 
@@ -206,7 +207,8 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
+                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
@@ -297,7 +299,7 @@ namespace ImGui.UnitTest.Rendering
                     titleBarContainer.AppendChild(closeButton);
                     windowContainer.AppendChild(titleBarContainer);
                 }
-                
+
                 Node clientArea;
                 //client area background
                 {
@@ -318,7 +320,7 @@ namespace ImGui.UnitTest.Rendering
                         {
                             Application.Quit();
                         }
-                        
+
                         if (Keyboard.Instance.KeyPressed(Key.Space))
                         {
                             clientArea.ActiveSelf = !clientArea.ActiveSelf;
@@ -326,7 +328,7 @@ namespace ImGui.UnitTest.Rendering
 
                         {
                             DrawNode(windowContainer, meshList);
-                            windowContainer.Foreach(n=>DrawNode(n, meshList));
+                            windowContainer.Foreach(n => DrawNode(n, meshList));
                             windowContainer.Layout();
                         }
 
@@ -337,7 +339,8 @@ namespace ImGui.UnitTest.Rendering
 
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, meshBuffer);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
+                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
