@@ -309,7 +309,7 @@ namespace ImGui.OSImplentation.Windows
         public void Init(Point position, Size size, WindowTypes windowType)
         {
             IntPtr hInstance = processHandle.DangerousGetHandle();
-            string szAppName = "ImGuiApplication~";
+            string szAppName = "ImGuiWindow~" + this.hwnd.ToInt64();
 
             this.wndclass.style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/;
             this.wndclass.lpfnWndProc = WindowProc;
