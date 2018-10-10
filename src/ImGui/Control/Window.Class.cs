@@ -595,33 +595,5 @@ namespace ImGui
         {
             this.Scroll.Y = newScrollY;
         }
-
-        bool CloseButton(int id, Rect rect)
-        {
-            Window window = GUI.GetCurrentWindow();
-
-            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out bool hovered, out bool held);
-
-            GUIStyle style = GUIStyle.Basic;
-            style.Save();
-            style.PushBgColor(Color.White, GUIState.Normal);
-            style.PushBgColor(Color.Rgb(232, 17, 35), GUIState.Hover);
-            style.PushBgColor(Color.Rgb(241, 112, 122), GUIState.Active);
-
-            // Render
-            var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            var color = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            //d.AddRectFilled(rect, color);
-
-            Point center = rect.Center;
-            //float cross_extent = (15 * 0.7071f) - 1.0f;
-            var fontColor = style.Get<Color>(GUIStyleName.FontColor, state);
-            //d.AddLine(center + new Vector(+cross_extent, +cross_extent), center + new Vector(-cross_extent, -cross_extent), fontColor);
-            //d.AddLine(center + new Vector(+cross_extent, -cross_extent), center + new Vector(-cross_extent, +cross_extent), fontColor);
-
-            style.Restore();
-
-            return pressed;
-        }
     }
 }

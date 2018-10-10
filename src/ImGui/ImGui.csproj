@@ -66,6 +66,7 @@
     <Compile Remove="Control\TextBox.cs" />
     <Compile Remove="Control\Toggle.cs" />
     <Compile Remove="Control\TreeNode.cs" />
+    <Compile Remove="Control\Window.Child.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,7 +74,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Style\GUIStyle.Option.cs" />
     <None Include="Style\StyleRuleSet.Builder.cs" />
   </ItemGroup>
 
