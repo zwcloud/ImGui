@@ -28,7 +28,6 @@ namespace ImGui
     {
         internal static List<Form> Forms = new List<Form>();
         internal static OSAbstraction.PlatformContext PlatformContext;
-        private static readonly Stopwatch _applicationWatch = new Stopwatch();
 
         internal static void InitSysDependencies()
         {

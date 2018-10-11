@@ -5,7 +5,7 @@ namespace ImGui
 {
     internal static class Time
     {
-        private static readonly Stopwatch _applicationWatch = new Stopwatch();
+        private static readonly Stopwatch _watch = new Stopwatch();
         
         private static long _frameStartTime;
         private static long _deltaTime;
@@ -17,12 +17,12 @@ namespace ImGui
         {
             get
             {
-                if(!_applicationWatch.IsRunning)
+                if(!_watch.IsRunning)
                 {
                     throw new InvalidOperationException(
                         "The time cannot be obtained because the internal time isn't running. Call Application.Run to run it first.");
                 }
-                return _applicationWatch.ElapsedMilliseconds;
+                return _watch.ElapsedMilliseconds;
             }
         }
 
@@ -33,7 +33,7 @@ namespace ImGui
 
         public static void Init()
         {
-            _applicationWatch.Start();
+            _watch.Start();
             _frameStartTime = time;
         }
 

@@ -13,8 +13,6 @@ namespace ImGui.UnitTest
             [Fact]
             public void KeypressedIsWorking()
             {
-                //Util.CheckEchoLogger();
-
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 
