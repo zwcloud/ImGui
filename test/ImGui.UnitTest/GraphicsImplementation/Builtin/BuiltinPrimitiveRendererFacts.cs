@@ -14,10 +14,10 @@ namespace ImGui.UnitTest.Rendering
         public void StrokeAPath()
         {
             var primitive = new PathPrimitive();
-            primitive.PathMoveTo(new Point(10, 10));
-            primitive.PathLineTo(new Point(10, 100));
+            primitive.PathMoveTo(new Point(10, 10)  );
+            primitive.PathLineTo(new Point(10, 100) );
             primitive.PathLineTo(new Point(100, 100));
-            primitive.PathLineTo(new Point(100, 10));
+            primitive.PathLineTo(new Point(100, 10) );
             primitive.PathClose();
             primitive.PathStroke(2, Color.Red);
 
@@ -29,26 +29,16 @@ namespace ImGui.UnitTest.Rendering
 
             primitiveRenderer.DrawPath(primitive);
 
-            var window = new Win32Window();
-            window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+            Assert.NotNull(mesh.CommandBuffer);
+            Assert.Equal(1, mesh.CommandBuffer.Count);
+            var cmd = mesh.CommandBuffer[0];
+            Assert.Equal(6, cmd.ElemCount);
 
-            var renderer = new Win32OpenGLRenderer();
-            renderer.Init(window.Pointer, window.ClientSize);
+            Assert.NotNull(mesh.VertexBuffer);
+            var vertexBuffer = mesh.VertexBuffer;
+            Assert.Equal(4, vertexBuffer.Count);
 
-            while (true)
-            {
-                window.MainLoop(() =>
-                {
-                    renderer.Clear(Color.FrameBg);
-                    Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
-                        (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-                    renderer.SwapBuffers();
-                });
-                if (Input.Keyboard.Instance.KeyDown(Key.Escape))
-                {
-                    break;
-                }
-            }
+            //TODO
         }
 
         [Fact]
