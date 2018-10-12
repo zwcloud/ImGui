@@ -103,6 +103,9 @@ namespace CSharpGLES
         [DllImport(GLESv2, EntryPoint = "glDepthFunc")]
         public static extern void DepthFunc(uint func);
 
+        [DllImport(GLESv2, EntryPoint = "glReadPixels")]
+        public static extern void ReadPixels(int x, int y, int width, int height, uint format, uint type, byte[] pixels);
+
         //shader
         [DllImport(GLESv2, EntryPoint = "glCreateProgram")]
         public static extern uint CreateProgram();

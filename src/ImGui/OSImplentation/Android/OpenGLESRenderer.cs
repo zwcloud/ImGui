@@ -336,5 +336,17 @@ void main()
             this.imageMaterial.ShutDown();
             this.glyphMaterial.ShutDown();
         }
+
+        public byte[] GetRawBackBuffer(out int width, out int height)
+        {
+            GL.GetIntegerv(GL.GL_VIEWPORT, IntBuffer);
+            int viewportX = IntBuffer[0];
+            int viewportY = IntBuffer[1];
+            int viewportWidth = width = IntBuffer[2];
+            int viewportHeight = height = IntBuffer[3];
+            var pixels = new byte[viewportWidth * viewportHeight * 4];
+            GL.ReadPixels(viewportX, viewportY, viewportWidth, viewportHeight, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels);
+            return pixels;
+        }
     }
 }

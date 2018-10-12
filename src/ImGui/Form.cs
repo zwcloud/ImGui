@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Window;
+using SixLabors.ImageSharp.Processing;
 
 namespace ImGui
 {
@@ -104,6 +106,17 @@ namespace ImGui
         internal Point ClientToScreen(Point point)
         {
             return this.nativeWindow.ClientToScreen(point);
+        }
+
+        internal void SaveClientAreaToPng(string filePath)
+        {
+            byte[] data = this.renderer.GetRawBackBuffer(out var width, out var height);
+            var image = SixLabors.ImageSharp.Image.LoadPixelData<SixLabors.ImageSharp.PixelFormats.Rgba32>(SixLabors.ImageSharp.Configuration.Default, data, width, height);
+            image.Mutate(x => x.Flip(FlipMode.Vertical));
+            using (var stream = File.OpenWrite(filePath))
+            {
+                SixLabors.ImageSharp.ImageExtensions.SaveAsPng(image, stream);
+            }
         }
     }
 }

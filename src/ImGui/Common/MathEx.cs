@@ -1,7 +1,7 @@
-﻿using System;
+﻿using ImGui.Common.Primitive;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using ImGui.Common.Primitive;
 
 namespace ImGui.Common
 {
@@ -18,7 +18,7 @@ namespace ImGui.Common
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double ClampTo0(double value)
         {
-            if(value < 0)
+            if (value < 0)
             {
                 return 0;
             }
@@ -135,6 +135,11 @@ namespace ImGui.Common
                 return 1f;
             }
             return value;
+        }
+
+        public static int RoundToInt(double f)
+        {
+            return (int)Math.Round(f);
         }
 
         /// <summary>
@@ -276,11 +281,11 @@ namespace ImGui.Common
             Point vsum = Point.Zero;
 
             var numVerts = verts.Length;
-            for (int i = 0; i<numVerts; i++)
+            for (int i = 0; i < numVerts; i++)
             {
                 Point v1 = verts[i];
                 Point v2 = verts[(i + 1) % numVerts];
-                var cross = v1.X*v2.Y - v1.Y*v2.X;
+                var cross = v1.X * v2.Y - v1.Y * v2.X;
                 sum += cross;
                 vsum = new Point(((v1.X + v2.X) * cross) + vsum.X, ((v1.Y + v2.Y) * cross) + vsum.Y);
             }

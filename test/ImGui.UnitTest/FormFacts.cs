@@ -46,5 +46,44 @@ namespace ImGui.UnitTest
                 }
             }
         }
+
+        public class TheSaveClientAreaToPngMethod
+        {
+            [Fact]
+            public void Save()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                var form = new MainForm();
+                form.Show();
+
+                while (!form.Closed)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    if (Keyboard.Instance.KeyDown(Key.Escape))
+                    {
+                        Application.Quit();
+                    }
+                    
+                    if (Keyboard.Instance.KeyDown(Key.Space))
+                    {
+                        form.SaveClientAreaToPng("D:\\1.png");
+                    }
+
+                    form.MainLoop(form.GUILoop);
+                    
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+                    
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+        }
     }
 }

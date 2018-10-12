@@ -38,5 +38,10 @@ namespace ImGui.OSAbstraction.Graphics
         /// shut down the renderer
         /// </summary>
         void ShutDown();
+
+        /// <summary>
+        /// Get back buffer data
+        /// </summary>
+        byte[] GetRawBackBuffer(out int width, out int height);
     }
 }
