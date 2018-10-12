@@ -1,13 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using Xunit;
-using ImGui;
-using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
-using ImGui.GraphicsImplementation;
+﻿using Xunit;
 using ImGui.Input;
-using ImGui.OSImplentation.Windows;
-using ImGui.Rendering;
 
 namespace ImGui.UnitTest
 {
