@@ -113,32 +113,4 @@ namespace ImGui.UnitTest
             }
         }
     }
-
-    public class ZSimpleTest
-    {
-        [Fact]
-        public void TS()
-        {
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, 2, 2))
-            using (Cairo.Context g = new Cairo.Context(surface))
-            {
-                g.SetSourceColor(new Cairo.Color(0, 0, 0, 1));
-                g.Paint();
-                //g.Operator = Operator.Over;
-
-                g.MoveTo(0, 0);
-                g.LineTo(2, 0);
-                g.LineTo(2, 2);
-                g.LineTo(0, 2);
-                g.ClosePath();
-                g.SetSourceColor(new Cairo.Color(1, 0, 0, 0.6));
-                g.Fill();
-
-                surface.WriteToPng("D:\\01_Cairo_WriteToPng.png");
-
-                var image = Image.LoadPixelData<Bgra32>(Configuration.Default, surface.Data, surface.Width, surface.Height);
-                image.SaveAsPng(System.IO.File.OpenWrite("D:\\01_ImageSharp_SaveAsPng.png"));
-            }
-        }
-    }
 }
