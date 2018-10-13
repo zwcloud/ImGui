@@ -5,6 +5,8 @@ using System.Reflection;
 using Cairo;
 using ImGui.Common.Primitive;
 using ImGui.Rendering;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.UnitTest
 {
@@ -264,6 +266,12 @@ namespace ImGui.UnitTest
                 surface.WriteToPng(filePath);
                 Util.OpenImage(filePath);
             }
+        }
+
+        internal static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
+        {
+            var diffPercentage = ImageSharp.Extension.ImageComparer.PercentageDifference(a,b);
+            return diffPercentage < 0.1;
         }
     }
 }

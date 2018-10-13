@@ -36,4 +36,16 @@
     <Folder Include="OSImplentation\Windows\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Util\images\logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Util\images\logo_diff.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Util\images\logo_mess.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
