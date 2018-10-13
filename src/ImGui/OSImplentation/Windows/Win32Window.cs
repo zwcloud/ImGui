@@ -382,9 +382,6 @@ namespace ImGui.OSImplentation.Windows
                 throw new WindowCreateException(string.Format("CreateWindowEx error: {0}", Marshal.GetLastWin32Error()));
             }
 
-            ShowWindow(hwnd, 1/*SW_SHOWNORMAL*/);
-            UpdateWindow(hwnd);
-
             this.hwnd = hwnd;
         }
 
