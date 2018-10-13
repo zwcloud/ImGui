@@ -273,5 +273,11 @@ namespace ImGui.UnitTest
             var diffPercentage = ImageSharp.Extension.ImageComparer.PercentageDifference(a,b);
             return diffPercentage < 0.1;
         }
+
+        internal static bool CompareImage(Image<Rgba32> a, Image<Bgra32> b)
+        {
+            var diffPercentage = ImageSharp.Extension.ImageComparer.PercentageDifference(a,b);
+            return diffPercentage < 0.1;
+        }
     }
 }

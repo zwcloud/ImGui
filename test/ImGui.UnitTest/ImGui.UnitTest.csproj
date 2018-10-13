@@ -37,6 +37,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="3rd\Typography\Typography.OpenFont\images\GlyphReaderFacts.TheReadMethod.Read_DroidSans.ttf_o.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="3rd\Typography\Typography.OpenFont\images\GlyphReaderFacts.TheReadMethod.Read_msjh.ttf_D.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="3rd\Typography\Typography.OpenFont\images\GlyphReaderFacts.TheReadMethod.Read_msjh.ttf_乐.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Util\images\logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

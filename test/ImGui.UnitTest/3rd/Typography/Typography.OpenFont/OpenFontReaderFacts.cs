@@ -1,15 +1,15 @@
 ﻿using Typography.OpenFont;
 using Xunit;
-using System.Reflection;
+using ImGui.Common;
 using ImGui.Common.Primitive;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using Xunit.Abstractions;
 
 namespace ImGui.UnitTest
 {
     public class OpenFontReaderFacts
     {
-        private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0, 2) + "\\ImGui.UnitTest.Output";
-
         public class TheReadMethod
         {
             private readonly ITestOutputHelper o;
@@ -19,10 +19,10 @@ namespace ImGui.UnitTest
             }
 
             [Theory]
-            [InlineData("msjh.ttf", 'D', 400)]
-            [InlineData("DroidSans.ttf", 'o', 400)]
-            [InlineData("msjh.ttf", '乐', 400)]
-            public void Read(string fontFileName, char character, int fontSize)
+            [InlineData("msjh.ttf", 'D', "3rd/Typography/Typography.OpenFont/images/GlyphReaderFacts.TheReadMethod.Read_msjh.ttf_D.png")]
+            [InlineData("DroidSans.ttf", 'o', "3rd/Typography/Typography.OpenFont/images/GlyphReaderFacts.TheReadMethod.Read_DroidSans.ttf_o.png")]
+            [InlineData("msjh.ttf", '乐', "3rd/Typography/Typography.OpenFont/images/GlyphReaderFacts.TheReadMethod.Read_msjh.ttf_乐.png")]
+            public void Read(string fontFileName, char character, string expectedImageFilePath)
             {
                 Typeface typeFace;
                 using (var fs = Utility.ReadFile(Utility.FontDir + fontFileName))
@@ -31,7 +31,7 @@ namespace ImGui.UnitTest
                     typeFace = reader.Read(fs);
                 }
 
-                Glyph glyph = typeFace.Lookup(character);
+                Typography.OpenFont.Glyph glyph = typeFace.Lookup(character);
 
                 // read polygons and bezier segments
                 GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
@@ -66,10 +66,13 @@ namespace ImGui.UnitTest
                 o.WriteLine("");
 
                 // draw to an image
-                using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, 2000, 2000))
+                using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, MathEx.RoundToInt(aabb.Width), MathEx.RoundToInt(aabb.Height)))
                 using (Cairo.Context g = new Cairo.Context(surface))
                 {
                     g.Translate(-aabb.Min.X, -aabb.Min.Y);
+                    //essential: set surface back ground to white (1,1,1,1)
+                    g.SetSourceColor(CairoEx.ColorWhite);
+                    g.Paint();
 
                     for (var i = 0; i < polygons.Count; i++)
                     {
@@ -82,7 +85,7 @@ namespace ImGui.UnitTest
                         g.ClosePath();
                     }
                     g.SetSourceColor(new Cairo.Color(0, 0, 0));
-                    g.LineWidth = 2;
+                    g.LineWidth = 4;
                     g.StrokePreserve();
                     g.SetSourceColor(new Cairo.Color(0.8, 0, 0, 0.6));
                     g.Fill();
@@ -100,15 +103,41 @@ namespace ImGui.UnitTest
                     g.SetSourceColor(CairoEx.ColorRgb(0, 122, 204));
                     g.Stroke();
 
-                    var path =
-                        $"{OutputPath}\\GlyphReaderFacts.TheReadMethod.Read_{fontFileName}_{character}_{fontSize}.png";
-                    surface.WriteToPng(path);
+                    //used to generate expected image
+                    //surface.WriteToPng($"{Util.OutputPath}\\GlyphReaderFacts.TheReadMethod.Read_{fontFileName}_{character}.png");
 
-                    Util.OpenImage(path);
-
-                    // Now inspect the image to check whether the glyph is correct
-                    // TODO Are there a better way to do such kind of unit-test?
+                    var image = Image.LoadPixelData<Bgra32>(Configuration.Default, surface.Data, surface.Width, surface.Height);
+                    var expectedImage = Image.Load(expectedImageFilePath);
+                    Assert.True(Util.CompareImage(expectedImage, image));
                 }
+            }
+        }
+    }
+
+    public class ZSimpleTest
+    {
+        [Fact]
+        public void TS()
+        {
+            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, 2, 2))
+            using (Cairo.Context g = new Cairo.Context(surface))
+            {
+                g.SetSourceColor(new Cairo.Color(0, 0, 0, 1));
+                g.Paint();
+                //g.Operator = Operator.Over;
+
+                g.MoveTo(0, 0);
+                g.LineTo(2, 0);
+                g.LineTo(2, 2);
+                g.LineTo(0, 2);
+                g.ClosePath();
+                g.SetSourceColor(new Cairo.Color(1, 0, 0, 0.6));
+                g.Fill();
+
+                surface.WriteToPng("D:\\01_Cairo_WriteToPng.png");
+
+                var image = Image.LoadPixelData<Bgra32>(Configuration.Default, surface.Data, surface.Width, surface.Height);
+                image.SaveAsPng(System.IO.File.OpenWrite("D:\\01_ImageSharp_SaveAsPng.png"));
             }
         }
     }
