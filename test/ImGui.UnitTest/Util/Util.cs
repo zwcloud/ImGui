@@ -6,7 +6,9 @@ using Cairo;
 using ImGui.Common.Primitive;
 using ImGui.Rendering;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace ImGui.UnitTest
 {
@@ -268,6 +270,24 @@ namespace ImGui.UnitTest
             }
         }
 
+        public static Image<Rgba32> CreateImage(byte[] data, int width, int height, bool flip)
+        {
+            var img = Image.LoadPixelData<Rgba32>(Configuration.Default, data, width, height);
+            if (flip)
+            {
+                img.Mutate(x => x.Flip(FlipMode.Vertical));
+            }
+            return img;
+        }
+
+        public static void SaveImage(Image<Rgba32> image, string path)
+        {
+            using (var stream = System.IO.File.OpenWrite(path))
+            {
+                image.SaveAsPng(stream);
+            }
+        }
+
         internal static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
         {
             var diffPercentage = ImageSharp.Extension.ImageComparer.PercentageDifference(a,b);
@@ -278,6 +298,11 @@ namespace ImGui.UnitTest
         {
             var diffPercentage = ImageSharp.Extension.ImageComparer.PercentageDifference(a,b);
             return diffPercentage < 0.1;
+        }
+
+        public static Image<Rgba32> LoadImage(string filePath)
+        {
+            return Image.Load<Rgba32>(filePath);
         }
     }
 }

@@ -29,16 +29,25 @@ namespace ImGui.UnitTest.Rendering
 
             primitiveRenderer.DrawPath(primitive);
 
-            Assert.NotNull(mesh.CommandBuffer);
-            Assert.Equal(1, mesh.CommandBuffer.Count);
-            var cmd = mesh.CommandBuffer[0];
-            Assert.Equal(6, cmd.ElemCount);
+            var window = new Win32Window();
+            window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
 
-            Assert.NotNull(mesh.VertexBuffer);
-            var vertexBuffer = mesh.VertexBuffer;
-            Assert.Equal(4, vertexBuffer.Count);
+            var renderer = new Win32OpenGLRenderer();
+            renderer.Init(window.Pointer, window.ClientSize);
 
-            //TODO
+            renderer.Clear(Color.FrameBg);
+            Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
+                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+            renderer.SwapBuffers();
+
+            var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
+
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+            //used to generate expected image
+            //Util.SaveImage(image, Util.OutputPath + "/BuiltinPrimitiveRendererFacts.StrokeAPath.png");
+            var expectedImage = Util.LoadImage(@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.StrokeAPath.png");
+
+            Assert.True(Util.CompareImage(expectedImage, image));
         }
 
         [Fact]
