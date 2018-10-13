@@ -62,7 +62,7 @@ namespace ImGui.UnitTest
                     
                     if (Keyboard.Instance.KeyDown(Key.Space))
                     {
-                        form.SaveClientAreaToPng("D:\\1.png");
+                        form.SaveClientAreaToPng(Util.OutputPath + "/1.png");
                     }
 
                     form.MainLoop(form.GUILoop);

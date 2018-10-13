@@ -10,7 +10,7 @@ namespace ImGui.UnitTest
 {
     public static class Util
     {
-        private static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0, 2) + "\\ImGui.UnitTest.Output";
+        public static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0, 2) + "/ImGui.UnitTest.Output";
 
         public static void CheckEchoLogger()
         {
