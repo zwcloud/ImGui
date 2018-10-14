@@ -38,7 +38,6 @@ namespace ImGui.UnitTest.Rendering
             renderer.Clear(Color.FrameBg);
             Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
                 (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-            renderer.SwapBuffers();
 
             var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
 
@@ -73,20 +72,10 @@ namespace ImGui.UnitTest.Rendering
             var renderer = new Win32OpenGLRenderer();
             renderer.Init(window.Pointer, window.ClientSize);
 
-            while (true)
-            {
-                window.MainLoop(() =>
-                {
-                    renderer.Clear(Color.FrameBg);
-                    Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
-                        (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-                    renderer.SwapBuffers();
-                });
-                if (Input.Keyboard.Instance.KeyDown(Key.Escape))
-                {
-                    break;
-                }
-            }
+            renderer.Clear(Color.FrameBg);
+            Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
+                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+            renderer.SwapBuffers();
         }
 
         [Theory]
