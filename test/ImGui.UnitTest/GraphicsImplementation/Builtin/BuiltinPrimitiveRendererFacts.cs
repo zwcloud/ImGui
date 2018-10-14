@@ -81,27 +81,16 @@ namespace ImGui.UnitTest.Rendering
             var textMesh = new TextMesh();
             primitiveRenderer.SetTextMesh(textMesh);
             primitiveRenderer.DrawText(primitive, new Rect(100, 100, 500, 40), new StyleRuleSet());
-
-            var window = new Win32Window();
-            window.Init(new Point(100, 100), new Size(500, 500), WindowTypes.Regular);
-
-            var renderer = new Win32OpenGLRenderer();
-            renderer.Init(window.Pointer, window.ClientSize);
-
-            while (true)
-            {
-                window.MainLoop(() =>
-                {
-                    renderer.Clear(Color.FrameBg);
-                    Win32OpenGLRenderer.DrawTextMesh(renderer.glyphMaterial, primitiveRenderer.TextMesh,
-                        (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-                    renderer.SwapBuffers();
-                });
-                if (Input.Keyboard.Instance.KeyDown(Key.Escape))
-                {
-                    break;
-                }
-            }
+            
+            var image = Util.RenderTextMeshToImage(primitiveRenderer.TextMesh, new Size(500, 500));
+            string expectedImageFilePath =
+                $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText_{text}.png";
+#if GenerateExpectedImages
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+            #else
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+#endif
         }
 
         [Fact]
