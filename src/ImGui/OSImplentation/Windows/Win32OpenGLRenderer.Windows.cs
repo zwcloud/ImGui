@@ -385,7 +385,7 @@ namespace ImGui.OSImplentation.Windows
                 style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/,
                 lpfnWndProc = (hWnd, msg, wParam, lParam) => DefWindowProc(hWnd, msg, wParam, lParam),
                 hInstance = hInstance,
-                lpszClassName = "tmpWindow~"
+                lpszClassName = "tmpWindowForMSAA~"+this.GetHashCode()
             };
             ushort atom = RegisterClassW(ref wndclass);
             if (atom == 0)

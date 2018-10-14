@@ -1,4 +1,5 @@
-﻿using ImGui.Common.Primitive;
+﻿//#define GenerateExpectedImages
+using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
@@ -29,24 +30,15 @@ namespace ImGui.UnitTest.Rendering
 
             primitiveRenderer.DrawPath(primitive);
 
-            var window = new Win32Window();
-            window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-            var renderer = new Win32OpenGLRenderer();
-            renderer.Init(window.Pointer, window.ClientSize);
-
-            renderer.Clear(Color.FrameBg);
-            Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
-                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-
-            var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
-
-            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-            //used to generate expected image
-            //Util.SaveImage(image, Util.OutputPath + "/BuiltinPrimitiveRendererFacts.StrokeAPath.png");
-            var expectedImage = Util.LoadImage(@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.StrokeAPath.png");
-
+            var image = Util.RenderShapeMeshToImage(primitiveRenderer.ShapeMesh, new Size(300, 400));
+            const string expectedImageFilePath =
+                @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.StrokeAPath.png";
+            #if GenerateExpectedImages
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+            #else
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
             Assert.True(Util.CompareImage(expectedImage, image));
+            #endif
         }
 
         [Fact]
@@ -66,16 +58,15 @@ namespace ImGui.UnitTest.Rendering
             primitiveRenderer.SetShapeMesh(mesh);
             primitiveRenderer.DrawPath(primitive);
 
-            var window = new Win32Window();
-            window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-            var renderer = new Win32OpenGLRenderer();
-            renderer.Init(window.Pointer, window.ClientSize);
-
-            renderer.Clear(Color.FrameBg);
-            Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, primitiveRenderer.ShapeMesh,
-                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-            renderer.SwapBuffers();
+            var image = Util.RenderShapeMeshToImage(primitiveRenderer.ShapeMesh, new Size(300, 400));
+            const string expectedImageFilePath =
+                @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.FillAPath.png";
+            #if GenerateExpectedImages
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+            #else
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+            #endif
         }
 
         [Theory]

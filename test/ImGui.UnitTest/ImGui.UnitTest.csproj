@@ -46,6 +46,9 @@
     <None Update="3rd\Typography\Typography.OpenFont\images\GlyphReaderFacts.TheReadMethod.Read_msjh.ttf_乐.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.FillAPath.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.StrokeAPath.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

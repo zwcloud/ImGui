@@ -2,11 +2,12 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using Cairo;
+using System.Runtime.CompilerServices;
+using ImageSharp.Extension;
 using ImGui.Common.Primitive;
+using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -14,7 +15,11 @@ namespace ImGui.UnitTest
 {
     public static class Util
     {
+        //FIXME this only works on Windows
+        //For macOS and Linux the path should start with "~\" instead.
         public static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0, 2) + "/ImGui.UnitTest.Output";
+
+        public static readonly string UnitTestRootDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")) + Path.DirectorySeparatorChar;
 
         public static void CheckEchoLogger()
         {
@@ -71,16 +76,16 @@ namespace ImGui.UnitTest
         }
 
 
-        internal static void DrawNode(Node node, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
+        internal static void DrawNode(Node node, [CallerMemberName] string memberName = "")
         {
             using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
             using (Cairo.Context context = new Cairo.Context(surface))
             {
                 Draw(context, node);
 
-                if (!System.IO.Directory.Exists(OutputPath))
+                if (!Directory.Exists(OutputPath))
                 {
-                    System.IO.Directory.CreateDirectory(OutputPath);
+                    Directory.CreateDirectory(OutputPath);
                 }
 
                 string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
@@ -89,7 +94,7 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static void Draw(Context context, Node node)
+        private static void Draw(Cairo.Context context, Node node)
         {
             var isGroup = node.Children != null;
 
@@ -121,7 +126,7 @@ namespace ImGui.UnitTest
             context.Restore();
         }
         
-        private static void Draw(Context context, PathPrimitive primitive)
+        private static void Draw(Cairo.Context context, PathPrimitive primitive)
         {
             foreach (var command in primitive.Path)
             {
@@ -182,14 +187,14 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static Size GetPrimitiveSize(PathPrimitive primitive, out Common.Primitive.Point min)
+        private static Size GetPrimitiveSize(PathPrimitive primitive, out Point min)
         {
             var minX = 0.0;
             var minY = 0.0;
             var maxX = 0.0;
             var maxY = 0.0;
 
-            void updateMinMax(Common.Primitive.Point point)
+            void updateMinMax(Point point)
             {
                 minX = Math.Min(minX, point.x);
                 minY = Math.Min(minY, point.y);
@@ -245,23 +250,23 @@ namespace ImGui.UnitTest
                 }
             }
 
-            min = new Common.Primitive.Point(minX, minY);
+            min = new Point(minX, minY);
             return new Size(maxX - minX, maxY - minY);
         }
 
-        internal static void DrawPathPrimitive(PathPrimitive primitive, [System.Runtime.CompilerServices.CallerMemberName]
+        internal static void DrawPathPrimitive(PathPrimitive primitive, [CallerMemberName]
             string memberName = "")
         {
-            var size = GetPrimitiveSize(primitive, out Common.Primitive.Point minPoint);
+            var size = GetPrimitiveSize(primitive, out Point minPoint);
             using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)size.Width, (int)size.Height))
             using (Cairo.Context context = new Cairo.Context(surface))
             {
                 context.Translate(-minPoint.x, -minPoint.y);
                 Draw(context, primitive);
 
-                if (!System.IO.Directory.Exists(OutputPath))
+                if (!Directory.Exists(OutputPath))
                 {
-                    System.IO.Directory.CreateDirectory(OutputPath);
+                    Directory.CreateDirectory(OutputPath);
                 }
 
                 string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
@@ -282,7 +287,7 @@ namespace ImGui.UnitTest
 
         public static void SaveImage(Image<Rgba32> image, string path)
         {
-            using (var stream = System.IO.File.OpenWrite(path))
+            using (var stream = File.OpenWrite(path))
             {
                 image.SaveAsPng(stream);
             }
@@ -290,19 +295,43 @@ namespace ImGui.UnitTest
 
         internal static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
         {
-            var diffPercentage = ImageSharp.Extension.ImageComparer.PercentageDifference(a,b);
+            var diffPercentage = ImageComparer.PercentageDifference(a,b);
             return diffPercentage < 0.1;
         }
 
         internal static bool CompareImage(Image<Rgba32> a, Image<Bgra32> b)
         {
-            var diffPercentage = ImageSharp.Extension.ImageComparer.PercentageDifference(a,b);
+            var diffPercentage = ImageComparer.PercentageDifference(a,b);
             return diffPercentage < 0.1;
         }
 
         public static Image<Rgba32> LoadImage(string filePath)
         {
             return Image.Load<Rgba32>(filePath);
+        }
+
+        internal static SixLabors.ImageSharp.Image<Rgba32> RenderShapeMeshToImage(Mesh mesh, Size imageSize)
+        {
+            //TODO de-cuple this method with Windows platform
+
+            var window = new Win32Window();
+            window.Init(Point.Zero, imageSize, WindowTypes.Regular);
+
+            var renderer = new Win32OpenGLRenderer();
+            renderer.Init(window.Pointer, window.ClientSize);
+
+            renderer.Clear(Color.FrameBg);
+            Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, mesh,
+                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+
+            var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
+
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+
+            renderer.ShutDown();
+            window.Close();
+
+            return image;
         }
     }
 }

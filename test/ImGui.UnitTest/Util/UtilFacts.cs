@@ -6,6 +6,12 @@ namespace ImGui.UnitTest
     public class UtilFacts
     {
         [Fact]
+        public void GetProjectPathWhenRunningUnitTestInVisualStudio()
+        {
+            Assert.Equal(@"D:\Workspace\ImGui\test\ImGui.UnitTest\", Util.UnitTestRootDir);
+        }
+
+        [Fact]
         public void CompareIdenticalImage()
         {
             var imageA = Image.Load("Util/images/logo.png");
