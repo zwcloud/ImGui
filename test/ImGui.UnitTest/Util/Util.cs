@@ -357,5 +357,29 @@ namespace ImGui.UnitTest
 
             return image;
         }
+
+        internal static SixLabors.ImageSharp.Image<Rgba32> RenderImageMeshToImage(Mesh mesh, Size imageSize)
+        {
+            //TODO de-cuple this method with Windows platform
+
+            var window = new Win32Window();
+            window.Init(Point.Zero, imageSize, WindowTypes.Regular);
+
+            var renderer = new Win32OpenGLRenderer();
+            renderer.Init(window.Pointer, window.ClientSize);
+
+            renderer.Clear(Color.FrameBg);
+            Win32OpenGLRenderer.DrawMesh(renderer.imageMaterial, mesh,
+                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
+
+            var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
+
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+
+            renderer.ShutDown();
+            window.Close();
+
+            return image;
+        }
     }
 }

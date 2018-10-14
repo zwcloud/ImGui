@@ -1,6 +1,6 @@
 ﻿//#define GenerateExpectedImages
+
 using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
@@ -9,7 +9,7 @@ using Xunit;
 
 namespace ImGui.UnitTest.Rendering
 {
-    public class BuiltinPrimitiveRendererFacts
+    public partial class BuiltinPrimitiveRendererFacts
     {
         [Fact]
         public void StrokeAPath()
@@ -81,7 +81,7 @@ namespace ImGui.UnitTest.Rendering
             var textMesh = new TextMesh();
             primitiveRenderer.SetTextMesh(textMesh);
             primitiveRenderer.DrawText(primitive, new Rect(100, 100, 500, 40), new StyleRuleSet());
-            
+
             var image = Util.RenderTextMeshToImage(primitiveRenderer.TextMesh, new Size(500, 500));
             string expectedImageFilePath =
                 $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText_{text}.png";
@@ -96,45 +96,40 @@ namespace ImGui.UnitTest.Rendering
         [Fact]
         public void DrawImage()
         {
-            var window = new Win32Window();
-            window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-            var renderer = new Win32OpenGLRenderer();
-            renderer.Init(window.Pointer, window.ClientSize);
-
-            var image = new Image(@"assets\images\logo.png");
-            var primitive = new ImagePrimitive(image);
-            primitive.Offset = new Vector(10, 10);
-
-            var styleRuleSet = new StyleRuleSet();
-            var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
-            styleRuleSetBuilder.BackgroundColor(Color.White);
-
-            var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-            var mesh = new Mesh();
-            mesh.CommandBuffer.Add(DrawCommand.Default);
-            primitiveRenderer.SetImageMesh(mesh);
-            primitiveRenderer.DrawImage(primitive, new Rect(10, 10, image.Width, image.Height), styleRuleSet);
-
-            window.Show();
-
-            while (true)
+            byte[] imageRawBytes;
+            int width, height;
+            using (var context = new RenderContextForTest(new Size(300, 400)))
             {
-                window.MainLoop(() =>
-                {
-                    renderer.Clear(Color.FrameBg);
-                    Win32OpenGLRenderer.DrawMesh(renderer.imageMaterial, primitiveRenderer.ImageMesh,
-                        (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-                    renderer.SwapBuffers();
-                });
-                if (Input.Keyboard.Instance.KeyDown(Key.Escape))
-                {
-                    break;
-                }
-            }
-        }
+                var primitive = new ImagePrimitive(@"assets\images\logo.png");
+                primitive.Offset = new Vector(10, 10);
 
+                var styleRuleSet = new StyleRuleSet();
+                var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
+                styleRuleSetBuilder.BackgroundColor(Color.White);
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+                var mesh = new Mesh();
+                mesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.SetImageMesh(mesh);
+                primitiveRenderer.DrawImage(primitive, new Rect(10, 10, primitive.Image.Width, primitive.Image.Height), styleRuleSet);
+
+                context.Clear();
+                context.DrawImageMesh(mesh);
+
+                imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
+            }
+
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+            string expectedImageFilePath =
+                @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.png";
+#if GenerateExpectedImages
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+            #else
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+#endif
+        }
 
         public class DrawBoxModel
         {
