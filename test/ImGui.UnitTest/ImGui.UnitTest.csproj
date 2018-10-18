@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="GraphicsImplementation\Builtin\images\" />
     <Folder Include="OSImplentation\Windows\" />
   </ItemGroup>
 
@@ -46,22 +47,28 @@
     <None Update="3rd\Typography\Typography.OpenFont\images\GlyphReaderFacts.TheReadMethod.Read_msjh.ttf_乐.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.png">
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithImageContent.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText_Hello你好こんにちは.png">
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithTextContent.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText_text with space.png">
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.DrawOriginalImage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText_textwithoutspace.png">
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillAPath.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.FillAPath.png">
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.StrokeAPath.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.StrokeAPath.png">
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnlineText_Hello你好こんにちは.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnlineText_text with space.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnlineText_textwithoutspace.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Util\images\logo.png">
