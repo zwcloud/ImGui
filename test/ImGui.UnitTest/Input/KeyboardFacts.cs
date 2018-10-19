@@ -1,58 +1,93 @@
-﻿using System.Threading;
-using ImGui.Common.Primitive;
-using ImGui.Input;
-using ImGui.OSImplentation.Windows;
+﻿using ImGui.Input;
 using Xunit;
 
 namespace ImGui.UnitTest
 {
     public class KeyboardFacts
     {
-        public class TheKeypressedMethod
+        public class KeyDown
         {
             [Fact]
-            public void KeypressedIsWorking()
+            public void Works()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
+                //frame 0
                 {
-                    Time.OnFrameBegin();
                     Keyboard.Instance.OnFrameBegin();
+                    Keyboard.Instance.lastKeyStates[(int)Key.A] = Keyboard.Instance.keyStates[(int)Key.A];
+                    Keyboard.Instance.keyStates[(int)Key.A] = KeyState.Down;
 
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyPressed(Key.Space))
-                        {
-                            Log.Msg("Key.Space Pressed");
-                        }
-                        
-                        Log.Msg("Key.Space "+Keyboard.Instance.keyStates[(int) Key.Space] + ", last Key.Space " + Keyboard.Instance.lastKeyStates[(int) Key.Space]);
+                    Assert.True(Keyboard.Instance.KeyDown(Key.A));
 
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-                    });
-                    
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep(16);
-                    
                     Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
+                }
+
+                //frame 1
+                {
+                    Keyboard.Instance.OnFrameBegin();
+                    Keyboard.Instance.lastKeyStates[(int)Key.A] = Keyboard.Instance.keyStates[(int)Key.A];
+                    Keyboard.Instance.keyStates[(int)Key.A] = KeyState.Up;
+
+                    Assert.False(Keyboard.Instance.KeyDown(Key.A));
+
+                    Keyboard.Instance.OnFrameEnd();
+                }
+            }
+        }
+
+        public class KeyOn
+        {
+            [Fact]
+            public void Works()
+            {
+                //frame 0
+                {
+                    Keyboard.Instance.OnFrameBegin();
+                    Keyboard.Instance.lastKeyStates[(int)Key.CapsLock] = Keyboard.Instance.keyStates[(int)Key.CapsLock];
+                    Keyboard.Instance.keyStates[(int)Key.CapsLock] = KeyState.On;
+
+                    Assert.True(Keyboard.Instance.KeyOn(Key.CapsLock));
+
+                    Keyboard.Instance.OnFrameEnd();
+                }
+
+                //frame 1
+                {
+                    Keyboard.Instance.OnFrameBegin();
+                    Keyboard.Instance.lastKeyStates[(int)Key.CapsLock] = Keyboard.Instance.keyStates[(int)Key.CapsLock];
+                    Keyboard.Instance.keyStates[(int)Key.CapsLock] = KeyState.Off;
+
+                    Assert.False(Keyboard.Instance.KeyOn(Key.CapsLock));
+
+                    Keyboard.Instance.OnFrameEnd();
+                }
+            }
+        }
+
+        public class KeyPressed
+        {
+            [Fact]
+            public void Works()
+            {
+                //frame 0
+                {
+                    Keyboard.Instance.OnFrameBegin();
+                    Keyboard.Instance.lastKeyStates[(int)Key.A] = Keyboard.Instance.keyStates[(int)Key.A];
+                    Keyboard.Instance.keyStates[(int)Key.A] = KeyState.Down;
+
+                    Assert.False(Keyboard.Instance.KeyPressed(Key.A));
+
+                    Keyboard.Instance.OnFrameEnd();
+                }
+
+                //frame 1
+                {
+                    Keyboard.Instance.OnFrameBegin();
+                    Keyboard.Instance.lastKeyStates[(int)Key.A] = Keyboard.Instance.keyStates[(int)Key.A];
+                    Keyboard.Instance.keyStates[(int)Key.A] = KeyState.Up;
+
+                    Assert.True(Keyboard.Instance.KeyPressed(Key.A));
+
+                    Keyboard.Instance.OnFrameEnd();
                 }
             }
         }
