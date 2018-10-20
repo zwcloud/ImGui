@@ -1,0 +1,1 @@
+bindings.cs: copied from [mono/sdks/wasm/bindings.cs](https://github.com/mono/mono/blob/a7f5952c69ae76015ccaefd4dfa8be2274498a21/sdks/wasm/bindings.cs), including essential binding classes of mono's WebAssembly implementation.
