@@ -552,7 +552,6 @@ namespace ImGui.OSImplentation.Windows
 
         public Point ScreenToClient(Point point)
         {
-            var posInScreen = point;
             POINT p = new POINT { X = (int)point.X, Y = (int)point.Y };
             ScreenToClient(this.Pointer, ref p);
             return new Point(p.X, p.Y);
@@ -560,7 +559,6 @@ namespace ImGui.OSImplentation.Windows
 
         public Point ClientToScreen(Point point)
         {
-            var posInScreen = point;
             POINT p = new POINT { X = (int)point.X, Y = (int)point.Y };
             ClientToScreen(this.Pointer, ref p);
             return new Point(p.X, p.Y);
