@@ -110,6 +110,11 @@ namespace ImGui.OSImplentation.Windows
             return (int) this.textureIdBuffer[0];
         }
 
+        public object GetNativeTextureObject()
+        {
+            return GetNativeTextureId();
+        }
+
 #region Implementation of IDisposable
 
         public void Dispose()

@@ -57,5 +57,13 @@ namespace ImGui.OSAbstraction.Graphics
         /// e.g. The id of the OpenGL texture object.
         /// </returns>
         int GetNativeTextureId();
+
+        /// <summary>
+        /// Retrieve an graphics-API-specific object of the texture resource.
+        /// </summary>
+        /// <returns>
+        /// e.g. The WebGLTexture object (JSObject).
+        /// </returns>
+        object GetNativeTextureObject();
     }
 }

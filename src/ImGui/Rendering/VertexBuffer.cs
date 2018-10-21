@@ -31,6 +31,8 @@ namespace ImGui
             set;
         }
 
+        public DrawVertex[] Data => this.data;
+
         void UpdatePointer()
         {
             if(this.handle.IsAllocated)
