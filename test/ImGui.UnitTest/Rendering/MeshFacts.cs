@@ -1,5 +1,7 @@
 ﻿using ImGui.Common.Primitive;
-using ImGui.OSImplentation.Windows;
+using ImGui.OSAbstraction.Graphics;
+using SixLabors.ImageSharp.PixelFormats;
+using System;
 using Xunit;
 
 namespace ImGui.UnitTest.DrawList
@@ -17,9 +19,9 @@ namespace ImGui.UnitTest.DrawList
                 mesh.AppendIndex(0);
                 mesh.AppendIndex(1);
                 mesh.AppendIndex(2);
-                mesh.AppendVertex(new DrawVertex{pos=new Point(0,0)});
-                mesh.AppendVertex(new DrawVertex{pos=new Point(1,0)});
-                mesh.AppendVertex(new DrawVertex{pos=new Point(2,0)});
+                mesh.AppendVertex(new DrawVertex { pos = new Point(0, 0) });
+                mesh.AppendVertex(new DrawVertex { pos = new Point(1, 0) });
+                mesh.AppendVertex(new DrawVertex { pos = new Point(2, 0) });
 
                 var meshToAppend = new Mesh();
                 meshToAppend.CommandBuffer.Add(DrawCommand.Default);
@@ -30,9 +32,9 @@ namespace ImGui.UnitTest.DrawList
                 meshToAppend.AppendIndex(1);
                 meshToAppend.AppendIndex(2);
                 meshToAppend.AppendIndex(0);
-                meshToAppend.AppendVertex(new DrawVertex{pos=new Point(3,0)});
-                meshToAppend.AppendVertex(new DrawVertex{pos=new Point(4,0)});
-                meshToAppend.AppendVertex(new DrawVertex{pos=new Point(5,0)});
+                meshToAppend.AppendVertex(new DrawVertex { pos = new Point(3, 0) });
+                meshToAppend.AppendVertex(new DrawVertex { pos = new Point(4, 0) });
+                meshToAppend.AppendVertex(new DrawVertex { pos = new Point(5, 0) });
 
                 mesh.Append(meshToAppend);
 
@@ -54,37 +56,62 @@ namespace ImGui.UnitTest.DrawList
                 Assert.Equal(5, mesh.VertexBuffer[5].pos.x);
             }
 
+            public class FakeTexture : ITexture
+            {
+                public void Dispose()
+                {
+                }
+
+                public void LoadImage(byte[] data)
+                {
+                }
+
+                public void LoadImage(Rgba32[] data, int width, int height)
+                {
+                }
+
+                public void LoadImage(string filePath)
+                {
+                }
+
+                public int Width { get; }
+                public int Height { get; }
+                public Size Size { get; }
+                public IntPtr GetNativeTexturePtr()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public int GetNativeTextureId()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public object GetNativeTextureObject()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             [Fact]
             public void AppendTexturedMesh()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
                 var mesh = new Mesh();
                 mesh.CommandBuffer.Add(DrawCommand.Default);
                 mesh.PrimReserve(3, 3);
                 mesh.AppendIndex(0);
                 mesh.AppendIndex(1);
                 mesh.AppendIndex(2);
-                mesh.AppendVertex(new DrawVertex{pos=new Point(0,0)});
-                mesh.AppendVertex(new DrawVertex{pos=new Point(1,0)});
-                mesh.AppendVertex(new DrawVertex{pos=new Point(2,0)});
+                mesh.AppendVertex(new DrawVertex { pos = new Point(0, 0) });
+                mesh.AppendVertex(new DrawVertex { pos = new Point(1, 0) });
+                mesh.AppendVertex(new DrawVertex { pos = new Point(2, 0) });
 
                 var meshToAppend = new Mesh();
 
-                var image = new GraphicsAbstraction.Image(@"assets\images\logo.png");
-                var texture = new ImGui.OSImplentation.Windows.OpenGLTexture();
-                texture.LoadImage(image.Data, image.Width, image.Height);
-
                 DrawCommand cmd = new DrawCommand();
                 cmd.ClipRect = Rect.Big;
-                cmd.TextureData = texture;
+                var dummyTexture = new FakeTexture();
+                cmd.TextureData = dummyTexture;//dummy, only the reference is needed
                 meshToAppend.CommandBuffer.Add(cmd);
 
                 meshToAppend.PrimReserve(6, 4);
@@ -111,7 +138,7 @@ namespace ImGui.UnitTest.DrawList
 
                 mesh.Append(meshToAppend);
 
-                Assert.Equal(texture, mesh.CommandBuffer[mesh.CommandBuffer.Count-1].TextureData);
+                Assert.Equal(dummyTexture, mesh.CommandBuffer[mesh.CommandBuffer.Count - 1].TextureData);
             }
         }
     }

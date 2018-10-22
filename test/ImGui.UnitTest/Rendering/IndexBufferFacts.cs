@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using Xunit;
+﻿using Xunit;
 
 namespace ImGui.UnitTest.DrawList
 {
