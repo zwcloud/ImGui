@@ -191,9 +191,9 @@ void main()
             IndexBuffer indexBuffer = mesh.IndexBuffer;
             GL.BindVertexArray(material.vaoHandle);
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
-            GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.data, GL.GL_STREAM_DRAW);
+            //GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.data, GL.GL_STREAM_DRAW);
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
-            GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.data, GL.GL_STREAM_DRAW);
+            //GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.data, GL.GL_STREAM_DRAW);
 
             Utility.CheckGLESError();
 
@@ -278,10 +278,10 @@ void main()
             // Send vertex data
             GL.BindVertexArray(material.vaoHandle);
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
-            var vertexBuf = new Memory<float>(vertexBuffer.Data);
-            GL.BufferData(GL.GL_ARRAY_BUFFER,  vertexBuf, GL.GL_STREAM_DRAW);
+            //var vertexBuf = new Memory<float>(vertexBuffer.Data);
+            //GL.BufferData(GL.GL_ARRAY_BUFFER,  vertexBuf, GL.GL_STREAM_DRAW);
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
-            GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.data, GL.GL_STREAM_DRAW);
+            //GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.data, GL.GL_STREAM_DRAW);
 
             Utility.CheckWebGLError();
 

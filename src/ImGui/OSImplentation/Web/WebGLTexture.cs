@@ -32,7 +32,7 @@ namespace ImGui.OSImplentation.Web
             GL.ActiveTexture(GL.GL_TEXTURE0);
             this.textureObject = GL.CreateTexture();
             GL.BindTexture(GL.GL_TEXTURE_2D, this.textureObject);
-            GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, this.Width, this.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, this.textureData);
+            //GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, this.Width, this.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, this.textureData);
             //sampler settings
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
@@ -60,7 +60,7 @@ namespace ImGui.OSImplentation.Web
             GL.ActiveTexture(GL.GL_TEXTURE0);
             this.textureObject = GL.CreateTexture();
             GL.BindTexture(GL.GL_TEXTURE_2D, this.textureObject);
-            GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, this.Width, this.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, this.textureData);
+            //GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, this.Width, this.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, this.textureData);
             //sampler settings
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
