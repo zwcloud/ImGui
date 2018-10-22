@@ -31,10 +31,10 @@ namespace ImGui.UnitTest.Rendering
 
             public void DrawShapeMesh(Mesh shapeMesh)
             {
-                Win32OpenGLRenderer.DrawMesh(this.Renderer.imageMaterial, shapeMesh,
+                Win32OpenGLRenderer.DrawMesh(this.Renderer.shapeMaterial, shapeMesh,
                     (int)this.Window.ClientSize.Width, (int)this.Window.ClientSize.Height);
             }
-            
+
             public void DrawImageMesh(Mesh imageMesh)
             {
                 Win32OpenGLRenderer.DrawMesh(this.Renderer.imageMaterial, imageMesh,

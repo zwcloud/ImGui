@@ -1,4 +1,4 @@
-﻿#define GenerateExpectedImages
+﻿//#define GenerateExpectedImages
 
 using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
@@ -64,6 +64,27 @@ namespace ImGui.UnitTest.Rendering
                 #if GenerateExpectedImages
                 Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
                 #else
+                var expectedImage = Util.LoadImage(expectedImageFilePath);
+                Assert.True(Util.CompareImage(expectedImage, image));
+                #endif
+            }
+
+            [Fact]
+            public void FillARect()
+            {
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                mesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.SetShapeMesh(mesh);
+                primitiveRenderer.PathRect(new Rect(10, 10, 100, 40));
+                primitiveRenderer.PathFill(Color.Red);
+
+                var image = Util.RenderShapeMeshToImage(primitiveRenderer.ShapeMesh, new Size(100, 100));
+                const string expectedImageFilePath =
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillARect.png";
+#if GenerateExpectedImages
+                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+#else
                 var expectedImage = Util.LoadImage(expectedImageFilePath);
                 Assert.True(Util.CompareImage(expectedImage, image));
                 #endif
@@ -150,14 +171,16 @@ namespace ImGui.UnitTest.Rendering
                     var styleRuleSet = new StyleRuleSet();
                     var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
                     styleRuleSetBuilder
-                        .BackgroundColor(Color.Argb(100, 255, 0, 0))
+                        .BackgroundColor(Color.White)
+                        .Border((1, 3, 1, 3))
+                        .BorderColor(Color.Black)
                         .Padding((10, 5, 10, 5));
 
                     BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
                     var mesh = new Mesh();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
                     primitiveRenderer.SetShapeMesh(mesh);
-                    primitiveRenderer.DrawBoxModel( new Rect(10, 10, 300, 60), styleRuleSet);
+                    primitiveRenderer.DrawBoxModel(new Rect(10, 10, 300, 60), styleRuleSet);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);
@@ -174,8 +197,6 @@ namespace ImGui.UnitTest.Rendering
                 var expectedImage = Util.LoadImage(expectedImageFilePath);
                 Assert.True(Util.CompareImage(expectedImage, image));
                 #endif
-
-                Assert.False(true);//force fail: the generated image is incorrect.
             }
 
             [Fact]
@@ -202,7 +223,7 @@ namespace ImGui.UnitTest.Rendering
                     primitiveRenderer.SetShapeMesh(mesh);
                     var textMesh = new TextMesh();
                     primitiveRenderer.SetTextMesh(textMesh);
-                    primitiveRenderer.DrawBoxModel(textPrimitive, new Rect(10, 10, 300, 60), styleRuleSet);
+                    primitiveRenderer.DrawBoxModel(textPrimitive, new Rect(10, 10, 350, 60), styleRuleSet);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);
@@ -220,8 +241,6 @@ namespace ImGui.UnitTest.Rendering
                 var expectedImage = Util.LoadImage(expectedImageFilePath);
                 Assert.True(Util.CompareImage(expectedImage, image));
                 #endif
-
-                Assert.False(true);//force fail: the generated image is incorrect.
             }
 
             [Fact]
