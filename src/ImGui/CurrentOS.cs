@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace ImGui
@@ -12,17 +13,8 @@ namespace ImGui
 
         static CurrentOS()
         {
-            var envars = Environment.GetEnvironmentVariables();
-            var keys = envars.Keys;
-            foreach (var key in keys)
-            {
-                var keyString = key as string;
-                if (keyString != null && keyString.StartsWith("android", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    IsAndroid = true;
-                    return;
-                }
-            }
+            IsAndroid = AppDomain.CurrentDomain.GetAssemblies().Any(assembly =>
+                assembly.FullName.StartsWith("Mono.Android"));
             if (IsAndroid)
             {
                 Platform = Platform.Android;
