@@ -45,7 +45,7 @@ namespace ImGui.UnitTest.DrawList
                 Assert.Equal(4, mesh.IndexBuffer[6]);
                 Assert.Equal(5, mesh.IndexBuffer[7]);
                 Assert.Equal(3, mesh.IndexBuffer[8]);
-                
+
                 Assert.Equal(0, mesh.VertexBuffer[0].pos.x);
                 Assert.Equal(1, mesh.VertexBuffer[1].pos.x);
                 Assert.Equal(2, mesh.VertexBuffer[2].pos.x);
@@ -77,9 +77,9 @@ namespace ImGui.UnitTest.DrawList
                 mesh.AppendVertex(new DrawVertex{pos=new Point(2,0)});
 
                 var meshToAppend = new Mesh();
-                
+
                 var image = new GraphicsAbstraction.Image(@"assets\images\logo.png");
-                var texture = new OSImplentation.Windows.OpenGLTexture();
+                var texture = new ImGui.OSImplentation.Windows.OpenGLTexture();
                 texture.LoadImage(image.Data, image.Width, image.Height);
 
                 DrawCommand cmd = new DrawCommand();
