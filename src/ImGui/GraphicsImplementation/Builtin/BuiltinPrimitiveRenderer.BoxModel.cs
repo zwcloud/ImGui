@@ -133,7 +133,7 @@ namespace ImGui.GraphicsImplementation
                     PathStroke(outlineColor, true, outlineWidth);
                 }
             }
-            
+
 #if DrawPaddingBox
             PathRect(ptl, pbr);
             PathStroke(Color.Rgb(0, 100, 100), true, 1);

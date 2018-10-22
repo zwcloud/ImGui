@@ -1,4 +1,4 @@
-﻿//#define GenerateExpectedImages
+﻿#define GenerateExpectedImages
 
 using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
@@ -140,6 +140,44 @@ namespace ImGui.UnitTest.Rendering
 
         public class DrawBoxModel
         {
+            [Fact]
+            public void DrawEmptyBoxModel()
+            {
+                byte[] imageRawBytes;
+                int width, height;
+                using (var context = new RenderContextForTest(new Size(400, 100)))
+                {
+                    var styleRuleSet = new StyleRuleSet();
+                    var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
+                    styleRuleSetBuilder
+                        .BackgroundColor(Color.Argb(100, 255, 0, 0))
+                        .Padding((10, 5, 10, 5));
+
+                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    var mesh = new Mesh();
+                    mesh.CommandBuffer.Add(DrawCommand.Default);
+                    primitiveRenderer.SetShapeMesh(mesh);
+                    primitiveRenderer.DrawBoxModel( new Rect(10, 10, 300, 60), styleRuleSet);
+
+                    context.Clear();
+                    context.DrawShapeMesh(mesh);
+
+                    imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
+                }
+
+                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+                string expectedImageFilePath =
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawEmptyBoxModel.png";
+                #if GenerateExpectedImages
+                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+                #else
+                var expectedImage = Util.LoadImage(expectedImageFilePath);
+                Assert.True(Util.CompareImage(expectedImage, image));
+                #endif
+
+                Assert.False(true);//force fail: the generated image is incorrect.
+            }
+
             [Fact]
             public void DrawBoxModelWithTextContent()
             {
