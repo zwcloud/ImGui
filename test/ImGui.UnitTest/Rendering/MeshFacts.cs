@@ -139,6 +139,27 @@ namespace ImGui.UnitTest.DrawList
                 mesh.Append(meshToAppend);
 
                 Assert.Equal(dummyTexture, mesh.CommandBuffer[mesh.CommandBuffer.Count - 1].TextureData);
+
+                Assert.Equal(7, mesh.VertexBuffer.Count);
+                Assert.Equal(9, mesh.IndexBuffer.Count);
+
+                Assert.Equal(0, mesh.IndexBuffer[0]);
+                Assert.Equal(1, mesh.IndexBuffer[1]);
+                Assert.Equal(2, mesh.IndexBuffer[2]);
+                Assert.Equal(3, mesh.IndexBuffer[3]);
+                Assert.Equal(4, mesh.IndexBuffer[4]);
+                Assert.Equal(5, mesh.IndexBuffer[5]);
+                Assert.Equal(3, mesh.IndexBuffer[6]);
+                Assert.Equal(5, mesh.IndexBuffer[7]);
+                Assert.Equal(6, mesh.IndexBuffer[8]);
+
+                Assert.Equal(0, mesh.VertexBuffer[0].pos.x);
+                Assert.Equal(1, mesh.VertexBuffer[1].pos.x);
+                Assert.Equal(2, mesh.VertexBuffer[2].pos.x);
+                Assert.Equal(10, mesh.VertexBuffer[3].pos.x);
+                Assert.Equal(300, mesh.VertexBuffer[4].pos.x);
+                Assert.Equal(300, mesh.VertexBuffer[5].pos.x);
+                Assert.Equal(10, mesh.VertexBuffer[6].pos.x);
             }
         }
     }
