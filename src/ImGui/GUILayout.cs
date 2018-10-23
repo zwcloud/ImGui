@@ -103,13 +103,13 @@ namespace ImGui
             Window window = GetCurrentWindow();
             int id = window.GetID(str_id);
             PushID(id);
-            window.BeginLayoutGroup(id, false, options, str_id);
+            window.RenderTree.BeginLayoutGroup(id, false, options, str_id);
         }
 
         public static void EndHorizontal()
         {
             Window window = GetCurrentWindow();
-            window.EndLayoutGroup();
+            window.RenderTree.EndLayoutGroup();
             PopID();
         }
 
@@ -125,14 +125,14 @@ namespace ImGui
             int id = window.GetID(str_id);
             PushID(id);
 
-            window.BeginLayoutGroup(id, true, options, str_id);
+            window.RenderTree.BeginLayoutGroup(id, true, options, str_id);
         }
 
         public static void EndVertical()
         {
             Window window = GetCurrentWindow();
 
-            window.EndLayoutGroup();
+            window.RenderTree.EndLayoutGroup();
             PopID();
         }
 

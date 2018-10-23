@@ -1,4 +1,5 @@
 using ImGui.Common.Primitive;
+using ImGui.Layout;
 using ImGui.Rendering;
 using Xunit;
 
@@ -192,27 +193,25 @@ namespace ImGui.UnitTest.Layout
             [Fact]
             public void GetRectInsideGroup()
             {
-                var group = new Node(1);
-                group.AttachLayoutGroup(true);
-                group.RuleSet.ApplyOptions(GUILayout.Width(800).Height(600));
+                GUIStyle.Default.CellSpacing = (0, 0);//reset the cell-spacing of any group to 0
 
-                Assert.False(true);//Force fail because this test is not finished
+                var renderTree = new RenderTree(0, Point.Zero, new Size(800, 600));
+                var size = new Size(200, 300);
 
-                //TODO
-                //layout.BeginLayoutGroup(1, true);
-                //    layout.GetRect(2, size);
-                //layout.EndLayoutGroup();
-                //
-                //layout.Layout();
-                //
-                //layout.BeginLayoutGroup(1, true);
-                //    var rect = layout.GetRect(2, size);
-                //layout.EndLayoutGroup();
+                renderTree.BeginLayoutGroup(1, true);
+                var node = new Node(2);
+                node.AttachLayoutEntry(size);
+                renderTree.CurrentContainer.AppendChild(node);
+                renderTree.EndLayoutGroup();
 
-                //Assert.Equal(0, rect.X);
-                //Assert.Equal(0, rect.Y);
-                //Assert.Equal(size.Width, rect.Width);
-                //Assert.Equal(size.Height, rect.Height);
+                renderTree.Root.Layout();
+
+                var rect = node.Rect;
+
+                Assert.Equal(0, rect.X);
+                Assert.Equal(0, rect.Y);
+                Assert.Equal(200, rect.Width);
+                Assert.Equal(300, rect.Height);
             }
         }
     }
