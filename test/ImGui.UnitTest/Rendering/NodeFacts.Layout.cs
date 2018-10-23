@@ -7,7 +7,7 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
-        public class Layout
+        public partial class Layout
         {
             //misc old unit test
 

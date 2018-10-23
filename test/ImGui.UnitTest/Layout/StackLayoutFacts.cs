@@ -1,17 +1,15 @@
-using System;
 using ImGui.Common.Primitive;
-using ImGui.Layout;
 using ImGui.Rendering;
 using Xunit;
 
 namespace ImGui.UnitTest.Layout
 {
-    public partial class StackLayoutFacts
+    public partial class NodeFacts
     {
-        public class Constructor
+        public partial class Layout
         {
             [Fact]
-            public void CreatedStackLayoutIsProperlySet()
+            public void CreatedNodeIsProperlySet()
             {
                 var group = new Node(1);
                 group.AttachLayoutGroup(true);
@@ -21,10 +19,7 @@ namespace ImGui.UnitTest.Layout
                 Assert.True(group.LayoutGroup.IsVertical);
                 Assert.True(group.RuleSet.IsFixedWidth);
             }
-        }
 
-        public partial class TheGetRectMethod
-        {
             [Fact]
             public void GetNormalRectAfterLayout()
             {
@@ -72,86 +67,100 @@ namespace ImGui.UnitTest.Layout
                 Assert.Equal(0.6, rect2.Height);
             }
 
-#if false
             [Fact]
             public void GetRectWithPadding()
             {
-                var layout = new StackLayout(0, new Size(800, 600));
-                var size = new Size(200, 300);
-                var style = new GUIStyle();
-                style.Padding = (1, 2, 3, 4);
-                //FIXME per-entry style modification
+                var group = new Node(1);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Width(800).Height(600));
 
-                layout.Begin();
-                layout.GetRect(1, size);
-                layout.Layout();
-                var rect = layout.GetRect(1, size);
+                var node = new Node(2);
+                var contentSize = new Size(200, 300);
+                node.AttachLayoutEntry(contentSize);
+                var builder = new StyleRuleSetBuilder(node.RuleSet);
+                builder.Padding((1, 2, 3, 4));
+                group.AppendChild(node);
+
+                group.Layout();
+
+                var rect = node.Rect;
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
-                Assert.Equal(size.Width + style.PaddingHorizontal, rect.Width);
-                Assert.Equal(size.Height + style.PaddingVertical, rect.Height);
+                Assert.Equal(200 + 2 + 4, rect.Width);
+                Assert.Equal(300 + 1 + 3, rect.Height);
             }
-            
+
             [Fact]
             public void GetRectWithBorder()
             {
-                var layout = new StackLayout(0, new Size(800, 600));
-                var size = new Size(200, 300);
-                var style = new GUIStyle();
-                style.Border = (1, 2, 3, 4);
-                //FIXME per-entry style modification
+                var group = new Node(1);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Width(800).Height(600));
 
-                layout.Begin();
-                layout.GetRect(1, size);
-                layout.Layout();
-                var rect = layout.GetRect(1, size);
+                var node = new Node(2);
+                var contentSize = new Size(200, 300);
+                node.AttachLayoutEntry(contentSize);
+                var builder = new StyleRuleSetBuilder(node.RuleSet);
+                builder.Border((1, 2, 3, 4));
+                group.AppendChild(node);
 
+                group.Layout();
+
+                var rect = node.Rect;
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
-                Assert.Equal(size.Width + style.BorderHorizontal, rect.Width);
-                Assert.Equal(size.Height + style.BorderVertical, rect.Height);
+                Assert.Equal(200 + 2 + 4, rect.Width);
+                Assert.Equal(300 + 1 + 3, rect.Height);
             }
 
             [Fact]
             public void GetRectWithPaddingAndBorder()
             {
-                var layout = new StackLayout(0, new Size(800, 600));
-                var size = new Size(200, 300);
-                var style = new GUIStyle();
-                style.Border = (1, 2, 3, 4);
-                style.Padding = (5, 6, 7, 8);
-                //FIXME per-entry style modification
+                var group = new Node(1);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Width(800).Height(600));
 
-                layout.Begin();
-                layout.GetRect(1, size);
-                layout.Layout();
-                var rect = layout.GetRect(1, size);
+                var node = new Node(2);
+                var contentSize = new Size(200, 300);
+                node.AttachLayoutEntry(contentSize);
+                var builder = new StyleRuleSetBuilder(node.RuleSet);
+                builder.Border((1, 2, 3, 4))
+                    .Padding((5, 6, 7, 8));
+                group.AppendChild(node);
+
+                group.Layout();
+                var rect = node.Rect;
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
-                Assert.Equal(size.Width + style.BorderHorizontal + style.PaddingHorizontal, rect.Width);
-                Assert.Equal(size.Height + style.BorderVertical + style.PaddingVertical, rect.Height);
+                Assert.Equal(200 + 2 + 4 + 6 + 8, rect.Width);
+                Assert.Equal(300 + 1 + 3 + 5 + 7, rect.Height);
             }
 
             [Fact]
             public void GetRectWithFixedWidthAndHeight()
             {
-                var layout = new StackLayout(0, new Size(800, 600));
-                var size = new Size(200, 300);
+                var group = new Node(1);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Width(800).Height(600));
+
                 const int fixedWidth = 100;
                 const int fixedHeight = 200;
                 var options = GUILayout.Width(fixedWidth).Height(fixedHeight);
+                var node = new Node(2);
+                var contentSize = new Size(200, 300);
+                node.AttachLayoutEntry(contentSize);
+                node.RuleSet.ApplyOptions(options);
+                group.AppendChild(node);
 
-                layout.Begin();
-                layout.GetRect(1, size, options);
-                layout.Layout();
-                var rect = layout.GetRect(1, size, options);
+                group.Layout();
+                var rect = node.Rect;
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
-                Assert.Equal(fixedWidth, rect.Width);
-                Assert.Equal(fixedHeight, rect.Height);
+                Assert.Equal(100, rect.Width);
+                Assert.Equal(200, rect.Height);
             }
 
             [Theory]
@@ -160,44 +169,51 @@ namespace ImGui.UnitTest.Layout
             [InlineData(true, true)]
             public void GetRectWithExpandWidth(bool expandWidth, bool expandHeight)
             {
-                var layout = new StackLayout(0, new Size(800, 600));
-                var size = new Size(200, 300);
-                var options = GUILayout.ExpandWidth(expandWidth).ExpandHeight(expandHeight);
+                var group = new Node(1);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Width(800).Height(600));
 
-                layout.Begin();
-                layout.GetRect(1, size, options);
-                layout.Layout();
-                var rect = layout.GetRect(1, size, options);
+                var options = GUILayout.ExpandWidth(expandWidth).ExpandHeight(expandHeight);
+                var node = new Node(2);
+                var contentSize = new Size(200, 300);
+                node.AttachLayoutEntry(contentSize);
+                node.RuleSet.ApplyOptions(options);
+                group.AppendChild(node);
+
+                group.Layout();
+                var rect = node.Rect;
 
                 Assert.Equal(0, rect.X);
                 Assert.Equal(0, rect.Y);
-                Assert.Equal(expandWidth ? 800 : size.Width, rect.Width);
-                Assert.Equal(expandHeight ? 600 : size.Height, rect.Height);
+                Assert.Equal(expandWidth ? 800 : 200, rect.Width);
+                Assert.Equal(expandHeight ? 600 : 300, rect.Height);
             }
 
             [Fact]
             public void GetRectInsideGroup()
             {
-                var layout = new StackLayout(0, new Size(800, 600));
-                var size = new Size(200, 300);
+                var group = new Node(1);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Width(800).Height(600));
 
-                layout.Begin();
-                layout.BeginLayoutGroup(1, true);
-                    layout.GetRect(2, size);
-                layout.EndLayoutGroup();
-                layout.Layout();
+                Assert.False(true);//Force fail because this test is not finished
 
-                layout.Begin();
-                layout.BeginLayoutGroup(1, true);
-                    var rect = layout.GetRect(2, size);
-                layout.EndLayoutGroup();
+                //TODO
+                //layout.BeginLayoutGroup(1, true);
+                //    layout.GetRect(2, size);
+                //layout.EndLayoutGroup();
+                //
+                //layout.Layout();
+                //
+                //layout.BeginLayoutGroup(1, true);
+                //    var rect = layout.GetRect(2, size);
+                //layout.EndLayoutGroup();
 
-                Assert.Equal(0, rect.X);
-                Assert.Equal(0, rect.Y);
-                Assert.Equal(size.Width, rect.Width);
-                Assert.Equal(size.Height, rect.Height);
+                //Assert.Equal(0, rect.X);
+                //Assert.Equal(0, rect.Y);
+                //Assert.Equal(size.Width, rect.Width);
+                //Assert.Equal(size.Height, rect.Height);
             }
-            #endif
         }
     }
 }
