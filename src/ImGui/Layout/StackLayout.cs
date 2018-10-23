@@ -1,40 +1,20 @@
-﻿using System.Collections.Generic;
-using ImGui.Common.Primitive;
-using System.Diagnostics;
+﻿using ImGui.Rendering;
 
 namespace ImGui.Layout
 {
-    internal partial class StackLayout
+    internal static class StackLayout
     {
-        public StackLayout(int rootId, Size size)
+        public static void BeginLayoutGroup(this Window window, int id, bool isVertical, LayoutOptions? options = null, string str_id = null)
         {
+            var group = new Node(id, str_id ?? "group");
+            group.RuleSet.ApplyOptions(options);
+            group.AttachLayoutGroup(isVertical);
+            window.RenderTree.CurrentContainer.AppendChild(group);
         }
 
-        public Rect GetRect(int id, Size contentSize, LayoutOptions? options = null, string str_id = null)
+        public static void EndLayoutGroup(this Window window)
         {
-            return new Rect();
+            window.RenderTree.CurrentContainer = window.RenderTree.CurrentContainer.Parent;
         }
-
-        public void BeginLayoutGroup(int id, bool isVertical, LayoutOptions? options = null, string str_id = null)
-        {
-        }
-
-        public void EndLayoutGroup()
-        {
-        }
-
-        public void Begin()
-        {
-        }
-
-        public void Layout()
-        {
-        }
-
-        public void SetRootSize(Size size)
-        {
-        }
-
-        public static Rect DummyRect = new Rect(1, 1);
     }
 }

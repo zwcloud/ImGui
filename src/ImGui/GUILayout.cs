@@ -1,5 +1,4 @@
 ﻿using System;
-using ImGui.Common.Primitive;
 using ImGui.Layout;
 
 namespace ImGui
@@ -102,18 +101,15 @@ namespace ImGui
         public static void BeginHorizontal(string str_id, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
-
             int id = window.GetID(str_id);
             PushID(id);
-
-            window.StackLayout.BeginLayoutGroup(id, false, options, str_id);
+            window.BeginLayoutGroup(id, false, options, str_id);
         }
 
         public static void EndHorizontal()
         {
             Window window = GetCurrentWindow();
-
-            window.StackLayout.EndLayoutGroup();
+            window.EndLayoutGroup();
             PopID();
         }
 
@@ -129,14 +125,14 @@ namespace ImGui
             int id = window.GetID(str_id);
             PushID(id);
 
-            window.StackLayout.BeginLayoutGroup(id, true, options, str_id);
+            window.BeginLayoutGroup(id, true, options, str_id);
         }
 
         public static void EndVertical()
         {
             Window window = GetCurrentWindow();
 
-            window.StackLayout.EndLayoutGroup();
+            window.EndLayoutGroup();
             PopID();
         }
 
@@ -148,41 +144,41 @@ namespace ImGui
         /// Set the width of a control.
         /// </summary>
         /// <param name="width">width value</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the width of a control/group.</returns>
+        /// <returns>A <see cref="LayoutOptions"/> that will set the width of a control/group.</returns>
         public static LayoutOptions Width(double width) => new LayoutOptions().Width(width);
 
         /// <summary>
         /// Set the height of a control.
         /// </summary>
         /// <param name="height">height value</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the height of a control/group.</returns>
+        /// <returns>A <see cref="LayoutOptions"/> that will set the height of a control/group.</returns>
         public static LayoutOptions Height(double height) => new LayoutOptions().Height(height);
 
         /// <summary>
         /// Set whether the width of a control should be expanded to occupy as much space as possible.
         /// </summary>
         /// <param name="expand">expanded?</param>
-        /// <returns>A <see cref="LayoutOption"/> that will expand the width of a control/group.</returns>
+        /// <returns>A <see cref="LayoutOptions"/> that will expand the width of a control/group.</returns>
         public static LayoutOptions ExpandWidth(bool expand) => new LayoutOptions().ExpandWidth(expand);
 
         /// <summary>
         /// Set whether the height of a control should be expanded to occupy as much space as possible.
         /// </summary>
         /// <param name="expand">expanded?</param>
-        /// <returns>A <see cref="LayoutOption"/> that will expand the height of a control/group.</returns>
+        /// <returns>A <see cref="LayoutOptions"/> that will expand the height of a control/group.</returns>
         public static LayoutOptions ExpandHeight(bool expand) => new LayoutOptions().ExpandHeight(expand);
 
         /// <summary>
         /// Set the factor when expanding the width of a control.
         /// </summary>
         /// <param name="factor">the value of the factor</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the width of a control/group.</returns>
+        /// <returns>A <see cref="LayoutOptions"/> that will set the factor when expanding the width of a control/group.</returns>
         public static LayoutOptions StretchWidth(int factor) => new LayoutOptions().StretchWidth(factor);
         /// <summary>
         /// Set the factor when expanding the height of a control.
         /// </summary>
         /// <param name="factor">the value of the factor</param>
-        /// <returns>A <see cref="LayoutOption"/> that will set the factor when expanding the height of a control/group.</returns>
+        /// <returns>A <see cref="LayoutOptions"/> that will set the factor when expanding the height of a control/group.</returns>
         public static LayoutOptions StretchHeight(int factor) => new LayoutOptions().StretchHeight(factor);
 
         #endregion

@@ -68,11 +68,6 @@ namespace ImGui
         public long LastActiveFrame;
 
         /// <summary>
-        /// stack layout manager
-        /// </summary>
-        public StackLayout StackLayout { get; set; }
-
-        /// <summary>
         /// ID stack
         /// </summary>
         public Stack<int> IDStack { get; set; } = new Stack<int>();

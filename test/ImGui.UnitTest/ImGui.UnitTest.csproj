@@ -8,12 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Layout\**" />
-    <EmbeddedResource Remove="Layout\**" />
-    <None Remove="Layout\**" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Compile Remove="Layout\StackLayoutFacts.Dynamic.cs" />
     <Compile Remove="OSImplentation\Windows\Win32OpenGLRendererFacts.cs" />
   </ItemGroup>
 
