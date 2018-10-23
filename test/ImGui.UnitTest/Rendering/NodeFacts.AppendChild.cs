@@ -8,7 +8,7 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
-        public class TheAppendToMethod
+        public class AppendChild
         {
             [Fact]
             public void AppendAPlainNodeToAPlainNode()

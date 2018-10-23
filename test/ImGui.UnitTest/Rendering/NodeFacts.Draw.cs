@@ -11,7 +11,7 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
-        public class TheDrawMethod
+        public class Draw
         {
             [Fact]
             public void DrawANode()
