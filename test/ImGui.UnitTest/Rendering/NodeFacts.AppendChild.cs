@@ -18,7 +18,7 @@ namespace ImGui.UnitTest.Rendering
 
                 plainNode1.AppendChild(plainNode2);
 
-                Assert.Equal(plainNode1, plainNode2.Parent);
+                Assert.Same(plainNode1, plainNode2.Parent);
                 Assert.Contains(plainNode2, plainNode1.Children);
             }
 
@@ -94,7 +94,7 @@ namespace ImGui.UnitTest.Rendering
 
                 groupNode.AppendChild(entryNode);
 
-                Assert.Equal(groupNode, entryNode.Parent);
+                Assert.Same(groupNode, entryNode.Parent);
                 Assert.Contains(entryNode, groupNode.Children);
             }
 
