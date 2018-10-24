@@ -12,9 +12,14 @@ namespace UniversalAppTemplate
         private bool open;
         protected override void OnGUI()
         {
+            GUILayout.BeginHorizontal("HGroup~1");
+            GUILayout.Button("Button 1");
+            GUILayout.Button("Button 2");
+            GUILayout.Button("Button 3");
+            GUILayout.EndHorizontal();
             //GUILayout.Button("123");
-            GUI.Begin("test window", ref open);
-            GUI.End();
+            //GUI.Begin("test window", ref open);
+            //GUI.End();
         }
     }
 }

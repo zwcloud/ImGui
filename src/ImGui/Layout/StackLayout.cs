@@ -11,10 +11,11 @@ namespace ImGui.Layout
             if (group == null)
             {
                 group = new Node(id, str_id ?? "group");
+                group.AttachLayoutGroup(isVertical);
+                renderTree.CurrentContainer.AppendChild(group);
             }
             group.RuleSet.ApplyOptions(options);
-            group.AttachLayoutGroup(isVertical);
-            renderTree.CurrentContainer.AppendChild(group);
+            renderTree.CurrentContainer = group;
         }
 
         public static void EndLayoutGroup(this RenderTree renderTree)

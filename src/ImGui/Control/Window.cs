@@ -123,7 +123,7 @@ namespace ImGui
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
 
-            window.RenderTree.CurrentContainer = window.RenderTree.Root;
+            window.RenderTree.CurrentContainer = window.ClientAreaNode;
 
             window.Layout();
 
