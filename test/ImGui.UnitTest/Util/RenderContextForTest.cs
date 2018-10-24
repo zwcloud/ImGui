@@ -1,6 +1,7 @@
 ﻿using ImGui.Common.Primitive;
 using ImGui.OSImplentation.Windows;
 using System;
+using ImGui.Rendering;
 
 namespace ImGui.UnitTest
 {
@@ -43,6 +44,18 @@ namespace ImGui.UnitTest
         {
             Win32OpenGLRenderer.DrawTextMesh(this.Renderer.glyphMaterial, textMesh,
                 (int)this.Window.ClientSize.Width, (int)this.Window.ClientSize.Height);
+        }
+
+        public void DrawMeshes(MeshBuffer meshBuffer)
+        {
+            this.DrawShapeMesh(meshBuffer.ShapeMesh);
+            this.DrawImageMesh(meshBuffer.ImageMesh);
+            this.DrawTextMesh(meshBuffer.TextMesh);
+        }
+
+        public byte[] GetRenderedRawBytes(out int width, out int height)
+        {
+            return this.Renderer.GetRawBackBuffer(out width, out height);
         }
 
         public void Dispose()

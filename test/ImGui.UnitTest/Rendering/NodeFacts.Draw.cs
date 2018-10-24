@@ -1,5 +1,6 @@
-﻿using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
+﻿//#define GenerateExpectedImages
+
+using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSImplentation.Windows;
@@ -38,46 +39,31 @@ namespace ImGui.UnitTest.Rendering
 
                 node.Draw(primitiveRenderer, meshList);
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
+                byte[] imageRawBytes;
+                int width, height;
+                using (var context = new RenderContextForTest(new Size(110, 110)))
                 {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
 
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
 
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
-                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
+                    imageRawBytes = context.GetRenderedRawBytes(out width, out height);
                 }
+
+                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+                string expectedImageFilePath =
+                    @"Rendering\images\NodeFacts.Draw.DrawANode.png";
+#if GenerateExpectedImages
+                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+                #else
+                var expectedImage = Util.LoadImage(expectedImageFilePath);
+                Assert.True(Util.CompareImage(expectedImage, image));
+#endif
             }
 
             [Fact]

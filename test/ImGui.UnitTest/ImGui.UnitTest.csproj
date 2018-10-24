@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Rendering\image\**" />
+    <EmbeddedResource Remove="Rendering\image\**" />
+    <None Remove="Rendering\image\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Layout\StackLayoutFacts.Dynamic.cs" />
     <Compile Remove="OSImplentation\Windows\Win32OpenGLRendererFacts.cs" />
   </ItemGroup>
@@ -30,7 +36,6 @@
   <ItemGroup>
     <Folder Include="GraphicsImplementation\Builtin\images\" />
     <Folder Include="OSImplentation\Windows\" />
-    <Folder Include="Rendering\image\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +43,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="GraphicsImplementation\Builtin\images\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Rendering\images\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Util\images\**\*.*">
