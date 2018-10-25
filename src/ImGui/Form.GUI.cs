@@ -126,7 +126,7 @@ namespace ImGui
             Debug.Assert(w.WindowStack.Count == 1);    // Mismatched Begin()/End() calls
             if (w.CurrentWindow != null && !w.CurrentWindow.Accessed)
             {
-                //w.CurrentWindow.Active = false;
+                w.CurrentWindow.Active = false;
             }
             GUI.End();
 
