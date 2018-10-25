@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -34,10 +33,7 @@ namespace ImGui
 
             var textPrimitive = node.Primitive as TextPrimitive;
             Debug.Assert(textPrimitive != null);
-            if (textPrimitive.Text != text)
-            {
-                node.Primitive = new TextPrimitive(text);
-            }
+            textPrimitive.Text = text;
 
             // rect
             node.Rect = window.GetRect(rect);
