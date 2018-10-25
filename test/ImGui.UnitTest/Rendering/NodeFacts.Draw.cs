@@ -151,6 +151,78 @@ namespace ImGui.UnitTest.Rendering
                     Time.OnFrameEnd();
                 }
             }
+            
+            [Fact]
+            public void UpdateATextNode()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+                Node node = new Node(1);
+
+                var primitive = new TextPrimitive("before");
+
+                node.Primitive = primitive;
+
+                node.Draw(primitiveRenderer, meshList);
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                window.Show();
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyPressed(Key.Space))
+                        {
+                            primitive.Text = primitive.Text == "before" ? "after" : "before";
+                        }
+
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        //update nodes
+                        if (node.ActiveInTree)//this is actually always true
+                        {
+                            node.Draw(primitiveRenderer, meshList);
+                        }
+
+                        //rebuild mesh buffer
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
+                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
 
             [Fact]
             public void UpdateTwoNode()

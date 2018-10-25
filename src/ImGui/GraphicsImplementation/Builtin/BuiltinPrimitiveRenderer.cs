@@ -497,6 +497,12 @@ namespace ImGui.GraphicsImplementation
         {
             do
             {
+                if (primitive.TextChanged)
+                {
+                    primitive.TextChanged = false;
+                    break;
+                }
+
                 double fontSize = style.FontSize;
                 if (!MathEx.AmostEqual(primitive.FontSize, fontSize))
                 {
@@ -533,7 +539,6 @@ namespace ImGui.GraphicsImplementation
         /// <param name="primitive"></param>
         /// <param name="rect"></param>
         /// <param name="style"></param>
-        /// TODO apply text alignment
         public void DrawText(TextPrimitive primitive, Rect rect, StyleRuleSet style)
         {
             primitive.Offset = (Vector)rect.TopLeft;
@@ -548,10 +553,18 @@ namespace ImGui.GraphicsImplementation
             //build text mesh
             if (needRebuild)
             {
+                primitive.Glyphs.Clear();
+                primitive.Offsets.Clear();
+
+                primitive.FontSize = fontSize;
+                primitive.FontFamily = fontFamily;
+                primitive.FontStyle = style.FontStyle;
+                primitive.FontWeight = style.FontWeight;
+
                 var fontStretch = FontStretch.Normal;
                 var fontStyle = style.FontStyle;
                 var fontWeight = style.FontWeight;
-                var textAlignment = (TextAlignment) style.Get<int>(GUIStyleName.TextAlignment);
+                var textAlignment = (TextAlignment) style.Get<int>(GUIStyleName.TextAlignment);//TODO apply text alignment
 
                 var textContext = new OSImplentation.TypographyTextContext(primitive.Text,
                     fontFamily,
