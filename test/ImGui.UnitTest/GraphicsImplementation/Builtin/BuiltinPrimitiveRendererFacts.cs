@@ -97,7 +97,7 @@ namespace ImGui.UnitTest.Rendering
             [InlineData("Hello你好こんにちは")]
             [InlineData("textwithoutspace")]
             [InlineData("text with space")]
-            public void DrawOnlineText(string text)
+            public void DrawOnelineText(string text)
             {
                 TextPrimitive primitive = new TextPrimitive(text);
 
@@ -108,7 +108,7 @@ namespace ImGui.UnitTest.Rendering
 
                 var image = Util.RenderTextMeshToImage(primitiveRenderer.TextMesh, new Size(200, 50));
                 string expectedImageFilePath =
-                    $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnlineText_{text}.png";
+                    $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnelineText_{text}.png";
                 #if GenerateExpectedImages
                 Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
                 #else
