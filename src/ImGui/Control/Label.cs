@@ -1,4 +1,8 @@
-﻿using ImGui.Common.Primitive;
+﻿using System.Diagnostics;
+using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
+using ImGui.Rendering;
+using ImGui.Style;
 
 namespace ImGui
 {
@@ -11,20 +15,32 @@ namespace ImGui
         /// <param name="text">text to display</param>
         public static void Label(Rect rect, string text)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
-            // style apply
-            var style = GUIStyle.Basic;
+            //get or create the root node
+            int id = window.GetID(text);
+            var container = window.NodeTreeRoot;
+            Node node = container.GetNodeById(id);
+            if (node == null)
+            {
+                node = new Node(id, $"Label<{text}>");
+                container.AppendChild(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
+                node.Primitive = new TextPrimitive(text);
+            }
+
+            var textPrimitive = node.Primitive as TextPrimitive;
+            Debug.Assert(textPrimitive != null);
+            if (textPrimitive.Text != text)
+            {
+                node.Primitive = new TextPrimitive(text);
+            }
 
             // rect
-            rect = window.GetRect(rect);
-
-            // render
-            DrawList d = window.DrawList;
-            d.DrawBoxModel(rect, text, style);
+            node.Rect = window.GetRect(rect);
         }
     }
 
@@ -34,29 +50,33 @@ namespace ImGui
         /// Create an auto-layout label.
         /// </summary>
         /// <param name="text">text to display</param>
+        /// <param name="options"></param>
         public static void Label(string text, LayoutOptions? options)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
+            //get or create the root node
             int id = window.GetID(text);
+            var container = window.RenderTree.CurrentContainer;
+            Node node = container.GetNodeById(id);
+            if (node == null)
+            {
+                node = new Node(id, $"Label<{text}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+                node.Primitive = new TextPrimitive(text);
+            }
+            node.RuleSet.ApplyOptions(options);
 
-            // style
-            var style = GUIStyle.Basic;
-            style.Save();
-            style.ApplyOption(options);
+            //TODO check if text changes
 
             // rect
-            Size contentSize = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id);
-
-            // rendering
-            DrawList d = window.DrawList;
-            d.DrawBoxModel(rect, text, style);
-
-            style.Restore();
+            node.Rect = window.GetRect(id);
         }
 
         /// <summary>
@@ -68,6 +88,7 @@ namespace ImGui
             Label(text, options: null);
         }
 
+        #if false
         /// <summary>
         /// Create a colored auto-layout label.
         /// </summary>
@@ -137,8 +158,6 @@ namespace ImGui
         }
 
         #region Bullets
-
-
         /// <summary>
         /// Create a bullet.
         /// </summary>
@@ -196,15 +215,36 @@ namespace ImGui
         {
             BulletText(string.Format(format, args));
         }
-    #endregion
+        #endregion
+
+        #endif
     }
 
+    internal partial class GUISkin
+    {
+        private void InitLabelStyles(StyleRuleSet ruleSet)
+        {
+            StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
+            builder
+                .Padding(1.0, GUIState.Normal)
+                .Padding(1.0, GUIState.Hover)
+                .Padding(1.0, GUIState.Active)
+                .AlignmentVertical(Alignment.Center, GUIState.Normal)
+                .AlignmentVertical(Alignment.Center, GUIState.Hover)
+                .AlignmentVertical(Alignment.Center, GUIState.Active)
+                .AlignmentHorizontal(Alignment.Start, GUIState.Normal)
+                .AlignmentHorizontal(Alignment.Start, GUIState.Hover)
+                .AlignmentHorizontal(Alignment.Start, GUIState.Active);
+        }
+    }
+    #if false
     internal static partial class DrawListExtension
     {
-        public static void RenderBullet(this DrawList drawList, Point pos, double lineHeight, Color color)
+        public static void RenderBullet(this IPrimitiveRenderer drawList, Point pos, double lineHeight, Color color)
         {
             drawList.AddCircleFilled(pos, (float)lineHeight * 0.20f, color, 8);
         }
     }
+    #endif
 
 }

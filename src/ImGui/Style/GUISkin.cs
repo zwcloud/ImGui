@@ -30,6 +30,11 @@ namespace ImGui
             StyleRuleSet button = new StyleRuleSet();
             skin.InitButtonStyles(button);
             skin.styles[GUIControlName.Button] = button;
+
+            StyleRuleSet label = new StyleRuleSet();
+            skin.InitLabelStyles(label);
+            skin.styles[GUIControlName.Label] = label;
+
             //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
             //skin.InitTextBoxStyles();
