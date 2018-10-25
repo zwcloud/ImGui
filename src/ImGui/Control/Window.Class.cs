@@ -272,12 +272,11 @@ namespace ImGui
                 {
                     this.Collapsed = !this.Collapsed;
                     w.FocusWindow(this);
+                    open = !this.Collapsed;//overwrite the open state
                 }
             }
-            else
-            {
-                this.Collapsed = false;
-            }
+
+            this.Collapsed = !open;
 
             //update title bar
             var titleBarRect = this.TitleBarRect;
