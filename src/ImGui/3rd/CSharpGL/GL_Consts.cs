@@ -1,12 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-
-namespace CSharpGL
+﻿namespace CSharpGL
 {
     public static partial class GL
     {
-
         #region The OpenGL constant definitions.
 
         //   OpenGL Version Identifier
@@ -747,6 +742,5 @@ namespace CSharpGL
         public static uint FOG_SPECULAR_TEXTURE_WIN = 0x80EC;
 
         #endregion
-
     }
 }

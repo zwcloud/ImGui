@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace CSharpGL
 {
     public static partial class GL
     {
-        private const string OpenGL32 = "opengl32.dll";
-        private const bool error = false;
-
         #region The OpenGL DLL Functions (Exactly the same naming).
 
         /// <summary>
@@ -2486,6 +2482,5 @@ namespace CSharpGL
         public static extern void Viewport(int x, int y, int width, int height);
 
         #endregion
-
     }
 }

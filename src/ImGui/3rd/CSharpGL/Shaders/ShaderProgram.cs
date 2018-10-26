@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CSharpGL.Objects.Shaders
 {
@@ -23,84 +21,81 @@ namespace CSharpGL.Objects.Shaders
             Dictionary<uint, string> attributeLocations)
         {
             //  Create the shaders.
-            vertexShader.Create(GL.GL_VERTEX_SHADER, vertexShaderSource);
-            fragmentShader.Create(GL.GL_FRAGMENT_SHADER, fragmentShaderSource);
+            this.vertexShader.Create(GL.GL_VERTEX_SHADER, vertexShaderSource);
+            this.fragmentShader.Create(GL.GL_FRAGMENT_SHADER, fragmentShaderSource);
 
             //  Create the program, attach the shaders.
-            ShaderProgramObject = GL.CreateProgram();
-            GL.AttachShader(ShaderProgramObject, vertexShader.ShaderObject);
-            GL.AttachShader(ShaderProgramObject, fragmentShader.ShaderObject);
+            this.ShaderProgramObject = GL.CreateProgram();
+            GL.AttachShader(this.ShaderProgramObject, this.vertexShader.ShaderObject);
+            GL.AttachShader(this.ShaderProgramObject, this.fragmentShader.ShaderObject);
 
             //  Before we link, bind any vertex attribute locations.
             if (attributeLocations != null)
             {
                 foreach (var vertexAttributeLocation in attributeLocations)
-                    GL.BindAttribLocation(ShaderProgramObject, vertexAttributeLocation.Key, vertexAttributeLocation.Value);
+                    GL.BindAttribLocation(this.ShaderProgramObject, vertexAttributeLocation.Key, vertexAttributeLocation.Value);
             }
 
             //  Now we can link the program.
-            GL.LinkProgram(ShaderProgramObject);
+            GL.LinkProgram(this.ShaderProgramObject);
 
             //  Now that we've compiled and linked the shader, check it's link status. If it's not linked properly, we're
             //  going to throw an exception.
-            if (GetLinkStatus() == false)
+            if (this.GetLinkStatus() == false)
             {
                 string log = this.GetInfoLog();
                 throw new ShaderCompilationException(
-                    string.Format("Failed to link shader program with ID {0}. Log: {1}", ShaderProgramObject, log), 
+                    $"Failed to link shader program with ID {this.ShaderProgramObject}. Log: {log}",
                     log);
             }
-            if (vertexShader.GetCompileStatus() == false)
+            if (this.vertexShader.GetCompileStatus() == false)
             {
-                string log = vertexShader.GetInfoLog();
+                string log = this.vertexShader.GetInfoLog();
                 throw new Exception(log);
             }
-            if (fragmentShader.GetCompileStatus() == false)
+            if (this.fragmentShader.GetCompileStatus() == false)
             {
-                string log = fragmentShader.GetInfoLog();
+                string log = this.fragmentShader.GetInfoLog();
                 throw new Exception(log);
             }
 
-            GL.DetachShader(ShaderProgramObject, vertexShader.ShaderObject);
-            GL.DetachShader(ShaderProgramObject, fragmentShader.ShaderObject);
-            vertexShader.Delete();
-            fragmentShader.Delete();
+            // Now that the shaders have been linked to the program, they can be released.
+            GL.DetachShader(this.ShaderProgramObject, this.vertexShader.ShaderObject);
+            GL.DetachShader(this.ShaderProgramObject, this.fragmentShader.ShaderObject);
+            this.vertexShader.Delete();
+            this.fragmentShader.Delete();
         }
 
         public void Delete()
         {
-            //GL.DetachShader(ShaderProgramObject, vertexShader.ShaderObject);
-            //GL.DetachShader(ShaderProgramObject, fragmentShader.ShaderObject);
-            //vertexShader.Delete();
-            //fragmentShader.Delete();
-            GL.DeleteProgram(ShaderProgramObject);
-            ShaderProgramObject = 0;
+            GL.DeleteProgram(this.ShaderProgramObject);
+            this.ShaderProgramObject = 0;
         }
 
         public uint GetAttributeLocation(string attributeName)
         {
             //  If we don't have the attribute name in the dictionary, get it's
             //  location and add it.
-            if (attributeNamesToLocations.ContainsKey(attributeName) == false)
+            if (this.attributeNamesToLocations.ContainsKey(attributeName) == false)
             {
-                int location = GL.GetAttribLocation(ShaderProgramObject, attributeName);
+                int location = GL.GetAttribLocation(this.ShaderProgramObject, attributeName);
                 if (location < 0) { throw new Exception(); }
 
-                attributeNamesToLocations[attributeName] = (uint)location;
+                this.attributeNamesToLocations[attributeName] = (uint)location;
             }
 
             //  Return the attribute location.
-            return attributeNamesToLocations[attributeName];
+            return this.attributeNamesToLocations[attributeName];
         }
 
         public void BindAttributeLocation(uint location, string attribute)
         {
-            GL.BindAttribLocation(ShaderProgramObject, location, attribute);
+            GL.BindAttribLocation(this.ShaderProgramObject, location, attribute);
         }
 
         public void Bind()
         {
-            GL.UseProgram(ShaderProgramObject);
+            GL.UseProgram(this.ShaderProgramObject);
         }
 
         public void Unbind()
@@ -111,7 +106,7 @@ namespace CSharpGL.Objects.Shaders
         public bool GetLinkStatus()
         {
             int[] parameters = new int[] { 0 };
-            GL.GetProgram(ShaderProgramObject, GL.GL_LINK_STATUS, parameters);
+            GL.GetProgram(this.ShaderProgramObject, GL.GL_LINK_STATUS, parameters);
             return parameters[0] == GL.GL_TRUE;
         }
 
@@ -119,141 +114,117 @@ namespace CSharpGL.Objects.Shaders
         {
             //  Get the info log length.
             int[] infoLength = new int[] { 0 };
-            GL.GetProgram(ShaderProgramObject, GL.GL_INFO_LOG_LENGTH, infoLength);
+            GL.GetProgram(this.ShaderProgramObject, GL.GL_INFO_LOG_LENGTH, infoLength);
             int bufSize = infoLength[0];
 
             //  Get the compile info.
             StringBuilder il = new StringBuilder(bufSize);
-            GL.GetProgramInfoLog(ShaderProgramObject, bufSize, IntPtr.Zero, il);
+            GL.GetProgramInfoLog(this.ShaderProgramObject, bufSize, IntPtr.Zero, il);
 
             string log = il.ToString();
             return log;
         }
 
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of int
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
         public void SetUniform(string uniformName, int v1)
         {
-            GL.Uniform1(GetUniformLocation(uniformName), v1);
+            GL.Uniform1(this.GetUniformLocation(uniformName), v1);
         }
 
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of vec2
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
         public void SetUniform(string uniformName, int v1, int v2)
         {
-            GL.Uniform2(GetUniformLocation(uniformName), v1, v2);
+            GL.Uniform2(this.GetUniformLocation(uniformName), v1, v2);
         }
 
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of vec3
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
         public void SetUniform(string uniformName, int v1, int v2, int v3)
         {
-            GL.Uniform3(GetUniformLocation(uniformName), v1, v2, v3);
+            GL.Uniform3(this.GetUniformLocation(uniformName), v1, v2, v3);
         }
 
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of vec4
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
-        /// <param name="v4"></param>
         public void SetUniform(string uniformName, int v1, int v2, int v3, int v4)
         {
-            GL.Uniform4(GetUniformLocation(uniformName), v1, v2, v3, v4);
+            GL.Uniform4(this.GetUniformLocation(uniformName), v1, v2, v3, v4);
         }
 
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of float
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
         public void SetUniform(string uniformName, float v1)
         {
-            GL.Uniform1(GetUniformLocation(uniformName), v1);
+            GL.Uniform1(this.GetUniformLocation(uniformName), v1);
         }
-
+        
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of float2
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
         public void SetUniform(string uniformName, float v1, float v2)
         {
-            GL.Uniform2(GetUniformLocation(uniformName), v1, v2);
+            GL.Uniform2(this.GetUniformLocation(uniformName), v1, v2);
         }
-
+        
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of float3
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
         public void SetUniform(string uniformName, float v1, float v2, float v3)
         {
-            GL.Uniform3(GetUniformLocation(uniformName), v1, v2, v3);
+            GL.Uniform3(this.GetUniformLocation(uniformName), v1, v2, v3);
         }
 
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of float4
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <param name="v3"></param>
-        /// <param name="v4"></param>
         public void SetUniform(string uniformName, float v1, float v2, float v3, float v4)
         {
-            GL.Uniform4(GetUniformLocation(uniformName), v1, v2, v3, v4);
+            GL.Uniform4(this.GetUniformLocation(uniformName), v1, v2, v3, v4);
         }
-
+        
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of mat3
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="m"></param>
         public void SetUniformMatrix3(string uniformName, float[] m)
         {
-            GL.UniformMatrix3(GetUniformLocation(uniformName), 1, false, m);
+            GL.UniformMatrix3(this.GetUniformLocation(uniformName), 1, false, m);
         }
-
+        
         /// <summary>
-        /// 请注意你的数据类型最终将转换为int还是float
+        /// Set a uniform of mat4
         /// </summary>
-        /// <param name="uniformName"></param>
-        /// <param name="m"></param>
         public void SetUniformMatrix4(string uniformName, float[] m)
         {
-            GL.UniformMatrix4(GetUniformLocation(uniformName), 1, false, m);
+            GL.UniformMatrix4(this.GetUniformLocation(uniformName), 1, false, m);
         }
-
+        
+        /// <summary>
+        /// Get the location index of a uniform
+        /// </summary>
         public int GetUniformLocation(string uniformName)
         {
             //  If we don't have the uniform name in the dictionary, get it's
             //  location and add it.
-            if (uniformNamesToLocations.ContainsKey(uniformName) == false)
+            if (this.uniformNamesToLocations.ContainsKey(uniformName) == false)
             {
-                uniformNamesToLocations[uniformName] = GL.GetUniformLocation(ShaderProgramObject, uniformName);
-                //  TODO: if it's not found, we should probably throw an exception.
+                var location = GL.GetUniformLocation(this.ShaderProgramObject, uniformName);
+                if (location < 0)
+                {
+                    throw new Exception($"Uniform<{uniformName}> is not found.");
+                }
+
+                this.uniformNamesToLocations[uniformName] = location;
             }
 
             //  Return the uniform location.
-            return uniformNamesToLocations[uniformName];
+            return this.uniformNamesToLocations[uniformName];
         }
 
         /// <summary>
@@ -263,7 +234,6 @@ namespace CSharpGL.Objects.Shaders
         /// The shader program object.
         /// </value>
         public uint ShaderProgramObject { get; protected set; }
-
 
         /// <summary>
         /// A mapping of uniform names to locations. This allows us to very easily specify

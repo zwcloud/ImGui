@@ -19,7 +19,7 @@ namespace CSharpGL
         /// </summary>
         static Win32()
         {
-            //  Load the openGL library - without this wgl calls will fail.
+            //Load the openGL library - without this wgl calls will fail.
             opengl32Library = Win32.LoadLibrary(OpenGL32);
         }
         ~Win32()
@@ -27,13 +27,8 @@ namespace CSharpGL
             FreeLibrary(opengl32Library);
         }
 
-        /// <summary>
-        /// public const string Kernel32 = "kernel32.dll";
-        /// </summary>
         public const string Kernel32 = "kernel32.dll";
-        /// <summary>
-        /// public const string Kernel32 = "opengl32.dll"
-        /// </summary>
+
         public const string OpenGL32 = "opengl32.dll";
 
         [DllImport(Kernel32, SetLastError = true)]
@@ -47,9 +42,9 @@ namespace CSharpGL
         }
 
         [DllImport(Kernel32, SetLastError = true)]
-        public extern static IntPtr GetProcAddress(IntPtr lib, String funcName);
+        public static extern IntPtr GetProcAddress(IntPtr lib, String funcName);
 
         [DllImport(Kernel32, SetLastError = true)]
-        public extern static bool FreeLibrary(IntPtr lib);
+        public static extern bool FreeLibrary(IntPtr lib);
     }
 }
