@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="85.422302mm"
+   height="64.861053mm"
+   viewBox="0 0 85.422302 64.861053"
+   version="1.1"
+   id="svg64"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="slider.svg">
+  <defs
+     id="defs58" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="72.29617"
+     inkscape:cy="16.287519"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true" />
+  <metadata
+     id="metadata61">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-21.582598,-16.78718)">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3701"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="translate(126.35599,60.910683)"><flowRegion
+         id="flowRegion3703"><rect
+           id="rect3705"
+           width="197.14285"
+           height="51.42857"
+           x="282.85715"
+           y="179.66254" /></flowRegion><flowPara
+         id="flowPara3707" /></flowRoot>    <rect
+       id="rect3699"
+       width="85.422302"
+       height="64.861053"
+       x="21.582598"
+       y="16.78718"
+       style="fill:#cccccc;stroke-width:0.26647854" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.8089416px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.08927386"
+       x="24.067995"
+       y="21.690966"
+       id="text4516"><tspan
+         sodipodi:role="line"
+         id="tspan3844"
+         x="24.067995"
+         y="21.690966">Slider</tspan></text>
+    <rect
+       id="rect3699-7"
+       width="79.924355"
+       height="19.921669"
+       x="23.58256"
+       y="59.113091"
+       style="fill:#999999;stroke-width:0.1428522" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.80901837px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.08927386"
+       x="25.26449"
+       y="65.028954"
+       id="text4516-0"><tspan
+         id="tspan4551"
+         sodipodi:role="line"
+         x="25.26449"
+         y="65.028954"
+         style="stroke-width:0.08927386">BoxModel</tspan></text>
+    <rect
+       id="rect3699-7-7"
+       width="22.509768"
+       height="7.4862514"
+       x="24.869379"
+       y="69.872208"
+       style="fill:#cccccc;stroke-width:0.04647316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.80901837px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.08927386"
+       x="26.948191"
+       y="75.126625"
+       id="text4516-0-2"><tspan
+         style="stroke-width:0.08927386"
+         sodipodi:role="line"
+         id="tspan4584"
+         x="26.948191"
+         y="75.126625">border*4</tspan></text>
+    <rect
+       id="rect3699-7-7-7"
+       width="25.420185"
+       height="7.4862523"
+       x="48.348408"
+       y="69.916855"
+       style="fill:#cccccc;stroke-width:0.04938625" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.80901837px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.08927386"
+       x="50.427204"
+       y="75.171249"
+       id="text4516-0-2-5"><tspan
+         style="stroke-width:0.08927386"
+         sodipodi:role="line"
+         id="tspan4607"
+         x="50.427204"
+         y="75.171249">background</tspan></text>
+    <rect
+       id="rect3699-7-7-7-2"
+       width="25.420187"
+       height="7.4862523"
+       x="74.487579"
+       y="70.005058"
+       style="fill:#cccccc;stroke-width:0.04938625" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.8089416px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.08927386"
+       x="83.415695"
+       y="75.061226"
+       id="text4516-0-2-5-4"><tspan
+         sodipodi:role="line"
+         id="tspan32"
+         x="83.415695"
+         y="75.061226">text</tspan></text>
+    <rect
+       id="rect3699-7-0"
+       width="43.676437"
+       height="14.100836"
+       x="23.802404"
+       y="26.689167"
+       style="fill:#999999;stroke-width:0.0888445" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.8089416px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.08927386"
+       x="27.586523"
+       y="35.157734"
+       id="text4516-0-5"><tspan
+         sodipodi:role="line"
+         id="tspan3879"
+         x="27.586523"
+         y="35.157734">Shape: rectangle</tspan></text>
+    <rect
+       id="rect3699-7-0-7"
+       width="43.676437"
+       height="14.100836"
+       x="23.670113"
+       y="42.828747"
+       style="fill:#999999;stroke-width:0.0888445" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.8089416px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.08927386"
+       x="25.372528"
+       y="51.726513"
+       id="text4516-0-5-6"><tspan
+         sodipodi:role="line"
+         id="tspan4723"
+         x="25.372528"
+         y="51.726513">Shape: slider button</tspan></text>
+  </g>
+</svg>
