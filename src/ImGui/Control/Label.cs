@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using ImGui.Common.Primitive;
+﻿using ImGui.Common.Primitive;
 using ImGui.Rendering;
 using ImGui.Style;
+using System.Diagnostics;
 
 namespace ImGui
 {
@@ -84,7 +84,7 @@ namespace ImGui
             Label(text, options: null);
         }
 
-        #if false
+#if false
         /// <summary>
         /// Create a colored auto-layout label.
         /// </summary>
@@ -213,7 +213,7 @@ namespace ImGui
         }
         #endregion
 
-        #endif
+#endif
     }
 
     internal partial class GUISkin
@@ -233,7 +233,7 @@ namespace ImGui
                 .AlignmentHorizontal(Alignment.Start, GUIState.Active);
         }
     }
-    #if false
+#if false
     internal static partial class DrawListExtension
     {
         public static void RenderBullet(this IPrimitiveRenderer drawList, Point pos, double lineHeight, Color color)
@@ -241,6 +241,6 @@ namespace ImGui
             drawList.AddCircleFilled(pos, (float)lineHeight * 0.20f, color, 8);
         }
     }
-    #endif
+#endif
 
 }

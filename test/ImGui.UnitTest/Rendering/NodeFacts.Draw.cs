@@ -60,7 +60,7 @@ namespace ImGui.UnitTest.Rendering
                     @"Rendering\images\NodeFacts.Draw.DrawANode.png";
 #if GenerateExpectedImages
                 Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
+#else
                 var expectedImage = Util.LoadImage(expectedImageFilePath);
                 Assert.True(Util.CompareImage(expectedImage, image));
 #endif
@@ -151,7 +151,7 @@ namespace ImGui.UnitTest.Rendering
                     Time.OnFrameEnd();
                 }
             }
-            
+
             [Fact]
             public void UpdateATextNode()
             {
