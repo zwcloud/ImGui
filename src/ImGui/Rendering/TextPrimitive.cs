@@ -5,11 +5,24 @@ namespace ImGui.Rendering
 {
     internal class TextPrimitive : Primitive
     {
-        public string Text { get; set; }
+        public string Text
+        {
+            get => this.text;
+            set
+            {
+                if (value != this.text)
+                {
+                    this.TextChanged = true;
+                    this.text = value;
+                }
+            }
+        }
+
         public string FontFamily { get; set; }
         public double FontSize;
         public FontStyle FontStyle;
         public FontWeight FontWeight;
+        private string text;
         public bool TextChanged { get; set; } = false;
 
         public List<Vector> Offsets { get; set; } = new List<Vector>();
@@ -17,10 +30,6 @@ namespace ImGui.Rendering
 
         public TextPrimitive(string text)
         {
-            if (text != this.Text)
-            {
-                this.TextChanged = true;
-            }
             this.Text = text;
         }
     }
