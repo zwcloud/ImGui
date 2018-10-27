@@ -12,7 +12,7 @@ namespace ImGui
         /// Create a button. When the user click it, something will happen immediately.
         /// </summary>
         /// <param name="rect">position and size of the control</param>
-        /// <param name="text">text to display on the button</param>
+        /// <param name="text">text to display on the button, optionally incuding the id: "#MyButton"</param>
         /// <returns>true when the users clicks the button.</returns>
         public static bool Button(Rect rect, string text)
         {
@@ -24,6 +24,7 @@ namespace ImGui
             int id = window.GetID(text);
             var container = window.NodeTreeRoot;
             Node node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 //create button node
@@ -64,6 +65,7 @@ namespace ImGui
             int id = window.GetID(text);
             var container = window.RenderTree.CurrentContainer;
             Node node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 //create button node

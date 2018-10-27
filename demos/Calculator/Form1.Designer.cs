@@ -23,8 +23,8 @@ namespace Calculator
 
             const int o = -20;
 
-            GUI.Label(new Rect(14, 22 + o, new Size(190, 20)), calc.Expression);//ExpressionLabel
-            GUI.Label(new Rect(14, 42+ o, new Size(190, 24)), calc.Result);//ResultLabel
+            GUI.Label(new Rect(14, 22 + o, new Size(190, 20)), calc.Expression+"##Expression");//ExpressionLabel
+            GUI.Label(new Rect(14, 42+ o, new Size(190, 24)), calc.Result+"##Result");//ResultLabel
 
             var backspace = GUI.Button(new Rect(14, 68+ o, new Size(34, 27)), "←");//backspaceButton
             if (backspace) Current = ButtonType.Backspace;

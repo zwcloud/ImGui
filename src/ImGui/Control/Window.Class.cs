@@ -493,9 +493,16 @@ namespace ImGui
 
         public int GetID(string str_id)
         {
-            int seed = this.IDStack.Peek();
-            int int_id = str_id.GetHashCode();
-            var id = this.Hash(seed, int_id);
+            var seed = this.IDStack.Peek();
+            var hashCharIndex = str_id.IndexOf("##", StringComparison.Ordinal);
+            string customId = null;
+            if (hashCharIndex > 0)
+            {
+                customId = str_id.Substring(hashCharIndex + 1);
+            }
+
+            var subId = string.IsNullOrWhiteSpace(customId) ? str_id.GetHashCode() : customId.GetHashCode();
+            var id = this.Hash(seed, subId);
 
             GUIContext g = Form.current.uiContext;
             g.KeepAliveID(id);

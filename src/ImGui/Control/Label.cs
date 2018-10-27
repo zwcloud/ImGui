@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.Rendering;
 using ImGui.Style;
@@ -22,6 +23,7 @@ namespace ImGui
             int id = window.GetID(text);
             var container = window.NodeTreeRoot;
             Node node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 node = new Node(id, $"Label<{text}>");
@@ -57,6 +59,7 @@ namespace ImGui
             int id = window.GetID(text);
             var container = window.RenderTree.CurrentContainer;
             Node node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 node = new Node(id, $"Label<{text}>");
