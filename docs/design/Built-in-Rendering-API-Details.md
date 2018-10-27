@@ -8,7 +8,7 @@
 
 # Details
 
-## important: Text-related caches__
+## important: Text-related caches
 
 It is too expensive to rebuild text meshes for a piece of text with format. We need to cache it and also keep the flexibility to not rebuild too much when a piece of text and its format is changed.
 
