@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.Rendering;
 using ImGui.Style;
@@ -71,8 +70,6 @@ namespace ImGui
                 node.Primitive = new TextPrimitive(text);
             }
             node.RuleSet.ApplyOptions(options);
-
-            //TODO check if text changes
 
             // rect
             node.Rect = window.GetRect(id);

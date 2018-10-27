@@ -23,7 +23,7 @@ namespace ImGui.UnitTest
             }
 
             [Fact]
-            public void ShowDynamicLabel()
+            public void ShowDynamicFixedLabel()
             {
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
@@ -37,6 +37,38 @@ namespace ImGui.UnitTest
                     {
                         text = text == "before#1" ? "after#0" : "before#1";
                     }
+                };
+
+                Application.Run(form);
+            }
+
+            [Fact]
+            public void ShowOneLayoutedLabel()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.Init();
+
+                var form = new MainForm();
+                form.OnGUIAction = () =>
+                {
+                    GUILayout.Label("Some Text");
+                };
+
+                Application.Run(form);
+            }
+
+            [Fact]
+            public void ShowThreeLayoutedLabel()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.Init();
+
+                var form = new MainForm();
+                form.OnGUIAction = () =>
+                {
+                    GUILayout.Label("Some Text##0");
+                    GUILayout.Label("Some Text##1");
+                    GUILayout.Label("Some Text##2");
                 };
 
                 Application.Run(form);
