@@ -6,6 +6,16 @@ namespace ImGui
     {
         private StyleRuleSet s;
 
+        private void Set<T>(GUIStyleName styleName, T value)
+        {
+            this.s.Set<T>(styleName, value);
+        }
+
+        private void Set<T>(GUIStyleName styleName, T value, GUIState state)
+        {
+            this.s.Set<T>(styleName, value, state);
+        }
+
         public StyleRuleSetBuilder(IStyleRuleSet ruleSet)
         {
             this.s = ruleSet.RuleSet;
@@ -19,10 +29,10 @@ namespace ImGui
         public StyleRuleSetBuilder Border(double value, GUIState state = GUIState.Normal)
         {
             var (top, right, bottom, left) = (value, value, value, value);
-            this.s.Set<double>(GUIStyleName.BorderTop, top, state);
-            this.s.Set<double>(GUIStyleName.BorderRight, right, state);
-            this.s.Set<double>(GUIStyleName.BorderBottom, bottom, state);
-            this.s.Set<double>(GUIStyleName.BorderLeft, left, state);
+            this.Set<double>(GUIStyleName.BorderTop, top, state);
+            this.Set<double>(GUIStyleName.BorderRight, right, state);
+            this.Set<double>(GUIStyleName.BorderBottom, bottom, state);
+            this.Set<double>(GUIStyleName.BorderLeft, left, state);
             return this;
         }
 
@@ -30,91 +40,109 @@ namespace ImGui
             GUIState state = GUIState.Normal)
         {
             var (top, right, bottom, left) = value;
-            this.s.Set<double>(GUIStyleName.BorderTop, top, state);
-            this.s.Set<double>(GUIStyleName.BorderRight, right, state);
-            this.s.Set<double>(GUIStyleName.BorderBottom, bottom, state);
-            this.s.Set<double>(GUIStyleName.BorderLeft, left, state);
+            this.Set<double>(GUIStyleName.BorderTop, top, state);
+            this.Set<double>(GUIStyleName.BorderRight, right, state);
+            this.Set<double>(GUIStyleName.BorderBottom, bottom, state);
+            this.Set<double>(GUIStyleName.BorderLeft, left, state);
             return this;
         }
 
         public StyleRuleSetBuilder BorderColor(Color value, GUIState state = GUIState.Normal)
         {
-            s.Set(GUIStyleName.BorderTopColor, value, state);
-            s.Set(GUIStyleName.BorderRightColor, value, state);
-            s.Set(GUIStyleName.BorderBottomColor, value, state);
-            s.Set(GUIStyleName.BorderLeftColor, value, state);
+            this.s.Set<Color>(GUIStyleName.BorderTopColor, value, state);
+            this.s.Set<Color>(GUIStyleName.BorderRightColor, value, state);
+            this.s.Set<Color>(GUIStyleName.BorderBottomColor, value, state);
+            this.s.Set<Color>(GUIStyleName.BorderLeftColor, value, state);
+            return this;
+        }
+
+        public StyleRuleSetBuilder BorderImageSource(Color value, GUIState state = GUIState.Normal)
+        {
+            this.Set(GUIStyleName.BorderImageSource, value, state);
+            return this;
+        }
+        
+        public StyleRuleSetBuilder BorderImageSlice((double top, double right, double bottom, double left) value, GUIState state = GUIState.Normal)
+        {
+            var (top, right, bottom, left) = value;
+            this.Set<double>(GUIStyleName.BorderImageSliceTop, top);
+            this.Set<double>(GUIStyleName.BorderImageSliceRight, right);
+            this.Set<double>(GUIStyleName.BorderImageSliceBottom, bottom);
+            this.Set<double>(GUIStyleName.BorderImageSliceLeft, left);
             return this;
         }
 
         public StyleRuleSetBuilder Padding(double value, GUIState state = GUIState.Normal)
         {
             var (top, right, bottom, left) = (value, value, value, value);
-            this.s.Set<double>(GUIStyleName.PaddingTop, top, state);
-            this.s.Set<double>(GUIStyleName.PaddingRight, right, state);
-            this.s.Set<double>(GUIStyleName.PaddingBottom, bottom, state);
-            this.s.Set<double>(GUIStyleName.PaddingLeft, left, state);
+            this.Set<double>(GUIStyleName.PaddingTop, top, state);
+            this.Set<double>(GUIStyleName.PaddingRight, right, state);
+            this.Set<double>(GUIStyleName.PaddingBottom, bottom, state);
+            this.Set<double>(GUIStyleName.PaddingLeft, left, state);
             return this;
         }
 
         public StyleRuleSetBuilder Padding((double top, double right, double bottom, double left) value, GUIState state = GUIState.Normal)
         {
             var (top, right, bottom, left) = value;
-            this.s.Set<double>(GUIStyleName.PaddingTop, top, state);
-            this.s.Set<double>(GUIStyleName.PaddingRight, right, state);
-            this.s.Set<double>(GUIStyleName.PaddingBottom, bottom, state);
-            this.s.Set<double>(GUIStyleName.PaddingLeft, left, state);
+            this.Set<double>(GUIStyleName.PaddingTop, top, state);
+            this.Set<double>(GUIStyleName.PaddingRight, right, state);
+            this.Set<double>(GUIStyleName.PaddingBottom, bottom, state);
+            this.Set<double>(GUIStyleName.PaddingLeft, left, state);
             return this;
         }
 
         public StyleRuleSetBuilder AlignmentVertical(Alignment value, GUIState state = GUIState.Normal)
         {
-            s.Set(GUIStyleName.AlignmentVertical, value, state);
+            this.Set(GUIStyleName.AlignmentVertical, value, state);
             return this;
         }
 
         public StyleRuleSetBuilder AlignmentHorizontal(Alignment value, GUIState state = GUIState.Normal)
         {
-            s.Set(GUIStyleName.AlignmentHorizontal, value, state);
+            this.Set(GUIStyleName.AlignmentHorizontal, value, state);
             return this;
         }
 
         public StyleRuleSetBuilder BackgroundColor(Color value, GUIState state = GUIState.Normal)
         {
-            s.Set(GUIStyleName.BackgroundColor, value, state);
+            this.Set(GUIStyleName.BackgroundColor, value, state);
             return this;
         }
 
         public StyleRuleSetBuilder BackgroundGradient(Gradient value, GUIState state = GUIState.Normal)
         {
-            s.Set(GUIStyleName.BackgroundGradient, value, state);
+            this.Set(GUIStyleName.BackgroundGradient, value, state);
             return this;
         }
 
         public StyleRuleSetBuilder GradientTopDownColor(Color value1, Color value2, GUIState state = GUIState.Normal)
         {
-            s.Set(GUIStyleName.GradientTopColor, value1, state);
-            s.Set(GUIStyleName.GradientBottomColor, value2, state);
+            this.Set(GUIStyleName.GradientTopColor, value1, state);
+            this.Set(GUIStyleName.GradientBottomColor, value2, state);
             return this;
         }
 
         public StyleRuleSetBuilder GradientLeftRightColor(Color value1, Color value2, GUIState state = GUIState.Normal)
         {
-            s.Set(GUIStyleName.GradientLeftColor, value1, state);
-            s.Set(GUIStyleName.GradientRightColor, value2, state);
+            this.Set(GUIStyleName.GradientLeftColor, value1, state);
+            this.Set(GUIStyleName.GradientRightColor, value2, state);
             return this;
         }
 
         public StyleRuleSetBuilder FontSize(double value)
         {
-            s.FontSize = value;
+            this.s.FontSize = value;
             return this;
         }
 
         public StyleRuleSetBuilder FontColor(Color value)
         {
-            s.FontColor = value;
+            this.s.FontColor = value;
             return this;
         }
+
+
     }
 
 }

@@ -159,6 +159,47 @@ namespace ImGui.UnitTest.Rendering
             }
         }
 
+        public class DrawSlicedImage
+        {
+            [Fact]
+            public void DrawOneImage()
+            {
+                byte[] imageRawBytes;
+                int width, height;
+                using (var context = new RenderContextForTest(new Size(300, 400)))
+                {
+                    var primitive = new ImagePrimitive(@"assets\images\button.png");
+
+                    var styleRuleSet = new StyleRuleSet();
+                    var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
+                    styleRuleSetBuilder
+                        .BorderImageSlice((83, 54, 54, 54));
+
+                    var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+                    var mesh = new Mesh();
+                    mesh.CommandBuffer.Add(DrawCommand.Default);
+                    primitiveRenderer.SetImageMesh(mesh);
+                    primitiveRenderer.DrawSlicedImage(primitive, new Rect(2, 2, primitive.Image.Width+50, primitive.Image.Height+100), styleRuleSet);
+
+                    context.Clear();
+                    context.DrawImageMesh(mesh);
+
+                    imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
+                }
+
+                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+                string expectedImageFilePath =
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawSlicedImage.DrawOneImage.png";
+#if GenerateExpectedImages
+                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+                #else
+                var expectedImage = Util.LoadImage(expectedImageFilePath);
+                Assert.True(Util.CompareImage(expectedImage, image));
+#endif
+            }
+        }
+
         public class DrawBoxModel
         {
             [Fact]

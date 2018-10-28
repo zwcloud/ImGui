@@ -628,9 +628,6 @@ namespace ImGui.GraphicsImplementation
         /// <summary>
         /// Draw an image primitive and merge the result to the image mesh.
         /// </summary>
-        /// <param name="primitive"></param>
-        /// <param name="rect"></param>
-        /// <param name="style"></param>
         public void DrawImage(ImagePrimitive primitive, Rect rect, StyleRuleSet style)
         {
             Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
@@ -653,6 +650,91 @@ namespace ImGui.GraphicsImplementation
 
             this.ImageMesh.PrimReserve(6, 4);
             AddImageRect(rect, uvMin, uvMax, tintColor);
+        }
+
+        private void AddImage(ImagePrimitive primitive, Point a, Point b, Point uv0, Point uv1, Color col)
+        {
+            if (MathEx.AmostZero(col.A))
+                return;
+
+            if(primitive.Texture == null)
+            {
+                primitive.SendToGPU();
+            }
+
+            //add a new draw command
+            DrawCommand cmd = new DrawCommand();
+            cmd.ClipRect = Rect.Big;
+            cmd.TextureData = primitive.Texture;
+            this.ImageMesh.CommandBuffer.Add(cmd);
+            
+            this.ImageMesh.PrimReserve(6, 4);
+            AddImageRect(a, b, uv0, uv1, col);
+        }
+
+        /// <summary>
+        /// Draw an image content
+        /// </summary>
+        public void DrawSlicedImage(ImagePrimitive primitive, Rect rect, StyleRuleSet style)
+        {
+            var (top, right, bottom, left) = style.BorderImageSlice;
+            Point uv0 = new Point(left / primitive.Image.Width, top / primitive.Image.Height);
+            Point uv1 = new Point(1 - right / primitive.Image.Width, 1 - bottom / primitive.Image.Height);
+
+            //     | L |   | R |
+            // ----a---b---c---+
+            //   T | 1 | 2 | 3 |
+            // ----d---e---f---g
+            //     | 4 | 5 | 6 |
+            // ----h---i---j---k
+            //   B | 7 | 8 | 9 |
+            // ----+---l---m---n
+
+            var a = rect.TopLeft;
+            var b = a + new Vector(left, 0);
+            var c = rect.TopRight + new Vector(-right, 0);
+
+            var d = a + new Vector(0, top);
+            var e = b + new Vector(0, top);
+            var f = c + new Vector(0, top);
+            var g = f + new Vector(right, 0);
+
+            var h = rect.BottomLeft + new Vector(0, -bottom);
+            var i = h + new Vector(left, 0);
+            var j = rect.BottomRight + new Vector(-right, -bottom);
+            var k = j + new Vector(right, 0);
+
+            var l = i + new Vector(0, bottom);
+            var m = rect.BottomRight + new Vector(-right, 0);
+            var n = rect.BottomRight;
+
+            var uv_a = new Point(0, 0);
+            var uv_b = new Point(uv0.X, 0);
+            var uv_c = new Point(uv1.X, 0);
+
+            var uv_d = new Point(0, uv0.Y);
+            var uv_e = new Point(uv0.X, uv0.Y);
+            var uv_f = new Point(uv1.X, uv0.Y);
+            var uv_g = new Point(1, uv0.Y);
+
+            var uv_h = new Point(0, uv1.Y);
+            var uv_i = new Point(uv0.X, uv1.Y);
+            var uv_j = new Point(uv1.X, uv1.Y);
+            var uv_k = new Point(1, uv1.Y);
+
+            var uv_l = new Point(uv0.X, 1);
+            var uv_m = new Point(uv1.X, 1);
+            var uv_n = new Point(1, 1);
+
+            this.AddImage(primitive, a, e, uv_a, uv_e, Color.White); //1
+            this.AddImage(primitive, b, f, uv_b, uv_f, Color.White); //2
+            this.AddImage(primitive, c, g, uv_c, uv_g, Color.White); //3
+            this.AddImage(primitive, d, i, uv_d, uv_i, Color.White); //4
+            this.AddImage(primitive, e, j, uv_e, uv_j, Color.White); //5
+            this.AddImage(primitive, f, k, uv_f, uv_k, Color.White); //6
+            this.AddImage(primitive, h, l, uv_h, uv_l, Color.White); //7
+            this.AddImage(primitive, i, m, uv_i, uv_m, Color.White); //8
+            this.AddImage(primitive, j, n, uv_j, uv_n, Color.White); //9
         }
     }
 }
