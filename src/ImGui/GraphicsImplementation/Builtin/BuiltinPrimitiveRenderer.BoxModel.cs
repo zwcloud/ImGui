@@ -13,31 +13,108 @@ namespace ImGui.GraphicsImplementation
         {
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out _);
 
-            // draw background in padding-box
-            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient);
-            if (gradient == Gradient.None)
-            {
-                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                var borderRounding = style.Get<double>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
-                this.PathRect(paddingBoxRect, (float)borderRounding);
-                this.PathFill(bgColor);
-            }
-            else if (gradient == Gradient.TopBottom)
-            {
-                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor);
-                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor);
-                this.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
+            this.DrawBackground(style, paddingBoxRect);
 
             //Content
             //Content-box
             //no content
 
-            //Border
+            this.DrawBorder(style, borderBoxRect, paddingBoxRect);
+            this.DrawOutline(style, borderBoxRect);
+
+#if DrawPaddingBox
+            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
+            PathStroke(Color.Rgb(0, 100, 100), true, 1);
+#endif
+
+#if DrawContentBox
+            PathRect(contentBoxRect.TopLeft, cbr);
+            PathStroke(Color.Rgb(100, 0, 100), true, 1);
+#endif
+        }
+
+        public void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, StyleRuleSet style)
+        {
+            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+
+            this.DrawBackground(style, paddingBoxRect);
+
+            //Content
+            //Content-box
+            if (contentBoxRect.TopLeft.X < contentBoxRect.TopRight.X)//content should not be visible when contentBoxRect.TopLeft.X > contentBoxRect.TopRight.X
+            {
+                if (textPrimitive != null)
+                {
+                    //var textSize = style.CalcSize(text);
+                    /*HACK Don't check text size because the size calculated by Typography is not accurate. */
+                    /*if (textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)*/
+                    {
+                        this.DrawText(textPrimitive, contentBoxRect, style);
+                    }
+                }
+            }
+
+            this.DrawBorder(style, borderBoxRect, paddingBoxRect);
+            this.DrawOutline(style, borderBoxRect);
+
+#if DrawPaddingBox
+            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
+            PathStroke(Color.Rgb(0, 100, 100), true, 1);
+#endif
+
+#if DrawContentBox
+            PathRect(contentBoxRect.TopLeft, cbr);
+            PathStroke(Color.Rgb(100, 0, 100), true, 1);
+#endif
+        }
+
+        public void DrawBoxModel(ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style)
+        {
+            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+
+            this.DrawBackground(style, paddingBoxRect);
+
+            //Content
+            //Content-box
+            if (contentBoxRect.TopLeft.X < contentBoxRect.TopRight.X)//content should not be visible when contentBoxRect.TopLeft.X > contentBoxRect.TopRight.X
+            {
+                if (imagePrimitive != null)
+                {
+                    this.DrawImage(imagePrimitive, contentBoxRect, style);
+                }
+            }
+
+            this.DrawBorder(style, borderBoxRect, paddingBoxRect);
+            this.DrawOutline(style, borderBoxRect);
+
+#if DrawPaddingBox
+            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
+            PathStroke(Color.Rgb(0, 100, 100), true, 1);
+#endif
+
+#if DrawContentBox
+            PathRect(contentBoxRect.TopLeft, cbr);
+            PathStroke(Color.Rgb(100, 0, 100), true, 1);
+#endif
+        }
+
+        private void DrawOutline(StyleRuleSet style, Rect borderBoxRect)
+        {
+            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
+            if (!MathEx.AmostZero(outlineWidth))
+            {
+                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
+                if (!MathEx.AmostZero(outlineColor.A))
+                {
+                    this.PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
+                    this.PathStroke(outlineColor, true, outlineWidth);
+                }
+            }
+        }
+
+        private void DrawBorder(StyleRuleSet style, Rect borderBoxRect, Rect paddingBoxRect)
+        {
+            // draw border between border-box and padding-box
             var borderImageSource = style.BorderImageSource;
             if (borderImageSource != null)
             {
@@ -46,6 +123,7 @@ namespace ImGui.GraphicsImplementation
                 {
                     rule.primitive = new ImagePrimitive(borderImageSource);
                 }
+
                 Debug.Assert(rule.primitive is ImagePrimitive);
                 this.DrawSlicedImage((ImagePrimitive) rule.primitive, borderBoxRect, style);
             }
@@ -64,6 +142,7 @@ namespace ImGui.GraphicsImplementation
                         this.PathFill(borderTopColor);
                     }
                 }
+
                 //  Right
                 if (!MathEx.AmostZero(borderBoxRect.Right))
                 {
@@ -77,6 +156,7 @@ namespace ImGui.GraphicsImplementation
                         this.PathFill(borderRightColor);
                     }
                 }
+
                 //  Bottom
                 if (!MathEx.AmostZero(borderBoxRect.Bottom))
                 {
@@ -90,6 +170,7 @@ namespace ImGui.GraphicsImplementation
                         this.PathFill(borderBottomColor);
                     }
                 }
+
                 //  Left
                 if (!MathEx.AmostZero(borderBoxRect.Left))
                 {
@@ -104,41 +185,19 @@ namespace ImGui.GraphicsImplementation
                     }
                 }
             }
-
-            //Outline
-            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
-            if (!MathEx.AmostZero(outlineWidth))
-            {
-                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
-                if (!MathEx.AmostZero(outlineColor.A))
-                {
-                    this.PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
-                    this.PathStroke(outlineColor, true, outlineWidth);
-                }
-            }
-
-#if DrawPaddingBox
-            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
-            PathStroke(Color.Rgb(0, 100, 100), true, 1);
-#endif
-
-#if DrawContentBox
-            PathRect(contentBoxRect.TopLeft, cbr);
-            PathStroke(Color.Rgb(100, 0, 100), true, 1);
-#endif
         }
 
-        public void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, StyleRuleSet style)
+        private void DrawBackground(StyleRuleSet style, Rect paddingBoxRect)
         {
-            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
-
             // draw background in padding-box
-            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient);
+            var gradient = (Gradient) style.Get<int>(GUIStyleName.BackgroundGradient);
             if (gradient == Gradient.None)
             {
                 var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                var borderRounding = style.Get<double>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
-                this.PathRect(paddingBoxRect, (float)borderRounding);
+                var borderRounding =
+                    style.Get<double>(GUIStyleName
+                        .BorderTopLeftRadius); //FIXME only round or not round for all corners of a rectangle
+                this.PathRect(paddingBoxRect, (float) borderRounding);
                 this.PathFill(bgColor);
             }
             else if (gradient == Gradient.TopBottom)
@@ -151,208 +210,6 @@ namespace ImGui.GraphicsImplementation
             {
                 throw new InvalidOperationException();
             }
-
-            //Content
-            //Content-box
-            if (contentBoxRect.TopLeft.X < contentBoxRect.TopRight.X)//content should not be visible when contentBoxRect.TopLeft.X > contentBoxRect.TopRight.X
-            {
-                if (textPrimitive != null)
-                {
-                    //var textSize = style.CalcSize(text);
-                    /*HACK Don't check text size because the size calculated by Typography is not accurate. */
-                    /*if (textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)*/
-                    {
-                        this.DrawText(textPrimitive, contentBoxRect, style);
-                    }
-                }
-            }
-
-            //Border
-            //  Top
-            if (!MathEx.AmostZero(borderBoxRect.Top))
-            {
-                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
-                if (!MathEx.AmostZero(borderTopColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.TopLeft);
-                    this.PathLineTo(borderBoxRect.TopLeft);
-                    this.PathLineTo(borderBoxRect.TopRight);
-                    this.PathLineTo(paddingBoxRect.TopRight);
-                    this.PathFill(borderTopColor);
-                }
-            }
-            //  Right
-            if (!MathEx.AmostZero(borderBoxRect.Right))
-            {
-                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
-                if (!MathEx.AmostZero(borderRightColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.TopRight);
-                    this.PathLineTo(borderBoxRect.TopRight);
-                    this.PathLineTo(borderBoxRect.BottomRight);
-                    this.PathLineTo(paddingBoxRect.BottomRight);
-                    this.PathFill(borderRightColor);
-                }
-            }
-            //  Bottom
-            if (!MathEx.AmostZero(borderBoxRect.Bottom))
-            {
-                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
-                if (!MathEx.AmostZero(borderBottomColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.BottomRight);
-                    this.PathLineTo(borderBoxRect.BottomRight);
-                    this.PathLineTo(borderBoxRect.BottomLeft);
-                    this.PathLineTo(paddingBoxRect.BottomLeft);
-                    this.PathFill(borderBottomColor);
-                }
-            }
-            //  Left
-            if (!MathEx.AmostZero(borderBoxRect.Left))
-            {
-                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
-                if (!MathEx.AmostZero(borderLeftColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.BottomLeft);
-                    this.PathLineTo(borderBoxRect.BottomLeft);
-                    this.PathLineTo(borderBoxRect.TopLeft);
-                    this.PathLineTo(paddingBoxRect.TopLeft);
-                    this.PathFill(borderLeftColor);
-                }
-            }
-
-            //Outline
-            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
-            if (!MathEx.AmostZero(outlineWidth))
-            {
-                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
-                if (!MathEx.AmostZero(outlineColor.A))
-                {
-                    this.PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
-                    this.PathStroke(outlineColor, true, outlineWidth);
-                }
-            }
-
-#if DrawPaddingBox
-            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
-            PathStroke(Color.Rgb(0, 100, 100), true, 1);
-#endif
-
-#if DrawContentBox
-            PathRect(contentBoxRect.TopLeft, cbr);
-            PathStroke(Color.Rgb(100, 0, 100), true, 1);
-#endif
-        }
-
-        public void DrawBoxModel(ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style)
-        {
-            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
-
-            // draw background in padding-box
-            var gradient = (Gradient)style.Get<int>(GUIStyleName.BackgroundGradient);
-            if (gradient == Gradient.None)
-            {
-                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                var borderRounding = style.Get<double>(GUIStyleName.BorderTopLeftRadius);//FIXME only round or not round for all corners of a rectangle
-                this.PathRect(paddingBoxRect, (float)borderRounding);
-                this.PathFill(bgColor);
-            }
-            else if (gradient == Gradient.TopBottom)
-            {
-                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor);
-                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor);
-                this.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
-
-            //Content
-            //Content-box
-            if (contentBoxRect.TopLeft.X < contentBoxRect.TopRight.X)//content should not be visible when contentBoxRect.TopLeft.X > contentBoxRect.TopRight.X
-            {
-                if (imagePrimitive != null)
-                {
-                    this.DrawImage(imagePrimitive, contentBoxRect, style);
-                }
-            }
-
-            //Border
-            //  Top
-            if (!MathEx.AmostZero(borderBoxRect.Top))
-            {
-                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
-                if (!MathEx.AmostZero(borderTopColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.TopLeft);
-                    this.PathLineTo(borderBoxRect.TopLeft);
-                    this.PathLineTo(borderBoxRect.TopRight);
-                    this.PathLineTo(paddingBoxRect.TopRight);
-                    this.PathFill(borderTopColor);
-                }
-            }
-            //  Right
-            if (!MathEx.AmostZero(borderBoxRect.Right))
-            {
-                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
-                if (!MathEx.AmostZero(borderRightColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.TopRight);
-                    this.PathLineTo(borderBoxRect.TopRight);
-                    this.PathLineTo(borderBoxRect.BottomRight);
-                    this.PathLineTo(paddingBoxRect.BottomRight);
-                    this.PathFill(borderRightColor);
-                }
-            }
-            //  Bottom
-            if (!MathEx.AmostZero(borderBoxRect.Bottom))
-            {
-                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
-                if (!MathEx.AmostZero(borderBottomColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.BottomRight);
-                    this.PathLineTo(borderBoxRect.BottomRight);
-                    this.PathLineTo(borderBoxRect.BottomLeft);
-                    this.PathLineTo(paddingBoxRect.BottomLeft);
-                    this.PathFill(borderBottomColor);
-                }
-            }
-            //  Left
-            if (!MathEx.AmostZero(borderBoxRect.Left))
-            {
-                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
-                if (!MathEx.AmostZero(borderLeftColor.A))
-                {
-                    this.PathLineTo(paddingBoxRect.BottomLeft);
-                    this.PathLineTo(borderBoxRect.BottomLeft);
-                    this.PathLineTo(borderBoxRect.TopLeft);
-                    this.PathLineTo(paddingBoxRect.TopLeft);
-                    this.PathFill(borderLeftColor);
-                }
-            }
-
-            //Outline
-            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
-            if (!MathEx.AmostZero(outlineWidth))
-            {
-                var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
-                if (!MathEx.AmostZero(outlineColor.A))
-                {
-                    this.PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
-                    this.PathStroke(outlineColor, true, outlineWidth);
-                }
-            }
-
-#if DrawPaddingBox
-            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
-            PathStroke(Color.Rgb(0, 100, 100), true, 1);
-#endif
-
-#if DrawContentBox
-            PathRect(contentBoxRect.TopLeft, cbr);
-            PathStroke(Color.Rgb(100, 0, 100), true, 1);
-#endif
         }
 
         private static void GetBoxes(Rect rect, StyleRuleSet style, out Rect borderBoxRect, out Rect paddingBoxRect,
