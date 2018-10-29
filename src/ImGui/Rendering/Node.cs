@@ -426,15 +426,32 @@ namespace ImGui.Rendering
                         shapeMesh.Clear();
                         shapeMesh.CommandBuffer.Add(DrawCommand.Default);
 
+                        //check render context for image mesh
+                        if (this.RenderContext.imageMesh == null)
+                        {
+                            this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
+                            this.RenderContext.imageMesh.Node = this;
+                        }
+
+                        //clear image mesh
+                        var imageMesh = this.RenderContext.imageMesh;
+                        imageMesh.Clear();
+
                         //draw
                         r.SetShapeMesh(shapeMesh);
+                        r.SetImageMesh(imageMesh);
                         renderer.DrawBoxModel(Rect.Offset(this.Rect, offset), this.RuleSet);
                         r.SetShapeMesh(null);
+                        r.SetImageMesh(null);
 
                         //save to mesh list
                         if (!meshList.ShapeMeshes.Contains(shapeMesh))
                         {
                             meshList.ShapeMeshes.AddLast(shapeMesh);
+                        }
+                        if (!meshList.ImageMeshes.Contains(imageMesh))
+                        {
+                            meshList.ImageMeshes.AddLast(imageMesh);
                         }
                     }
                     break;
@@ -487,6 +504,17 @@ namespace ImGui.Rendering
                                 this.RenderContext.shapeMesh.Node = this;
                             }
 
+                            //check render context for image mesh
+                            if (this.RenderContext.imageMesh == null)
+                            {
+                                this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
+                                this.RenderContext.imageMesh.Node = this;
+                            }
+
+                            //clear image mesh
+                            var imageMesh = this.RenderContext.imageMesh;
+                            imageMesh.Clear();
+
                             //get shape mesh
                             var shapeMesh = this.RenderContext.shapeMesh;
                             shapeMesh.Clear();
@@ -495,14 +523,20 @@ namespace ImGui.Rendering
                             //draw
                             r.SetShapeMesh(shapeMesh);
                             r.SetTextMesh(textMesh);
+                            r.SetImageMesh(imageMesh);
                             renderer.DrawBoxModel(t, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetShapeMesh(null);
                             r.SetTextMesh(null);
+                            r.SetImageMesh(null);
 
                             //save to mesh list
                             if (!meshList.ShapeMeshes.Contains(shapeMesh))
                             {
                                 meshList.ShapeMeshes.AddLast(shapeMesh);
+                            }
+                            if (!meshList.ImageMeshes.Contains(imageMesh))
+                            {
+                                meshList.ImageMeshes.AddLast(imageMesh);
                             }
                             if (!meshList.TextMeshes.Contains(textMesh))
                             {
