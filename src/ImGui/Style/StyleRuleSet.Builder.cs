@@ -56,9 +56,9 @@ namespace ImGui
             return this;
         }
 
-        public StyleRuleSetBuilder BorderImageSource(Color value, GUIState state = GUIState.Normal)
+        public StyleRuleSetBuilder BorderImageSource(string value, GUIState state = GUIState.Normal)
         {
-            this.Set(GUIStyleName.BorderImageSource, value, state);
+            this.Set<string>(GUIStyleName.BorderImageSource, value, state);
             return this;
         }
         

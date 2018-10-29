@@ -168,14 +168,22 @@ namespace ImGui.UnitTest.Rendering
                 int width, height;
                 using (var context = new RenderContextForTest(new Size(300, 400)))
                 {
-                    var primitive = new ImagePrimitive(@"assets\images\button.png");
-
                     var styleRuleSet = new StyleRuleSet();
                     var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
                     styleRuleSetBuilder
+                        .BorderImageSource(@"assets\images\button.png")
                         .BorderImageSlice((83, 54, 54, 54));
 
                     var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+                    //build image and get the image primitive
+                    var rule = styleRuleSet.GetRule<string>(GUIStyleName.BorderImageSource);
+                    if (rule.primitive == null)
+                    {
+                        rule.primitive = new ImagePrimitive(rule.Value);
+                    }
+                    Assert.True(rule.primitive is ImagePrimitive);
+                    var primitive = (ImagePrimitive) rule.primitive;
 
                     var mesh = new Mesh();
                     mesh.CommandBuffer.Add(DrawCommand.Default);

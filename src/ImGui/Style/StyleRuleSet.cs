@@ -42,6 +42,22 @@ namespace ImGui
 
             return rule;
         }
+        
+        public StyleRule<T> GetRule<T>(GUIStyleName name)
+        {
+            var rule = this.rules.Find(i =>
+            {
+                var r = i as StyleRule<T>;
+                if (r !=null && r.Name == name && r.State == this.currentState)
+                {
+                    return true;
+                }
+
+                return false;
+            }) as StyleRule<T>;
+
+            return rule;
+        }
 
         public void SetState(GUIState state)
         {
@@ -258,7 +274,7 @@ namespace ImGui
         public Color BorderRightColor => Get<Color>(GUIStyleName.BorderRightColor);
         public Color BorderBottomColor => Get<Color>(GUIStyleName.BorderBottomColor);
         public Color BorderLeftColor => Get<Color>(GUIStyleName.BorderLeftColor);
-        public ITexture BorderImageSource => Get<ITexture>(GUIStyleName.BorderImageSource);
+        public string BorderImageSource => Get<string>(GUIStyleName.BorderImageSource);
         public (double, double, double, double) BorderImageSlice
         {
             get

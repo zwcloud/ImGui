@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ImGui.Common.Primitive;
+using ImGui.OSAbstraction.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using ImGui.Common.Primitive;
-using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
@@ -182,10 +182,6 @@ namespace ImGui
 
             style.imageStyles = new Dictionary<NameState, ITexture>
             {
-                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
-                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Hover }] = null,
-                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Active }] = null,
-
                 [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Normal }] = null,
                 [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Hover }] = null,
                 [new NameState { Name = GUIStyleName.BackgroundImage, State = GUIState.Active }] = null,
@@ -230,7 +226,11 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Normal }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Hover }] = DefaultFontFamily,
                 [new NameState { Name = GUIStyleName.FontFamily, State = GUIState.Active }] = DefaultFontFamily,
-            };            
+
+                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Normal }] = null,
+                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Hover }] = null,
+                [new NameState { Name = GUIStyleName.BorderImageSource, State = GUIState.Active }] = null,
+            };
 
             return style;
         }
@@ -261,7 +261,7 @@ namespace ImGui
         {
             T value;
             var nameState = new NameState { Name = styleName, State = state };
-            var dict = GetDict<T>();
+            var dict = this.GetDict<T>();
 
             //try get the style value of specified state
             if (dict.TryGetValue(nameState, out value))
@@ -269,7 +269,7 @@ namespace ImGui
                 return value;
             }
 
-            if(state != GUIState.Normal)
+            if (state != GUIState.Normal)
             {
                 //try to get the style value of Normal state
                 if (dict.TryGetValue(new NameState { Name = styleName, State = GUIState.Normal }, out value))
@@ -301,7 +301,7 @@ namespace ImGui
         public void Set<T>(GUIStyleName styleName, T value, GUIState state = GUIState.Normal)
         {
             var nameState = new NameState { Name = styleName, State = state };
-            var dict = GetDict<T>();
+            var dict = this.GetDict<T>();
             dict[nameState] = value;
         }
 
@@ -327,7 +327,7 @@ namespace ImGui
 
             // apply font and text styles
             {
-                var actualSize = MeasureText(state, text);
+                var actualSize = this.MeasureText(state, text);
                 width = actualSize.Width;
                 height = actualSize.Height;
             }
@@ -371,10 +371,10 @@ namespace ImGui
             }
             var size = new Size(Math.Ceiling(width), Math.Ceiling(height));
 
-            var paddingHorizontal = Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
-            var borderHorizontal = Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
-            var paddingVertical = Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
-            var borderVertical = Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
+            var paddingHorizontal = this.Get<double>(GUIStyleName.PaddingLeft) + this.Get<double>(GUIStyleName.PaddingRight);
+            var borderHorizontal = this.Get<double>(GUIStyleName.BorderLeft) + this.Get<double>(GUIStyleName.BorderRight);
+            var paddingVertical = this.Get<double>(GUIStyleName.PaddingTop) + this.Get<double>(GUIStyleName.PaddingBottom);
+            var borderVertical = this.Get<double>(GUIStyleName.BorderTop) + this.Get<double>(GUIStyleName.BorderBottom);
             size.Width += paddingHorizontal + borderHorizontal;
             size.Height += paddingVertical + borderVertical;
             return size;
@@ -437,80 +437,80 @@ namespace ImGui
         #region Width & Height
         public double MinWidth
         {
-            get => Get<double>(GUIStyleName.MinWidth);
-            set => Set<double>(GUIStyleName.MinWidth, value);
+            get => this.Get<double>(GUIStyleName.MinWidth);
+            set => this.Set(GUIStyleName.MinWidth, value);
         }
         public double MaxWidth
         {
-            get => Get<double>(GUIStyleName.MaxWidth);
-            set => Set<double>(GUIStyleName.MaxWidth, value);
+            get => this.Get<double>(GUIStyleName.MaxWidth);
+            set => this.Set(GUIStyleName.MaxWidth, value);
         }
         public double MinHeight
         {
-            get => Get<double>(GUIStyleName.MinHeight);
-            set => Set<double>(GUIStyleName.MinHeight, value);
+            get => this.Get<double>(GUIStyleName.MinHeight);
+            set => this.Set(GUIStyleName.MinHeight, value);
         }
         public double MaxHeight
         {
-            get => Get<double>(GUIStyleName.MaxHeight);
-            set => Set<double>(GUIStyleName.MaxHeight, value);
+            get => this.Get<double>(GUIStyleName.MaxHeight);
+            set => this.Set(GUIStyleName.MaxHeight, value);
         }
         #endregion Width & Height
 
         #region Padding
-        public double PaddingTop => Get<double>(GUIStyleName.PaddingTop);
-        public double PaddingRight => Get<double>(GUIStyleName.PaddingRight);
-        public double PaddingBottom => Get<double>(GUIStyleName.PaddingBottom);
-        public double PaddingLeft => Get<double>(GUIStyleName.PaddingLeft);
-        public double PaddingHorizontal => Get<double>(GUIStyleName.PaddingLeft) + Get<double>(GUIStyleName.PaddingRight);
-        public double PaddingVertical => Get<double>(GUIStyleName.PaddingTop) + Get<double>(GUIStyleName.PaddingBottom);
+        public double PaddingTop => this.Get<double>(GUIStyleName.PaddingTop);
+        public double PaddingRight => this.Get<double>(GUIStyleName.PaddingRight);
+        public double PaddingBottom => this.Get<double>(GUIStyleName.PaddingBottom);
+        public double PaddingLeft => this.Get<double>(GUIStyleName.PaddingLeft);
+        public double PaddingHorizontal => this.Get<double>(GUIStyleName.PaddingLeft) + this.Get<double>(GUIStyleName.PaddingRight);
+        public double PaddingVertical => this.Get<double>(GUIStyleName.PaddingTop) + this.Get<double>(GUIStyleName.PaddingBottom);
         public (double, double, double, double) Padding
         {
             get
             {
-                var top = Get<double>(GUIStyleName.PaddingTop);
-                var right = Get<double>(GUIStyleName.PaddingRight);
-                var bottom = Get<double>(GUIStyleName.PaddingBottom);
-                var left = Get<double>(GUIStyleName.PaddingLeft);
+                var top = this.Get<double>(GUIStyleName.PaddingTop);
+                var right = this.Get<double>(GUIStyleName.PaddingRight);
+                var bottom = this.Get<double>(GUIStyleName.PaddingBottom);
+                var left = this.Get<double>(GUIStyleName.PaddingLeft);
                 return (top, right, bottom, left);
             }
 
             set
             {
                 var (top, right, bottom, left) = value;
-                Set<double>(GUIStyleName.PaddingTop, top);
-                Set<double>(GUIStyleName.PaddingRight, right);
-                Set<double>(GUIStyleName.PaddingBottom, bottom);
-                Set<double>(GUIStyleName.PaddingLeft, left);
+                this.Set(GUIStyleName.PaddingTop, top);
+                this.Set(GUIStyleName.PaddingRight, right);
+                this.Set(GUIStyleName.PaddingBottom, bottom);
+                this.Set(GUIStyleName.PaddingLeft, left);
             }
         }
         #endregion Padding
 
         #region Border
-        public double BorderTop => Get<double>(GUIStyleName.BorderTop);
-        public double BorderRight => Get<double>(GUIStyleName.BorderRight);
-        public double BorderBottom => Get<double>(GUIStyleName.BorderBottom);
-        public double BorderLeft => Get<double>(GUIStyleName.BorderLeft);
-        public double BorderHorizontal => Get<double>(GUIStyleName.BorderLeft) + Get<double>(GUIStyleName.BorderRight);
-        public double BorderVertical => Get<double>(GUIStyleName.BorderTop) + Get<double>(GUIStyleName.BorderBottom);
+        public double BorderTop => this.Get<double>(GUIStyleName.BorderTop);
+        public double BorderRight => this.Get<double>(GUIStyleName.BorderRight);
+        public double BorderBottom => this.Get<double>(GUIStyleName.BorderBottom);
+        public double BorderLeft => this.Get<double>(GUIStyleName.BorderLeft);
+        public double BorderHorizontal => this.Get<double>(GUIStyleName.BorderLeft) + this.Get<double>(GUIStyleName.BorderRight);
+        public double BorderVertical => this.Get<double>(GUIStyleName.BorderTop) + this.Get<double>(GUIStyleName.BorderBottom);
         public (double, double, double, double) Border
         {
             get
             {
-                var top = Get<double>(GUIStyleName.BorderTop);
-                var right = Get<double>(GUIStyleName.BorderRight);
-                var bottom = Get<double>(GUIStyleName.BorderBottom);
-                var left = Get<double>(GUIStyleName.BorderLeft);
+                var top = this.Get<double>(GUIStyleName.BorderTop);
+                var right = this.Get<double>(GUIStyleName.BorderRight);
+                var bottom = this.Get<double>(GUIStyleName.BorderBottom);
+                var left = this.Get<double>(GUIStyleName.BorderLeft);
                 return (top, right, bottom, left);
             }
 
             set
             {
                 var (top, right, bottom, left) = value;
-                Set<double>(GUIStyleName.BorderTop, top);
-                Set<double>(GUIStyleName.BorderRight, right);
-                Set<double>(GUIStyleName.BorderBottom, bottom);
-                Set<double>(GUIStyleName.BorderLeft, left);
+                this.Set(GUIStyleName.BorderTop, top);
+                this.Set(GUIStyleName.BorderRight, right);
+                this.Set(GUIStyleName.BorderBottom, bottom);
+                this.Set(GUIStyleName.BorderLeft, left);
             }
         }
 
@@ -518,8 +518,8 @@ namespace ImGui
         {
             get
             {
-                var color = BorderTopColor;
-                if (color == BorderRightColor && color == BorderBottomColor && color == BorderLeftColor)
+                var color = this.BorderTopColor;
+                if (color == this.BorderRightColor && color == this.BorderBottomColor && color == this.BorderLeftColor)
                 {
                     return color;
                 }
@@ -534,57 +534,57 @@ namespace ImGui
             }
         }
 
-        public Color BorderTopColor => Get<Color>(GUIStyleName.BorderTopColor);
-        public Color BorderRightColor => Get<Color>(GUIStyleName.BorderRightColor);
-        public Color BorderBottomColor => Get<Color>(GUIStyleName.BorderBottomColor);
-        public Color BorderLeftColor => Get<Color>(GUIStyleName.BorderLeftColor);
-        public ITexture BorderImageSource => Get<ITexture>(GUIStyleName.BorderImageSource);
+        public Color BorderTopColor => this.Get<Color>(GUIStyleName.BorderTopColor);
+        public Color BorderRightColor => this.Get<Color>(GUIStyleName.BorderRightColor);
+        public Color BorderBottomColor => this.Get<Color>(GUIStyleName.BorderBottomColor);
+        public Color BorderLeftColor => this.Get<Color>(GUIStyleName.BorderLeftColor);
+        public ITexture BorderImageSource => this.Get<ITexture>(GUIStyleName.BorderImageSource);
         public (double, double, double, double) BorderImageSlice
         {
             get
             {
-                var top = Get<double>(GUIStyleName.BorderImageSliceTop);
-                var right = Get<double>(GUIStyleName.BorderImageSliceRight);
-                var bottom = Get<double>(GUIStyleName.BorderImageSliceBottom);
-                var left = Get<double>(GUIStyleName.BorderImageSliceLeft);
+                var top = this.Get<double>(GUIStyleName.BorderImageSliceTop);
+                var right = this.Get<double>(GUIStyleName.BorderImageSliceRight);
+                var bottom = this.Get<double>(GUIStyleName.BorderImageSliceBottom);
+                var left = this.Get<double>(GUIStyleName.BorderImageSliceLeft);
                 return (top, right, bottom, left);
             }
 
             set
             {
                 var (top, right, bottom, left) = value;
-                Set<double>(GUIStyleName.BorderImageSliceTop, top);
-                Set<double>(GUIStyleName.BorderImageSliceRight, right);
-                Set<double>(GUIStyleName.BorderImageSliceBottom, bottom);
-                Set<double>(GUIStyleName.BorderImageSliceLeft, left);
+                this.Set(GUIStyleName.BorderImageSliceTop, top);
+                this.Set(GUIStyleName.BorderImageSliceRight, right);
+                this.Set(GUIStyleName.BorderImageSliceBottom, bottom);
+                this.Set(GUIStyleName.BorderImageSliceLeft, left);
             }
         }
 
         public (double topLeft, double topRight, double bottomRight, double bottomLeft) BorderRadius =>
             (
-                Get<double>(GUIStyleName.BorderTopLeftRadius),
-                Get<double>(GUIStyleName.BorderTopRightRadius),
-                Get<double>(GUIStyleName.BorderBottomRightRadius),
-                Get<double>(GUIStyleName.BorderBottomLeftRadius)
+                this.Get<double>(GUIStyleName.BorderTopLeftRadius),
+                this.Get<double>(GUIStyleName.BorderTopRightRadius),
+                this.Get<double>(GUIStyleName.BorderBottomRightRadius),
+                this.Get<double>(GUIStyleName.BorderBottomLeftRadius)
             );
 
         #endregion Border
 
         #region Outline
-        public double OutlineWidth => Get<double>(GUIStyleName.OutlineWidth);
-        public Color OutlineColor => Get<Color>(GUIStyleName.OutlineColor);
+        public double OutlineWidth => this.Get<double>(GUIStyleName.OutlineWidth);
+        public Color OutlineColor => this.Get<Color>(GUIStyleName.OutlineColor);
         #endregion Outline
 
         public Color BackgroundColor
         {
-            get => Get<Color>(GUIStyleName.BackgroundColor);
-            set => Set<Color>(GUIStyleName.BackgroundColor, value);
+            get => this.Get<Color>(GUIStyleName.BackgroundColor);
+            set => this.Set(GUIStyleName.BackgroundColor, value);
         }
 
         public Gradient BackgroundGradient
         {
-            get => (Gradient)Get<int>(GUIStyleName.BackgroundGradient);
-            set => Set<int>(GUIStyleName.BackgroundGradient, (int)value);
+            get => (Gradient)this.Get<int>(GUIStyleName.BackgroundGradient);
+            set => this.Set(GUIStyleName.BackgroundGradient, (int)value);
         }
 
         #endregion Box model
@@ -593,57 +593,57 @@ namespace ImGui
 
         public int HorizontalStretchFactor
         {
-            get => Get<int>(GUIStyleName.HorizontalStretchFactor);
-            set => Set<int>(GUIStyleName.HorizontalStretchFactor, value);
+            get => this.Get<int>(GUIStyleName.HorizontalStretchFactor);
+            set => this.Set(GUIStyleName.HorizontalStretchFactor, value);
         }
 
         public int VerticalStretchFactor
         {
-            get => Get<int>(GUIStyleName.VerticalStretchFactor);
-            set => Set<int>(GUIStyleName.VerticalStretchFactor, value);
+            get => this.Get<int>(GUIStyleName.VerticalStretchFactor);
+            set => this.Set(GUIStyleName.VerticalStretchFactor, value);
         }
 
         public double CellSpacingHorizontal
         {
-            get => Get<double>(GUIStyleName.CellSpacingHorizontal);
-            set => Set<double>(GUIStyleName.CellSpacingHorizontal, value);
+            get => this.Get<double>(GUIStyleName.CellSpacingHorizontal);
+            set => this.Set(GUIStyleName.CellSpacingHorizontal, value);
         }
         public double CellSpacingVertical
         {
-            get => Get<double>(GUIStyleName.CellSpacingVertical);
-            set => Set<double>(GUIStyleName.CellSpacingVertical, value);
+            get => this.Get<double>(GUIStyleName.CellSpacingVertical);
+            set => this.Set(GUIStyleName.CellSpacingVertical, value);
         }
         public (double, double) CellSpacing
         {
-            get => (CellSpacingHorizontal, CellSpacingVertical);
-            set { CellSpacingHorizontal = value.Item1; CellSpacingVertical = value.Item2; }
+            get => (this.CellSpacingHorizontal, this.CellSpacingVertical);
+            set { this.CellSpacingHorizontal = value.Item1; this.CellSpacingVertical = value.Item2; }
         }
 
         public Alignment AlignmentHorizontal
         {
-            get => (Alignment)Get<int>(GUIStyleName.AlignmentHorizontal);
-            set => Set<int>(GUIStyleName.AlignmentHorizontal, (int)value);
+            get => (Alignment)this.Get<int>(GUIStyleName.AlignmentHorizontal);
+            set => this.Set(GUIStyleName.AlignmentHorizontal, (int)value);
         }
         public Alignment AlignmentVertical
         {
-            get => (Alignment)Get<int>(GUIStyleName.AlignmentVertical);
-            set => Set<int>(GUIStyleName.AlignmentVertical, (int)value);
+            get => (Alignment)this.Get<int>(GUIStyleName.AlignmentVertical);
+            set => this.Set(GUIStyleName.AlignmentVertical, (int)value);
         }
         public (Alignment, Alignment) GroupAlignment
         {
-            get => (AlignmentHorizontal, AlignmentVertical);
-            set { AlignmentHorizontal = value.Item1; AlignmentVertical = value.Item2; }
+            get => (this.AlignmentHorizontal, this.AlignmentVertical);
+            set { this.AlignmentHorizontal = value.Item1; this.AlignmentVertical = value.Item2; }
         }
 
         #endregion Layout
 
         #region Misc
 
-        public Color StrokeColor => Get<Color>(GUIStyleName.StrokeColor);
-        public Color FillColor => Get<Color>(GUIStyleName.FillColor);
+        public Color StrokeColor => this.Get<Color>(GUIStyleName.StrokeColor);
+        public Color FillColor => this.Get<Color>(GUIStyleName.FillColor);
 
-        public Color GradientTopColor => Get<Color>(GUIStyleName.GradientTopColor);
-        public Color GradientBottomColor => Get<Color>(GUIStyleName.GradientBottomColor);
+        public Color GradientTopColor => this.Get<Color>(GUIStyleName.GradientTopColor);
+        public Color GradientBottomColor => this.Get<Color>(GUIStyleName.GradientBottomColor);
 
         #endregion
 
@@ -651,36 +651,36 @@ namespace ImGui
 
         public string FontFamily
         {
-            get => Get<string>(GUIStyleName.FontFamily);
-            set => Set<string>(GUIStyleName.FontFamily, value);
+            get => this.Get<string>(GUIStyleName.FontFamily);
+            set => this.Set(GUIStyleName.FontFamily, value);
         }
 
         public double FontSize
         {
-            get => Get<double>(GUIStyleName.FontSize);
-            set => Set<double>(GUIStyleName.FontSize, value);
+            get => this.Get<double>(GUIStyleName.FontSize);
+            set => this.Set(GUIStyleName.FontSize, value);
         }
 
         public FontStyle FontStyle//No effect in current Typography.
         {
-            get => (FontStyle)Get<int>(GUIStyleName.FontStyle);
-            set => Set<int>(GUIStyleName.FontStyle, (int)value);
+            get => (FontStyle)this.Get<int>(GUIStyleName.FontStyle);
+            set => this.Set(GUIStyleName.FontStyle, (int)value);
         }
 
         public FontWeight FontWeight//No effect in current Typography.
         {
-            get => (FontWeight)Get<int>(GUIStyleName.FontWeight);
-            set => Set<int>(GUIStyleName.FontWeight, (int)value);
+            get => (FontWeight)this.Get<int>(GUIStyleName.FontWeight);
+            set => this.Set(GUIStyleName.FontWeight, (int)value);
         }
 
         public Color FontColor
         {
-            get => Get<Color>(GUIStyleName.FontColor);
-            set => Set<Color>(GUIStyleName.FontColor, value);
+            get => this.Get<Color>(GUIStyleName.FontColor);
+            set => this.Set(GUIStyleName.FontColor, value);
         }
 
         #endregion
 
-#endregion
+        #endregion
     }
 }

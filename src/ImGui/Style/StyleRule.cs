@@ -1,11 +1,18 @@
-﻿namespace ImGui
+﻿using ImGui.Rendering;
+
+namespace ImGui
 {
     public interface IStyleRule {}
-    public class StyleRule<T> : IStyleRule
+    internal class StyleRule<T> : IStyleRule
     {
         public GUIStyleName Name { get; set; }
         public GUIState State { get; set; }
         public T Value { get; set; }
+
+        /// <summary>
+        /// Primitive owned by this rule.
+        /// </summary>
+        public Primitive primitive;
 
         public StyleRule(GUIStyleName name, T value)
         {

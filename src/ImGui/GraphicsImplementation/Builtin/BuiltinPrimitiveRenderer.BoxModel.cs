@@ -1,8 +1,9 @@
-﻿using System;
-using ImGui.Common;
+﻿using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.Rendering;
+using System;
+using System.Diagnostics;
 
 namespace ImGui.GraphicsImplementation
 {
@@ -37,56 +38,70 @@ namespace ImGui.GraphicsImplementation
             //no content
 
             //Border
-            //  Top
-            if (!MathEx.AmostZero(borderBoxRect.Top))
+            var borderImageSource = style.BorderImageSource;
+            if (borderImageSource != null)
             {
-                var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
-                if (!MathEx.AmostZero(borderTopColor.A))
+                var rule = style.GetRule<string>(GUIStyleName.BorderImageSource);
+                if (rule.primitive == null)
                 {
-                    PathLineTo(paddingBoxRect.TopLeft);
-                    PathLineTo(borderBoxRect.TopLeft);
-                    PathLineTo(borderBoxRect.TopRight);
-                    PathLineTo(paddingBoxRect.TopRight);
-                    PathFill(borderTopColor);
+                    rule.primitive = new ImagePrimitive(borderImageSource);
                 }
+                Debug.Assert(rule.primitive is ImagePrimitive);
+                this.DrawSlicedImage((ImagePrimitive) rule.primitive, borderBoxRect, style);
             }
-            //  Right
-            if (!MathEx.AmostZero(borderBoxRect.Right))
+            else
             {
-                var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
-                if(!MathEx.AmostZero(borderRightColor.A))
+                //  Top
+                if (!MathEx.AmostZero(borderBoxRect.Top))
                 {
-                    PathLineTo(paddingBoxRect.TopRight);
-                    PathLineTo(borderBoxRect.TopRight);
-                    PathLineTo(borderBoxRect.BottomRight);
-                    PathLineTo(paddingBoxRect.BottomRight);
-                    PathFill(borderRightColor);
+                    var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
+                    if (!MathEx.AmostZero(borderTopColor.A))
+                    {
+                        this.PathLineTo(paddingBoxRect.TopLeft);
+                        this.PathLineTo(borderBoxRect.TopLeft);
+                        this.PathLineTo(borderBoxRect.TopRight);
+                        this.PathLineTo(paddingBoxRect.TopRight);
+                        this.PathFill(borderTopColor);
+                    }
                 }
-            }
-            //  Bottom
-            if (!MathEx.AmostZero(borderBoxRect.Bottom))
-            {
-                var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
-                if (!MathEx.AmostZero(borderBottomColor.A))
+                //  Right
+                if (!MathEx.AmostZero(borderBoxRect.Right))
                 {
-                    PathLineTo(paddingBoxRect.BottomRight);
-                    PathLineTo(borderBoxRect.BottomRight);
-                    PathLineTo(borderBoxRect.BottomLeft);
-                    PathLineTo(paddingBoxRect.BottomLeft);
-                    PathFill(borderBottomColor);
+                    var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
+                    if (!MathEx.AmostZero(borderRightColor.A))
+                    {
+                        this.PathLineTo(paddingBoxRect.TopRight);
+                        this.PathLineTo(borderBoxRect.TopRight);
+                        this.PathLineTo(borderBoxRect.BottomRight);
+                        this.PathLineTo(paddingBoxRect.BottomRight);
+                        this.PathFill(borderRightColor);
+                    }
                 }
-            }
-            //  Left
-            if (!MathEx.AmostZero(borderBoxRect.Left))
-            {
-                var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
-                if (!MathEx.AmostZero(borderLeftColor.A))
+                //  Bottom
+                if (!MathEx.AmostZero(borderBoxRect.Bottom))
                 {
-                    PathLineTo(paddingBoxRect.BottomLeft);
-                    PathLineTo(borderBoxRect.BottomLeft);
-                    PathLineTo(borderBoxRect.TopLeft);
-                    PathLineTo(paddingBoxRect.TopLeft);
-                    PathFill(borderLeftColor);
+                    var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
+                    if (!MathEx.AmostZero(borderBottomColor.A))
+                    {
+                        this.PathLineTo(paddingBoxRect.BottomRight);
+                        this.PathLineTo(borderBoxRect.BottomRight);
+                        this.PathLineTo(borderBoxRect.BottomLeft);
+                        this.PathLineTo(paddingBoxRect.BottomLeft);
+                        this.PathFill(borderBottomColor);
+                    }
+                }
+                //  Left
+                if (!MathEx.AmostZero(borderBoxRect.Left))
+                {
+                    var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
+                    if (!MathEx.AmostZero(borderLeftColor.A))
+                    {
+                        this.PathLineTo(paddingBoxRect.BottomLeft);
+                        this.PathLineTo(borderBoxRect.BottomLeft);
+                        this.PathLineTo(borderBoxRect.TopLeft);
+                        this.PathLineTo(paddingBoxRect.TopLeft);
+                        this.PathFill(borderLeftColor);
+                    }
                 }
             }
 
@@ -95,10 +110,10 @@ namespace ImGui.GraphicsImplementation
             if (!MathEx.AmostZero(outlineWidth))
             {
                 var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
-                if(!MathEx.AmostZero(outlineColor.A))
+                if (!MathEx.AmostZero(outlineColor.A))
                 {
-                    PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
-                    PathStroke(outlineColor, true, outlineWidth);
+                    this.PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
+                    this.PathStroke(outlineColor, true, outlineWidth);
                 }
             }
 
@@ -147,7 +162,7 @@ namespace ImGui.GraphicsImplementation
                     /*HACK Don't check text size because the size calculated by Typography is not accurate. */
                     /*if (textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)*/
                     {
-                        DrawText(textPrimitive, contentBoxRect, style);
+                        this.DrawText(textPrimitive, contentBoxRect, style);
                     }
                 }
             }
@@ -159,24 +174,24 @@ namespace ImGui.GraphicsImplementation
                 var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
                 if (!MathEx.AmostZero(borderTopColor.A))
                 {
-                    PathLineTo(paddingBoxRect.TopLeft);
-                    PathLineTo(borderBoxRect.TopLeft);
-                    PathLineTo(borderBoxRect.TopRight);
-                    PathLineTo(paddingBoxRect.TopRight);
-                    PathFill(borderTopColor);
+                    this.PathLineTo(paddingBoxRect.TopLeft);
+                    this.PathLineTo(borderBoxRect.TopLeft);
+                    this.PathLineTo(borderBoxRect.TopRight);
+                    this.PathLineTo(paddingBoxRect.TopRight);
+                    this.PathFill(borderTopColor);
                 }
             }
             //  Right
             if (!MathEx.AmostZero(borderBoxRect.Right))
             {
                 var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
-                if(!MathEx.AmostZero(borderRightColor.A))
+                if (!MathEx.AmostZero(borderRightColor.A))
                 {
-                    PathLineTo(paddingBoxRect.TopRight);
-                    PathLineTo(borderBoxRect.TopRight);
-                    PathLineTo(borderBoxRect.BottomRight);
-                    PathLineTo(paddingBoxRect.BottomRight);
-                    PathFill(borderRightColor);
+                    this.PathLineTo(paddingBoxRect.TopRight);
+                    this.PathLineTo(borderBoxRect.TopRight);
+                    this.PathLineTo(borderBoxRect.BottomRight);
+                    this.PathLineTo(paddingBoxRect.BottomRight);
+                    this.PathFill(borderRightColor);
                 }
             }
             //  Bottom
@@ -185,11 +200,11 @@ namespace ImGui.GraphicsImplementation
                 var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
                 if (!MathEx.AmostZero(borderBottomColor.A))
                 {
-                    PathLineTo(paddingBoxRect.BottomRight);
-                    PathLineTo(borderBoxRect.BottomRight);
-                    PathLineTo(borderBoxRect.BottomLeft);
-                    PathLineTo(paddingBoxRect.BottomLeft);
-                    PathFill(borderBottomColor);
+                    this.PathLineTo(paddingBoxRect.BottomRight);
+                    this.PathLineTo(borderBoxRect.BottomRight);
+                    this.PathLineTo(borderBoxRect.BottomLeft);
+                    this.PathLineTo(paddingBoxRect.BottomLeft);
+                    this.PathFill(borderBottomColor);
                 }
             }
             //  Left
@@ -198,11 +213,11 @@ namespace ImGui.GraphicsImplementation
                 var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
                 if (!MathEx.AmostZero(borderLeftColor.A))
                 {
-                    PathLineTo(paddingBoxRect.BottomLeft);
-                    PathLineTo(borderBoxRect.BottomLeft);
-                    PathLineTo(borderBoxRect.TopLeft);
-                    PathLineTo(paddingBoxRect.TopLeft);
-                    PathFill(borderLeftColor);
+                    this.PathLineTo(paddingBoxRect.BottomLeft);
+                    this.PathLineTo(borderBoxRect.BottomLeft);
+                    this.PathLineTo(borderBoxRect.TopLeft);
+                    this.PathLineTo(paddingBoxRect.TopLeft);
+                    this.PathFill(borderLeftColor);
                 }
             }
 
@@ -211,10 +226,10 @@ namespace ImGui.GraphicsImplementation
             if (!MathEx.AmostZero(outlineWidth))
             {
                 var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
-                if(!MathEx.AmostZero(outlineColor.A))
+                if (!MathEx.AmostZero(outlineColor.A))
                 {
-                    PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
-                    PathStroke(outlineColor, true, outlineWidth);
+                    this.PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
+                    this.PathStroke(outlineColor, true, outlineWidth);
                 }
             }
 
@@ -259,7 +274,7 @@ namespace ImGui.GraphicsImplementation
             {
                 if (imagePrimitive != null)
                 {
-                    DrawImage(imagePrimitive, contentBoxRect, style);
+                    this.DrawImage(imagePrimitive, contentBoxRect, style);
                 }
             }
 
@@ -270,24 +285,24 @@ namespace ImGui.GraphicsImplementation
                 var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
                 if (!MathEx.AmostZero(borderTopColor.A))
                 {
-                    PathLineTo(paddingBoxRect.TopLeft);
-                    PathLineTo(borderBoxRect.TopLeft);
-                    PathLineTo(borderBoxRect.TopRight);
-                    PathLineTo(paddingBoxRect.TopRight);
-                    PathFill(borderTopColor);
+                    this.PathLineTo(paddingBoxRect.TopLeft);
+                    this.PathLineTo(borderBoxRect.TopLeft);
+                    this.PathLineTo(borderBoxRect.TopRight);
+                    this.PathLineTo(paddingBoxRect.TopRight);
+                    this.PathFill(borderTopColor);
                 }
             }
             //  Right
             if (!MathEx.AmostZero(borderBoxRect.Right))
             {
                 var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
-                if(!MathEx.AmostZero(borderRightColor.A))
+                if (!MathEx.AmostZero(borderRightColor.A))
                 {
-                    PathLineTo(paddingBoxRect.TopRight);
-                    PathLineTo(borderBoxRect.TopRight);
-                    PathLineTo(borderBoxRect.BottomRight);
-                    PathLineTo(paddingBoxRect.BottomRight);
-                    PathFill(borderRightColor);
+                    this.PathLineTo(paddingBoxRect.TopRight);
+                    this.PathLineTo(borderBoxRect.TopRight);
+                    this.PathLineTo(borderBoxRect.BottomRight);
+                    this.PathLineTo(paddingBoxRect.BottomRight);
+                    this.PathFill(borderRightColor);
                 }
             }
             //  Bottom
@@ -296,11 +311,11 @@ namespace ImGui.GraphicsImplementation
                 var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
                 if (!MathEx.AmostZero(borderBottomColor.A))
                 {
-                    PathLineTo(paddingBoxRect.BottomRight);
-                    PathLineTo(borderBoxRect.BottomRight);
-                    PathLineTo(borderBoxRect.BottomLeft);
-                    PathLineTo(paddingBoxRect.BottomLeft);
-                    PathFill(borderBottomColor);
+                    this.PathLineTo(paddingBoxRect.BottomRight);
+                    this.PathLineTo(borderBoxRect.BottomRight);
+                    this.PathLineTo(borderBoxRect.BottomLeft);
+                    this.PathLineTo(paddingBoxRect.BottomLeft);
+                    this.PathFill(borderBottomColor);
                 }
             }
             //  Left
@@ -309,11 +324,11 @@ namespace ImGui.GraphicsImplementation
                 var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
                 if (!MathEx.AmostZero(borderLeftColor.A))
                 {
-                    PathLineTo(paddingBoxRect.BottomLeft);
-                    PathLineTo(borderBoxRect.BottomLeft);
-                    PathLineTo(borderBoxRect.TopLeft);
-                    PathLineTo(paddingBoxRect.TopLeft);
-                    PathFill(borderLeftColor);
+                    this.PathLineTo(paddingBoxRect.BottomLeft);
+                    this.PathLineTo(borderBoxRect.BottomLeft);
+                    this.PathLineTo(borderBoxRect.TopLeft);
+                    this.PathLineTo(paddingBoxRect.TopLeft);
+                    this.PathFill(borderLeftColor);
                 }
             }
 
@@ -322,10 +337,10 @@ namespace ImGui.GraphicsImplementation
             if (!MathEx.AmostZero(outlineWidth))
             {
                 var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
-                if(!MathEx.AmostZero(outlineColor.A))
+                if (!MathEx.AmostZero(outlineColor.A))
                 {
-                    PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
-                    PathStroke(outlineColor, true, outlineWidth);
+                    this.PathRect(borderBoxRect.TopLeft, borderBoxRect.BottomRight);
+                    this.PathStroke(outlineColor, true, outlineWidth);
                 }
             }
 
@@ -343,7 +358,7 @@ namespace ImGui.GraphicsImplementation
         private static void GetBoxes(Rect rect, StyleRuleSet style, out Rect borderBoxRect, out Rect paddingBoxRect,
             out Rect contentBoxRect)
         {
-//Widths of border
+            //Widths of border
             var bt = style.Get<double>(GUIStyleName.BorderTop);
             var br = style.Get<double>(GUIStyleName.BorderRight);
             var bb = style.Get<double>(GUIStyleName.BorderBottom);
@@ -367,7 +382,7 @@ namespace ImGui.GraphicsImplementation
             var ptr = new Point(btr.X - br, btr.Y + bt);
             var pbr = new Point(bbr.X - br, bbr.Y - bb);
             var pbl = new Point(bbl.X + bl, bbl.Y - bb);
-            //if (ptl.X > ptr.X) return;//TODO what if (ptl.X > ptr.X) happens?
+            Debug.Assert(ptl.X < ptr.X);//TODO what if (ptl.X > ptr.X) happens?
             paddingBoxRect = new Rect(ptl, pbr);
 
             //4 corner of the content-box
@@ -375,6 +390,7 @@ namespace ImGui.GraphicsImplementation
             var ctr = new Point(ptr.X - pr, ptr.Y + pr);
             var cbr = new Point(pbr.X - pr, pbr.Y - pb);
             var cbl = new Point(pbl.X + pl, pbl.Y - pb);
+            Debug.Assert(ctl.X < ctr.X);
             contentBoxRect = new Rect(ctl, cbr);
         }
     }
