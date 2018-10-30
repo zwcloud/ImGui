@@ -1,5 +1,6 @@
 ﻿//#define GenerateExpectedImages
 
+using System;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
@@ -397,6 +398,87 @@ namespace ImGui.UnitTest.Rendering
                         //draw mesh buffer to screen
                         renderer.Clear(Color.FrameBg);
                         renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
+                        renderer.SwapBuffers();
+                    });
+
+                    if (Application.RequestQuit)
+                    {
+                        break;
+                    }
+
+                    Keyboard.Instance.OnFrameEnd();
+                    Time.OnFrameEnd();
+                }
+            }
+
+            [Fact]
+            public void ShowAnimateNode()
+            {
+                Application.IsRunningInUnitTest = true;
+                Application.InitSysDependencies();
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+
+                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+                Node node = new Node(1);
+                node.Primitive = new PathPrimitive();
+
+                var window = new Win32Window();
+                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
+
+                var renderer = new Win32OpenGLRenderer();
+                renderer.Init(window.Pointer, window.ClientSize);
+
+                window.Show();
+                
+                var A = new Point(200, 200);
+                var B = new Point(600, 200);
+                var C = new Point(400, 400);
+
+                while (true)
+                {
+                    Time.OnFrameBegin();
+                    Keyboard.Instance.OnFrameBegin();
+
+                    window.MainLoop(() =>
+                    {
+                        if (Keyboard.Instance.KeyDown(Key.Escape))
+                        {
+                            Application.Quit();
+                        }
+
+                        var normal = (Time.time % 1000) / 1000f * 2 - 1;
+                        var rad = normal * Math.PI;
+                        var A_ = A + 50 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
+                        rad += Math.PI * 0.333;
+                        var B_ = B + 30 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
+                        rad += Math.PI * 0.666;
+                        var C_ = C + 70 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
+
+                        var d = node.Primitive as PathPrimitive;
+                        d.PathClear();
+                        d.PathMoveTo(A_);
+                        d.PathLineTo(B_);
+                        d.PathLineTo(C_);
+                        d.PathStroke(2, Color.Blue);
+
+                        //update nodes
+                        if (node.ActiveInTree)//this is actually always true
+                        {
+                            node.Draw(primitiveRenderer, meshList);
+                        }
+
+                        //rebuild mesh buffer
+                        meshBuffer.Clear();
+                        meshBuffer.Init();
+                        meshBuffer.Build(meshList);
+
+                        //draw mesh buffer to screen
+                        renderer.Clear(Color.FrameBg);
+                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
+                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
                         renderer.SwapBuffers();
                     });
 
