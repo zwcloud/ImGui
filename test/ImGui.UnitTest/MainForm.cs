@@ -19,9 +19,14 @@ namespace ImGui.UnitTest
         {
         }
 
+        public MainForm(Action onGUI) : base(new Rect(320, 180, 300, 400))
+        {
+            this.OnGUIAction = onGUI;
+        }
+
         protected override void OnGUI()
         {
-            OnGUIAction?.Invoke();
+            this.OnGUIAction?.Invoke();
         }
     }
 }

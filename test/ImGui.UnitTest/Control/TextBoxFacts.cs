@@ -1,4 +1,6 @@
 ﻿using ImGui;
+using ImGui.Common.Primitive;
+using ImGui.UnitTest;
 using Xunit;
 
 namespace ControlTest
@@ -16,7 +18,8 @@ namespace ControlTest
         {
             var text = "Hello ImGui!你好";
 
-            Application.Run(new Form1(() => {
+            Application.Run(new MainForm(() =>
+            {
                 text = GUILayout.Textbox("Name", new Size(200, 30), text);
             }));
         }
