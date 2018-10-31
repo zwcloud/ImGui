@@ -1,6 +1,4 @@
-﻿//#define GenerateExpectedImages
-
-using System;
+﻿using System;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
@@ -35,8 +33,8 @@ namespace ImGui.UnitTest.Rendering
                 Node node = new Node(1);
                 node.Primitive = primitive;
                 
-                Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
-                Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.DrawANode.png");
+                Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
+                Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANode.png");
             }
 
             [Fact]
@@ -55,18 +53,18 @@ namespace ImGui.UnitTest.Rendering
 
                 {
                     fillCmd.Color = Color.Red;
-                    Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
-                    Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.UpdateANode.Black.png");
+                    Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
+                    Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.UpdateANode.Black.png");
                 }
                 {
                     fillCmd.Color = Color.Green;
-                    Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
-                    Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.UpdateANode.Green.png");
+                    Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
+                    Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.UpdateANode.Green.png");
                 }
                 {
                     fillCmd.Color = Color.Blue;
-                    Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
-                    Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.UpdateANode.Blue.png");
+                    Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
+                    Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.UpdateANode.Blue.png");
                 }
 
             }
@@ -74,85 +72,26 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void UpdateATextNode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
                 Node node = new Node(1);
-
-                var primitive = new TextPrimitive("before");
-
+                var primitive = new TextPrimitive("Before");
                 node.Primitive = primitive;
 
-                node.Draw(primitiveRenderer, meshList);
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
                 {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
+                    primitive.Text = "Before";
+                    Util.DrawNodeToImage(out var imageRawBytes, node, 100, 30);
+                    Util.CheckExpectedImage(imageRawBytes, 100, 30, @"Rendering\images\NodeFacts.Draw.UpdateATextNode.Before.png");
+                }
 
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyPressed(Key.Space))
-                        {
-                            primitive.Text = primitive.Text == "before" ? "after" : "before";
-                        }
-
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update nodes
-                        if (node.ActiveInTree)//this is actually always true
-                        {
-                            node.Draw(primitiveRenderer, meshList);
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
-                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
+                {
+                    primitive.Text = "After";
+                    Util.DrawNodeToImage(out var imageRawBytes, node, 100, 30);
+                    Util.CheckExpectedImage(imageRawBytes, 100, 30, @"Rendering\images\NodeFacts.Draw.UpdateATextNode.After.png");
                 }
             }
 
             [Fact]
             public void UpdateTwoNode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 FillCommand node0FillCmd, node1FillCmd;
                 {
@@ -166,8 +105,6 @@ namespace ImGui.UnitTest.Rendering
                     primitive.PathClose();
                     node0FillCmd = primitive.PathFill(Color.Green);
                     node.Primitive = primitive;
-
-                    node.Draw(primitiveRenderer, meshList);
                 }
                 {
                     Node node = new Node(1);
@@ -181,157 +118,54 @@ namespace ImGui.UnitTest.Rendering
                     node1FillCmd = primitive.PathFill(Color.Orange);
 
                     node.Primitive = primitive;
-
-                    node.Draw(primitiveRenderer, meshList);
                 }
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
                 {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
+                    node0FillCmd.Color = Color.Red;
+                    node1FillCmd.Color = Color.Blue;
+                    Util.DrawNodesToImage(out var imageRawBytes, nodes, 110, 110);
+                    Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.UpdateTwoNode.Before.png");
+                }
 
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.NumPad1))
-                        {
-                            node0FillCmd.Color = Color.Red;
-                            node1FillCmd.Color = Color.Blue;
-                        }
-                        if (Keyboard.Instance.KeyDown(Key.NumPad2))
-                        {
-                            node0FillCmd.Color = Color.Green;
-                            node1FillCmd.Color = Color.Orange;
-                        }
-
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update nodes
-                        foreach (var node in nodes)
-                        {
-                            if (node.ActiveInTree)
-                            {
-                                node.Draw(primitiveRenderer, meshList);
-                            }
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
+                {
+                    node0FillCmd.Color = Color.Green;
+                    node1FillCmd.Color = Color.Orange;
+                    Util.DrawNodesToImage(out var imageRawBytes, nodes, 110, 110);
+                    Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.UpdateTwoNode.After.png");
                 }
             }
 
             [Fact]
             public void ShowHideANode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
+                Node node = new Node(1);
+                var primitive = new PathPrimitive();
+                primitive.PathMoveTo(new Point(10, 10));
+                primitive.PathLineTo(new Point(10, 100));
+                primitive.PathLineTo(new Point(100, 100));
+                primitive.PathLineTo(new Point(100, 10));
+                primitive.PathClose();
+                primitive.PathFill(Color.Red);
+                node.Primitive = primitive;
 
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-                var nodes = new List<Node>();
                 {
-                    Node node = new Node(1);
-                    nodes.Add(node);
-                    var primitive = new PathPrimitive();
-                    primitive.PathMoveTo(new Point(10, 10));
-                    primitive.PathLineTo(new Point(10, 100));
-                    primitive.PathLineTo(new Point(100, 100));
-                    primitive.PathLineTo(new Point(100, 10));
-                    primitive.PathClose();
-                    primitive.PathFill(Color.Red);
-
-                    node.Primitive = primitive;
-
-                    node.Draw(primitiveRenderer, meshList);
+                    node.ActiveSelf = true;
+                    Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
+                    Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.ShowHideANode.Show.png");
                 }
-                var theNode = nodes[0];
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
                 {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        if (Keyboard.Instance.KeyPressed(Key.Space))
-                        {
-                            theNode.ActiveSelf = !theNode.ActiveSelf;
-                            Log.Msg("Key.Space Pressed. theNode becomes " + (theNode.ActiveSelf ? "visible" : "invisible"));
-                        }
-
-                        //update nodes
-                        foreach (var node in nodes)
-                        {
-                            if (node.ActiveInTree)
-                            {
-                                node.Draw(primitiveRenderer, meshList);
-                            }
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
+                    node.ActiveSelf = false;
+                    Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
+                    Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.ShowHideANode.Hide.png");
                 }
             }
 
             [Fact]
             public void ShowAnimateNode()
             {
+                //FIXME make this test automatable
+
                 Application.IsRunningInUnitTest = true;
                 Application.InitSysDependencies();
 

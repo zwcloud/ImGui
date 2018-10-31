@@ -19,6 +19,7 @@
     <ApplicationIcon />
     <Win32Resource />
     <LangVersion>latest</LangVersion>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

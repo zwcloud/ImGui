@@ -1,6 +1,7 @@
 ﻿using ImGui.Common.Primitive;
 using ImGui.OSImplentation.Windows;
 using System;
+using CSharpGL;
 using ImGui.Rendering;
 
 namespace ImGui.UnitTest
@@ -12,12 +13,18 @@ namespace ImGui.UnitTest
         public Win32Window Window { get; private set; }
         public Win32OpenGLRenderer Renderer { get; private set; }
 
-        public RenderContextForTest(Size size)
+        private readonly int viewportWidth;
+        private readonly int viewportHeight;
+
+        public RenderContextForTest(int viewportWidth, int viewportHeight)
         {
+            this.viewportWidth = viewportWidth;
+            this.viewportHeight = viewportHeight;
+
             Application.Init();
 
             this.Window = new Win32Window();
-            this.Window.Init(Point.Zero, size, WindowTypes.Regular);
+            this.Window.Init(Point.Zero, new Size(1000, 1000)/*This size should be enough for unit testing.*/, WindowTypes.Regular);
 
             this.Renderer = new Win32OpenGLRenderer();
             this.Renderer.Init(this.Window.Pointer, this.Window.ClientSize);
@@ -31,19 +38,19 @@ namespace ImGui.UnitTest
         public void DrawShapeMesh(Mesh shapeMesh)
         {
             Win32OpenGLRenderer.DrawMesh(this.Renderer.shapeMaterial, shapeMesh,
-                (int)this.Window.ClientSize.Width, (int)this.Window.ClientSize.Height);
+                viewportWidth, viewportHeight);
         }
 
         public void DrawImageMesh(Mesh imageMesh)
         {
             Win32OpenGLRenderer.DrawMesh(this.Renderer.imageMaterial, imageMesh,
-                (int)this.Window.ClientSize.Width, (int)this.Window.ClientSize.Height);
+                viewportWidth, viewportHeight);
         }
 
         public void DrawTextMesh(TextMesh textMesh)
         {
             Win32OpenGLRenderer.DrawTextMesh(this.Renderer.glyphMaterial, textMesh,
-                (int)this.Window.ClientSize.Width, (int)this.Window.ClientSize.Height);
+                viewportWidth, viewportHeight);
         }
 
         public void DrawMeshes(MeshBuffer meshBuffer)
@@ -53,9 +60,10 @@ namespace ImGui.UnitTest
             this.DrawTextMesh(meshBuffer.TextMesh);
         }
 
-        public byte[] GetRenderedRawBytes(out int width, out int height)
+        public byte[] GetRenderedRawBytes()
         {
-            return this.Renderer.GetRawBackBuffer(out width, out height);
+            GL.Viewport(0,0, this.viewportWidth, this.viewportHeight);//fix the viewport TODO make this cleaner
+            return this.Renderer.GetRawBackBuffer(out _, out _);
         }
 
         public void Dispose()

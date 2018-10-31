@@ -125,7 +125,7 @@ namespace ImGui.UnitTest.Rendering
             {
                 byte[] imageRawBytes;
                 int width, height;
-                using (var context = new RenderContextForTest(new Size(300, 400)))
+                using (var context = new RenderContextForTest(300, 400))
                 {
                     var primitive = new ImagePrimitive(@"assets\images\logo.png");
                     primitive.Offset = new Vector(10, 10);
@@ -166,7 +166,7 @@ namespace ImGui.UnitTest.Rendering
             {
                 byte[] imageRawBytes;
                 int width, height;
-                using (var context = new RenderContextForTest(new Size(300, 400)))
+                using (var context = new RenderContextForTest(300, 400))
                 {
                     var styleRuleSet = new StyleRuleSet();
                     var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
@@ -215,7 +215,7 @@ namespace ImGui.UnitTest.Rendering
             {
                 byte[] imageRawBytes;
                 int width, height;
-                using (var context = new RenderContextForTest(new Size(400, 100)))
+                using (var context = new RenderContextForTest(400, 100))
                 {
                     var styleRuleSet = new StyleRuleSet();
                     var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
@@ -253,7 +253,7 @@ namespace ImGui.UnitTest.Rendering
             {
                 byte[] imageRawBytes;
                 int width, height;
-                using (var context = new RenderContextForTest(new Size(400, 100)))
+                using (var context = new RenderContextForTest(400, 100))
                 {
                     TextPrimitive textPrimitive = new TextPrimitive("Hello你好こんにちは");
                     var styleRuleSet = new StyleRuleSet();
@@ -297,7 +297,7 @@ namespace ImGui.UnitTest.Rendering
             {
                 byte[] imageRawBytes;
                 int width, height;
-                using (var context = new RenderContextForTest(new Size(500, 500)))
+                using (var context = new RenderContextForTest(500, 500))
                 {
                     var primitive = new ImagePrimitive(@"assets\images\logo.png");
 

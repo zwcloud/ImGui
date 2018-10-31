@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui.UnitTest", "test\ImGu
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Demo", "templates\Demo\Demo.shproj", "{2AF7F9F5-8001-40BF-8C60-C4852CEAA299}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTemplate", "templates\WebTemplate\WebTemplate.csproj", "{D1B8A72B-35FF-45D2-BD04-AFA25EA93479}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTemplate", "templates\WebTemplate\WebTemplate.csproj", "{D1B8A72B-35FF-45D2-BD04-AFA25EA93479}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

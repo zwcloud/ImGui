@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -393,22 +394,22 @@ namespace ImGui.UnitTest
         internal static void CheckExpectedImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
         {
             var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-#if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-#else
+#if DEBUG
             var expectedImage = Util.LoadImage(expectedImageFilePath);
             Assert.True(Util.CompareImage(expectedImage, image));
+#else
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
 #endif
         }
 
-        internal static void DrawNodeToImage(out byte[] imageRawBytes, Node node, out int width, out int height)
+        internal static void DrawNodeToImage(out byte[] imageRawBytes, Node node, int width, int height)
         {
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
             IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             node.Draw(primitiveRenderer, meshList);
 
-            using (var context = new RenderContextForTest(new Size(110, 110)))
+            using (var context = new RenderContextForTest(width, height))
             {
                 //rebuild mesh buffer
                 meshBuffer.Clear();
@@ -419,7 +420,33 @@ namespace ImGui.UnitTest
                 context.Clear();
                 context.DrawMeshes(meshBuffer);
 
-                imageRawBytes = context.GetRenderedRawBytes(out width, out height);
+                imageRawBytes = context.GetRenderedRawBytes();
+            }
+        }
+
+        internal static void DrawNodesToImage(out byte[] imageRawBytes, IList<Node> nodes, int width, int height)
+        {
+            MeshBuffer meshBuffer = new MeshBuffer();
+            MeshList meshList = new MeshList();
+            IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+            
+            foreach (var node in nodes)
+            {
+                node.Draw(primitiveRenderer, meshList);
+            }
+
+            using (var context = new RenderContextForTest(width, height))
+            {
+                //rebuild mesh buffer
+                meshBuffer.Clear();
+                meshBuffer.Init();
+                meshBuffer.Build(meshList);
+
+                //draw mesh buffer to screen
+                context.Clear();
+                context.DrawMeshes(meshBuffer);
+
+                imageRawBytes = context.GetRenderedRawBytes();
             }
         }
     }
