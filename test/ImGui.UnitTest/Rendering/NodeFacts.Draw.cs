@@ -13,21 +13,17 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
+        static NodeFacts()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.InitSysDependencies();
+        }
+
         public class Draw
         {
             [Fact]
             public void DrawANode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                Node node = new Node(1);
-
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(new Point(10, 10));
                 primitive.PathLineTo(new Point(10, 100));
@@ -36,121 +32,43 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathClose();
                 primitive.PathFill(Color.Black);
 
+                Node node = new Node(1);
                 node.Primitive = primitive;
-
-                node.Draw(primitiveRenderer, meshList);
-
-                byte[] imageRawBytes;
-                int width, height;
-                using (var context = new RenderContextForTest(new Size(110, 110)))
-                {
-                    //rebuild mesh buffer
-                    meshBuffer.Clear();
-                    meshBuffer.Init();
-                    meshBuffer.Build(meshList);
-
-                    //draw mesh buffer to screen
-                    context.Clear();
-                    context.DrawMeshes(meshBuffer);
-
-                    imageRawBytes = context.GetRenderedRawBytes(out width, out height);
-                }
-
-                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-                string expectedImageFilePath =
-                    @"Rendering\images\NodeFacts.Draw.DrawANode.png";
-#if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-#else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-#endif
+                
+                Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
+                Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.DrawANode.png");
             }
 
             [Fact]
             public void UpdateANode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                Node node = new Node(1);
-
                 var primitive = new PathPrimitive();
                 primitive.PathMoveTo(new Point(10, 10));
                 primitive.PathLineTo(new Point(10, 100));
                 primitive.PathLineTo(new Point(100, 100));
                 primitive.PathLineTo(new Point(100, 10));
                 primitive.PathClose();
-                var fillCmd = primitive.PathFill(Color.Green);
+                var fillCmd = primitive.PathFill(Color.Black);
 
+                Node node = new Node(1);
                 node.Primitive = primitive;
 
-                node.Draw(primitiveRenderer, meshList);
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
                 {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.D1))
-                        {
-                            fillCmd.Color = Color.Red;
-                        }
-                        if (Keyboard.Instance.KeyDown(Key.D2))
-                        {
-                            fillCmd.Color = Color.Green;
-                        }
-                        if (Keyboard.Instance.KeyDown(Key.D3))
-                        {
-                            fillCmd.Color = Color.Blue;
-                        }
-
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update nodes
-                        if (node.ActiveInTree)//this is actually always true
-                        {
-                            node.Draw(primitiveRenderer, meshList);
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
-                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
+                    fillCmd.Color = Color.Red;
+                    Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
+                    Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.UpdateANode.Black.png");
                 }
+                {
+                    fillCmd.Color = Color.Green;
+                    Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
+                    Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.UpdateANode.Green.png");
+                }
+                {
+                    fillCmd.Color = Color.Blue;
+                    Util.DrawNodeToImage(out var imageRawBytes, node, out var width, out var height);
+                    Util.CheckExpectedImage(imageRawBytes, width, height, @"Rendering\images\NodeFacts.Draw.UpdateANode.Blue.png");
+                }
+
             }
 
             [Fact]

@@ -3,13 +3,21 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Cairo;
 using ImageSharp.Extension;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
+using ImGui.GraphicsImplementation;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Xunit;
+using Color = ImGui.Common.Primitive.Color;
+using Image = SixLabors.ImageSharp.Image;
+using Path = System.IO.Path;
+using Point = ImGui.Common.Primitive.Point;
 
 namespace ImGui.UnitTest
 {
@@ -78,8 +86,8 @@ namespace ImGui.UnitTest
 
         internal static void DrawNode(Node node, [CallerMemberName] string memberName = "")
         {
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
-            using (Cairo.Context context = new Cairo.Context(surface))
+            using (ImageSurface surface = new ImageSurface(Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
+            using (Context context = new Context(surface))
             {
                 Draw(context, node);
 
@@ -94,7 +102,7 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static void Draw(Cairo.Context context, Node node)
+        private static void Draw(Context context, Node node)
         {
             var isGroup = node.Children != null;
 
@@ -126,7 +134,7 @@ namespace ImGui.UnitTest
             context.Restore();
         }
         
-        private static void Draw(Cairo.Context context, PathPrimitive primitive)
+        private static void Draw(Context context, PathPrimitive primitive)
         {
             foreach (var command in primitive.Path)
             {
@@ -258,8 +266,8 @@ namespace ImGui.UnitTest
             string memberName = "")
         {
             var size = GetPrimitiveSize(primitive, out Point minPoint);
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)size.Width, (int)size.Height))
-            using (Cairo.Context context = new Cairo.Context(surface))
+            using (ImageSurface surface = new ImageSurface(Format.Argb32, (int)size.Width, (int)size.Height))
+            using (Context context = new Context(surface))
             {
                 context.Translate(-minPoint.x, -minPoint.y);
                 Draw(context, primitive);
@@ -310,7 +318,7 @@ namespace ImGui.UnitTest
             return Image.Load<Rgba32>(filePath);
         }
 
-        internal static SixLabors.ImageSharp.Image<Rgba32> RenderShapeMeshToImage(Mesh mesh, Size imageSize)
+        internal static Image<Rgba32> RenderShapeMeshToImage(Mesh mesh, Size imageSize)
         {
             //TODO de-cuple this method with Windows platform
 
@@ -334,7 +342,7 @@ namespace ImGui.UnitTest
             return image;
         }
 
-        internal static SixLabors.ImageSharp.Image<Rgba32> RenderTextMeshToImage(TextMesh textMesh, Size imageSize)
+        internal static Image<Rgba32> RenderTextMeshToImage(TextMesh textMesh, Size imageSize)
         {
             //TODO de-cuple this method with Windows platform
 
@@ -358,7 +366,7 @@ namespace ImGui.UnitTest
             return image;
         }
 
-        internal static SixLabors.ImageSharp.Image<Rgba32> RenderImageMeshToImage(Mesh mesh, Size imageSize)
+        internal static Image<Rgba32> RenderImageMeshToImage(Mesh mesh, Size imageSize)
         {
             //TODO de-cuple this method with Windows platform
 
@@ -380,6 +388,39 @@ namespace ImGui.UnitTest
             window.Close();
 
             return image;
+        }
+
+        internal static void CheckExpectedImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
+        {
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+#if GenerateExpectedImages
+                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+#else
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+#endif
+        }
+
+        internal static void DrawNodeToImage(out byte[] imageRawBytes, Node node, out int width, out int height)
+        {
+            MeshBuffer meshBuffer = new MeshBuffer();
+            MeshList meshList = new MeshList();
+            IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+            node.Draw(primitiveRenderer, meshList);
+
+            using (var context = new RenderContextForTest(new Size(110, 110)))
+            {
+                //rebuild mesh buffer
+                meshBuffer.Clear();
+                meshBuffer.Init();
+                meshBuffer.Build(meshList);
+
+                //draw mesh buffer to screen
+                context.Clear();
+                context.DrawMeshes(meshBuffer);
+
+                imageRawBytes = context.GetRenderedRawBytes(out width, out height);
+            }
         }
     }
 }
