@@ -145,7 +145,6 @@ namespace ImGui.OSImplentation.Windows
         static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
         static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
         const int GWL_STYLE = -16;
 
