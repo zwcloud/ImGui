@@ -407,10 +407,12 @@ namespace ImGui.UnitTest
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
             IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
-            node.Draw(primitiveRenderer, meshList);
 
             using (var context = new RenderContextForTest(width, height))
             {
+                //This must be called after the context is created, for creating textures when the OpenGL context is built.
+                node.Draw(primitiveRenderer, meshList);
+
                 //rebuild mesh buffer
                 meshBuffer.Clear();
                 meshBuffer.Init();
@@ -430,13 +432,15 @@ namespace ImGui.UnitTest
             MeshList meshList = new MeshList();
             IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
             
-            foreach (var node in nodes)
-            {
-                node.Draw(primitiveRenderer, meshList);
-            }
 
             using (var context = new RenderContextForTest(width, height))
             {
+                //This must be called after the context is created, for creating textures when the OpenGL context is built.
+                foreach (var node in nodes)
+                {
+                    node.Draw(primitiveRenderer, meshList);
+                }
+
                 //rebuild mesh buffer
                 meshBuffer.Clear();
                 meshBuffer.Init();

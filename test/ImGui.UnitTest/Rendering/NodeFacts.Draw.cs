@@ -11,13 +11,7 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
-        static NodeFacts()
-        {
-            Application.IsRunningInUnitTest = true;
-            Application.InitSysDependencies();
-        }
-
-        public class Draw
+        public class Draw : IClassFixture<ApplicationFixture>
         {
             [Fact]
             public void DrawANode()
@@ -247,84 +241,25 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOneTextNode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1);
-                var primitive = new TextPrimitive("AAA");
+                var primitive = new TextPrimitive("ImGUI立即");
                 node.Primitive = primitive;
-                node.Draw(primitiveRenderer, meshList);
                 node.Rect.X = 1;
                 node.Rect.Y = 1;
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update the node
-                        if (node.ActiveInTree)
-                        {
-                            node.Draw(primitiveRenderer, meshList);
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                Util.DrawNodeToImage(out var imageRawBytes, node, 100, 30);
+                Util.CheckExpectedImage(imageRawBytes, 100, 30, @"Rendering\images\NodeFacts.Draw.DrawOneTextNode.png");
             }
 
             [Fact]
             public void DrawTwoTextNode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var nodes = new List<Node>();
                 {
                     Node node = new Node(1);
                     nodes.Add(node);
                     var primitive = new TextPrimitive("AAA");
                     node.Primitive = primitive;
-                    node.Draw(primitiveRenderer, meshList);
                     node.Rect.X = 1;
                     node.Rect.Y = 1;
                 }
@@ -333,196 +268,40 @@ namespace ImGui.UnitTest.Rendering
                     nodes.Add(node);
                     var primitive = new TextPrimitive("B");
                     node.Primitive = primitive;
-                    node.Draw(primitiveRenderer, meshList);
                     node.Rect.X = 1;
                     node.Rect.Y = 40;
                 }
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update nodes
-                        foreach (var node in nodes)
-                        {
-                            if (node.ActiveInTree)
-                            {
-                                node.Draw(primitiveRenderer, meshList);
-                            }
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                Util.DrawNodesToImage(out var imageRawBytes, nodes, 100, 70);
+                Util.CheckExpectedImage(imageRawBytes, 100, 70, @"Rendering\images\NodeFacts.Draw.DrawTwoTextNode.png");
             }
 
             [Fact]
             public void DrawOneTextNodeAtPosition()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1);
                 var primitive = new TextPrimitive("AAA");
                 node.Primitive = primitive;
-                node.Draw(primitiveRenderer, meshList);
-                node.Rect.X = 100;
+                node.Rect.X = 50;
                 node.Rect.Y = 30;
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(300, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update the node
-                        if (node.ActiveInTree)
-                        {
-                            node.Draw(primitiveRenderer, meshList);
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                Util.DrawNodeToImage(out var imageRawBytes, node, 150, 60);
+                Util.CheckExpectedImage(imageRawBytes, 150, 60, @"Rendering\images\NodeFacts.Draw.DrawOneTextNodeAtPosition.png");
             }
 
             [Fact]
             public void DrawOneImageNode()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(500, 500), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
                 node.Primitive = new ImagePrimitive(@"assets\images\logo.png");
-                node.Draw(primitiveRenderer, meshList);
 
-                window.Show();
-
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update the node
-                        if (node.ActiveInTree)
-                        {
-                            node.Draw(primitiveRenderer, meshList);
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                Util.DrawNodeToImage(out var imageRawBytes, node, 350, 250);
+                Util.CheckExpectedImage(imageRawBytes, 350, 250, @"Rendering\images\NodeFacts.Draw.DrawOneImageNode.png");
             }
 
             [Fact]
             public void DrawOverlappedRectangles()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                MeshBuffer meshBuffer0 = new MeshBuffer();
-                MeshList meshList0 = new MeshList();
                 var box0 = new List<Node>();
                 {
                     {
@@ -533,7 +312,6 @@ namespace ImGui.UnitTest.Rendering
                         primitive.PathFill(Color.Orange);
                         node.Primitive = primitive;
                     }
-
                     {
                         Node node = new Node(1);
                         box0.Add(node);
@@ -544,8 +322,6 @@ namespace ImGui.UnitTest.Rendering
                     }
                 }
                 var box1 = new List<Node>();
-                MeshBuffer meshBuffer1 = new MeshBuffer();
-                MeshList meshList1 = new MeshList();
                 {
                     {
                         Node node = new Node(3);
@@ -563,72 +339,21 @@ namespace ImGui.UnitTest.Rendering
                         primitive.PathStroke(2, Color.Red);
                         node.Primitive = primitive;
                     }
-
                 }
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(400, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                bool switched = false;
-
-                void DrawBox(List<Node> boxNodes, MeshList meshList, MeshBuffer meshBuffer)
                 {
-                    boxNodes.ForEach(n => n.Draw(primitiveRenderer, meshList));
-
-                    //rebuild mesh buffer
-                    meshBuffer.Clear();
-                    meshBuffer.Init();
-                    meshBuffer.Build(meshList);
-
-                    //draw mesh buffer to screen
-                    renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
+                    var box0Foreground = new List<Node>();
+                    box0Foreground.AddRange(box0);
+                    box0Foreground.AddRange(box1);
+                    Util.DrawNodesToImage(out var imageRawBytes, box0Foreground, 150, 150);
+                    Util.CheckExpectedImage(imageRawBytes, 150, 150, @"Rendering\images\NodeFacts.Draw.DrawOverlappedRectangles.Before.png");
                 }
-
-                while (true)
                 {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        renderer.Clear(Color.FrameBg);
-
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        if (Keyboard.Instance.KeyPressed(Key.Space))
-                        {
-                            switched = !switched;
-                        }
-
-                        if (switched)
-                        {
-                            DrawBox(box0, meshList0, meshBuffer0);
-                            DrawBox(box1, meshList1, meshBuffer1);
-                        }
-                        else
-                        {
-                            DrawBox(box1, meshList1, meshBuffer1);
-                            DrawBox(box0, meshList0, meshBuffer0);
-                        }
-
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
+                    var box1Foreground = new List<Node>();
+                    box1Foreground.AddRange(box1);
+                    box1Foreground.AddRange(box0);
+                    Util.DrawNodesToImage(out var imageRawBytes, box1Foreground, 150, 150);
+                    Util.CheckExpectedImage(imageRawBytes, 150, 150, @"Rendering\images\NodeFacts.Draw.DrawOverlappedRectangles.After.png");
                 }
             }
 
