@@ -360,14 +360,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawBoxModelText()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-                Node node = new Node(1, "textNode", new Rect(10, 10, 300, 40));
+                Node node = new Node(1, "textNode", new Rect(10, 10, 90, 40));
                 StyleRuleSetBuilder ruleSetBuilder = new StyleRuleSetBuilder(node.RuleSet);
                 ruleSetBuilder
                     .Border((5, 10, 5, 10))
@@ -377,72 +370,15 @@ namespace ImGui.UnitTest.Rendering
                 node.UseBoxModel = true;
                 var primitive = new TextPrimitive("AAA");
                 node.Primitive = primitive;
-                node.Draw(primitiveRenderer, meshList);
 
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //update the node
-                        if (node.ActiveInTree)
-                        {
-                            node.Draw(primitiveRenderer, meshList);
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                Util.DrawNodeToImage(out var imageRawBytes, node, 120, 60);
+                Util.CheckExpectedImage(imageRawBytes, 120, 60,
+                    @"Rendering\images\NodeFacts.Draw.DrawBoxModelText.png");
             }
 
             [Fact]
             public void DrawBoxModelImage()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
                 Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
                 StyleRuleSetBuilder ruleSetBuilder = new StyleRuleSetBuilder(node.RuleSet);
                 ruleSetBuilder
@@ -451,41 +387,10 @@ namespace ImGui.UnitTest.Rendering
                     .Padding((4, 2, 4, 2));
                 node.UseBoxModel = true;
                 node.Primitive = new ImagePrimitive(@"assets\images\logo.png");
-                node.Draw(primitiveRenderer, meshList);
 
-                window.Show();
-
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height, (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                Util.DrawNodeToImage(out var imageRawBytes, node, 400, 300);
+                Util.CheckExpectedImage(imageRawBytes, 400, 300,
+                    @"Rendering\images\NodeFacts.Draw.DrawBoxModelImage.png");
             }
         }
     }
