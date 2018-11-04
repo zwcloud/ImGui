@@ -404,6 +404,8 @@ namespace ImGui.Rendering
         /// <remarks>A node can only have one single primitive.</remarks>
         public void Draw(IPrimitiveRenderer renderer, Vector offset, MeshList meshList)
         {
+            //TODO refactor this: extract DrawPrimitve method
+
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
@@ -440,7 +442,7 @@ namespace ImGui.Rendering
                         //draw
                         r.SetShapeMesh(shapeMesh);
                         r.SetImageMesh(imageMesh);
-                        renderer.DrawBoxModel(Rect.Offset(this.Rect, offset), this.RuleSet);
+                        r.DrawBoxModel(Rect.Offset(this.Rect, offset), this.RuleSet);
                         r.SetShapeMesh(null);
                         r.SetImageMesh(null);
 
@@ -471,7 +473,7 @@ namespace ImGui.Rendering
 
                         //draw
                         r.SetShapeMesh(shapeMesh);
-                        renderer.DrawPath(p, (Vector)this.Rect.Location);
+                        r.DrawPath(p, (Vector)this.Rect.Location);
                         r.SetShapeMesh(null);
 
                         //save to mesh list
@@ -524,7 +526,7 @@ namespace ImGui.Rendering
                             r.SetShapeMesh(shapeMesh);
                             r.SetTextMesh(textMesh);
                             r.SetImageMesh(imageMesh);
-                            renderer.DrawBoxModel(t, Rect.Offset(this.Rect, offset), this.RuleSet);
+                            r.DrawBoxModel(t, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetShapeMesh(null);
                             r.SetTextMesh(null);
                             r.SetImageMesh(null);
@@ -558,7 +560,7 @@ namespace ImGui.Rendering
 
                             //draw
                             r.SetTextMesh(textMesh);
-                            renderer.DrawText(t, Rect.Offset(this.Rect, offset), this.RuleSet);
+                            r.DrawText(t, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetTextMesh(null);
 
                             //save to mesh list
@@ -599,7 +601,7 @@ namespace ImGui.Rendering
                             //draw
                             r.SetImageMesh(imageMesh);
                             r.SetShapeMesh(shapeMesh);
-                            renderer.DrawBoxModel(i, Rect.Offset(this.Rect, offset), this.RuleSet);
+                            r.DrawBoxModel(i, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetShapeMesh(null);
                             r.SetImageMesh(null);
 
@@ -627,7 +629,7 @@ namespace ImGui.Rendering
                             imageMesh.Clear();
 
                             r.SetImageMesh(imageMesh);
-                            renderer.DrawImage(i, Rect.Offset(this.Rect, offset), this.RuleSet);
+                            r.DrawImage(i, Rect.Offset(this.Rect, offset), this.RuleSet);
                             r.SetImageMesh(null);
 
                             //save to mesh list
