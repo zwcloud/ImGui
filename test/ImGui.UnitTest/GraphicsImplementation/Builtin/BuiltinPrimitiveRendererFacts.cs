@@ -1,13 +1,11 @@
-﻿//#define GenerateExpectedImages
-
-using ImGui.Common.Primitive;
+﻿using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
 using ImGui.Rendering;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
 {
-    public partial class BuiltinPrimitiveRendererFacts
+    public class BuiltinPrimitiveRendererFacts
     {
         public class DrawPath
         {
@@ -22,23 +20,7 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathClose();
                 primitive.PathStroke(2, Color.Red);
 
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                var mesh = new Mesh();
-                mesh.CommandBuffer.Add(DrawCommand.Default);
-                primitiveRenderer.SetShapeMesh(mesh);
-
-                primitiveRenderer.DrawPath(primitive);
-
-                var image = Util.RenderShapeMeshToImage(primitiveRenderer.ShapeMesh, new Size(100, 100));
-                const string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.StrokeAPath.png";
-                #if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #endif
+                Util.CheckExpectedImage(primitive, 100, 100,  @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.StrokeAPath.png");
             }
 
             [Fact]
@@ -48,46 +30,20 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathMoveTo(new Point(10, 10));
                 primitive.PathLineTo(new Point(10, 80));
                 primitive.PathLineTo(new Point(80, 80));
-                primitive.PathLineTo(new Point(80, 10));
                 primitive.PathClose();
                 primitive.PathFill(Color.Red);
 
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-                var mesh = new Mesh();
-                mesh.CommandBuffer.Add(DrawCommand.Default);
-                primitiveRenderer.SetShapeMesh(mesh);
-                primitiveRenderer.DrawPath(primitive);
-
-                var image = Util.RenderShapeMeshToImage(primitiveRenderer.ShapeMesh, new Size(100, 100));
-                const string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillAPath.png";
-                #if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #endif
+                Util.CheckExpectedImage(primitive, 100, 100, @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillAPath.png");
             }
 
             [Fact]
             public void FillARect()
             {
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-                var mesh = new Mesh();
-                mesh.CommandBuffer.Add(DrawCommand.Default);
-                primitiveRenderer.SetShapeMesh(mesh);
-                primitiveRenderer.PathRect(new Rect(10, 10, 100, 40));
-                primitiveRenderer.PathFill(Color.Red);
+                var primitive = new PathPrimitive();
+                primitive.PathRect(new Rect(10, 10, 80, 60));
+                primitive.PathFill(Color.Red);
 
-                var image = Util.RenderShapeMeshToImage(primitiveRenderer.ShapeMesh, new Size(100, 100));
-                const string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillARect.png";
-#if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-#else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #endif
+                Util.CheckExpectedImage(primitive, 100, 100, @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillARect.png");
             }
         }
 
@@ -150,11 +106,11 @@ namespace ImGui.UnitTest.Rendering
                 var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
                 string expectedImageFilePath =
                     @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.DrawOriginalImage.png";
-                #if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
+                #if DEBUG
                 var expectedImage = Util.LoadImage(expectedImageFilePath);
                 Assert.True(Util.CompareImage(expectedImage, image));
+                #else
+                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
                 #endif
             }
         }

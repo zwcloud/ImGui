@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
+using ImGui.GraphicsImplementation;
 
 namespace ImGui.Rendering
 {
@@ -422,18 +423,17 @@ namespace ImGui.Rendering
                             this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
                             this.RenderContext.shapeMesh.Node = this;
                         }
-
-                        //clear shape mesh
-                        var shapeMesh = this.RenderContext.shapeMesh;
-                        shapeMesh.Clear();
-                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-
                         //check render context for image mesh
                         if (this.RenderContext.imageMesh == null)
                         {
                             this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
                             this.RenderContext.imageMesh.Node = this;
                         }
+
+                        //clear shape mesh
+                        var shapeMesh = this.RenderContext.shapeMesh;
+                        shapeMesh.Clear();
+                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
 
                         //clear image mesh
                         var imageMesh = this.RenderContext.imageMesh;
@@ -468,13 +468,7 @@ namespace ImGui.Rendering
 
                         //get shape mesh
                         var shapeMesh = this.RenderContext.shapeMesh;
-                        shapeMesh.Clear();
-                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-
-                        //draw
-                        r.SetShapeMesh(shapeMesh);
-                        r.DrawPath(p, (Vector)this.Rect.Location);
-                        r.SetShapeMesh(null);
+                        r.DrawPathPrimitive(shapeMesh, p, (Vector)this.Rect.Location);
 
                         //save to mesh list
                         var foundNode = meshList.ShapeMeshes.Find(shapeMesh);
@@ -556,12 +550,7 @@ namespace ImGui.Rendering
 
                             //clear text mesh
                             var textMesh = this.RenderContext.textMesh;
-                            textMesh.Clear();
-
-                            //draw
-                            r.SetTextMesh(textMesh);
-                            r.DrawText(t, Rect.Offset(this.Rect, offset), this.RuleSet);
-                            r.SetTextMesh(null);
+                            r.DrawTextPrimitive(offset, textMesh, t, this.Rect, this.RuleSet);
 
                             //save to mesh list
                             if (!meshList.TextMeshes.Contains(textMesh))
@@ -626,11 +615,7 @@ namespace ImGui.Rendering
 
                             //clear image mesh
                             var imageMesh = this.RenderContext.imageMesh;
-                            imageMesh.Clear();
-
-                            r.SetImageMesh(imageMesh);
-                            r.DrawImage(i, Rect.Offset(this.Rect, offset), this.RuleSet);
-                            r.SetImageMesh(null);
+                            r.DrawImagePrimitive(offset, imageMesh, i, this.Rect, this.RuleSet);
 
                             //save to mesh list
                             if (!meshList.ImageMeshes.Contains(imageMesh))
@@ -644,7 +629,6 @@ namespace ImGui.Rendering
                 throw new ArgumentOutOfRangeException();
             }
         }
-
         #endregion
 
         /// <summary>

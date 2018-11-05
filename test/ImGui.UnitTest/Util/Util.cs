@@ -319,30 +319,6 @@ namespace ImGui.UnitTest
             return Image.Load<Rgba32>(filePath);
         }
 
-        internal static Image<Rgba32> RenderShapeMeshToImage(Mesh mesh, Size imageSize)
-        {
-            //TODO de-cuple this method with Windows platform
-
-            var window = new Win32Window();
-            window.Init(Point.Zero, imageSize, WindowTypes.Regular);
-
-            var renderer = new Win32OpenGLRenderer();
-            renderer.Init(window.Pointer, window.ClientSize);
-
-            renderer.Clear(Color.FrameBg);
-            Win32OpenGLRenderer.DrawMesh(renderer.shapeMaterial, mesh,
-                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-
-            var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
-
-            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-
-            renderer.ShutDown();
-            window.Close();
-
-            return image;
-        }
-
         internal static Image<Rgba32> RenderTextMeshToImage(TextMesh textMesh, Size imageSize)
         {
             //TODO de-cuple this method with Windows platform
@@ -355,30 +331,6 @@ namespace ImGui.UnitTest
 
             renderer.Clear(Color.FrameBg);
             Win32OpenGLRenderer.DrawTextMesh(renderer.shapeMaterial, textMesh,
-                (int)window.ClientSize.Width, (int)window.ClientSize.Height);
-
-            var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
-
-            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-
-            renderer.ShutDown();
-            window.Close();
-
-            return image;
-        }
-
-        internal static Image<Rgba32> RenderImageMeshToImage(Mesh mesh, Size imageSize)
-        {
-            //TODO de-cuple this method with Windows platform
-
-            var window = new Win32Window();
-            window.Init(Point.Zero, imageSize, WindowTypes.Regular);
-
-            var renderer = new Win32OpenGLRenderer();
-            renderer.Init(window.Pointer, window.ClientSize);
-
-            renderer.Clear(Color.FrameBg);
-            Win32OpenGLRenderer.DrawMesh(renderer.imageMaterial, mesh,
                 (int)window.ClientSize.Width, (int)window.ClientSize.Height);
 
             var imageRawBytes = renderer.GetRawBackBuffer(out var width, out var height);
@@ -431,7 +383,6 @@ namespace ImGui.UnitTest
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
             IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
-            
 
             using (var context = new RenderContextForTest(width, height))
             {
@@ -452,6 +403,30 @@ namespace ImGui.UnitTest
 
                 imageRawBytes = context.GetRenderedRawBytes();
             }
+        }
+
+        internal static void CheckExpectedImage(PathPrimitive primitive, int width, int height, string expectedImageFilePath)
+        {
+            byte[] imageRawBytes;
+            using (var context = new RenderContextForTest(width, height))
+            {
+                BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                mesh.CommandBuffer.Add(DrawCommand.Default);
+                primitiveRenderer.DrawPathPrimitive(mesh, primitive, Vector.Zero);
+
+                context.Clear();
+                context.DrawShapeMesh(mesh);
+
+                imageRawBytes = context.GetRenderedRawBytes();
+            }
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+#if DEBUG
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+#else
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath); //generate expected image
+#endif
         }
     }
 }
