@@ -550,7 +550,7 @@ namespace ImGui.Rendering
 
                             //clear text mesh
                             var textMesh = this.RenderContext.textMesh;
-                            r.DrawTextPrimitive(offset, textMesh, t, this.Rect, this.RuleSet);
+                            r.DrawTextPrimitive(textMesh, t, this.Rect, this.RuleSet, offset);
 
                             //save to mesh list
                             if (!meshList.TextMeshes.Contains(textMesh))
@@ -615,7 +615,7 @@ namespace ImGui.Rendering
 
                             //clear image mesh
                             var imageMesh = this.RenderContext.imageMesh;
-                            r.DrawImagePrimitive(offset, imageMesh, i, this.Rect, this.RuleSet);
+                            r.DrawImagePrimitive(imageMesh, i, this.Rect, this.RuleSet, offset);
 
                             //save to mesh list
                             if (!meshList.ImageMeshes.Contains(imageMesh))

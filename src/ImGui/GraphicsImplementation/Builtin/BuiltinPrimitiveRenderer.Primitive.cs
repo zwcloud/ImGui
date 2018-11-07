@@ -16,8 +16,8 @@ namespace ImGui.GraphicsImplementation
             this.SetShapeMesh(null);
         }
 
-        public void DrawImagePrimitive(Vector offset, Mesh imageMesh,
-            ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style)
+        public void DrawImagePrimitive(Mesh imageMesh,
+            ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style, Vector offset)
         {
             imageMesh.Clear();
 
@@ -26,8 +26,18 @@ namespace ImGui.GraphicsImplementation
             this.SetImageMesh(null);
         }
 
-        public void DrawTextPrimitive(Vector offset, TextMesh textMesh,
-            TextPrimitive textPrimitive, Rect rect, StyleRuleSet style)
+        public void DrawSlicedImagePrimitive(Mesh imageMesh,
+            ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style, Vector offset)
+        {
+            imageMesh.Clear();
+
+            this.SetImageMesh(imageMesh);
+            this.DrawImage(imagePrimitive, Rect.Offset(rect, offset), style);
+            this.SetImageMesh(null);
+        }
+
+        public void DrawTextPrimitive(TextMesh textMesh,
+            TextPrimitive textPrimitive, Rect rect, StyleRuleSet style, Vector offset)
         {
             textMesh.Clear();
 

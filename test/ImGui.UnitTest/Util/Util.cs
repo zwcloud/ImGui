@@ -412,11 +412,34 @@ namespace ImGui.UnitTest
             {
                 BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var mesh = new Mesh();
-                mesh.CommandBuffer.Add(DrawCommand.Default);
                 primitiveRenderer.DrawPathPrimitive(mesh, primitive, Vector.Zero);
 
                 context.Clear();
                 context.DrawShapeMesh(mesh);
+
+                imageRawBytes = context.GetRenderedRawBytes();
+            }
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+#if DEBUG
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+#else
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath); //generate expected image
+#endif
+        }
+
+        internal static void CheckExpectedImage(ImagePrimitive primitive, int width, int height, StyleRuleSet style, string expectedImageFilePath)
+        {
+            byte[] imageRawBytes;
+            using (var context = new RenderContextForTest(width, height))
+            {
+                BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                primitiveRenderer.DrawImagePrimitive(mesh, primitive,
+                    new Rect(10, 10, primitive.Image.Width, primitive.Image.Height), style, Vector.Zero);
+
+                context.Clear();
+                context.DrawImageMesh(mesh);
 
                 imageRawBytes = context.GetRenderedRawBytes();
             }
@@ -436,11 +459,34 @@ namespace ImGui.UnitTest
             {
                 BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
                 var textMesh = new TextMesh();
-                primitiveRenderer.SetTextMesh(textMesh);
-                primitiveRenderer.DrawText(primitive, contentRect, new StyleRuleSet());
+                primitiveRenderer.DrawTextPrimitive(textMesh, primitive, contentRect, new StyleRuleSet(), Vector.Zero);
 
                 context.Clear();
                 context.DrawTextMesh(textMesh);
+
+                imageRawBytes = context.GetRenderedRawBytes();
+            }
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+#if DEBUG
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+#else
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath); //generate expected image
+#endif
+        }
+
+        internal static void CheckExpectedImageSliced(ImagePrimitive primitive, int width, int height, Rect rect, StyleRuleSet style, string expectedImageFilePath)
+        {
+            byte[] imageRawBytes;
+            using (var context = new RenderContextForTest(width, height))
+            {
+                BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var mesh = new Mesh();
+                primitiveRenderer.SetImageMesh(mesh);
+                primitiveRenderer.DrawSlicedImage(primitive, rect, style);
+
+                context.Clear();
+                context.DrawImageMesh(mesh);
 
                 imageRawBytes = context.GetRenderedRawBytes();
             }

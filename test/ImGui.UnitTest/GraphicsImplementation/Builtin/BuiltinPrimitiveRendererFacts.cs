@@ -70,39 +70,11 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOriginalImage()
             {
-                byte[] imageRawBytes;
-                int width, height;
-                using (var context = new RenderContextForTest(300, 400))
-                {
-                    var primitive = new ImagePrimitive(@"assets\images\logo.png");
-                    primitive.Offset = new Vector(10, 10);
+                var primitive = new ImagePrimitive(@"assets\images\logo.png");
+                var styleRuleSet = new StyleRuleSet {BackgroundColor = Color.White};
 
-                    var styleRuleSet = new StyleRuleSet();
-                    var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
-                    styleRuleSetBuilder.BackgroundColor(Color.White);
-
-                    var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                    var mesh = new Mesh();
-                    mesh.CommandBuffer.Add(DrawCommand.Default);
-                    primitiveRenderer.SetImageMesh(mesh);
-                    primitiveRenderer.DrawImage(primitive, new Rect(10, 10, primitive.Image.Width, primitive.Image.Height), styleRuleSet);
-
-                    context.Clear();
-                    context.DrawImageMesh(mesh);
-
-                    imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
-                }
-
-                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-                string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.DrawOriginalImage.png";
-                #if DEBUG
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #else
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #endif
+                Util.CheckExpectedImage(primitive, 300, 400, styleRuleSet,
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.DrawOriginalImage.png");
             }
         }
 
@@ -111,47 +83,12 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOneImage()
             {
-                byte[] imageRawBytes;
-                int width, height;
-                using (var context = new RenderContextForTest(300, 400))
-                {
-                    var styleRuleSet = new StyleRuleSet();
-                    var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
-                    styleRuleSetBuilder
-                        .BorderImageSource(@"assets\images\button.png")
-                        .BorderImageSlice((83, 54, 54, 54));
+                var primitive = new ImagePrimitive(@"assets\images\button.png");
+                var styleRuleSet = new StyleRuleSet {BorderImageSlice = (83, 54, 54, 54)};
 
-                    var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                    //build image and get the image primitive
-                    var rule = styleRuleSet.GetRule<string>(GUIStyleName.BorderImageSource);
-                    if (rule.primitive == null)
-                    {
-                        rule.primitive = new ImagePrimitive(rule.Value);
-                    }
-                    Assert.True(rule.primitive is ImagePrimitive);
-                    var primitive = (ImagePrimitive) rule.primitive;
-
-                    var mesh = new Mesh();
-                    mesh.CommandBuffer.Add(DrawCommand.Default);
-                    primitiveRenderer.SetImageMesh(mesh);
-                    primitiveRenderer.DrawSlicedImage(primitive, new Rect(2, 2, primitive.Image.Width+50, primitive.Image.Height+100), styleRuleSet);
-
-                    context.Clear();
-                    context.DrawImageMesh(mesh);
-
-                    imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
-                }
-
-                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-                string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawSlicedImage.DrawOneImage.png";
-#if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-#endif
+                Util.CheckExpectedImageSliced(primitive, 300, 400,
+                    new Rect(2, 2, primitive.Image.Width + 50, primitive.Image.Height + 100), styleRuleSet,
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawSlicedImage.DrawOneImage.png");
             }
         }
 
