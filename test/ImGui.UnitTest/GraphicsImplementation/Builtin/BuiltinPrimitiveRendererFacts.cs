@@ -169,127 +169,119 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawEmptyBoxModel()
             {
-                byte[] imageRawBytes;
-                int width, height;
-                using (var context = new RenderContextForTest(400, 100))
-                {
-                    var styleRuleSet = new StyleRuleSet();
-                    var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
-                    styleRuleSetBuilder
-                        .BackgroundColor(Color.White)
-                        .Border((1, 3, 1, 3))
-                        .BorderColor(Color.Black)
-                        .Padding((10, 5, 10, 5));
-
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
-                    var mesh = new Mesh();
-                    mesh.CommandBuffer.Add(DrawCommand.Default);
-                    primitiveRenderer.SetShapeMesh(mesh);
-                    primitiveRenderer.DrawBoxModel(new Rect(10, 10, 300, 60), styleRuleSet);
-
-                    context.Clear();
-                    context.DrawShapeMesh(mesh);
-
-                    imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
-                }
-
-                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-                string expectedImageFilePath =
+                var styleRuleSet = new StyleRuleSet();
+                var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
+                styleRuleSetBuilder
+                    .BackgroundColor(Color.White)
+                    .Border((1, 3, 1, 3))
+                    .BorderColor(Color.Black)
+                    .Padding((10, 5, 10, 5));
+                var rect = new Rect(10, 10, 300, 60);
+                const string expectedImageFilePath =
                     @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawEmptyBoxModel.png";
-                #if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #endif
-            }
+                const int width = 400, height = 100;
 
-            [Fact]
-            public void DrawBoxModelWithTextContent()
-            {
                 byte[] imageRawBytes;
-                int width, height;
-                using (var context = new RenderContextForTest(400, 100))
+                using (var context = new RenderContextForTest(width, height))
                 {
-                    TextPrimitive textPrimitive = new TextPrimitive("Hello你好こんにちは");
-                    var styleRuleSet = new StyleRuleSet();
-                    var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
-                    styleRuleSetBuilder
-                        .BackgroundColor(Color.White)
-                        .Border((1, 3, 1, 3))
-                        .BorderColor(Color.Black)
-                        .Padding((10, 5, 10, 5))
-                        .FontSize(24)
-                        .FontColor(Color.Black);
-
                     BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
                     var mesh = new Mesh();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
                     primitiveRenderer.SetShapeMesh(mesh);
                     var textMesh = new TextMesh();
                     primitiveRenderer.SetTextMesh(textMesh);
-                    primitiveRenderer.DrawBoxModel(textPrimitive, new Rect(10, 10, 350, 60), styleRuleSet);
+                    var imageMesh = new Mesh();
+                    primitiveRenderer.SetImageMesh(imageMesh);
+                    primitiveRenderer.DrawBoxModel(rect, styleRuleSet);
+
+                    context.Clear();
+                    context.DrawShapeMesh(mesh);
+
+                    imageRawBytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
+            [Fact]
+            public void DrawBoxModelWithTextContent()
+            {
+                TextPrimitive textPrimitive = new TextPrimitive("Hello你好こんにちは");
+                var styleRuleSet = new StyleRuleSet();
+                var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
+                styleRuleSetBuilder
+                    .BackgroundColor(Color.White)
+                    .Border((1, 3, 1, 3))
+                    .BorderColor(Color.Black)
+                    .Padding((10, 5, 10, 5))
+                    .FontSize(24)
+                    .FontColor(Color.Black);
+                var rect = new Rect(10, 10, 350, 60);
+
+                const string expectedImageFilePath =
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithTextContent.png";
+                const int width = 400, height = 100;
+
+                byte[] imageRawBytes;
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    var mesh = new Mesh();
+                    mesh.CommandBuffer.Add(DrawCommand.Default);
+                    primitiveRenderer.SetShapeMesh(mesh);
+                    var textMesh = new TextMesh();
+                    primitiveRenderer.SetTextMesh(textMesh);
+                    var imageMesh = new Mesh();
+                    primitiveRenderer.SetImageMesh(imageMesh);
+                    primitiveRenderer.DrawBoxModel(textPrimitive, rect, styleRuleSet);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);
                     context.DrawTextMesh(textMesh);
 
-                    imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
+                    imageRawBytes = context.GetRenderedRawBytes();
                 }
 
-                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-                string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithTextContent.png";
-                #if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #endif
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
             }
 
             [Fact]
             public void DrawBoxModelWithImageContent()
             {
+                var primitive = new ImagePrimitive(@"assets\images\logo.png");
+
+                var ruleSet = new StyleRuleSet();
+                var styleSetBuilder = new StyleRuleSetBuilder(ruleSet);
+                styleSetBuilder
+                    .BackgroundColor(Color.White)
+                    .Border((top: 1, right: 3, bottom: 1, left: 3))
+                    .BorderColor(Color.LightBlue)
+                    .Padding((10, 5, 10, 5));
+                var rect = new Rect(10, 10, 300, 400);
+
+                const string expectedImageFilePath =
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithImageContent.png";
+                const int width = 500, height = 500;
+
                 byte[] imageRawBytes;
-                int width, height;
-                using (var context = new RenderContextForTest(500, 500))
+                using (var context = new RenderContextForTest(width, height))
                 {
-                    var primitive = new ImagePrimitive(@"assets\images\logo.png");
-
-                    var ruleSet = new StyleRuleSet();
-                    var styleSetBuilder = new StyleRuleSetBuilder(ruleSet);
-                    styleSetBuilder
-                        .BackgroundColor(Color.White)
-                        .Border((top: 1, right: 3, bottom: 1, left: 3))
-                        .BorderColor(Color.LightBlue)
-                        .Padding((10, 5, 10, 5));
-
                     BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
                     var mesh = new Mesh();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
                     primitiveRenderer.SetShapeMesh(mesh);
                     var imageMesh = new Mesh();
-                    imageMesh.CommandBuffer.Add(DrawCommand.Default);
                     primitiveRenderer.SetImageMesh(imageMesh);
-                    primitiveRenderer.DrawBoxModel(primitive, new Rect(10, 10, 300, 400), ruleSet);
+                    primitiveRenderer.DrawBoxModel(primitive, rect, ruleSet);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);
                     context.DrawImageMesh(imageMesh);
 
-                    imageRawBytes = context.Renderer.GetRawBackBuffer(out width, out height);
+                    imageRawBytes = context.GetRenderedRawBytes();
                 }
 
-                var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-                string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithImageContent.png";
-                #if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #endif
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
             }
         }
     }
