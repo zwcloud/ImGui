@@ -6,19 +6,15 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Cairo;
 using ImageSharp.Extension;
-using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
-using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Xunit;
-using Color = ImGui.Common.Primitive.Color;
 using Image = SixLabors.ImageSharp.Image;
 using Path = System.IO.Path;
-using Point = ImGui.Common.Primitive.Point;
 
 namespace ImGui.UnitTest
 {
@@ -133,155 +129,6 @@ namespace ImGui.UnitTest
                 Draw(context, childNode);
             }
             context.Restore();
-        }
-
-        private static void Draw(Context context, PathPrimitive primitive)
-        {
-            foreach (var command in primitive.Path)
-            {
-                switch (command.Type)
-                {
-                    case PathCommandType.PathMoveTo:
-                    {
-                        var cmd = (MoveToCommand)command;
-                        context.MoveTo(cmd.Point.ToPointD());
-                        break;
-                    }
-                    case PathCommandType.PathLineTo:
-                    {
-                        var cmd = (LineToCommand)command;
-                        context.LineTo(cmd.Point.ToPointD());
-                        break;
-                    }
-                    case PathCommandType.PathCurveTo:
-                    {
-                        var cmd = (CurveToCommand) command;
-                        context.CurveTo(cmd.ControlPoint0.ToPointD(), cmd.ControlPoint1.ToPointD(), cmd.EndPoint.ToPointD());
-                        break;
-                    }
-                    case PathCommandType.PathArc:
-                    {
-                        var cmd = (ArcCommand)command;
-                        var xc = cmd.Center.x;
-                        var yc = cmd.Center.y;
-                        var r = cmd.Radius;
-                        var angle1 = cmd.Amin * Math.PI / 6;
-                        var angle2 = cmd.Amax * Math.PI / 6;
-                        context.Arc(xc, yc, r, angle1, angle2);
-                        break;
-                    }
-                    case PathCommandType.PathClosePath:
-                    {
-                        context.ClosePath();
-                        break;
-                    }
-                    case PathCommandType.Stroke:
-                    {
-                        var cmd = (StrokeCommand) command;
-                        context.Color = cmd.Color.ToCairoColor();
-                        context.LineWidth = cmd.LineWidth;
-                        context.Stroke();
-                        break;
-                    }
-                    case PathCommandType.Fill:
-                    {
-                        var cmd = (FillCommand) command;
-                        context.Color = cmd.Color.ToCairoColor();
-                        context.Fill();
-                        break;
-                    }
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
-        private static Size GetPrimitiveSize(PathPrimitive primitive, out Point min)
-        {
-            var minX = 0.0;
-            var minY = 0.0;
-            var maxX = 0.0;
-            var maxY = 0.0;
-
-            void updateMinMax(Point point)
-            {
-                minX = Math.Min(minX, point.x);
-                minY = Math.Min(minY, point.y);
-                maxX = Math.Max(maxX, point.x);
-                maxY = Math.Max(maxY, point.y);
-            }
-            foreach (var command in primitive.Path)
-            {
-                switch (command.Type)
-                {
-                    case PathCommandType.PathMoveTo:
-                    {
-                        var cmd = (MoveToCommand)command;
-                        var point = cmd.Point;
-                        updateMinMax(point);
-                        break;
-                    }
-                    case PathCommandType.PathLineTo:
-                    {
-                        var cmd = (LineToCommand)command;
-                        var point = cmd.Point;
-                        updateMinMax(point);
-                        break;
-                    }
-                    case PathCommandType.PathCurveTo:
-                    {
-                        var cmd = (CurveToCommand) command;
-                        var c0 = cmd.ControlPoint0;
-                        var c1 = cmd.ControlPoint1;
-                        var end = cmd.EndPoint;
-                        updateMinMax(c0);
-                        updateMinMax(c1);
-                        updateMinMax(end);
-                        break;
-                    }
-                    case PathCommandType.PathArc:
-                    {
-                        var cmd = (ArcCommand)command;
-                        var c0 = cmd.Center;
-                        var v = new Vector(cmd.Radius, cmd.Radius);
-                        var minPoint = c0 - v;
-                        var maxPoint = c0 + v;
-                        updateMinMax(minPoint);
-                        updateMinMax(maxPoint);
-                        break;
-                    }
-                    case PathCommandType.PathClosePath:
-                    case PathCommandType.Stroke:
-                    case PathCommandType.Fill:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            min = new Point(minX, minY);
-            return new Size(maxX - minX, maxY - minY);
-        }
-
-        internal static void DrawPathPrimitive(PathPrimitive primitive, [CallerMemberName]
-            string memberName = "")
-        {
-            var size = GetPrimitiveSize(primitive, out Point minPoint);
-            using (ImageSurface surface = new ImageSurface(Format.Argb32, (int)size.Width, (int)size.Height))
-            using (Context context = new Context(surface))
-            {
-                context.Translate(-minPoint.x, -minPoint.y);
-                Draw(context, primitive);
-
-                if (!Directory.Exists(OutputPath))
-                {
-                    Directory.CreateDirectory(OutputPath);
-                }
-
-                string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
-                surface.WriteToPng(filePath);
-                Util.OpenImage(filePath);
-            }
         }
 
         public static Image<Rgba32> CreateImage(byte[] data, int width, int height, bool flip)

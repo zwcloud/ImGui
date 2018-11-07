@@ -62,27 +62,14 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathMoveTo(Point.Zero);
                 primitive.PathArcFast(new Point(10, 0), 10, 3, 6);
 
-                {
-                    var cmd1 = (ArcCommand)primitive.Path[1];
-                    var center = cmd1.Center;
-                    var amin = cmd1.Amin;
-                    var amax = cmd1.Amax;
-                    Assert.Equal(10, center.x, precision: 2);
-                    Assert.Equal(0, center.y, precision: 2);
-                    Assert.Equal(3, amin);
-                    Assert.Equal(6, amax);
-                }
-            }
-
-            [Fact]
-            public void Draw()
-            {
-                var primitive = new PathPrimitive();
-                primitive.PathMoveTo(Point.Zero);
-                primitive.PathArcFast(new Point(10, 0), 10, 6, 9);
-                primitive.PathStroke(1, Color.Black);
-
-                Util.DrawPathPrimitive(primitive);
+                var cmd = (ArcCommand) primitive.Path[1];
+                var center = cmd.Center;
+                var amin = cmd.Amin;
+                var amax = cmd.Amax;
+                Assert.Equal(10, center.x, precision: 2);
+                Assert.Equal(0, center.y, precision: 2);
+                Assert.Equal(3, amin);
+                Assert.Equal(6, amax);
             }
         }
     }
