@@ -32,7 +32,7 @@ namespace ImGui.GraphicsImplementation
             imageMesh.Clear();
 
             this.SetImageMesh(imageMesh);
-            this.DrawImage(imagePrimitive, Rect.Offset(rect, offset), style);
+            this.DrawSlicedImage(imagePrimitive, Rect.Offset(rect, offset), style);
             this.SetImageMesh(null);
         }
 

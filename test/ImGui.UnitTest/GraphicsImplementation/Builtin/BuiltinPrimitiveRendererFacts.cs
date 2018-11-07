@@ -9,6 +9,24 @@ namespace ImGui.UnitTest.Rendering
     {
         public class DrawPath
         {
+            internal static void CheckExpectedImage(PathPrimitive primitive, int width, int height, string expectedImageFilePath)
+            {
+                byte[] imageRawBytes;
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    var mesh = new Mesh();
+                    primitiveRenderer.DrawPathPrimitive(mesh, primitive, Vector.Zero);
+
+                    context.Clear();
+                    context.DrawShapeMesh(mesh);
+
+                    imageRawBytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
             [Fact]
             public void StrokeAPath()
             {
@@ -20,7 +38,7 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathClose();
                 primitive.PathStroke(2, Color.Red);
 
-                Util.CheckExpectedImage(primitive, 100, 100,
+                CheckExpectedImage(primitive, 100, 100,
                     @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.StrokeAPath.png");
             }
 
@@ -34,7 +52,7 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathClose();
                 primitive.PathFill(Color.Red);
 
-                Util.CheckExpectedImage(primitive, 100, 100,
+                CheckExpectedImage(primitive, 100, 100,
                     @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillAPath.png");
             }
 
@@ -45,13 +63,30 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathRect(new Rect(10, 10, 80, 60));
                 primitive.PathFill(Color.Red);
 
-                Util.CheckExpectedImage(primitive, 100, 100,
+                CheckExpectedImage(primitive, 100, 100,
                     @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillARect.png");
             }
         }
 
         public class DrawText
         {
+            internal static void CheckExpectedImage(TextPrimitive primitive, int width, int height, Rect contentRect, string expectedImageFilePath)
+            {
+                byte[] imageRawBytes;
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    var textMesh = new TextMesh();
+                    primitiveRenderer.DrawTextPrimitive(textMesh, primitive, contentRect, new StyleRuleSet(), Vector.Zero);
+
+                    context.Clear();
+                    context.DrawTextMesh(textMesh);
+
+                    imageRawBytes = context.GetRenderedRawBytes();
+                }
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
             [Theory]
             [InlineData("Hello你好こんにちは")]
             [InlineData("textwithoutspace")]
@@ -60,33 +95,70 @@ namespace ImGui.UnitTest.Rendering
             {
                 TextPrimitive primitive = new TextPrimitive(text);
 
-                Util.CheckExpectedImage(primitive, 200, 50, new Rect(10, 10, 200, 40),
+                CheckExpectedImage(primitive, 200, 50, new Rect(10, 10, 200, 40),
                     $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnelineText_{text}.png");
             }
         }
 
         public class DrawImage
         {
+            internal static void CheckExpectedImage(ImagePrimitive primitive, int width, int height, Rect contentRect, StyleRuleSet style, string expectedImageFilePath)
+            {
+                byte[] imageRawBytes;
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    var mesh = new Mesh();
+                    primitiveRenderer.DrawImagePrimitive(mesh, primitive, contentRect, style, Vector.Zero);
+
+                    context.Clear();
+                    context.DrawImageMesh(mesh);
+
+                    imageRawBytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
             [Fact]
             public void DrawOriginalImage()
             {
                 var primitive = new ImagePrimitive(@"assets\images\logo.png");
                 var styleRuleSet = new StyleRuleSet {BackgroundColor = Color.White};
 
-                Util.CheckExpectedImage(primitive, 300, 400, styleRuleSet,
+                CheckExpectedImage(primitive, 300, 400,
+                    new Rect(10, 10, primitive.Image.Width, primitive.Image.Height), styleRuleSet,
                     @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.DrawOriginalImage.png");
             }
         }
 
         public class DrawSlicedImage
         {
+            internal static void CheckExpectedImage(ImagePrimitive primitive, int width, int height, Rect rect, StyleRuleSet style, string expectedImageFilePath)
+            {
+                byte[] imageRawBytes;
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    var mesh = new Mesh();
+                    primitiveRenderer.DrawSlicedImagePrimitive(mesh, primitive, rect, style, Vector.Zero);
+
+                    context.Clear();
+                    context.DrawImageMesh(mesh);
+
+                    imageRawBytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
             [Fact]
             public void DrawOneImage()
             {
                 var primitive = new ImagePrimitive(@"assets\images\button.png");
                 var styleRuleSet = new StyleRuleSet {BorderImageSlice = (83, 54, 54, 54)};
 
-                Util.CheckExpectedImageSliced(primitive, 300, 400,
+                CheckExpectedImage(primitive, 300, 400,
                     new Rect(2, 2, primitive.Image.Width + 50, primitive.Image.Height + 100), styleRuleSet,
                     @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawSlicedImage.DrawOneImage.png");
             }
