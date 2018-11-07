@@ -11,7 +11,7 @@ namespace ImGui.GraphicsImplementation
     {
         public void DrawBoxModel(Rect rect, StyleRuleSet style)
         {
-            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out _);
+            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
             this.DrawBackground(style, paddingBoxRect);
 
@@ -22,15 +22,7 @@ namespace ImGui.GraphicsImplementation
             this.DrawBorder(style, borderBoxRect, paddingBoxRect);
             this.DrawOutline(style, borderBoxRect);
 
-#if DrawPaddingBox
-            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
-            PathStroke(Color.Rgb(0, 100, 100), true, 1);
-#endif
-
-#if DrawContentBox
-            PathRect(contentBoxRect.TopLeft, cbr);
-            PathStroke(Color.Rgb(100, 0, 100), true, 1);
-#endif
+            this.DrawDebug(paddingBoxRect, contentBoxRect);
         }
 
         public void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, StyleRuleSet style)
@@ -57,15 +49,7 @@ namespace ImGui.GraphicsImplementation
             this.DrawBorder(style, borderBoxRect, paddingBoxRect);
             this.DrawOutline(style, borderBoxRect);
 
-#if DrawPaddingBox
-            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
-            PathStroke(Color.Rgb(0, 100, 100), true, 1);
-#endif
-
-#if DrawContentBox
-            PathRect(contentBoxRect.TopLeft, cbr);
-            PathStroke(Color.Rgb(100, 0, 100), true, 1);
-#endif
+            this.DrawDebug(paddingBoxRect, contentBoxRect);
         }
 
         public void DrawBoxModel(ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style)
@@ -87,15 +71,7 @@ namespace ImGui.GraphicsImplementation
             this.DrawBorder(style, borderBoxRect, paddingBoxRect);
             this.DrawOutline(style, borderBoxRect);
 
-#if DrawPaddingBox
-            PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
-            PathStroke(Color.Rgb(0, 100, 100), true, 1);
-#endif
-
-#if DrawContentBox
-            PathRect(contentBoxRect.TopLeft, cbr);
-            PathStroke(Color.Rgb(100, 0, 100), true, 1);
-#endif
+            this.DrawDebug(paddingBoxRect, contentBoxRect);
         }
 
         private void DrawOutline(StyleRuleSet style, Rect borderBoxRect)
@@ -249,6 +225,19 @@ namespace ImGui.GraphicsImplementation
             var cbl = new Point(pbl.X + pl, pbl.Y - pb);
             Debug.Assert(ctl.X < ctr.X);
             contentBoxRect = new Rect(ctl, cbr);
+        }
+
+        private void DrawDebug(Rect paddingBoxRect, Rect contentBoxRect)
+        {
+#if DrawPaddingBox
+            this.PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
+            this.PathStroke(Color.Rgb(0, 100, 100), true, 1);
+#endif
+
+#if DrawContentBox
+            this.PathRect(contentBoxRect.TopLeft, cbr);
+            this.PathStroke(Color.Rgb(100, 0, 100), true, 1);
+#endif
         }
     }
 }
