@@ -134,7 +134,7 @@ namespace ImGui.UnitTest
             }
             context.Restore();
         }
-        
+
         private static void Draw(Context context, PathPrimitive primitive)
         {
             foreach (var command in primitive.Path)
@@ -428,5 +428,30 @@ namespace ImGui.UnitTest
             Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath); //generate expected image
 #endif
         }
+
+        internal static void CheckExpectedImage(TextPrimitive primitive, int width, int height, Rect contentRect, string expectedImageFilePath)
+        {
+            byte[] imageRawBytes;
+            using (var context = new RenderContextForTest(width, height))
+            {
+                BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var textMesh = new TextMesh();
+                primitiveRenderer.SetTextMesh(textMesh);
+                primitiveRenderer.DrawText(primitive, contentRect, new StyleRuleSet());
+
+                context.Clear();
+                context.DrawTextMesh(textMesh);
+
+                imageRawBytes = context.GetRenderedRawBytes();
+            }
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+#if DEBUG
+            var expectedImage = Util.LoadImage(expectedImageFilePath);
+            Assert.True(Util.CompareImage(expectedImage, image));
+#else
+            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath); //generate expected image
+#endif
+        }
+
     }
 }

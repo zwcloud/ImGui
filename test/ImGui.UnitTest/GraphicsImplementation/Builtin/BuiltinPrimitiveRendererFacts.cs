@@ -20,7 +20,8 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathClose();
                 primitive.PathStroke(2, Color.Red);
 
-                Util.CheckExpectedImage(primitive, 100, 100,  @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.StrokeAPath.png");
+                Util.CheckExpectedImage(primitive, 100, 100,
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.StrokeAPath.png");
             }
 
             [Fact]
@@ -33,7 +34,8 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathClose();
                 primitive.PathFill(Color.Red);
 
-                Util.CheckExpectedImage(primitive, 100, 100, @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillAPath.png");
+                Util.CheckExpectedImage(primitive, 100, 100,
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillAPath.png");
             }
 
             [Fact]
@@ -43,7 +45,8 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathRect(new Rect(10, 10, 80, 60));
                 primitive.PathFill(Color.Red);
 
-                Util.CheckExpectedImage(primitive, 100, 100, @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillARect.png");
+                Util.CheckExpectedImage(primitive, 100, 100,
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillARect.png");
             }
         }
 
@@ -57,20 +60,8 @@ namespace ImGui.UnitTest.Rendering
             {
                 TextPrimitive primitive = new TextPrimitive(text);
 
-                BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
-                var textMesh = new TextMesh();
-                primitiveRenderer.SetTextMesh(textMesh);
-                primitiveRenderer.DrawText(primitive, new Rect(10, 10, 200, 40), new StyleRuleSet());
-
-                var image = Util.RenderTextMeshToImage(primitiveRenderer.TextMesh, new Size(200, 50));
-                string expectedImageFilePath =
-                    $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnelineText_{text}.png";
-                #if GenerateExpectedImages
-                Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-                #else
-                var expectedImage = Util.LoadImage(expectedImageFilePath);
-                Assert.True(Util.CompareImage(expectedImage, image));
-                #endif
+                Util.CheckExpectedImage(primitive, 200, 50, new Rect(10, 10, 200, 40),
+                    $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnelineText_{text}.png");
             }
         }
 
