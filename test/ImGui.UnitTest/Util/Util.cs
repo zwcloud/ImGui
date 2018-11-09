@@ -185,7 +185,7 @@ namespace ImGui.UnitTest
 
             using (var context = new RenderContextForTest(width, height))
             {
-                //This must be called after the context is created, for creating textures when the OpenGL context is built.
+                //This must be called after the context is created, for uploading textures to GPU via OpenGL.
                 node.Draw(primitiveRenderer, meshList);
 
                 //rebuild mesh buffer
@@ -209,7 +209,7 @@ namespace ImGui.UnitTest
 
             using (var context = new RenderContextForTest(width, height))
             {
-                //This must be called after the context is created, for creating textures when the OpenGL context is built.
+                //This must be called after the context is created, for uploading textures to GPU via OpenGL.
                 foreach (var node in nodes)
                 {
                     node.Draw(primitiveRenderer, meshList);
@@ -225,6 +225,43 @@ namespace ImGui.UnitTest
                 context.DrawMeshes(meshBuffer);
 
                 imageRawBytes = context.GetRenderedRawBytes();
+            }
+        }
+
+        internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node node, int width, int height)
+        {
+            MeshBuffer meshBuffer = new MeshBuffer();
+            MeshList meshList = new MeshList();
+            IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+
+            using (var context = new RenderContextForTest(width, height))
+            {
+                //This must be called after the context is created, for uploading textures to GPU via OpenGL.
+                DrawNodeToImageRecursively(primitiveRenderer, node, meshList);
+
+                //rebuild mesh buffer
+                meshBuffer.Clear();
+                meshBuffer.Init();
+                meshBuffer.Build(meshList);
+
+                //draw mesh buffer to screen
+                context.Clear();
+                context.DrawMeshes(meshBuffer);
+
+                imageRawBytes = context.GetRenderedRawBytes();
+            }
+        }
+
+        private static void DrawNodeToImageRecursively(IPrimitiveRenderer primitiveRenderer, Node node, MeshList meshList)
+        {
+            node.Draw(primitiveRenderer, meshList);
+            if (node.Children == null)
+            {
+                return;
+            }
+            foreach (var childNode in node.Children)
+            {
+                DrawNodeToImageRecursively(primitiveRenderer, childNode, meshList);
             }
         }
     }

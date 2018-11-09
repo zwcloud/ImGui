@@ -7,31 +7,56 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
-        public partial class Layout
+        public class NodeRenderingFixture
         {
+            public NodeRenderingFixture()
+            {
+                //mark as running unit tests
+                Application.IsRunningInUnitTest = true;
+
+                //reset the style for rendering the rectangle of a node
+                GUIStyle.Default.BackgroundColor = Color.White;
+                GUIStyle.Default.Border = (1, 1, 1, 1);
+                GUIStyle.Default.BorderColor = Color.Black;
+                GUIStyle.Default.Padding = (1, 1, 1, 1);
+                GUIStyle.Default.CellSpacing = (1, 1);
+            }
+        }
+
+        public class Layout : IClassFixture<NodeRenderingFixture>
+        {
+            internal static void CheckExpectedImage(Node node, string expectedImageFilePath)
+            {
+                int width = (int) node.Rect.Width;
+                int height = (int) node.Rect.Height;
+                Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
             //misc old unit test
 
             [Fact]
-            public void ShowANodeWithTwoChildren() // Add rect; Add rect then remove rect
+            public void ShowANodeWithTwoChildren()
             {
                 Node a = new Node(1);
-                a.Rect = new Rect(0, 0, 300, 400);
+                a.UseBoxModel = true;
+                a.Rect = new Rect(0, 0, 100, 200);
                 a.AttachLayoutGroup(true);
 
                 Node b = new Node(2);
-                b.Rect = new Rect(0, 0, 100, 100);
+                b.UseBoxModel = true;
                 b.AttachLayoutEntry(new Size(100, 100));
 
                 Node c = new Node(3);
-                c.Rect = new Rect(0, 0, 100, 200);
-                c.AttachLayoutEntry(new Size(100, 200));
+                c.UseBoxModel = true;
+                c.AttachLayoutEntry(new Size(100, 50));
 
                 a.AppendChild(b);
                 a.AppendChild(c);
 
                 a.Layout();
 
-                Util.DrawNode(a);
+                CheckExpectedImage(a, @"Rendering\images\NodeFacts.Layout.ShowANodeWithTwoChildren.png");
             }
 
             [Fact]
@@ -403,7 +428,6 @@ namespace ImGui.UnitTest.Rendering
                 Assert.Equal(200, a.Rect.Height);
                 Util.DrawNode(a);
             }
-
         }
     }
 }
