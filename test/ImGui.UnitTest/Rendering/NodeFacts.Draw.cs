@@ -26,7 +26,7 @@ namespace ImGui.UnitTest.Rendering
 
                 Node node = new Node(1);
                 node.Primitive = primitive;
-                
+
                 Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
                 Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANode.png");
             }
@@ -178,7 +178,7 @@ namespace ImGui.UnitTest.Rendering
                 renderer.Init(window.Pointer, window.ClientSize);
 
                 window.Show();
-                
+
                 var A = new Point(200, 200);
                 var B = new Point(600, 200);
                 var C = new Point(400, 400);

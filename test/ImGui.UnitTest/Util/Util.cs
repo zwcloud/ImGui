@@ -254,7 +254,10 @@ namespace ImGui.UnitTest
 
         private static void DrawNodeToImageRecursively(IPrimitiveRenderer primitiveRenderer, Node node, MeshList meshList)
         {
-            node.Draw(primitiveRenderer, meshList);
+            if (node.ActiveInTree)
+            {
+                node.Draw(primitiveRenderer, meshList);
+            }
             if (node.Children == null)
             {
                 return;

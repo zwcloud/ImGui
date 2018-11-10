@@ -14,6 +14,9 @@ namespace ImGui.UnitTest.Rendering
                 //mark as running unit tests
                 Application.IsRunningInUnitTest = true;
 
+                //use box-model for all nodes
+                Node.DefaultUseBoxModel = true;
+
                 //reset the style for rendering the rectangle of a node
                 GUIStyle.Default.BackgroundColor = Color.White;
                 GUIStyle.Default.Border = (1, 1, 1, 1);
@@ -39,16 +42,13 @@ namespace ImGui.UnitTest.Rendering
             public void ShowANodeWithTwoChildren()
             {
                 Node a = new Node(1);
-                a.UseBoxModel = true;
                 a.Rect = new Rect(0, 0, 100, 200);
                 a.AttachLayoutGroup(true);
 
                 Node b = new Node(2);
-                b.UseBoxModel = true;
                 b.AttachLayoutEntry(new Size(100, 100));
 
                 Node c = new Node(3);
-                c.UseBoxModel = true;
                 c.AttachLayoutEntry(new Size(100, 50));
 
                 a.AppendChild(b);
@@ -72,7 +72,7 @@ namespace ImGui.UnitTest.Rendering
 
                 group.Layout();
 
-                Util.DrawNode(group);
+                CheckExpectedImage(group, @"Rendering\images\NodeFacts.Layout.ShowAHorizontalGroupOf3ItemsWithDifferentStretchFactors.png");
             }
 
             [Fact]
@@ -113,7 +113,7 @@ namespace ImGui.UnitTest.Rendering
 
                 group1.Layout();
 
-                Util.DrawNode(group1);
+                CheckExpectedImage(group1, @"Rendering\images\NodeFacts.Layout.ShowAThreeLayerGroup.png");
             }
 
             //default sized children
@@ -141,7 +141,7 @@ namespace ImGui.UnitTest.Rendering
 
                 a.Layout();
 
-                Util.DrawNode(a);
+                CheckExpectedImage(a, @"Rendering\images\NodeFacts.Layout.LayoutDefaultSizedNodeInDefaultSizedGroup.png");
             }
 
             [Fact]
@@ -167,7 +167,7 @@ namespace ImGui.UnitTest.Rendering
 
                 a.Layout();
 
-                Util.DrawNode(a);
+                CheckExpectedImage(a, @"Rendering\images\NodeFacts.Layout.LayoutDefaultSizedNodeInFixedSizedGroup.png");
             }
 
             [Fact]
@@ -226,7 +226,7 @@ namespace ImGui.UnitTest.Rendering
 
                 a.Layout();
 
-                Util.DrawNode(a);
+                CheckExpectedImage(a, @"Rendering\images\NodeFacts.Layout.LayoutFixedSizedNodeInDefaultSizedGroup.png");
             }
 
             [Fact]
@@ -254,7 +254,7 @@ namespace ImGui.UnitTest.Rendering
 
                 a.Layout();
 
-                Util.DrawNode(a);
+                CheckExpectedImage(a, @"Rendering\images\NodeFacts.Layout.LayoutFixedSizedNodeInFixedSizedGroup.png");
             }
 
             [Fact]
@@ -345,7 +345,7 @@ namespace ImGui.UnitTest.Rendering
 
                 a.Layout();
 
-                Util.DrawNode(a);
+                CheckExpectedImage(a, @"Rendering\images\NodeFacts.Layout.LayoutStretchedSizedNodeInFixedSizedGroup.png");
             }
 
             [Fact]
@@ -407,7 +407,7 @@ namespace ImGui.UnitTest.Rendering
 
                 a.Layout();
 
-                Util.DrawNode(a);
+                CheckExpectedImage(a, @"Rendering\images\NodeFacts.Layout.LayoutNodeWithInactiveChildren.png");
             }
 
             [Fact]
@@ -426,7 +426,6 @@ namespace ImGui.UnitTest.Rendering
                 a.RuleSet.ApplyOptions(GUILayout.Height(200));
                 a.Layout();
                 Assert.Equal(200, a.Rect.Height);
-                Util.DrawNode(a);
             }
         }
     }

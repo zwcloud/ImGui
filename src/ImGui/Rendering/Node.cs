@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
-using ImGui.GraphicsImplementation;
 
 namespace ImGui.Rendering
 {
     [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}")]
     internal class Node : IStyleRuleSet, ILayoutGroup
     {
+        public static bool DefaultUseBoxModel = false;
+
         /// <summary>
         /// identifier number
         /// </summary>
@@ -97,6 +98,7 @@ namespace ImGui.Rendering
         {
             this.Rect = rect;
         }
+
         #region Layout
 
         public LayoutEntry LayoutEntry { get; private set; }
@@ -376,7 +378,7 @@ namespace ImGui.Rendering
 
         internal Primitive Primitive { get; set; }
 
-        internal bool UseBoxModel { get; set; } = false;
+        internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
 
         public StyleRuleSet RuleSet { get; }
 
