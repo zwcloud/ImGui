@@ -1,7 +1,4 @@
 ﻿using ImGui.Common.Primitive;
-using ImGui.GraphicsImplementation;
-using ImGui.Input;
-using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using Xunit;
 
@@ -9,249 +6,99 @@ namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
-        public class NodeContainer
+        public class ContainerRenderingFixture
         {
+            public ContainerRenderingFixture()
+            {
+                //mark as running unit tests
+                Application.IsRunningInUnitTest = true;
+
+                //don't use box-model for all nodes
+                Node.DefaultUseBoxModel = false;
+
+                //reset the style for rendering the rectangle of a node
+                GUIStyle.Default.BackgroundColor = Color.White;
+                GUIStyle.Default.Border = (1, 1, 1, 1);
+                GUIStyle.Default.BorderColor = Color.Black;
+                GUIStyle.Default.Padding = (1, 1, 1, 1);
+                GUIStyle.Default.CellSpacing = (1, 1);
+            }
+        }
+
+        public class Container : IClassFixture<ContainerRenderingFixture>
+        {
+            private static void CheckExpectedImage(Node node, string expectedImageFilePath)
+            {
+                int width = (int)node.Rect.Width;
+                int height = (int)node.Rect.Height;
+                Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
             [Fact]
             public void DrawAndLayoutEmptyContainer()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
+                Node node = new Node(1, "container");
+                node.AttachLayoutGroup(true);
+                node.RuleSet.ApplyOptions(GUILayout.Width(300).Height(40));
+                node.UseBoxModel = true;
+                StyleRuleSetBuilder b = new StyleRuleSetBuilder(node);
+                b.Border(1)
+                    .BorderColor(Color.Black)
+                    .Border((top: 1, right: 2, bottom: 1, left: 2));
+                node.Layout();
 
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(400, 400), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                bool DrawNode(Node n, MeshList list)
-                {
-                    if (!n.ActiveInTree)
-                    {
-                        return false;
-                    }
-
-                    n.Draw(primitiveRenderer, list);
-                    return true;
-                }
-
-                Node node = null;
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        if (node == null)
-                        {
-                            node = new Node(1, "container");
-                            node.AttachLayoutGroup(true);
-                            node.RuleSet.ApplyOptions(GUILayout.Width(300).Height(40));
-                            node.UseBoxModel = true;
-                            StyleRuleSetBuilder b = new StyleRuleSetBuilder(node);
-                            b.Border(1)
-                                .BorderColor(Color.Black)
-                                .Padding((top: 1, right: 2, bottom: 1, left: 2))
-                                .BackgroundColor(Color.Silver);
-                        }
-
-                        {
-                            DrawNode(node, meshList);
-                            node.Foreach(n => DrawNode(n, meshList));
-                            node.Layout();
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
-                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                CheckExpectedImage(node, @"Rendering\images\NodeFacts.Container.DrawAndLayoutEmptyContainer.png");
             }
 
             [Fact]
             public void DrawAndLayoutContainerWithElements()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
+                var container = new Node(1, "container");
+                container.AttachLayoutGroup(false);
+                container.RuleSet.ApplyOptions(GUILayout.Width(300).Height(40));
+                container.UseBoxModel = true;
+                StyleRuleSetBuilder b = new StyleRuleSetBuilder(container);
+                b.Border(1)
+                    .BorderColor(Color.Black)
+                    .Padding((top: 4, right: 3, bottom: 4, left: 3))
+                    .AlignmentVertical(Alignment.Center)
+                    .AlignmentHorizontal(Alignment.Center);
 
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var icon = new Node(2, "icon");
+                icon.AttachLayoutEntry(new Size(20, 20));
+                icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
+                icon.UseBoxModel = false;
+                icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
 
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
+                var title = new Node(3, "title");
+                var titleTextSize = GUIStyle.Default.CalcSize("title", GUIState.Normal);//TODO consider this
+                title.AttachLayoutEntry(titleTextSize);
+                title.RuleSet.ApplyOptions(GUILayout.Height(20).ExpandWidth(true));
+                title.UseBoxModel = false;
+                title.Primitive = new TextPrimitive("title");
 
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(400, 400), WindowTypes.Regular);
+                var closeButton = new Node(4, "close button");
+                closeButton.AttachLayoutEntry(new Size(20, 20));
+                closeButton.UseBoxModel = false;
+                PathPrimitive path = new PathPrimitive();
+                path.PathRect(new Rect(0, 0, 20, 20));
+                path.PathFill(Color.Black);
 
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
+                closeButton.Primitive = path;
 
-                window.Show();
+                container.AppendChild(icon);
+                container.AppendChild(title);
+                container.AppendChild(closeButton);
 
-                bool DrawNode(Node n, MeshList list)
-                {
-                    if (!n.ActiveInTree)
-                    {
-                        return false;
-                    }
+                container.Layout();
 
-                    n.Draw(primitiveRenderer, list);
-                    return true;
-                }
-
-                Node container = null;
-                Node icon;
-                Node title;
-                Node closeButton;
-
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
-
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        if (container == null)
-                        {
-                            container = new Node(1, "container");
-                            container.AttachLayoutGroup(false);
-                            container.RuleSet.ApplyOptions(GUILayout.Width(300).Height(40));
-                            container.UseBoxModel = true;
-                            StyleRuleSetBuilder b = new StyleRuleSetBuilder(container);
-                            b.Border(1)
-                                .BorderColor(Color.Black)
-                                .Padding((top: 4, right: 3, bottom: 4, left: 3))
-                                .BackgroundColor(Color.Silver)
-                                .AlignmentVertical(Alignment.Center)
-                                .AlignmentHorizontal(Alignment.Center);
-
-                            icon = new Node(2, "icon");
-                            icon.AttachLayoutEntry(new Size(20, 20));
-                            icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
-                            icon.UseBoxModel = false;
-                            icon.Primitive = new ImagePrimitive(@"assets\images\logo.png");
-
-                            title = new Node(3, "title");
-                            var titleTextSize = GUIStyle.Default.CalcSize("title", GUIState.Normal);//TODO consider this
-                            title.AttachLayoutEntry(titleTextSize);
-                            title.RuleSet.ApplyOptions(GUILayout.Height(20).ExpandWidth(true));
-                            title.UseBoxModel = false;
-                            title.Primitive = new TextPrimitive("title");
-
-                            closeButton = new Node(4, "close button");
-                            closeButton.AttachLayoutEntry(new Size(20, 20));
-                            closeButton.UseBoxModel = false;
-                            PathPrimitive path = new PathPrimitive();
-                            path.PathRect(new Rect(0, 0, 20, 20));
-                            path.PathFill(Color.Black);
-                            //path.PathClear();
-
-                            //path.PathMoveTo((0, 0));
-                            //path.PathLineTo((20,20));
-                            //path.PathStroke(1, Color.Black);
-                            //path.PathClear();
-                            //
-                            //path.PathMoveTo((0, 20));
-                            //path.PathLineTo((20,0));
-                            //path.PathStroke(1, Color.Black);
-                            //path.PathClear();
-
-                            closeButton.Primitive = path;
-
-                            container.AppendChild(icon);
-                            container.AppendChild(title);
-                            container.AppendChild(closeButton);
-                        }
-
-                        {
-                            DrawNode(container, meshList);
-                            container.Foreach(n => DrawNode(n, meshList));
-                            container.Layout();
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
-                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                CheckExpectedImage(container, @"Rendering\images\NodeFacts.Container.DrawAndLayoutContainerWithElements.png");
             }
 
             [Fact]
             public void DrawAWindow()
             {
-                Application.IsRunningInUnitTest = true;
-                Application.InitSysDependencies();
-
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
-
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-
-                var window = new Win32Window();
-                window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
-
-                var renderer = new Win32OpenGLRenderer();
-                renderer.Init(window.Pointer, window.ClientSize);
-
-                window.Show();
-
-                bool DrawNode(Node n, MeshList list)
-                {
-                    if (!n.ActiveInTree)
-                    {
-                        return false;
-                    }
-
-                    n.Draw(primitiveRenderer, list);
-                    return true;
-                }
-
                 //window
                 var windowContainer = new Node("#window");
                 windowContainer.AttachLayoutGroup(true);
@@ -300,58 +147,17 @@ namespace ImGui.UnitTest.Rendering
                     windowContainer.AppendChild(titleBarContainer);
                 }
 
-                Node clientArea;
                 //client area background
                 {
-                    clientArea = new Node("#ClientArea_Background");
+                    var clientArea = new Node("#ClientArea_Background");
                     clientArea.AttachLayoutGroup(true);
                     clientArea.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(200));
                     windowContainer.AppendChild(clientArea);
                 }
 
-                while (true)
-                {
-                    Time.OnFrameBegin();
-                    Keyboard.Instance.OnFrameBegin();
+                windowContainer.Layout();
 
-                    window.MainLoop(() =>
-                    {
-                        if (Keyboard.Instance.KeyDown(Key.Escape))
-                        {
-                            Application.Quit();
-                        }
-
-                        if (Keyboard.Instance.KeyPressed(Key.Space))
-                        {
-                            clientArea.ActiveSelf = !clientArea.ActiveSelf;
-                        }
-
-                        {
-                            DrawNode(windowContainer, meshList);
-                            windowContainer.Foreach(n => DrawNode(n, meshList));
-                            windowContainer.Layout();
-                        }
-
-                        //rebuild mesh buffer
-                        meshBuffer.Clear();
-                        meshBuffer.Init();
-                        meshBuffer.Build(meshList);
-
-                        //draw mesh buffer to screen
-                        renderer.Clear(Color.FrameBg);
-                        renderer.DrawMeshes((int)window.ClientSize.Width, (int)window.ClientSize.Height,
-                            (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                        renderer.SwapBuffers();
-                    });
-
-                    if (Application.RequestQuit)
-                    {
-                        break;
-                    }
-
-                    Keyboard.Instance.OnFrameEnd();
-                    Time.OnFrameEnd();
-                }
+                CheckExpectedImage(windowContainer, @"Rendering\images\NodeFacts.Container.DrawAWindow.png");
             }
         }
     }
