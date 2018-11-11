@@ -1,10 +1,17 @@
-# About test
+Unit Test for ImGui
+===================
 
-Only __ImGui.UnitTest__ is valid. All others are outdated and will be updated and merged into __ImGui.UnitTest__.
+Unit Test is used to gurantee all functions of ImGui work as expected without any issue.
 
-Further unit tests will follow [the Structuring Unit Tests](http://haacked.com/archive/2012/01/02/structuring-unit-tests.aspx/) approach.
+## Standard
+* Follows the [Arrange, Act, Assert](http://wiki.c2.com/?ArrangeActAssert) pattern.
+* Organized by [the Structuring Unit Tests](http://haacked.com/archive/2012/01/02/structuring-unit-tests.aspx/) approach.
+* Easy to be integrated with continuous integration to automatically check for issues when the code is changed.
+* Expected rendering result is represented as an expected image for each test; an expected image is generated and verified by human eyes and then used to verify the result of rendering.
 
 # Dependency
+
+(All dependencies are to be removed.)
 
 * Windows Photo Viewer: A picture viewer to show the output picture of some test. (windows-only)
 * [CairoSharp](https://github.com/zwcloud/CairoSharp): A software vector rendering lib to programmatically draw the output of some test.

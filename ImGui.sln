@@ -8,6 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{593C5B50-52E6-436D-9BF2-93E220984E45}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{1F08C70D-0D16-48E8-B4E7-4726BE7D4518}"
+	ProjectSection(SolutionItems) = preProject
+		test\ReadMe.md = test\ReadMe.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "demos\Calculator\Calculator.csproj", "{5A9E507B-9090-4B3A-9EFC-53EBE7EC3E3D}"
 EndProject
@@ -167,9 +170,5 @@ Global
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
