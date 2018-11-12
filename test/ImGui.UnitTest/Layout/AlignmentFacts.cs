@@ -3,43 +3,33 @@ using Xunit;
 
 namespace ImGui.UnitTest.Layout
 {
-    public class AlignmentFacts
+    public class AlignmentFacts : NodeRenderingFixture
     {
-        private void CheckExpectedImage(Node @group, string expectedImagePath)
+        private void CheckExpectedImage(Node node, string expectedImageFilePath)
         {
-
+            int width = (int)node.Rect.Width;
+            int height = (int)node.Rect.Height;
+            Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
+            Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
         }
 
         [Fact]
         public void Show3HorizontalGroupOf1ItemWithDifferentAlignment()
         {
-            Node group = new Node(0);
-            group.AttachLayoutGroup(true);
+            Node group = new Node(0); group.AttachLayoutGroup(true);
 
-            Node group1 = new Node(1);
-            group1.AttachLayoutGroup(false);
-            group1.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
+            Node group1 = new Node(1); group1.AttachLayoutGroup(false); group1.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
             group1.RuleSet.AlignmentVertical = Alignment.Start;
 
-            Node group2 = new Node(2);
-            group2.AttachLayoutGroup(false);
-            group2.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
+            Node group2 = new Node(2); group2.AttachLayoutGroup(false); group2.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
             group2.RuleSet.AlignmentVertical = Alignment.Center;
 
-            Node group3 = new Node(3);
-            group3.AttachLayoutGroup(false);
-            group3.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
+            Node group3 = new Node(3); group3.AttachLayoutGroup(false); group3.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
             group3.RuleSet.AlignmentVertical = Alignment.End;
 
-            Node item1 = new Node(4);
-            item1.AttachLayoutEntry();
-            item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item2 = new Node(5);
-            item2.AttachLayoutEntry();
-            item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item3 = new Node(6);
-            item3.AttachLayoutEntry();
-            item3.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item1 = new Node(4); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item2 = new Node(5); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item3 = new Node(6); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
 
             group1.AppendChild(item1);
             group2.AppendChild(item2);
@@ -56,29 +46,18 @@ namespace ImGui.UnitTest.Layout
         [Fact]
         public void Show3VerticalGroupOf1ItemWithDifferentAlignment()
         {
-            Node group = new Node(0);
-            group.AttachLayoutGroup(false);
+            Node group = new Node(0); group.AttachLayoutGroup(false);
 
-            Node group1 = new Node(1);
-            group1.AttachLayoutGroup(true);
-            group1.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
+            Node group1 = new Node(1); group1.AttachLayoutGroup(true); group1.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
             group1.RuleSet.AlignmentHorizontal = Alignment.Start;
-            Node group2 = new Node(2);
-            group2.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
+            Node group2 = new Node(2); group2.AttachLayoutGroup(true); group2.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
             group2.RuleSet.AlignmentHorizontal = Alignment.Center;
-            Node group3 = new Node(3);
-            group3.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
+            Node group3 = new Node(3); group3.AttachLayoutGroup(true); group3.RuleSet.ApplyOptions(GUILayout.Width(200).Height(200));
             group3.RuleSet.AlignmentHorizontal = Alignment.End;
 
-            Node item1 = new Node(4);
-            item1.AttachLayoutEntry();
-            item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item2 = new Node(5);
-            item2.AttachLayoutEntry();
-            item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item3 = new Node(6);
-            item3.AttachLayoutEntry();
-            item3.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item1 = new Node(4); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item2 = new Node(5); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item3 = new Node(6); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
 
             group1.AppendChild(item1);
             group2.AppendChild(item2);
@@ -112,33 +91,15 @@ namespace ImGui.UnitTest.Layout
             Node group8 = new Node(11); group8.AttachLayoutGroup(false);
             Node group9 = new Node(12); group9.AttachLayoutGroup(false);
 
-            Node item1 = new Node(13);
-            item1.AttachLayoutEntry();
-            item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item2 = new Node(14);
-            item2.AttachLayoutEntry();
-            item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item3 = new Node(15);
-            item3.AttachLayoutEntry();
-            item3.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item4 = new Node(16);
-            item4.AttachLayoutEntry();
-            item4.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item5 = new Node(17);
-            item5.AttachLayoutEntry();
-            item5.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item6 = new Node(18);
-            item6.AttachLayoutEntry();
-            item6.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item7 = new Node(19);
-            item7.AttachLayoutEntry();
-            item7.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item8 = new Node(20);
-            item8.AttachLayoutEntry();
-            item8.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-            Node item9 = new Node(21);
-            item9.AttachLayoutEntry();
-            item9.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item1 = new Node(13); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item2 = new Node(14); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item3 = new Node(15); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item4 = new Node(16); item4.AttachLayoutEntry(); item4.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item5 = new Node(17); item5.AttachLayoutEntry(); item5.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item6 = new Node(18); item6.AttachLayoutEntry(); item6.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item7 = new Node(19); item7.AttachLayoutEntry(); item7.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item8 = new Node(20); item8.AttachLayoutEntry(); item8.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+            Node item9 = new Node(21); item9.AttachLayoutEntry(); item9.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
 
             group1.RuleSet.AlignmentHorizontal = Alignment.Start;
             group1.RuleSet.AlignmentVertical = Alignment.Start;
@@ -195,11 +156,11 @@ namespace ImGui.UnitTest.Layout
         {
             Node group = new Node(0); group.AttachLayoutGroup(true);
 
-            Node group1 = new Node(1); group1.AttachLayoutGroup(true); group1.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
-            Node group2 = new Node(2); group2.AttachLayoutGroup(true); group2.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
-            Node group3 = new Node(3); group3.AttachLayoutGroup(true); group3.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
-            Node group4 = new Node(4); group4.AttachLayoutGroup(true); group4.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
-            Node group5 = new Node(5); group5.AttachLayoutGroup(true); group5.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
+            Node group1 = new Node(1); group1.AttachLayoutGroup(false); group1.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
+            Node group2 = new Node(2); group2.AttachLayoutGroup(false); group2.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
+            Node group3 = new Node(3); group3.AttachLayoutGroup(false); group3.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
+            Node group4 = new Node(4); group4.AttachLayoutGroup(false); group4.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
+            Node group5 = new Node(5); group5.AttachLayoutGroup(false); group5.RuleSet.ApplyOptions(GUILayout.Width(600).Height(150));
 
             Node item1  = new Node(6 ); item1 .AttachLayoutEntry(); item1 .RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
             Node item2  = new Node(2 ); item2 .AttachLayoutEntry(); item2 .RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));

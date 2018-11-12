@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>    
-    <TargetFramework>netcoreapp2.0</TargetFramework>    
-    <ApplicationIcon />    
-    <OutputType>Library</OutputType>    
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
     <StartupObject />
   </PropertyGroup>
 
@@ -14,12 +14,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Rendering\image\**" />
-    <EmbeddedResource Remove="Rendering\image\**" />
-    <None Remove="Rendering\image\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Control\SliderFacts.cs" />
@@ -44,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Layout\images\" />
     <Folder Include="OSImplentation\Windows\" />
   </ItemGroup>
 
@@ -52,6 +47,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="GraphicsImplementation\Builtin\images\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Layout\images\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Rendering\images\**\*.*">
