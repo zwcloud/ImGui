@@ -61,12 +61,12 @@ namespace ImGui.UnitTest.Layout
 
                 var items = new[]
                 {
-                item1,
-                item2,
-                item3,
-                item4,
-                item5
-            };
+                    item1,
+                    item2,
+                    item3,
+                    item4,
+                    item5
+                };
 
                 foreach (var item in items)
                 {

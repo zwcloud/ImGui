@@ -31,7 +31,7 @@ namespace ImGui.UnitTest.Layout
                 Assert.Equal(200, group.Rect.Height);
             }
 
-            [Fact, Trait("Category", "rect & content size"), Trait("Description", "The size of a vertical group that contains a single entry is correctly calculated")]
+            [Fact]
             public void TheSizeOfAVerticalGroupThatContainsASingleEntryIsCorrectlyCalculated()
             {
                 Node group = new Node(1); group.AttachLayoutGroup(true);

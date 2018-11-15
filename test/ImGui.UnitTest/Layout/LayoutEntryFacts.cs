@@ -51,7 +51,7 @@ namespace ImGui.UnitTest.Layout
                 Assert.False(entry.RuleSet.VerticallyStretched);
                 Assert.Equal(0, entry.RuleSet.VerticalStretchFactor);
             }
-            
+
             [Fact]
             public void FlexSizedEntryProperlyInitialized()
             {
