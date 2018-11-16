@@ -18,7 +18,6 @@
   <ItemGroup>
     <Compile Remove="Control\SliderFacts.cs" />
     <Compile Remove="Control\TextBoxFacts.cs" />
-    <Compile Remove="Layout\LayoutGroupFacts.StretchedSize.cs" />
     <Compile Remove="Layout\StackLayoutFacts.Dynamic.cs" />
     <Compile Remove="OSImplentation\Windows\Win32OpenGLRendererFacts.cs" />
   </ItemGroup>
@@ -41,10 +40,6 @@
   <ItemGroup>
     <Folder Include="Layout\images\" />
     <Folder Include="OSImplentation\Windows\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Layout\LayoutGroupFacts.StretchedSize.cs" />
   </ItemGroup>
 
   <ItemGroup>
