@@ -42,7 +42,7 @@ namespace ImGui
 
             return rule;
         }
-        
+
         public StyleRule<T> GetRule<T>(GUIStyleName name)
         {
             var rule = this.rules.Find(i =>
@@ -395,7 +395,7 @@ namespace ImGui
 
         public bool IsDefaultWidth => !IsFixedWidth && !HorizontallyStretched;
 
-        public bool IsDefaultHeight => !IsFixedWidth && !VerticallyStretched;
+        public bool IsDefaultHeight => !IsFixedHeight && !VerticallyStretched;
 
         public bool IsStretchedWidth => HorizontallyStretched;
 
