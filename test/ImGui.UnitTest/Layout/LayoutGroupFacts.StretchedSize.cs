@@ -5,7 +5,7 @@ namespace ImGui.UnitTest.Layout
 {
     public partial class LayoutGroupFacts
     {
-        public class StretchedSize
+        public class StretchedSize : IClassFixture<NodeRenderingFixture>
         {
             private static void CheckExpectedImage(Node node, string expectedImageFilePath)
             {
@@ -63,7 +63,7 @@ namespace ImGui.UnitTest.Layout
             public void ShowAVerticalGroupOf1Item()
             {
                 Node group = new Node(0); group.AttachLayoutGroup(true); group.RuleSet.ApplyOptions(GUILayout.Height(600));
-                Node item = new Node(1); item.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(50));
+                Node item = new Node(1); item.AttachLayoutEntry(); item.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(50));
                 group.AppendChild(item);
 
                 group.Layout();
@@ -75,9 +75,9 @@ namespace ImGui.UnitTest.Layout
             public void ShowAVerticalGroupOf3Items()
             {
                 Node group = new Node(0); group.AttachLayoutGroup(true); group.RuleSet.ApplyOptions(GUILayout.Height(600));
-                Node item1 = new Node(1); item1.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(50));
-                Node item2 = new Node(2); item2.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(60));
-                Node item3 = new Node(3); item3.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(30));
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(50));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(60));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(30));
                 group.AppendChild(item1);
                 group.AppendChild(item2);
                 group.AppendChild(item3);
@@ -91,9 +91,9 @@ namespace ImGui.UnitTest.Layout
             public void ShowAVerticalGroupOf3ItemsWithDifferentStretchFactors()
             {
                 Node group = new Node(0); group.AttachLayoutGroup(true); group.RuleSet.ApplyOptions(GUILayout.Height(600));
-                Node item1 = new Node(1); item1.RuleSet.ApplyOptions(GUILayout.StretchHeight(1).Width(50));
-                Node item2 = new Node(2); item2.RuleSet.ApplyOptions(GUILayout.StretchHeight(2).Width(60));
-                Node item3 = new Node(3); item3.RuleSet.ApplyOptions(GUILayout.StretchHeight(1).Width(30));
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.StretchHeight(1).Width(50));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.StretchHeight(2).Width(60));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.StretchHeight(1).Width(30));
                 group.AppendChild(item1);
                 group.AppendChild(item2);
                 group.AppendChild(item3);
@@ -227,7 +227,7 @@ namespace ImGui.UnitTest.Layout
             public void ShowAGroupWithNoSpaceToHoldTheChild()
             {
                 Node group = new Node(0); group.AttachLayoutGroup(false); group.RuleSet.ApplyOptions(GUILayout.Width(400).Height(30));//content box height of this group is 0
-                Node item = new Node(1); item.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
+                Node item = new Node(1); item.AttachLayoutEntry(); item.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 group.AppendChild(item);
 
                 group.Layout();
