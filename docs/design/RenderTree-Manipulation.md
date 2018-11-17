@@ -104,6 +104,10 @@ Node:
 
 * `State`: a `GUIState` representing the state of this node.
 
+* `ActiveSelf`: a local flag determine whether this node is enabled. A node may be disabled because a parent is not enabled. In that case, set a node `ActiveSelf` to true will not enable it, but only set the local state of the node.
+
+* `ActiveInTree`: a global bool flag shows whether the node is enabled in the render-tree. That is the case if its `ActiveSelf` property is enabled as well as all of its parents.
+
 ### styling
 
 __logical structure of styling__
@@ -153,3 +157,9 @@ Instead, ImGui will stick to the old rules. Let's make that explicit below:
 In practical, plain nodes are used to create the node tree of a control that are manually layout-ed. LayoutGroup and LayoutEntry nodes are used to create node tree of a control that is auto-layout-ed.
 
 And, to group nodes logically in a control,  group them by a manual created list or tree instead. Do not depend on the render tree!
+
+### Rethinking node visibility
+
+In the old implementation, ImGui creates control on the fly when an API is called every frame. And so a control will disappear if its function is not called. executed. But with the new render-tree based architecture this is no longer effective: we need to implement the feature manually. A point should be emphasized : __ImGui is about how to use UI in an immediate way instead of how to implementing UI.__
+
+So how to implement proper node visibility? The most direct way is to disable all nodes at the beginning of a frame. In practice, a node's `ActiveSelf` is set to `false` at `Form.NewFrame()`.
