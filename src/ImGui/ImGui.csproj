@@ -5,17 +5,17 @@
     <Description>ImGui Framework Library</Description>
     <Company>zwcloud</Company>
     <Product>zwcloud.ImGui</Product>
-    <Copyright>Copyright (c) 2016-2017 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
+    <Copyright>Copyright (c) 2016-2018 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
     <PackageProjectUrl>https://github.com/zwcloud/ImGui</PackageProjectUrl>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <SignAssembly>False</SignAssembly>
     <RepositoryUrl>https://github.com/zwcloud/ImGui</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/zwcloud/ImGui/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageTags>GUI</PackageTags>
-    <AssemblyVersion>0.0.0.1</AssemblyVersion>
-    <FileVersion>0.0.0.1</FileVersion>
+    <AssemblyVersion>0.0.0.2</AssemblyVersion>
+    <FileVersion>0.0.0.2</FileVersion>
     <ApplicationIcon />
     <Win32Resource />
     <LangVersion>latest</LangVersion>
