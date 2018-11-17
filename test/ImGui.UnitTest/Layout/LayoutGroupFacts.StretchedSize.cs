@@ -222,18 +222,6 @@ namespace ImGui.UnitTest.Layout
 
                 CheckExpectedImage(group1, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(StretchedSize)}.{nameof(ShowAThreeLayerGroup)}.png");
             }
-
-            [Fact]
-            public void ShowAGroupWithNoSpaceToHoldTheChild()
-            {
-                Node group = new Node(0); group.AttachLayoutGroup(false); group.RuleSet.ApplyOptions(GUILayout.Width(400).Height(30));//content box height of this group is 0
-                Node item = new Node(1); item.AttachLayoutEntry(); item.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
-                group.AppendChild(item);
-
-                group.Layout();
-
-                CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(StretchedSize)}.{nameof(ShowAGroupWithNoSpaceToHoldTheChild)}.png");
-            }
         }
     }
 }

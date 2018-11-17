@@ -223,8 +223,15 @@ namespace ImGui.GraphicsImplementation
             var ctr = new Point(ptr.X - pr, ptr.Y + pr);
             var cbr = new Point(pbr.X - pr, pbr.Y - pb);
             var cbl = new Point(pbl.X + pl, pbl.Y - pb);
-            Debug.Assert(ctl.X < ctr.X);
-            contentBoxRect = new Rect(ctl, cbr);
+            if (ctl.X >= ctr.X)
+            {
+                Log.Warning("Content box is zero-sized.");
+                contentBoxRect = new Rect(ctl, Size.Zero);
+            }
+            else
+            {
+                contentBoxRect = new Rect(ctl, cbr);
+            }
         }
 
         private void DrawDebug(Rect paddingBoxRect, Rect contentBoxRect)
