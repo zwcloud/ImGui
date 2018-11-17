@@ -10,13 +10,19 @@ namespace UniversalAppTemplate
         }
 
         private bool open;
+        private bool clicked;
         protected override void OnGUI()
         {
-            GUILayout.BeginHorizontal("HGroup~1");
-            GUILayout.Button("Button 1");
-            GUILayout.Button("Button 2");
-            GUILayout.Button("Button 3");
-            GUILayout.EndHorizontal();
+            if (GUILayout.Button("Button"))
+            {
+                clicked = !clicked;
+            }
+            if (clicked)
+            {
+                GUILayout.Button("123");
+                GUILayout.Label("345");
+            }
+
             //GUILayout.Button("123");
             //GUI.Begin("test window", ref open);
             //GUI.End();
