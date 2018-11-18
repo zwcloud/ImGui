@@ -23,32 +23,32 @@ namespace WebTemplate
             JSObject glContext = (JSObject)canvas.Invoke("getContext", "webgl2");
             gl.Init(glContext);
 
-		    gl.clearColor(0.0f, 0.0f, 0.8f, 1.0f);
-		    gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.clearColor(0.0f, 0.0f, 0.8f, 1.0f);
+            gl.clear(gl.COLOR_BUFFER_BIT);
 
             var prog = shaderProgram(
-                "attribute vec3 pos;"+
-                "void main() {"+
-                "	gl_Position = vec4(pos, 2.0);"+
+                "attribute vec3 pos;" +
+                "void main() {" +
+                "	gl_Position = vec4(pos, 2.0);" +
                 "}",
-                "precision mediump float;"+
+                "precision mediump float;" +
                 "uniform vec3 randomColor;" +
-                "void main() {"+
-                "	gl_FragColor = vec4(randomColor.r, randomColor.g, randomColor.b, 1.0);"+
+                "void main() {" +
+                "	gl_FragColor = vec4(randomColor.r, randomColor.g, randomColor.b, 1.0);" +
                 "}"
             );
             gl.useProgram(prog);
             randomColorLocation = gl.getUniformLocation(prog, "randomColor");
 
             var vertexBufferLength = 3 * 4;
-            IntPtr vertexBuffer = Marshal.AllocHGlobal(Marshal.SizeOf<float>()*vertexBufferLength);
+            IntPtr vertexBuffer = Marshal.AllocHGlobal(Marshal.SizeOf<float>() * vertexBufferLength);
             unsafe
             {
                 float* p = (float*)vertexBuffer.ToPointer();
-                p[0] = -1; p[1] = 0;   p[2] = 0;
-                p[3] = 0;  p[4] = 1;   p[5] = 0;
-                p[6] = 0;  p[7] = -1;  p[8] = 0;
-                p[9] = 1;  p[10] = 0;  p[11] = 0;
+                p[0] = -1; p[1] = 0; p[2] = 0;
+                p[3] = 0; p[4] = 1; p[5] = 0;
+                p[6] = 0; p[7] = -1; p[8] = 0;
+                p[9] = 1; p[10] = 0; p[11] = 0;
             }
 
             attributeSetFloats(prog, "pos", 3, vertexBuffer, vertexBufferLength);
@@ -66,7 +66,8 @@ namespace WebTemplate
             Draw();
         }
 
-        static JSObject shaderProgram(string vsText, string fsText) {
+        static JSObject shaderProgram(string vsText, string fsText)
+        {
             var prog = gl.createProgram();
             addshader(prog, "vertex", vsText);
             addshader(prog, "fragment", fsText);
@@ -80,7 +81,8 @@ namespace WebTemplate
             gl.shaderSource(s, source);
             gl.compileShader(s);
 
-            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+            {
                 throw new Exception("Could not compile " + type + " shader:\n\n"
                     + gl.getShaderInfoLog(s));
             }
@@ -88,7 +90,8 @@ namespace WebTemplate
             gl.attachShader(prog, s);
         }
 
-        static void attributeSetFloats(JSObject prog, string attr_name, int size, IntPtr arr, int length) {
+        static void attributeSetFloats(JSObject prog, string attr_name, int size, IntPtr arr, int length)
+        {
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
             gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW, 0, length);
             var attr = gl.getAttribLocation(prog, attr_name);
@@ -96,11 +99,13 @@ namespace WebTemplate
             gl.vertexAttribPointer(attr, size, gl.FLOAT, false, 0, 0);
         }
 
+        static float c = (float)random.NextDouble();
         static void Draw()
         {
             gl.clearColor(0.8f, 0.8f, 0.8f, 1.0f);
             gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.uniform3f(randomColorLocation, (float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+            Color color = Color.FromHSL((c+=0.003f)%1.0f, 0.5, 0.5);
+            gl.uniform3f(randomColorLocation, color.R/255.0f, (float)color.G/255.0f, (float)color.B/255.0f);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
     }
@@ -186,7 +191,7 @@ namespace WebTemplate
 
         public static void clearColor(float r, float g, float b, float a)
         {
-            _gl.Invoke("clearColor", r,g,b,a);
+            _gl.Invoke("clearColor", r, g, b, a);
         }
 
         public const int COLOR_BUFFER_BIT = 16384;
@@ -230,65 +235,86 @@ namespace WebTemplate
             return _gl.Invoke("getShaderInfoLog", shader) as string;
         }
     }
+
+    public struct Color
+    {
+        public byte R;
+        public byte G;
+        public byte B;
+
+        public Color(byte r, byte g, byte b)
+        {
+            this.R = r;
+            this.G = g;
+            this.B = b;
+        }
+
+        // Given H,S,L in range of 0-1
+        // Returns a Color (RGB struct) in range of 0-255
+        public static Color FromHSL(double h, double sl, double l)
+        {
+            double v;
+            double r, g, b;
+
+            r = l;   // default to gray
+            g = l;
+            b = l;
+            v = (l <= 0.5) ? (l * (1.0 + sl)) : (l + sl - l * sl);
+            if (v > 0)
+            {
+                double m;
+                double sv;
+                int sextant;
+                double fract, vsf, mid1, mid2;
+
+                m = l + l - v;
+                sv = (v - m) / v;
+                h *= 6.0;
+                sextant = (int)h;
+                fract = h - sextant;
+                vsf = v * sv * fract;
+                mid1 = m + vsf;
+                mid2 = v - vsf;
+                switch (sextant)
+                {
+                    case 0:
+                    r = v;
+                    g = mid1;
+                    b = m;
+                    break;
+                    case 1:
+                    r = mid2;
+                    g = v;
+                    b = m;
+                    break;
+                    case 2:
+                    r = m;
+                    g = v;
+                    b = mid1;
+                    break;
+                    case 3:
+                    r = m;
+                    g = mid2;
+                    b = v;
+                    break;
+                    case 4:
+                    r = mid1;
+                    g = m;
+                    b = v;
+                    break;
+                    case 5:
+                    r = v;
+                    g = m;
+                    b = mid2;
+                    break;
+                }
+            }
+            Color rgb;
+            rgb.R = Convert.ToByte(r * 255.0f);
+            rgb.G = Convert.ToByte(g * 255.0f);
+            rgb.B = Convert.ToByte(b * 255.0f);
+            return rgb;
+        }
+    }
+
 }
-
-/*
-function shaderProgram(gl, vs, fs) {
-	var prog = gl.createProgram();
-	var addshader = function(type, source) {
-		var s = gl.createShader((type == 'vertex') ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER);
-		gl.shaderSource(s, source);
-		gl.compileShader(s);
-		gl.getShaderParameter(s, gl.COMPILE_STATUS);
-		gl.attachShader(prog, s);
-	};
-	addshader('vertex', vs);
-	addshader('fragment', fs);
-	gl.linkProgram(prog);
-	gl.getProgramParameter(prog, gl.LINK_STATUS);
-	return prog;
-}
-
-function attributeSetFloats(gl, prog, attr_name, rsize, arr) {
-	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
-	var attr = gl.getAttribLocation(prog, attr_name);
-	gl.enableVertexAttribArray(attr);
-	gl.vertexAttribPointer(attr, rsize, gl.FLOAT, false, 0, 0);
-}
-
-function draw() {
-	var gl = document.getElementById("webgl").getContext("webgl2");
-	gl.clearColor(0.8, 0.8, 0.8, 1);
-	gl.clear(gl.COLOR_BUFFER_BIT);
-
-	var prog = shaderProgram(gl,
-		"attribute vec3 pos;"+
-		"void main() {"+
-		"	gl_Position = vec4(pos, 2.0);"+
-		"}",
-		"void main() {"+
-		"	gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0);"+
-		"}"
-	);
-	gl.useProgram(prog);
-
-	attributeSetFloats(gl, prog, "pos", 3, [
-		-1, 0, 0,
-		0, 1, 0,
-		0, -1, 0,
-		1, 0, 0
-	]);
-
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-}
-
-function init() {
-	try {
-		draw();
-	} catch (e) {
-		alert("Error: "+e);
-	}
-}
-setTimeout(init, 100);
- */
