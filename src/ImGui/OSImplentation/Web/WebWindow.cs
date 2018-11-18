@@ -30,7 +30,7 @@ namespace ImGui.OSImplentation.Web
         /// The canvas DOM object
         /// </summary>
         private JSObject canvas;
-        
+
         /// <summary>
         /// The canvas style object
         /// </summary>

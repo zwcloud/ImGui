@@ -197,6 +197,10 @@ namespace ImGui
                 window.WasActive = window.Active;
                 window.Active = false;
                 window.Accessed = false;
+
+                //disable all nodes in the window
+                window.ClientAreaNode.Foreach(n => n.ActiveSelf = false);
+                window.NodeTreeRoot.Foreach(n => n.ActiveSelf = false);
             }
 
             // No window should be open at the beginning of the frame.

@@ -35,6 +35,8 @@ namespace ImGui
                 node.Primitive = new TextPrimitive(text);
             }
 
+            node.ActiveSelf = true;
+
             //TODO check if text changes
 
             // rect
@@ -78,6 +80,7 @@ namespace ImGui
                 node.Primitive = new TextPrimitive(text);
             }
             node.RuleSet.ApplyOptions(options);
+            node.ActiveSelf = true;
 
             //TODO check if text changes
 

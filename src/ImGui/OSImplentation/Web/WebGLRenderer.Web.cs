@@ -4,7 +4,7 @@
     {
         public void SwapBuffers()
         {
-            // No need to do this for the web, because the browser will did this later.
+            // No need to do this for the web, because the browser will do this later.
         }
     }
 }

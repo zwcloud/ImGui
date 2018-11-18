@@ -32,6 +32,8 @@ namespace ImGui
                 node.Primitive = new TextPrimitive(text);
             }
 
+            node.ActiveSelf = true;
+
             var textPrimitive = node.Primitive as TextPrimitive;
             Debug.Assert(textPrimitive != null);
             textPrimitive.Text = text;
@@ -69,6 +71,8 @@ namespace ImGui
                 container.AppendChild(node);
                 node.Primitive = new TextPrimitive(text);
             }
+
+            node.ActiveSelf = true;
             node.RuleSet.ApplyOptions(options);
 
             // rect

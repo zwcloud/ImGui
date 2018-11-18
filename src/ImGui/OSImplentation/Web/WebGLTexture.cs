@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using GL = ImGui.OSImplentation.Web.WebGL;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
