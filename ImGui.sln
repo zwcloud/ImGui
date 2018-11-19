@@ -30,25 +30,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui.UnitTest", "test\ImGu
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Demo", "templates\Demo\Demo.shproj", "{2AF7F9F5-8001-40BF-8C60-C4852CEAA299}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebTemplate", "templates\WebTemplate\", "{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebTemplate", "WebTemplate", "{192C7FBE-D5FE-4C01-9F02-C2729F9312C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTemplateApp", "templates\WebTemplate\WebTemplateApp\WebTemplateApp.csproj", "{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebTemplateHost", "templates\WebTemplate\WebTemplateHost\", "{22531B25-FDD0-477F-BD0C-A1DC45FA1805}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_54461"
-		Debug.AspNetCompiler.PhysicalPath = "templates\WebTemplate\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_54461\"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_50236"
+		Debug.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateHost\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50236\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_54461"
-		Release.AspNetCompiler.PhysicalPath = "templates\WebTemplate\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_54461\"
+		Release.AspNetCompiler.VirtualPath = "/localhost_50236"
+		Release.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateHost\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50236\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "54461"
-		SlnRelativePath = "templates\WebTemplate\"
+		VWDPort = "50236"
+		SlnRelativePath = "templates\WebTemplate\WebTemplateHost\"
 	EndProjectSection
 EndProject
 Global
@@ -154,18 +158,30 @@ Global
 		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|x64.Build.0 = Release|Any CPU
 		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|x86.ActiveCfg = Release|Any CPU
 		{B8087E73-4140-49B1-88CA-95528264CDB6}.Release|x86.Build.0 = Release|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Debug|x64.Build.0 = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Debug|x86.Build.0 = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Release|Any CPU.Build.0 = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Release|x64.ActiveCfg = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Release|x64.Build.0 = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Release|x86.ActiveCfg = Debug|Any CPU
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4}.Release|x86.Build.0 = Debug|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Debug|x64.Build.0 = Debug|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Debug|x86.Build.0 = Debug|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Release|x64.ActiveCfg = Release|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Release|x64.Build.0 = Release|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Release|x86.ActiveCfg = Release|Any CPU
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}.Release|x86.Build.0 = Release|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|x64.Build.0 = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|x86.Build.0 = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|x64.ActiveCfg = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|x64.Build.0 = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|x86.ActiveCfg = Debug|Any CPU
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,7 +195,9 @@ Global
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A} = {593C5B50-52E6-436D-9BF2-93E220984E45}
 		{B8087E73-4140-49B1-88CA-95528264CDB6} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
 		{2AF7F9F5-8001-40BF-8C60-C4852CEAA299} = {593C5B50-52E6-436D-9BF2-93E220984E45}
-		{49B25AE0-D3FB-42D0-92BC-26F5A706D3D4} = {593C5B50-52E6-436D-9BF2-93E220984E45}
+		{192C7FBE-D5FE-4C01-9F02-C2729F9312C7} = {593C5B50-52E6-436D-9BF2-93E220984E45}
+		{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B} = {192C7FBE-D5FE-4C01-9F02-C2729F9312C7}
+		{22531B25-FDD0-477F-BD0C-A1DC45FA1805} = {192C7FBE-D5FE-4C01-9F02-C2729F9312C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F2FED21B-4283-49FD-91D0-9360FFF0F4D5}

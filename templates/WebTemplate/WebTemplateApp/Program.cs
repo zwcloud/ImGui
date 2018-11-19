@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using WebAssembly;
 
-namespace WebTemplate
+namespace WebTemplateApp
 {
     public class Program
     {

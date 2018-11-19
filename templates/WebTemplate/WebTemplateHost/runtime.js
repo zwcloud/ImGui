@@ -8,7 +8,7 @@
 		function () {
 			config.add_bindings ();
 			//call main()
-			BINDING.call_static_method("[WebTemplate] WebTemplate.Program:Main", []);
+			BINDING.call_static_method("[WebTemplateApp] WebTemplateApp.Program:Main", []);
 		}
 	)
 	},
