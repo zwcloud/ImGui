@@ -9,15 +9,18 @@ namespace WebTemplateApp
         static JSObject window;
         static Random random = new System.Random();
         static JSObject randomColorLocation;
+
+        private const int canvasWidth = 800;
+        private const int canvasHeight = 600;
+
         public static void Main(string[] args)
         {
             window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
             JSObject document = (JSObject)WebAssembly.Runtime.GetGlobalObject("document");
             JSObject body = (JSObject)document.GetObjectProperty("body");
             JSObject canvas = (JSObject)document.Invoke("createElement", "canvas");
-            JSObject canvasStyle = (JSObject)canvas.GetObjectProperty("style");
-            canvasStyle.SetObjectProperty("width", "800px");
-            canvasStyle.SetObjectProperty("height", "600px");
+            canvas.SetObjectProperty("width", canvasWidth);
+            canvas.SetObjectProperty("height", canvasHeight);
             body.Invoke("appendChild", canvas);
 
             JSObject glContext = (JSObject)canvas.Invoke("getContext", "webgl2");
