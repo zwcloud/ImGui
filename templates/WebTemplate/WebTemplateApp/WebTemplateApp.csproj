@@ -33,17 +33,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Security">
-      <HintPath>..\MonoWasm\managed\Mono.Security.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <HintPath>..\MonoWasm\managed\System.dll</HintPath>
     </Reference>
-    <Reference Include="WebAssembly.Bindings">
-      <HintPath>..\MonoWasm\managed\WebAssembly.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="WebAssembly.Net.Http">
-      <HintPath>..\MonoWasm\managed\WebAssembly.Net.Http.dll</HintPath>
+    <Reference Include="WebAssembly.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MonoWasm\framework\WebAssembly.Bindings.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PostBuild.ps1" />
+    <None Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="index.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
