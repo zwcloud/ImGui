@@ -52,7 +52,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebTemplateHost", "template
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "50236"
-		SlnRelativePath = "templates\WebTemplate\WebTemplateApp\"
+		SlnRelativePath = "templates\WebTemplate\WebTemplateApp\wwwroot\"
 	EndProjectSection
 EndProject
 Global
