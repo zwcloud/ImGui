@@ -34,25 +34,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebTemplate", "WebTemplate"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTemplateApp", "templates\WebTemplate\WebTemplateApp\WebTemplateApp.csproj", "{EE6FE1F8-4B8B-40BC-B049-0EB04E99DA8B}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebTemplateHost", "templates\WebTemplate\WebTemplateHost\", "{22531B25-FDD0-477F-BD0C-A1DC45FA1805}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebTemplateHost", "templates\WebTemplate\WebTemplateApp\wwwroot\", "{22531B25-FDD0-477F-BD0C-A1DC45FA1805}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_50236"
-		Debug.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateHost\"
+		Debug.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateApp\wwwroot\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50236\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost_50236"
-		Release.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateHost\"
+		Release.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateApp\wwwroot\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50236\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "50236"
-		SlnRelativePath = "templates\WebTemplate\WebTemplateHost\"
+		SlnRelativePath = "templates\WebTemplate\WebTemplateApp\"
 	EndProjectSection
 EndProject
 Global

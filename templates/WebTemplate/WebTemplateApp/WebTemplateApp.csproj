@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PostBuild.ps1" />
-    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
