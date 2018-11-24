@@ -17,6 +17,12 @@
   </Target>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\ImGui\ImGui.csproj">
+      <Private>true</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="WebAssembly.Bindings">
       <HintPath>..\MonoWasm\framework\WebAssembly.Bindings.dll</HintPath>
     </Reference>
