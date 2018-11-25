@@ -10,12 +10,12 @@ namespace ImGui.Rendering
         /// <summary>
         /// exact content width, externally pre-calculated from content and style
         /// </summary>
-        public double ContentWidth { get; set; }
+        public virtual double ContentWidth { get; set; }
 
         /// <summary>
         /// exact content height, externally pre-calculated from content and style
         /// </summary>
-        public double ContentHeight { get; set; }
+        public virtual double ContentHeight { get; set; }
 
         public double BorderTop => this.node.RuleSet.BorderTop;
         public double BorderRight => this.node.RuleSet.BorderRight;

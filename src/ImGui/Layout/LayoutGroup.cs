@@ -8,6 +8,16 @@ namespace ImGui.Rendering
     {
         public bool IsVertical { get; }
 
+        /// <summary>
+        /// Width of the content box
+        /// </summary>
+        public override double ContentWidth { get; set; }
+
+        /// <summary>
+        /// Height of the content box
+        /// </summary>
+        public override double ContentHeight { get; set; }
+
         private ILayoutGroup group;
 
         public LayoutGroup(ILayoutGroup group, bool isVertical) : base(group, Size.Zero)
@@ -178,6 +188,9 @@ namespace ImGui.Rendering
                         $"Group<{this.node}> doesn't have enough width for horizontal-cell-spacing<{this.node.RuleSet.CellSpacingHorizontal}> with {childCount} children.");
                 }
 
+                //FIXME widthWithoutCellSpacing is a fake one:
+                //the actual widthWithoutCellSpacing is calculated according to
+                //the widths of children and their sizing type(default, fixed or stretched)
                 var widthWithoutCellSpacing = this.ContentWidth - cellSpacingWidth;
 
                 double minWidthOfEntries = 0;
@@ -397,7 +410,6 @@ namespace ImGui.Rendering
                         minHeightOfEntries += entry.LayoutEntry.GetDefaultHeight();
                     }
                 }
-
                 if (minHeightOfEntries > heightWithoutCellSpacing)//overflow
                 {
                     var factor = 0;
