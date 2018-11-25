@@ -35,6 +35,33 @@ namespace ImGui.UnitTest.Rendering
                 Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
             }
 
+            [Theory]
+            [InlineData(10, 10, 50, 50)]
+            [InlineData(35, 35, 50, 50)]
+            [InlineData(55, 55, 50, 50)]
+            [InlineData(75, 75, 50, 50)]
+            [InlineData(95, 95, 50, 50)]
+            public void DrawNodesClipped(int clipX, int clipY, int clipWidth, int clipHeight)
+            {
+                var group = new Node(0, new Rect(120, 120));
+                group.UseBoxModel = true;
+                int i = 0;
+                for (int y = 0; y < 5; y++)
+                {
+                    for (int x = 0; x < 5; x++)
+                    {
+                        Node node = new Node(++i, new Rect(10 + x*20, 10 + y*20, 15, 15));
+                        node.UseBoxModel = true;
+                        group.AppendChild(node);
+                    }
+                }
+
+                int width = (int)group.Rect.Width;
+                int height = (int)group.Rect.Height;
+                Util.DrawNodeTreeToImage(out var imageRawBytes, group, width, height, new Rect(clipX, clipY, clipWidth, clipHeight));
+                Util.CheckExpectedImage(imageRawBytes, width, height, $@"Rendering\images\NodeFacts.Container.DrawNodesClipped_{clipX}_{clipY}_{clipWidth}_{clipHeight}.png");
+            }
+
             [Fact]
             public void DrawAndLayoutEmptyContainer()
             {

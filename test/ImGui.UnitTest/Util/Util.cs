@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Cairo;
 using ImageSharp.Extension;
+using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Rendering;
@@ -228,16 +229,16 @@ namespace ImGui.UnitTest
             }
         }
 
-        internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node node, int width, int height)
+        internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height, Rect clipRect)
         {
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
-            IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+            var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
             using (var context = new RenderContextForTest(width, height))
             {
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
-                DrawNodeToImageRecursively(primitiveRenderer, node, meshList);
+                root.Foreach(n =>primitiveRenderer.DrawNode(n, clipRect, meshList));
 
                 //rebuild mesh buffer
                 meshBuffer.Clear();
@@ -252,20 +253,7 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static void DrawNodeToImageRecursively(IPrimitiveRenderer primitiveRenderer, Node node, MeshList meshList)
-        {
-            if (node.ActiveInTree)
-            {
-                node.Draw(primitiveRenderer, meshList);
-            }
-            if (node.Children == null)
-            {
-                return;
-            }
-            foreach (var childNode in node.Children)
-            {
-                DrawNodeToImageRecursively(primitiveRenderer, childNode, meshList);
-            }
-        }
+        internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height)
+            => DrawNodeTreeToImage(out imageRawBytes, root, width, height, Rect.Big);
     }
 }

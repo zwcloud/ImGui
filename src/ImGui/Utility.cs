@@ -3,14 +3,13 @@ using System.Diagnostics;
 using System.IO;
 using CSharpGL;
 using System.Reflection;
+using ImGui.Common.Primitive;
 using ImGui.OSImplentation.Web;
 
 namespace ImGui
 {
     internal static class Utility
     {
-
-
         /// <summary>
         /// convert pt to dip
         /// </summary>
@@ -203,6 +202,47 @@ namespace ImGui
             }
 
             return text;
+        }
+
+        public static Rect GetContentBox(Rect rect, StyleRuleSet style)
+        {
+            //Widths of border
+            var bt = style.Get<double>(GUIStyleName.BorderTop);
+            var br = style.Get<double>(GUIStyleName.BorderRight);
+            var bb = style.Get<double>(GUIStyleName.BorderBottom);
+            var bl = style.Get<double>(GUIStyleName.BorderLeft);
+
+            //Widths of padding
+            var pt = style.Get<double>(GUIStyleName.PaddingTop);
+            var pr = style.Get<double>(GUIStyleName.PaddingRight);
+            var pb = style.Get<double>(GUIStyleName.PaddingBottom);
+            var pl = style.Get<double>(GUIStyleName.PaddingLeft);
+
+            //4 corner of the border-box
+            var btl = new Point(rect.Left, rect.Top);
+            var btr = new Point(rect.Right, rect.Top);
+            var bbr = new Point(rect.Right, rect.Bottom);
+            var bbl = new Point(rect.Left, rect.Bottom);
+
+            //4 corner of the padding-box
+            var ptl = new Point(btl.X + bl, btl.Y + bt);
+            var ptr = new Point(btr.X - br, btr.Y + bt);
+            var pbr = new Point(bbr.X - br, bbr.Y - bb);
+            var pbl = new Point(bbl.X + bl, bbl.Y - bb);
+            Debug.Assert(ptl.X < ptr.X);//TODO what if (ptl.X > ptr.X) happens?
+
+            //4 corner of the content-box
+            var ctl = new Point(ptl.X + pl, ptl.Y + pt);
+            var ctr = new Point(ptr.X - pr, ptr.Y + pr);
+            var cbr = new Point(pbr.X - pr, pbr.Y - pb);
+            var cbl = new Point(pbl.X + pl, pbl.Y - pb);
+            if (ctl.X >= ctr.X)
+            {
+                Log.Warning("Content box is zero-sized.");
+                return new Rect(ctl, Size.Zero);
+            }
+
+            return new Rect(ctl, cbr);
         }
     }
 }

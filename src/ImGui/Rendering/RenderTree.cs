@@ -35,6 +35,11 @@ namespace ImGui.Rendering
             return Root.GetNodeById(id);
         }
 
+        /// <summary>
+        /// Performs the specified function on each node of the render tree.
+        /// And return when the function return false.
+        /// </summary>
+        /// <param name="func"></param>
         public void Foreach(Func<Node, bool> func)
         {
             Root.Foreach(func);

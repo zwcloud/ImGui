@@ -179,23 +179,13 @@ namespace ImGui
 
             this.renderer.Clear(this.BackgroundColor);
 
-            bool DrawNode(Node node, MeshList meshList)
-            {
-                if (!node.ActiveInTree)
-                {
-                    return false;
-                }
-
-                node.Draw(this.primitiveRenderer, meshList);
-                return true;
-            }
-
+            var clientRect = new Rect(Point.Zero, this.ClientSize);
             foreach (var window in w.Windows)
             {
                 if (!window.Active) continue;
 
-                window.RenderTree.Foreach(n => DrawNode(n, window.MeshList));
-                window.NodeTreeRoot.Foreach(n => DrawNode(n, window.MeshList));
+                window.RenderTree.Foreach(n => this.primitiveRenderer.DrawNode(n, clientRect, window.MeshList));
+                window.NodeTreeRoot.Foreach(n => this.primitiveRenderer.DrawNode(n, clientRect, window.MeshList));
 
                 //rebuild mesh buffer
                 window.MeshBuffer.Clear();
@@ -208,6 +198,7 @@ namespace ImGui
             }
             this.renderer.SwapBuffers();
         }
+
 
         internal void Log()
         {

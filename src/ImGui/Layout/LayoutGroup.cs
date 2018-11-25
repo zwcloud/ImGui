@@ -349,7 +349,7 @@ namespace ImGui.Rendering
                 // calculate the height of fixed-size children
 
                 var childCount = this.group.ChildCount;
-                
+
                 //only count active children
                 foreach (var entry in this.group)
                 {

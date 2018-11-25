@@ -319,7 +319,7 @@ namespace ImGui.GraphicsImplementation
             AddConvexPolyFilled(Path, color, true);
             PathClear();
         }
-        
+
         #endregion
 
         #region Compond
@@ -397,7 +397,7 @@ namespace ImGui.GraphicsImplementation
                 PathArcFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
             }
         }
-        
+
         public void PathRect(Rect rect, float rounding = 0.0f, int roundingCorners = 0x0F) =>
             this.PathRect(rect.Min, rect.Max, rounding, roundingCorners);
 
@@ -430,7 +430,7 @@ namespace ImGui.GraphicsImplementation
             this.ShapeMesh.PrimReserve(6, 4);
             PrimRectGradient(a, b, topColor, bottomColor);
         }
-        
+
         public void AddRectFilledGradient(Rect rect, Color topColor, Color bottomColor)
         {
             AddRectFilledGradient(rect.Min, rect.Max, topColor, bottomColor);
@@ -667,7 +667,7 @@ namespace ImGui.GraphicsImplementation
             cmd.ClipRect = Rect.Big;
             cmd.TextureData = primitive.Texture;
             this.ImageMesh.CommandBuffer.Add(cmd);
-            
+
             this.ImageMesh.PrimReserve(6, 4);
             AddImageRect(a, b, uv0, uv1, col);
         }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using ImGui.Common;
 using ImGui.Common.Primitive;
-using ImGui.Input;
 
 namespace ImGui
 {

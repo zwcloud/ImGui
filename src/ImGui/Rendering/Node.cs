@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
+using ImGui.GraphicsImplementation;
 
 namespace ImGui.Rendering
 {
@@ -58,6 +59,11 @@ namespace ImGui.Rendering
         {
             this.Id = id;
             this.RuleSet = new StyleRuleSet();
+        }
+
+        public Node(int id, Rect rect) : this(id)
+        {
+            this.Rect = rect;
         }
 
         /// <summary>
@@ -125,7 +131,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// Make this node a (default-sized) layout entry.
         /// </summary>
-        public void AttachLayoutEntry() => AttachLayoutEntry(Size.Zero);
+        public void AttachLayoutEntry() => this.AttachLayoutEntry(Size.Zero);
 
         /// <summary>
         /// Layout the sub-tree rooted at this node: the root node is placed at the specified position.
@@ -155,7 +161,7 @@ namespace ImGui.Rendering
 
         public List<Node> Children { get; set; }
 
-        public int ChildCount => Children.Count;
+        public int ChildCount => this.Children.Count;
 
         public IEnumerator<ILayoutEntry> GetEnumerator()
         {
@@ -172,7 +178,7 @@ namespace ImGui.Rendering
             get
             {
                 //already deactived
-                if (!ActiveSelf)
+                if (!this.ActiveSelf)
                 {
                     return false;
                 }
@@ -397,7 +403,7 @@ namespace ImGui.Rendering
             }
         }
 
-        public void Draw(IPrimitiveRenderer renderer, MeshList meshList) => Draw(renderer, Vector.Zero, meshList);
+        public void Draw(IPrimitiveRenderer renderer, MeshList meshList) => this.Draw(renderer, Vector.Zero, meshList);
 
         /// <summary>
         /// Redraw the node's primitive.
@@ -410,7 +416,7 @@ namespace ImGui.Rendering
             //TODO refactor this: extract DrawPrimitve method
 
             //TEMP regard all renderer as the built-in renderer
-            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            var r = renderer as BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
 
             switch (this.Primitive)
@@ -640,5 +646,45 @@ namespace ImGui.Rendering
 
         private bool activeSelf = true;
         private GUIState state = GUIState.Normal;
+
+        /// <summary>
+        /// Is this node clipped?
+        /// </summary>
+        public bool IsClipped(Rect clipRect)
+        {
+            if (clipRect.IntersectsWith(this.Rect))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Get the clip rect that applies to this node.
+        /// </summary>
+        /// <param name="rootClipRect">The root clip rect: client area of the window</param>
+        public Rect GetClipRect(Rect rootClipRect)
+        {
+            Rect clipRect;
+            if (this.Parent != null)
+            {
+                var parentNode = this.Parent;
+                if (this.UseBoxModel)
+                {
+                    clipRect = Utility.GetContentBox(parentNode.Rect, parentNode.RuleSet);
+                }
+                else
+                {
+                    clipRect = parentNode.Rect;
+                }
+                clipRect.Intersect(rootClipRect);
+            }
+            else
+            {
+                clipRect = rootClipRect;
+            }
+
+            return clipRect;
+        }
     }
 }

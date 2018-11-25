@@ -173,8 +173,5 @@ TODO:
 * Clip shape: only rectangle; do we need more?
 
 There are two kinds of clipping:
-
-* For non-layout-ed nodes: the clip rectangle is the Window(the window control `GUI.Begin`/`GUI.End`).
-* For layout-ed nodes:
-  - a node using box-model: all children of this node will be clipped by the content-box of this node.
-  - a node not using box-model: all children of this node will be clipped by `node.Rect`.
+* a node using box-model: all children of this node will be clipped by the content-box of this node.
+* a node not using box-model: all children of this node will be clipped by `node.Rect`.

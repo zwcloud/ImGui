@@ -14,6 +14,9 @@ namespace ImGui
 
     internal class StyleRuleSet
     {
+        //for test
+        public Node refNode;
+
         private readonly List<IStyleRule> rules;
         private GUIState currentState = GUIState.Normal;
 
@@ -307,8 +310,17 @@ namespace ImGui
         #endregion Border
 
         #region Outline
-        public double OutlineWidth => Get<double>(GUIStyleName.OutlineWidth);
-        public Color OutlineColor => Get<Color>(GUIStyleName.OutlineColor);
+        public double OutlineWidth
+        {
+            get => this.Get<double>(GUIStyleName.OutlineWidth);
+            set => this.Set<double>(GUIStyleName.OutlineWidth, value);
+        }
+
+        public Color OutlineColor
+        {
+            get => this.Get<Color>(GUIStyleName.OutlineColor);
+            set => this.Set<Color>(GUIStyleName.OutlineColor, value);
+        }
         #endregion Outline
 
         public Color BackgroundColor

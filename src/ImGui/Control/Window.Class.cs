@@ -205,6 +205,9 @@ namespace ImGui
                 node.AttachLayoutGroup(true);
                 node.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 node.UseBoxModel = true;
+                node.RuleSet.OutlineWidth = 1;
+                node.RuleSet.OutlineColor = Color.Red;
+                node.RuleSet.refNode = node;
                 this.ClientAreaNode = node;
                 this.WindowContainer.AppendChild(node);
             }
