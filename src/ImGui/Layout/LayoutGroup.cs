@@ -181,71 +181,45 @@ namespace ImGui.Rendering
                     return;
                 }
 
-                var cellSpacingWidth = this.node.RuleSet.CellSpacingHorizontal * (childCount - 1);
-                if(cellSpacingWidth >= this.ContentWidth)
+                var cellSpacing = this.node.RuleSet.CellSpacingHorizontal;
+                if (this.ContentWidth < this.node.RuleSet.CellSpacingHorizontal)//the content box is too small to hold any child
                 {
-                    throw new LayoutException(
-                        $"Group<{this.node}> doesn't have enough width for horizontal-cell-spacing<{this.node.RuleSet.CellSpacingHorizontal}> with {childCount} children.");
+                    return;
                 }
 
-                //FIXME widthWithoutCellSpacing is a fake one:
-                //the actual widthWithoutCellSpacing is calculated according to
-                //the widths of children and their sizing type(default, fixed or stretched)
-                var widthWithoutCellSpacing = this.ContentWidth - cellSpacingWidth;
-
-                double minWidthOfEntries = 0;
-                double minStretchedWidth = 0;
+                //get the total size of fixed/default-sized, namely known-sized, children
+                var knownSizedChildrenWidth = 0.0;
                 foreach (var entry in this.group)
                 {
                     if (!entry.ActiveSelf)
                     {
                         continue;
                     }
-                    if (entry.RuleSet.HorizontallyStretched)
+                    if(entry.RuleSet.IsFixedWidth)
                     {
-                        var defaultWidth = entry.LayoutEntry.GetDefaultWidth();
-                        minWidthOfEntries += defaultWidth;
-                        minStretchedWidth += defaultWidth;
+                        knownSizedChildrenWidth += entry.RuleSet.MinWidth;
+                        knownSizedChildrenWidth += cellSpacing;
                     }
-                    else if(entry.RuleSet.IsFixedWidth)
+                    else if(entry.RuleSet.IsDefaultWidth)
                     {
-                        minWidthOfEntries += entry.RuleSet.MinWidth;
-                    }
-                    else
-                    {
-                        minWidthOfEntries += entry.LayoutEntry.GetDefaultWidth();
+                        knownSizedChildrenWidth += entry.LayoutEntry.GetDefaultWidth();
+                        knownSizedChildrenWidth += cellSpacing;
                     }
                 }
 
-                if(minWidthOfEntries > widthWithoutCellSpacing)//overflow
+                var spaceLeftForStretchedChildren = this.ContentWidth - knownSizedChildrenWidth;
+                if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be hidden
                 {
-                    var factor = 0;
                     foreach (var entry in this.group)
                     {
                         if (!entry.ActiveSelf)
                         {
                             continue;
                         }
-                        if (entry.RuleSet.HorizontallyStretched)
+                        if(entry.RuleSet.IsFixedWidth || entry.RuleSet.IsDefaultWidth)
                         {
-                            factor += entry.RuleSet.HorizontalStretchFactor;
+                            entry.LayoutEntry.CalcWidth();
                         }
-                    }
-                    var unit = minStretchedWidth / factor;
-                    // change all HorizontallyStretched entries to fixed width
-                    foreach (var entry in this.group)
-                    {
-                        if (!entry.ActiveSelf)
-                        {
-                            continue;
-                        }
-                        if (entry.RuleSet.HorizontallyStretched)
-                        {
-                            entry.RuleSet.MinWidth = entry.RuleSet.MaxWidth = unit * entry.RuleSet.HorizontalStretchFactor;
-                            entry.RuleSet.HorizontalStretchFactor = 0;
-                        }
-
-                        entry.LayoutEntry.CalcWidth();
                     }
                 }
                 else
@@ -269,8 +243,7 @@ namespace ImGui.Rendering
 
                     if (factor > 0)
                     {
-                        var stretchedWidth = widthWithoutCellSpacing - minWidthOfEntries + minStretchedWidth;
-                        var unit = stretchedWidth / factor;
+                        var unit = spaceLeftForStretchedChildren / factor;
                         // calculate the width of stretched children
                         foreach (var entry in this.group)
                         {
@@ -378,67 +351,45 @@ namespace ImGui.Rendering
                     return;
                 }
 
-                var cellSpacingHeight = (childCount - 1) * this.node.RuleSet.CellSpacingVertical;
-                if(cellSpacingHeight >= this.ContentWidth)
+                var cellSpacing = this.node.RuleSet.CellSpacingVertical;
+                if (this.ContentHeight < this.node.RuleSet.CellSpacingVertical)//the content box is too small to hold any child
                 {
-                    throw new LayoutException(
-                        $"Group<{this.node}> doesn't have enough height for vertical-cell-spacing<{this.node.RuleSet.CellSpacingVertical}> with {childCount} children.");
+                    return;
                 }
 
-                var heightWithoutCellSpacing = this.ContentHeight - cellSpacingHeight;
-
-                double minHeightOfEntries = 0;
-                double minStretchedHeight = 0;
+                //get the total size of fixed/default-sized, namely known-sized, children
+                var knownSizedChildrenHeight = 0.0;
                 foreach (var entry in this.group)
                 {
                     if (!entry.ActiveSelf)
                     {
                         continue;
                     }
-                    if (entry.RuleSet.VerticallyStretched)
+                    if(entry.RuleSet.IsFixedHeight)
                     {
-                        var defaultHeight = entry.LayoutEntry.GetDefaultHeight();
-                        minHeightOfEntries += defaultHeight;
-                        minStretchedHeight += defaultHeight;
+                        knownSizedChildrenHeight += entry.RuleSet.MinHeight;
+                        knownSizedChildrenHeight += cellSpacing;
                     }
-                    else if (entry.RuleSet.IsFixedHeight)
+                    else if(entry.RuleSet.IsDefaultHeight)
                     {
-                        minHeightOfEntries += entry.RuleSet.MinHeight;
-                    }
-                    else
-                    {
-                        minHeightOfEntries += entry.LayoutEntry.GetDefaultHeight();
+                        knownSizedChildrenHeight += entry.LayoutEntry.GetDefaultHeight();
+                        knownSizedChildrenHeight += cellSpacing;
                     }
                 }
-                if (minHeightOfEntries > heightWithoutCellSpacing)//overflow
-                {
-                    var factor = 0;
-                    foreach (var entry in this.group)
-                    {
-                        if (!entry.ActiveSelf)
-                        {
-                            continue;
-                        }
-                        if (entry.RuleSet.VerticallyStretched)
-                        {
-                            factor += entry.RuleSet.VerticalStretchFactor;
-                        }
-                    }
-                    var unit = minStretchedHeight / factor;
-                    // change all VerticallyStretched entries to fixed height
-                    foreach (var entry in this.group)
-                    {
-                        if (!entry.ActiveSelf)
-                        {
-                            continue;
-                        }
-                        if (entry.RuleSet.VerticallyStretched)
-                        {
-                            entry.RuleSet.MinHeight = entry.RuleSet.MaxHeight = unit * entry.RuleSet.VerticalStretchFactor;
-                            entry.RuleSet.VerticalStretchFactor = 0;
-                        }
 
-                        entry.LayoutEntry.CalcHeight();
+                var spaceLeftForStretchedChildren = this.ContentHeight - knownSizedChildrenHeight;
+                if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be hidden
+                {
+                    foreach (var entry in this.group)
+                    {
+                        if (!entry.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        if(entry.RuleSet.IsFixedHeight || entry.RuleSet.IsDefaultHeight)
+                        {
+                            entry.LayoutEntry.CalcHeight();
+                        }
                     }
                 }
                 else
@@ -462,8 +413,7 @@ namespace ImGui.Rendering
 
                     if (factor > 0)
                     {
-                        var stretchedHeight = heightWithoutCellSpacing - minHeightOfEntries + minStretchedHeight;
-                        var unit = stretchedHeight / factor;
+                        var unit = spaceLeftForStretchedChildren / factor;
                         // calculate the height of stretched children
                         foreach (var entry in this.group)
                         {
@@ -478,7 +428,6 @@ namespace ImGui.Rendering
                         }
                     }
                 }
-
             }
             else // horizontal group
             {
