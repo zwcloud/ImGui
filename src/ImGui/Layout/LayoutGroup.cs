@@ -18,6 +18,9 @@ namespace ImGui.Rendering
         /// </summary>
         public override double ContentHeight { get; set; }
 
+        public bool HorizontallyOverflow { get; set; }
+        public bool VerticallyOverflow { get; set; }
+
         private ILayoutGroup group;
 
         public LayoutGroup(ILayoutGroup group, bool isVertical) : base(group, Size.Zero)
@@ -195,12 +198,12 @@ namespace ImGui.Rendering
                     {
                         continue;
                     }
-                    if(entry.RuleSet.IsFixedWidth)
+                    if (entry.RuleSet.IsFixedWidth)
                     {
                         knownSizedChildrenWidth += entry.RuleSet.MinWidth;
                         knownSizedChildrenWidth += cellSpacing;
                     }
-                    else if(entry.RuleSet.IsDefaultWidth)
+                    else if (entry.RuleSet.IsDefaultWidth)
                     {
                         knownSizedChildrenWidth += entry.LayoutEntry.GetDefaultWidth();
                         knownSizedChildrenWidth += cellSpacing;
@@ -210,13 +213,14 @@ namespace ImGui.Rendering
                 var spaceLeftForStretchedChildren = this.ContentWidth - knownSizedChildrenWidth;
                 if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be hidden
                 {
+                    this.HorizontallyOverflow = true;
                     foreach (var entry in this.group)
                     {
                         if (!entry.ActiveSelf)
                         {
                             continue;
                         }
-                        if(entry.RuleSet.IsFixedWidth || entry.RuleSet.IsDefaultWidth)
+                        if (entry.RuleSet.IsFixedWidth || entry.RuleSet.IsDefaultWidth)
                         {
                             entry.LayoutEntry.CalcWidth();
                         }
@@ -224,6 +228,7 @@ namespace ImGui.Rendering
                 }
                 else
                 {
+                    this.HorizontallyOverflow = false;
                     var factor = 0;
                     foreach (var entry in this.group)
                     {
@@ -365,12 +370,12 @@ namespace ImGui.Rendering
                     {
                         continue;
                     }
-                    if(entry.RuleSet.IsFixedHeight)
+                    if (entry.RuleSet.IsFixedHeight)
                     {
                         knownSizedChildrenHeight += entry.RuleSet.MinHeight;
                         knownSizedChildrenHeight += cellSpacing;
                     }
-                    else if(entry.RuleSet.IsDefaultHeight)
+                    else if (entry.RuleSet.IsDefaultHeight)
                     {
                         knownSizedChildrenHeight += entry.LayoutEntry.GetDefaultHeight();
                         knownSizedChildrenHeight += cellSpacing;
@@ -386,7 +391,7 @@ namespace ImGui.Rendering
                         {
                             continue;
                         }
-                        if(entry.RuleSet.IsFixedHeight || entry.RuleSet.IsDefaultHeight)
+                        if (entry.RuleSet.IsFixedHeight || entry.RuleSet.IsDefaultHeight)
                         {
                             entry.LayoutEntry.CalcHeight();
                         }
@@ -460,7 +465,7 @@ namespace ImGui.Rendering
                 var childX = 0d;
                 foreach (var entry in this.group)
                 {
-                    if (!entry.ActiveSelf)
+                    if (!entry.ActiveSelf || entry.Width < 0.1)
                     {
                         continue;
                     }
@@ -484,65 +489,81 @@ namespace ImGui.Rendering
             }
             else
             {
-                double nextX;
-
-                var childWidthWithCellSpcaing = 0d;
-                var childWidthWithoutCellSpcaing = 0d;
-                foreach (var entry in this.group)
+                double nextX;//position x of first child
+                if (this.HorizontallyOverflow)//overflow happens so there is no room for to align children
                 {
-                    if (!entry.ActiveSelf)
+                    nextX = x + this.BorderLeft + this.PaddingLeft;
+
+                    foreach (var entry in this.group)
                     {
-                        continue;
+                        if (!entry.ActiveSelf || entry.Width < 0.1)
+                        {
+                            continue;
+                        }
+                        entry.LayoutEntry.SetX(nextX);
+                        nextX += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
                     }
-                    childWidthWithCellSpcaing += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
-                    childWidthWithoutCellSpcaing += entry.Width;
                 }
-                childWidthWithCellSpcaing -= this.node.RuleSet.CellSpacingVertical;
-
-                switch (this.node.RuleSet.AlignmentHorizontal)
+                else
                 {
-                    case Alignment.Start:
-                        nextX = x + this.BorderLeft + this.PaddingLeft;
-                        break;
-                    case Alignment.Center:
-                        nextX = x + this.BorderLeft + this.PaddingLeft + (this.ContentWidth - childWidthWithCellSpcaing) / 2;
-                        break;
-                    case Alignment.End:
-                        nextX = x + this.node.Width - this.BorderRight - this.PaddingRight - childWidthWithCellSpcaing;
-                        break;
-                    case Alignment.SpaceAround:
-                        nextX = x + this.BorderLeft + this.PaddingLeft +
-                                (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.group.ChildCount + 1);
-                        break;
-                    case Alignment.SpaceBetween:
-                        nextX = x + this.BorderLeft + this.PaddingLeft;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                foreach (var entry in this.group)
-                {
-                    if (!entry.ActiveSelf)
+                    var childWidthWithCellSpcaing = 0d;
+                    var childWidthWithoutCellSpcaing = 0d;
+                    foreach (var entry in this.group)
                     {
-                        continue;
+                        if (!entry.ActiveSelf || entry.Width < 0.1)
+                        {
+                            continue;
+                        }
+                        childWidthWithCellSpcaing += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
+                        childWidthWithoutCellSpcaing += entry.Width;
                     }
-                    entry.LayoutEntry.SetX(nextX);
+                    childWidthWithCellSpcaing -= this.node.RuleSet.CellSpacingVertical;
+
                     switch (this.node.RuleSet.AlignmentHorizontal)
                     {
                         case Alignment.Start:
+                            nextX = x + this.BorderLeft + this.PaddingLeft;
+                            break;
                         case Alignment.Center:
+                            nextX = x + this.BorderLeft + this.PaddingLeft + (this.ContentWidth - childWidthWithCellSpcaing) / 2;
+                            break;
                         case Alignment.End:
-                            nextX += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
+                            nextX = x + this.node.Width - this.BorderRight - this.PaddingRight - childWidthWithCellSpcaing;
                             break;
                         case Alignment.SpaceAround:
-                            nextX += entry.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.group.ChildCount + 1);
+                            nextX = x + this.BorderLeft + this.PaddingLeft +
+                                    (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.group.ChildCount + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextX += entry.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.group.ChildCount - 1);
+                            nextX = x + this.BorderLeft + this.PaddingLeft;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
+                    }
+
+                    foreach (var entry in this.group)
+                    {
+                        if (!entry.ActiveSelf || entry.Width < 0.1)
+                        {
+                            continue;
+                        }
+                        entry.LayoutEntry.SetX(nextX);
+                        switch (this.node.RuleSet.AlignmentHorizontal)
+                        {
+                            case Alignment.Start:
+                            case Alignment.Center:
+                            case Alignment.End:
+                                nextX += entry.Width + this.node.RuleSet.CellSpacingHorizontal;
+                                break;
+                            case Alignment.SpaceAround:
+                                nextX += entry.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.group.ChildCount + 1);
+                                break;
+                            case Alignment.SpaceBetween:
+                                nextX += entry.Width + (this.ContentWidth - childWidthWithoutCellSpcaing) / (this.group.ChildCount - 1);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                     }
                 }
             }

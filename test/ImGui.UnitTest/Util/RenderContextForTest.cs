@@ -32,7 +32,7 @@ namespace ImGui.UnitTest
 
         public void Clear()
         {
-            this.Renderer.Clear(Color.FrameBg);
+            this.Renderer.Clear(Color.White);
         }
 
         public void DrawShapeMesh(Mesh shapeMesh)
