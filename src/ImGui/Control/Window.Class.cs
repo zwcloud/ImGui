@@ -8,6 +8,7 @@ using ImGui.GraphicsAbstraction;
 using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
+using ImGui.Style;
 
 namespace ImGui
 {
@@ -179,7 +180,8 @@ namespace ImGui
                 icon.Primitive = new ImagePrimitive(@"assets/images/logo.png");
 
                 var title = new Node(this.GetID("title"),"title");
-                title.AttachLayoutEntry(Size.Zero);
+                var contentSize = title.RuleSet.CalcSize(this.Name, GUIState.Normal);
+                title.AttachLayoutEntry(contentSize);
                 title.RuleSet.ApplyOptions(GUILayout.Height(20));
                 title.UseBoxModel = false;
                 title.Primitive = new TextPrimitive(this.Name);
