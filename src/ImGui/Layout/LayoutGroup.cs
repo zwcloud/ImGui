@@ -385,6 +385,7 @@ namespace ImGui.Rendering
                 var spaceLeftForStretchedChildren = this.ContentHeight - knownSizedChildrenHeight;
                 if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be hidden
                 {
+                    this.VerticallyOverflow = true;
                     foreach (var entry in this.group)
                     {
                         if (!entry.ActiveSelf)
@@ -399,6 +400,7 @@ namespace ImGui.Rendering
                 }
                 else
                 {
+                    this.VerticallyOverflow = false;
                     var factor = 0;
                     foreach (var entry in this.group)
                     {
@@ -574,65 +576,81 @@ namespace ImGui.Rendering
             this.node.Y = y;
             if (this.IsVertical)
             {
-                double nextY;
-
-                var childHeightWithCellSpcaing = 0d;
-                var childHeightWithoutCellSpcaing = 0d;
-                foreach (var entry in this.group)
+                double nextY;//position y of first child
+                if (this.VerticallyOverflow)//overflow happens so there is no room for to align children
                 {
-                    if (!entry.ActiveSelf)
+                    nextY = y + this.BorderTop + this.PaddingTop;
+
+                    foreach (var entry in this.group)
                     {
-                        continue;
+                        if (!entry.ActiveSelf || entry.Height < 0.1)
+                        {
+                            continue;
+                        }
+                        entry.LayoutEntry.SetY(nextY);
+                        nextY += entry.Height + this.node.RuleSet.CellSpacingVertical;
                     }
-                    childHeightWithCellSpcaing += entry.Height + this.node.RuleSet.CellSpacingVertical;
-                    childHeightWithoutCellSpcaing += entry.Height;
                 }
-                childHeightWithCellSpcaing -= this.node.RuleSet.CellSpacingVertical;
-
-                switch (this.node.RuleSet.AlignmentVertical)
+                else
                 {
-                    case Alignment.Start:
-                        nextY = y + this.BorderTop + this.PaddingTop;
-                        break;
-                    case Alignment.Center:
-                        nextY = y + this.BorderTop + this.PaddingTop + (this.ContentHeight - childHeightWithCellSpcaing) / 2;
-                        break;
-                    case Alignment.End:
-                        nextY = y + this.node.Height - this.BorderBottom - this.PaddingBottom - childHeightWithCellSpcaing;
-                        break;
-                    case Alignment.SpaceAround:
-                        nextY = y + this.BorderTop + this.PaddingTop +
-                                (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.group.ChildCount + 1);
-                        break;
-                    case Alignment.SpaceBetween:
-                        nextY = y + this.BorderTop + this.PaddingTop;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                foreach (var entry in this.group)
-                {
-                    if (!entry.ActiveSelf)
+                    var childHeightWithCellSpcaing = 0d;
+                    var childHeightWithoutCellSpcaing = 0d;
+                    foreach (var entry in this.group)
                     {
-                        continue;
+                        if (!entry.ActiveSelf || entry.Height < 0.1)
+                        {
+                            continue;
+                        }
+                        childHeightWithCellSpcaing += entry.Height + this.node.RuleSet.CellSpacingVertical;
+                        childHeightWithoutCellSpcaing += entry.Height;
                     }
-                    entry.LayoutEntry.SetY(nextY);
+                    childHeightWithCellSpcaing -= this.node.RuleSet.CellSpacingVertical;
+
                     switch (this.node.RuleSet.AlignmentVertical)
                     {
                         case Alignment.Start:
+                            nextY = y + this.BorderTop + this.PaddingTop;
+                            break;
                         case Alignment.Center:
+                            nextY = y + this.BorderTop + this.PaddingTop + (this.ContentHeight - childHeightWithCellSpcaing) / 2;
+                            break;
                         case Alignment.End:
-                            nextY += entry.Height + this.node.RuleSet.CellSpacingVertical;
+                            nextY = y + this.node.Height - this.BorderBottom - this.PaddingBottom - childHeightWithCellSpcaing;
                             break;
                         case Alignment.SpaceAround:
-                            nextY += entry.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.group.ChildCount + 1);
+                            nextY = y + this.BorderTop + this.PaddingTop +
+                                    (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.group.ChildCount + 1);
                             break;
                         case Alignment.SpaceBetween:
-                            nextY += entry.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.group.ChildCount - 1);
+                            nextY = y + this.BorderTop + this.PaddingTop;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
+                    }
+
+                    foreach (var entry in this.group)
+                    {
+                        if (!entry.ActiveSelf || entry.Height < 0.1)
+                        {
+                            continue;
+                        }
+                        entry.LayoutEntry.SetY(nextY);
+                        switch (this.node.RuleSet.AlignmentVertical)
+                        {
+                            case Alignment.Start:
+                            case Alignment.Center:
+                            case Alignment.End:
+                                nextY += entry.Height + this.node.RuleSet.CellSpacingVertical;
+                                break;
+                            case Alignment.SpaceAround:
+                                nextY += entry.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.group.ChildCount + 1);
+                                break;
+                            case Alignment.SpaceBetween:
+                                nextY += entry.Height + (this.ContentHeight - childHeightWithoutCellSpcaing) / (this.group.ChildCount - 1);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                     }
                 }
             }

@@ -99,6 +99,101 @@ namespace ImGui.UnitTest.Layout
                 CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(HorizontallyOverflow4)}.png");
             }
 
+            [Fact]
+            public void VerticallyOverflow1()
+            {
+                Node group = new Node(0);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Height(100));
+
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Height(50).Width(20));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Height(60).Width(20));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.Height(30).Width(20));
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+                group.AppendChild(item3);
+
+                group.Layout();
+
+                item1.RuleSet.BorderColor = (Color.Red, Color.Red, Color.Red, Color.Red);
+                item2.RuleSet.BorderColor = (Color.Green, Color.Green, Color.Green, Color.Green);
+                item3.RuleSet.BorderColor = (Color.Blue, Color.Blue, Color.Blue, Color.Blue);//item3 should be hidden
+
+                CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(VerticallyOverflow1)}.png");
+            }
+
+            [Fact]
+            public void VerticallyOverflow2()
+            {
+                Node group = new Node(0);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Height(100));
+                group.RuleSet.AlignmentVertical = Alignment.Center;
+
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Height(50).Width(20));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Height(60).Width(20));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.Height(30).Width(20));
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+                group.AppendChild(item3);
+
+                group.Layout();
+
+                item1.RuleSet.BorderColor = (Color.Red, Color.Red, Color.Red, Color.Red);
+                item2.RuleSet.BorderColor = (Color.Green, Color.Green, Color.Green, Color.Green);
+                item3.RuleSet.BorderColor = (Color.Blue, Color.Blue, Color.Blue, Color.Blue);//item3 should be hidden
+
+                CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(VerticallyOverflow2)}.png");
+            }
+
+            [Fact]
+            public void VerticallyOverflow3()
+            {
+                Node group = new Node(0);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Height(100));
+                group.RuleSet.AlignmentVertical = Alignment.SpaceAround;
+
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Height(50).Width(20));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Height(60).Width(20));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.Height(30).Width(20));
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+                group.AppendChild(item3);
+
+                group.Layout();
+
+                item1.RuleSet.BorderColor = (Color.Red, Color.Red, Color.Red, Color.Red);
+                item2.RuleSet.BorderColor = (Color.Green, Color.Green, Color.Green, Color.Green);
+                item3.RuleSet.BorderColor = (Color.Blue, Color.Blue, Color.Blue, Color.Blue);//item3 should be hidden
+
+                CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(VerticallyOverflow3)}.png");
+            }
+
+            [Fact]
+            public void VerticallyOverflow4()
+            {
+                Node group = new Node(0);
+                group.AttachLayoutGroup(true);
+                group.RuleSet.ApplyOptions(GUILayout.Height(100));
+                group.RuleSet.AlignmentVertical = Alignment.SpaceAround;
+
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Height(50).Width(20));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).Width(20));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.Height(60).Width(20));
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+                group.AppendChild(item3);
+
+                group.Layout();
+
+                item1.RuleSet.BorderColor = (Color.Red, Color.Red, Color.Red, Color.Red);
+                item2.RuleSet.BorderColor = (Color.Green, Color.Green, Color.Green, Color.Green);//item2 should be hidden: no green rect displayed
+                item3.RuleSet.BorderColor = (Color.Blue, Color.Blue, Color.Blue, Color.Blue);
+
+                CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(VerticallyOverflow4)}.png");
+            }
+
         }
     }
 }
