@@ -35,6 +35,10 @@ namespace ImGui
             skin.InitLabelStyles(label);
             skin.styles[GUIControlName.Label] = label;
 
+            StyleRuleSet box = new StyleRuleSet();
+            skin.InitBoxStyles(box);
+            skin.styles[GUIControlName.Box] = box;
+
             //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
             //skin.InitTextBoxStyles();
@@ -65,12 +69,12 @@ namespace ImGui
 
         /*
          * # Field and label design
-         * 
+         *
          * single-line:
          * +-----------+         +---------+
          * | ~ field ~ | spacing |  label  |
          * +-----------+         +---------+
-         * 
+         *
          * multiple-line:
          * +-----------+         +---------+
          * | ~ field ~ | spacing |  label  |
@@ -79,7 +83,7 @@ namespace ImGui
          * |           |
          * |           |
          * +-----------+
-         * 
+         *
          * Field is horizontally stretched. Spacing and label is fix-sized.
          */
 
