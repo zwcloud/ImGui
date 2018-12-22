@@ -1,4 +1,4 @@
-__Note__: ImGui is being heavily refactored to employ a render-tree based architecture, so most features described below are not working for now. If you are interested in a working ImGui implementation, check out [the old version](https://github.com/zwcloud/ImGui/tree/80ab55b73c8857a328949ef5e13415d202f0c34d), that rebuilds and repaints everything every frame.
+__Note__: [ImGui is being heavily refactored to employ a render-tree based architecture](https://github.com/zwcloud/ImGui/projects/6), so most features described below are not working for now. If you are interested in a working ImGui implementation, check out [the old version](https://github.com/zwcloud/ImGui/tree/80ab55b73c8857a328949ef5e13415d202f0c34d), that rebuilds and repaints everything every frame.
 
 Hello ImGui,
 ============
@@ -9,9 +9,7 @@ Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](http
 
 Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms). MAC and iphone are not supported because I don't have them.
 
-Please be informed that ImGui is just released. There's a lack of usability and documentation. But all will be improved gradually.
-
-Please note that the API is unstable and will change at any time.
+At present, ImGui lacks usability but will be improved gradually.
 
 ## Get Started
 
