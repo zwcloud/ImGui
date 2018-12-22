@@ -43,7 +43,7 @@ namespace ImGui
             textPrimitive.Text = text;
 
             // rect
-            node.Rect = window.GetRect(id);
+            node.Rect = window.GetRect(rect);
         }
 
         internal static void Box(Rect rect, string text) => Box(rect, text, null);
@@ -98,14 +98,12 @@ namespace ImGui
         {
             StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
             builder
-                .Border(1.0, GUIState.Normal)
-                .Padding(5.0, GUIState.Normal)
-                .BorderColor(Color.Rgb(166, 166, 166), GUIState.Normal)
-                .BackgroundColor(Color.Rgb(0x65a9d7), GUIState.Normal)
-                .BackgroundGradient(Gradient.TopBottom)
-                .AlignmentVertical(Alignment.Center, GUIState.Normal)
-                .AlignmentHorizontal(Alignment.Center, GUIState.Normal)
-                .GradientTopDownColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal);
+                .Border(1.0)
+                .Padding(5.0)
+                .BorderColor(Color.Black)
+                .BackgroundColor(Color.White)
+                .AlignmentVertical(Alignment.Center)
+                .AlignmentHorizontal(Alignment.Center);
         }
     }
 }

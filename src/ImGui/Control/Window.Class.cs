@@ -102,6 +102,7 @@ namespace ImGui
 
             this.NodeTreeRoot = new Node(this.ID, "root");
             this.NodeTreeRoot.Children = new List<Node>();
+            this.NodeTreeRoot.Rect = new Rect(0, 0, size);
             this.RenderTree = new RenderTree(this.ID, position, size);
 
             this.IDStack.Push(this.ID);
@@ -541,6 +542,7 @@ namespace ImGui
             this.FullSize = new_size;
             this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Width(new_size.Width));
             this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Height(new_size.Height));
+            this.NodeTreeRoot.Rect = new Rect(0, 0, new_size);
         }
 
         private Point RenderTreeNodesPivotPoint => this.Position;
