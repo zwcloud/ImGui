@@ -457,6 +457,13 @@ namespace ImGui
             set => Set<Color>(GUIStyleName.FontColor, value);
         }
 
+        public double GetLineHeight()
+        {
+            var lineHeight = OSImplentation.TypographyTextContext.GetLineHeight(this.FontFamily, this.FontSize);
+            lineHeight += this.PaddingVertical + this.BorderVertical;
+            return lineHeight;
+        }
+
         #endregion
 
         #endregion

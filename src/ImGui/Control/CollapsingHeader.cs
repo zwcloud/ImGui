@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -9,69 +11,58 @@ namespace ImGui
         /// </summary>
         /// <param name="text">header text</param>
         /// <param name="open">opened</param>
+        /// <param name="options">style options</param>
         /// <returns>true when opened</returns>
-        /// <remarks> It is horizontally stretched (factor 1).</remarks>
-        public static bool CollapsingHeader(string text, ref bool open, float scale = 1)
+        /// <remarks> It is always horizontally stretched (factor 1).</remarks>
+        public static bool CollapsingHeader(string text, ref bool open, LayoutOptions? options)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
-            var id = window.GetID(text);
+            //get or create the root node
+            int id = window.GetID(text);
+            var container = window.RenderTree.CurrentContainer;
+            Node node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
+            var displayText = (open ? "-" : "+") + text;
+            if (node == null)
+            {
+                //create nodes
+                node = new Node(id, $"CollapsingHeader<{text}>");
+                node.AttachLayoutEntry();
+                container.AppendChild(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.CollapsingHeader]);
+                node.Primitive = new TextPrimitive(displayText);
+            }
+            node.RuleSet.ApplyOptions(options);
+            node.RuleSet.ApplyOptions(Height(node.RuleSet.GetLineHeight()));
+            node.ActiveSelf = true;
 
-            // style apply
-            var style = GUIStyle.Basic;
-            style.PushStretchFactor(false, 1);//+1, always expand width
-            style.PushPadding(2);//4
+            var textPrimitive = node.Primitive as TextPrimitive;
+            Debug.Assert(textPrimitive != null);
+            textPrimitive.Text = displayText;
 
             // rect
-            var height = style.GetLineHeight();
             Rect rect = window.GetRect(id);
-            if (rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
-            {
-                style.PopStyle();//-1
-                style.PopStyle(4);//-4
-                return false;
-            }
 
             // interact
-            bool hovered, held;
-            bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, ButtonFlags.PressedOnClick);
+            var pressed = GUIBehavior.ButtonBehavior(rect, id, out var hovered, out var held, ButtonFlags.PressedOnClick);
             if (pressed)
             {
                 open = !open;
+                node.State = open ? GUIState.Active : GUIState.Normal;
             }
-
-            // render
-            {
-                DrawList d = window.DrawList;
-                style.PushBgColor(new Color(0.40f, 0.40f, 0.90f, 0.45f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-                style.PushBgColor(new Color(0.45f, 0.45f, 0.90f, 0.80f), GUIState.Hover);//+1
-                style.PushBgColor(new Color(0.53f, 0.53f, 0.87f, 0.80f), GUIState.Active);//+1
-                var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-                Color col = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-                d.RenderFrame(rect.Min, rect.Max, col, false, 0);
-                style.PopStyle(3);
-                d.RenderCollapseTriangle(rect.Min, open, rect.Height, Color.Black, scale);
-                rect.X += rect.Height;
-                var delta = rect.Width - rect.Height;
-                if (delta > 0)
-                {
-                    rect.Width = delta;
-                }
-                d.DrawText(rect, text, style, state);
-            }
-
-            // style restore
-            style.PopStyle();//-1
-            style.PopStyle(4);//-4
 
             return open;
         }
 
+        public static bool CollapsingHeader(string text, ref bool open) => CollapsingHeader(text, ref open, null);
+
     }
 
+    #if false //old drawlist code, to be integrated to PathPrimitive
     internal static partial class DrawListExtension
     {
         public static void RenderCollapseTriangle(this DrawList drawList, Point pMin, bool isOpen, double height, Color color, double scale = 1)
@@ -96,6 +87,19 @@ namespace ImGui
             }
 
             drawList.AddTriangleFilled(a, b, c, color);
+        }
+    }
+    #endif
+
+    internal partial class GUISkin
+    {
+        private void InitCollapsingHeaderStyles(StyleRuleSet button, out StyleRuleSet ruleSet)
+        {
+            ruleSet = new StyleRuleSet();
+            ruleSet.Replace(button);
+            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Normal);
+            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Hover);
+            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Active);
         }
     }
 }

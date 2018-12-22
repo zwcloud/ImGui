@@ -39,6 +39,9 @@ namespace ImGui
             skin.InitBoxStyles(box);
             skin.styles[GUIControlName.Box] = box;
 
+            skin.InitCollapsingHeaderStyles(button, out var collapsingHeader);
+            skin.styles[GUIControlName.CollapsingHeader] = collapsingHeader;
+
             //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
             //skin.InitTextBoxStyles();
