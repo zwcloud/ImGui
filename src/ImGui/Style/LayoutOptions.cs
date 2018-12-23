@@ -5,6 +5,7 @@ namespace ImGui
 {
     public struct LayoutOptions
     {
+        //TODO stateful options
         //TODO implement min/max width/height
         //TODO enable per-entry or per-group alignment adjustment
         internal double? MinWidth;
@@ -17,6 +18,7 @@ namespace ImGui
         internal Color? fontColor;
         internal double? fontSize;
         internal string fontFamily;
+        internal TextAlignment? textAlignment;
 
         public LayoutOptions Width(double width)
         {
@@ -76,6 +78,11 @@ namespace ImGui
             return this;
         }
 
+        public LayoutOptions TextAlignment(TextAlignment textAlignment)
+        {
+            this.textAlignment = textAlignment;
+            return this;
+        }
 
     }
 }

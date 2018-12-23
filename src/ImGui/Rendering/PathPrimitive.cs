@@ -29,7 +29,7 @@ namespace ImGui.Rendering
 
         /// <summary>
         /// Adds a line segment to the path from the current point to
-        /// the beginning of the current sub-path, (the most recent 
+        /// the beginning of the current sub-path, (the most recent
         /// point passed to PathMoveTo()), and closes this sub-path.
         /// After this call the current point will be at the joined endpoint of the sub-path.
         /// </summary>

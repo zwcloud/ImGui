@@ -133,6 +133,11 @@ namespace ImGui
             }
         }
 
+        /// <summary>
+        /// Apply style options to this rule set.
+        /// </summary>
+        /// <param name="options"></param>
+        /// TODO refactor
         public void ApplyOptions(LayoutOptions options)
         {
             if(options.MinWidth.HasValue && options.MaxWidth.HasValue)
@@ -164,6 +169,10 @@ namespace ImGui
             if (options.VerticalStretchFactor.HasValue)
             {
                 this.VerticalStretchFactor = options.VerticalStretchFactor.Value;
+            }
+            if (options.textAlignment.HasValue)
+            {
+                this.TextAlignment = options.textAlignment.Value;
             }
         }
 
@@ -455,6 +464,12 @@ namespace ImGui
         {
             get => Get<Color>(GUIStyleName.FontColor);
             set => Set<Color>(GUIStyleName.FontColor, value);
+        }
+
+        public TextAlignment TextAlignment
+        {
+            get => (TextAlignment) Get<int>(GUIStyleName.TextAlignment);
+            set => Set<int>(GUIStyleName.TextAlignment, (int)value);
         }
 
         public double GetLineHeight()
