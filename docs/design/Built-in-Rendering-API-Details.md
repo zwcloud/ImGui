@@ -36,3 +36,21 @@ Here is a list of text properties:
 | font stretch |      N/A      |     N/A     |   N/A    |
 
 All text properties except font color have influences on `TextPrimitive`, `TextContext` and `TextMesh`. Note font stretch will not be supported since almost all web browsers have decided not to support it.
+
+# Update a Primitive
+
+We should be able to update a primitive without completely recreating it. For example, a rectangle `PathPrimitive`, the size of this rectangle is changed, then only the corrdinates of added line-segments should be changed:
+
+	//create a line-segment
+	public void PathLineTo(Point point)
+	{
+		Path.Add(new LineToCommand(point));
+	}
+
+	//modify a line-segment
+	//1. find the LineToCommand that should be modified
+	var lineToCommand = FindLineCmd(Path, ...);
+	//2. modify the end point
+	lineToCommand.Point = new Point(newX, newY);
+
+At present, there is no implementation of `FindLineCmd`.
