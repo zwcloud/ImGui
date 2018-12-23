@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.Input;
 using ImGui.Rendering;
@@ -13,8 +14,9 @@ namespace ImGui
         /// </summary>
         /// <param name="rect">position and size of the control</param>
         /// <param name="text">text to display on the button, optionally incuding the id: "#MyButton"</param>
+        /// <param name="options">style options</param>
         /// <returns>true when the users clicks the button.</returns>
-        public static bool Button(Rect rect, string text)
+        public static bool Button(Rect rect, string text, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
             if (window.SkipItems)
@@ -35,9 +37,12 @@ namespace ImGui
                 node.Primitive = new TextPrimitive(text);
             }
 
+            node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            //TODO check if text changes
+            var textPrimitive = node.Primitive as TextPrimitive;
+            Debug.Assert(textPrimitive != null);
+            textPrimitive.Text = text;
 
             // rect
             node.Rect = window.GetRect(rect);
@@ -48,6 +53,8 @@ namespace ImGui
 
             return pressed;
         }
+
+        public static bool Button(Rect rect, string text) => Button(rect, text, null);
     }
 
     public partial class GUILayout
@@ -56,7 +63,7 @@ namespace ImGui
         /// Create an auto-layout button. When the user click it, something will happen immediately.
         /// </summary>
         /// <param name="text">text to display on the button</param>
-        /// <param name="options"></param>
+        /// <param name="options">style options</param>
         public static bool Button(string text, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
@@ -70,7 +77,7 @@ namespace ImGui
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
-                //create button node
+                //create node
                 node = new Node(id, $"Button<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
@@ -82,7 +89,9 @@ namespace ImGui
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            //TODO check if text changes
+            var textPrimitive = node.Primitive as TextPrimitive;
+            Debug.Assert(textPrimitive != null);
+            textPrimitive.Text = text;
 
             // rect
             node.Rect = window.GetRect(id);
