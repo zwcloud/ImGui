@@ -1,0 +1,43 @@
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="802" height="502" id="canvas_background" fill="#fff"/>
+  <g id="canvasGrid" display="none">
+   <rect id="svg_8" width="800" height="600" x="1" y="1" stroke-width="0" fill="url(#gridpattern)"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <rect fill="#fff" stroke="#000" stroke-width="1.5" x="97.763035" y="87.279482" width="384" height="196" id="svg_1"/>
+  <text fill="#000000" stroke="#000" stroke-width="0" x="101.289349" y="111.805795" id="svg_2" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">Node</text>
+  <rect fill="#fff" stroke="#000" stroke-width="1.5" x="190.131411" y="148.805795" width="154" height="59" id="svg_3"/>
+  <text fill="#000000" stroke="#000" stroke-width="0" x="197.131411" y="174.805795" id="svg_4" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">Primitive1</text>
+  <rect fill="#fff" stroke="#000" stroke-width="1.5" x="245.131411" y="184.805795" width="154" height="59" id="svg_5"/>
+  <text fill="#000000" stroke="#000" stroke-width="0" x="252.131411" y="210.805795" id="svg_6" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">Primitive2</text>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="190.131411" y1="148.805794" x2="190.131411" y2="32.188624" id="svg_7" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5" stroke="#000"/>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="190.131411" y1="148.805795" x2="32.138747" y2="148.805795" id="svg_9" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5" stroke="#000"/>
+  <ellipse fill="#000000" stroke="#000" stroke-width="1.5" stroke-opacity="null" cx="98.157777" cy="88.358423" id="svg_11" rx="4.5" ry="4.5"/>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" x="219.158066" y="326.493079" id="svg_13" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">Node.Width</text>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" x="489.157352" y="193.335534" id="svg_14" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">Node.Height</text>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="625.919719" y1="87.753326" x2="475.821797" y2="87.753326" id="svg_16" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5" stroke="#000"/>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="626.972366" y1="283.542282" x2="481.611255" y2="283.542282" id="svg_17" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5" stroke="#000"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="98.026394" y1="361.436817" x2="98.026394" y2="274.293258" id="svg_18" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5"/>
+  <line fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="482.235898" y1="364.594704" x2="482.235898" y2="277.451144" id="svg_19" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5"/>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="75.47423" y="389.650815" id="svg_20" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">A = (Node.X,Node.Y)</text>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="75.47453" y="85.441088" id="svg_21" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">A</text>
+  <ellipse fill="#000000" stroke="#000" stroke-width="1.5" stroke-opacity="null" cx="190.262794" cy="148.358263" id="svg_22" rx="4.5" ry="4.5"/>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" x="198.105785" y="138.072528" id="svg_23" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">B</text>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="74.947916" y="422.282312" id="svg_24" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">B = (Node.X+Primitive1.Offset.X, Node.Y+Primitive1.Offset.Y)</text>
+  <ellipse fill="#000000" stroke="#000" stroke-width="1.5" stroke-opacity="null" cx="245.52581" cy="184.67396" id="svg_25" rx="4.5" ry="4.5"/>
+  <path fill="#000000" stroke-width="1.5" stroke-opacity="null" d="m449.83391,332.39385l8.59497,-7.23443l-16.61796,0l-16.61792,0l0,-4.47845l0,-4.47846l16.42728,0c9.03499,0 16.42727,-0.22698 16.42727,-0.50442c0,-0.27742 -3.59681,-3.53292 -7.99289,-7.23442l-7.99291,-6.73001l7.3879,0l7.38786,0l11.28294,9.48273l11.28293,9.48272l-11.30457,9.46459l-11.30458,9.46458l-7.77765,0l-7.77767,0l8.59499,-7.23443l0.00001,0z" id="svg_26" stroke="#000"/>
+  <path transform="rotate(180 128.0884857177734,320.1546630859375) " fill="#000000" stroke-width="1.5" stroke-opacity="null" d="m125.6242,331.86754l8.59497,-7.23443l-16.61796,0l-16.61792,0l0,-4.47846l0,-4.47845l16.42728,0c9.03499,0 16.42727,-0.22699 16.42727,-0.50443c0,-0.27742 -3.5968,-3.53292 -7.99288,-7.23442l-7.99291,-6.73001l7.38789,0l7.38786,0l11.28294,9.48273l11.28294,9.48273l-11.30458,9.46458l-11.30458,9.46458l-7.77765,0l-7.77767,0l8.595,-7.23443l0,0.00001z" id="svg_29" stroke="#000"/>
+  <path transform="rotate(90 558.6137084960939,253.31271362304693) " fill="#000000" stroke-width="1.5" stroke-opacity="null" d="m556.14943,265.02559l8.59497,-7.23442l-16.61796,0l-16.61792,0l0,-4.47846l0,-4.47845l16.42728,0c9.03499,0 16.42727,-0.22699 16.42727,-0.50443c0,-0.27742 -3.59681,-3.53292 -7.99289,-7.23442l-7.99291,-6.73001l7.38789,0l7.38787,0l11.28294,9.48273l11.28293,9.48273l-11.30458,9.46458l-11.30457,9.46458l-7.77765,0l-7.77767,0l8.59499,-7.23443l0.00001,0z" id="svg_30" stroke="#000"/>
+  <path transform="rotate(-90 560.7189941406251,118.0499114990234) " fill="#000000" stroke-width="1.5" stroke-opacity="null" d="m558.25468,129.76279l8.59497,-7.23442l-16.61796,0l-16.61792,0l0,-4.47846l0,-4.47845l16.42728,0c9.03499,0 16.42727,-0.22699 16.42727,-0.50443c0,-0.27742 -3.59681,-3.53292 -7.99289,-7.23442l-7.99291,-6.73001l7.38789,0l7.38787,0l11.28294,9.48273l11.28293,9.48273l-11.30458,9.46458l-11.30457,9.46458l-7.77765,0l-7.77767,0l8.59499,-7.23443l0.00001,0z" id="svg_31" stroke="#000"/>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="98.552701" y1="87.227003" x2="98.552701" y2="31.135997" id="svg_32" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5" stroke="#000"/>
+  <line fill="none" stroke-width="1.5" stroke-opacity="null" fill-opacity="null" x1="97.500063" y1="88.279634" x2="27.928231" y2="88.279634" id="svg_33" stroke-linejoin="null" stroke-linecap="null" stroke-dasharray="5,5" stroke="#000"/>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="13.369401" y="126.262835" id="svg_34" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">OffsetY</text>
+  <text fill="#000000" stroke="#000" stroke-width="0" stroke-opacity="null" fill-opacity="null" x="104.421802" y="70.473506" id="svg_35" font-size="24" font-family="Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve">OffsetX</text>
+ </g>
+</svg>

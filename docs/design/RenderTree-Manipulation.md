@@ -164,13 +164,17 @@ In the old implementation, ImGui creates control on the fly when an API is calle
 
 So how to implement proper node visibility? The most direct way is to disable all nodes at the beginning of a frame. In practice, a node's `ActiveSelf` is set to `false` at `Form.NewFrame()`.
 
+TODO
+
+- [ ] re-design disabled state and logic.
+
 ### Node Clipping
 
 TODO:
 
-* Clip nodes that's not visible: to visually clip, not logically.
-* Clip nodes logically: clipped invisible nodes will not run any logic.
-* Clip shape: only rectangle; do we need more?
+- [x] Clip nodes that's not visible: to visually clip, not logically.
+- [ ] Clip nodes logically: clipped invisible nodes will not run any logic.
+- [ ] Clip shape: only rectangle; do we need more?
 
 There are two kinds of clipping:
 * a node using box-model: all children of this node will be clipped by the content-box of this node.

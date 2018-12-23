@@ -4,10 +4,15 @@ There are four levels of rendering layers from top to base:
 
 * Layer 1: __control__
 * Layer 2: __render tree__
-    Each control corresponds with a sub-tree in the render tree. Each node on the render tree corresponds to a primitive or a box-model. Style should be computed at this layer and applied to the primitive.
+    Each control corresponds with a sub-tree in the render tree. Each node on the render tree corresponds to a rectangle area. Styles are computed at this layer and applied to the primitive list.
 * Layer 3: __primitive__
     The minimal abstract rendering unit: line-segments, rectangles, triangles, circles, polygon, ployline, arcs, bezier-curves, quadratic-curves and so on.  
-	(Box-model borders are polygon primitives.)
+	(Box-model borders are polygon primitives.)  
+	A primitive is drawn inside the content-box of the node if the node uses box-model, or just inside the rectangle of the node.  
+	For a node not using box-model:  
+	![a node not using box-model](img/node-and-primitive-1.svg)  
+	For a node using box-model:  
+	![a node using box-model](img/node-and-primitive-2.svg)
 * Layer 4: __basic rendering API (interface)__
     Possible implementations:
 
@@ -32,10 +37,10 @@ __examples__
 
 ### function of a render-tree node
 
-1. a visual data container: position(rectangle) and style
-2. a layout unit
-
-So, the current implementation should be rewritten.
+1. a rectangular region: position and size
+2. a rule set (style) container
+3. a layout unit
+4. a primitive container
 
 ### implementation changes
 
