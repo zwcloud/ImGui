@@ -423,32 +423,23 @@ namespace ImGui.Rendering
             var r = renderer as BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
 
+            var renderContext = this.RenderContext;
             switch (this.Primitive)
             {
                 case null when !this.UseBoxModel:
                 return;
                 case null:
                     {
-                        //check render context for shape mesh
-                        if (this.RenderContext.shapeMesh == null)
-                        {
-                            this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                            this.RenderContext.shapeMesh.Node = this;
-                        }
-                        //check render context for image mesh
-                        if (this.RenderContext.imageMesh == null)
-                        {
-                            this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
-                            this.RenderContext.imageMesh.Node = this;
-                        }
+                        renderContext.CheckShapeMesh(this);
+                        renderContext.CheckImageMesh(this);
 
                         //clear shape mesh
-                        var shapeMesh = this.RenderContext.shapeMesh;
+                        var shapeMesh = renderContext.shapeMesh;
                         shapeMesh.Clear();
                         shapeMesh.CommandBuffer.Add(DrawCommand.Default);
 
                         //clear image mesh
-                        var imageMesh = this.RenderContext.imageMesh;
+                        var imageMesh = renderContext.imageMesh;
                         imageMesh.Clear();
 
                         //draw
@@ -465,15 +456,10 @@ namespace ImGui.Rendering
                     break;
                 case PathPrimitive p:
                     {
-                        //check render context for shape mesh
-                        if (this.RenderContext.shapeMesh == null)
-                        {
-                            this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                            this.RenderContext.shapeMesh.Node = this;
-                        }
+                        renderContext.CheckShapeMesh(this);
 
                         //get shape mesh
-                        var shapeMesh = this.RenderContext.shapeMesh;
+                        var shapeMesh = renderContext.shapeMesh;
                         r.DrawPathPrimitive(shapeMesh, p, (Vector)this.Rect.Location);
 
                         //save to mesh list
@@ -484,37 +470,21 @@ namespace ImGui.Rendering
                     {
                         if (this.UseBoxModel)
                         {
-                            //check render context for textMesh
-                            if (this.RenderContext.textMesh == null)
-                            {
-                                this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
-                                this.RenderContext.textMesh.Node = this;
-                            }
+                            renderContext.CheckTextMesh(this);
 
                             //get text mesh
-                            var textMesh = this.RenderContext.textMesh;
+                            var textMesh = renderContext.textMesh;
                             textMesh.Clear();
 
-                            //check render context for shape mesh
-                            if (this.RenderContext.shapeMesh == null)
-                            {
-                                this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                                this.RenderContext.shapeMesh.Node = this;
-                            }
-
-                            //check render context for image mesh
-                            if (this.RenderContext.imageMesh == null)
-                            {
-                                this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
-                                this.RenderContext.imageMesh.Node = this;
-                            }
+                            renderContext.CheckShapeMesh(this);
+                            renderContext.CheckImageMesh(this);
 
                             //clear image mesh
-                            var imageMesh = this.RenderContext.imageMesh;
+                            var imageMesh = renderContext.imageMesh;
                             imageMesh.Clear();
 
                             //get shape mesh
-                            var shapeMesh = this.RenderContext.shapeMesh;
+                            var shapeMesh = renderContext.shapeMesh;
                             shapeMesh.Clear();
                             shapeMesh.CommandBuffer.Add(DrawCommand.Default);
 
@@ -534,15 +504,10 @@ namespace ImGui.Rendering
                         }
                         else
                         {
-                            //check render context for textMesh
-                            if (this.RenderContext.textMesh == null)
-                            {
-                                this.RenderContext.textMesh = MeshPool.TextMeshPool.Get();
-                                this.RenderContext.textMesh.Node = this;
-                            }
+                            renderContext.CheckTextMesh(this);
 
                             //clear text mesh
-                            var textMesh = this.RenderContext.textMesh;
+                            var textMesh = renderContext.textMesh;
                             r.DrawTextPrimitive(textMesh, t, this.Rect, this.RuleSet, offset);
 
                             //save to mesh list
@@ -554,26 +519,16 @@ namespace ImGui.Rendering
                     {
                         if (this.UseBoxModel)
                         {
-                            //check render context for image mesh
-                            if (this.RenderContext.imageMesh == null)
-                            {
-                                this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
-                                this.RenderContext.imageMesh.Node = this;
-                            }
+                            renderContext.CheckImageMesh(this);
 
                             //clear image mesh
-                            var imageMesh = this.RenderContext.imageMesh;
+                            var imageMesh = renderContext.imageMesh;
                             imageMesh.Clear();
 
-                            //check render context for shape mesh
-                            if (this.RenderContext.shapeMesh == null)
-                            {
-                                this.RenderContext.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                                this.RenderContext.shapeMesh.Node = this;
-                            }
+                            renderContext.CheckShapeMesh(this);
 
                             //clear shape mesh
-                            var shapeMesh = this.RenderContext.shapeMesh;
+                            var shapeMesh = renderContext.shapeMesh;
                             shapeMesh.Clear();
                             shapeMesh.CommandBuffer.Add(DrawCommand.Default);
 
@@ -590,15 +545,10 @@ namespace ImGui.Rendering
                         }
                         else
                         {
-                            //check render context for image mesh
-                            if (this.RenderContext.imageMesh == null)
-                            {
-                                this.RenderContext.imageMesh = MeshPool.ImageMeshPool.Get();
-                                this.RenderContext.imageMesh.Node = this;
-                            }
+                            renderContext.CheckImageMesh(this);
 
                             //clear image mesh
-                            var imageMesh = this.RenderContext.imageMesh;
+                            var imageMesh = renderContext.imageMesh;
                             r.DrawImagePrimitive(imageMesh, i, this.Rect, this.RuleSet, offset);
 
                             //save to mesh list
