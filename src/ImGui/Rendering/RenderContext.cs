@@ -48,5 +48,29 @@
             }
         }
 
+        /// <summary>
+        /// clear shape mesh
+        /// </summary>
+        public void ClearShapeMesh()
+        {
+            this.shapeMesh.Clear();
+            this.shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+        }
+
+        /// <summary>
+        /// clear image mesh
+        /// </summary>
+        public void ClearImageMesh()
+        {
+            this.imageMesh.Clear();
+        }
+
+        /// <summary>
+        /// clear text mesh
+        /// </summary>
+        public void ClearTextMesh()
+        {
+            this.textMesh.Clear();
+        }
     }
 }
