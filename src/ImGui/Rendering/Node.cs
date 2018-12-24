@@ -129,7 +129,7 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Make this node a (default-sized) layout entry.
+        /// Make this node a layout entry.
         /// </summary>
         public void AttachLayoutEntry() => this.AttachLayoutEntry(Size.Zero);
 
@@ -384,6 +384,8 @@ namespace ImGui.Rendering
 
         internal Primitive Primitive { get; set; }
 
+        internal List<Primitive> PrimitiveList { get; set; } = new List<Primitive>(1);
+
         internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
 
         public StyleRuleSet RuleSet { get; }
@@ -402,6 +404,8 @@ namespace ImGui.Rendering
                 this.RuleSet.SetState(value);
             }
         }
+
+        public RenderContext RenderContext { get; } = new RenderContext();
 
         public void Draw(IPrimitiveRenderer renderer, MeshList meshList) => this.Draw(renderer, Vector.Zero, meshList);
 
@@ -455,14 +459,8 @@ namespace ImGui.Rendering
                         r.SetImageMesh(null);
 
                         //save to mesh list
-                        if (!meshList.ShapeMeshes.Contains(shapeMesh))
-                        {
-                            meshList.ShapeMeshes.AddLast(shapeMesh);
-                        }
-                        if (!meshList.ImageMeshes.Contains(imageMesh))
-                        {
-                            meshList.ImageMeshes.AddLast(imageMesh);
-                        }
+                        meshList.AddOrUpdateShapeMesh(shapeMesh);
+                        meshList.AddOrUpdateImageMesh(imageMesh);
                     }
                     break;
                 case PathPrimitive p:
@@ -479,11 +477,7 @@ namespace ImGui.Rendering
                         r.DrawPathPrimitive(shapeMesh, p, (Vector)this.Rect.Location);
 
                         //save to mesh list
-                        var foundNode = meshList.ShapeMeshes.Find(shapeMesh);
-                        if (foundNode == null)
-                        {
-                            meshList.ShapeMeshes.AddLast(shapeMesh);
-                        }
+                        meshList.AddOrUpdateShapeMesh(shapeMesh);
                     }
                     break;
                 case TextPrimitive t:
@@ -534,18 +528,9 @@ namespace ImGui.Rendering
                             r.SetImageMesh(null);
 
                             //save to mesh list
-                            if (!meshList.ShapeMeshes.Contains(shapeMesh))
-                            {
-                                meshList.ShapeMeshes.AddLast(shapeMesh);
-                            }
-                            if (!meshList.ImageMeshes.Contains(imageMesh))
-                            {
-                                meshList.ImageMeshes.AddLast(imageMesh);
-                            }
-                            if (!meshList.TextMeshes.Contains(textMesh))
-                            {
-                                meshList.TextMeshes.AddLast(textMesh);
-                            }
+                            meshList.AddOrUpdateShapeMesh(shapeMesh);
+                            meshList.AddOrUpdateImageMesh(imageMesh);
+                            meshList.AddOrUpdateTextMesh(textMesh);
                         }
                         else
                         {
@@ -561,10 +546,7 @@ namespace ImGui.Rendering
                             r.DrawTextPrimitive(textMesh, t, this.Rect, this.RuleSet, offset);
 
                             //save to mesh list
-                            if (!meshList.TextMeshes.Contains(textMesh))
-                            {
-                                meshList.TextMeshes.AddLast(textMesh);
-                            }
+                            meshList.AddOrUpdateTextMesh(textMesh);
                         }
                     }
                     break;
@@ -603,14 +585,8 @@ namespace ImGui.Rendering
                             r.SetImageMesh(null);
 
                             //save to mesh list
-                            if (!meshList.ShapeMeshes.Contains(shapeMesh))
-                            {
-                                meshList.ShapeMeshes.AddLast(shapeMesh);
-                            }
-                            if (!meshList.ImageMeshes.Contains(imageMesh))
-                            {
-                                meshList.ImageMeshes.AddLast(imageMesh);
-                            }
+                            meshList.AddOrUpdateShapeMesh(shapeMesh);
+                            meshList.AddOrUpdateImageMesh(imageMesh);
                         }
                         else
                         {
@@ -626,10 +602,7 @@ namespace ImGui.Rendering
                             r.DrawImagePrimitive(imageMesh, i, this.Rect, this.RuleSet, offset);
 
                             //save to mesh list
-                            if (!meshList.ImageMeshes.Contains(imageMesh))
-                            {
-                                meshList.ImageMeshes.AddLast(imageMesh);
-                            }
+                            meshList.AddOrUpdateImageMesh(imageMesh);
                         }
                     }
                     break;
@@ -638,11 +611,6 @@ namespace ImGui.Rendering
             }
         }
         #endregion
-
-        /// <summary>
-        /// internal render context refers to a context object.
-        /// </summary>
-        internal (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) RenderContext;
 
         private bool activeSelf = true;
         private GUIState state = GUIState.Normal;
