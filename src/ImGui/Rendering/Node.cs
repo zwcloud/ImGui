@@ -449,6 +449,7 @@ namespace ImGui.Rendering
                 case PathPrimitive p:
                 {
                     renderContext.CheckShapeMesh(this);
+                    renderContext.ClearShapeMesh();
 
                     r.DrawPathPrimitive(renderContext.shapeMesh, p, (Vector)this.Rect.Location);
 
@@ -482,6 +483,7 @@ namespace ImGui.Rendering
                     else
                     {
                         renderContext.CheckTextMesh(this);
+                        renderContext.ClearTextMesh();
 
                         r.DrawTextPrimitive(renderContext.textMesh, t, this.Rect, this.RuleSet, offset);
 
@@ -511,6 +513,7 @@ namespace ImGui.Rendering
                     else
                     {
                         renderContext.CheckImageMesh(this);
+                        renderContext.ClearImageMesh();
 
                         r.DrawImagePrimitive(renderContext.imageMesh, i, this.Rect, this.RuleSet, offset);
 
