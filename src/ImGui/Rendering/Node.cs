@@ -438,112 +438,119 @@ namespace ImGui.Rendering
         /// <remarks>A node can only have one single primitive.</remarks>
         public void Draw(IPrimitiveRenderer renderer, Vector offset, MeshList meshList)
         {
-            //TODO refactor this: extract DrawPrimitve method
-
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
 
             var renderContext = this.RenderContext;
-            switch (this.Primitive)
+
+            //special common case: an empty box-model
+            if (this.Primitive == null && this.UseBoxModel)
             {
-                case null when !this.UseBoxModel:
-                    return;
-                case null:
+                renderContext.CheckShapeMesh(this);
+                renderContext.CheckImageMesh(this);
+
+                renderContext.ClearShapeMesh();
+                renderContext.ClearImageMesh();
+
+                r.SetShapeMesh(renderContext.shapeMesh);
+                r.SetImageMesh(renderContext.imageMesh);
+                r.DrawBoxModel(Rect.Offset(this.Rect, offset), this.RuleSet);
+                r.SetShapeMesh(null);
+                r.SetImageMesh(null);
+
+                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
+                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
+            }
+            else
+            {
+                foreach (var primitive in this.PrimitiveList)
                 {
-                    renderContext.CheckShapeMesh(this);
-                    renderContext.CheckImageMesh(this);
-
-                    renderContext.ClearShapeMesh();
-                    renderContext.ClearImageMesh();
-
-                    r.SetShapeMesh(renderContext.shapeMesh);
-                    r.SetImageMesh(renderContext.imageMesh);
-                    r.DrawBoxModel(Rect.Offset(this.Rect, offset), this.RuleSet);
-                    r.SetShapeMesh(null);
-                    r.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                    meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
-                }
-                break;
-                case PathPrimitive p:
-                {
-                    renderContext.CheckShapeMesh(this);
-                    renderContext.ClearShapeMesh();
-
-                    r.DrawPathPrimitive(renderContext.shapeMesh, p, (Vector)this.Rect.Location);
-
-                    meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                }
-                break;
-                case TextPrimitive t:
-                {
-                    if (this.UseBoxModel)
+                    switch (primitive)
                     {
-                        renderContext.CheckTextMesh(this);
-                        renderContext.CheckShapeMesh(this);
-                        renderContext.CheckImageMesh(this);
+                        case PathPrimitive p:
+                            if (this.UseBoxModel)
+                            {
+                                throw new NotImplementedException();
+                            }
+                            else
+                            {
+                                renderContext.CheckShapeMesh(this);
+                                renderContext.ClearShapeMesh();
 
-                        renderContext.ClearTextMesh();
-                        renderContext.ClearImageMesh();
-                        renderContext.ClearShapeMesh();
+                                r.DrawPathPrimitive(renderContext.shapeMesh, p, (Vector)this.Rect.Location);
 
-                        r.SetShapeMesh(renderContext.shapeMesh);
-                        r.SetTextMesh(renderContext.textMesh);
-                        r.SetImageMesh(renderContext.imageMesh);
-                        r.DrawBoxModel(t, Rect.Offset(this.Rect, offset), this.RuleSet);
-                        r.SetShapeMesh(null);
-                        r.SetTextMesh(null);
-                        r.SetImageMesh(null);
+                                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
+                            }
 
-                        meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                        meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
-                        meshList.AddOrUpdateTextMesh(renderContext.textMesh);
-                    }
-                    else
-                    {
-                        renderContext.CheckTextMesh(this);
-                        renderContext.ClearTextMesh();
+                            break;
+                        case TextPrimitive t:
+                            if (this.UseBoxModel)
+                            {
+                                renderContext.CheckTextMesh(this);
+                                renderContext.CheckShapeMesh(this);
+                                renderContext.CheckImageMesh(this);
 
-                        r.DrawTextPrimitive(renderContext.textMesh, t, this.Rect, this.RuleSet, offset);
+                                renderContext.ClearTextMesh();
+                                renderContext.ClearImageMesh();
+                                renderContext.ClearShapeMesh();
 
-                        meshList.AddOrUpdateTextMesh(renderContext.textMesh);
-                    }
-                }
-                break;
-                case ImagePrimitive i:
-                {
-                    if (this.UseBoxModel)
-                    {
-                        renderContext.CheckShapeMesh(this);
-                        renderContext.CheckImageMesh(this);
+                                r.SetShapeMesh(renderContext.shapeMesh);
+                                r.SetTextMesh(renderContext.textMesh);
+                                r.SetImageMesh(renderContext.imageMesh);
+                                r.DrawBoxModel(t, Rect.Offset(this.Rect, offset), this.RuleSet);
+                                r.SetShapeMesh(null);
+                                r.SetTextMesh(null);
+                                r.SetImageMesh(null);
 
-                        renderContext.ClearShapeMesh();
-                        renderContext.ClearImageMesh();
+                                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
+                                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
+                                meshList.AddOrUpdateTextMesh(renderContext.textMesh);
+                            }
+                            else
+                            {
+                                renderContext.CheckTextMesh(this);
+                                renderContext.ClearTextMesh();
 
-                        r.SetImageMesh(renderContext.imageMesh);
-                        r.SetShapeMesh(renderContext.shapeMesh);
-                        r.DrawBoxModel(i, Rect.Offset(this.Rect, offset), this.RuleSet);
-                        r.SetShapeMesh(null);
-                        r.SetImageMesh(null);
+                                r.DrawTextPrimitive(renderContext.textMesh, t, this.Rect, this.RuleSet, offset);
 
-                        meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                        meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
-                    }
-                    else
-                    {
-                        renderContext.CheckImageMesh(this);
-                        renderContext.ClearImageMesh();
+                                meshList.AddOrUpdateTextMesh(renderContext.textMesh);
+                            }
 
-                        r.DrawImagePrimitive(renderContext.imageMesh, i, this.Rect, this.RuleSet, offset);
+                            break;
+                        case ImagePrimitive i:
+                            if (this.UseBoxModel)
+                            {
+                                renderContext.CheckShapeMesh(this);
+                                renderContext.CheckImageMesh(this);
 
-                        meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
+                                renderContext.ClearShapeMesh();
+                                renderContext.ClearImageMesh();
+
+                                r.SetImageMesh(renderContext.imageMesh);
+                                r.SetShapeMesh(renderContext.shapeMesh);
+                                r.DrawBoxModel(i, Rect.Offset(this.Rect, offset), this.RuleSet);
+                                r.SetShapeMesh(null);
+                                r.SetImageMesh(null);
+
+                                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
+                                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
+                            }
+                            else
+                            {
+                                renderContext.CheckImageMesh(this);
+                                renderContext.ClearImageMesh();
+
+                                r.DrawImagePrimitive(renderContext.imageMesh, i, this.Rect, this.RuleSet, offset);
+
+                                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
+                            }
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
-                break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
         #endregion
