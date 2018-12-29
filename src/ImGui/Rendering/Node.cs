@@ -447,8 +447,8 @@ namespace ImGui.Rendering
             //special common case: an empty box-model
             if (this.Primitive == null && this.UseBoxModel)
             {
-                renderContext.CheckShapeMesh(this);
-                renderContext.CheckImageMesh(this);
+                renderContext.CheckShapeMesh();
+                renderContext.CheckImageMesh();
 
                 renderContext.ClearShapeMesh();
                 renderContext.ClearImageMesh();
@@ -475,7 +475,7 @@ namespace ImGui.Rendering
                             }
                             else
                             {
-                                renderContext.CheckShapeMesh(this);
+                                renderContext.CheckShapeMesh();
                                 renderContext.ClearShapeMesh();
 
                                 r.DrawPathPrimitive(renderContext.shapeMesh, p, (Vector)this.Rect.Location);
@@ -487,9 +487,9 @@ namespace ImGui.Rendering
                         case TextPrimitive t:
                             if (this.UseBoxModel)
                             {
-                                renderContext.CheckTextMesh(this);
-                                renderContext.CheckShapeMesh(this);
-                                renderContext.CheckImageMesh(this);
+                                renderContext.CheckTextMesh();
+                                renderContext.CheckShapeMesh();
+                                renderContext.CheckImageMesh();
 
                                 renderContext.ClearTextMesh();
                                 renderContext.ClearImageMesh();
@@ -509,7 +509,7 @@ namespace ImGui.Rendering
                             }
                             else
                             {
-                                renderContext.CheckTextMesh(this);
+                                renderContext.CheckTextMesh();
                                 renderContext.ClearTextMesh();
 
                                 r.DrawTextPrimitive(renderContext.textMesh, t, this.Rect, this.RuleSet, offset);
@@ -521,8 +521,8 @@ namespace ImGui.Rendering
                         case ImagePrimitive i:
                             if (this.UseBoxModel)
                             {
-                                renderContext.CheckShapeMesh(this);
-                                renderContext.CheckImageMesh(this);
+                                renderContext.CheckShapeMesh();
+                                renderContext.CheckImageMesh();
 
                                 renderContext.ClearShapeMesh();
                                 renderContext.ClearImageMesh();
@@ -538,7 +538,7 @@ namespace ImGui.Rendering
                             }
                             else
                             {
-                                renderContext.CheckImageMesh(this);
+                                renderContext.CheckImageMesh();
                                 renderContext.ClearImageMesh();
 
                                 r.DrawImagePrimitive(renderContext.imageMesh, i, this.Rect, this.RuleSet, offset);

@@ -13,8 +13,6 @@ namespace ImGui
 
         public bool Visible { get; set; } = true;
 
-        public Node Node { get; set; }
-
         /// <summary>
         /// Commands. Typically 1 command = 1 gpu draw call.
         /// </summary>
@@ -93,7 +91,7 @@ namespace ImGui
             this.idxWritePosition = 0;
             this.currentIdx = 0;
         }
-        
+
         /// <summary>
         /// Append a mesh to this mesh
         /// </summary>

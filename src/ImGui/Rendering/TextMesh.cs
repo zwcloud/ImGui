@@ -23,8 +23,6 @@ namespace ImGui
 
         public bool Visible { get; set; } = true;
 
-        public Node Node { get; set; }
-
         /// <summary>
         /// vertex buffer
         /// </summary>

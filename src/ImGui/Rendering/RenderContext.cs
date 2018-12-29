@@ -14,37 +14,33 @@
         /// <summary>
         /// check render context for shape mesh
         /// </summary>
-        public void CheckShapeMesh(Node node)
+        public void CheckShapeMesh()
         {
             if (this.shapeMesh == null)
             {
                 this.shapeMesh = MeshPool.ShapeMeshPool.Get();
-                this.shapeMesh.Node = node;
             }
         }
 
         /// <summary>
         /// check render context for textMesh
         /// </summary>
-        public void CheckTextMesh(Node node)
+        public void CheckTextMesh()
         {
             if (this.textMesh == null)
             {
                 this.textMesh = MeshPool.TextMeshPool.Get();
-                this.textMesh.Node = node;
             }
         }
 
         /// <summary>
         /// check render context for image mesh
         /// </summary>
-        /// <param name="node"></param>
-        public void CheckImageMesh(Node node)
+        public void CheckImageMesh()
         {
             if (this.imageMesh == null)
             {
                 this.imageMesh = MeshPool.ImageMeshPool.Get();
-                this.imageMesh.Node = node;
             }
         }
 
