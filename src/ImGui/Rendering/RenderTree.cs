@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using ImGui.Layout;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
@@ -15,24 +12,24 @@ namespace ImGui.Rendering
         {
             get
             {
-                return currentContainer ?? Root;
+                return this.currentContainer ?? this.Root;
             }
             set
             {
-                currentContainer = value;
+                this.currentContainer = value;
             }
         }
 
         public RenderTree(int rootId, Point position, Size size)
         {
-            Root = new Node(rootId, "layout-root");
-            Root.Rect = new Rect(position, size);
-            Root.AttachLayoutGroup(true);
+            this.Root = new Node(rootId, "layout-root");
+            this.Root.Rect = new Rect(position, size);
+            this.Root.AttachLayoutGroup(true);
         }
 
         public Node GetNodeById(int id)
         {
-            return Root.GetNodeById(id);
+            return this.Root.GetNodeById(id);
         }
 
         /// <summary>
@@ -42,7 +39,7 @@ namespace ImGui.Rendering
         /// <param name="func"></param>
         public void Foreach(Func<Node, bool> func)
         {
-            Root.Foreach(func);
+            this.Root.Foreach(func);
         }
     }
 }

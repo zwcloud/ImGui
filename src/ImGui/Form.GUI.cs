@@ -4,7 +4,6 @@ using System.Threading;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
-using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -79,13 +78,13 @@ namespace ImGui
                 Mouse.Instance.LeftButtonPressedPos = Mouse.Instance.Position;
                 Mouse.Instance.DragMaxDiatanceSquared = 0;
             }
-            else if(Mouse.Instance.LeftButtonState == KeyState.Down)
+            else if (Mouse.Instance.LeftButtonState == KeyState.Down)
             {
                 Mouse.Instance.DragMaxDiatanceSquared = Math.Max(Mouse.Instance.DragMaxDiatanceSquared, (Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPos).LengthSquared);
             }
             if (Mouse.Instance.LeftButtonPressed) ++Mouse.Instance.LeftButtonPressedTimes;
             if (Mouse.Instance.LeftButtonReleased) ++Mouse.Instance.LeftButtonReleasedTimes;
-            if(Mouse.Instance.LeftButtonDoubleClicked) ++Mouse.Instance.LeftButtonDoubleClickedTimes;
+            if (Mouse.Instance.LeftButtonDoubleClicked) ++Mouse.Instance.LeftButtonDoubleClickedTimes;
             #endregion
 
             #region mouse right button
@@ -149,13 +148,13 @@ namespace ImGui
         /// </summary>
         internal void GUILoop()
         {
-            NewFrame();
+            this.NewFrame();
 
-            OnGUI();
+            this.OnGUI();
 
-            Render();
+            this.Render();
 
-            Log();
+            this.Log();
 
             if (ImGui.Log.Enabled && ImGui.Log.LogStatus)
             {

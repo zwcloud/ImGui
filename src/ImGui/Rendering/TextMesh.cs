@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using ImGui.Common;
 using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Text;
-using System.Runtime.CompilerServices;
-using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -114,7 +113,7 @@ namespace ImGui
                 p0.x += glyphOffsetX;
                 p0.y += glyphOffsetY;
                 ApplyOffsetScale(ref p0, positionOffsetX, positionOffsetY, scale, flipY);
-                PrimReserve(3 * (polygon.Count - 1), 3 * (polygon.Count - 1));
+                this.PrimReserve(3 * (polygon.Count - 1), 3 * (polygon.Count - 1));
                 for (int k = 0; k < polygon.Count - 1; k++)
                 {
                     var p1 = polygon[k];
@@ -125,12 +124,12 @@ namespace ImGui
                     p2.x += glyphOffsetX;
                     p2.y += glyphOffsetY;
                     ApplyOffsetScale(ref p2, positionOffsetX, positionOffsetY, scale, flipY);
-                    AppendVertex(new DrawVertex { pos = p0, uv = Point.Zero, color = color });
-                    AppendVertex(new DrawVertex { pos = p1, uv = Point.Zero, color = color });
-                    AppendVertex(new DrawVertex { pos = p2, uv = Point.Zero, color = color });
-                    AppendIndex(0);
-                    AppendIndex(1);
-                    AppendIndex(2);
+                    this.AppendVertex(new DrawVertex { pos = p0, uv = Point.Zero, color = color });
+                    this.AppendVertex(new DrawVertex { pos = p1, uv = Point.Zero, color = color });
+                    this.AppendVertex(new DrawVertex { pos = p2, uv = Point.Zero, color = color });
+                    this.AppendIndex(0);
+                    this.AppendIndex(1);
+                    this.AppendIndex(2);
                     this.currentIdx += 3;
                 }
             }
@@ -138,7 +137,7 @@ namespace ImGui
 
         public void AddBezierSegments(IList<(Point, Point, Point)> segments, Color color, Vector positionOffset, Vector glyphOffset, float scale = 1, bool flipY = true)
         {
-            PrimReserve(segments.Count * 3, segments.Count * 3);
+            this.PrimReserve(segments.Count * 3, segments.Count * 3);
             var uv0 = new Point(0, 0);
             var uv1 = new Point(0.5, 0);
             var uv2 = new Point(1, 1);
@@ -167,13 +166,13 @@ namespace ImGui
                 endPoint.y += glyphOffsetY;
                 ApplyOffsetScale(ref endPoint, positionOffsetX, positionOffsetY, scale, flipY);
 
-                AppendVertex(new DrawVertex { pos = startPoint, uv = uv0, color = color });
-                AppendVertex(new DrawVertex { pos = controlPoint, uv = uv1, color = color });
-                AppendVertex(new DrawVertex { pos = endPoint, uv = uv2, color = color });
+                this.AppendVertex(new DrawVertex { pos = startPoint, uv = uv0, color = color });
+                this.AppendVertex(new DrawVertex { pos = controlPoint, uv = uv1, color = color });
+                this.AppendVertex(new DrawVertex { pos = endPoint, uv = uv2, color = color });
 
-                AppendIndex(0);
-                AppendIndex(1);
-                AppendIndex(2);
+                this.AppendIndex(0);
+                this.AppendIndex(1);
+                this.AppendIndex(2);
                 this.currentIdx += 3;
             }
         }
@@ -196,9 +195,9 @@ namespace ImGui
             var segments = glyphData.QuadraticCurveSegments;
 
             // triangles
-            AddTriangles(polygons, color, positionOffset, glyphOffset, scale, flipY);
+            this.AddTriangles(polygons, color, positionOffset, glyphOffset, scale, flipY);
             // quadratic bezier segments
-            AddBezierSegments(segments, color, positionOffset, glyphOffset, scale, flipY);
+            this.AddBezierSegments(segments, color, positionOffset, glyphOffset, scale, flipY);
         }
 
         public void Append(TextMesh textMesh, Vector offset)
@@ -221,7 +220,7 @@ namespace ImGui
                 {
                     var index = this.IndexBuffer[i].Index;
                     index += oldVertexCount;
-                    this.IndexBuffer[i] = new DrawIndex {Index = index};
+                    this.IndexBuffer[i] = new DrawIndex { Index = index };
                 }
             }
 

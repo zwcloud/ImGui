@@ -186,7 +186,7 @@ namespace ImGui.GraphicsImplementation
         }
 
         private void AddImageRect(Rect rect, Point uvA, Point uvC, Color color) =>
-            AddImageRect(rect.Min, rect.Max, uvA, uvC, color);
+            this.AddImageRect(rect.Min, rect.Max, uvA, uvC, color);
         #endregion
 
         #endregion
@@ -306,8 +306,8 @@ namespace ImGui.GraphicsImplementation
         /// <param name="thickness">thickness</param>
         public void PathStroke(Color color, bool close, double thickness = 1)
         {
-            AddPolyline(Path, color, close, thickness);
-            PathClear();
+            this.AddPolyline(Path, color, close, thickness);
+            this.PathClear();
         }
 
         /// <summary>
@@ -316,8 +316,8 @@ namespace ImGui.GraphicsImplementation
         /// <param name="color">fill color</param>
         public void PathFill(Color color)
         {
-            AddConvexPolyFilled(Path, color, true);
-            PathClear();
+            this.AddConvexPolyFilled(Path, color, true);
+            this.PathClear();
         }
 
         #endregion
@@ -359,11 +359,11 @@ namespace ImGui.GraphicsImplementation
                 var p = new Point(center.X + c.X * radius, center.Y + c.Y * radius);
                 if (a == amin)
                 {
-                    PathMoveTo(p);
+                    this.PathMoveTo(p);
                 }
                 else
                 {
-                    PathLineTo(p);
+                    this.PathLineTo(p);
                 }
             }
         }
@@ -380,10 +380,10 @@ namespace ImGui.GraphicsImplementation
 
             if (r <= 0.0f || roundingCorners == 0)
             {
-                PathLineTo(a);
-                PathLineTo(new Point(b.X, a.Y));
-                PathLineTo(b);
-                PathLineTo(new Point(a.X, b.Y));
+                this.PathLineTo(a);
+                this.PathLineTo(new Point(b.X, a.Y));
+                this.PathLineTo(b);
+                this.PathLineTo(new Point(a.X, b.Y));
             }
             else
             {
@@ -391,10 +391,10 @@ namespace ImGui.GraphicsImplementation
                 var r1 = (roundingCorners & 2) != 0 ? r : 0.0f;
                 var r2 = (roundingCorners & 4) != 0 ? r : 0.0f;
                 var r3 = (roundingCorners & 8) != 0 ? r : 0.0f;
-                PathArcFast(new Point(a.X + r0, a.Y + r0), r0, 6, 9);
-                PathArcFast(new Point(b.X - r1, a.Y + r1), r1, 9, 12);
-                PathArcFast(new Point(b.X - r2, b.Y - r2), r2, 0, 3);
-                PathArcFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
+                this.PathArcFast(new Point(a.X + r0, a.Y + r0), r0, 6, 9);
+                this.PathArcFast(new Point(b.X - r1, a.Y + r1), r1, 9, 12);
+                this.PathArcFast(new Point(b.X - r2, b.Y - r2), r2, 0, 3);
+                this.PathArcFast(new Point(a.X + r3, b.Y - r3), r3, 3, 6);
             }
         }
 
@@ -428,12 +428,12 @@ namespace ImGui.GraphicsImplementation
                 return;
 
             this.ShapeMesh.PrimReserve(6, 4);
-            PrimRectGradient(a, b, topColor, bottomColor);
+            this.PrimRectGradient(a, b, topColor, bottomColor);
         }
 
         public void AddRectFilledGradient(Rect rect, Color topColor, Color bottomColor)
         {
-            AddRectFilledGradient(rect.Min, rect.Max, topColor, bottomColor);
+            this.AddRectFilledGradient(rect.Min, rect.Max, topColor, bottomColor);
         }
 
         #endregion
@@ -449,13 +449,13 @@ namespace ImGui.GraphicsImplementation
                     case PathCommandType.PathMoveTo:
                     {
                         var cmd = (MoveToCommand)command;
-                        this.PathMoveTo(cmd.Point+offset);
+                        this.PathMoveTo(cmd.Point + offset);
                         break;
                     }
                     case PathCommandType.PathLineTo:
                     {
                         var cmd = (LineToCommand)command;
-                        this.PathLineTo(cmd.Point+offset);
+                        this.PathLineTo(cmd.Point + offset);
                         break;
                     }
                     case PathCommandType.PathCurveTo:
@@ -470,19 +470,19 @@ namespace ImGui.GraphicsImplementation
                     }
                     case PathCommandType.PathArc:
                     {
-                        var cmd = (ArcCommand) command;
-                        this.PathArcFast(cmd.Center+offset, cmd.Radius, cmd.Amin, cmd.Amax);
+                        var cmd = (ArcCommand)command;
+                        this.PathArcFast(cmd.Center + offset, cmd.Radius, cmd.Amin, cmd.Amax);
                         break;
                     }
                     case PathCommandType.Stroke:
                     {
-                        var cmd = (StrokeCommand) command;
+                        var cmd = (StrokeCommand)command;
                         this.PathStroke(cmd.Color, false, cmd.LineWidth);
                         break;
                     }
                     case PathCommandType.Fill:
                     {
-                        var cmd = (FillCommand) command;
+                        var cmd = (FillCommand)command;
                         this.PathFill(cmd.Color);
                         break;
                     }
@@ -491,7 +491,7 @@ namespace ImGui.GraphicsImplementation
                 }
             }
         }
-        public void DrawPath(PathPrimitive primitive) => DrawPath(primitive, Vector.Zero);
+        public void DrawPath(PathPrimitive primitive) => this.DrawPath(primitive, Vector.Zero);
 
         private bool CheckTextPrimitive(TextPrimitive primitive, StyleRuleSet style)
         {
@@ -562,7 +562,7 @@ namespace ImGui.GraphicsImplementation
                 var fontStretch = FontStretch.Normal;
                 var fontStyle = style.FontStyle;
                 var fontWeight = style.FontWeight;
-                var textAlignment = (TextAlignment) style.Get<int>(GUIStyleName.TextAlignment);//TODO apply text alignment
+                var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment);//TODO apply text alignment
 
                 var textContext = new OSImplentation.TypographyTextContext(primitive.Text,
                     fontFamily,
@@ -630,7 +630,7 @@ namespace ImGui.GraphicsImplementation
         {
             Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
 
-            if(primitive.Texture == null)
+            if (primitive.Texture == null)
             {
                 primitive.SendToGPU();
             }
@@ -643,11 +643,11 @@ namespace ImGui.GraphicsImplementation
             this.ImageMesh.CommandBuffer.Add(cmd);
 
             //construct and merge the mesh of this Path into ShapeMesh
-            var uvMin = new Point(0,0);
-            var uvMax = new Point(1,1);
+            var uvMin = new Point(0, 0);
+            var uvMax = new Point(1, 1);
 
             this.ImageMesh.PrimReserve(6, 4);
-            AddImageRect(rect, uvMin, uvMax, tintColor);
+            this.AddImageRect(rect, uvMin, uvMax, tintColor);
         }
 
         private void AddImage(ImagePrimitive primitive, Point a, Point b, Point uv0, Point uv1, Color col)
@@ -655,7 +655,7 @@ namespace ImGui.GraphicsImplementation
             if (MathEx.AmostZero(col.A))
                 return;
 
-            if(primitive.Texture == null)
+            if (primitive.Texture == null)
             {
                 primitive.SendToGPU();
             }
@@ -667,7 +667,7 @@ namespace ImGui.GraphicsImplementation
             this.ImageMesh.CommandBuffer.Add(cmd);
 
             this.ImageMesh.PrimReserve(6, 4);
-            AddImageRect(a, b, uv0, uv1, col);
+            this.AddImageRect(a, b, uv0, uv1, col);
         }
 
         /// <summary>

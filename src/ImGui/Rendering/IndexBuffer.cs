@@ -12,7 +12,7 @@ namespace ImGui
 
         private int capacity;
 
-        public int Capacity => capacity;
+        public int Capacity => this.capacity;
 
         private GCHandle handle;//TODO free this handle finally
         private unsafe DrawIndex* ptr;
@@ -22,7 +22,7 @@ namespace ImGui
             this.data = new DrawIndex[capacity];
             this.capacity = capacity;
             this.size = 0;
-            UpdatePointer();
+            this.UpdatePointer();
         }
 
         public IntPtr Pointer
@@ -40,7 +40,7 @@ namespace ImGui
                 this.handle.Free();
             }
             this.handle = GCHandle.Alloc(this.data, GCHandleType.Pinned);
-            this.Pointer = handle.AddrOfPinnedObject();
+            this.Pointer = this.handle.AddrOfPinnedObject();
             unsafe
             {
                 this.ptr = (DrawIndex*)this.Pointer.ToPointer();
@@ -52,12 +52,12 @@ namespace ImGui
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return *(ptr + index);
+                return *(this.ptr + index);
             }
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                *(ptr + index) = value;
+                *(this.ptr + index) = value;
             }
         }
 
@@ -73,13 +73,13 @@ namespace ImGui
 
         public void Resize(int newSize)
         {
-            if (newSize > data.Length)
+            if (newSize > this.data.Length)
             {
-                Reserve(_grow_capacity(newSize));
+                this.Reserve(this._grow_capacity(newSize));
             }
             this.size = newSize;
         }
-        
+
         public void Append(IndexBuffer indexBuffer)
         {
             var original_size = this.size;
@@ -89,14 +89,14 @@ namespace ImGui
 
         private void Reserve(int new_capacity)
         {
-            if (new_capacity <= capacity) return;
+            if (new_capacity <= this.capacity) return;
             DrawIndex[] new_data = new DrawIndex[new_capacity];
             if (this.data != null)
             {
                 unsafe
                 {
                     var dest_byte_size = new_capacity * Marshal.SizeOf<DrawIndex>();
-                    var src_byte_size = size * Marshal.SizeOf<DrawIndex>();
+                    var src_byte_size = this.size * Marshal.SizeOf<DrawIndex>();
                     fixed (DrawIndex* data_ptr = this.data)
                     fixed (DrawIndex* new_data_ptr = new_data)
                     {
@@ -107,12 +107,12 @@ namespace ImGui
             this.data = null;
             this.data = new_data;
             this.capacity = new_capacity;
-            UpdatePointer();
+            this.UpdatePointer();
         }
 
         private int _grow_capacity(int newSize)
         {
-            int new_capacity = (capacity != 0) ? (Capacity + Capacity / 2) : 8;
+            int new_capacity = (this.capacity != 0) ? (this.Capacity + this.Capacity / 2) : 8;
             return new_capacity > newSize ? new_capacity : newSize;
         }
     }

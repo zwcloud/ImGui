@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using ImGui.Common;
 using System.Runtime.CompilerServices;
-using ImGui.Rendering;
 
 namespace ImGui
 {

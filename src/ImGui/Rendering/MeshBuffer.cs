@@ -12,31 +12,31 @@ namespace ImGui.Rendering
 
         public void Clear()
         {
-            ShapeMesh.Clear();
-            TextMesh.Clear();
-            ImageMesh.Clear();
+            this.ShapeMesh.Clear();
+            this.TextMesh.Clear();
+            this.ImageMesh.Clear();
         }
 
         public void Init()
         {
-            ShapeMesh.CommandBuffer.Add(DrawCommand.Default);
-            TextMesh.Commands.Add(DrawCommand.Default);
-            ImageMesh.CommandBuffer.Add(DrawCommand.Default);
+            this.ShapeMesh.CommandBuffer.Add(DrawCommand.Default);
+            this.TextMesh.Commands.Add(DrawCommand.Default);
+            this.ImageMesh.CommandBuffer.Add(DrawCommand.Default);
         }
 
         public void Build(MeshList meshList)
         {
             foreach (var mesh in meshList.ShapeMeshes)
             {
-                ShapeMesh.Append(mesh);
+                this.ShapeMesh.Append(mesh);
             }
             foreach (var mesh in meshList.ImageMeshes)
             {
-                ImageMesh.Append(mesh);
+                this.ImageMesh.Append(mesh);
             }
             foreach (var textMesh in meshList.TextMeshes)
             {
-                TextMesh.Append(textMesh, Vector.Zero);
+                this.TextMesh.Append(textMesh, Vector.Zero);
             }
         }
     }
