@@ -202,26 +202,7 @@ namespace ImGui.Rendering
             }
         }
 
-        public bool ActiveSelf
-        {
-            get => this.activeSelf;
-            set
-            {
-                this.activeSelf = value;
-                if (this.RenderContext.shapeMesh != null)
-                {
-                    this.RenderContext.shapeMesh.Visible = value;
-                }
-                if (this.RenderContext.textMesh != null)
-                {
-                    this.RenderContext.textMesh.Visible = value;
-                }
-                if (this.RenderContext.imageMesh != null)
-                {
-                    this.RenderContext.imageMesh.Visible = value;
-                }
-            }
-        }
+        public bool ActiveSelf { get; set; } = true;
 
         enum NodeType
         {
@@ -425,8 +406,6 @@ namespace ImGui.Rendering
                 this.RuleSet.SetState(value);
             }
         }
-
-        public RenderContext RenderContext { get; } = new RenderContext();
 
         /// <summary>
         /// Redraw the node's primitive.
