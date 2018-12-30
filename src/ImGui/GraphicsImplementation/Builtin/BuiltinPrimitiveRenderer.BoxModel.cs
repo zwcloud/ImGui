@@ -188,6 +188,7 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
+        //TODO remove out parameter borderBoxRect
         private static void GetBoxes(Rect rect, StyleRuleSet style, out Rect borderBoxRect, out Rect paddingBoxRect,
             out Rect contentBoxRect)
         {

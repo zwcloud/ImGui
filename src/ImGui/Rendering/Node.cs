@@ -428,134 +428,21 @@ namespace ImGui.Rendering
 
         public RenderContext RenderContext { get; } = new RenderContext();
 
-        public void Draw(IPrimitiveRenderer renderer, MeshList meshList) => this.Draw(renderer, Vector.Zero, meshList);
-
         /// <summary>
         /// Redraw the node's primitive.
         /// </summary>
         /// <param name="renderer"></param>
         /// <param name="meshList"></param>
         /// <remarks>A node can only have one single primitive.</remarks>
-        public void Draw(IPrimitiveRenderer renderer, Vector offset, MeshList meshList)
+        public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
         {
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
-
-            var renderContext = this.RenderContext;
-
-            //special common case: an empty box-model
-            if (this.Primitive == null && this.UseBoxModel)
-            {
-                renderContext.CheckShapeMesh();
-                renderContext.CheckImageMesh();
-
-                renderContext.ClearShapeMesh();
-                renderContext.ClearImageMesh();
-
-                r.SetShapeMesh(renderContext.shapeMesh);
-                r.SetImageMesh(renderContext.imageMesh);
-                r.DrawBoxModel(Rect.Offset(this.Rect, offset), this.RuleSet);
-                r.SetShapeMesh(null);
-                r.SetImageMesh(null);
-
-                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
-            }
-            else
-            {
-                foreach (var primitive in this.PrimitiveList)
-                {
-                    switch (primitive)
-                    {
-                        case PathPrimitive p:
-                            if (this.UseBoxModel)
-                            {
-                                throw new NotImplementedException();
-                            }
-                            else
-                            {
-                                renderContext.CheckShapeMesh();
-                                renderContext.ClearShapeMesh();
-
-                                r.DrawPathPrimitive(renderContext.shapeMesh, p, (Vector)this.Rect.Location);
-
-                                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                            }
-
-                            break;
-                        case TextPrimitive t:
-                            if (this.UseBoxModel)
-                            {
-                                renderContext.CheckTextMesh();
-                                renderContext.CheckShapeMesh();
-                                renderContext.CheckImageMesh();
-
-                                renderContext.ClearTextMesh();
-                                renderContext.ClearImageMesh();
-                                renderContext.ClearShapeMesh();
-
-                                r.SetShapeMesh(renderContext.shapeMesh);
-                                r.SetTextMesh(renderContext.textMesh);
-                                r.SetImageMesh(renderContext.imageMesh);
-                                r.DrawBoxModel(t, Rect.Offset(this.Rect, offset), this.RuleSet);
-                                r.SetShapeMesh(null);
-                                r.SetTextMesh(null);
-                                r.SetImageMesh(null);
-
-                                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
-                                meshList.AddOrUpdateTextMesh(renderContext.textMesh);
-                            }
-                            else
-                            {
-                                renderContext.CheckTextMesh();
-                                renderContext.ClearTextMesh();
-
-                                r.DrawTextPrimitive(renderContext.textMesh, t, this.Rect, this.RuleSet, offset);
-
-                                meshList.AddOrUpdateTextMesh(renderContext.textMesh);
-                            }
-
-                            break;
-                        case ImagePrimitive i:
-                            if (this.UseBoxModel)
-                            {
-                                renderContext.CheckShapeMesh();
-                                renderContext.CheckImageMesh();
-
-                                renderContext.ClearShapeMesh();
-                                renderContext.ClearImageMesh();
-
-                                r.SetImageMesh(renderContext.imageMesh);
-                                r.SetShapeMesh(renderContext.shapeMesh);
-                                r.DrawBoxModel(i, Rect.Offset(this.Rect, offset), this.RuleSet);
-                                r.SetShapeMesh(null);
-                                r.SetImageMesh(null);
-
-                                meshList.AddOrUpdateShapeMesh(renderContext.shapeMesh);
-                                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
-                            }
-                            else
-                            {
-                                renderContext.CheckImageMesh();
-                                renderContext.ClearImageMesh();
-
-                                r.DrawImagePrimitive(renderContext.imageMesh, i, this.Rect, this.RuleSet, offset);
-
-                                meshList.AddOrUpdateImageMesh(renderContext.imageMesh);
-                            }
-
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
+            r.DrawPrimitiveList(this.PrimitiveList, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }
         #endregion
 
-        private bool activeSelf = true;
         private GUIState state = GUIState.Normal;
 
         /// <summary>

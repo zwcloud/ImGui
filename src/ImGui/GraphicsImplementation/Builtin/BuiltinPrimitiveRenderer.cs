@@ -541,8 +541,6 @@ namespace ImGui.GraphicsImplementation
         /// <param name="style"></param>
         public void DrawText(TextPrimitive primitive, Rect rect, StyleRuleSet style)
         {
-            primitive.Offset = (Vector)rect.TopLeft;
-
             //check if we need to rebuild the glyph data of this text primitive
             var needRebuild = this.CheckTextPrimitive(primitive, style);
 
@@ -575,7 +573,7 @@ namespace ImGui.GraphicsImplementation
                     (int)rect.Size.Width,
                     (int)rect.Size.Height,
                     textAlignment);
-                textContext.Build((Point)primitive.Offset);
+                textContext.Build(rect.Location);
 
                 primitive.Offsets.AddRange(textContext.GlyphOffsets);
 
@@ -614,7 +612,7 @@ namespace ImGui.GraphicsImplementation
                 index++;
                 var glyphData = primitive.Glyphs[index];
                 Vector glyphOffset = primitive.Offsets[index];
-                this.TextMesh.Append(primitive.Offset, glyphData, glyphOffset, scale, fontColor, false);
+                this.TextMesh.Append((Vector)rect.Location + primitive.Offset, glyphData, glyphOffset, scale, fontColor, false);
             }
 
             var newIndexBufferCount = this.TextMesh.IndexBuffer.Count;

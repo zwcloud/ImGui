@@ -192,6 +192,8 @@ namespace ImGui
                 window.MeshBuffer.Init();
                 window.MeshBuffer.Build(window.MeshList);
 
+                window.MeshList.Clear();
+
                 //draw mesh buffer
                 this.renderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height,
                     (shapeMesh: window.MeshBuffer.ShapeMesh, imageMesh: window.MeshBuffer.ImageMesh, window.MeshBuffer.TextMesh));

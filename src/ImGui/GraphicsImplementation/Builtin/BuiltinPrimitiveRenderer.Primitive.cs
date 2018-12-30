@@ -1,4 +1,6 @@
-﻿using ImGui.Common.Primitive;
+﻿using System;
+using System.Collections.Generic;
+using ImGui.Common.Primitive;
 using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
@@ -32,8 +34,82 @@ namespace ImGui.GraphicsImplementation
             TextPrimitive textPrimitive, Rect rect, StyleRuleSet style, Vector offset)
         {
             this.SetTextMesh(textMesh);
-            this.DrawText(textPrimitive, Rect.Offset(rect, offset), style);
+            this.DrawText(textPrimitive, rect, style);
             this.SetTextMesh(null);
         }
+
+        public void DrawBoxModelPrimitive(Mesh shapeMesh, Mesh imageMesh,
+            Rect borderBoxRect, Rect paddingBoxRect, Rect contentBoxRect, StyleRuleSet style)
+        {
+            this.SetShapeMesh(shapeMesh);
+            this.SetImageMesh(imageMesh);
+
+            this.DrawBackground(style, paddingBoxRect);
+
+            this.DrawBorder(style, borderBoxRect, paddingBoxRect);
+            this.DrawOutline(style, borderBoxRect);
+
+            this.DrawDebug(paddingBoxRect, contentBoxRect);
+
+            this.SetShapeMesh(null);
+            this.SetImageMesh(null);
+        }
+
+        public void DrawPrimitiveList(List<Primitive> primitiveList, bool useBoxModel, Rect nodeRect,
+            StyleRuleSet ruleSet, MeshList meshList)
+        {
+            Rect rect = nodeRect;
+            if (useBoxModel)
+            {
+                GetBoxes(nodeRect, ruleSet, out var bRect, out var pRect, out rect);
+
+                var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                shapeMesh.Clear();
+                shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+
+                var imageMesh = MeshPool.ImageMeshPool.Get();
+                imageMesh.Clear();
+
+                this.DrawBoxModelPrimitive(shapeMesh, imageMesh, bRect, pRect, rect, ruleSet);
+
+                meshList.AddOrUpdateShapeMesh(shapeMesh);
+                meshList.AddOrUpdateImageMesh(imageMesh);
+            }
+
+            foreach (var primitive in primitiveList)
+            {
+                switch (primitive)
+                {
+                    case PathPrimitive p:
+                    {
+                        var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                        shapeMesh.Clear();
+                        shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                        this.DrawPathPrimitive(shapeMesh, p, (Vector)rect.Location);
+                        meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    }
+                    break;
+                    case TextPrimitive t:
+                    {
+                        var textMesh = MeshPool.TextMeshPool.Get();
+                        textMesh.Clear();
+                        this.DrawTextPrimitive(textMesh, t, rect, ruleSet, primitive.Offset);
+                        meshList.AddOrUpdateTextMesh(textMesh);
+                    }
+                    break;
+                    case ImagePrimitive i:
+                    {
+                        var imageMesh = MeshPool.ImageMeshPool.Get();
+                        imageMesh.Clear();
+                        this.DrawImagePrimitive(imageMesh, i, rect, ruleSet, primitive.Offset);
+                        meshList.AddOrUpdateImageMesh(imageMesh);
+                    }
+                    break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
     }
 }

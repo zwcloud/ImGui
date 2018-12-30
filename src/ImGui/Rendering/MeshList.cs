@@ -45,5 +45,27 @@ namespace ImGui.Rendering
 
             this.ImageMeshes.AddLast(imageMesh);
         }
+
+        public void Clear()
+        {
+            foreach (var shapeMesh in this.ShapeMeshes)
+            {
+                MeshPool.ShapeMeshPool.Put(shapeMesh);
+            }
+
+            foreach (var imageMesh in this.ImageMeshes)
+            {
+                MeshPool.ImageMeshPool.Put(imageMesh);
+            }
+
+            foreach (var textMesh in this.TextMeshes)
+            {
+                MeshPool.TextMeshPool.Put(textMesh);
+            }
+
+            this.ShapeMeshes.Clear();
+            this.ImageMeshes.Clear();
+            this.TextMeshes.Clear();
+        }
     }
 }
