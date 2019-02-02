@@ -63,6 +63,7 @@ namespace ImGui
         Slider_LineUnused,
 
         StrokeColor,
+        StrokeWidth,
         FillColor,
 
         GradientLeftColor,

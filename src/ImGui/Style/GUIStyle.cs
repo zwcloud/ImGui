@@ -131,6 +131,10 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Normal }] = 1,
                 [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Hover }] = 1,
                 [new NameState { Name = GUIStyleName.MaxTextureCoordinateV, State = GUIState.Active }] = 1,
+
+                [new NameState {Name = GUIStyleName.StrokeWidth, State = GUIState.Normal}] = 1,
+                [new NameState {Name = GUIStyleName.StrokeWidth, State = GUIState.Hover}] = 1,
+                [new NameState {Name = GUIStyleName.StrokeWidth, State = GUIState.Active}] = 1,
             };
 
             style.colorStyles = new Dictionary<NameState, Color>
