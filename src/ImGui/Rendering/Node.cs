@@ -362,31 +362,7 @@ namespace ImGui.Rendering
         #endregion
 
         #region Draw
-        internal Primitive Primitive
-        {
-            get
-            {
-                if (this.PrimitiveList.Count == 0)
-                {
-                    return null;
-                }
-
-                return this.PrimitiveList[0];
-            }
-            set
-            {
-                if (this.PrimitiveList.Count == 0)
-                {
-                    this.PrimitiveList.Add(value);
-                }
-                else
-                {
-                    this.PrimitiveList[0] = value;
-                }
-            }
-        }
-
-        internal List<Primitive> PrimitiveList { get; set; } = new List<Primitive>(1);
+        internal Primitive Primitive { get; set; }
 
         internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
 
@@ -418,7 +394,7 @@ namespace ImGui.Rendering
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
-            r.DrawPrimitiveList(this.PrimitiveList, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
+            r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }
         #endregion
 
