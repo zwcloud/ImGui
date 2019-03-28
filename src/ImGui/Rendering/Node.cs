@@ -8,50 +8,15 @@ using ImGui.GraphicsImplementation;
 
 namespace ImGui.Rendering
 {
+    /// <summary>
+    /// The minimal layout and style element: styling and layout.
+    /// </summary>
+    /// <remarks>
+    /// Persisting styling and layout data for <see cref="Visual"/>s of a control.
+    /// </remarks>
     [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}")]
-    internal class Node : IStyleRuleSet, ILayoutGroup
+    internal class Node : Visual, IStyleRuleSet, ILayoutGroup
     {
-        public static bool DefaultUseBoxModel = false;
-
-        /// <summary>
-        /// identifier number
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// string identifier
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// The rectangle this node occupies. Act as the border-box when using box-model.
-        /// </summary>
-        public Rect Rect;
-
-        public double X
-        {
-            get => this.Rect.X;
-            set => this.Rect.X = value;
-        }
-
-        public double Y
-        {
-            get => this.Rect.Y;
-            set => this.Rect.Y = value;
-        }
-
-        public double Width
-        {
-            get => this.Rect.Width;
-            set => this.Rect.Width = value;
-        }
-
-        public double Height
-        {
-            get => this.Rect.Height;
-            set => this.Rect.Height = value;
-        }
-
         /// <summary>
         /// Create a node.
         /// </summary>
@@ -157,12 +122,6 @@ namespace ImGui.Rendering
         #endregion
 
         #region Hierarchy
-        public Node Parent { get; set; }
-
-        public List<Node> Children { get; set; }
-
-        public int ChildCount => this.Children.Count;
-
         public IEnumerator<ILayoutEntry> GetEnumerator()
         {
             return this.Children.GetEnumerator();
@@ -172,37 +131,6 @@ namespace ImGui.Rendering
         {
             return this.GetEnumerator();
         }
-
-        internal bool ActiveInTree
-        {
-            get
-            {
-                //already deactived
-                if (!this.ActiveSelf)
-                {
-                    return false;
-                }
-
-                //check if all ancestors are active
-                Node ancestorNode = this;
-                do
-                {
-                    ancestorNode = ancestorNode.Parent;
-                    if (ancestorNode == null)
-                    {
-                        break;
-                    }
-                    if (!ancestorNode.ActiveSelf)
-                    {
-                        return false;
-                    }
-                } while (ancestorNode.ActiveSelf);
-
-                return true;
-            }
-        }
-
-        public bool ActiveSelf { get; set; } = true;
 
         enum NodeType
         {
@@ -362,9 +290,6 @@ namespace ImGui.Rendering
         #endregion
 
         #region Draw
-        internal Primitive Primitive { get; set; }
-
-        internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
 
         public StyleRuleSet RuleSet { get; }
 
@@ -399,45 +324,5 @@ namespace ImGui.Rendering
         #endregion
 
         private GUIState state = GUIState.Normal;
-
-        /// <summary>
-        /// Is this node clipped?
-        /// </summary>
-        public bool IsClipped(Rect clipRect)
-        {
-            if (clipRect.IntersectsWith(this.Rect))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Get the clip rect that applies to this node.
-        /// </summary>
-        /// <param name="rootClipRect">The root clip rect: client area of the window</param>
-        public Rect GetClipRect(Rect rootClipRect)
-        {
-            Rect clipRect;
-            if (this.Parent != null)
-            {
-                var parentNode = this.Parent;
-                if (this.UseBoxModel)
-                {
-                    clipRect = Utility.GetContentBox(parentNode.Rect, parentNode.RuleSet);
-                }
-                else
-                {
-                    clipRect = parentNode.Rect;
-                }
-                clipRect.Intersect(rootClipRect);
-            }
-            else
-            {
-                clipRect = rootClipRect;
-            }
-
-            return clipRect;
-        }
     }
 }

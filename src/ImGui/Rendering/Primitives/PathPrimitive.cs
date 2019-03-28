@@ -1,7 +1,6 @@
 ﻿using System;
 using ImGui.Common.Primitive;
 using System.Collections.Generic;
-using ImGui.Common;
 
 namespace ImGui.Rendering
 {
