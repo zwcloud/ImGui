@@ -20,9 +20,8 @@ namespace ImGui.Rendering
         /// <summary>
         /// Create a node.
         /// </summary>
-        public Node(int id)
+        public Node(int id) : base(id)
         {
-            this.Id = id;
             this.RuleSet = new StyleRuleSet();
         }
 
@@ -50,15 +49,8 @@ namespace ImGui.Rendering
         /// <summary>
         /// Create a node.
         /// </summary>
-        public Node(string name)
+        public Node(string name) : base(name)
         {
-            var idIndex = name.IndexOf('#');
-            if (idIndex < 0)
-            {
-                throw new ArgumentException("No id is specfied in the name.", nameof(name));
-            }
-            this.Id = name.Substring(idIndex).GetHashCode();
-            this.Name = name;
             this.RuleSet = new StyleRuleSet();
         }
 

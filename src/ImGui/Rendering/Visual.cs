@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
@@ -12,6 +13,22 @@ namespace ImGui.Rendering
     internal class Visual
     {
         public static bool DefaultUseBoxModel = false;
+
+        public Visual(int id)
+        {
+            this.Id = id;
+        }
+
+        public Visual(string name)
+        {
+            var idIndex = name.IndexOf('#');
+            if (idIndex < 0)
+            {
+                throw new ArgumentException("No id is specfied in the name.", nameof(name));
+            }
+            this.Id = name.Substring(0, idIndex).GetHashCode();
+            this.Name = name.Substring(idIndex);
+        }
 
         /// <summary>
         /// The rectangle this node occupies. Act as the border-box when using box-model.
