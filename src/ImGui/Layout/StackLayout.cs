@@ -7,7 +7,7 @@ namespace ImGui.Layout
     {
         public static void BeginLayoutGroup(this RenderTree renderTree, int id, bool isVertical, LayoutOptions? options = null, string str_id = null)
         {
-            var group = (Node)renderTree.CurrentContainer.Children.Find(n => n.Id == id);
+            var group = renderTree.CurrentContainer.GetDirectNodeById(id);
             if (group == null)
             {
                 group = new Node(id, str_id ?? "group");

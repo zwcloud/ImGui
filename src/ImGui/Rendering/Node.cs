@@ -210,6 +210,11 @@ namespace ImGui.Rendering
             return (Node) visual;
         }
 
+        public Node GetDirectNodeById(int id)
+        {
+            return (Node) this.Children.Find(n => n.Id == id);
+        }
+
         public void Foreach(Func<Node, bool> func)
         {
             if (func == null)

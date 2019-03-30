@@ -70,7 +70,7 @@ namespace ImGui.Rendering
         }
 
         public Visual Parent { get; set; }
-        public List<Visual> Children { get; set; }
+        protected List<Visual> Children { get; set; }
         public int ChildCount => this.Children.Count;
 
         internal bool ActiveInTree
