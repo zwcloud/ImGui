@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
     /// <summary>
-    /// The minimal layout and style element: styling and layout.
+    /// The minimal layout element.
     /// </summary>
     /// <remarks>
     /// Persisting styling and layout data for <see cref="Visual"/>s of a control.
@@ -16,12 +15,8 @@ namespace ImGui.Rendering
     [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}")]
     internal class Node : Visual, IStyleRuleSet, ILayoutGroup
     {
-        /// <summary>
-        /// Create a node.
-        /// </summary>
         public Node(int id) : base(id)
         {
-            this.RuleSet = new StyleRuleSet();
         }
 
         public Node(int id, Rect rect) : this(id)
@@ -29,34 +24,20 @@ namespace ImGui.Rendering
             this.Rect = rect;
         }
 
-        /// <summary>
-        /// Create a node.
-        /// </summary>
-        public Node(int id, string name) : this(id)
+        public Node(string name) : base(name)
         {
-            this.Name = name;
         }
 
-        /// <summary>
-        /// Create a node.
-        /// </summary>
-        public Node(int id, string name, Rect rect) : this(id, name)
+        public Node(string name, Rect rect) : this(name)
         {
             this.Rect = rect;
         }
 
-        /// <summary>
-        /// Create a node.
-        /// </summary>
-        public Node(string name) : base(name)
+        public Node(int id, string name) : base(id, name)
         {
-            this.RuleSet = new StyleRuleSet();
         }
 
-        /// <summary>
-        /// Create a node.
-        /// </summary>
-        public Node(string name, Rect rect) : this(name)
+        public Node(int id, string name, Rect rect) : this(id, name)
         {
             this.Rect = rect;
         }
@@ -215,59 +196,11 @@ namespace ImGui.Rendering
             return (Node) this.Children.Find(n => n.Id == id);
         }
 
-        public void Foreach(Func<Node, bool> func)
+        public bool Contains(Node node)
         {
-            if (func == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            foreach (var visual in this.Children)
-            {
-                var node = (Node)visual;
-                var continueWithChildren = func(node);
-                if (continueWithChildren && node.Children != null && node.Children.Count != 0)
-                {
-                    node.Foreach(func);
-                }
-            }
+            return this.Children.Contains(node);
         }
+
         #endregion
-
-        #region Draw
-
-        public StyleRuleSet RuleSet { get; }
-
-        public GUIState State
-        {
-            get => this.state;
-            set
-            {
-                if (this.state == value)
-                {
-                    return;
-                }
-
-                this.state = value;
-                this.RuleSet.SetState(value);
-            }
-        }
-
-        /// <summary>
-        /// Redraw the node's primitive.
-        /// </summary>
-        /// <param name="renderer"></param>
-        /// <param name="meshList"></param>
-        /// <remarks>A node can only have one single primitive.</remarks>
-        public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
-        {
-            //TEMP regard all renderer as the built-in renderer
-            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
-            Debug.Assert(r != null);
-            r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
-        }
-        #endregion
-
-        private GUIState state = GUIState.Normal;
     }
 }

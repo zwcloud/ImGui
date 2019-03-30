@@ -37,7 +37,7 @@ namespace ImGui.Rendering
         /// And return when the function return false.
         /// </summary>
         /// <param name="func"></param>
-        public void Foreach(Func<Node, bool> func)
+        public void Foreach(Func<Visual, bool> func)
         {
             this.Root.Foreach(func);
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {
@@ -28,6 +30,12 @@ namespace ImGui.Rendering
             }
             this.Id = name.Substring(0, idIndex).GetHashCode();
             this.Name = name.Substring(idIndex);
+        }
+
+        protected Visual(int id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
         }
 
         /// <summary>
@@ -71,6 +79,7 @@ namespace ImGui.Rendering
 
         public Visual Parent { get; set; }
         protected List<Visual> Children { get; set; }
+            = new List<Visual>();
         public int ChildCount => this.Children.Count;
 
         internal bool ActiveInTree
@@ -126,7 +135,7 @@ namespace ImGui.Rendering
             Rect clipRect;
             if (this.Parent != null)
             {
-                var parentNode = (Node)this.Parent;
+                var parentNode = this.Parent;
                 if (this.UseBoxModel)
                 {
                     clipRect = Utility.GetContentBox(parentNode.Rect, parentNode.RuleSet);//TODO decuple RuleSet and ContentBox
@@ -157,10 +166,6 @@ namespace ImGui.Rendering
             Node.CheckNodeType(this, child);
 
             child.Parent = this;
-            if (this.Children == null)
-            {
-                this.Children = new List<Visual>();
-            }
             this.Children.Add(child);
         }
 
@@ -186,10 +191,60 @@ namespace ImGui.Rendering
             return null;
         }
 
-        public bool RemoveChild(Visual node)
+        public bool RemoveChild(Visual visual)
         {
-            return this.Children.Remove(node);
+            return this.Children.Remove(visual);
         }
+
+        public void Foreach(Func<Visual, bool> func)
+        {
+            if (func == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            foreach (var visual in this.Children)
+            {
+                var continueWithChildren = func(visual);
+                if (continueWithChildren && visual.Children != null && visual.Children.Count != 0)
+                {
+                    visual.Foreach(func);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Redraw the node's primitive.
+        /// </summary>
+        /// <param name="renderer"></param>
+        /// <param name="meshList"></param>
+        /// <remarks>A visual can only have one single primitive.</remarks>
+        public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
+        {
+            //TEMP regard all renderer as the built-in renderer
+            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            Debug.Assert(r != null);
+            r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
+        }
+
+        public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
+
+        public GUIState State
+        {
+            get => this.state;
+            set
+            {
+                if (this.state == value)
+                {
+                    return;
+                }
+
+                this.state = value;
+                this.RuleSet.SetState(value);
+            }
+        }
+
+        private GUIState state = GUIState.Normal;
     }
 
 }

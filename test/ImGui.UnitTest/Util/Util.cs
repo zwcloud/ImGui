@@ -100,9 +100,10 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static void Draw(Context context, Node node)
+        private static void Draw(Context context, Visual visual)
         {
-            var isGroup = node.Children != null;
+            var node = (Node)visual;
+            var isGroup =  node.LayoutGroup != null;
 
             if (!isGroup)
             {
@@ -125,10 +126,11 @@ namespace ImGui.UnitTest
             if (!isGroup) return;
 
             context.Save();
-            foreach (var childNode in node.Children)
+            node.Foreach(v =>
             {
-                Draw(context, childNode);
-            }
+                Draw(context, v);
+                return true;
+            });
             context.Restore();
         }
 
@@ -238,7 +240,7 @@ namespace ImGui.UnitTest
             using (var context = new RenderContextForTest(width, height))
             {
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
-                root.Foreach(n =>primitiveRenderer.DrawNode(n, clipRect, meshList));
+                root.Foreach(n =>primitiveRenderer.Draw(n, clipRect, meshList));
 
                 //rebuild mesh buffer
                 meshBuffer.Clear();

@@ -183,8 +183,8 @@ namespace ImGui
             {
                 if (!window.Active) continue;
 
-                window.RenderTree.Foreach(n => this.primitiveRenderer.DrawNode(n, clientRect, window.MeshList));
-                window.NodeTreeRoot.Foreach(n => this.primitiveRenderer.DrawNode(n, clientRect, window.MeshList));
+                window.RenderTree.Foreach(n => this.primitiveRenderer.Draw(n, clientRect, window.MeshList));
+                window.NodeTreeRoot.Foreach(n => this.primitiveRenderer.Draw(n, clientRect, window.MeshList));
 
                 //rebuild mesh buffer
                 window.MeshBuffer.Clear();

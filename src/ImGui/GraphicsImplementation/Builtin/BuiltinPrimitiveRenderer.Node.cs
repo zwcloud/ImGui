@@ -5,21 +5,21 @@ namespace ImGui.GraphicsImplementation
 {
     internal static class BuiltinPrimitiveRendererExtension
     {
-        public static bool DrawNode(this BuiltinPrimitiveRenderer primitiveRenderer, Node node, Rect rootClipRect, MeshList meshList)
+        public static bool Draw(this BuiltinPrimitiveRenderer primitiveRenderer, Visual visual, Rect rootClipRect, MeshList meshList)
         {
-            if (!node.ActiveInTree)
+            if (!visual.ActiveInTree)
             {
                 return false;
             }
 
-            var clipRect = node.GetClipRect(rootClipRect);
+            var clipRect = visual.GetClipRect(rootClipRect);
 
-            if (node.IsClipped(clipRect))
+            if (visual.IsClipped(clipRect))
             {
                 return false;
             }
 
-            node.Draw(primitiveRenderer, meshList);
+            visual.Draw(primitiveRenderer, meshList);
             return true;
         }
 
