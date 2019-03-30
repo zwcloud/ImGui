@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
-using ImGui.GraphicsImplementation;
 
 namespace ImGui.Rendering
 {
@@ -110,14 +109,12 @@ namespace ImGui.Rendering
             this.LayoutGroup.SetX(this.Rect.X);
             this.LayoutGroup.SetY(this.Rect.Y);
         }
-        #endregion
 
-        #region Hierarchy
         public IEnumerator<ILayoutEntry> GetEnumerator()
         {
             foreach (var visual in this.Children)
             {
-                yield return visual as Node;
+                yield return (Node)visual;
             }
         }
 
@@ -156,8 +153,8 @@ namespace ImGui.Rendering
 
         internal static void CheckNodeType(Visual parentVisual, Visual v)
         {
-            var parent = parentVisual as Node;
-            var node = v as Node;
+            var parent = (Node)parentVisual;
+            var node = (Node)v;
 
             NodeType thisNodeType = GetNodeType(parent);
             NodeType nodeType = GetNodeType(node);
@@ -207,28 +204,10 @@ namespace ImGui.Rendering
             }
         }
 
-        //TODO maybe we should use an extra dictionary to retrive node by id, O(1) but occupies more memory
         public Node GetNodeById(int id)
         {
-            if (this.Children == null)
-            {
-                return null;
-            }
-            foreach (var visual in this.Children)
-            {
-                var node = visual as Node;
-                if (node.Id == id)
-                {
-                    return node;
-                }
-
-                Node child = node.GetNodeById(id);
-                if (child != null)
-                {
-                    return child;
-                }
-            }
-            return null;
+            var visual = GetVisualById(id);
+            return (Node) visual;
         }
 
         public void Foreach(Func<Node, bool> func)
@@ -240,18 +219,13 @@ namespace ImGui.Rendering
 
             foreach (var visual in this.Children)
             {
-                var node = visual as Node;
+                var node = (Node)visual;
                 var continueWithChildren = func(node);
                 if (continueWithChildren && node.Children != null && node.Children.Count != 0)
                 {
                     node.Foreach(func);
                 }
             }
-        }
-
-        public bool RemoveChild(Node node)
-        {
-            return this.Children.Remove(node);
         }
         #endregion
 
@@ -283,7 +257,7 @@ namespace ImGui.Rendering
         public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
         {
             //TEMP regard all renderer as the built-in renderer
-            var r = renderer as BuiltinPrimitiveRenderer;
+            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
             r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }

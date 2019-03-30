@@ -10,16 +10,16 @@ namespace ImGui.Rendering
     /// <remarks>
     /// Persisting rendering data for controls.
     /// </remarks>
-    internal class Visual
+    internal abstract class Visual
     {
         public static bool DefaultUseBoxModel = false;
 
-        public Visual(int id)
+        protected Visual(int id)
         {
             this.Id = id;
         }
 
-        public Visual(string name)
+        protected Visual(string name)
         {
             var idIndex = name.IndexOf('#');
             if (idIndex < 0)
@@ -126,7 +126,7 @@ namespace ImGui.Rendering
             Rect clipRect;
             if (this.Parent != null)
             {
-                var parentNode = this.Parent as Node;
+                var parentNode = (Node)this.Parent;
                 if (this.UseBoxModel)
                 {
                     clipRect = Utility.GetContentBox(parentNode.Rect, parentNode.RuleSet);//TODO decuple RuleSet and ContentBox
@@ -164,6 +164,32 @@ namespace ImGui.Rendering
             this.Children.Add(child);
         }
 
+        public Visual GetVisualById(int id)
+        {
+            if (this.Children == null)
+            {
+                return null;
+            }
+            foreach (var visual in this.Children)
+            {
+                if (visual.Id == id)
+                {
+                    return visual;
+                }
+
+                Visual child = visual.GetVisualById(id);
+                if (child != null)
+                {
+                    return child;
+                }
+            }
+            return null;
+        }
+
+        public bool RemoveChild(Visual node)
+        {
+            return this.Children.Remove(node);
+        }
     }
 
 }

@@ -7,7 +7,7 @@ namespace ImGui.Layout
     {
         public static void BeginLayoutGroup(this RenderTree renderTree, int id, bool isVertical, LayoutOptions? options = null, string str_id = null)
         {
-            var group = renderTree.CurrentContainer.Children.Find(n => n.Id == id) as Node;
+            var group = (Node)renderTree.CurrentContainer.Children.Find(n => n.Id == id);
             if (group == null)
             {
                 group = new Node(id, str_id ?? "group");
@@ -24,7 +24,7 @@ namespace ImGui.Layout
             {
                 throw new InvalidOperationException("BeginLayoutGroup/EndLayoutGroup mismatch.");
             }
-            renderTree.CurrentContainer = renderTree.CurrentContainer.Parent as Node;
+            renderTree.CurrentContainer = (Node)renderTree.CurrentContainer.Parent;
         }
     }
 }
