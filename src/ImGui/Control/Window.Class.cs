@@ -101,7 +101,6 @@ namespace ImGui
             this.Flags = Flags;
 
             this.NodeTreeRoot = new Node(this.ID, "root");
-            this.NodeTreeRoot.Children = new List<Node>();
             this.NodeTreeRoot.Rect = new Rect(0, 0, size);
             this.RenderTree = new RenderTree(this.ID, position, size);
 

@@ -73,7 +73,6 @@ namespace ImGui.Rendering
         public void AttachLayoutGroup(bool isVertical)
         {
             this.LayoutEntry = new LayoutGroup(this, isVertical);
-            this.Children = new List<Node>();
         }
 
         /// <summary>
@@ -116,7 +115,10 @@ namespace ImGui.Rendering
         #region Hierarchy
         public IEnumerator<ILayoutEntry> GetEnumerator()
         {
-            return this.Children.GetEnumerator();
+            foreach (var visual in this.Children)
+            {
+                yield return visual as Node;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -152,9 +154,12 @@ namespace ImGui.Rendering
             return nodeType;
         }
 
-        public void AppendChild(Node node)
+        internal static void CheckNodeType(Visual parentVisual, Visual v)
         {
-            NodeType thisNodeType = GetNodeType(this);
+            var parent = parentVisual as Node;
+            var node = v as Node;
+
+            NodeType thisNodeType = GetNodeType(parent);
             NodeType nodeType = GetNodeType(node);
 
             /* Rules:
@@ -182,32 +187,24 @@ namespace ImGui.Rendering
                         throw new LayoutException("It's not allowed to append a Plain node to a LayoutGroup node");
                     case NodeType.LayoutEntry:
                     case NodeType.LayoutGroup:
-                        if (this.RuleSet.IsDefaultWidth && node.RuleSet.IsStretchedWidth)
+                        if (parent.RuleSet.IsDefaultWidth && node.RuleSet.IsStretchedWidth)
                         {
-                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized LayoutGroup node");
+                            throw new LayoutException(
+                                "It's not allowed to append a stretched node to a default-sized LayoutGroup node");
                         }
-                        if (this.RuleSet.IsDefaultHeight && node.RuleSet.IsStretchedHeight)
+
+                        if (parent.RuleSet.IsDefaultHeight && node.RuleSet.IsStretchedHeight)
                         {
-                            throw new LayoutException("It's not allowed to append a stretched node to a default-sized LayoutGroup node");
+                            throw new LayoutException(
+                                "It's not allowed to append a stretched node to a default-sized LayoutGroup node");
                         }
-                        this.LayoutGroup.OnAddLayoutEntry(node);
+
+                        parent.LayoutGroup.OnAddLayoutEntry(node);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
-            this.SetUpParentChildren(node);
-        }
-
-        private void SetUpParentChildren(Node childNode)
-        {
-            childNode.Parent = this;
-            if (this.Children == null)
-            {
-                this.Children = new List<Node>();
-            }
-            this.Children.Add(childNode);
         }
 
         //TODO maybe we should use an extra dictionary to retrive node by id, O(1) but occupies more memory
@@ -217,39 +214,15 @@ namespace ImGui.Rendering
             {
                 return null;
             }
-            foreach (var node in this.Children)
+            foreach (var visual in this.Children)
             {
+                var node = visual as Node;
                 if (node.Id == id)
                 {
                     return node;
                 }
 
                 Node child = node.GetNodeById(id);
-                if (child != null)
-                {
-                    return child;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Get the first child node of the specified name
-        /// </summary>
-        public Node GetNodeByName(string name)
-        {
-            if (this.Children == null)
-            {
-                return null;
-            }
-            foreach (var node in this.Children)
-            {
-                if (node.Name == name)
-                {
-                    return node;
-                }
-
-                Node child = node.GetNodeByName(name);
                 if (child != null)
                 {
                     return child;
@@ -265,8 +238,9 @@ namespace ImGui.Rendering
                 throw new ArgumentNullException();
             }
 
-            foreach (var node in this.Children)
+            foreach (var visual in this.Children)
             {
+                var node = visual as Node;
                 var continueWithChildren = func(node);
                 if (continueWithChildren && node.Children != null && node.Children.Count != 0)
                 {

@@ -31,7 +31,7 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// The rectangle this node occupies. Act as the border-box when using box-model.
+        /// The rectangle this visual occupies. Act as the border-box when using box-model.
         /// </summary>
         public Rect Rect;
 
@@ -69,8 +69,8 @@ namespace ImGui.Rendering
             set => this.Rect.Height = value;
         }
 
-        public Node Parent { get; set; }
-        public List<Node> Children { get; set; }
+        public Visual Parent { get; set; }
+        public List<Visual> Children { get; set; }
         public int ChildCount => this.Children.Count;
 
         internal bool ActiveInTree
@@ -106,7 +106,7 @@ namespace ImGui.Rendering
         internal Primitive Primitive { get; set; }
 
         /// <summary>
-        /// Is this node clipped?
+        /// Is this visual clipped?
         /// </summary>
         public bool IsClipped(Rect clipRect)
         {
@@ -118,7 +118,7 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Get the clip rect that applies to this node.
+        /// Get the clip rect that applies to this visual.
         /// </summary>
         /// <param name="rootClipRect">The root clip rect: client area of the window</param>
         public Rect GetClipRect(Rect rootClipRect)
@@ -126,10 +126,10 @@ namespace ImGui.Rendering
             Rect clipRect;
             if (this.Parent != null)
             {
-                var parentNode = this.Parent;
+                var parentNode = this.Parent as Node;
                 if (this.UseBoxModel)
                 {
-                    clipRect = Utility.GetContentBox(parentNode.Rect, parentNode.RuleSet);
+                    clipRect = Utility.GetContentBox(parentNode.Rect, parentNode.RuleSet);//TODO decuple RuleSet and ContentBox
                 }
                 else
                 {
@@ -146,5 +146,24 @@ namespace ImGui.Rendering
         }
 
         internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
+
+        public void AppendChild(Visual child)
+        {
+            if (child == null)
+            {
+                throw new ArgumentNullException(nameof(child));
+            }
+
+            Node.CheckNodeType(this, child);
+
+            child.Parent = this;
+            if (this.Children == null)
+            {
+                this.Children = new List<Visual>();
+            }
+            this.Children.Add(child);
+        }
+
     }
+
 }
