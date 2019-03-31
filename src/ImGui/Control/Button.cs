@@ -24,7 +24,7 @@ namespace ImGui
 
             //get or create the root node
             int id = window.GetID(text);
-            var container = window.NodeTreeRoot;
+            var container = window.AbsoluteVisualList;
             Visual node = container.Find(visual => visual.Id == id);
             text = Utility.FindRenderedText(text);
             if (node == null)

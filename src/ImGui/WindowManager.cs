@@ -200,7 +200,7 @@ namespace ImGui
 
                 //disable all nodes in the window
                 window.ClientAreaNode.Foreach(n => n.ActiveSelf = false);
-                window.NodeTreeRoot.ForEach(n => n.ActiveSelf = false);
+                window.AbsoluteVisualList.ForEach(n => n.ActiveSelf = false);
             }
 
             // No window should be open at the beginning of the frame.

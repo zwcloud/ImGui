@@ -184,7 +184,7 @@ namespace ImGui
                 if (!window.Active) continue;
 
                 window.RenderTree.Foreach(n => this.primitiveRenderer.Draw(n, clientRect, window.MeshList));
-                foreach (var visual in window.NodeTreeRoot)
+                foreach (var visual in window.AbsoluteVisualList)
                 {
                     this.primitiveRenderer.Draw(visual, clientRect, window.MeshList);
                 }

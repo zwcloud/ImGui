@@ -49,7 +49,7 @@ namespace ImGui
         /// <summary>
         /// Absolute placed visuals. (non-layout)
         /// </summary>
-        public List<Visual> NodeTreeRoot;
+        public List<Visual> AbsoluteVisualList;
 
         /// <summary>
         /// Render tree of layout-ed nodes
@@ -100,7 +100,7 @@ namespace ImGui
 
             this.Flags = Flags;
 
-            this.NodeTreeRoot = new List<Visual>();
+            this.AbsoluteVisualList = new List<Visual>();
             this.RenderTree = new RenderTree(this.ID, position, size);
 
             this.IDStack.Push(this.ID);
@@ -312,7 +312,7 @@ namespace ImGui
                     var node = new Node(id, "Window_ResizeGrip");
                     node.Primitive = new PathPrimitive();
                     this.ResizeGripNode = node;
-                    this.NodeTreeRoot.Add(node);
+                    this.AbsoluteVisualList.Add(node);
                 }
                 //resize grip
                 var resizeGripColor = Color.Clear;
