@@ -47,9 +47,9 @@ namespace ImGui
         public WindowFlags Flags;
 
         /// <summary>
-        /// Root of node tree of plain nodes
+        /// Absolute placed visuals. (non-layout)
         /// </summary>
-        public Node NodeTreeRoot;
+        public List<Visual> NodeTreeRoot;
 
         /// <summary>
         /// Render tree of layout-ed nodes
@@ -100,8 +100,7 @@ namespace ImGui
 
             this.Flags = Flags;
 
-            this.NodeTreeRoot = new Node(this.ID, "root");
-            this.NodeTreeRoot.Rect = new Rect(0, 0, size);
+            this.NodeTreeRoot = new List<Visual>();
             this.RenderTree = new RenderTree(this.ID, position, size);
 
             this.IDStack.Push(this.ID);
@@ -313,7 +312,7 @@ namespace ImGui
                     var node = new Node(id, "Window_ResizeGrip");
                     node.Primitive = new PathPrimitive();
                     this.ResizeGripNode = node;
-                    this.NodeTreeRoot.AppendChild(node);
+                    this.NodeTreeRoot.Add(node);
                 }
                 //resize grip
                 var resizeGripColor = Color.Clear;
@@ -541,7 +540,6 @@ namespace ImGui
             this.FullSize = new_size;
             this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Width(new_size.Width));
             this.WindowContainer.RuleSet.ApplyOptions(GUILayout.Height(new_size.Height));
-            this.NodeTreeRoot.Rect = new Rect(0, 0, new_size);
         }
 
         private Point RenderTreeNodesPivotPoint => this.Position;

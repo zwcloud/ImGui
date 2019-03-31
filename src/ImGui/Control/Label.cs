@@ -21,12 +21,12 @@ namespace ImGui
             //get or create the root node
             int id = window.GetID(text);
             var container = window.NodeTreeRoot;
-            Node node = container.GetNodeById(id);
+            Visual node = container.Find(visual => visual.Id == id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 node = new Node(id, $"Label<{text}>");
-                container.AppendChild(node);
+                container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
                 node.Primitive = new TextPrimitive(text);

@@ -25,13 +25,13 @@ namespace ImGui
             //get or create the root node
             int id = window.GetID(text);
             var container = window.NodeTreeRoot;
-            Node node = container.GetNodeById(id);
+            Visual node = container.Find(visual => visual.Id == id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 //create button node
                 node = new Node(id, $"Button<{text}>");
-                container.AppendChild(node);
+                container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
                 node.Primitive = new TextPrimitive(text);
