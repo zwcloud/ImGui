@@ -3,71 +3,12 @@ using ImGui.Common.Primitive;
 using ImGui.Rendering;
 using Xunit;
 
-
 namespace ImGui.UnitTest.Rendering
 {
     public partial class NodeFacts
     {
         public class AppendChild
         {
-            [Fact]
-            public void AppendAPlainNodeToAPlainNode()
-            {
-                Node plainNode1 = new Node(1);
-                Node plainNode2 = new Node(2);
-
-                plainNode1.AppendChild(plainNode2);
-
-                Assert.Same(plainNode1, plainNode2.Parent);
-                Assert.Contains(plainNode1, plainNode2);
-            }
-
-            [Fact]
-            public void AppendAPlainNodeToALayoutEntryNode_NotAllowed()
-            {
-                Action action = () =>
-                {
-                    Node plainNode = new Node(1);
-                    Node entryNode = new Node(2);
-                    entryNode.AttachLayoutEntry(new Size(100, 100));
-
-                    entryNode.AppendChild(plainNode);
-                };
-
-                Assert.Throws<LayoutException>(action);
-            }
-
-            [Fact]
-            public void AppendAPlainNodeToALayoutGroupNode_NotAllowed()
-            {
-                Action action = () =>
-                {
-                    Node plainNode = new Node(1);
-                    Node groupNode = new Node(2);
-                    groupNode.AttachLayoutGroup(true);
-
-                    groupNode.AppendChild(plainNode);
-                };
-
-                Assert.Throws<LayoutException>(action);
-            }
-
-
-            [Fact]
-            public void AppendALayoutEntryNodeToAPlainNode_NotAllowed()
-            {
-                Action action = () =>
-                {
-                    Node entryNode = new Node(1);
-                    entryNode.AttachLayoutEntry(new Size(100, 100));
-                    Node plainNode = new Node(2);
-
-                    plainNode.AppendChild(entryNode);
-                };
-
-                Assert.Throws<LayoutException>(action);
-            }
-
             [Fact]
             public void AppendALayoutEntryNodeToALayoutEntryNode_NotAllowed()
             {
@@ -96,21 +37,6 @@ namespace ImGui.UnitTest.Rendering
 
                 Assert.Same(groupNode, entryNode.Parent);
                 Assert.Contains(entryNode, groupNode);
-            }
-
-            [Fact]
-            public void AppendALayoutGroupNodeToAPlainNode_NotAllowed()
-            {
-                Action action = () =>
-                {
-                    Node groupNode = new Node(1);
-                    groupNode.AttachLayoutGroup(true);
-                    Node plainNode = new Node(2);
-
-                    plainNode.AppendChild(groupNode);
-                };
-
-                Assert.Throws<LayoutException>(action);
             }
 
             [Fact]

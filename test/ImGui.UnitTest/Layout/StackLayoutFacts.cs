@@ -17,7 +17,7 @@ namespace ImGui.UnitTest.Layout
                 var options = GUILayout.Width(200);
                 group.RuleSet.ApplyOptions(options);
 
-                Assert.True(group.LayoutGroup.IsVertical);
+                Assert.True(group.IsVertical);
                 Assert.True(group.RuleSet.IsFixedWidth);
             }
 
@@ -57,7 +57,7 @@ namespace ImGui.UnitTest.Layout
                 var node2 = new Node(2);
                 node2.AttachLayoutEntry(smallSize);
                 group.AppendChild(node2);
-                
+
                 group.Layout();
 
                 var rect1 = node1.Rect;

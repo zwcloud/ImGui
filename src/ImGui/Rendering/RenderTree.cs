@@ -41,5 +41,29 @@ namespace ImGui.Rendering
         {
             this.Root.Foreach(func);
         }
+
+        public void BeginLayoutGroup(int id, bool isVertical, LayoutOptions? options = null, string str_id = null)
+        {
+            var group = this.CurrentContainer.GetDirectNodeById(id);
+            if (group == null)
+            {
+                group = new Node(id, str_id ?? "group");
+                group.AttachLayoutGroup(isVertical);
+                this.CurrentContainer.AppendChild(group);
+            }
+            group.RuleSet.ApplyOptions(options);
+            this.CurrentContainer = group;
+        }
+
+        public void EndLayoutGroup()
+        {
+            if (this.CurrentContainer == this.Root)
+            {
+                throw new InvalidOperationException("BeginLayoutGroup/EndLayoutGroup mismatch.");
+            }
+
+            this.CurrentContainer = (Node) this.CurrentContainer.Parent;
+        }
     }
+
 }

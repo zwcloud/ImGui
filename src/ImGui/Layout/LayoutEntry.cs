@@ -3,127 +3,112 @@ using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
 {
-    internal class LayoutEntry
+    internal partial class Node
     {
-        protected ILayoutEntry node;
-
-        /// <summary>
-        /// exact content width, externally pre-calculated from content and style
-        /// </summary>
-        public virtual double ContentWidth { get; set; }
-
-        /// <summary>
-        /// exact content height, externally pre-calculated from content and style
-        /// </summary>
-        public virtual double ContentHeight { get; set; }
-
-        public double BorderTop => this.node.RuleSet.BorderTop;
-        public double BorderRight => this.node.RuleSet.BorderRight;
-        public double BorderBottom => this.node.RuleSet.BorderBottom;
-        public double BorderLeft => this.node.RuleSet.BorderLeft;
+        public double BorderTop => this.RuleSet.BorderTop;
+        public double BorderRight => this.RuleSet.BorderRight;
+        public double BorderBottom => this.RuleSet.BorderBottom;
+        public double BorderLeft => this.RuleSet.BorderLeft;
         public double BorderHorizontal => BorderLeft + BorderRight;
         public double BorderVertical => BorderTop + BorderBottom;
 
-        public double PaddingTop => this.node.RuleSet.PaddingTop;
-        public double PaddingRight => this.node.RuleSet.PaddingRight;
-        public double PaddingBottom => this.node.RuleSet.PaddingBottom;
-        public double PaddingLeft => this.node.RuleSet.PaddingLeft;
+        public double PaddingTop => this.RuleSet.PaddingTop;
+        public double PaddingRight => this.RuleSet.PaddingRight;
+        public double PaddingBottom => this.RuleSet.PaddingBottom;
+        public double PaddingLeft => this.RuleSet.PaddingLeft;
         public double PaddingHorizontal => PaddingLeft + PaddingRight;
         public double PaddingVertical => PaddingTop + PaddingBottom;
 
-        public LayoutEntry(ILayoutEntry node, Size contentSize)
+        public void CheckRuleSetForLayout_Entry()
         {
-            this.node = node;
+            //TODO recheck this.RuleSet when layout-related rules are added or changed
 
-            this.ContentWidth = contentSize.Width;
-            this.ContentHeight = contentSize.Height;
-
-            if (this.node.RuleSet.IsFixedWidth)
+            if (this.RuleSet.IsFixedWidth)
             {
                 double horizontalSpace = this.PaddingHorizontal + this.BorderHorizontal;
-                var fixedWidth = this.node.RuleSet.MinWidth;
+                var fixedWidth = this.RuleSet.MinWidth;
                 if(fixedWidth < horizontalSpace)
                 {
                     throw new LayoutException(
                         $"Specified width is too small. It must bigger than the horizontal padding and border size ({horizontalSpace}).");
                 }
-                this.node.RuleSet.HorizontalStretchFactor = 0;
+                this.RuleSet.HorizontalStretchFactor = 0;
             }
 
-            if (this.node.RuleSet.IsFixedHeight)
+            if (this.RuleSet.IsFixedHeight)
             {
                 double verticalSpace = this.PaddingVertical + this.BorderVertical;
-                var fixedHeight = this.node.RuleSet.MinHeight;
+                var fixedHeight = this.RuleSet.MinHeight;
                 if (fixedHeight < verticalSpace)
                 {
                     throw new LayoutException(
                         $"Specified height is too small. It must bigger than the vertical padding and border size ({verticalSpace}).");
                 }
-                this.node.RuleSet.VerticalStretchFactor = 0;
+                this.RuleSet.VerticalStretchFactor = 0;
             }
         }
 
-        public virtual void CalcWidth(double unitPartWidth = -1d)
+        public void CalcWidth_Entry(double unitPartWidth = -1d)
         {
-            if (this.node.RuleSet.HorizontallyStretched)
+            if (this.RuleSet.HorizontallyStretched)
             {
                 if (unitPartWidth > 0)
                 {
-                    this.node.Width = unitPartWidth * this.node.RuleSet.HorizontalStretchFactor;
+                    this.Width = unitPartWidth * this.RuleSet.HorizontalStretchFactor;
                 }
                 else
                 {
                     throw new ArgumentException("The unit part width is invalid", nameof(unitPartWidth));
                 }
             }
-            else if (this.node.RuleSet.IsFixedWidth)
+            else if (this.RuleSet.IsFixedWidth)
             {
-                this.node.Width = this.node.RuleSet.MinWidth;
+                this.Width = this.RuleSet.MinWidth;
             }
             else
             {
-                this.node.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
+                this.Width = this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
             }
         }
 
-        public virtual void CalcHeight(double unitPartHeight = -1d)
+        public void CalcHeight_Entry(double unitPartHeight = -1d)
         {
-            if (this.node.RuleSet.VerticallyStretched)
+            if (this.RuleSet.VerticallyStretched)
             {
                 if (unitPartHeight > 0)
                 {
-                    this.node.Height = unitPartHeight * this.node.RuleSet.VerticalStretchFactor;
-                    this.ContentHeight = this.node.Height - this.PaddingVertical - this.BorderVertical;
+                    this.Height = unitPartHeight * this.RuleSet.VerticalStretchFactor;
+                    this.ContentHeight = this.Height - this.PaddingVertical - this.BorderVertical;
                 }
                 else
                 {
                     throw new ArgumentException("The unit part height is invalid", nameof(unitPartHeight));
                 }
             }
-            else if (this.node.RuleSet.IsFixedHeight)
+            else if (this.RuleSet.IsFixedHeight)
             {
-                this.node.Height = this.node.RuleSet.MinHeight;
-                this.ContentHeight = this.node.Height - this.PaddingVertical - this.BorderVertical;
+                this.Height = this.RuleSet.MinHeight;
+                this.ContentHeight = this.Height - this.PaddingVertical - this.BorderVertical;
             }
             else
             {
-                this.node.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
+                this.Height = this.ContentHeight + this.PaddingVertical + this.BorderVertical;
             }
         }
 
-        public virtual void SetX(double x)
+        public void SetX_Entry(double x)
         {
-            this.node.X = x;
+            this.X = x;
         }
 
-        public virtual void SetY(double y)
+        public void SetY_Entry(double y)
         {
-            this.node.Y = y;
+            this.Y = y;
         }
 
         public double GetDefaultWidth()
         {
-            if(this.node.RuleSet.IsFixedWidth)
+            if(this.RuleSet.IsFixedWidth)
             {
                 throw new LayoutException("Cannot get default width of a fixed size entry.");
             }
@@ -132,7 +117,7 @@ namespace ImGui.Rendering
 
         public double GetDefaultHeight()
         {
-            if (this.node.RuleSet.IsFixedHeight)
+            if (this.RuleSet.IsFixedHeight)
             {
                 throw new LayoutException("Cannot get default width of a fixed height entry.");
             }

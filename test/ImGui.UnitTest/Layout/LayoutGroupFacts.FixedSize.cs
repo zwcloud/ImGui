@@ -12,8 +12,8 @@ namespace ImGui.UnitTest.Layout
             {
                 Node node = new Node(1); node.AttachLayoutEntry(); node.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
 
-                node.LayoutEntry.CalcWidth();
-                node.LayoutEntry.CalcHeight();
+                node.CalcWidth();
+                node.CalcHeight();
 
                 Assert.Equal(50, node.Rect.Width);
                 Assert.Equal(50, node.Rect.Height);
@@ -24,8 +24,8 @@ namespace ImGui.UnitTest.Layout
             {
                 Node group = new Node(1); group.AttachLayoutGroup(true); group.RuleSet.ApplyOptions(GUILayout.Width(100).Height(200));
 
-                group.LayoutGroup.CalcWidth();
-                group.LayoutGroup.CalcHeight();
+                group.CalcWidth();
+                group.CalcHeight();
 
                 Assert.Equal(100, group.Rect.Width);
                 Assert.Equal(200, group.Rect.Height);
@@ -38,8 +38,8 @@ namespace ImGui.UnitTest.Layout
                 Node item = new Node(2); item.AttachLayoutEntry(); item.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
                 group.AppendChild(item);
 
-                group.LayoutGroup.CalcWidth();
-                group.LayoutGroup.CalcHeight();
+                group.CalcWidth();
+                group.CalcHeight();
 
                 Assert.Equal(item.Rect.Width + group.RuleSet.PaddingHorizontal + group.RuleSet.BorderHorizontal, group.Rect.Width);
                 Assert.Equal(item.Rect.Height + group.RuleSet.PaddingVertical + group.RuleSet.BorderVertical, group.Rect.Height);
@@ -72,8 +72,8 @@ namespace ImGui.UnitTest.Layout
                     group.AppendChild(item);
                 }
 
-                group.LayoutGroup.CalcWidth();
-                group.LayoutGroup.CalcHeight();
+                group.CalcWidth();
+                group.CalcHeight();
 
                 Assert.Equal(100, group.Rect.Width);
                 Assert.Equal(200, group.Rect.Height);
@@ -86,8 +86,8 @@ namespace ImGui.UnitTest.Layout
                 Node item = new Node(2); item.AttachLayoutEntry(); item.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
                 group.AppendChild(item);
 
-                group.LayoutGroup.CalcWidth();
-                group.LayoutGroup.CalcHeight();
+                group.CalcWidth();
+                group.CalcHeight();
 
                 Assert.Equal(item.Rect.Width + group.RuleSet.PaddingHorizontal + group.RuleSet.BorderHorizontal, group.Rect.Width);
                 Assert.Equal(item.Rect.Height + group.RuleSet.PaddingVertical + group.RuleSet.BorderVertical, group.Rect.Height);
@@ -117,13 +117,13 @@ namespace ImGui.UnitTest.Layout
                 {
                     var item = items[i];
                     item.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
-                    item.LayoutEntry.ContentWidth += i * 5;
-                    item.LayoutEntry.ContentHeight += i * 8;
+                    item.ContentWidth += i * 5;
+                    item.ContentHeight += i * 8;
                     group.AppendChild(item);
                 }
 
-                group.LayoutGroup.CalcWidth();
-                group.LayoutGroup.CalcHeight();
+                group.CalcWidth();
+                group.CalcHeight();
 
                 Assert.Equal(100, group.Rect.Width);
                 Assert.Equal(200, group.Rect.Height);

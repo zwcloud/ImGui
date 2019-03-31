@@ -14,14 +14,14 @@ namespace ImGui.UnitTest.Layout
                 var entry = new Node(1);
                 entry.AttachLayoutEntry(new Size(100, 200));
 
-                Assert.Equal(100, entry.LayoutEntry.ContentWidth);
+                Assert.Equal(100, entry.ContentWidth);
                 Assert.Equal(1, entry.RuleSet.MinWidth);
                 Assert.Equal(9999, entry.RuleSet.MaxWidth);
                 Assert.False(entry.RuleSet.IsFixedWidth);
                 Assert.False(entry.RuleSet.HorizontallyStretched);
                 Assert.Equal(0, entry.RuleSet.HorizontalStretchFactor);
 
-                Assert.Equal(200, entry.LayoutEntry.ContentHeight);
+                Assert.Equal(200, entry.ContentHeight);
                 Assert.Equal(1, entry.RuleSet.MinHeight);
                 Assert.Equal(9999, entry.RuleSet.MaxHeight);
                 Assert.False(entry.RuleSet.IsFixedHeight);
@@ -37,14 +37,14 @@ namespace ImGui.UnitTest.Layout
                 entry.AttachLayoutEntry();
                 entry.RuleSet.ApplyOptions(options);
 
-                Assert.Equal(0, entry.LayoutEntry.ContentWidth);
+                Assert.Equal(0, entry.ContentWidth);
                 Assert.Equal(100, entry.RuleSet.MinWidth);
                 Assert.Equal(100, entry.RuleSet.MaxWidth);
                 Assert.True(entry.RuleSet.IsFixedWidth);
                 Assert.False(entry.RuleSet.HorizontallyStretched);
                 Assert.Equal(0, entry.RuleSet.HorizontalStretchFactor);
 
-                Assert.Equal(0, entry.LayoutEntry.ContentHeight);
+                Assert.Equal(0, entry.ContentHeight);
                 Assert.Equal(200, entry.RuleSet.MinHeight);
                 Assert.Equal(200, entry.RuleSet.MaxHeight);
                 Assert.True(entry.RuleSet.IsFixedHeight);
@@ -60,14 +60,14 @@ namespace ImGui.UnitTest.Layout
                 entry.AttachLayoutEntry();
                 entry.RuleSet.ApplyOptions(options);
 
-                Assert.Equal(0, entry.LayoutEntry.ContentWidth);
+                Assert.Equal(0, entry.ContentWidth);
                 Assert.Equal(1, entry.RuleSet.MinWidth);
                 Assert.Equal(9999, entry.RuleSet.MaxWidth);
                 Assert.False(entry.RuleSet.IsFixedWidth);
                 Assert.True(entry.RuleSet.HorizontallyStretched);
                 Assert.Equal(1, entry.RuleSet.HorizontalStretchFactor);
 
-                Assert.Equal(0, entry.LayoutEntry.ContentHeight);
+                Assert.Equal(0, entry.ContentHeight);
                 Assert.Equal(1, entry.RuleSet.MinHeight);
                 Assert.Equal(9999, entry.RuleSet.MaxHeight);
                 Assert.False(entry.RuleSet.IsFixedHeight);

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.Layout;
 
 namespace ImGui.Rendering
 {
@@ -13,7 +14,7 @@ namespace ImGui.Rendering
     /// Persisting styling and layout data for <see cref="Visual"/>s of a control.
     /// </remarks>
     [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}")]
-    internal class Node : Visual, IStyleRuleSet, ILayoutGroup
+    internal partial class Node : Visual, IStyleRuleSet
     {
         public Node(int id) : base(id)
         {
@@ -44,15 +45,31 @@ namespace ImGui.Rendering
 
         #region Layout
 
-        public LayoutEntry LayoutEntry { get; private set; }
-        public LayoutGroup LayoutGroup => this.LayoutEntry as LayoutGroup;
+        public bool IsGroup { get; set; }
+
+        public bool IsVertical { get; set; }
+
+        public Rect ContentRect;
+
+        public double ContentWidth
+        {
+            get => this.ContentRect.Width;
+            set => this.ContentRect.Width = value;
+        }
+
+        public double ContentHeight
+        {
+            get => this.ContentRect.Height;
+            set => this.ContentRect.Height = value;
+        }
 
         /// <summary>
         /// Make this node a group
         /// </summary>
         public void AttachLayoutGroup(bool isVertical)
         {
-            this.LayoutEntry = new LayoutGroup(this, isVertical);
+            this.IsGroup = true;
+            this.IsVertical = isVertical;
         }
 
         /// <summary>
@@ -60,8 +77,7 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutEntry(Size contentSize)
         {
-            this.LayoutEntry = new LayoutEntry(this, contentSize);
-            this.Children = null;
+            this.ContentRect.Size = contentSize;
         }
 
         /// <summary>
@@ -74,10 +90,7 @@ namespace ImGui.Rendering
         /// </summary>
         public void Layout(Point p)
         {
-            this.LayoutGroup.CalcWidth(this.LayoutEntry.ContentWidth);
-            this.LayoutGroup.CalcHeight(this.LayoutEntry.ContentHeight);
-            this.LayoutGroup.SetX(p.X);
-            this.LayoutGroup.SetY(p.Y);
+            StackLayout.Layout(this, p);
         }
 
         /// <summary>
@@ -85,55 +98,24 @@ namespace ImGui.Rendering
         /// </summary>
         public void Layout()
         {
-            this.LayoutGroup.CalcWidth(this.LayoutEntry.ContentWidth);
-            this.LayoutGroup.CalcHeight(this.LayoutEntry.ContentHeight);
-            this.LayoutGroup.SetX(this.Rect.X);
-            this.LayoutGroup.SetY(this.Rect.Y);
-        }
-
-        public IEnumerator<ILayoutEntry> GetEnumerator()
-        {
-            foreach (var visual in this.Children)
-            {
-                yield return (Node)visual;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
+            StackLayout.Layout(this, this.Rect.Location);
         }
 
         enum NodeType
         {
-            Plain,
             LayoutEntry,
             LayoutGroup
         }
 
         private static NodeType GetNodeType(Node node)
         {
-            NodeType nodeType = NodeType.Plain;
-            do
-            {
-                if (node.LayoutEntry is LayoutGroup)
-                {
-                    nodeType = NodeType.LayoutGroup;
-                    break;
-                }
-
-                if (node.LayoutEntry != null)
-                {
-                    nodeType = NodeType.LayoutEntry;
-                    break;
-                }
-            } while (false);
-
-            return nodeType;
+            return node.IsGroup ? NodeType.LayoutGroup : NodeType.LayoutEntry;
         }
 
         internal static void CheckNodeType(Visual parentVisual, Visual v)
         {
+            //TODO check if all children is Node
+
             var parent = (Node)parentVisual;
             var node = (Node)v;
 
@@ -147,11 +129,6 @@ namespace ImGui.Rendering
              * 3. LayoutEntry nodes are always leaf nodes.
              */
 
-            if (thisNodeType == NodeType.Plain && nodeType != NodeType.Plain)
-            {
-                throw new LayoutException("It's not allowed to append a Plain node to a non-Plain node");
-            }
-
             if (thisNodeType == NodeType.LayoutEntry)
             {
                 throw new LayoutException("It's not allowed to append any node to a LayoutEntry node");
@@ -161,8 +138,6 @@ namespace ImGui.Rendering
             {
                 switch (nodeType)
                 {
-                    case NodeType.Plain:
-                        throw new LayoutException("It's not allowed to append a Plain node to a LayoutGroup node");
                     case NodeType.LayoutEntry:
                     case NodeType.LayoutGroup:
                         if (parent.RuleSet.IsDefaultWidth && node.RuleSet.IsStretchedWidth)
@@ -177,7 +152,7 @@ namespace ImGui.Rendering
                                 "It's not allowed to append a stretched node to a default-sized LayoutGroup node");
                         }
 
-                        parent.LayoutGroup.OnAddLayoutEntry(node);
+                        parent.CheckRuleSetForLayout_Group(node);//TODO handle this
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

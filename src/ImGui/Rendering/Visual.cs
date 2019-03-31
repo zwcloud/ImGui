@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
@@ -12,7 +13,7 @@ namespace ImGui.Rendering
     /// <remarks>
     /// Persisting rendering data for controls.
     /// </remarks>
-    internal abstract class Visual
+    internal abstract class Visual : IEnumerable<Visual>
     {
         public static bool DefaultUseBoxModel = false;
 
@@ -78,9 +79,18 @@ namespace ImGui.Rendering
         }
 
         public Visual Parent { get; set; }
-        protected List<Visual> Children { get; set; }
-            = new List<Visual>();
+        protected List<Visual> Children { get; } = new List<Visual>();
         public int ChildCount => this.Children.Count;
+
+        public IEnumerator<Visual> GetEnumerator()
+        {
+            return this.Children.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         internal bool ActiveInTree
         {
@@ -245,6 +255,7 @@ namespace ImGui.Rendering
         }
 
         private GUIState state = GUIState.Normal;
+
     }
 
 }

@@ -1,30 +1,17 @@
-﻿using System;
+﻿using ImGui.Common.Primitive;
 using ImGui.Rendering;
 
 namespace ImGui.Layout
 {
     internal static class StackLayout
     {
-        public static void BeginLayoutGroup(this RenderTree renderTree, int id, bool isVertical, LayoutOptions? options = null, string str_id = null)
+        public static void Layout(Node node, Point position)
         {
-            var group = renderTree.CurrentContainer.GetDirectNodeById(id);
-            if (group == null)
-            {
-                group = new Node(id, str_id ?? "group");
-                group.AttachLayoutGroup(isVertical);
-                renderTree.CurrentContainer.AppendChild(group);
-            }
-            group.RuleSet.ApplyOptions(options);
-            renderTree.CurrentContainer = group;
+            node.CalcWidth(node.ContentWidth);
+            node.CalcHeight(node.ContentHeight);
+            node.SetX(position.X);
+            node.SetY(position.Y);
         }
 
-        public static void EndLayoutGroup(this RenderTree renderTree)
-        {
-            if (renderTree.CurrentContainer == renderTree.Root)
-            {
-                throw new InvalidOperationException("BeginLayoutGroup/EndLayoutGroup mismatch.");
-            }
-            renderTree.CurrentContainer = (Node)renderTree.CurrentContainer.Parent;
-        }
     }
 }

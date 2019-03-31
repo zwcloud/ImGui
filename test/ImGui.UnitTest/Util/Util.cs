@@ -103,7 +103,7 @@ namespace ImGui.UnitTest
         private static void Draw(Context context, Visual visual)
         {
             var node = (Node)visual;
-            var isGroup =  node.LayoutGroup != null;
+            var isGroup =  node.IsGroup;
 
             if (!isGroup)
             {
