@@ -54,32 +54,55 @@ namespace ImGui.Rendering
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Shortcut of Visual.Rect.X
+        /// </summary>
         public double X
         {
             get => this.Rect.X;
             set => this.Rect.X = value;
         }
 
+        /// <summary>
+        /// Shortcut of Visual.Rect.Y
+        /// </summary>
         public double Y
         {
             get => this.Rect.Y;
             set => this.Rect.Y = value;
         }
 
+        /// <summary>
+        /// Shortcut of Visual.Rect.Width
+        /// </summary>
         public double Width
         {
             get => this.Rect.Width;
             set => this.Rect.Width = value;
         }
 
+        /// <summary>
+        /// Shortcut of Visual.Rect.Height
+        /// </summary>
         public double Height
         {
             get => this.Rect.Height;
             set => this.Rect.Height = value;
         }
 
+        /// <summary>
+        /// Parent
+        /// </summary>
         public Visual Parent { get; set; }
+
+        /// <summary>
+        /// Children list
+        /// </summary>
         protected List<Visual> Children { get; } = new List<Visual>();
+
+        /// <summary>
+        /// The number of visuals in the list of children
+        /// </summary>
         public int ChildCount => this.Children.Count;
 
         public IEnumerator<Visual> GetEnumerator()
@@ -92,7 +115,10 @@ namespace ImGui.Rendering
             return GetEnumerator();
         }
 
-        internal bool ActiveInTree
+        /// <summary>
+        /// Defines whether the Visual is active in the render tree.
+        /// </summary>
+        public bool ActiveInTree
         {
             get
             {
@@ -121,11 +147,18 @@ namespace ImGui.Rendering
             }
         }
 
+        /// <summary>
+        /// The local active state of this Visual
+        /// </summary>
         public bool ActiveSelf { get; set; } = true;
+
+        /// <summary>
+        /// The Primitive hold by this Visual.
+        /// </summary>
         internal Primitive Primitive { get; set; }
 
         /// <summary>
-        /// Is this visual clipped?
+        /// Whether this visual is clipped: it doesn't intersect with the clip rectangle.
         /// </summary>
         public bool IsClipped(Rect clipRect)
         {
@@ -164,8 +197,14 @@ namespace ImGui.Rendering
             return clipRect;
         }
 
+        /// <summary>
+        /// Whether box-model be applied when rendering this Visual.
+        /// </summary>
         internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
 
+        /// <summary>
+        /// Adds a visual to the end of the list of children.
+        /// </summary>
         public void AppendChild(Visual child)
         {
             if (child == null)
@@ -179,6 +218,9 @@ namespace ImGui.Rendering
             this.Children.Add(child);
         }
 
+        /// <summary>
+        /// Find a visual in the list of children recursively.
+        /// </summary>
         public Visual GetVisualById(int id)
         {
             if (this.Children == null)
@@ -201,11 +243,18 @@ namespace ImGui.Rendering
             return null;
         }
 
+        /// <summary>
+        /// Remove a direct child visual from the list of children.
+        /// </summary>
         public bool RemoveChild(Visual visual)
         {
             return this.Children.Remove(visual);
         }
 
+        /// <summary>
+        /// Executes the provided callback once for each element present in the list of children recursively.
+        /// When the callback returns false, recursion stopped so the callback won't be called on the child.
+        /// </summary>
         public void Foreach(Func<Visual, bool> func)
         {
             if (func == null)
@@ -237,8 +286,14 @@ namespace ImGui.Rendering
             r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }
 
+        /// <summary>
+        /// Rule Set
+        /// </summary>
         public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
 
+        /// <summary>
+        /// UI state
+        /// </summary>
         public GUIState State
         {
             get => this.state;
