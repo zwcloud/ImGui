@@ -12,11 +12,13 @@ namespace ImGui.GraphicsImplementation
                 return false;
             }
 
-            var clipRect = visual.GetClipRect(rootClipRect);
-
-            if (visual.IsClipped(clipRect))
+            if (visual is Node)
             {
-                return false;
+                var clipRect = visual.GetClipRect(rootClipRect);
+                if (visual.IsClipped(clipRect))
+                {
+                    return false;
+                }
             }
 
             visual.Draw(primitiveRenderer, meshList);

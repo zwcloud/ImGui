@@ -99,11 +99,13 @@ namespace ImGui.Rendering
         public void SetX_Entry(double x)
         {
             this.X = x;
+            this.ContentRect.X = x + this.PaddingLeft + this.BorderLeft;
         }
 
         public void SetY_Entry(double y)
         {
             this.Y = y;
+            this.ContentRect.Y = y + this.PaddingTop + this.BorderTop;
         }
 
         public double GetDefaultWidth()

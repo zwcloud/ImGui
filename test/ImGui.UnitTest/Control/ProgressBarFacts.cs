@@ -17,7 +17,7 @@ namespace ImGui.UnitTest
                 bool open = true;
                 form.OnGUIAction = () =>
                 {
-                    GUILayout.ProgressBar("Progress", 0.4, new Size(300, 40));
+                    GUILayout.ProgressBar("Progress", System.DateTime.Now.Millisecond/1000.0f, new Size(100, 20));
                 };
 
                 Application.Run(form);

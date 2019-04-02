@@ -51,6 +51,12 @@ namespace ImGui.Rendering
 
         public Rect ContentRect;
 
+        public Size ContentSize
+        {
+            get => this.ContentRect.Size;
+            set => this.ContentRect.Size = value;
+        }
+
         public double ContentWidth
         {
             get => this.ContentRect.Width;

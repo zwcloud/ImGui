@@ -477,7 +477,7 @@ namespace ImGui.Rendering
 
         public void SetX_Group(double x)
         {
-            this.X = x;
+            SetX_Entry(x);
             if (this.IsVertical)
             {
                 var childX = 0d;
@@ -597,7 +597,7 @@ namespace ImGui.Rendering
 
         public void SetY_Group(double y)
         {
-            this.Y = y;
+            SetY_Entry(y);
             if (this.IsVertical)
             {
                 double nextY;//position y of first child

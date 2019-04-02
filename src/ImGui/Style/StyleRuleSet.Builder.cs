@@ -61,7 +61,7 @@ namespace ImGui
             this.Set<string>(GUIStyleName.BorderImageSource, value, state);
             return this;
         }
-        
+
         public StyleRuleSetBuilder BorderImageSlice((double top, double right, double bottom, double left) value, GUIState state = GUIState.Normal)
         {
             var (top, right, bottom, left) = value;
@@ -142,7 +142,11 @@ namespace ImGui
             return this;
         }
 
-
+        public StyleRuleSetBuilder FillColor(Color value)
+        {
+            this.s.FillColor = value;
+            return this;
+        }
     }
 
 }

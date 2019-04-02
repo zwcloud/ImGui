@@ -57,7 +57,6 @@
     <Compile Remove="Control\Image.cs" />
     <Compile Remove="Control\ListBox.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
-    <Compile Remove="Control\ProgressBar.cs" />
     <Compile Remove="Control\RadioButton.cs" />
     <Compile Remove="Control\Selectable.cs" />
     <Compile Remove="Control\Separator.cs" />

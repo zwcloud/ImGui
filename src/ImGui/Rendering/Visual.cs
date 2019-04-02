@@ -212,10 +212,28 @@ namespace ImGui.Rendering
                 throw new ArgumentNullException(nameof(child));
             }
 
-            Node.CheckNodeType(this, child);
+            if (child is Node)
+            {
+                Node.CheckNodeType(this, child);
+            }
 
             child.Parent = this;
             this.Children.Add(child);
+        }
+
+        public Visual GetVisualByIndex(int i)
+        {
+            if (this.Children == null)
+            {
+                return null;
+            }
+
+            if (this.Children.Count - 1 < i)
+            {
+                throw new System.IndexOutOfRangeException();
+            }
+
+            return this.Children[i];
         }
 
         /// <summary>

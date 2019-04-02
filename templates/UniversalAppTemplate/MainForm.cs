@@ -22,6 +22,7 @@ namespace UniversalAppTemplate
                 GUILayout.Button("123");
                 GUILayout.Label("345");
             }
+            GUI.Button(new Rect(100, 10, 200,40), "123");
 
             //GUILayout.Button("123");
             //GUI.Begin("test window", ref open);

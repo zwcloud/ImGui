@@ -428,7 +428,12 @@ namespace ImGui
 
         public Color StrokeColor => Get<Color>(GUIStyleName.StrokeColor);
         public double StrokeWidth => Get<double>(GUIStyleName.StrokeWidth);
-        public Color FillColor => Get<Color>(GUIStyleName.FillColor);
+
+        public Color FillColor
+        {
+            get => Get<Color>(GUIStyleName.FillColor);
+            set => Set<Color>(GUIStyleName.FillColor, value);
+        }
 
         public Color GradientTopColor => Get<Color>(GUIStyleName.GradientTopColor);
         public Color GradientBottomColor => Get<Color>(GUIStyleName.GradientBottomColor);

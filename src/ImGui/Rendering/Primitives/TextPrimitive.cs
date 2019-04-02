@@ -10,6 +10,10 @@ namespace ImGui.Rendering
             get => this.text;
             set
             {
+                if (value == null)
+                {
+                    value = string.Empty;
+                }
                 if (value != this.text)
                 {
                     this.TextChanged = true;
