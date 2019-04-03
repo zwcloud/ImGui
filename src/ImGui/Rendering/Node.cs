@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Common.Primitive;
+using ImGui.GraphicsAbstraction;
 using ImGui.Layout;
 
 namespace ImGui.Rendering
@@ -44,6 +43,13 @@ namespace ImGui.Rendering
         }
 
         #region Layout
+
+        public static bool DefaultUseBoxModel = false;
+
+        /// <summary>
+        /// Whether box-model be applied when rendering this Node.
+        /// </summary>
+        internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
 
         public bool IsGroup { get; set; }
 
@@ -120,8 +126,6 @@ namespace ImGui.Rendering
 
         internal static void CheckNodeType(Visual parentVisual, Visual v)
         {
-            //TODO check if all children is Node
-
             var parent = (Node)parentVisual;
             var node = (Node)v;
 
@@ -129,10 +133,9 @@ namespace ImGui.Rendering
             NodeType nodeType = GetNodeType(node);
 
             /* Rules:
-             * 1. Plain nodes are not allowed to be added to a layout-ed node tree,
-             * which should only contain LayoutEntry and LayoutGroup;
-             * 2. LayoutEntry nodes should always be a children of a LayoutGroup;
-             * 3. LayoutEntry nodes are always leaf nodes.
+             * 1. LayoutEntry nodes should always be a children of a LayoutGroup;
+             * 2. LayoutEntry nodes are always leaf nodes.
+             * 3. Layout related rules.
              */
 
             if (thisNodeType == NodeType.LayoutEntry)
@@ -158,7 +161,7 @@ namespace ImGui.Rendering
                                 "It's not allowed to append a stretched node to a default-sized LayoutGroup node");
                         }
 
-                        parent.CheckRuleSetForLayout_Group(node);//TODO handle this
+                        parent.CheckRuleSetForLayout_Group(node);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -183,5 +186,51 @@ namespace ImGui.Rendering
         }
 
         #endregion
+
+        public override Rect GetClipRect(Rect rootClipRect)
+        {
+            Rect clipRect;
+            if (this.Parent != null)
+            {
+                var parentNode = (Node)this.Parent;
+                clipRect = parentNode.UseBoxModel ? parentNode.ContentRect : parentNode.Rect;
+                clipRect.Intersect(rootClipRect);
+            }
+            else
+            {
+                clipRect = rootClipRect;
+            }
+
+            return clipRect;
+        }
+
+        public override void Draw(IPrimitiveRenderer renderer, MeshList meshList)
+        {
+            //TEMP regard all renderer as the built-in renderer
+            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            Debug.Assert(r != null);
+            r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
+        }
+
+        /// <summary>
+        /// UI state
+        /// </summary>
+        public GUIState State
+        {
+            get => this.state;
+            set
+            {
+                if (this.state == value)
+                {
+                    return;
+                }
+
+                this.state = value;
+                this.RuleSet.SetState(value);
+            }
+        }
+
+        private GUIState state = GUIState.Normal;
+
     }
 }

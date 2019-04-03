@@ -112,5 +112,45 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
+        public void DrawPrimitive(Primitive primitive, Rect nodeRect, StyleRuleSet ruleSet, MeshList meshList)
+        {
+            Rect rect = nodeRect;
+
+            if (primitive == null)
+            {
+                return;
+            }
+
+            switch (primitive)
+            {
+                case PathPrimitive p:
+                {
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    this.DrawPathPrimitive(shapeMesh, p, (Vector)rect.Location);
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                }
+                break;
+                case TextPrimitive t:
+                {
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    this.DrawTextPrimitive(textMesh, t, rect, ruleSet, primitive.Offset);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                }
+                break;
+                case ImagePrimitive i:
+                {
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
+                    this.DrawImagePrimitive(imageMesh, i, rect, ruleSet, primitive.Offset);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+                }
+                break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
     }
 }

@@ -15,8 +15,6 @@ namespace ImGui.Rendering
     /// </remarks>
     internal abstract class Visual : IEnumerable<Visual>
     {
-        public static bool DefaultUseBoxModel = false;
-
         protected Visual(int id)
         {
             this.Id = id;
@@ -172,35 +170,8 @@ namespace ImGui.Rendering
         /// <summary>
         /// Get the clip rect that applies to this visual.
         /// </summary>
-        /// <param name="rootClipRect">The root clip rect: client area of the window</param>
-        public Rect GetClipRect(Rect rootClipRect)
-        {
-            Rect clipRect;
-            if (this.Parent != null)
-            {
-                var parentNode = this.Parent;
-                if (this.UseBoxModel)
-                {
-                    clipRect = Utility.GetContentBox(parentNode.Rect, parentNode.RuleSet);//TODO decuple RuleSet and ContentBox
-                }
-                else
-                {
-                    clipRect = parentNode.Rect;
-                }
-                clipRect.Intersect(rootClipRect);
-            }
-            else
-            {
-                clipRect = rootClipRect;
-            }
-
-            return clipRect;
-        }
-
-        /// <summary>
-        /// Whether box-model be applied when rendering this Visual.
-        /// </summary>
-        internal bool UseBoxModel { get; set; } = DefaultUseBoxModel;
+        /// <param name="rootClipRect">The root clip rect</param>
+        public abstract Rect GetClipRect(Rect rootClipRect);
 
         /// <summary>
         /// Adds a visual to the end of the list of children.
@@ -296,39 +267,13 @@ namespace ImGui.Rendering
         /// <param name="renderer"></param>
         /// <param name="meshList"></param>
         /// <remarks>A visual can only have one single primitive.</remarks>
-        public void Draw(IPrimitiveRenderer renderer, MeshList meshList)
-        {
-            //TEMP regard all renderer as the built-in renderer
-            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
-            Debug.Assert(r != null);
-            r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
-        }
+        public abstract void Draw(IPrimitiveRenderer renderer, MeshList meshList);
 
         /// <summary>
         /// Rule Set
         /// </summary>
+        /// //TODO make this stateless, state should be maintained at the Node level
         public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
-
-        /// <summary>
-        /// UI state
-        /// </summary>
-        public GUIState State
-        {
-            get => this.state;
-            set
-            {
-                if (this.state == value)
-                {
-                    return;
-                }
-
-                this.state = value;
-                this.RuleSet.SetState(value);
-            }
-        }
-
-        private GUIState state = GUIState.Normal;
-
     }
 
 }
