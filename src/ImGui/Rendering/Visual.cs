@@ -235,14 +235,14 @@ namespace ImGui.Rendering
         /// <summary>
         /// Remove a direct child visual from the list of children.
         /// </summary>
-        public bool RemoveChild(Visual visual)
+        public bool RemoveChildVisual(Visual visual)
         {
             return this.Children.Remove(visual);
         }
 
         /// <summary>
         /// Executes the provided callback once for each element present in the list of children recursively.
-        /// When the callback returns false, recursion stopped so the callback won't be called on the child.
+        /// Recursion will be stopped if the callback returns false: the callback won't be called on the child.
         /// </summary>
         public void Foreach(Func<Visual, bool> func)
         {
