@@ -23,5 +23,10 @@ namespace ImGui.Rendering
             this.Texture = Application.PlatformContext.CreateTexture();
             this.Texture.LoadImage(this.Image.Data, this.Image.Width, this.Image.Height);
         }
+
+        public override void UpdateContent()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

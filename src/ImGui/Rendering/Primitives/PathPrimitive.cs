@@ -104,6 +104,11 @@ namespace ImGui.Rendering
         }
 
         //TODO PathArc and other path APIs
+
+        public override void UpdateContent()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
