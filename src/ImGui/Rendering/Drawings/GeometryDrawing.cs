@@ -2,7 +2,7 @@
 {
     internal class GeometryDrawing : Drawing
     {
-        public Primitive Primitive { get; protected set; }
+        public Geometry Geometry { get; protected set; }
 
         public Brush Brush { get; protected set; }
 

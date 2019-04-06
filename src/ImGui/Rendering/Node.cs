@@ -209,7 +209,7 @@ namespace ImGui.Rendering
             //TEMP regard all renderer as the built-in renderer
             var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
-            r.DrawPrimitive(this.Primitive, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
+            r.DrawPrimitive(this.Geometry, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }
 
         /// <summary>

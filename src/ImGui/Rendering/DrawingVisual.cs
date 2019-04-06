@@ -27,7 +27,7 @@ namespace ImGui.Rendering
         {
             var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
             Debug.Assert(r != null);
-            r.DrawPrimitive(this.Primitive, this.Rect, this.RuleSet, meshList);
+            r.DrawPrimitive(this.Geometry, this.Rect, this.RuleSet, meshList);
         }
     }
 }

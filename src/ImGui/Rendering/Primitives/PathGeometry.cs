@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ImGui.Rendering
 {
-    internal class PathPrimitive : Primitive
+    internal class PathGeometry : Geometry
     {
         public List<PathCommand> Path { get; set; } = new List<PathCommand>();
 

@@ -6,34 +6,34 @@ namespace ImGui.GraphicsImplementation
 {
     internal partial class BuiltinPrimitiveRenderer
     {
-        public void DrawPathPrimitive(Mesh shapeMesh, PathPrimitive pathPrimitive, Vector offset)
+        public void DrawPathPrimitive(Mesh shapeMesh, PathGeometry pathGeometry, Vector offset)
         {
             this.SetShapeMesh(shapeMesh);
-            this.DrawPath(pathPrimitive, offset);
+            this.DrawPath(pathGeometry, offset);
             this.SetShapeMesh(null);
         }
 
         public void DrawImagePrimitive(Mesh imageMesh,
-            ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style, Vector offset)
+            ImageGeometry imageGeometry, Rect rect, StyleRuleSet style, Vector offset)
         {
             this.SetImageMesh(imageMesh);
-            this.DrawImage(imagePrimitive, Rect.Offset(rect, offset), style);
+            this.DrawImage(imageGeometry, Rect.Offset(rect, offset), style);
             this.SetImageMesh(null);
         }
 
         public void DrawSlicedImagePrimitive(Mesh imageMesh,
-            ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style, Vector offset)
+            ImageGeometry imageGeometry, Rect rect, StyleRuleSet style, Vector offset)
         {
             this.SetImageMesh(imageMesh);
-            this.DrawSlicedImage(imagePrimitive, Rect.Offset(rect, offset), style);
+            this.DrawSlicedImage(imageGeometry, Rect.Offset(rect, offset), style);
             this.SetImageMesh(null);
         }
 
         public void DrawTextPrimitive(TextMesh textMesh,
-            TextPrimitive textPrimitive, Rect rect, StyleRuleSet style, Vector offset)
+            TextGeometry textGeometry, Rect rect, StyleRuleSet style, Vector offset)
         {
             this.SetTextMesh(textMesh);
-            this.DrawText(textPrimitive, rect, style);
+            this.DrawText(textGeometry, rect, style);
             this.SetTextMesh(null);
         }
 
@@ -54,7 +54,7 @@ namespace ImGui.GraphicsImplementation
             this.SetImageMesh(null);
         }
 
-        public void DrawPrimitive(Primitive primitive, bool useBoxModel, Rect nodeRect,
+        public void DrawPrimitive(Geometry geometry, bool useBoxModel, Rect nodeRect,
             StyleRuleSet ruleSet, MeshList meshList)
         {
             Rect rect = nodeRect;
@@ -75,14 +75,14 @@ namespace ImGui.GraphicsImplementation
                 meshList.AddOrUpdateImageMesh(imageMesh);
             }
 
-            if (primitive == null)
+            if (geometry == null)
             {
                 return;
             }
 
-            switch (primitive)
+            switch (geometry)
             {
-                case PathPrimitive p:
+                case PathGeometry p:
                 {
                     var shapeMesh = MeshPool.ShapeMeshPool.Get();
                     shapeMesh.Clear();
@@ -91,19 +91,19 @@ namespace ImGui.GraphicsImplementation
                     meshList.AddOrUpdateShapeMesh(shapeMesh);
                 }
                 break;
-                case TextPrimitive t:
+                case TextGeometry t:
                 {
                     var textMesh = MeshPool.TextMeshPool.Get();
                     textMesh.Clear();
-                    this.DrawTextPrimitive(textMesh, t, rect, ruleSet, primitive.Offset);
+                    this.DrawTextPrimitive(textMesh, t, rect, ruleSet, geometry.Offset);
                     meshList.AddOrUpdateTextMesh(textMesh);
                 }
                 break;
-                case ImagePrimitive i:
+                case ImageGeometry i:
                 {
                     var imageMesh = MeshPool.ImageMeshPool.Get();
                     imageMesh.Clear();
-                    this.DrawImagePrimitive(imageMesh, i, rect, ruleSet, primitive.Offset);
+                    this.DrawImagePrimitive(imageMesh, i, rect, ruleSet, geometry.Offset);
                     meshList.AddOrUpdateImageMesh(imageMesh);
                 }
                 break;
@@ -112,18 +112,18 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
-        public void DrawPrimitive(Primitive primitive, Rect nodeRect, StyleRuleSet ruleSet, MeshList meshList)
+        public void DrawPrimitive(Geometry geometry, Rect nodeRect, StyleRuleSet ruleSet, MeshList meshList)
         {
             Rect rect = nodeRect;
 
-            if (primitive == null)
+            if (geometry == null)
             {
                 return;
             }
 
-            switch (primitive)
+            switch (geometry)
             {
-                case PathPrimitive p:
+                case PathGeometry p:
                 {
                     var shapeMesh = MeshPool.ShapeMeshPool.Get();
                     shapeMesh.Clear();
@@ -132,19 +132,19 @@ namespace ImGui.GraphicsImplementation
                     meshList.AddOrUpdateShapeMesh(shapeMesh);
                 }
                 break;
-                case TextPrimitive t:
+                case TextGeometry t:
                 {
                     var textMesh = MeshPool.TextMeshPool.Get();
                     textMesh.Clear();
-                    this.DrawTextPrimitive(textMesh, t, rect, ruleSet, primitive.Offset);
+                    this.DrawTextPrimitive(textMesh, t, rect, ruleSet, geometry.Offset);
                     meshList.AddOrUpdateTextMesh(textMesh);
                 }
                 break;
-                case ImagePrimitive i:
+                case ImageGeometry i:
                 {
                     var imageMesh = MeshPool.ImageMeshPool.Get();
                     imageMesh.Clear();
-                    this.DrawImagePrimitive(imageMesh, i, rect, ruleSet, primitive.Offset);
+                    this.DrawImagePrimitive(imageMesh, i, rect, ruleSet, geometry.Offset);
                     meshList.AddOrUpdateImageMesh(imageMesh);
                 }
                 break;

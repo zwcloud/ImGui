@@ -176,23 +176,23 @@ namespace ImGui
                 icon.AttachLayoutEntry(new Size(20, 20));
                 icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 icon.UseBoxModel = false;
-                icon.Primitive = new ImagePrimitive(@"assets/images/logo.png");
+                icon.Geometry = new ImageGeometry(@"assets/images/logo.png");
 
                 var title = new Node(this.GetID("title"),"title");
                 var contentSize = title.RuleSet.CalcSize(this.Name, GUIState.Normal);
                 title.AttachLayoutEntry(contentSize);
                 title.RuleSet.ApplyOptions(GUILayout.Height(20));
                 title.UseBoxModel = false;
-                title.Primitive = new TextPrimitive(this.Name);
+                title.Geometry = new TextGeometry(this.Name);
                 this.titleBarTitleNode = title;
 
                 var closeButton = new Node(this.GetID("close button"),"close button");
                 closeButton.AttachLayoutEntry(new Size(20, 20));
                 closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 closeButton.UseBoxModel = false;
-                PathPrimitive path = new PathPrimitive();
+                PathGeometry path = new PathGeometry();
                 path.PathRect(new Rect(0, 0, 20, 20));
-                closeButton.Primitive = path;
+                closeButton.Geometry = path;
 
                 titleBarContainer.AppendChild(icon);
                 titleBarContainer.AppendChild(title);
@@ -290,7 +290,7 @@ namespace ImGui
                 //text
                 {
                     // title text
-                    var textPrimitive = (TextPrimitive)this.titleBarTitleNode.Primitive;
+                    var textPrimitive = (TextGeometry)this.titleBarTitleNode.Geometry;
                     if (textPrimitive.Text != this.Name)
                     {
                         textPrimitive.Text = this.Name;
@@ -310,7 +310,7 @@ namespace ImGui
                 {
                     var id = this.GetID("#RESIZE");
                     var node = new Node(id, "Window_ResizeGrip");
-                    node.Primitive = new PathPrimitive();
+                    node.Geometry = new PathGeometry();
                     this.ResizeGripNode = node;
                     this.AbsoluteVisualList.Add(node);
                 }
@@ -368,7 +368,7 @@ namespace ImGui
                     var br = this.Rect.BottomRight;
                     var borderBottom = this.WindowContainer.RuleSet.BorderBottom;
                     var borderRight = this.WindowContainer.RuleSet.BorderRight;
-                    var primitive = (PathPrimitive)this.ResizeGripNode.Primitive;
+                    var primitive = (PathGeometry)this.ResizeGripNode.Geometry;
                     primitive.PathClear();
                     primitive.PathLineTo(br + new Vector(-borderRight, -borderBottom));
                     primitive.PathLineTo(br + new Vector(-borderRight, -windowRounding));

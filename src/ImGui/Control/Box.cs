@@ -33,12 +33,12 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Primitive = new TextPrimitive(text);
+                node.Geometry = new TextGeometry(text);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Primitive as TextPrimitive;
+            var textPrimitive = node.Geometry as TextGeometry;
             Debug.Assert(textPrimitive != null);
             textPrimitive.Text = text;
 
@@ -76,12 +76,12 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Primitive = new TextPrimitive(text);
+                node.Geometry = new TextGeometry(text);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Primitive as TextPrimitive;
+            var textPrimitive = node.Geometry as TextGeometry;
             Debug.Assert(textPrimitive != null);
             textPrimitive.Text = text;
 

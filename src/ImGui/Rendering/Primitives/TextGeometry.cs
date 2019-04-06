@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui.Rendering
 {
-    internal class TextPrimitive : Primitive
+    internal class TextGeometry : Geometry
     {
         public string Text
         {
@@ -32,7 +32,7 @@ namespace ImGui.Rendering
         public List<Vector> Offsets { get; set; } = new List<Vector>();
         public List<GlyphData> Glyphs { get; set; } = new List<GlyphData>();
 
-        public TextPrimitive(string text)
+        public TextGeometry(string text)
         {
             this.Text = text;
         }

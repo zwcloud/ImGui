@@ -25,7 +25,7 @@ namespace ImGui.GraphicsImplementation
             this.DrawDebug(paddingBoxRect, contentBoxRect);
         }
 
-        public void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, StyleRuleSet style)
+        public void DrawBoxModel(TextGeometry textGeometry, Rect rect, StyleRuleSet style)
         {
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
@@ -35,13 +35,13 @@ namespace ImGui.GraphicsImplementation
             //Content-box
             if (contentBoxRect.TopLeft.X < contentBoxRect.TopRight.X)//content should not be visible when contentBoxRect.TopLeft.X > contentBoxRect.TopRight.X
             {
-                if (textPrimitive != null)
+                if (textGeometry != null)
                 {
                     //var textSize = style.CalcSize(text);
                     /*HACK Don't check text size because the size calculated by Typography is not accurate. */
                     /*if (textSize.Height < contentBoxRect.Height && textSize.Width < contentBoxRect.Width)*/
                     {
-                        this.DrawText(textPrimitive, contentBoxRect, style);
+                        this.DrawText(textGeometry, contentBoxRect, style);
                     }
                 }
             }
@@ -52,7 +52,7 @@ namespace ImGui.GraphicsImplementation
             this.DrawDebug(paddingBoxRect, contentBoxRect);
         }
 
-        public void DrawBoxModel(ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style)
+        public void DrawBoxModel(ImageGeometry imageGeometry, Rect rect, StyleRuleSet style)
         {
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
@@ -62,9 +62,9 @@ namespace ImGui.GraphicsImplementation
             //Content-box
             if (contentBoxRect.TopLeft.X < contentBoxRect.TopRight.X)//content should not be visible when contentBoxRect.TopLeft.X > contentBoxRect.TopRight.X
             {
-                if (imagePrimitive != null)
+                if (imageGeometry != null)
                 {
-                    this.DrawImage(imagePrimitive, contentBoxRect, style);
+                    this.DrawImage(imageGeometry, contentBoxRect, style);
                 }
             }
 
@@ -95,13 +95,13 @@ namespace ImGui.GraphicsImplementation
             if (borderImageSource != null)
             {
                 var rule = style.GetRule<string>(GUIStyleName.BorderImageSource);
-                if (rule.primitive == null)
+                if (rule.Geometry == null)
                 {
-                    rule.primitive = new ImagePrimitive(borderImageSource);
+                    rule.Geometry = new ImageGeometry(borderImageSource);
                 }
 
-                Debug.Assert(rule.primitive is ImagePrimitive);
-                this.DrawSlicedImage((ImagePrimitive) rule.primitive, borderBoxRect, style);
+                Debug.Assert(rule.Geometry is ImageGeometry);
+                this.DrawSlicedImage((ImageGeometry) rule.Geometry, borderBoxRect, style);
             }
             else
             {

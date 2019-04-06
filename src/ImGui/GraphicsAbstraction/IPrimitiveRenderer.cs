@@ -5,16 +5,16 @@ namespace ImGui.GraphicsAbstraction
 {
     internal interface IPrimitiveRenderer
     {
-        void DrawPath(PathPrimitive primitive, Vector offset);
+        void DrawPath(PathGeometry geometry, Vector offset);
 
-        void DrawText(TextPrimitive primitive, Rect rect, StyleRuleSet style);
+        void DrawText(TextGeometry geometry, Rect rect, StyleRuleSet style);
 
-        void DrawImage(ImagePrimitive primitive, Rect rect, StyleRuleSet style);
+        void DrawImage(ImageGeometry geometry, Rect rect, StyleRuleSet style);
 
         void DrawBoxModel(Rect rect, StyleRuleSet style);
 
-        void DrawBoxModel(TextPrimitive textPrimitive, Rect rect, StyleRuleSet style);
+        void DrawBoxModel(TextGeometry textGeometry, Rect rect, StyleRuleSet style);
 
-        void DrawBoxModel(ImagePrimitive imagePrimitive, Rect rect, StyleRuleSet style);
+        void DrawBoxModel(ImageGeometry imageGeometry, Rect rect, StyleRuleSet style);
     }
 }

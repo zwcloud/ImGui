@@ -151,9 +151,9 @@ namespace ImGui.Rendering
         public bool ActiveSelf { get; set; } = true;
 
         /// <summary>
-        /// The Primitive hold by this Visual.
+        /// The Geometry hold by this Visual.
         /// </summary>
-        internal Primitive Primitive { get; set; }
+        internal Geometry Geometry { get; set; }
 
         /// <summary>
         /// Whether this visual is clipped: it doesn't intersect with the clip rectangle.
@@ -262,11 +262,11 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Redraw the node's primitive.
+        /// Redraw the node's Geometry.
         /// </summary>
         /// <param name="renderer"></param>
         /// <param name="meshList"></param>
-        /// <remarks>A visual can only have one single primitive.</remarks>
+        /// <remarks>A visual can only have one single Geometry.</remarks>
         public abstract void Draw(IPrimitiveRenderer renderer, MeshList meshList);
 
         /// <summary>

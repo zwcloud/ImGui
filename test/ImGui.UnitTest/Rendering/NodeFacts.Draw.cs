@@ -16,7 +16,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawANode()
             {
-                var primitive = new PathPrimitive();
+                var primitive = new PathGeometry();
                 primitive.PathMoveTo(new Point(10, 10));
                 primitive.PathLineTo(new Point(10, 100));
                 primitive.PathLineTo(new Point(100, 100));
@@ -25,7 +25,7 @@ namespace ImGui.UnitTest.Rendering
                 primitive.PathFill(Color.Black);
 
                 Node node = new Node(1);
-                node.Primitive = primitive;
+                node.Geometry = primitive;
 
                 Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
                 Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANode.png");
@@ -34,7 +34,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void UpdateANode()
             {
-                var primitive = new PathPrimitive();
+                var primitive = new PathGeometry();
                 primitive.PathMoveTo(new Point(10, 10));
                 primitive.PathLineTo(new Point(10, 100));
                 primitive.PathLineTo(new Point(100, 100));
@@ -43,7 +43,7 @@ namespace ImGui.UnitTest.Rendering
                 var fillCmd = primitive.PathFill(Color.Black);
 
                 Node node = new Node(1);
-                node.Primitive = primitive;
+                node.Geometry = primitive;
 
                 {
                     fillCmd.Color = Color.Red;
@@ -67,8 +67,8 @@ namespace ImGui.UnitTest.Rendering
             public void UpdateATextNode()
             {
                 Node node = new Node(1);
-                var primitive = new TextPrimitive("Before");
-                node.Primitive = primitive;
+                var primitive = new TextGeometry("Before");
+                node.Geometry = primitive;
 
                 {
                     primitive.Text = "Before";
@@ -91,19 +91,19 @@ namespace ImGui.UnitTest.Rendering
                 {
                     Node node = new Node(0);
                     nodes.Add(node);
-                    var primitive = new PathPrimitive();
+                    var primitive = new PathGeometry();
                     primitive.PathMoveTo(new Point(10, 10));
                     primitive.PathLineTo(new Point(10, 100));
                     primitive.PathLineTo(new Point(100, 100));
                     primitive.PathLineTo(new Point(100, 10));
                     primitive.PathClose();
                     node0FillCmd = primitive.PathFill(Color.Green);
-                    node.Primitive = primitive;
+                    node.Geometry = primitive;
                 }
                 {
                     Node node = new Node(1);
                     nodes.Add(node);
-                    var primitive = new PathPrimitive();
+                    var primitive = new PathGeometry();
                     primitive.PathMoveTo(new Point(110, 10));
                     primitive.PathLineTo(new Point(110, 100));
                     primitive.PathLineTo(new Point(200, 100));
@@ -111,7 +111,7 @@ namespace ImGui.UnitTest.Rendering
                     primitive.PathClose();
                     node1FillCmd = primitive.PathFill(Color.Orange);
 
-                    node.Primitive = primitive;
+                    node.Geometry = primitive;
                 }
 
                 {
@@ -133,14 +133,14 @@ namespace ImGui.UnitTest.Rendering
             public void ShowHideANode()
             {
                 Node node = new Node(1);
-                var primitive = new PathPrimitive();
+                var primitive = new PathGeometry();
                 primitive.PathMoveTo(new Point(10, 10));
                 primitive.PathLineTo(new Point(10, 100));
                 primitive.PathLineTo(new Point(100, 100));
                 primitive.PathLineTo(new Point(100, 10));
                 primitive.PathClose();
                 primitive.PathFill(Color.Red);
-                node.Primitive = primitive;
+                node.Geometry = primitive;
 
                 {
                     node.ActiveSelf = true;
@@ -169,7 +169,7 @@ namespace ImGui.UnitTest.Rendering
                 var primitiveRenderer = new BuiltinPrimitiveRenderer();
 
                 Node node = new Node(1);
-                node.Primitive = new PathPrimitive();
+                node.Geometry = new PathGeometry();
 
                 var window = new Win32Window();
                 window.Init(new Point(100, 100), new Size(800, 600), WindowTypes.Regular);
@@ -203,7 +203,7 @@ namespace ImGui.UnitTest.Rendering
                         rad += Math.PI * 0.666;
                         var C_ = C + 70 * new Vector(Math.Cos(rad) - Math.Sin(rad), Math.Sin(rad) + Math.Cos(rad));
 
-                        var d = node.Primitive as PathPrimitive;
+                        var d = node.Geometry as PathGeometry;
                         d.PathClear();
                         d.PathMoveTo(A_);
                         d.PathLineTo(B_);
@@ -242,8 +242,8 @@ namespace ImGui.UnitTest.Rendering
             public void DrawOneTextNode()
             {
                 Node node = new Node(1);
-                var primitive = new TextPrimitive("ImGUI立即");
-                node.Primitive = primitive;
+                var primitive = new TextGeometry("ImGUI立即");
+                node.Geometry = primitive;
                 node.Rect.X = 1;
                 node.Rect.Y = 1;
 
@@ -258,16 +258,16 @@ namespace ImGui.UnitTest.Rendering
                 {
                     Node node = new Node(1);
                     nodes.Add(node);
-                    var primitive = new TextPrimitive("AAA");
-                    node.Primitive = primitive;
+                    var primitive = new TextGeometry("AAA");
+                    node.Geometry = primitive;
                     node.Rect.X = 1;
                     node.Rect.Y = 1;
                 }
                 {
                     Node node = new Node(1);
                     nodes.Add(node);
-                    var primitive = new TextPrimitive("B");
-                    node.Primitive = primitive;
+                    var primitive = new TextGeometry("B");
+                    node.Geometry = primitive;
                     node.Rect.X = 1;
                     node.Rect.Y = 40;
                 }
@@ -280,8 +280,8 @@ namespace ImGui.UnitTest.Rendering
             public void DrawOneTextNodeAtPosition()
             {
                 Node node = new Node(1);
-                var primitive = new TextPrimitive("AAA");
-                node.Primitive = primitive;
+                var primitive = new TextGeometry("AAA");
+                node.Geometry = primitive;
                 node.Rect.X = 50;
                 node.Rect.Y = 30;
 
@@ -293,7 +293,7 @@ namespace ImGui.UnitTest.Rendering
             public void DrawOneImageNode()
             {
                 Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
-                node.Primitive = new ImagePrimitive(@"assets\images\logo.png");
+                node.Geometry = new ImageGeometry(@"assets\images\logo.png");
 
                 Util.DrawNodeToImage(out var imageRawBytes, node, 350, 250);
                 Util.CheckExpectedImage(imageRawBytes, 350, 250, @"Rendering\images\NodeFacts.Draw.DrawOneImageNode.png");
@@ -307,18 +307,18 @@ namespace ImGui.UnitTest.Rendering
                     {
                         Node node = new Node(0);
                         box0.Add(node);
-                        var primitive = new PathPrimitive();
+                        var primitive = new PathGeometry();
                         primitive.PathRect(new Point(10, 10), new Point(100, 100));
                         primitive.PathFill(Color.Orange);
-                        node.Primitive = primitive;
+                        node.Geometry = primitive;
                     }
                     {
                         Node node = new Node(1);
                         box0.Add(node);
-                        var primitive = new PathPrimitive();
+                        var primitive = new PathGeometry();
                         primitive.PathRect(new Point(9, 9), new Point(101, 101));
                         primitive.PathStroke(2, Color.Black);
-                        node.Primitive = primitive;
+                        node.Geometry = primitive;
                     }
                 }
                 var box1 = new List<Node>();
@@ -326,18 +326,18 @@ namespace ImGui.UnitTest.Rendering
                     {
                         Node node = new Node(3);
                         box1.Add(node);
-                        var primitive = new PathPrimitive();
+                        var primitive = new PathGeometry();
                         primitive.PathRect(new Point(50, 50), new Point(140, 140));
                         primitive.PathFill(Color.LightBlue);
-                        node.Primitive = primitive;
+                        node.Geometry = primitive;
                     }
                     {
                         Node node = new Node(4);
                         box1.Add(node);
-                        var primitive = new PathPrimitive();
+                        var primitive = new PathGeometry();
                         primitive.PathRect(new Point(49, 49), new Point(141, 141));
                         primitive.PathStroke(2, Color.Red);
-                        node.Primitive = primitive;
+                        node.Geometry = primitive;
                     }
                 }
 
@@ -368,8 +368,8 @@ namespace ImGui.UnitTest.Rendering
                     .BackgroundColor(Color.Azure)
                     .Padding((4, 2, 4, 2));
                 node.UseBoxModel = true;
-                var primitive = new TextPrimitive("AAA");
-                node.Primitive = primitive;
+                var primitive = new TextGeometry("AAA");
+                node.Geometry = primitive;
 
                 Util.DrawNodeToImage(out var imageRawBytes, node, 120, 60);
                 Util.CheckExpectedImage(imageRawBytes, 120, 60,
@@ -386,7 +386,7 @@ namespace ImGui.UnitTest.Rendering
                     .BorderColor(Color.HotPink)
                     .Padding((4, 2, 4, 2));
                 node.UseBoxModel = true;
-                node.Primitive = new ImagePrimitive(@"assets\images\logo.png");
+                node.Geometry = new ImageGeometry(@"assets\images\logo.png");
 
                 Util.DrawNodeToImage(out var imageRawBytes, node, 400, 300);
                 Util.CheckExpectedImage(imageRawBytes, 400, 300,

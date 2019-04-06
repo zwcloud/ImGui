@@ -10,9 +10,9 @@ namespace ImGui
         public T Value { get; set; }
 
         /// <summary>
-        /// Primitive owned by this rule.
+        /// Geometry owned by this rule.
         /// </summary>
-        public Primitive primitive;
+        public Geometry Geometry;
 
         public StyleRule(GUIStyleName name, T value)
         {

@@ -3,7 +3,7 @@ using System;
 namespace ImGui.Common.Primitive
 {
     /// <summary>
-    /// Rect - The primitive which represents a rectangle.  Rects are stored as
+    /// Rect - The Geometry which represents a rectangle.  Rects are stored as
     /// X, Y (Location) and Width and Height (Size).  As a result, Rects cannot have negative
     /// Width or Height.
     /// </summary>

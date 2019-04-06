@@ -11,7 +11,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void Works()
             {
-                var primitive = new PathPrimitive();
+                var primitive = new PathGeometry();
                 primitive.PathMoveTo(Point.Zero);
 
                 Assert.Single(primitive.Path);
@@ -26,7 +26,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void Works()
             {
-                var primitive = new PathPrimitive();
+                var primitive = new PathGeometry();
                 primitive.PathMoveTo(Point.Zero);
                 primitive.PathLineTo(new Point(0, 10));
                 primitive.PathLineTo(new Point(10, 10));
@@ -58,7 +58,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void Works()
             {
-                var primitive = new PathPrimitive();
+                var primitive = new PathGeometry();
                 primitive.PathMoveTo(Point.Zero);
                 primitive.PathArcFast(new Point(10, 0), 10, 3, 6);
 

@@ -3,17 +3,17 @@ using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui.Rendering
 {
-    internal class ImagePrimitive : Primitive
+    internal class ImageGeometry : Geometry
     {
         public Image Image { get; set; }
         public ITexture Texture { get; set; }
 
-        public ImagePrimitive(Image image)
+        public ImageGeometry(Image image)
         {
             this.Image = image;
         }
 
-        public ImagePrimitive(string filePath)
+        public ImageGeometry(string filePath)
         {
             this.Image = new Image(filePath);
         }

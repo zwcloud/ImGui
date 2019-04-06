@@ -34,13 +34,13 @@ namespace ImGui
                 container.AppendChild(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.CollapsingHeader]);
-                node.Primitive = new TextPrimitive(displayText);
+                node.Geometry = new TextGeometry(displayText);
             }
             node.RuleSet.ApplyOptions(options);
             node.RuleSet.ApplyOptions(Height(node.RuleSet.GetLineHeight()));
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Primitive as TextPrimitive;
+            var textPrimitive = node.Geometry as TextGeometry;
             Debug.Assert(textPrimitive != null);
             textPrimitive.Text = displayText;
 
@@ -62,7 +62,7 @@ namespace ImGui
 
     }
 
-    #if false //old drawlist code, to be integrated to PathPrimitive
+    #if false //old drawlist code, to be integrated to PathGeometry
     internal static partial class DrawListExtension
     {
         public static void RenderCollapseTriangle(this DrawList drawList, Point pMin, bool isOpen, double height, Color color, double scale = 1)

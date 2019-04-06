@@ -29,12 +29,12 @@ namespace ImGui
                 container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
-                node.Primitive = new TextPrimitive(text);
+                node.Geometry = new TextGeometry(text);
             }
 
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Primitive as TextPrimitive;
+            var textPrimitive = node.Geometry as TextGeometry;
             Debug.Assert(textPrimitive != null);
             textPrimitive.Text = text;
 
@@ -69,7 +69,7 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Primitive = new TextPrimitive(text);
+                node.Geometry = new TextGeometry(text);
             }
 
             node.ActiveSelf = true;

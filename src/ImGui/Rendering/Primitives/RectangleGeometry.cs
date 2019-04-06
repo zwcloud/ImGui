@@ -2,9 +2,9 @@
 
 namespace ImGui.Rendering
 {
-    internal class RectanglePrimitive : PathPrimitive
+    internal class RectangleGeometry : PathGeometry
     {
-        public RectanglePrimitive(Rect rect)
+        public RectangleGeometry(Rect rect)
         {
             this.Rect = rect;
         }
