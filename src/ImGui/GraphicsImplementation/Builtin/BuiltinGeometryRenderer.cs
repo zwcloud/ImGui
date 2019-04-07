@@ -8,7 +8,7 @@ using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal partial class BuiltinPrimitiveRenderer : IPrimitiveRenderer
+    internal partial class BuiltinGeometryRenderer : IGeometryRenderer
     {
         #region Mesh
 

@@ -5,7 +5,7 @@ namespace ImGui.GraphicsImplementation
 {
     internal static class BuiltinPrimitiveRendererExtension
     {
-        public static bool Draw(this BuiltinPrimitiveRenderer primitiveRenderer, Visual visual, Rect rootClipRect, MeshList meshList)
+        public static bool Draw(this BuiltinGeometryRenderer geometryRenderer, Visual visual, Rect rootClipRect, MeshList meshList)
         {
             if (!visual.ActiveInTree)
             {
@@ -21,7 +21,7 @@ namespace ImGui.GraphicsImplementation
                 }
             }
 
-            visual.Draw(primitiveRenderer, meshList);
+            visual.Draw(geometryRenderer, meshList);
             return true;
         }
 

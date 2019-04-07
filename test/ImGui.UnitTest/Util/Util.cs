@@ -184,12 +184,12 @@ namespace ImGui.UnitTest
         {
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
-            IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+            IGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
             using (var context = new RenderContextForTest(width, height))
             {
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
-                node.Draw(primitiveRenderer, meshList);
+                node.Draw(geometryRenderer, meshList);
 
                 //rebuild mesh buffer
                 meshBuffer.Clear();
@@ -208,14 +208,14 @@ namespace ImGui.UnitTest
         {
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
-            IPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+            IGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
             using (var context = new RenderContextForTest(width, height))
             {
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
                 foreach (var node in nodes)
                 {
-                    node.Draw(primitiveRenderer, meshList);
+                    node.Draw(geometryRenderer, meshList);
                 }
 
                 //rebuild mesh buffer
@@ -235,7 +235,7 @@ namespace ImGui.UnitTest
         {
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
-            var primitiveRenderer = new BuiltinPrimitiveRenderer();
+            var primitiveRenderer = new BuiltinGeometryRenderer();
 
             using (var context = new RenderContextForTest(width, height))
             {

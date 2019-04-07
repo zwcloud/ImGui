@@ -14,9 +14,9 @@ namespace ImGui.UnitTest.Rendering
                 byte[] imageRawBytes;
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
                     var mesh = new Mesh();
-                    primitiveRenderer.DrawPathPrimitive(mesh, geometry, Vector.Zero);
+                    geometryRenderer.DrawPathPrimitive(mesh, geometry, Vector.Zero);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);
@@ -75,9 +75,9 @@ namespace ImGui.UnitTest.Rendering
                 byte[] imageRawBytes;
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
                     var textMesh = new TextMesh();
-                    primitiveRenderer.DrawTextPrimitive(textMesh, geometry, contentRect, new StyleRuleSet(), Vector.Zero);
+                    geometryRenderer.DrawTextPrimitive(textMesh, geometry, contentRect, new StyleRuleSet(), Vector.Zero);
 
                     context.Clear();
                     context.DrawTextMesh(textMesh);
@@ -107,9 +107,9 @@ namespace ImGui.UnitTest.Rendering
                 byte[] imageRawBytes;
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
                     var mesh = new Mesh();
-                    primitiveRenderer.DrawImagePrimitive(mesh, geometry, contentRect, style, Vector.Zero);
+                    geometryRenderer.DrawImagePrimitive(mesh, geometry, contentRect, style, Vector.Zero);
 
                     context.Clear();
                     context.DrawImageMesh(mesh);
@@ -139,9 +139,9 @@ namespace ImGui.UnitTest.Rendering
                 byte[] imageRawBytes;
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
                     var mesh = new Mesh();
-                    primitiveRenderer.DrawSlicedImagePrimitive(mesh, geometry, rect, style, Vector.Zero);
+                    geometryRenderer.DrawSlicedImagePrimitive(mesh, geometry, rect, style, Vector.Zero);
 
                     context.Clear();
                     context.DrawImageMesh(mesh);
@@ -184,15 +184,15 @@ namespace ImGui.UnitTest.Rendering
                 byte[] imageRawBytes;
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
                     var mesh = new Mesh();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
-                    primitiveRenderer.SetShapeMesh(mesh);
+                    geometryRenderer.SetShapeMesh(mesh);
                     var textMesh = new TextMesh();
-                    primitiveRenderer.SetTextMesh(textMesh);
+                    geometryRenderer.SetTextMesh(textMesh);
                     var imageMesh = new Mesh();
-                    primitiveRenderer.SetImageMesh(imageMesh);
-                    primitiveRenderer.DrawBoxModel(rect, styleRuleSet);
+                    geometryRenderer.SetImageMesh(imageMesh);
+                    geometryRenderer.DrawBoxModel(rect, styleRuleSet);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);
@@ -225,15 +225,15 @@ namespace ImGui.UnitTest.Rendering
                 byte[] imageRawBytes;
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
                     var mesh = new Mesh();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
-                    primitiveRenderer.SetShapeMesh(mesh);
+                    geometryRenderer.SetShapeMesh(mesh);
                     var textMesh = new TextMesh();
-                    primitiveRenderer.SetTextMesh(textMesh);
+                    geometryRenderer.SetTextMesh(textMesh);
                     var imageMesh = new Mesh();
-                    primitiveRenderer.SetImageMesh(imageMesh);
-                    primitiveRenderer.DrawBoxModel(textGeometry, rect, styleRuleSet);
+                    geometryRenderer.SetImageMesh(imageMesh);
+                    geometryRenderer.DrawBoxModel(textGeometry, rect, styleRuleSet);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);
@@ -266,13 +266,13 @@ namespace ImGui.UnitTest.Rendering
                 byte[] imageRawBytes;
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
                     var mesh = new Mesh();
                     mesh.CommandBuffer.Add(DrawCommand.Default);
-                    primitiveRenderer.SetShapeMesh(mesh);
+                    geometryRenderer.SetShapeMesh(mesh);
                     var imageMesh = new Mesh();
-                    primitiveRenderer.SetImageMesh(imageMesh);
-                    primitiveRenderer.DrawBoxModel(primitive, rect, ruleSet);
+                    geometryRenderer.SetImageMesh(imageMesh);
+                    geometryRenderer.DrawBoxModel(primitive, rect, ruleSet);
 
                     context.Clear();
                     context.DrawShapeMesh(mesh);

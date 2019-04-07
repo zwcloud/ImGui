@@ -3,7 +3,7 @@ using ImGui.Rendering;
 
 namespace ImGui.GraphicsAbstraction
 {
-    internal interface IPrimitiveRenderer
+    internal interface IGeometryRenderer
     {
         void DrawPath(PathGeometry geometry, Vector offset);
 

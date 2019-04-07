@@ -166,7 +166,7 @@ namespace ImGui.UnitTest.Rendering
                 MeshBuffer meshBuffer = new MeshBuffer();
                 MeshList meshList = new MeshList();
 
-                var primitiveRenderer = new BuiltinPrimitiveRenderer();
+                var primitiveRenderer = new BuiltinGeometryRenderer();
 
                 Node node = new Node(1);
                 node.Geometry = new PathGeometry();

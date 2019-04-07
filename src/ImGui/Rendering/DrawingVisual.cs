@@ -23,9 +23,9 @@ namespace ImGui.Rendering
             return rootClipRect;
         }
 
-        public override void Draw(IPrimitiveRenderer renderer, MeshList meshList)
+        internal override void Draw(IGeometryRenderer renderer, MeshList meshList)
         {
-            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            var r = renderer as GraphicsImplementation.BuiltinGeometryRenderer;
             Debug.Assert(r != null);
             r.DrawPrimitive(this.Geometry, this.Rect, this.RuleSet, meshList);
         }

@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal partial class BuiltinPrimitiveRenderer : IPrimitiveRenderer
+    internal partial class BuiltinGeometryRenderer : IGeometryRenderer
     {
         public void DrawBoxModel(Rect rect, StyleRuleSet style)
         {

@@ -267,7 +267,7 @@ namespace ImGui.Rendering
         /// <param name="renderer"></param>
         /// <param name="meshList"></param>
         /// <remarks>A visual can only have one single Geometry.</remarks>
-        public abstract void Draw(IPrimitiveRenderer renderer, MeshList meshList);
+        internal abstract void Draw(IGeometryRenderer renderer, MeshList meshList);
 
         /// <summary>
         /// Rule Set

@@ -237,14 +237,5 @@ namespace ImGui
                 .AlignmentHorizontal(Alignment.Start, GUIState.Active);
         }
     }
-#if false
-    internal static partial class DrawListExtension
-    {
-        public static void RenderBullet(this IPrimitiveRenderer drawList, Point pos, double lineHeight, Color color)
-        {
-            drawList.AddCircleFilled(pos, (float)lineHeight * 0.20f, color, 8);
-        }
-    }
-#endif
 
 }

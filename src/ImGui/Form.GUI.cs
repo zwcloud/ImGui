@@ -14,7 +14,7 @@ namespace ImGui
         public Color BackgroundColor { get; set; } = Color.Argb(255, 114, 144, 154);
 
         //FIXME TEMP
-        private readonly BuiltinPrimitiveRenderer primitiveRenderer = new BuiltinPrimitiveRenderer();
+        private readonly BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
         internal void NewFrame()
         {
@@ -183,10 +183,10 @@ namespace ImGui
             {
                 if (!window.Active) continue;
 
-                window.RenderTree.Foreach(n => this.primitiveRenderer.Draw(n, clientRect, window.MeshList));
+                window.RenderTree.Foreach(n => this.geometryRenderer.Draw(n, clientRect, window.MeshList));
                 foreach (var visual in window.AbsoluteVisualList)
                 {
-                    this.primitiveRenderer.Draw(visual, clientRect, window.MeshList);
+                    this.geometryRenderer.Draw(visual, clientRect, window.MeshList);
                 }
 
                 //rebuild mesh buffer

@@ -204,10 +204,10 @@ namespace ImGui.Rendering
             return clipRect;
         }
 
-        public override void Draw(IPrimitiveRenderer renderer, MeshList meshList)
+        internal override void Draw(IGeometryRenderer renderer, MeshList meshList)
         {
             //TEMP regard all renderer as the built-in renderer
-            var r = renderer as GraphicsImplementation.BuiltinPrimitiveRenderer;
+            var r = renderer as GraphicsImplementation.BuiltinGeometryRenderer;
             Debug.Assert(r != null);
             r.DrawPrimitive(this.Geometry, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }

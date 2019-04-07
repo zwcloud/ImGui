@@ -4,7 +4,7 @@ using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal partial class BuiltinPrimitiveRenderer
+    internal partial class BuiltinGeometryRenderer
     {
         public void DrawPathPrimitive(Mesh shapeMesh, PathGeometry pathGeometry, Vector offset)
         {
