@@ -24,7 +24,7 @@ namespace ImGui.Rendering
             this.Texture.LoadImage(this.Image.Data, this.Image.Width, this.Image.Height);
         }
 
-        public override void UpdateContent()
+        public override void UpdateContent(RenderContext context)
         {
             throw new System.NotImplementedException();
         }

@@ -212,6 +212,29 @@ namespace ImGui.Rendering
             r.DrawPrimitive(this.Geometry, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }
 
+        internal override void RenderContent(RenderContext context)
+        {
+            context.ConsumeContent(content);
+        }
+
+        internal override void RenderClose(DrawingContent newContent)
+        {
+            DrawingContent oldContent;
+
+            oldContent = content;
+            content = newContent;
+
+            SetFlags(true, VisualFlags.IsContentDirty);
+
+            if (oldContent != null)
+            {
+                //TODO consider if we need to release/reuse old content via object pool or leave it to GC
+                //TODO remove related Mesh/TextMesh from MeshList
+            }
+
+            //PropagateFlags(this,VisualFlags.IsSubtreeDirtyForRender);//TODO
+        }
+
         /// <summary>
         /// UI state
         /// </summary>
@@ -232,5 +255,6 @@ namespace ImGui.Rendering
 
         private GUIState state = GUIState.Normal;
 
+        private DrawingContent content;
     }
 }

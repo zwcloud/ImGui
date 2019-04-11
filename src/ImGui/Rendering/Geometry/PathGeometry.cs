@@ -6,7 +6,16 @@ namespace ImGui.Rendering
 {
     internal class PathGeometry : Geometry
     {
+        /// <summary>
+        /// Gets or sets path commands that describes how to rendering this PathGeometry.
+        /// TODO Consider if we should convert this to a raw segment list instead of PathCommand list.
+        /// </summary>
         public List<PathCommand> Path { get; set; } = new List<PathCommand>();
+
+        /// <summary>
+        /// Gets or sets a value that determines how the intersecting areas contained in this PathGeometry are combined.
+        /// </summary>
+        public FillRule FillRule { get; set; } = FillRule.EvenOdd;
 
         /// <summary>
         /// Moves the current point of the current path.
@@ -105,7 +114,21 @@ namespace ImGui.Rendering
 
         //TODO PathArc and other path APIs
 
-        public override void UpdateContent()
+        /// <summary>
+        /// GetPathGeometryData - returns a struct which contains this Geometry represented
+        /// as a path geometry's serialized format.
+        /// </summary>
+        internal virtual PathGeometryData GetPathGeometryData()
+        {
+            //TODO PathGeometryData actually isn't converted. Re-consider this!
+            PathGeometryData data = new PathGeometryData();
+            data.Path = Path;
+            data.FillRule = FillRule;
+            data.Offset = Offset;
+            return data;
+        }
+
+        public override void UpdateContent(RenderContext context)
         {
             throw new NotImplementedException();
         }

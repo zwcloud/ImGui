@@ -37,7 +37,7 @@ namespace ImGui.Rendering
             this.Text = text;
         }
 
-        public override void UpdateContent()
+        public override void UpdateContent(RenderContext context)
         {
             throw new System.NotImplementedException();
         }

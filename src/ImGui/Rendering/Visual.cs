@@ -274,6 +274,60 @@ namespace ImGui.Rendering
         /// </summary>
         /// //TODO make this stateless, state should be maintained at the Node level
         public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
+
+        internal VisualFlags Flags { get; set; } = VisualFlags.None;
+
+        internal void SetFlags(bool value, VisualFlags flags)
+        {
+            Flags = value ? (Flags | flags) : (Flags & (~flags));
+        }
+
+        internal void Render(RenderContext context)
+        {
+            RenderRecursive(context);
+        }
+
+        internal void RenderRecursive(RenderContext context)
+        {
+            this.UpdateContent(context);
+            this.UpdateChildren(context);
+
+            SetFlags(false, VisualFlags.IsSubtreeDirtyForRender);
+        }
+
+        internal void UpdateContent(RenderContext context)
+        {
+            if ((Flags & VisualFlags.IsContentDirty) != 0)
+            {
+                RenderContent(context);
+                SetFlags(false, VisualFlags.IsContentDirty);
+            }
+        }
+
+        internal void UpdateChildren(RenderContext context)
+        {
+            var childCount = ChildCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                Visual child = GetVisualByIndex(i);
+                if ((child.Flags & VisualFlags.IsSubtreeDirtyForRender) != 0)
+                {
+                    child.RenderRecursive(context);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Convert content into GPU renderable resources: Mesh/TextMesh
+        /// </summary>
+        /// <param name="context"></param>
+        internal abstract void RenderContent(RenderContext context);
+
+        /// <summary>
+        /// Called from the DrawingContext when the DrawingContext is closed.
+        /// </summary>
+        /// <param name="newContent"></param>
+        internal abstract void RenderClose(DrawingContent newContent);
     }
 
 }

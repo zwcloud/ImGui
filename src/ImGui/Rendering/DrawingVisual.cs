@@ -29,5 +29,41 @@ namespace ImGui.Rendering
             Debug.Assert(r != null);
             r.DrawPrimitive(this.Geometry, this.Rect, this.RuleSet, meshList);
         }
+
+        /// <summary>
+        /// Convert content into GPU renderable resources: Mesh/TextMesh
+        /// </summary>
+        /// <param name="context"></param>
+        internal override void RenderContent(RenderContext context)
+        {
+            context.ConsumeContent(content);
+        }
+
+        internal DrawingContext RenderOpen()
+        {
+            return new VisualDrawingContext(this);
+        }
+
+        /// <summary>
+        /// Called from the DrawingContext when the DrawingContext is closed.
+        /// </summary>
+        internal override void RenderClose(DrawingContent newContent)
+        {
+            DrawingContent oldContent;
+
+            oldContent = content;
+            content = newContent;
+
+            SetFlags(true, VisualFlags.IsContentDirty);
+
+            if (oldContent != null)
+            {
+                //TODO consider if we need to release/reuse old content via object pool or leave it to GC
+            }
+
+            //PropagateFlags(this,VisualFlags.IsSubtreeDirtyForRender);//TODO
+        }
+
+        private DrawingContent content;
     }
 }
