@@ -211,6 +211,29 @@ namespace ImGui.Rendering
             r.DrawPrimitive(this.Geometry, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
         }
 
+
+        /// <summary>
+        /// UI state
+        /// </summary>
+        public GUIState State
+        {
+            get => this.state;
+            set
+            {
+                if (this.state == value)
+                {
+                    return;
+                }
+
+                this.state = value;
+                this.RuleSet.SetState(value);
+            }
+        }
+
+        private GUIState state = GUIState.Normal;
+
+        #region new rendering pipeline
+
         internal override void RenderContent(RenderContext context)
         {
             context.ConsumeContent(content);
@@ -234,26 +257,8 @@ namespace ImGui.Rendering
             //PropagateFlags(this,VisualFlags.IsSubtreeDirtyForRender);//TODO
         }
 
-        /// <summary>
-        /// UI state
-        /// </summary>
-        public GUIState State
-        {
-            get => this.state;
-            set
-            {
-                if (this.state == value)
-                {
-                    return;
-                }
-
-                this.state = value;
-                this.RuleSet.SetState(value);
-            }
-        }
-
-        private GUIState state = GUIState.Normal;
-
         private DrawingContent content;
+
+        #endregion
     }
 }

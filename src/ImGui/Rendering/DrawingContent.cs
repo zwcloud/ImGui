@@ -17,10 +17,15 @@ namespace ImGui.Rendering
     /// </remarks>
     internal class DrawingContent
     {
-        public int AddReferenceToResource(object resource)
+        public uint AddReferenceToResource(object resource)
         {
+            if (resource == null)
+            {
+                throw new ArgumentNullException(nameof(resource));
+            }
+
             dependentResources.Add(resource);
-            return dependentResources.Count - 1;
+            return (uint)(dependentResources.Count + 1);
         }
 
         public unsafe void WriteRecord(RecordType type, byte* recordData, int recordSize)
@@ -64,6 +69,82 @@ namespace ImGui.Rendering
             curOffset += totalSize;
         }
 
+        public void ReadAllRecords(RecordReader ctx)
+        {
+            // We shouldn't have any dependent resources if _curOffset is 0
+            // (curOffset == 0) -> (renderData.dependentResources.Count == 0)
+            Debug.Assert((curOffset > 0) || (dependentResources.Count == 0));
+
+            // The buffer being null implies that curOffset must be 0.
+            // (buffer == null) -> (curOffset == 0)
+            Debug.Assert((buffer != null) || (curOffset == 0));
+
+            // The _curOffset must be less than the length, if there is a buffer.
+            Debug.Assert((buffer == null) || (curOffset <= buffer.Length));
+
+            if (curOffset > 0)
+            {
+                unsafe
+                {
+                    fixed (byte* pByte = this.buffer)
+                    {
+                        // This pointer points to the current read point in the
+                        // instruction stream.
+                        byte* pCur = pByte;
+
+                        // This points to the first byte past the end of the
+                        // instruction stream (i.e. when to stop)
+                        byte* pEndOfInstructions = pByte + curOffset;
+
+                        // Iterate across the entire list of instructions, stopping at the
+                        // end or when the DrawingContextWalker has signalled a stop.
+                        while ((pCur < pEndOfInstructions) && !ctx.ShouldStopWalking)
+                        {
+                            RecordHeader* pCurRecord = (RecordHeader*)pCur;
+
+                            switch (pCurRecord->Type)
+                            {
+                                case RecordType.DrawLine:
+                                {
+                                    DrawLineCommand* data = (DrawLineCommand*)(pCur + sizeof(RecordHeader));
+
+                                    // Retrieve the resources for the dependents and call the context.
+                                    ctx.DrawLine(
+                                        (Pen)DependentLookup(data->PenIndex),
+                                        data->StartPoint,
+                                        data->EndPoint
+                                        );
+                                }
+                                break;
+                                case RecordType.DrawRectangle:
+                                {
+                                    DrawRectangleCommand* data = (DrawRectangleCommand*)(pCur + sizeof(RecordHeader));
+
+                                    // Retrieve the resources for the dependents and call the context.
+                                    ctx.DrawRectangle(
+                                        (Brush)DependentLookup(data->BrushHandle),
+                                        (Pen)DependentLookup(data->PenHandle),
+                                        data->Rectangle
+                                        );
+                                }
+                                break;
+                                case RecordType.DrawGlyphRun:
+                                    throw new NotImplementedException();
+                                    break;
+                                default:
+                                {
+                                    Debug.Assert(false);
+                                }
+                                break;
+                            }
+
+                            pCur += pCurRecord->Size;
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// EnsureBuffer - this method ensures that the capacity is at least equal to cbRequiredSize.
         /// </summary>
@@ -98,6 +179,25 @@ namespace ImGui.Rendering
 
                 buffer = newBuffer;
             }
+        }
+
+        /// <summary>
+        /// DependentLookup - given an index into the dependent resource array,
+        /// we return null if the index is 0, else we return the dependent at index - 1.
+        /// </summary>
+        /// <param name="index"> uint - 1-based index into the dependent array, 0 means "no lookup". </param>
+        private object DependentLookup(uint index)
+        {
+            Debug.Assert(index <= (uint)Int32.MaxValue);
+
+            if (index == 0)
+            {
+                return null;
+            }
+
+            Debug.Assert(dependentResources.Count >= index);
+
+            return dependentResources[(int)index - 1];
         }
 
         // The offset of the beginning of the next record

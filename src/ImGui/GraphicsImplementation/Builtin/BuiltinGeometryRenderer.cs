@@ -42,6 +42,8 @@ namespace ImGui.GraphicsImplementation
         /// </summary>
         public Mesh ShapeMesh { get; private set; }
 
+        //TODO remove duplicated code in AddPolyline(IList<Point> points,...) and AddPolyline(Point* points,...)
+
         /// <summary>
         /// Add a poly line.
         /// </summary>
@@ -53,6 +55,66 @@ namespace ImGui.GraphicsImplementation
         public void AddPolyline(IList<Point> points, Color color, bool close, double thickness, bool antiAliased = false)
         {
             var pointsCount = points.Count;
+            if (pointsCount < 2)
+                return;
+
+            int count = pointsCount;
+            if (!close)
+                count = pointsCount - 1;
+
+            if (antiAliased)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // Non Anti-aliased Stroke
+                int idxCount = count * 6;
+                int vtxCount = count * 4; // FIXME: Not sharing edges
+                this.ShapeMesh.PrimReserve(idxCount, vtxCount);
+
+                for (int i1 = 0; i1 < count; i1++)
+                {
+                    int i2 = (i1 + 1) == pointsCount ? 0 : i1 + 1;
+                    Point p1 = points[i1];
+                    Point p2 = points[i2];
+                    Vector diff = p2 - p1;
+                    diff *= MathEx.InverseLength(diff, 1.0f);
+
+                    float dx = (float)(diff.X * (thickness * 0.5f));
+                    float dy = (float)(diff.Y * (thickness * 0.5f));
+                    var vertex0 = new DrawVertex { pos = new Point(p1.X + dy, p1.Y - dx), uv = Point.Zero, color = color };
+                    var vertex1 = new DrawVertex { pos = new Point(p2.X + dy, p2.Y - dx), uv = Point.Zero, color = color };
+                    var vertex2 = new DrawVertex { pos = new Point(p2.X - dy, p2.Y + dx), uv = Point.Zero, color = color };
+                    var vertex3 = new DrawVertex { pos = new Point(p1.X - dy, p1.Y + dx), uv = Point.Zero, color = color };
+                    this.ShapeMesh.AppendVertex(vertex0);
+                    this.ShapeMesh.AppendVertex(vertex1);
+                    this.ShapeMesh.AppendVertex(vertex2);
+                    this.ShapeMesh.AppendVertex(vertex3);
+
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(1);
+                    this.ShapeMesh.AppendIndex(2);
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(2);
+                    this.ShapeMesh.AppendIndex(3);
+
+                    this.ShapeMesh.currentIdx += 4;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a poly line.
+        /// </summary>
+        /// <param name="points">pointer to points data</param>
+        /// <param name="pointsCount">number of points</param>
+        /// <param name="color">color</param>
+        /// <param name="close">Should this method close the polyline for you? A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public unsafe void AddPolyline(Point* points, int pointsCount, Color color, bool close, double thickness, bool antiAliased = false)
+        {
             if (pointsCount < 2)
                 return;
 

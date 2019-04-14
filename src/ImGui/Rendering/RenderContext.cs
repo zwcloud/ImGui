@@ -16,7 +16,7 @@ namespace ImGui.Rendering
 
         public void ConsumeContent(DrawingContent content)
         {
-            //TODO converts content to mesh and save into meshList
+            content.ReadAllRecords(renderer);
         }
 
         /// <summary>

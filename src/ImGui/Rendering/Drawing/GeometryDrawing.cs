@@ -58,6 +58,7 @@ namespace ImGui.Rendering
                 //TODO update content here,
                 //we don't need to update content immediately when property Geometry, Pen and Brush is changed.
                 throw new NotImplementedException();
+                dirty = false;
             }
             context.ConsumeContent(content);
         }

@@ -24,7 +24,7 @@ namespace ImGui.Rendering
             {
                 EnsureContent();
 
-                int penIndex = content.AddReferenceToResource(pen);
+                var penIndex = content.AddReferenceToResource(pen);
                 var record = new DrawLineCommand(penIndex, point0, point1);
 
                 content.WriteRecord(RecordType.DrawLine, (byte*)&record, sizeof(DrawLineCommand));
@@ -46,8 +46,8 @@ namespace ImGui.Rendering
             {
                 EnsureContent();
 
-                int brushIndex = content.AddReferenceToResource(brush);
-                int penIndex = content.AddReferenceToResource(pen);
+                var brushIndex = content.AddReferenceToResource(brush);
+                var penIndex = content.AddReferenceToResource(pen);
                 var record = new DrawRectangleCommand(brushIndex, penIndex, rectangle);
 
                 content.WriteRecord(RecordType.DrawRectangle, (byte*)&record, sizeof(DrawRectangleCommand));
