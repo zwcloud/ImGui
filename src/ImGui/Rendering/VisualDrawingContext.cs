@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGui.GraphicsAbstraction;
+using ImGui.Rendering.Composition;
 
 namespace ImGui.Rendering
 {
@@ -14,17 +15,43 @@ namespace ImGui.Rendering
 
         public override void DrawLine(Pen pen, Point point0, Point point1)
         {
-            EnsureContent();
+            if (pen == null)
+            {
+                throw new ArgumentNullException(nameof(pen));
+            }
 
-            //var p = content.PathContent.Path;
-            //p.Add(new MoveToCommand(point0));
-            //p.Add(new LineToCommand(point1));
-            //p.Add(new StrokeCommand(pen.LineWidth, pen.LineColor));
+            unsafe
+            {
+                EnsureContent();
+
+                int penIndex = content.AddReferenceToResource(pen);
+                var record = new DrawLineCommand(penIndex, point0, point1);
+
+                content.WriteRecord(RecordType.DrawLine, (byte*)&record, sizeof(DrawLineCommand));
+            }
         }
 
         public override void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
         {
-            throw new System.NotImplementedException();
+            if (brush == null)
+            {
+                throw new ArgumentNullException(nameof(brush));
+            }
+            if (pen == null)
+            {
+                throw new ArgumentNullException(nameof(pen));
+            }
+
+            unsafe
+            {
+                EnsureContent();
+
+                int brushIndex = content.AddReferenceToResource(brush);
+                int penIndex = content.AddReferenceToResource(pen);
+                var record = new DrawRectangleCommand(brushIndex, penIndex, rectangle);
+
+                content.WriteRecord(RecordType.DrawRectangle, (byte*)&record, sizeof(DrawRectangleCommand));
+            }
         }
 
         public override void DrawRoundedRectangle(Brush brush, Pen pen, Rect rectangle, double radiusX, double radiusY)
