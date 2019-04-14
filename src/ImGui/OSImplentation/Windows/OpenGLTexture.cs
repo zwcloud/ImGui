@@ -2,7 +2,6 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using CSharpGL;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;

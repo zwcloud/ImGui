@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Window;
 using WebAssembly;
 

@@ -1,6 +1,4 @@
-﻿using ImGui.Common.Primitive;
-
-namespace ImGui.Rendering
+﻿namespace ImGui.Rendering
 {
     /// <summary>
     /// Base class for all Geometry

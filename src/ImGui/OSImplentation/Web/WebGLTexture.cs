@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using GL = ImGui.OSImplentation.Web.WebGL;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;

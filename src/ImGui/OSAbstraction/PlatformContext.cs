@@ -1,5 +1,4 @@
 ﻿using System;
-using ImGui.Common.Primitive;
 using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;

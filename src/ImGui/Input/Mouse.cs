@@ -1,6 +1,4 @@
-﻿using ImGui.Common.Primitive;
-
-namespace ImGui.Input
+﻿namespace ImGui.Input
 {
     /// <summary>
     /// Mouse status and operations

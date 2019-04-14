@@ -1,9 +1,8 @@
-﻿using ImGui.Common.Primitive;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace ImGui.Common
+namespace ImGui
 {
     /// <summary>
     /// Extended class for System.Math

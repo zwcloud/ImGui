@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using ImGui.OSAbstraction.Graphics;
+﻿using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using Xunit;

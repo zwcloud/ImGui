@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGL;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui.OSImplentation.Linux

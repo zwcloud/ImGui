@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using ImGui.OSImplentation.Windows;
+﻿using ImGui.OSImplentation.Windows;
 using System;
 using CSharpGL;
 using ImGui.Rendering;

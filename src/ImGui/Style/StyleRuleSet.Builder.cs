@@ -1,6 +1,4 @@
-﻿using ImGui.Common.Primitive;
-
-namespace ImGui
+﻿namespace ImGui
 {
     internal class StyleRuleSetBuilder
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace ImGui.Common.Primitive
+namespace ImGui
 {
     [System.Diagnostics.DebuggerStepThrough]
     [Serializable]

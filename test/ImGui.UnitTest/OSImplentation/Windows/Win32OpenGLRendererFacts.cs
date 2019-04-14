@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using ImGui;
-using ImGui.Common.Primitive;
 
 namespace ImGui.UnitTest
 {

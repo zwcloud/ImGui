@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using ImGui.GraphicsImplementation;
+﻿using ImGui.GraphicsImplementation;
 using ImGui.Rendering;
 using Xunit;
 

@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using System;
+﻿using System;
 
 namespace ImGui.Style
 {

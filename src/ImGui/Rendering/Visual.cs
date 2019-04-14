@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
@@ -151,7 +149,7 @@ namespace ImGui.Rendering
         public bool ActiveSelf { get; set; } = true;
 
         /// <summary>
-        /// The Geometry hold by this Visual.
+        /// The Geometry hold by this Visual. (to be removed when new rendering-pipeline is completed)
         /// </summary>
         internal Geometry Geometry { get; set; }
 

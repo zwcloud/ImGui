@@ -16,7 +16,6 @@ namespace ImGui.Rendering
 
         public void ConsumeContent(DrawingContent content)
         {
-            AppendPathGeometryData(content.PathContent);
             //TODO converts other content to mesh and save into meshList
         }
 

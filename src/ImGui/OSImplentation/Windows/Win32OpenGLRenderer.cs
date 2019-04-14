@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using CSharpGL;
-using ImGui.Common;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using WebAssembly;
 using GL = ImGui.OSImplentation.Web.WebGL;

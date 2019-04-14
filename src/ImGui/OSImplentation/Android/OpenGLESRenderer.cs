@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using CSharpGLES;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui.OSImplentation.Android

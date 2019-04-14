@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using ImGui.Common.Primitive;
 using ImGui.Input;
 using ImGui.OSAbstraction.Window;
 

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ImGui.Common;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Text;
 using Typography.OpenFont;
 using Typography.Rendering;

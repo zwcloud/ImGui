@@ -1,5 +1,4 @@
 ﻿using ImGui;
-using ImGui.Common.Primitive;
 
 namespace Calculator
 {

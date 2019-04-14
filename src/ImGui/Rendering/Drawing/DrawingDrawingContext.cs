@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
+﻿using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
 {

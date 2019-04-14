@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using ImGui.Rendering;
+﻿using ImGui.Rendering;
 using Xunit;
 
 namespace ImGui.UnitTest.Layout

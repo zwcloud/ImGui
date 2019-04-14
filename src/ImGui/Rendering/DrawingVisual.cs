@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering

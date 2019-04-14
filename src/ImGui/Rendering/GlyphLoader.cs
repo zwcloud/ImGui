@@ -1,7 +1,5 @@
-﻿using ImGui.Common.Primitive;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using ImGui;
 
 namespace Typography.OpenFont
 {
@@ -47,7 +45,7 @@ namespace Typography.OpenFont
 
             /*
              * Important note
-             * 
+             *
              * Glyph points from Glyph should be flipped before adding to polygons and bezierSegments.
              * Because the coordinate system of a Glyph
              * +--------------------+
@@ -62,7 +60,7 @@ namespace Typography.OpenFont
              * |                    |
              * |(0,0)        (100,0)|
              * +--------------------+
-             * 
+             *
              * is upside down compared to the one we used
              * +--------------------+
              * |(0,0)       (100, 0)|

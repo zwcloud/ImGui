@@ -1,5 +1,4 @@
-﻿using ImGui.Common.Primitive;
-using ImGui.OSAbstraction.Graphics;
+﻿using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {

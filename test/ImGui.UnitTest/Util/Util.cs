@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Cairo;
 using ImageSharp.Extension;
-using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Rendering;

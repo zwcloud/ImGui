@@ -1,5 +1,4 @@
 using System;
-using ImGui.Common.Primitive;
 
 namespace ImGui.OSAbstraction.Window
 {

@@ -7,8 +7,8 @@ using OpenTK.Platform.Android;
 using Android.Views;
 using Android.Content;
 using Android.Util;
-using ImGui.Common.Primitive;
-using Size = ImGui.Common.Primitive.Size;
+using ImGui;
+using Size = ImGui.Size;
 
 namespace AndroidTemplate
 {

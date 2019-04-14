@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
-using ImGui.Common.Primitive;
 
 namespace ImGui
 {

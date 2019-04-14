@@ -1,7 +1,5 @@
 ﻿using System;
 using Cairo;
-using ImGui.Common.Primitive;
-using Color = Cairo.Color;
 
 namespace ImGui.UnitTest
 {
@@ -24,10 +22,10 @@ namespace ImGui.UnitTest
 
         internal static void StrokeRectangle(this Cairo.Context g,
             Rect rect,
-            Color topColor,
-            Color rightColor,
-            Color bottomColor,
-            Color leftColor)
+            Cairo.Color topColor,
+            Cairo.Color rightColor,
+            Cairo.Color bottomColor,
+            Cairo.Color leftColor)
         {
             g.NewPath();
             g.MoveTo(rect.TopLeft.X, rect.TopLeft.Y);
@@ -45,7 +43,7 @@ namespace ImGui.UnitTest
 
         internal static void StrokeRectangle(this Cairo.Context g,
             Rect rect,
-            Color color)
+            Cairo.Color color)
         {
             g.NewPath();
             g.MoveTo(rect.TopLeft.X, rect.TopLeft.Y);
@@ -60,7 +58,7 @@ namespace ImGui.UnitTest
 
         internal static void FillRectangle(this Cairo.Context g,
             Rect rect,
-            Color color)
+            Cairo.Color color)
         {
             g.NewPath();
             g.MoveTo(rect.TopLeft.X, rect.TopLeft.Y);
@@ -75,34 +73,34 @@ namespace ImGui.UnitTest
 
         #region Color
 
-        public static readonly Color ColorClear = ColorArgb(0, 0, 0, 0);
-        public static readonly Color ColorBlack = ColorRgb(0, 0, 0);
-        public static readonly Color ColorWhite = ColorRgb(255, 255, 255);
-        public static readonly Color ColorMetal = ColorRgb(192, 192, 192);
-        public static readonly Color ColorRed = ColorRgb(255, 0, 0);
-        public static readonly Color ColorGreen = ColorRgb(0, 255, 0);
-        public static readonly Color ColorBlue = ColorRgb(0, 0, 255);
-        public static readonly Color ColorLightBlue = ColorRgb(46, 167, 224);
-        public static readonly Color ColorDarkBlue = ColorRgb(3, 110, 184);
-        public static readonly Color ColorPink = ColorRgb(255, 192, 203);
-        public static readonly Color ColorOrange = ColorRgb(255, 165, 0);
+        public static readonly Cairo.Color ColorClear = ColorArgb(0, 0, 0, 0);
+        public static readonly Cairo.Color ColorBlack = ColorRgb(0, 0, 0);
+        public static readonly Cairo.Color ColorWhite = ColorRgb(255, 255, 255);
+        public static readonly Cairo.Color ColorMetal = ColorRgb(192, 192, 192);
+        public static readonly Cairo.Color ColorRed = ColorRgb(255, 0, 0);
+        public static readonly Cairo.Color ColorGreen = ColorRgb(0, 255, 0);
+        public static readonly Cairo.Color ColorBlue = ColorRgb(0, 0, 255);
+        public static readonly Cairo.Color ColorLightBlue = ColorRgb(46, 167, 224);
+        public static readonly Cairo.Color ColorDarkBlue = ColorRgb(3, 110, 184);
+        public static readonly Cairo.Color ColorPink = ColorRgb(255, 192, 203);
+        public static readonly Cairo.Color ColorOrange = ColorRgb(255, 165, 0);
 
-        public static void SetSourceColor(this Cairo.Context context, Color color)
+        public static void SetSourceColor(this Cairo.Context context, Cairo.Color color)
         {
             context.SetSourceRGBA(color.R,color.G,color.B,color.A);
         }
 
-        public static Color ColorRgb(byte r, byte g, byte b)
+        public static Cairo.Color ColorRgb(byte r, byte g, byte b)
         {
-            return new Color(r/255.0,g/255.0,b/255.0,1.0);
+            return new Cairo.Color(r/255.0,g/255.0,b/255.0,1.0);
         }
 
-        public static Color ColorArgb(byte a, byte r, byte g, byte b)
+        public static Cairo.Color ColorArgb(byte a, byte r, byte g, byte b)
         {
-            return new Color(r/255.0,g/255.0,b/255.0,a/255.0);
+            return new Cairo.Color(r/255.0,g/255.0,b/255.0,a/255.0);
         }
 
-        public static Color ColorArgb(uint colorValue)
+        public static Cairo.Color ColorArgb(uint colorValue)
         {
             return ColorArgb(
                 (byte) ((colorValue >> 24) & 0xff),
@@ -112,7 +110,7 @@ namespace ImGui.UnitTest
                 );
         }
 
-        public static Color ColorFromHSV(double hue, double saturation, double value)
+        public static Cairo.Color ColorFromHSV(double hue, double saturation, double value)
         {
             int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
             double f = hue / 60 - Math.Floor(hue / 60);
@@ -137,10 +135,10 @@ namespace ImGui.UnitTest
             return CairoEx.ColorArgb(255, v, p, q);
         }
 
-        public static Color AlphaBlend(Color backgroundColor, Color foregroundColor)
+        public static Cairo.Color AlphaBlend(Cairo.Color backgroundColor, Cairo.Color foregroundColor)
         {
             double k = foregroundColor.A;
-            Color outputColor = new Color(
+            Cairo.Color outputColor = new Cairo.Color(
                 foregroundColor.R*k + backgroundColor.R*(1.0 - k),
                 foregroundColor.G*k + backgroundColor.G*(1.0 - k),
                 foregroundColor.B*k + backgroundColor.B*(1.0 - k)
@@ -149,12 +147,12 @@ namespace ImGui.UnitTest
         }
         #endregion
 
-        public static Color ToCairoColor(this ImGui.Common.Primitive.Color color)
+        public static Cairo.Color ToCairoColor(this Color color)
         {
-            return new Color(color.R, color.G, color.B, color.A);
+            return new Cairo.Color(color.R, color.G, color.B, color.A);
         }
 
-        public static PointD ToPointD(this ImGui.Common.Primitive.Point point)
+        public static PointD ToPointD(this Point point)
         {
             return new PointD(point.x, point.y);
         }

@@ -1,7 +1,5 @@
 ﻿using Typography.OpenFont;
 using Xunit;
-using ImGui.Common;
-using ImGui.Common.Primitive;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Xunit.Abstractions;

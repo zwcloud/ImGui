@@ -1,5 +1,4 @@
 ﻿using System;
-using ImGui.Common.Primitive;
 using ImGui.GraphicsAbstraction;
 
 namespace ImGui.Rendering
@@ -17,10 +16,10 @@ namespace ImGui.Rendering
         {
             EnsureContent();
 
-            var p = content.PathContent.Path;
-            p.Add(new MoveToCommand(point0));
-            p.Add(new LineToCommand(point1));
-            p.Add(new StrokeCommand(pen.LineWidth, pen.LineColor));
+            //var p = content.PathContent.Path;
+            //p.Add(new MoveToCommand(point0));
+            //p.Add(new LineToCommand(point1));
+            //p.Add(new StrokeCommand(pen.LineWidth, pen.LineColor));
         }
 
         public override void DrawRectangle(Brush brush, Pen pen, Rect rectangle)

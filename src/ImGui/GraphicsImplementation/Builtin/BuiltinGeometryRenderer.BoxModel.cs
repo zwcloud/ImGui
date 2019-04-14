@@ -1,6 +1,4 @@
-﻿using ImGui.Common;
-using ImGui.Common.Primitive;
-using ImGui.GraphicsAbstraction;
+﻿using ImGui.GraphicsAbstraction;
 using ImGui.Rendering;
 using System;
 using System.Diagnostics;

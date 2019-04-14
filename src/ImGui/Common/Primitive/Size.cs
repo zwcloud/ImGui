@@ -2,7 +2,7 @@ using System;
 
 // These types are aliased to match the unamanaged names used in interop
 
-namespace ImGui.Common.Primitive
+namespace ImGui
 {
     /// <summary>
     /// Size - A value type which defined a size in terms of non-negative width and height
@@ -32,7 +32,7 @@ namespace ImGui.Common.Primitive
         #endregion
 
         /// <summary>
-        /// Empty - a static property which provides an Empty size.  Width and Height are 
+        /// Empty - a static property which provides an Empty size.  Width and Height are
         /// negative-infinity.  This is the only situation
         /// where size can be negative.
         /// </summary>

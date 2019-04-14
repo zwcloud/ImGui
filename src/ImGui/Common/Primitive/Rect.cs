@@ -1,6 +1,6 @@
 using System;
 
-namespace ImGui.Common.Primitive
+namespace ImGui
 {
     /// <summary>
     /// Rect - The Geometry which represents a rectangle.  Rects are stored as
@@ -99,8 +99,8 @@ namespace ImGui.Common.Primitive
         }
 
         /// <summary>
-        /// Constructor which sets the initial values to bound the (0,0) point and the point 
-        /// that results from (0,0) + size. 
+        /// Constructor which sets the initial values to bound the (0,0) point and the point
+        /// that results from (0,0) + size.
         /// </summary>
         public Rect(Size size)
         {
@@ -796,7 +796,7 @@ namespace ImGui.Common.Primitive
         /// <summary>
         /// Updates rectangle to be the bounds of the original value transformed
         /// by the matrix.
-        /// The Empty Rect is not affected by this call.        
+        /// The Empty Rect is not affected by this call.
         /// </summary>
         /// <param name="matrix"> Matrix </param>
         public void Transform(Matrix matrix)

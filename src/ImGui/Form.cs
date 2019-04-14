@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Window;
 using SixLabors.ImageSharp.Processing;

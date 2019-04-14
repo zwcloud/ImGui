@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ImGui.Common.Primitive;
 
 namespace ImGui.Rendering
 {

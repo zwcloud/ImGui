@@ -1,5 +1,4 @@
 ﻿using System;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Window;
 
 namespace ImGui.OSImplentation.Android
