@@ -239,6 +239,15 @@ namespace ImGui.Rendering
             context.ConsumeContent(content);
         }
 
+        /// <summary>
+        /// Opens the Node for rendering. The returned DrawingContext can be used to
+        /// render into the Node: populate the content.
+        /// </summary>
+        internal DrawingContext RenderOpen()
+        {
+            return new VisualDrawingContext(this);
+        }
+
         internal override void RenderClose(DrawingContent newContent)
         {
             DrawingContent oldContent;
