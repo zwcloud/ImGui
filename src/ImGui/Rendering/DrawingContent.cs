@@ -25,7 +25,7 @@ namespace ImGui.Rendering
             }
 
             dependentResources.Add(resource);
-            return (uint)(dependentResources.Count + 1);
+            return (uint)dependentResources.Count;
         }
 
         public unsafe void WriteRecord(RecordType type, byte* recordData, int recordSize)

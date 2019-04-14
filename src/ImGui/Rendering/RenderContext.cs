@@ -16,7 +16,25 @@ namespace ImGui.Rendering
 
         public void ConsumeContent(DrawingContent content)
         {
+            var shapeMesh = MeshPool.ShapeMeshPool.Get();
+            shapeMesh.Clear();
+            shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+            var textMesh = MeshPool.TextMeshPool.Get();
+            textMesh.Clear();
+            var imageMesh = MeshPool.ImageMeshPool.Get();
+            imageMesh.Clear();
+
+            renderer.SetShapeMesh(shapeMesh);
+            renderer.SetTextMesh(textMesh);
+            renderer.SetImageMesh(imageMesh);
             content.ReadAllRecords(renderer);
+            renderer.SetShapeMesh(null);
+            renderer.SetTextMesh(null);
+            renderer.SetImageMesh(null);
+
+            meshList.AddOrUpdateShapeMesh(shapeMesh);
+            meshList.AddOrUpdateTextMesh(textMesh);
+            meshList.AddOrUpdateImageMesh(imageMesh);
         }
 
         /// <summary>

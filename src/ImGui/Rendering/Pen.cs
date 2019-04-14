@@ -7,5 +7,15 @@
     {
         public Color LineColor { get; set; } = Color.Black;
         public float LineWidth { get; set; } = 1;
+
+        public Pen()
+        {
+        }
+
+        public Pen(Color lineColor, float lineWidth)
+        {
+            LineColor = lineColor;
+            LineWidth = lineWidth;
+        }
     }
 }

@@ -145,6 +145,11 @@ namespace ImGui.UnitTest
 
         public static void SaveImage(Image<Rgba32> image, string path)
         {
+            var dirPath = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
             using (var stream = File.OpenWrite(path))
             {
                 image.SaveAsPng(stream);
@@ -256,5 +261,34 @@ namespace ImGui.UnitTest
 
         internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height)
             => DrawNodeTreeToImage(out imageRawBytes, root, width, height, Rect.Big);
+
+        #region new rendering pipeline
+
+        internal static void DrawNodeToImage_NewPipeline(out byte[] imageRawBytes, Node node, int width, int height)
+        {
+            MeshBuffer meshBuffer = new MeshBuffer();
+            MeshList meshList = new MeshList();
+            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
+
+            using (var context = new RenderContextForTest(width, height))
+            {
+                RenderContext renderContext = new RenderContext(geometryRenderer, meshList);
+                //This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                node.Render(renderContext);
+
+                //rebuild mesh buffer
+                meshBuffer.Clear();
+                meshBuffer.Init();
+                meshBuffer.Build(meshList);
+
+                //draw mesh buffer to screen
+                context.Clear();
+                context.DrawMeshes(meshBuffer);
+
+                imageRawBytes = context.GetRenderedRawBytes();
+            }
+        }
+
+        #endregion
     }
 }

@@ -11,6 +11,8 @@ namespace ImGui.GraphicsImplementation
             unsafe
             {
                 Point* scratchForLine = stackalloc Point[2];
+                scratchForLine[0] = point0;
+                scratchForLine[1] = point1;
                 AddPolyline(scratchForLine, 2, pen.LineColor, false, pen.LineWidth);
             }
         }
@@ -20,7 +22,11 @@ namespace ImGui.GraphicsImplementation
             unsafe
             {
                 Point* scratchForRectangle = stackalloc Point[4];
-                AddPolyline(scratchForRectangle, 2, pen.LineColor, false, pen.LineWidth);
+                scratchForRectangle[0] = rectangle.TopLeft;
+                scratchForRectangle[1] = rectangle.TopRight;
+                scratchForRectangle[2] = rectangle.BottomRight;
+                scratchForRectangle[3] = rectangle.BottomLeft;
+                AddPolyline(scratchForRectangle, 2, pen.LineColor, true, pen.LineWidth);
             }
         }
 
