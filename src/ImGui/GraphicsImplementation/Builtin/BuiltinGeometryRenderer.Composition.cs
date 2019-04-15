@@ -26,7 +26,8 @@ namespace ImGui.GraphicsImplementation
                 scratchForRectangle[1] = rectangle.TopRight;
                 scratchForRectangle[2] = rectangle.BottomRight;
                 scratchForRectangle[3] = rectangle.BottomLeft;
-                AddPolyline(scratchForRectangle, 2, pen.LineColor, true, pen.LineWidth);
+                AddPolyline(scratchForRectangle, 4, pen.LineColor, true, pen.LineWidth);
+                AddConvexPolyFilled(scratchForRectangle, 4, brush.FillColor, false);
             }
         }
 

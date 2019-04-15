@@ -6,5 +6,14 @@
     internal class Brush
     {
         public Color FillColor { get; set; } = Color.Black;
+
+        public Brush()
+        {
+        }
+
+        public Brush(Color fillColor)
+        {
+            FillColor = fillColor;
+        }
     }
 }

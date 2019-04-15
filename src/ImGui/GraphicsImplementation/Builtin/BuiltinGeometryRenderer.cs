@@ -199,6 +199,40 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
+        /// <summary>
+        /// Add a filled convex polygon.
+        /// </summary>
+        /// <param name="points">points</param>
+        /// <param name="pointsCount"></param>
+        /// <param name="color">color</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public unsafe void AddConvexPolyFilled(Point* points, int pointsCount, Color color, bool antiAliased)
+        {
+            antiAliased = false;//TODO remove this when antiAliased branch is implemented
+
+            if (antiAliased)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // Non Anti-aliased Fill
+                int idxCount = (pointsCount - 2) * 3;
+                int vtxCount = pointsCount;
+                this.ShapeMesh.PrimReserve(idxCount, vtxCount);
+                for (int i = 0; i < vtxCount; i++)
+                {
+                    this.ShapeMesh.AppendVertex(new DrawVertex { pos = points[i], uv = Point.Zero, color = color });
+                }
+                for (int i = 2; i < pointsCount; i++)
+                {
+                    this.ShapeMesh.AppendIndex(0);
+                    this.ShapeMesh.AppendIndex(i - 1);
+                    this.ShapeMesh.AppendIndex(i);
+                }
+                this.ShapeMesh.currentIdx += vtxCount;
+            }
+        }
         #endregion
 
         #region Text
