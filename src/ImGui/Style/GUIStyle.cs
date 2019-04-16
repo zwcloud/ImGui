@@ -8,6 +8,7 @@ namespace ImGui
 {
     internal partial class GUIStyle
     {
+        [DebuggerDisplay("{" + nameof(Name) + "}" + ("{" + nameof(State) + "}"))]
         private struct NameState
         {
             public GUIStyleName Name { get; set; }
@@ -272,13 +273,11 @@ namespace ImGui
                 return value;
             }
 
-            if (state != GUIState.Normal)
+            //try to get the style value of Normal state
+            var normalNameState = new NameState { Name = styleName, State = GUIState.Normal };
+            if (dict.TryGetValue(normalNameState, out value))
             {
-                //try to get the style value of Normal state
-                if (dict.TryGetValue(new NameState { Name = styleName, State = GUIState.Normal }, out value))
-                {
-                    return value;
-                }
+                return value;
             }
 
             var defalutDict = Default.GetDict<T>();
@@ -289,13 +288,10 @@ namespace ImGui
                 return value;
             }
 
-            if (state != GUIState.Normal)
+            // try to get a default value of Normal state
+            if (defalutDict.TryGetValue(normalNameState, out value))
             {
-                // try to get a default value of Normal state
-                if (defalutDict.TryGetValue(new NameState { Name = styleName, State = GUIState.Normal }, out value))
-                {
-                    return value;
-                }
+                return value;
             }
 
             throw new InvalidOperationException($"Cannot find the style<{styleName},{state}>");

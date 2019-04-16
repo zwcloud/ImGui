@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ImGui.OSAbstraction.Graphics;
+﻿using System.Collections.Generic;
 using ImGui.Rendering;
 
 namespace ImGui
@@ -113,6 +111,11 @@ namespace ImGui
         public T Get<T>(GUIStyleName styleName)
         {
             var rule = this.GetRule<T>(styleName, this.currentState);
+            if (rule == null)
+            {
+                rule = this.GetRule<T>(styleName, GUIState.Normal);
+            }
+
             if (rule == null)
             {
                 return GUIStyle.Default.Get<T>(styleName, this.currentState);
@@ -422,21 +425,6 @@ namespace ImGui
 
         #endregion Layout
 
-        #region Misc
-
-        public Color StrokeColor => Get<Color>(GUIStyleName.StrokeColor);
-        public double StrokeWidth => Get<double>(GUIStyleName.StrokeWidth);
-
-        public Color FillColor
-        {
-            get => Get<Color>(GUIStyleName.FillColor);
-            set => Set<Color>(GUIStyleName.FillColor, value);
-        }
-
-        public Color GradientTopColor => Get<Color>(GUIStyleName.GradientTopColor);
-        public Color GradientBottomColor => Get<Color>(GUIStyleName.GradientBottomColor);
-
-        #endregion
 
         #region Font & Text
 
@@ -481,6 +469,31 @@ namespace ImGui
             var lineHeight = OSImplentation.TypographyTextContext.GetLineHeight(this.FontFamily, this.FontSize);
             lineHeight += this.PaddingVertical + this.BorderVertical;
             return lineHeight;
+        }
+
+        #endregion
+
+        #region Pen & Brush
+
+        public Color FillColor
+        {
+            get => Get<Color>(GUIStyleName.FillColor);
+            set => Set<Color>(GUIStyleName.FillColor, value);
+        }
+
+        public Color GradientTopColor => Get<Color>(GUIStyleName.GradientTopColor);
+        public Color GradientBottomColor => Get<Color>(GUIStyleName.GradientBottomColor);
+
+        public double StrokeWidth
+        {
+            get => this.Get<double>(GUIStyleName.StrokeWidth);
+            set => this.Set<double>(GUIStyleName.StrokeWidth, value);
+        }
+
+        public Color StrokeColor
+        {
+            get => this.Get<Color>(GUIStyleName.StrokeColor);
+            set => this.Set<Color>(GUIStyleName.StrokeColor, value);
         }
 
         #endregion

@@ -1,8 +1,11 @@
-﻿using ImGui.Rendering;
+﻿using System.Diagnostics;
+using ImGui.Rendering;
 
 namespace ImGui
 {
     public interface IStyleRule {}
+
+    [DebuggerDisplay("{Name}, {State}, {Value}")]
     internal class StyleRule<T> : IStyleRule
     {
         public GUIStyleName Name { get; set; }

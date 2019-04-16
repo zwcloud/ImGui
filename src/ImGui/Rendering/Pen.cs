@@ -6,13 +6,13 @@
     internal class Pen
     {
         public Color LineColor { get; set; } = Color.Black;
-        public float LineWidth { get; set; } = 1;
+        public double LineWidth { get; set; } = 1;
 
         public Pen()
         {
         }
 
-        public Pen(Color lineColor, float lineWidth)
+        public Pen(Color lineColor, double lineWidth)
         {
             LineColor = lineColor;
             LineWidth = lineWidth;
