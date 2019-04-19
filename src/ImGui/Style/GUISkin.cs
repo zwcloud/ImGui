@@ -41,10 +41,6 @@ namespace ImGui
             skin.InitCollapsingHeaderStyles(button, out var collapsingHeader);
             skin.styles[GUIControlName.CollapsingHeader] = collapsingHeader;
 
-            StyleRuleSet progressBar = new StyleRuleSet();
-            skin.InitProgressBarStyles(progressBar);
-            skin.styles[GUIControlName.ProgressBar] = progressBar;
-
             //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
             //skin.InitTextBoxStyles();
