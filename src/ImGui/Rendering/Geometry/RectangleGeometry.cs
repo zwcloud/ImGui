@@ -29,41 +29,7 @@ namespace ImGui.Rendering
 
         internal override PathGeometryData GetPathGeometryData()
         {
-            if (IsEmpty())
-            {
-                return Geometry.GetEmptyPathGeometryData();
-            }
-
-            PathGeometryData data = new PathGeometryData();
-            data.FillRule = FillRule.EvenOdd;
-            data.Offset = Offset;
-
-            double radiusX = RadiusX;
-            double radiusY = RadiusY;
-            Rect rect = Rect;
-
-            PathGeometryContext context = new PathGeometryContext(data);
-
-            double r = Math.Max(radiusX, radiusY);
-            var a = rect.Min;
-            var b = rect.Max;
-            if (r <= 0)
-            {
-                context.MoveTo(a);
-                context.LineTo(new Point(b.X, a.Y));
-                context.LineTo(b);
-                context.LineTo(new Point(a.X, b.Y));
-                context.LineTo(a);
-            }
-            else
-            {
-                context.ArcFast(new Point(a.X + r, a.Y + r), r, 6, 9);
-                context.ArcFast(new Point(b.X - r, a.Y + r), r, 9, 12);
-                context.ArcFast(new Point(b.X - r, b.Y - r), r, 0, 3);
-                context.ArcFast(new Point(a.X + r, b.Y - r), r, 3, 6);
-            }
-
-            return data;
+            throw new NotImplementedException();
         }
     }
 }

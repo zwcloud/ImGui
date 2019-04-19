@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui.Rendering
 {
-    internal class PathGeometry : Geometry, IPathList
+    internal class PathGeometry : Geometry
     {
         /// <summary>
         /// Gets or sets path commands that describes how to rendering this PathGeometry.

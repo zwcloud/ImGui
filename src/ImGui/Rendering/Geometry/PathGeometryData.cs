@@ -2,7 +2,7 @@
 
 namespace ImGui.Rendering
 {
-    internal class PathGeometryData : IPathList
+    internal class PathGeometryData
     {
         public List<PathCommand> Path { get; set; } = new List<PathCommand>();
 

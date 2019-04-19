@@ -26,6 +26,36 @@ namespace ImGui.Rendering
             dc.DrawRectangle(brush, pen, rectangle);
         }
 
+        public void DrawRoundedRectangle(Rect rect,
+            (double TopLeft, double TopRight, double BottomRight, double BottomLeft) cornerRadius)
+        {
+            var geometry = new PathGeometry();
+            using (var context = geometry.Open())
+            {
+                context.ArcFast(
+                    new Point(rect.TopLeft.X + cornerRadius.TopLeft, rect.TopLeft.Y + cornerRadius.TopLeft),
+                    cornerRadius.TopLeft, 6, 9);
+                context.LineTo(rect.TopRight - new Vector(cornerRadius.TopRight, 0));
+                context.ArcFast(
+                    new Point(rect.TopRight.X - cornerRadius.TopRight, rect.TopRight.Y + cornerRadius.TopRight),
+                    cornerRadius.TopRight, 9, 12);
+                context.LineTo(rect.BottomRight - new Vector(0, cornerRadius.BottomRight));
+                context.ArcFast(
+                    new Point(rect.BottomRight.X - cornerRadius.BottomRight, rect.BottomRight.Y - cornerRadius.BottomRight),
+                    cornerRadius.BottomRight, 0, 3);
+                context.LineTo(rect.BottomLeft + new Vector(cornerRadius.BottomLeft, 0));
+                context.ArcFast(new Point(rect.BottomLeft.X + cornerRadius.BottomLeft, rect.BottomLeft.Y - cornerRadius.BottomLeft),
+                    cornerRadius.BottomLeft, 3, 6);
+                context.Finish();
+            }
+
+            var rule = ownerNode.RuleSet;
+            Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
+            Brush brush = new Brush(rule.FillColor);
+            dc.DrawGeometry(brush, pen, geometry);
+        }
+
+
         public void DrawBoxModel(Rect rect)
         {
             var style = ownerNode.RuleSet;

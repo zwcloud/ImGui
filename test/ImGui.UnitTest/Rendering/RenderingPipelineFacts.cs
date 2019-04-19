@@ -88,6 +88,22 @@ namespace ImGui.UnitTest.Rendering
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderBoxModel)}.png");
         }
 
+        [Fact]
+        public void RenderRoundedRectangle()
+        {
+            var node = new Node(1, new Rect(10, 20, 300, 60));
+            node.RuleSet.StrokeColor = Color.Black;
+            node.RuleSet.StrokeWidth = 4;
+            node.RuleSet.FillColor = Color.DeepSkyBlue;
+
+            var context = node.RenderOpen();
+            context.DrawRoundedRectangle(new Rect(20, 20, 200, 80), (10, 10, 10, 10));
+            context.Close();
+
+            ShowImage(node, 250, 250,
+                $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderRoundedRectangle)}.png");
+        }
+
         private static void ShowImage(Node node, int width, int height, string path)
         {
             Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);
