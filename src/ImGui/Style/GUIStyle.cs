@@ -182,6 +182,14 @@ namespace ImGui
                 [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Normal }] = Color.Rgb(221, 221, 221),
                 [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Hover }] = Color.Rgb(221, 221, 221),
                 [new NameState { Name = GUIStyleName.GradientBottomColor, State = GUIState.Active }] = Color.Rgb(221, 221, 221),
+
+                [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Normal }] = Color.Black,
+                [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Hover }] = Color.Black,
+                [new NameState { Name = GUIStyleName.StrokeColor, State = GUIState.Active }] = Color.Black,
+
+                [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Normal }] = Color.White,
+                [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Hover }] = Color.White,
+                [new NameState { Name = GUIStyleName.FillColor, State = GUIState.Active }] = Color.White,
             };
 
             style.imageStyles = new Dictionary<NameState, ITexture>

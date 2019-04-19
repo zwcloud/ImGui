@@ -36,7 +36,7 @@ namespace ImGui.Rendering
             this.Text = text;
         }
 
-        public override void UpdateContent(RenderContext context)
+        internal override PathGeometryData GetPathGeometryData()
         {
             throw new System.NotImplementedException();
         }

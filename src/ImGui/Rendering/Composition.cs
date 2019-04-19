@@ -8,6 +8,7 @@ namespace ImGui.Rendering.Composition
         DrawLine,
         DrawRectangle,
         DrawGlyphRun,
+        DrawGeometry,
     }
 
     internal struct RecordHeader
@@ -46,6 +47,27 @@ namespace ImGui.Rendering.Composition
             BrushHandle = brushIndex;
             PenHandle = penIndex;
         }
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DrawGeometryCommand
+    {
+        public DrawGeometryCommand (
+            uint hBrush,
+            uint hPen,
+            uint hGeometry
+        )
+        {
+            this.hBrush = hBrush;
+            this.hPen = hPen;
+            this.hGeometry = hGeometry;
+            this.QuadWordPad0 = 0;
+        }
+
+        [FieldOffset(0)] public uint hBrush;
+        [FieldOffset(4)] public uint hPen;
+        [FieldOffset(8)] public uint hGeometry;
+        [FieldOffset(12)] private uint QuadWordPad0;
     }
 
     internal abstract class RecordReader : DrawingContext

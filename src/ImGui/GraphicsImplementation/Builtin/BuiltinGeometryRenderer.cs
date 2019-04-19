@@ -405,6 +405,26 @@ namespace ImGui.GraphicsImplementation
         }
 
         /// <summary>
+        /// Fills the current path without clear current path. The path must be a convex.
+        /// </summary>
+        /// <param name="color">fill color</param>
+        public void PathFillPreserve(Color color)
+        {
+            this.AddConvexPolyFilled(Path, color, true);
+        }
+
+        /// <summary>
+        /// Strokes the current path without clear current path.
+        /// </summary>
+        /// <param name="color">color</param>
+        /// <param name="close">Set to true if you want the path be closed. A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        public void PathStrokePreserve(Color color, bool close, double thickness = 1)
+        {
+            this.AddPolyline(Path, color, close, thickness);
+        }
+
+        /// <summary>
         /// Fills the current path. The path must be a convex.
         /// </summary>
         /// <param name="color">fill color</param>

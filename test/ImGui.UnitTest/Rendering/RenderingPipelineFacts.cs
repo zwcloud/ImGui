@@ -49,6 +49,45 @@ namespace ImGui.UnitTest.Rendering
 
         }
 
+        [Fact]
+        public void RenderPathGeometry()
+        {
+            var node = new Node(1, new Rect(10, 20, 300, 60));
+
+            var geometry = new PathGeometry();
+            var g = new PathGeometryContext(geometry);
+            g.MoveTo(new Point(5,90));
+            g.LineTo(new Point(125,0));
+            g.LineTo(new Point(245,90));
+            g.LineTo(new Point(200,230));
+            g.LineTo(new Point(52,230));
+            g.LineTo(new Point(5,90));
+
+            var context = node.RenderOpenStatic();
+            context.DrawGeometry(new Brush(Color.BlueViolet), new Pen(Color.Black, 4), geometry);
+            context.DrawRectangle(new Brush(Color.YellowGreen), new Pen(Color.Cornsilk, 4), new Rect(100, 100, 50, 50));
+            context.Close();
+
+            ShowImage(node, 250, 250,
+                $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderPathGeometry)}.png");
+        }
+
+
+        [Fact]
+        public void RenderBoxModel()
+        {
+            var node = new Node(1, new Rect(10, 20, 300, 60));
+            node.RuleSet.Border = (10, 20, 30, 40);
+            node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.AliceBlue, Color.YellowGreen);
+
+            var context = node.RenderOpen();
+            context.DrawBoxModel(new Rect(20, 20, 200, 80));
+            context.Close();
+
+            ShowImage(node, 250, 250,
+                $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderBoxModel)}.png");
+        }
+
         private static void ShowImage(Node node, int width, int height, string path)
         {
             Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);

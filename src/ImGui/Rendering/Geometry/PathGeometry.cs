@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui.Rendering
 {
-    internal class PathGeometry : Geometry
+    internal class PathGeometry : Geometry, IPathList
     {
         /// <summary>
         /// Gets or sets path commands that describes how to rendering this PathGeometry.
@@ -117,7 +117,7 @@ namespace ImGui.Rendering
         /// GetPathGeometryData - returns a struct which contains this Geometry represented
         /// as a path geometry's serialized format.
         /// </summary>
-        internal virtual PathGeometryData GetPathGeometryData()
+        internal override PathGeometryData GetPathGeometryData()
         {
             //TODO PathGeometryData actually isn't converted. Re-consider this!
             PathGeometryData data = new PathGeometryData();
@@ -127,10 +127,14 @@ namespace ImGui.Rendering
             return data;
         }
 
-        public override void UpdateContent(RenderContext context)
+        public PathGeometryContext Open()
         {
-            throw new NotImplementedException();
+            return new PathGeometryContext(this);
         }
     }
 
+    internal interface IPathList
+    {
+        List<PathCommand> Path { get; set; }
+    }
 }

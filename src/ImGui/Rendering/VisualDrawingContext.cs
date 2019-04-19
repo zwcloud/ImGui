@@ -11,8 +11,6 @@ namespace ImGui.Rendering
             this.ownerVisual = visual;
         }
 
-        //TODO implement DrawXXX methods: fill VisualDrawingContext.content
-
         public override void DrawLine(Pen pen, Point point0, Point point1)
         {
             if (pen == null)
@@ -24,7 +22,7 @@ namespace ImGui.Rendering
             {
                 EnsureContent();
 
-                var penIndex = content.AddReferenceToResource(pen);
+                var penIndex = content.AddDependentResource(pen);
                 var record = new DrawLineCommand(penIndex, point0, point1);
 
                 content.WriteRecord(RecordType.DrawLine, (byte*)&record, sizeof(DrawLineCommand));
@@ -33,22 +31,19 @@ namespace ImGui.Rendering
 
         public override void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
         {
-            if (brush == null)
+            if (brush == null && pen == null)
             {
-                throw new ArgumentNullException(nameof(brush));
-            }
-            if (pen == null)
-            {
-                throw new ArgumentNullException(nameof(pen));
+                return;
             }
 
             unsafe
             {
                 EnsureContent();
 
-                var brushIndex = content.AddReferenceToResource(brush);
-                var penIndex = content.AddReferenceToResource(pen);
-                var record = new DrawRectangleCommand(brushIndex, penIndex, rectangle);
+                var record = new DrawRectangleCommand(
+                    content.AddDependentResource(brush),
+                    content.AddDependentResource(pen),
+                    rectangle);
 
                 content.WriteRecord(RecordType.DrawRectangle, (byte*)&record, sizeof(DrawRectangleCommand));
             }
@@ -66,7 +61,24 @@ namespace ImGui.Rendering
 
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)
         {
-            throw new System.NotImplementedException();
+            if (brush == null && pen == null || geometry == null)
+            {
+                return;
+            }
+
+            unsafe
+            {
+                EnsureContent();
+
+                var record =
+                    new DrawGeometryCommand (
+                        content.AddDependentResource(brush),
+                        content.AddDependentResource(pen),
+                        content.AddDependentResource(geometry)
+                    );
+
+                content.WriteRecord(RecordType.DrawGeometry, (byte*) &record, sizeof(DrawGeometryCommand));
+            }
         }
 
         public override void DrawImage(Image image, Rect rectangle)

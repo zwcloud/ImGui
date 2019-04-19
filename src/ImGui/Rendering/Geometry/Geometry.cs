@@ -10,7 +10,11 @@
         /// </summary>
         public Vector Offset { get; set; }//TODO make this a matrix, namely transformation
 
-        public abstract void UpdateContent(RenderContext context);
+        /// <summary>
+        /// GetPathGeometryData - returns a struct which contains this Geometry represented
+        /// as a path geometry's serialized format.
+        /// </summary>
+        internal abstract PathGeometryData GetPathGeometryData();
 
         internal static PathGeometryData GetEmptyPathGeometryData()
         {

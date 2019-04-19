@@ -2,7 +2,7 @@
 
 namespace ImGui.Rendering
 {
-    internal class RectangleGeometry : PathGeometry
+    internal class RectangleGeometry : Geometry
     {
         public RectangleGeometry(Rect rect)
         {
@@ -42,33 +42,28 @@ namespace ImGui.Rendering
             double radiusY = RadiusY;
             Rect rect = Rect;
 
-            PathGeometryContext context = new PathGeometryContext();
+            PathGeometryContext context = new PathGeometryContext(data);
 
             double r = Math.Max(radiusX, radiusY);
             var a = rect.Min;
             var b = rect.Max;
             if (r <= 0)
             {
-                context.PathMoveTo(a);
-                context.PathLineTo(new Point(b.X, a.Y));
-                context.PathLineTo(b);
-                context.PathLineTo(new Point(a.X, b.Y));
-                context.PathLineTo(a);
+                context.MoveTo(a);
+                context.LineTo(new Point(b.X, a.Y));
+                context.LineTo(b);
+                context.LineTo(new Point(a.X, b.Y));
+                context.LineTo(a);
             }
             else
             {
-                context.PathArcFast(new Point(a.X + r, a.Y + r), r, 6, 9);
-                context.PathArcFast(new Point(b.X - r, a.Y + r), r, 9, 12);
-                context.PathArcFast(new Point(b.X - r, b.Y - r), r, 0, 3);
-                context.PathArcFast(new Point(a.X + r, b.Y - r), r, 3, 6);
+                context.ArcFast(new Point(a.X + r, a.Y + r), r, 6, 9);
+                context.ArcFast(new Point(b.X - r, a.Y + r), r, 9, 12);
+                context.ArcFast(new Point(b.X - r, b.Y - r), r, 0, 3);
+                context.ArcFast(new Point(a.X + r, b.Y - r), r, 3, 6);
             }
 
             return data;
-        }
-
-        public override void UpdateContent(RenderContext context)
-        {
-
         }
     }
 }

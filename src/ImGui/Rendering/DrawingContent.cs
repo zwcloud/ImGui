@@ -17,11 +17,11 @@ namespace ImGui.Rendering
     /// </remarks>
     internal class DrawingContent
     {
-        public uint AddReferenceToResource(object resource)
+        public uint AddDependentResource(object resource)
         {
             if (resource == null)
             {
-                throw new ArgumentNullException(nameof(resource));
+                return 0;
             }
 
             dependentResources.Add(resource);
@@ -97,7 +97,7 @@ namespace ImGui.Rendering
                         byte* pEndOfInstructions = pByte + curOffset;
 
                         // Iterate across the entire list of instructions, stopping at the
-                        // end or when the DrawingContextWalker has signalled a stop.
+                        // end or when it has signalled a stop.
                         while ((pCur < pEndOfInstructions) && !ctx.ShouldStopWalking)
                         {
                             RecordHeader* pCurRecord = (RecordHeader*)pCur;
@@ -107,8 +107,6 @@ namespace ImGui.Rendering
                                 case RecordType.DrawLine:
                                 {
                                     DrawLineCommand* data = (DrawLineCommand*)(pCur + sizeof(RecordHeader));
-
-                                    // Retrieve the resources for the dependents and call the context.
                                     ctx.DrawLine(
                                         (Pen)DependentLookup(data->PenIndex),
                                         data->StartPoint,
@@ -119,8 +117,6 @@ namespace ImGui.Rendering
                                 case RecordType.DrawRectangle:
                                 {
                                     DrawRectangleCommand* data = (DrawRectangleCommand*)(pCur + sizeof(RecordHeader));
-
-                                    // Retrieve the resources for the dependents and call the context.
                                     ctx.DrawRectangle(
                                         (Brush)DependentLookup(data->BrushHandle),
                                         (Pen)DependentLookup(data->PenHandle),
@@ -130,6 +126,16 @@ namespace ImGui.Rendering
                                 break;
                                 case RecordType.DrawGlyphRun:
                                     throw new NotImplementedException();
+                                    break;
+                                case RecordType.DrawGeometry:
+                                {
+                                    DrawGeometryCommand* data = (DrawGeometryCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.DrawGeometry(
+                                        (Brush)DependentLookup(data->hBrush),
+                                        (Pen)DependentLookup(data->hPen),
+                                        (Geometry)DependentLookup(data->hGeometry)
+                                    );
+                                }
                                     break;
                                 default:
                                 {

@@ -1,4 +1,6 @@
-﻿using ImGui.GraphicsAbstraction;
+﻿using System;
+using System.Diagnostics;
+using ImGui.GraphicsAbstraction;
 using ImGui.Rendering;
 using ImGui.Rendering.Composition;
 
@@ -8,6 +10,7 @@ namespace ImGui.GraphicsImplementation
     {
         public override void DrawLine(Pen pen, Point point0, Point point1)
         {
+            Debug.Assert(pen != null);
             unsafe
             {
                 Point* scratchForLine = stackalloc Point[2];
@@ -19,6 +22,7 @@ namespace ImGui.GraphicsImplementation
 
         public override void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
         {
+            Debug.Assert(brush != null || pen != null);
             unsafe
             {
                 Point* scratchForRectangle = stackalloc Point[4];
@@ -26,8 +30,16 @@ namespace ImGui.GraphicsImplementation
                 scratchForRectangle[1] = rectangle.TopRight;
                 scratchForRectangle[2] = rectangle.BottomRight;
                 scratchForRectangle[3] = rectangle.BottomLeft;
-                AddPolyline(scratchForRectangle, 4, pen.LineColor, true, pen.LineWidth);
-                AddConvexPolyFilled(scratchForRectangle, 4, brush.FillColor, false);
+
+                if(pen != null)
+                {
+                    AddPolyline(scratchForRectangle, 4, pen.LineColor, true, pen.LineWidth);
+                }
+
+                if (brush != null)
+                {
+                    AddConvexPolyFilled(scratchForRectangle, 4, brush.FillColor, false);
+                }
             }
         }
 
@@ -43,7 +55,45 @@ namespace ImGui.GraphicsImplementation
 
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)
         {
-            throw new System.NotImplementedException();
+            Debug.Assert((brush != null || pen != null) && geometry != null);
+
+            if (geometry is PathGeometry pathGeometry)
+            {
+                var paths = pathGeometry.Path;
+                foreach (var pathCommand in paths)
+                {
+                    switch (pathCommand)
+                    {
+                        case MoveToCommand moveToCommand:
+                            PathMoveTo(moveToCommand.Point);
+                            break;
+                        case LineToCommand lineToCommand:
+                            PathLineTo(lineToCommand.Point);
+                            break;
+                        case ClosePathCommand closePathCommand:
+                            PathClose();
+                            break;
+                        case CurveToCommand curveToCommand:
+                            PathBezierCurveTo(curveToCommand.ControlPoint0, curveToCommand.ControlPoint1, curveToCommand.EndPoint);
+                            break;
+                        case ArcCommand a:
+                            PathArcFast(a.Center, a.Radius, a.Amin, a.Amax);
+                            break;
+                        default:
+                            throw new NotSupportedException();
+                    }
+                }
+
+                if (brush != null)
+                {
+                    PathFillPreserve(brush.FillColor);
+                }
+
+                if (pen != null)
+                {
+                    PathStroke(pen.LineColor, false, pen.LineWidth);
+                }
+            }
         }
 
         public override void DrawImage(Image image, Rect rectangle)
