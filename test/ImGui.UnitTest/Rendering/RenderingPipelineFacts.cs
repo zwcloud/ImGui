@@ -78,7 +78,7 @@ namespace ImGui.UnitTest.Rendering
         {
             var node = new Node(1, new Rect(10, 20, 300, 60));
             node.RuleSet.Border = (10, 20, 30, 40);
-            node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.AliceBlue, Color.YellowGreen);
+            node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.YellowGreen);
 
             var context = node.RenderOpen();
             context.DrawBoxModel(new Rect(20, 20, 200, 80));

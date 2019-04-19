@@ -86,7 +86,14 @@ namespace ImGui.GraphicsImplementation
 
                 if (brush != null)
                 {
-                    PathFillPreserve(brush.FillColor);
+                    if (pen == null)
+                    {
+                        PathFill(brush.FillColor);
+                    }
+                    else
+                    {
+                        PathFillPreserve(brush.FillColor);
+                    }
                 }
 
                 if (pen != null)
