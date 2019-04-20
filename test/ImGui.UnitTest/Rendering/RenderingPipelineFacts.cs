@@ -72,7 +72,6 @@ namespace ImGui.UnitTest.Rendering
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderPathGeometry)}.png");
         }
 
-
         [Fact]
         public void RenderBoxModel()
         {
@@ -95,9 +94,10 @@ namespace ImGui.UnitTest.Rendering
             node.RuleSet.StrokeColor = Color.Black;
             node.RuleSet.StrokeWidth = 4;
             node.RuleSet.FillColor = Color.DeepSkyBlue;
+            node.RuleSet.BorderRadius = (10, 10, 10, 10);
 
             var context = node.RenderOpen();
-            context.DrawRoundedRectangle(new Rect(20, 20, 200, 80), (10, 10, 10, 10));
+            context.DrawRoundedRectangle(new Rect(20, 20, 200, 80));
             context.Close();
 
             ShowImage(node, 250, 250,

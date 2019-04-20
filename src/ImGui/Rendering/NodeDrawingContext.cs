@@ -26,7 +26,16 @@ namespace ImGui.Rendering
             dc.DrawRectangle(brush, pen, rectangle);
         }
 
-        public void DrawRoundedRectangle(Rect rect,
+        public void DrawRoundedRectangle(Rect rect)
+        {
+            var rule = ownerNode.RuleSet;
+            Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
+            Brush brush = new Brush(rule.FillColor);
+            var cornerRadius = rule.BorderRadius;
+            DrawRoundedRectangle(brush, pen, rect, cornerRadius);
+        }
+
+        public void DrawRoundedRectangle(Brush brush, Pen pen, Rect rect,
             (double TopLeft, double TopRight, double BottomRight, double BottomLeft) cornerRadius)
         {
             var geometry = new PathGeometry();
@@ -48,13 +57,9 @@ namespace ImGui.Rendering
                     cornerRadius.BottomLeft, 3, 6);
                 context.Finish();
             }
-
             var rule = ownerNode.RuleSet;
-            Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
-            Brush brush = new Brush(rule.FillColor);
             dc.DrawGeometry(brush, pen, geometry);
         }
-
 
         public void DrawBoxModel(Rect rect)
         {
@@ -179,11 +184,8 @@ namespace ImGui.Rendering
             if (gradient == Gradient.None)
             {
                 var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                //TODO rounding
-                //var borderRounding =
-                //    style.Get<double>(GUIStyleName
-                //        .BorderTopLeftRadius); //FIXME only round or not round for all corners of a rectangle
-                dc.DrawRectangle(new Brush(bgColor), null, paddingBoxRect);
+                var borderRadius = style.BorderRadius;
+                DrawRoundedRectangle(new Brush(bgColor), null, paddingBoxRect, borderRadius);
             }
             else if (gradient == Gradient.TopBottom)
             {

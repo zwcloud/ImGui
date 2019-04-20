@@ -309,14 +309,22 @@ namespace ImGui
             }
         }
 
-        public (double topLeft, double topRight, double bottomRight, double bottomLeft) BorderRadius =>
-            (
+        public (double TopLeft, double TopRight, double BottomRight, double BottomLeft) BorderRadius
+        {
+            get => (
                 Get<double>(GUIStyleName.BorderTopLeftRadius),
                 Get<double>(GUIStyleName.BorderTopRightRadius),
                 Get<double>(GUIStyleName.BorderBottomRightRadius),
                 Get<double>(GUIStyleName.BorderBottomLeftRadius)
             );
-
+            set
+            {
+                Set<double>(GUIStyleName.BorderTopLeftRadius, value.TopLeft);
+                Set<double>(GUIStyleName.BorderTopRightRadius, value.TopRight);
+                Set<double>(GUIStyleName.BorderBottomRightRadius, value.BottomRight);
+                Set<double>(GUIStyleName.BorderBottomLeftRadius, value.BottomLeft);
+            }
+        }
         #endregion Border
 
         #region Outline
