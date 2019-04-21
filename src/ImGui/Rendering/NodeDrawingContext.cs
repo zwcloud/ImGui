@@ -26,6 +26,11 @@ namespace ImGui.Rendering
             dc.DrawRectangle(brush, pen, rectangle);
         }
 
+        public void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
+        {
+            dc.DrawRectangle(brush, pen, rectangle);
+        }
+
         public void DrawRoundedRectangle(Rect rect)
         {
             var rule = ownerNode.RuleSet;
@@ -57,12 +62,12 @@ namespace ImGui.Rendering
                     cornerRadius.BottomLeft, 3, 6);
                 context.Finish();
             }
-            var rule = ownerNode.RuleSet;
             dc.DrawGeometry(brush, pen, geometry);
         }
 
-        public void DrawBoxModel(Rect rect)
+        public void DrawBoxModel()
         {
+            var rect = ownerNode.Rect;
             var style = ownerNode.RuleSet;
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
@@ -106,73 +111,73 @@ namespace ImGui.Rendering
             }
             else
             {
-                //  Top
-                if (!MathEx.AmostZero(borderBoxRect.Top))
+                var border = style.Border;
+                var borderColor = style.BorderColor;
+                var borderRadius = style.BorderRadius;
+
+                PathGeometry geometry = new PathGeometry();
+                PathGeometryContext g = new PathGeometryContext(geometry);
+
+                //start from top-left
+                var bl = border.left;
+                var bt = border.top;
+                Point topLeftLowerEndPoint;
                 {
-                    var borderTopColor = style.Get<Color>(GUIStyleName.BorderTopColor);
-                    if (!MathEx.AmostZero(borderTopColor.A))
+                    var r = borderRadius.TopLeft;
+                    var arcCenter = borderBoxRect.TopLeft + new Vector(r, r);
+                    var paddingIntersectionPoint = borderBoxRect.TopLeft + new Vector(bl, bt);
+                    var halfArcPoint = MathEx.EvaluateCircle(arcCenter, r, MathEx.Deg2Rad(-135));
+                    if (bl < r && r < bt || bt < r && r < bl || r < bl && bl < bt || r < bt && bt < bl
+                        || r == bt && bt == bl)
                     {
-                        PathGeometry geometry = new PathGeometry();
-                        PathGeometryContext ctx = new PathGeometryContext(geometry);
-                        ctx.LineTo(paddingBoxRect.TopLeft);
-                        ctx.LineTo(borderBoxRect.TopLeft);
-                        ctx.LineTo(borderBoxRect.TopRight);
-                        ctx.LineTo(paddingBoxRect.TopRight);
-                        ctx.Finish();
-                        dc.DrawGeometry(new Brush(borderTopColor), null, geometry);
+                        g.MoveTo(paddingIntersectionPoint);
+                        g.LineTo(halfArcPoint);
+                        g.Arc(arcCenter, r, MathEx.Deg2Rad(-135), MathEx.Deg2Rad(-90));
+                        topLeftLowerEndPoint = paddingIntersectionPoint;
+                    }
+                    else// if (bl < bt && bt < r || bt<bl && bl <r)//inner ellipse curve occurs
+                    {
+                        var ellipseCenter = arcCenter;
+                        var ellipseXRadius = r - bl;
+                        var ellipseYRadius = r - bt;
+                        topLeftLowerEndPoint = paddingIntersectionPoint + new Vector(ellipseXRadius, 0);
+                        g.MoveTo(topLeftLowerEndPoint);
+                        g.Ellipse(ellipseCenter, ellipseXRadius, ellipseYRadius, MathEx.Deg2Rad(-90), MathEx.Deg2Rad(-135));
+                        g.LineTo(halfArcPoint);
+                        g.Arc(arcCenter, r, MathEx.Deg2Rad(-135), MathEx.Deg2Rad(-90));
                     }
                 }
 
-                //  Right
-                if (!MathEx.AmostZero(borderBoxRect.Right))
+                //top upper line: connect left to right
+                g.LineTo(borderBoxRect.TopRight + new Vector(-borderRadius.TopRight, 0));
+
+                //to top-right
+                var br = border.right;
                 {
-                    var borderRightColor = style.Get<Color>(GUIStyleName.BorderRightColor);
-                    if (!MathEx.AmostZero(borderRightColor.A))
+                    var r = borderRadius.TopRight;
+                    var arcCenter = borderBoxRect.TopRight + new Vector(-r, r);
+                    var paddingIntersectionPoint = borderBoxRect.TopRight + new Vector(-bl, bt);
+                    if (br < r && r < bt || bt < r && r < br || r < br && br < bt || r < bt && bt < br
+                        || r == bt && bt == br)
                     {
-                        PathGeometry geometry = new PathGeometry();
-                        PathGeometryContext ctx = new PathGeometryContext(geometry);
-                        ctx.LineTo(paddingBoxRect.TopRight);
-                        ctx.LineTo(borderBoxRect.TopRight);
-                        ctx.LineTo(borderBoxRect.BottomRight);
-                        ctx.LineTo(paddingBoxRect.BottomRight);
-                        ctx.Finish();
-                        dc.DrawGeometry(new Brush(borderRightColor), null, geometry);
+                        g.Arc(arcCenter, r, MathEx.Deg2Rad(-90), MathEx.Deg2Rad(-45));
+                        g.LineTo(paddingIntersectionPoint);
+                    }
+                    else //(br < bt && bt < r || bt<br && br <r)//inner ellipse curve occurs
+                    {
+                        var ellipseCenter = arcCenter;
+                        var ellipseXRadius = r - br;
+                        var ellipseYRadius = r - bt;
+                        g.Arc(arcCenter, r, MathEx.Deg2Rad(-90), MathEx.Deg2Rad(-45));
+                        g.LineTo(MathEx.EvaluateEllipse(arcCenter, ellipseXRadius, ellipseYRadius, MathEx.Deg2Rad(-45)));
+                        g.Ellipse(ellipseCenter, ellipseXRadius, ellipseYRadius, MathEx.Deg2Rad(-45), MathEx.Deg2Rad(-90));
                     }
                 }
 
-                //  Bottom
-                if (!MathEx.AmostZero(borderBoxRect.Bottom))
-                {
-                    var borderBottomColor = style.Get<Color>(GUIStyleName.BorderBottomColor);
-                    if (!MathEx.AmostZero(borderBottomColor.A))
-                    {
-                        PathGeometry geometry = new PathGeometry();
-                        PathGeometryContext ctx = new PathGeometryContext(geometry);
-                        ctx.LineTo(paddingBoxRect.BottomRight);
-                        ctx.LineTo(borderBoxRect.BottomRight);
-                        ctx.LineTo(borderBoxRect.BottomLeft);
-                        ctx.LineTo(paddingBoxRect.BottomLeft);
-                        ctx.Finish();
-                        dc.DrawGeometry(new Brush(borderBottomColor), null, geometry);
-                    }
-                }
+                //top lower line: connect left to right
+                g.LineTo(topLeftLowerEndPoint);
 
-                //  Left
-                if (!MathEx.AmostZero(borderBoxRect.Left))
-                {
-                    var borderLeftColor = style.Get<Color>(GUIStyleName.BorderLeftColor);
-                    if (!MathEx.AmostZero(borderLeftColor.A))
-                    {
-                        PathGeometry geometry = new PathGeometry();
-                        PathGeometryContext ctx = new PathGeometryContext(geometry);
-                        ctx.LineTo(paddingBoxRect.BottomLeft);
-                        ctx.LineTo(borderBoxRect.BottomLeft);
-                        ctx.LineTo(borderBoxRect.TopLeft);
-                        ctx.LineTo(paddingBoxRect.TopLeft);
-                        ctx.Finish();
-                        dc.DrawGeometry(new Brush(borderLeftColor), null, geometry);
-                    }
-                }
+                dc.DrawGeometry(new Brush(borderColor.top), new Pen(Color.Black, 2), geometry);
             }
         }
 
@@ -183,9 +188,9 @@ namespace ImGui.Rendering
             var gradient = (Gradient) style.Get<int>(GUIStyleName.BackgroundGradient);
             if (gradient == Gradient.None)
             {
-                var bgColor = style.Get<Color>(GUIStyleName.BackgroundColor);
-                var borderRadius = style.BorderRadius;
-                DrawRoundedRectangle(new Brush(bgColor), null, paddingBoxRect, borderRadius);
+                var bgColor = style.BackgroundColor;
+                DrawRectangle(new Brush(bgColor), null, paddingBoxRect);
+                //TODO apply border-radius clip, which is determined by how border corners are rendered
             }
             else if (gradient == Gradient.TopBottom)
             {

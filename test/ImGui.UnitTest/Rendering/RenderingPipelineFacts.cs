@@ -75,12 +75,12 @@ namespace ImGui.UnitTest.Rendering
         [Fact]
         public void RenderBoxModel()
         {
-            var node = new Node(1, new Rect(10, 20, 300, 60));
+            var node = new Node(1, new Rect(20, 20, 200, 80));
             node.RuleSet.Border = (10, 20, 30, 40);
             node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.YellowGreen);
 
             var context = node.RenderOpen();
-            context.DrawBoxModel(new Rect(20, 20, 200, 80));
+            context.DrawBoxModel();
             context.Close();
 
             ShowImage(node, 250, 250,
@@ -102,6 +102,23 @@ namespace ImGui.UnitTest.Rendering
 
             ShowImage(node, 250, 250,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderRoundedRectangle)}.png");
+        }
+
+        [Fact]
+        public void RenderRoundBoxModel()
+        {
+            var node = new Node(1, new Rect(100, 100, 200, 200));
+            node.RuleSet.Border = (top:20, right: 30, 0, left:40);
+            node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.Black);
+            node.RuleSet.BorderRadius = (TopLeft:50, 40, 0, 0);
+            node.RuleSet.BackgroundColor = Color.AliceBlue;
+
+            var context = node.RenderOpen();
+            context.DrawBoxModel();
+            context.Close();
+
+            ShowImage(node, 300, 250,
+                $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderRoundBoxModel)}.png");
         }
 
         private static void ShowImage(Node node, int width, int height, string path)
