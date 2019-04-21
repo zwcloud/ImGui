@@ -482,6 +482,42 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
+        public void PathEllipse(Point center, double radiusX, double radiusY, double fromAngle, double toAngle)
+        {
+            if(fromAngle == toAngle) return;
+            if (MathEx.AmostZero(radiusX) && MathEx.AmostZero(radiusY))
+            {
+                return;
+            }
+            var segmentCount = Math.Max((int)(radiusX + radiusY - 1), 1);
+
+            if (fromAngle < toAngle)
+            {
+                var unit = (toAngle - fromAngle) / segmentCount;
+                for (int i = 0; i <= segmentCount; i++)
+                {
+                    var angle = fromAngle + unit * i;
+                    var p = MathEx.EvaluateEllipse(center, radiusX, radiusY, angle);
+                    PathLineTo(p);
+                }
+            }
+            else
+            {
+                var unit = (fromAngle - toAngle) / segmentCount;
+                for (int i = 0; i <= segmentCount; i++)
+                {
+                    var angle = fromAngle - unit * i;
+                    var p = MathEx.EvaluateEllipse(center, radiusX, radiusY, angle);
+                    PathLineTo(p);
+                }
+            }
+        }
+
+        public void PathArc(Point center, double radius, double minAngle, double maxAngle)
+        {
+            PathEllipse(center, radius, radius, minAngle, maxAngle);
+        }
+
         #endregion
 
         #region Complex
@@ -586,6 +622,12 @@ namespace ImGui.GraphicsImplementation
                     {
                         var cmd = (ArcCommand)command;
                         this.PathArcFast(cmd.Center + offset, cmd.Radius, cmd.Amin, cmd.Amax);
+                        break;
+                    }
+                    case PathCommandType.PathEllipse:
+                    {
+                        var cmd = (EllipseCommand)command;
+                        PathEllipse(cmd.Center + offset, cmd.RadiusX, cmd.RadiusY, cmd.FromAngle, cmd.ToAngle);
                         break;
                     }
                     case PathCommandType.Stroke:

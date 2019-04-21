@@ -79,6 +79,13 @@ namespace ImGui.GraphicsImplementation
                         case ArcCommand a:
                             PathArcFast(a.Center, a.Radius, a.Amin, a.Amax);
                             break;
+                        case EllipseCommand ellipseCommand:
+                            PathEllipse(ellipseCommand.Center,
+                                ellipseCommand.RadiusX,
+                                ellipseCommand.RadiusY,
+                                ellipseCommand.FromAngle,
+                                ellipseCommand.ToAngle);
+                            break;
                         default:
                             throw new NotSupportedException();
                     }

@@ -12,7 +12,7 @@ namespace ImGui.Rendering
             this.Point = point;
         }
     }
-    
+
     internal class LineToCommand : PathCommand
     {
         public Point Point { get; set;}
@@ -56,6 +56,24 @@ namespace ImGui.Rendering
             this.Radius = radius;
             this.Amin = amin;
             this.Amax = amax;
+        }
+    }
+
+    internal class EllipseCommand : PathCommand
+    {
+        public Point Center { get; set; }
+        public double RadiusX { get; }
+        public double RadiusY { get; }
+        public double FromAngle { get; set; }
+        public double ToAngle { get; set; }
+
+        public EllipseCommand(Point center, double radiusX, double radiusY, double fromAngle, double toAngle) : base(PathCommandType.PathEllipse)
+        {
+            Center = center;
+            RadiusX = radiusX;
+            RadiusY = radiusY;
+            FromAngle = fromAngle;
+            ToAngle = toAngle;
         }
     }
 

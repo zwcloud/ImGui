@@ -50,6 +50,16 @@ namespace ImGui.Rendering
             list.Add(new ArcCommand(center, radius, amin, amax));
         }
 
+        public void Arc(Point center, double radius, double minAngle, double maxAngle)
+        {
+            Ellipse(center, radius, radius, minAngle, maxAngle);
+        }
+
+        public void Ellipse(Point center, double radiusX, double radiusY, double fromAngle, double toAngle)
+        {
+            list.Add(new EllipseCommand(center, radiusX, radiusY, fromAngle, toAngle));
+        }
+
         public void CurveTo(Point c1, Point c2, Point end, int numSegments = 0)
         {
             list.Add(new CurveToCommand(c1, c2, end));

@@ -11,6 +11,7 @@ namespace ImGui.Rendering
         PathCurveTo,
         PathClosePath,
         PathArc,
+        PathEllipse,
         Stroke,
         Fill,
     }
