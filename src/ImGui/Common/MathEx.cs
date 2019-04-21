@@ -292,5 +292,38 @@ namespace ImGui
             var z = 1.0 / (3.0 * sum);
             return new Point(vsum.X * z, vsum.Y * z);
         }
+
+        public static Point EvaluateCircle(Point center, double radius, double rad)
+        {
+            return EvaluateEllipse(center, radius, radius, rad);
+        }
+
+        public static Point EvaluateEllipse(Point center, double xHalfAxis, double yHalfAxis, double rad)
+        {
+            double x = xHalfAxis * Math.Cos(rad);
+            double y = yHalfAxis * Math.Sin(rad);
+            return new Point(x, y) + new Vector(center.X, center.Y);
+        }
+
+        public static Point EvaluateQuadraticBezier(Point startPoint, Point controlPoint, Point endPoint, double t)
+        {
+            var P0 = startPoint;
+            var P1 = controlPoint;
+            var P2 = endPoint;
+
+            double x = (1 - t) * (1 - t) * P0.X + 2 * (1 - t) * t * P1.X + t * t * P2.X;
+            double y = (1 - t) * (1 - t) * P0.Y + 2 * (1 - t) * t * P1.Y + t * t * P2.Y;
+            return new Point(x, y);
+        }
+
+        public static double Deg2Rad(double degree)
+        {
+            return degree * Math.PI / 180;
+        }
+
+        public static double Rad2Deg(double radian)
+        {
+            return radian * 180 / Math.PI;
+        }
     }
 }
