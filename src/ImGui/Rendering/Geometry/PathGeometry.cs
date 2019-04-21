@@ -5,6 +5,8 @@ namespace ImGui.Rendering
 {
     internal class PathGeometry : Geometry
     {
+        public List<PathFigure> Figures { get; set; } = new List<PathFigure>();
+
         /// <summary>
         /// Gets or sets path commands that describes how to rendering this PathGeometry.
         /// TODO Consider if we should convert this to a raw segment list instead of PathCommand list.

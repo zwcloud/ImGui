@@ -1,5 +1,8 @@
 ﻿namespace ImGui.Rendering
 {
+    /// <summary>
+    /// Represents an elliptical arc between two points.
+    /// </summary>
     public class ArcSegment : PathSegment
     {
         /// <summary>
