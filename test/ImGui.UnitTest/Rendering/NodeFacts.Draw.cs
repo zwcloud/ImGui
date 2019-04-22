@@ -17,11 +17,12 @@ namespace ImGui.UnitTest.Rendering
             {
                 var pathGeometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
-                figure.StartPoint = new Point(10, 10);
-                figure.Segments.Add(new LineSegment(new Point(10, 100), true));
-                figure.Segments.Add(new LineSegment(new Point(100, 100), true));
-                figure.Segments.Add(new LineSegment(new Point(100, 10), true));
-                figure.Segments.Add(new LineSegment(new Point(10, 10), true));
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = new Point(10+0.5, 10+0.5);
+                figure.Segments.Add(new LineSegment(new Point(10+0.5, 100+0.51), true));
+                figure.Segments.Add(new LineSegment(new Point(100+0.51, 100+0.51), true));
+                figure.Segments.Add(new LineSegment(new Point(100+0.51, 10+0.5), true));
+                figure.Segments.Add(new LineSegment(new Point(10+0.5, 10+0.5), true));
                 figure.IsClosed = true;
                 figure.IsFilled = false;
                 pathGeometry.Figures.Add(figure);

@@ -78,11 +78,12 @@ namespace ImGui.GraphicsImplementation
                     int i2 = (i1 + 1) == pointsCount ? 0 : i1 + 1;
                     Point p1 = points[i1];
                     Point p2 = points[i2];
-                    Vector diff = p2 - p1;
-                    diff *= MathEx.InverseLength(diff, 1.0f);
+                    double dx = p2.x - p1.x;
+                    double dy = p2.y - p1.y;
+                    MathEx.NORMALIZE2F_OVER_ZERO(ref dx, ref dy);
+                    dx *= (thickness * 0.5);
+                    dy *= (thickness * 0.5);
 
-                    float dx = (float)(diff.X * (thickness * 0.5f));
-                    float dy = (float)(diff.Y * (thickness * 0.5f));
                     var vertex0 = new DrawVertex { pos = new Point(p1.X + dy, p1.Y - dx), uv = Point.Zero, color = color };
                     var vertex1 = new DrawVertex { pos = new Point(p2.X + dy, p2.Y - dx), uv = Point.Zero, color = color };
                     var vertex2 = new DrawVertex { pos = new Point(p2.X - dy, p2.Y + dx), uv = Point.Zero, color = color };
@@ -138,11 +139,12 @@ namespace ImGui.GraphicsImplementation
                     int i2 = (i1 + 1) == pointsCount ? 0 : i1 + 1;
                     Point p1 = points[i1];
                     Point p2 = points[i2];
-                    Vector diff = p2 - p1;
-                    diff *= MathEx.InverseLength(diff, 1.0f);
+                    double dx = p2.x - p1.x;
+                    double dy = p2.y - p1.y;
+                    MathEx.NORMALIZE2F_OVER_ZERO(ref dx, ref dy);
+                    dx *= (thickness * 0.5);
+                    dy *= (thickness * 0.5);
 
-                    float dx = (float)(diff.X * (thickness * 0.5f));
-                    float dy = (float)(diff.Y * (thickness * 0.5f));
                     var vertex0 = new DrawVertex { pos = new Point(p1.X + dy, p1.Y - dx), uv = Point.Zero, color = color };
                     var vertex1 = new DrawVertex { pos = new Point(p2.X + dy, p2.Y - dx), uv = Point.Zero, color = color };
                     var vertex2 = new DrawVertex { pos = new Point(p2.X - dy, p2.Y + dx), uv = Point.Zero, color = color };

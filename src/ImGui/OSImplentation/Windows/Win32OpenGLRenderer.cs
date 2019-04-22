@@ -186,7 +186,7 @@ void main()
                 (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f,
             };
             material.program.Bind();
-            material.program.SetUniformMatrix4("ProjMtx", ortho_projection);//FIXME make GLM.mat4.to_array() not create a new array
+            material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex and index data
             GL.BindVertexArray(material.VaoHandle);

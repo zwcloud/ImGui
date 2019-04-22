@@ -184,11 +184,15 @@ namespace ImGui
         /// <param name="fail_value"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double InverseLength(Vector lhs, double fail_value)
+        public static void NORMALIZE2F_OVER_ZERO(ref double VX, ref double VY)
         {
-            var d = lhs.X * lhs.X + lhs.Y * lhs.Y;
-            if (d > 0.0f) return 1.0 / Math.Sqrt(d);
-            return fail_value;
+            var d2 = VX * VX + VY * VY;
+            if (d2 > 0.0f)
+            {
+                var inv_len = 1.0 / Math.Sqrt(d2);
+                VX *= inv_len;
+                VY *= inv_len;
+            }
         }
 
         /// <summary>
