@@ -1,5 +1,4 @@
-﻿#define USE_MSAA
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGL;
@@ -367,121 +366,124 @@ namespace ImGui.OSImplentation.Windows
             var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
             pixelformatdescriptor.Init();
 
-#if !USE_MSAA
-            int pixelFormat;
-            pixelFormat = ChoosePixelFormat(this.hDC, ref pixelformatdescriptor);
-            SetPixelFormat(this.hDC, pixelFormat, ref pixelformatdescriptor);
-
-            this.hglrc = wglCreateContext(this.hDC);
-            wglMakeCurrent(this.hDC, this.hglrc);
-#else
-            IntPtr tempContext = IntPtr.Zero;
-            IntPtr tempHwnd = IntPtr.Zero;
-            //Create temporary window
-            IntPtr hInstance = Process.GetCurrentProcess().SafeHandle.DangerousGetHandle();
-
-            WNDCLASS wndclass = new WNDCLASS()
+            if(!Application.EnableMSAA)
             {
-                style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/,
-                lpfnWndProc = (hWnd, msg, wParam, lParam) => DefWindowProc(hWnd, msg, wParam, lParam),
-                hInstance = hInstance,
-                lpszClassName = "tmpWindowForMSAA~"+this.GetHashCode()
-            };
-            ushort atom = RegisterClassW(ref wndclass);
-            if (atom == 0)
-            {
-                throw new WindowCreateException(string.Format("RegisterClass error: {0}", Marshal.GetLastWin32Error()));
+                int pixelFormat;
+                pixelFormat = ChoosePixelFormat(this.hDC, ref pixelformatdescriptor);
+                SetPixelFormat(this.hDC, pixelFormat, ref pixelformatdescriptor);
+
+                this.hglrc = wglCreateContext(this.hDC);
+                wglMakeCurrent(this.hDC, this.hglrc);
             }
-
-            tempHwnd = CreateWindowEx(
-                0,
-                new IntPtr(atom),
-                "tmpWindow~",
-                (uint)(WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN),
-                0, 0, 1, 1, hwnd, IntPtr.Zero,
-                hInstance,
-                IntPtr.Zero);
-            if (tempHwnd == IntPtr.Zero)
+            else
             {
-                throw new WindowCreateException(string.Format("CreateWindowEx for tempContext error: {0}", Marshal.GetLastWin32Error()));
+                IntPtr tempContext = IntPtr.Zero;
+                IntPtr tempHwnd = IntPtr.Zero;
+                //Create temporary window
+                IntPtr hInstance = Process.GetCurrentProcess().SafeHandle.DangerousGetHandle();
+
+                WNDCLASS wndclass = new WNDCLASS()
+                {
+                    style = 0x0002 /*CS_HREDRAW*/ | 0x0001/*CS_VREDRAW*/ | 0x0020/*CS_OWNDC*/,
+                    lpfnWndProc = (hWnd, msg, wParam, lParam) => DefWindowProc(hWnd, msg, wParam, lParam),
+                    hInstance = hInstance,
+                    lpszClassName = "tmpWindowForMSAA~"+this.GetHashCode()
+                };
+                ushort atom = RegisterClassW(ref wndclass);
+                if (atom == 0)
+                {
+                    throw new WindowCreateException(string.Format("RegisterClass error: {0}", Marshal.GetLastWin32Error()));
+                }
+
+                tempHwnd = CreateWindowEx(
+                    0,
+                    new IntPtr(atom),
+                    "tmpWindow~",
+                    (uint)(WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN),
+                    0, 0, 1, 1, hwnd, IntPtr.Zero,
+                    hInstance,
+                    IntPtr.Zero);
+                if (tempHwnd == IntPtr.Zero)
+                {
+                    throw new WindowCreateException(string.Format("CreateWindowEx for tempContext error: {0}", Marshal.GetLastWin32Error()));
+                }
+
+                IntPtr tempHdc = GetDC(tempHwnd);
+
+                var tempPixelFormat = ChoosePixelFormat(tempHdc, ref pixelformatdescriptor);
+                if(tempPixelFormat == 0)
+                {
+                    throw new Exception(string.Format("ChoosePixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                if (!SetPixelFormat(tempHdc, tempPixelFormat, ref pixelformatdescriptor))
+                {
+                    throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                tempContext = Wgl.CreateContext(tempHdc);//Crate temp context to load entry points
+                if (tempContext == IntPtr.Zero)
+                {
+                    throw new Exception(string.Format("wglCreateContext for tempHdc failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                if (!Wgl.MakeCurrent(tempHdc, tempContext))
+                {
+                    throw new Exception(string.Format("wglMakeCurrent for tempContext failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                //load wgl entry points for wglChoosePixelFormatARB
+                new Wgl().LoadEntryPoints(tempHdc);
+
+                int[] iPixAttribs = {
+                    (int)WGL.WGL_SUPPORT_OPENGL_ARB, (int)GL.GL_TRUE,
+                    (int)WGL.WGL_DRAW_TO_WINDOW_ARB, (int)GL.GL_TRUE,
+                    (int)WGL.WGL_DOUBLE_BUFFER_ARB,  (int)GL.GL_TRUE,
+                    (int)WGL.WGL_PIXEL_TYPE_ARB,     (int)WGL.WGL_TYPE_RGBA_ARB,
+                    (int)WGL.WGL_ACCELERATION_ARB,   (int)WGL.WGL_FULL_ACCELERATION_ARB,
+                    (int)WGL.WGL_COLOR_BITS_ARB,     32,
+                    (int)WGL.WGL_DEPTH_BITS_ARB,     24,
+                    (int)WGL.WGL_STENCIL_BITS_ARB,   8,
+                    (int)WGL.WGL_SWAP_METHOD_ARB, (int)WGL.WGL_SWAP_EXCHANGE_ARB,
+                    (int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MSAA
+                    (int)WGL.WGL_SAMPLES_ARB,        16,
+                0};
+
+                int pixelFormat;
+                uint numFormats;
+                var result = Wgl.ChoosePixelFormatARB(this.hDC, iPixAttribs, null, 1, out pixelFormat, out numFormats);
+                if (result == false || numFormats == 0)
+                {
+                    throw new Exception(string.Format("wglChoosePixelFormatARB failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                if(!DescribePixelFormat(this.hDC, pixelFormat, (uint)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), ref pixelformatdescriptor))
+                {
+                    throw new Exception(string.Format("DescribePixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                if (!SetPixelFormat(this.hDC, pixelFormat, ref pixelformatdescriptor))
+                {
+                    throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                if ((this.hglrc = wglCreateContext(this.hDC)) == IntPtr.Zero)
+                {
+                    throw new Exception(string.Format("wglCreateContext failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+                Wgl.DeleteContext(tempContext);
+                ReleaseDC(tempHwnd, tempHdc);
+                DestroyWindow(tempHwnd);
+
+                if (!wglMakeCurrent(this.hDC, this.hglrc))
+                {
+                    throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
+                }
+
+                Utility.CheckGLError();
             }
-
-            IntPtr tempHdc = GetDC(tempHwnd);
-
-            var tempPixelFormat = ChoosePixelFormat(tempHdc, ref pixelformatdescriptor);
-            if(tempPixelFormat == 0)
-            {
-                throw new Exception(string.Format("ChoosePixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            if (!SetPixelFormat(tempHdc, tempPixelFormat, ref pixelformatdescriptor))
-            {
-                throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            tempContext = Wgl.CreateContext(tempHdc);//Crate temp context to load entry points
-            if (tempContext == IntPtr.Zero)
-            {
-                throw new Exception(string.Format("wglCreateContext for tempHdc failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            if (!Wgl.MakeCurrent(tempHdc, tempContext))
-            {
-                throw new Exception(string.Format("wglMakeCurrent for tempContext failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            //load wgl entry points for wglChoosePixelFormatARB
-            new Wgl().LoadEntryPoints(tempHdc);
-
-            int[] iPixAttribs = {
-                (int)WGL.WGL_SUPPORT_OPENGL_ARB, (int)GL.GL_TRUE,
-                (int)WGL.WGL_DRAW_TO_WINDOW_ARB, (int)GL.GL_TRUE,
-                (int)WGL.WGL_DOUBLE_BUFFER_ARB,  (int)GL.GL_TRUE,
-                (int)WGL.WGL_PIXEL_TYPE_ARB,     (int)WGL.WGL_TYPE_RGBA_ARB,
-                (int)WGL.WGL_ACCELERATION_ARB,   (int)WGL.WGL_FULL_ACCELERATION_ARB,
-                (int)WGL.WGL_COLOR_BITS_ARB,     32,
-                (int)WGL.WGL_DEPTH_BITS_ARB,     24,
-                (int)WGL.WGL_STENCIL_BITS_ARB,   8,
-                (int)WGL.WGL_SWAP_METHOD_ARB, (int)WGL.WGL_SWAP_EXCHANGE_ARB,
-                (int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MSAA
-                (int)WGL.WGL_SAMPLES_ARB,        16,
-            0};
-
-            int pixelFormat;
-            uint numFormats;
-            var result = Wgl.ChoosePixelFormatARB(this.hDC, iPixAttribs, null, 1, out pixelFormat, out numFormats);
-            if (result == false || numFormats == 0)
-            {
-                throw new Exception(string.Format("wglChoosePixelFormatARB failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            if(!DescribePixelFormat(this.hDC, pixelFormat, (uint)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), ref pixelformatdescriptor))
-            {
-                throw new Exception(string.Format("DescribePixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            if (!SetPixelFormat(this.hDC, pixelFormat, ref pixelformatdescriptor))
-            {
-                throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            if ((this.hglrc = wglCreateContext(this.hDC)) == IntPtr.Zero)
-            {
-                throw new Exception(string.Format("wglCreateContext failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
-            Wgl.DeleteContext(tempContext);
-            ReleaseDC(tempHwnd, tempHdc);
-            DestroyWindow(tempHwnd);
-
-            if (!wglMakeCurrent(this.hDC, this.hglrc))
-            {
-                throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-
-            Utility.CheckGLError();
-#endif
 
             GL.GetIntegerv(GL.GL_STENCIL_BITS, IntBuffer);
             var stencilBits = IntBuffer[0];

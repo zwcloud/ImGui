@@ -154,6 +154,8 @@ namespace ImGui
         /// </summary>
         internal static bool IsRunningInUnitTest { get; set; } = false;
 
+        internal static bool EnableMSAA { get; set; } = true;
+
         internal static ILogger Logger;
     }
 }
