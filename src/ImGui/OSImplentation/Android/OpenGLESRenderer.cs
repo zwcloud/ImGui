@@ -126,7 +126,7 @@ void main()
             GL.ClearColor((float)clearColor.R, (float)clearColor.G, (float)clearColor.B, (float)clearColor.A);
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
         }
-        
+
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
             DrawMesh(this.shapeMaterial, meshes.shapeMesh, width, height);
@@ -187,9 +187,19 @@ void main()
 
             // Setup viewport, orthographic projection matrix
             GL.Viewport(0, 0, width, height);
-            GLM.mat4 ortho_projection = GLM.glm.ortho(0.0f, width, height, 0.0f, -5.0f, 5.0f);
+            float L = 0;
+            float R = 0 + width;
+            float T = 0;
+            float B = 0 + height;
+            float[] ortho_projection = new float[16]
+            {
+                2.0f/(R-L),   0.0f,         0.0f,   0.0f,
+                0.0f,         2.0f/(T-B),   0.0f,   0.0f,
+                0.0f,         0.0f,        -1.0f,   0.0f,
+                (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f,
+            };
             material.program.Bind();
-            material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME GLM.mat4.to_array() will generate new array on the heap! This should not be done
+            material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex and index data
             GL.BindVertexArray(material.vaoHandle);
@@ -263,7 +273,17 @@ void main()
             int last_sessor_rect_width = IntBuffer[2];
             int last_sessor_rect_height = IntBuffer[3];
 
-            GLM.mat4 ortho_projection = GLM.glm.ortho(0.0f, width, height, 0.0f, -5.0f, 5.0f);
+            float L = 0;
+            float R = 0 + width;
+            float T = 0;
+            float B = 0 + height;
+            float[] ortho_projection = new float[16]
+            {
+                2.0f/(R-L),   0.0f,         0.0f,   0.0f,
+                0.0f,         2.0f/(T-B),   0.0f,   0.0f,
+                0.0f,         0.0f,        -1.0f,   0.0f,
+                (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f,
+            };
             GL.Viewport(0, 0, width, height);
 
             var material = this.glyphMaterial;
@@ -271,7 +291,7 @@ void main()
             var indexBuffer = textMesh.IndexBuffer;
 
             material.program.Bind();
-            material.program.SetUniformMatrix4("ProjMtx", ortho_projection.to_array());//FIXME make GLM.mat4.to_array() not create a new array
+            material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex data
             GL.BindVertexArray(material.vaoHandle);
