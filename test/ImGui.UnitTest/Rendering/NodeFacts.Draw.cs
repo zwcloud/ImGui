@@ -15,18 +15,24 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawANode()
             {
-                var primitive = new PathGeometry();
-                primitive.PathMoveTo(new Point(10, 10));
-                primitive.PathLineTo(new Point(10, 100));
-                primitive.PathLineTo(new Point(100, 100));
-                primitive.PathLineTo(new Point(100, 10));
-                primitive.PathClose();
-                primitive.PathFill(Color.Black);
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                figure.StartPoint = new Point(10, 10);
+                figure.Segments.Add(new LineSegment(new Point(10, 100), true));
+                figure.Segments.Add(new LineSegment(new Point(100, 100), true));
+                figure.Segments.Add(new LineSegment(new Point(100, 10), true));
+                figure.Segments.Add(new LineSegment(new Point(10, 10), true));
+                figure.IsClosed = true;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
 
                 Node node = new Node(1);
-                node.Geometry = primitive;
+                using (var ctx = node.RenderOpenStatic())
+                {
+                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
+                }
 
-                Util.DrawNodeToImage(out var imageRawBytes, node, 110, 110);
+                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 110, 110);
                 Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANode.png");
             }
 

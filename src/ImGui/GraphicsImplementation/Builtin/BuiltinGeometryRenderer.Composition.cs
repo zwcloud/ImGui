@@ -59,53 +59,48 @@ namespace ImGui.GraphicsImplementation
 
             if (geometry is PathGeometry pathGeometry)
             {
-                var paths = pathGeometry.Path;
-                foreach (var pathCommand in paths)
+                foreach (var figure in pathGeometry.Figures)
                 {
-                    switch (pathCommand)
+                    Path.Clear();
+                    var currentPoint = figure.StartPoint;
+                    Path.Add(currentPoint);
+                    foreach (var segment in figure.Segments)
                     {
-                        case MoveToCommand moveToCommand:
-                            PathMoveTo(moveToCommand.Point);
-                            break;
-                        case LineToCommand lineToCommand:
-                            PathLineTo(lineToCommand.Point);
-                            break;
-                        case ClosePathCommand closePathCommand:
-                            PathClose();
-                            break;
-                        case CurveToCommand curveToCommand:
-                            PathBezierCurveTo(curveToCommand.ControlPoint0, curveToCommand.ControlPoint1, curveToCommand.EndPoint);
-                            break;
-                        case ArcCommand a:
-                            PathArcFast(a.Center, a.Radius, a.Amin, a.Amax);
-                            break;
-                        case EllipseCommand ellipseCommand:
-                            PathEllipse(ellipseCommand.Center,
-                                ellipseCommand.RadiusX,
-                                ellipseCommand.RadiusY,
-                                ellipseCommand.FromAngle,
-                                ellipseCommand.ToAngle);
-                            break;
-                        default:
-                            throw new NotSupportedException();
+                        switch (segment)
+                        {
+                            case ArcSegment arcSegment:
+                                break;
+                            case CubicBezierSegment cubicBezierSegment:
+                                break;
+                            case LineSegment lineSegment:
+                                if (lineSegment.IsStroked)
+                                {
+                                    unsafe
+                                    {
+                                        var scratch = stackalloc Point[2];
+                                        scratch[0] = currentPoint;
+                                        scratch[1] = lineSegment.Point;
+                                        AddPolyline(scratch, 2, pen.LineColor, false, pen.LineWidth);
+                                        Path.Add(lineSegment.Point);
+                                        currentPoint = lineSegment.Point;
+                                    }
+                                }
+                                break;
+                            case PolyCubicBezierSegment polyCubicBezierSegment:
+                                break;
+                            case PolyLineSegment polyLineSegment:
+                                break;
+                            case PolyQuadraticBezierSegment polyQuadraticBezierSegment:
+                                break;
+                            case QuadraticBezierSegment quadraticBezierSegment:
+                                break;
+                        }
                     }
-                }
 
-                if (brush != null)
-                {
-                    if (pen == null)
+                    if (figure.IsFilled && brush != null)
                     {
-                        PathFill(brush.FillColor);
+                        AddConvexPolyFilled(Path, brush.FillColor, true);
                     }
-                    else
-                    {
-                        PathFillPreserve(brush.FillColor);
-                    }
-                }
-
-                if (pen != null)
-                {
-                    PathStroke(pen.LineColor, false, pen.LineWidth);
                 }
             }
         }

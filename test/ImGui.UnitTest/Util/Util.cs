@@ -186,6 +186,8 @@ namespace ImGui.UnitTest
 
         internal static void DrawNodeToImage(out byte[] imageRawBytes, Node node, int width, int height)
         {
+            Application.EnableMSAA = false;
+
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
             IGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
@@ -266,6 +268,8 @@ namespace ImGui.UnitTest
 
         internal static void DrawNodeToImage_NewPipeline(out byte[] imageRawBytes, Node node, int width, int height)
         {
+            Application.EnableMSAA = false;
+
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
             BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
