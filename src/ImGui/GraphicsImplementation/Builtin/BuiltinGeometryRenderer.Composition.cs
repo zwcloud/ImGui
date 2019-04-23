@@ -81,20 +81,36 @@ namespace ImGui.GraphicsImplementation
                                         scratch[0] = currentPoint;
                                         scratch[1] = lineSegment.Point;
                                         AddPolyline(scratch, 2, pen.LineColor, false, pen.LineWidth);
-                                        Path.Add(lineSegment.Point);
-                                        currentPoint = lineSegment.Point;
                                     }
                                 }
+                                Path.Add(lineSegment.Point);
                                 break;
                             case PolyCubicBezierSegment polyCubicBezierSegment:
                                 break;
                             case PolyLineSegment polyLineSegment:
+                                var points = polyLineSegment.Points;
+                                if (polyLineSegment.IsStroked)
+                                {
+                                    unsafe
+                                    {
+                                        var pointCount = 1 + points.Count;
+                                        var scratch = stackalloc Point[pointCount];
+                                        scratch[0] = currentPoint;
+                                        for (int i = 0; i < points.Count; i++)
+                                        {
+                                            scratch[1 + i] = points[i];
+                                        }
+                                        AddPolyline(scratch, pointCount, pen.LineColor, false, pen.LineWidth);
+                                    }
+                                }
+                                Path.AddRange(points);
                                 break;
                             case PolyQuadraticBezierSegment polyQuadraticBezierSegment:
                                 break;
                             case QuadraticBezierSegment quadraticBezierSegment:
                                 break;
                         }
+                        currentPoint = Path[Path.Count - 1];
                     }
 
                     if (figure.IsFilled && brush != null)

@@ -7,7 +7,7 @@ namespace ImGui.Rendering
     /// Represents a subsection of a geometry, a single connected series of two-dimensional geometric segments.
     /// </summary>
     /// <remarks>A PathGeometry is made up of one or more figures, represented by the PathFigure class. Each figure is itself made up of one or more segments, defined by the PathSegment class.</remarks>
-    public class PathFigure
+    internal class PathFigure
     {
         /// <summary>
         /// Gets or sets the Point where the PathFigure begins.

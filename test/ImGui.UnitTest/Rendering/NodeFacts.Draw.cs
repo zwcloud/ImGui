@@ -38,6 +38,34 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
+            public void DrawANodePolyLine()
+            {
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = new Point(10+0.5, 10+0.5);
+                figure.Segments.Add(new PolyLineSegment(new[]
+                {
+                    new Point(10 + 0.5, 100 + 0.51),
+                    new Point(100 + 0.51, 100 + 0.51),
+                    new Point(100 + 0.51, 10 + 0.5),
+                    new Point(10 + 0.5, 10 + 0.5)
+                }, true));
+                figure.IsClosed = true;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
+
+                Node node = new Node(1);
+                using (var ctx = node.RenderOpenStatic())
+                {
+                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
+                }
+
+                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 110, 110);
+                Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANodePolyLine.png");
+            }
+
+            [Fact]
             public void UpdateANode()
             {
                 var primitive = new PathGeometry();

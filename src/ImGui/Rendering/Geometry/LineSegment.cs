@@ -3,7 +3,7 @@
     /// <summary>
     /// Creates a line between two points in a PathFigure.
     /// </summary>
-    public class LineSegment : PathSegment
+    internal class LineSegment : PathSegment
     {
         /// <summary>
         /// Gets or sets the end point of the line segment.

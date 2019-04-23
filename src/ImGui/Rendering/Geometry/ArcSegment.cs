@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents an elliptical arc between two points.
     /// </summary>
-    public class ArcSegment : PathSegment
+    internal class ArcSegment : PathSegment
     {
         /// <summary>
         /// Gets or sets the endpoint of the elliptical arc.

@@ -5,7 +5,7 @@ namespace ImGui.Rendering
     /// <summary>
     /// Represents one or more cubic Bezier curves.
     /// </summary>
-    public class PolyCubicBezierSegment : PathSegment
+    internal class PolyCubicBezierSegment : PathSegment
     {
         /// <summary>
         /// Gets or sets the list of Points that define this PolyCubicBezierSegment object.

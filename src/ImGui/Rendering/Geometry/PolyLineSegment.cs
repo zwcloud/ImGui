@@ -5,7 +5,7 @@ namespace ImGui.Rendering
     /// <summary>
     /// Represents a set of line segments defined by a list of Point with each Point specifying the end point of a line segment.
     /// </summary>
-    public class PolyLineSegment : PathSegment
+    internal class PolyLineSegment : PathSegment
     {
         /// <summary>
         /// Gets or sets the list of Point structures that defines this PolyLineSegment object.

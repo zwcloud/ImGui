@@ -5,7 +5,7 @@ namespace ImGui.Rendering
     /// <summary>
     /// Represents a set of quadratic Bezier segments.
     /// </summary>
-    public class PolyQuadraticBezierSegment : PathSegment
+    internal class PolyQuadraticBezierSegment : PathSegment
     {
         /// <summary>
         /// Gets or sets the list of Points that define this PolyQuadraticBezierSegment object.

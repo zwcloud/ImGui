@@ -3,7 +3,7 @@
     /// <summary>
     /// Creates a quadratic Bezier curve between two points in a PathFigure.
     /// </summary>
-    public class QuadraticBezierSegment : PathSegment
+    internal class QuadraticBezierSegment : PathSegment
     {
         /// <summary>
         /// Gets or sets the control Point of the curve.

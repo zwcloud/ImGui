@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a cubic Bezier curve drawn between two points.
     /// </summary>
-    public class CubicBezierSegment : PathSegment
+    internal class CubicBezierSegment : PathSegment
     {
         /// <summary>
         /// Gets or sets the first control point of the curve.

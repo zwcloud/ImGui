@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a segment of a PathFigure object.
     /// </summary>
-    public abstract class PathSegment
+    internal abstract class PathSegment
     {
         /// <summary>
         /// Gets or sets a value that indicates whether the segment is stroked.
