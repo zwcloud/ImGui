@@ -128,11 +128,6 @@ namespace ImGui.Rendering
             data.Offset = Offset;
             return data;
         }
-
-        public PathGeometryContext Open()
-        {
-            return new PathGeometryContext(this);
-        }
     }
 
     internal interface IPathList

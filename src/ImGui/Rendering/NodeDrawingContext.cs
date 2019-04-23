@@ -44,6 +44,7 @@ namespace ImGui.Rendering
             (double TopLeft, double TopRight, double BottomRight, double BottomLeft) cornerRadius)
         {
             var geometry = new PathGeometry();
+            #if TODO
             using (var context = geometry.Open())
             {
                 context.ArcFast(
@@ -63,6 +64,7 @@ namespace ImGui.Rendering
                 context.Finish();
             }
             dc.DrawGeometry(brush, pen, geometry);
+            #endif
         }
 
         public void DrawBoxModel()
@@ -114,7 +116,7 @@ namespace ImGui.Rendering
                 var border = style.Border;
                 var borderColor = style.BorderColor;
                 var borderRadius = style.BorderRadius;
-
+#if TODO
                 PathGeometry geometry = new PathGeometry();
                 PathGeometryContext g = new PathGeometryContext(geometry);
 
@@ -178,6 +180,7 @@ namespace ImGui.Rendering
                 g.LineTo(topLeftLowerEndPoint);
 
                 dc.DrawGeometry(new Brush(borderColor.top), new Pen(Color.Black, 2), geometry);
+#endif
             }
         }
 

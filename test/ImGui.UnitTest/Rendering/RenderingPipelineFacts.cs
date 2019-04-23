@@ -55,6 +55,7 @@ namespace ImGui.UnitTest.Rendering
             var node = new Node(1, new Rect(10, 20, 300, 60));
 
             var geometry = new PathGeometry();
+            #if TODO
             var g = new PathGeometryContext(geometry);
             g.MoveTo(new Point(5,90));
             g.LineTo(new Point(125,0));
@@ -62,6 +63,7 @@ namespace ImGui.UnitTest.Rendering
             g.LineTo(new Point(200,230));
             g.LineTo(new Point(52,230));
             g.LineTo(new Point(5,90));
+            #endif
 
             var context = node.RenderOpenStatic();
             context.DrawGeometry(new Brush(Color.BlueViolet), new Pen(Color.Black, 4), geometry);
