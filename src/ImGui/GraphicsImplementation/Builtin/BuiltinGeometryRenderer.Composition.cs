@@ -70,6 +70,14 @@ namespace ImGui.GraphicsImplementation
                         switch (segment)
                         {
                             case ArcSegment arcSegment:
+                            {
+                                var generatedPoints = arcSegment.Flatten(currentPoint);
+                                if (arcSegment.IsStroked)
+                                {
+                                    AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                }
+                                Path.AddRange(generatedPoints);
+                            }
                                 break;
                             case CubicBezierSegment cubicBezierSegment:
                             {

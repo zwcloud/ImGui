@@ -125,6 +125,35 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
+            public void DrawANodeArc()
+            {
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = new Point(60,100);
+                figure.Segments.Add(
+                    new ArcSegment(
+                        size: new Size(60, 40),
+                        rotationAngle: 10,
+                        isLargeArc: true,
+                        sweepDirection: SweepDirection.Counterclockwise,
+                        point: new Point(140, 100),
+                        isStroked: true));
+                figure.IsClosed = true;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
+
+                Node node = new Node(1);
+                using (var ctx = node.RenderOpenStatic())
+                {
+                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
+                }
+
+                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 200, 200);
+                Util.CheckExpectedImage(imageRawBytes, 200, 200, @"Rendering\images\NodeFacts.Draw.DrawANodeArc.png");
+            }
+
+            [Fact]
             public void UpdateANode()
             {
                 var primitive = new PathGeometry();
