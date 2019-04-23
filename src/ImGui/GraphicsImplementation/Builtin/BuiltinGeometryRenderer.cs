@@ -236,12 +236,12 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
-        public void CubicBezier_AddPolyLine(Point startPoint, Point[] segmentPoints, Color color, double thickness, out List<Point> generatedPoints)
+        public List<Point> CubicBezier_GeneratePolyLinePoints(Point startPoint, IList<Point> segmentPoints)
         {
-            Debug.Assert(segmentPoints.Length % 3 == 0);
-            generatedPoints = new List<Point>();
+            Debug.Assert(segmentPoints.Count % 3 == 0);
+            var generatedPoints = new List<Point>();
             generatedPoints.Add(startPoint);
-            for (var i = 0; i < segmentPoints.Length; i+=3)
+            for (var i = 0; i < segmentPoints.Count; i+=3)
             {
                 Point p1 = generatedPoints[generatedPoints.Count - 1];
                 var c1 = segmentPoints[i];
@@ -250,13 +250,13 @@ namespace ImGui.GraphicsImplementation
                 // Auto-tessellated
                 PathBezierToCasteljau(generatedPoints, p1.X, p1.Y, c1.X, c1.Y, c2.X, c2.Y, end.X, end.Y, CurveTessellationTol, 0);
             }
-            AddPolyline(generatedPoints, color, false, thickness);
+            return generatedPoints;
         }
 
         public unsafe List<Point> CubicBezier_GeneratePolyLinePoints(Point startPoint, Point* segmentPoints, int pointCount)
         {
             Debug.Assert(pointCount % 3 == 0);
-            List<Point> generatedPoints = new List<Point>();
+            var generatedPoints = new List<Point>();
             generatedPoints.Add(startPoint);
             for (var i = 0; i < pointCount; i+=3)
             {

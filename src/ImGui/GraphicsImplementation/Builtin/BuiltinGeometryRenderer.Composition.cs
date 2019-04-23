@@ -72,6 +72,7 @@ namespace ImGui.GraphicsImplementation
                             case ArcSegment arcSegment:
                                 break;
                             case CubicBezierSegment cubicBezierSegment:
+                            {
                                 List<Point> generatedPoints;
                                 unsafe
                                 {
@@ -86,6 +87,7 @@ namespace ImGui.GraphicsImplementation
                                     AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
                                 }
                                 Path.AddRange(generatedPoints);
+                            }
                                 break;
                             case LineSegment lineSegment:
                                 if (lineSegment.IsStroked)
@@ -101,7 +103,14 @@ namespace ImGui.GraphicsImplementation
                                 Path.Add(lineSegment.Point);
                                 break;
                             case PolyCubicBezierSegment polyCubicBezierSegment:
-
+                            {
+                                var generatedPoints = CubicBezier_GeneratePolyLinePoints(currentPoint, polyCubicBezierSegment.Points);
+                                if (polyCubicBezierSegment.IsStroked)
+                                {
+                                    AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                }
+                                Path.AddRange(generatedPoints);
+                            }
                                 break;
                             case PolyLineSegment polyLineSegment:
                                 var points = polyLineSegment.Points;

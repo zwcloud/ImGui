@@ -92,6 +92,37 @@ namespace ImGui.UnitTest.Rendering
                 Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANodeCubicBezier.png");
             }
 
+            [Fact]
+            public void DrawANodePolyLineCubicBezier()
+            {
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.51
+                figure.StartPoint = new Point(10+0.51, 100+0.51);
+                var segment = new PolyCubicBezierSegment(new[]
+                    {
+                        new Point(0 + 0.51, 0 + 0.51),
+                        new Point(200 + 0.51, 0 + 0.51),
+                        new Point(300 + 0.51, 100 + 0.51),
+                        new Point(300 + 0.51, 0 + 0.51),
+                        new Point(400 + 0.51, 0 + 0.51),
+                        new Point(600 + 0.51, 100 + 0.51)
+                    },
+                    true);
+                figure.Segments.Add(segment);
+                figure.IsClosed = true;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
+
+                Node node = new Node(1);
+                using (var ctx = node.RenderOpenStatic())
+                {
+                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
+                }
+
+                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 610, 110);
+                Util.CheckExpectedImage(imageRawBytes, 610, 110, @"Rendering\images\NodeFacts.Draw.DrawANodePolyLineCubicBezier.png");
+            }
 
             [Fact]
             public void UpdateANode()
