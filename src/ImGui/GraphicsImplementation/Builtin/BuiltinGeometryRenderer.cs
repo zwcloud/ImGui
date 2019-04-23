@@ -235,6 +235,40 @@ namespace ImGui.GraphicsImplementation
                 this.ShapeMesh.currentIdx += vtxCount;
             }
         }
+
+        public void CubicBezier_AddPolyLine(Point startPoint, Point[] segmentPoints, Color color, double thickness, out List<Point> generatedPoints)
+        {
+            Debug.Assert(segmentPoints.Length % 3 == 0);
+            generatedPoints = new List<Point>();
+            generatedPoints.Add(startPoint);
+            for (var i = 0; i < segmentPoints.Length; i+=3)
+            {
+                Point p1 = generatedPoints[generatedPoints.Count - 1];
+                var c1 = segmentPoints[i];
+                var c2 = segmentPoints[i+1];
+                var end = segmentPoints[i+2];
+                // Auto-tessellated
+                PathBezierToCasteljau(generatedPoints, p1.X, p1.Y, c1.X, c1.Y, c2.X, c2.Y, end.X, end.Y, CurveTessellationTol, 0);
+            }
+            AddPolyline(generatedPoints, color, false, thickness);
+        }
+
+        public unsafe List<Point> CubicBezier_GeneratePolyLinePoints(Point startPoint, Point* segmentPoints, int pointCount)
+        {
+            Debug.Assert(pointCount % 3 == 0);
+            List<Point> generatedPoints = new List<Point>();
+            generatedPoints.Add(startPoint);
+            for (var i = 0; i < pointCount; i+=3)
+            {
+                Point p1 = generatedPoints[generatedPoints.Count - 1];
+                var c1 = segmentPoints[i];
+                var c2 = segmentPoints[i+1];
+                var end = segmentPoints[i+2];
+                // Auto-tessellated
+                PathBezierToCasteljau(generatedPoints, p1.X, p1.Y, c1.X, c1.Y, c2.X, c2.Y, end.X, end.Y, CurveTessellationTol, 0);
+            }
+            return generatedPoints;
+        }
         #endregion
 
         #region Text

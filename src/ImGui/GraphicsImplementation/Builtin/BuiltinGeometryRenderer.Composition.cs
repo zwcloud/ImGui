@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.GraphicsAbstraction;
 using ImGui.Rendering;
@@ -71,6 +72,20 @@ namespace ImGui.GraphicsImplementation
                             case ArcSegment arcSegment:
                                 break;
                             case CubicBezierSegment cubicBezierSegment:
+                                List<Point> generatedPoints;
+                                unsafe
+                                {
+                                    var scratch = stackalloc Point[3];
+                                    scratch[0] = cubicBezierSegment.ControlPoint1;
+                                    scratch[1] = cubicBezierSegment.ControlPoint2;
+                                    scratch[2] = cubicBezierSegment.EndPoint;
+                                    generatedPoints = CubicBezier_GeneratePolyLinePoints(currentPoint, scratch, 3);
+                                }
+                                if (cubicBezierSegment.IsStroked)
+                                {
+                                    AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                }
+                                Path.AddRange(generatedPoints);
                                 break;
                             case LineSegment lineSegment:
                                 if (lineSegment.IsStroked)
@@ -86,6 +101,7 @@ namespace ImGui.GraphicsImplementation
                                 Path.Add(lineSegment.Point);
                                 break;
                             case PolyCubicBezierSegment polyCubicBezierSegment:
+
                                 break;
                             case PolyLineSegment polyLineSegment:
                                 var points = polyLineSegment.Points;
