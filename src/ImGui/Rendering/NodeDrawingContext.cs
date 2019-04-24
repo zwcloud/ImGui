@@ -82,7 +82,7 @@ namespace ImGui.Rendering
                 isStroked: true
             ));
             figure.Segments.Add(new LineSegment(new Point(rect.TopLeft.X, rect.TopLeft.Y + cornerRadius.TopLeft), true));
-
+            geometry.Figures.Add(figure);
             dc.DrawGeometry(brush, pen, geometry);
         }
 

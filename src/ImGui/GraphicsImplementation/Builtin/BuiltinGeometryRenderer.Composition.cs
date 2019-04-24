@@ -139,8 +139,10 @@ namespace ImGui.GraphicsImplementation
                                 Path.AddRange(points);
                                 break;
                             case PolyQuadraticBezierSegment polyQuadraticBezierSegment:
+                                throw new NotImplementedException();
                                 break;
                             case QuadraticBezierSegment quadraticBezierSegment:
+                                throw new NotImplementedException();
                                 break;
                         }
                         currentPoint = Path[Path.Count - 1];

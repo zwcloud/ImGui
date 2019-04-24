@@ -92,14 +92,14 @@ namespace ImGui.UnitTest.Rendering
         [Fact]
         public void RenderRoundedRectangle()
         {
-            var node = new Node(1, new Rect(10, 20, 300, 60));
+            var node = new Node(1, new Rect(20, 20, 200, 80));
             node.RuleSet.StrokeColor = Color.Black;
             node.RuleSet.StrokeWidth = 4;
             node.RuleSet.FillColor = Color.DeepSkyBlue;
             node.RuleSet.BorderRadius = (10, 10, 10, 10);
 
             var context = node.RenderOpen();
-            context.DrawRoundedRectangle(new Rect(20, 20, 200, 80));
+            context.DrawRoundedRectangle(new Rect(20, 20, 100, 60));
             context.Close();
 
             DrawAndCheck(node, 250, 250,
