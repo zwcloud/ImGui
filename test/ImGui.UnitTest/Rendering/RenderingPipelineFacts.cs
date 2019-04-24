@@ -55,22 +55,22 @@ namespace ImGui.UnitTest.Rendering
             var node = new Node(1, new Rect(10, 20, 300, 60));
 
             var geometry = new PathGeometry();
-            #if TODO
-            var g = new PathGeometryContext(geometry);
-            g.MoveTo(new Point(5,90));
-            g.LineTo(new Point(125,0));
-            g.LineTo(new Point(245,90));
-            g.LineTo(new Point(200,230));
-            g.LineTo(new Point(52,230));
-            g.LineTo(new Point(5,90));
-            #endif
+            var figure = new PathFigure();
+            figure.StartPoint = new Point(5, 90);
+            figure.Segments.Add(new LineSegment(new Point(125,0),true));
+            figure.Segments.Add(new LineSegment(new Point(245,90),true));
+            figure.Segments.Add(new LineSegment(new Point(200,230),true));
+            figure.Segments.Add(new LineSegment(new Point(52,230),true));
+            figure.Segments.Add(new LineSegment(new Point(5,90),true));
+            geometry.Figures.Add(figure);
 
             var context = node.RenderOpenStatic();
             context.DrawGeometry(new Brush(Color.BlueViolet), new Pen(Color.Black, 4), geometry);
             context.DrawRectangle(new Brush(Color.YellowGreen), new Pen(Color.Cornsilk, 4), new Rect(100, 100, 50, 50));
             context.Close();
 
-            ShowImage(node, 250, 250,
+            Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 300, 300);
+            Util.CheckExpectedImage(imageRawBytes, 300, 300,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderPathGeometry)}.png");
         }
 
@@ -102,9 +102,10 @@ namespace ImGui.UnitTest.Rendering
             context.DrawRoundedRectangle(new Rect(20, 20, 200, 80));
             context.Close();
 
-            ShowImage(node, 250, 250,
+            DrawAndCheck(node, 250, 250,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderRoundedRectangle)}.png");
         }
+
 
         [Fact]
         public void RenderRoundBoxModel()
@@ -129,6 +130,12 @@ namespace ImGui.UnitTest.Rendering
             var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
             Util.SaveImage(image, path);
             Util.OpenImage(path);
+        }
+
+        private static void DrawAndCheck(Node node, int width, int height, string path)
+        {
+            Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);
+            Util.CheckExpectedImage(imageRawBytes, width, height, path);
         }
     }
 }

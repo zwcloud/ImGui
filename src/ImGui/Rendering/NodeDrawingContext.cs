@@ -44,27 +44,46 @@ namespace ImGui.Rendering
             (double TopLeft, double TopRight, double BottomRight, double BottomLeft) cornerRadius)
         {
             var geometry = new PathGeometry();
-            #if TODO
-            using (var context = geometry.Open())
-            {
-                context.ArcFast(
-                    new Point(rect.TopLeft.X + cornerRadius.TopLeft, rect.TopLeft.Y + cornerRadius.TopLeft),
-                    cornerRadius.TopLeft, 6, 9);
-                context.LineTo(rect.TopRight - new Vector(cornerRadius.TopRight, 0));
-                context.ArcFast(
-                    new Point(rect.TopRight.X - cornerRadius.TopRight, rect.TopRight.Y + cornerRadius.TopRight),
-                    cornerRadius.TopRight, 9, 12);
-                context.LineTo(rect.BottomRight - new Vector(0, cornerRadius.BottomRight));
-                context.ArcFast(
-                    new Point(rect.BottomRight.X - cornerRadius.BottomRight, rect.BottomRight.Y - cornerRadius.BottomRight),
-                    cornerRadius.BottomRight, 0, 3);
-                context.LineTo(rect.BottomLeft + new Vector(cornerRadius.BottomLeft, 0));
-                context.ArcFast(new Point(rect.BottomLeft.X + cornerRadius.BottomLeft, rect.BottomLeft.Y - cornerRadius.BottomLeft),
-                    cornerRadius.BottomLeft, 3, 6);
-                context.Finish();
-            }
+            var figure = new PathFigure();
+            figure.StartPoint = new Point(rect.TopLeft.X, rect.TopLeft.Y + cornerRadius.TopLeft);
+            figure.Segments.Add(new ArcSegment(
+                point: new Point(rect.TopLeft.X + cornerRadius.TopLeft, rect.TopLeft.Y),
+                size: new Size(cornerRadius.TopLeft, cornerRadius.TopLeft),
+                rotationAngle: 0,
+                isLargeArc: false,
+                sweepDirection: SweepDirection.Clockwise,
+                isStroked: true
+            ));
+            figure.Segments.Add(new LineSegment(rect.TopRight - new Vector(cornerRadius.TopRight, 0), true));
+            figure.Segments.Add(new ArcSegment(
+                point: new Point(rect.TopRight.X, rect.TopRight.Y + cornerRadius.TopRight),
+                size: new Size(cornerRadius.TopRight, cornerRadius.TopRight),
+                rotationAngle: 0,
+                isLargeArc: false,
+                sweepDirection: SweepDirection.Clockwise,
+                isStroked: true
+            ));
+            figure.Segments.Add(new LineSegment(rect.BottomRight - new Vector(0, cornerRadius.BottomRight), true));
+            figure.Segments.Add(new ArcSegment(
+                point: new Point(rect.BottomRight.X - cornerRadius.BottomRight, rect.BottomRight.Y),
+                size: new Size(cornerRadius.BottomRight, cornerRadius.BottomRight),
+                rotationAngle: 0,
+                isLargeArc: false,
+                sweepDirection: SweepDirection.Clockwise,
+                isStroked: true
+            ));
+            figure.Segments.Add(new LineSegment(rect.BottomLeft + new Vector(cornerRadius.BottomLeft, 0), true));
+            figure.Segments.Add(new ArcSegment(
+                point: new Point(rect.BottomLeft.X, rect.BottomLeft.Y - cornerRadius.BottomLeft),
+                size: new Size(cornerRadius.BottomLeft, cornerRadius.BottomLeft),
+                rotationAngle: 0,
+                isLargeArc: false,
+                sweepDirection: SweepDirection.Clockwise,
+                isStroked: true
+            ));
+            figure.Segments.Add(new LineSegment(new Point(rect.TopLeft.X, rect.TopLeft.Y + cornerRadius.TopLeft), true));
+
             dc.DrawGeometry(brush, pen, geometry);
-            #endif
         }
 
         public void DrawBoxModel()
