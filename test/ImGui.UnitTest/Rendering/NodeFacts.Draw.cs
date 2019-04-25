@@ -12,6 +12,12 @@ namespace ImGui.UnitTest.Rendering
     {
         public class Draw : IClassFixture<ApplicationFixture>
         {
+            private static void DrawAndCheck(Node node, int width, int height, string path)
+            {
+                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);
+                Util.CheckExpectedImage(imageRawBytes, width, height, path);
+            }
+
             [Fact]
             public void DrawANode()
             {
@@ -151,6 +157,35 @@ namespace ImGui.UnitTest.Rendering
 
                 Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 200, 200);
                 Util.CheckExpectedImage(imageRawBytes, 200, 200, @"Rendering\images\NodeFacts.Draw.DrawANodeArc.png");
+            }
+
+            [Fact]
+            public void DrawANodeArc1()
+            {
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = new Point(87.07, 45.86);
+                figure.Segments.Add(
+                    new ArcSegment(
+                        point: new Point(80, 40),
+                        size: new Size(10, 20),
+                        rotationAngle: 0,
+                        isLargeArc: false,
+                        sweepDirection: SweepDirection.Counterclockwise,
+                        isStroked: true));
+                figure.IsClosed = true;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
+
+                Node node = new Node(1);
+                using (var ctx = node.RenderOpenStatic())
+                {
+                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
+                }
+
+                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 200, 200);
+                Util.CheckExpectedImage(imageRawBytes, 200, 200, @"Rendering\images\NodeFacts.Draw.DrawANodeArc1.png");
             }
 
             [Fact]

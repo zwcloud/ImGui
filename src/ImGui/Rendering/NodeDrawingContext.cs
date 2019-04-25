@@ -137,6 +137,8 @@ namespace ImGui.Rendering
                 var borderRadius = style.BorderRadius;
                 PathGeometry geometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
+                figure.IsClosed = true;
+                figure.IsFilled = true;
                 geometry.Figures.Add(figure);
 
                 //start from top-left
@@ -163,7 +165,8 @@ namespace ImGui.Rendering
                         var ellipseYRadius = r - bt;
                         topLeftLowerEndPoint = paddingIntersectionPoint + new Vector(ellipseXRadius, 0);
                         figure.StartPoint = topLeftLowerEndPoint;
-                        figure.Segments.Add(new ArcSegment(new Point(borderBoxRect.Left+r, borderBoxRect.Top - border.top), new Size(ellipseXRadius, ellipseYRadius), 0, false, SweepDirection.Counterclockwise, false));
+                        var halfEllipsePoint = MathEx.EvaluateEllipse(arcCenter, ellipseXRadius, ellipseYRadius, MathEx.Deg2Rad(-135));
+                        figure.Segments.Add(new ArcSegment(halfEllipsePoint, new Size(ellipseXRadius, ellipseYRadius), 0, false, SweepDirection.Counterclockwise, false));
                         figure.Segments.Add(new LineSegment(halfArcPoint, false));
                         figure.Segments.Add(new ArcSegment(new Point(borderBoxRect.Left+r, borderBoxRect.Top), new Size(r, r), 0, false, SweepDirection.Clockwise, false));
                     }

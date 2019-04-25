@@ -16,7 +16,7 @@ namespace ImGui.UnitTest.Rendering
                 new Rect(new Point(30, 30), new Point(80, 80)));
             context.Close();
 
-            ShowImage(node, 110, 110,
+            DrawAndCheck(node, 110, 110,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderANode)}.png");
         }
 
@@ -34,7 +34,7 @@ namespace ImGui.UnitTest.Rendering
                 var context = node.RenderOpen();
                 context.DrawRectangle(new Rect(new Point(30, 30), new Point(80, 80)));
                 context.Close();
-                ShowImage(node, 110, 110,
+                DrawAndCheck(node, 110, 110,
                     $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderAStatedNode)}_Normal.png");
             }
 
@@ -43,7 +43,7 @@ namespace ImGui.UnitTest.Rendering
                 var context = node.RenderOpen();
                 context.DrawRectangle(new Rect(new Point(30, 30), new Point(80, 80)));
                 context.Close();
-                ShowImage(node, 110, 110,
+                DrawAndCheck(node, 110, 110,
                     $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderAStatedNode)}_Hover.png");
             }
 
@@ -69,8 +69,7 @@ namespace ImGui.UnitTest.Rendering
             context.DrawRectangle(new Brush(Color.YellowGreen), new Pen(Color.Cornsilk, 4), new Rect(100, 100, 50, 50));
             context.Close();
 
-            Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 300, 300);
-            Util.CheckExpectedImage(imageRawBytes, 300, 300,
+            DrawAndCheck(node, 300, 300,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderPathGeometry)}.png");
         }
 
@@ -85,7 +84,7 @@ namespace ImGui.UnitTest.Rendering
             context.DrawBoxModel();
             context.Close();
 
-            ShowImage(node, 250, 250,
+            DrawAndCheck(node, 250, 250,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderBoxModel)}.png");
         }
 
@@ -110,7 +109,7 @@ namespace ImGui.UnitTest.Rendering
         [Fact]
         public void RenderRoundBoxModel()
         {
-            var node = new Node(1, new Rect(100, 100, 200, 200));
+            var node = new Node(1, new Rect(20, 20, 200, 200));
             node.RuleSet.Border = (top:20, right: 30, 0, left:40);
             node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.Black);
             node.RuleSet.BorderRadius = (TopLeft:50, 40, 0, 0);
@@ -122,14 +121,6 @@ namespace ImGui.UnitTest.Rendering
 
             DrawAndCheck(node, 300, 250,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderRoundBoxModel)}.png");
-        }
-
-        private static void ShowImage(Node node, int width, int height, string path)
-        {
-            Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);
-            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-            Util.SaveImage(image, path);
-            Util.OpenImage(path);
         }
 
         private static void DrawAndCheck(Node node, int width, int height, string path)

@@ -54,6 +54,8 @@ namespace ImGui.GraphicsImplementation
             throw new System.NotImplementedException();
         }
 
+        private bool forceStrokeGeometry = true;//TEMP: for debugging geometry drawing
+
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)
         {
             Debug.Assert((brush != null || pen != null) && geometry != null);
@@ -151,6 +153,11 @@ namespace ImGui.GraphicsImplementation
                     if (figure.IsFilled && brush != null)
                     {
                         AddConvexPolyFilled(Path, brush.FillColor, true);
+                    }
+
+                    if (forceStrokeGeometry)
+                    {
+                        AddPolyline(Path, pen.LineColor, false, pen.LineWidth);
                     }
                 }
             }
