@@ -102,7 +102,7 @@ namespace ImGui.UnitTest.Rendering
             context.DrawRoundedRectangle(new Rect(20, 20, 100, 60));
             context.Close();
 
-            DrawAndCheck(node, 250, 250,
+            DrawAndCheck(node, 250, 100,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderRoundedRectangle)}.png");
         }
 
@@ -120,7 +120,7 @@ namespace ImGui.UnitTest.Rendering
             context.DrawBoxModel();
             context.Close();
 
-            ShowImage(node, 300, 250,
+            DrawAndCheck(node, 300, 250,
                 $@"Rendering\images\{nameof(RenderingPipelineFacts)}\{nameof(RenderRoundBoxModel)}.png");
         }
 
