@@ -110,9 +110,9 @@ namespace ImGui.UnitTest.Rendering
         public void RenderRoundBoxModel()
         {
             var node = new Node(1, new Rect(20, 20, 200, 200));
-            node.RuleSet.Border = (top:20, right: 30, 0, left:40);
+            node.RuleSet.Border = (top:20, right: 30, bottom: 20, left:40);
             node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.Black);
-            node.RuleSet.BorderRadius = (TopLeft:50, 40, 0, 0);
+            node.RuleSet.BorderRadius = (TopLeft:50, 40, 20, 30);
             node.RuleSet.BackgroundColor = Color.AliceBlue;
 
             var context = node.RenderOpen();
