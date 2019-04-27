@@ -39,6 +39,7 @@ namespace ImGui.Rendering
                 PathGeometry geometry = new PathGeometry();
                 geometry.Figures.Add(GenerateTopBorderFigure(borderBoxRect, paddingBoxRect, border, borderRadius));
                 geometry.Figures.Add(GenerateRightBorderFigure(borderBoxRect, paddingBoxRect, border, borderRadius));
+                geometry.Figures.Add(GenerateBottomBorderFigure(borderBoxRect, paddingBoxRect, border, borderRadius));
                 //TODO other borders
 
                 dc.DrawGeometry(new Brush(borderColor.top), new Pen(Color.Black, 2), geometry);
@@ -198,6 +199,85 @@ namespace ImGui.Rendering
 
             //close the figure
             figure.Segments.Add(new LineSegment(endPoint, false));
+            figure.IsClosed = true;
+
+            return figure;
+        }
+
+        private static PathFigure GenerateBottomBorderFigure(
+            Rect borderRect,
+            Rect paddingRect,
+            (double top, double right, double bottom, double left) border,
+            (double TopLeft, double TopRight, double BottomRight, double BottomLeft) borderRadius
+            )
+        {
+            PathFigure figure = new PathFigure();
+            figure.IsFilled = true;
+
+            //bottom right
+            {
+                Point startPoint;
+                var br = border.right;
+                var bb = border.bottom;
+                var r = borderRadius.BottomRight;
+                var arcCenter = borderRect.BottomRight + new Vector(-r, -r);
+                var halfArcPoint = MathEx.EvaluateCircle(arcCenter, r, MathEx.Deg2Rad(45));
+                var paddingCorner = paddingRect.BottomRight;
+                var arcEndPoint = new Point(borderRect.Right - r, borderRect.Bottom);
+
+                if (r == bb && bb == br || br <= r && r <= bb || bb <= r && r <= br || r <= br && br <= bb || r <= bb && bb <= br)
+                {
+                    startPoint = paddingCorner;
+                    figure.Segments.Add(new LineSegment(halfArcPoint, false));
+                    figure.Segments.Add(new ArcSegment(arcEndPoint, new Size(r, r), 0, false, SweepDirection.Clockwise,false));
+                }
+                else //(br < bb && bt < r || bb<br && br <r)//inner ellipse curve occurs
+                {
+                    var ellipseCenter = arcCenter;
+                    var ellipseXRadius = r - br;
+                    var ellipseYRadius = r - bb;
+                    var halfEllipsePoint = MathEx.EvaluateEllipse(ellipseCenter, ellipseXRadius, ellipseYRadius, MathEx.Deg2Rad(45));
+                    var ellipseEndPoint = new Point(ellipseCenter.X, ellipseCenter.Y + ellipseYRadius);
+                    startPoint = ellipseEndPoint;
+                    figure.Segments.Add(new ArcSegment(halfEllipsePoint, new Size(ellipseXRadius, ellipseYRadius), 0, false, SweepDirection.Counterclockwise, false));
+                    figure.Segments.Add(new LineSegment(halfArcPoint, false));
+                    figure.Segments.Add(new ArcSegment(arcEndPoint, new Size(r, r), 0, false, SweepDirection.Clockwise,false));
+                }
+                figure.StartPoint = startPoint;
+            }
+
+            //bottom left
+            {
+                var bl = border.left;
+                var bb = border.bottom;
+                var r = borderRadius.BottomLeft;
+                var arcCenter = borderRect.BottomLeft + new Vector(r, -r);
+                var halfArcPoint = MathEx.EvaluateCircle(arcCenter, r, MathEx.Deg2Rad(135));
+                var paddingCorner = paddingRect.BottomLeft;
+                var arcEndPoint = new Point(borderRect.Left + r, borderRect.Bottom);
+
+                figure.Segments.Add(new LineSegment(arcEndPoint, false));
+
+                if (r == bb && bb == bl || bl <= r && r <= bb || bb <= r && r <= bl || r <= bl && bl <= bb || r <= bb && bb <= bl)
+                {
+                    figure.Segments.Add(new ArcSegment(halfArcPoint, new Size(r, r), 0, false, SweepDirection.Clockwise,false));
+                    figure.Segments.Add(new LineSegment(paddingCorner, false));
+                }
+                else //(bl < bb && bt < r || bb<bl && bl <r)//inner ellipse curve occurs
+                {
+                    var ellipseCenter = arcCenter;
+                    var ellipseXRadius = r - bl;
+                    var ellipseYRadius = r - bb;
+                    var halfEllipsePoint = MathEx.EvaluateEllipse(ellipseCenter, ellipseXRadius, ellipseYRadius, MathEx.Deg2Rad(135));
+                    var ellipseEndPoint = new Point(ellipseCenter.X, ellipseCenter.Y + ellipseYRadius);
+                    figure.Segments.Add(new ArcSegment(halfArcPoint, new Size(r, r), 0, false, SweepDirection.Clockwise,false));
+                    figure.Segments.Add(new LineSegment(halfEllipsePoint, false));
+                    figure.Segments.Add(new ArcSegment(ellipseEndPoint, new Size(ellipseXRadius, ellipseYRadius), 0, false, SweepDirection.Counterclockwise, false));
+                }
+            }
+
+            //close the figure
+            figure.Segments.Add(new LineSegment(figure.StartPoint, false));
             figure.IsClosed = true;
 
             return figure;
