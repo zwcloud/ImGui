@@ -112,7 +112,7 @@ namespace ImGui.UnitTest.Rendering
             var node = new Node(1, new Rect(20, 20, 200, 200));
             node.RuleSet.Border = (top:20, right: 30, bottom: 20, left:40);
             node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.Black);
-            node.RuleSet.BorderRadius = (TopLeft:50, 40, 20, 30);
+            node.RuleSet.BorderRadius = (TopLeft: 50, TopRight: 40, BottomRight: 20, BottomLeft: 30);
             node.RuleSet.BackgroundColor = Color.AliceBlue;
 
             var context = node.RenderOpen();

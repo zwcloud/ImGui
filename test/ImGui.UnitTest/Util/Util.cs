@@ -181,6 +181,7 @@ namespace ImGui.UnitTest
             Assert.True(Util.CompareImage(expectedImage, image));
 #else
             Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
+            Util.OpenImage(Util.UnitTestRootDir + expectedImageFilePath);
 #endif
         }
 
