@@ -66,6 +66,16 @@ namespace ImGui.UnitTest
             Process.Start("rundll32.exe", @"""C:\Program Files\Windows Photo Viewer\PhotoViewer.dll"",ImageView_Fullscreen " + path);
         }
 
+        public static void SelectFileInExplorer(string path)
+        {
+            if(!File.Exists(path))
+            {
+                throw new FileNotFoundException();
+            }
+            string argument = "/select, \"" + path +"\"";
+            Process.Start("explorer", argument);
+        }
+
         public static void OpenModel(string path)
         {
             const string ModelViewerPath = @"E:\Program Files (green)\open3mod_1_1_standalone\open3mod.exe";
@@ -176,12 +186,14 @@ namespace ImGui.UnitTest
         internal static void CheckExpectedImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
         {
             var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-#if DEBUG
+#if DEBUG//check if it matches expected image
             var expectedImage = Util.LoadImage(expectedImageFilePath);
             Assert.True(Util.CompareImage(expectedImage, image));
-#else
-            Util.SaveImage(image, Util.UnitTestRootDir + expectedImageFilePath);//generate expected image
-            Util.OpenImage(Util.UnitTestRootDir + expectedImageFilePath);
+#else//generate expected image
+            var path = Util.UnitTestRootDir + expectedImageFilePath;
+            Util.SaveImage(image, path);
+            Util.SelectFileInExplorer(path);
+            Util.OpenImage(path);
 #endif
         }
 

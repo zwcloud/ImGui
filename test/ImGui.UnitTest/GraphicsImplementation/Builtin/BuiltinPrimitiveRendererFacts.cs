@@ -26,19 +26,71 @@ namespace ImGui.UnitTest.Rendering
                 Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
             }
 
+            internal static void DrawGeometry(PathGeometry geometry, Brush brush, Pen pen, int width, int height, string expectedImageFilePath)
+            {
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] imageRawBytes;
+
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
+
+                    renderer.SetShapeMesh(shapeMesh);
+                    renderer.SetTextMesh(textMesh);
+                    renderer.SetImageMesh(imageMesh);
+                    renderer.DrawGeometry(brush, pen, geometry);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.SetShapeMesh(null);
+                    renderer.SetTextMesh(null);
+                    renderer.SetImageMesh(null);
+
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
+
+                    imageRawBytes = context.GetRenderedRawBytes();
+                }
+                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+            }
+
+
             [Fact]
             public void StrokeAPath()
             {
-                var primitive = new PathGeometry();
-                primitive.PathMoveTo(new Point(10, 10));
-                primitive.PathLineTo(new Point(10, 80));
-                primitive.PathLineTo(new Point(80, 80));
-                primitive.PathLineTo(new Point(80, 10));
-                primitive.PathClose();
-                primitive.PathStroke(2, Color.Red);
+                var geometry = new PathGeometry();
+                var figure = new PathFigure();
+                geometry.Figures.Add(figure);
 
-                CheckExpectedImage(primitive, 100, 100,
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.StrokeAPath.png");
+                figure.StartPoint = new Point(10, 10);
+
+                figure.Segments.Add(new LineSegment(new Point(10, 10), true));
+                figure.Segments.Add(new LineSegment(new Point(10, 80), true));
+                figure.Segments.Add(new LineSegment(new Point(80, 80), true));
+                figure.Segments.Add(new LineSegment(new Point(80, 10), true));
+                figure.Segments.Add(new LineSegment(new Point(10, 10), true));
+
+                Pen pen = new Pen(Color.Red, 2);
+
+                DrawGeometry(geometry, null, pen, 100, 100,
+                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts\DrawPath\StrokeAPath.png");
             }
 
             [Fact]
