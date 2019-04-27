@@ -36,22 +36,26 @@ namespace ImGui.Rendering
                 var border = style.Border;
                 var borderColor = style.BorderColor;
                 var borderRadius = style.BorderRadius;
-                PathGeometry geometry = new PathGeometry();
-                geometry.Figures.Add(GenerateTopBorderFigure(borderBoxRect, paddingBoxRect, border, borderRadius));
-                geometry.Figures.Add(GenerateRightBorderFigure(borderBoxRect, paddingBoxRect, border, borderRadius));
-                geometry.Figures.Add(GenerateBottomBorderFigure(borderBoxRect, paddingBoxRect, border, borderRadius));
-                geometry.Figures.Add(GenerateLeftBorderFigure(borderBoxRect, paddingBoxRect, border, borderRadius));
-                dc.DrawGeometry(new Brush(borderColor.top), new Pen(Color.Black, 2), geometry);
+                PathGeometry topBorder = GenerateTopBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
+                PathGeometry leftBorder = GenerateRightBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
+                PathGeometry rightBorder = GenerateBottomBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
+                PathGeometry bottomBorder = GenerateLeftBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
+                dc.DrawGeometry(new Brush(borderColor.top),     new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, topBorder);
+                dc.DrawGeometry(new Brush(borderColor.left),    new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, leftBorder);
+                dc.DrawGeometry(new Brush(borderColor.right),   new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, rightBorder);
+                dc.DrawGeometry(new Brush(borderColor.bottom),  new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, bottomBorder);
             }
         }
 
-        private static PathFigure GenerateTopBorderFigure(
+        private static PathGeometry GenerateTopBorderGeometry(
             Rect borderRect,
             Rect paddingRect,
             (double top, double right, double bottom, double left) border,
             (double TopLeft, double TopRight, double BottomRight, double BottomLeft) borderRadius)
         {
+            PathGeometry geometry = new PathGeometry();
             PathFigure figure = new PathFigure();
+            geometry.Figures.Add(figure);
             figure.IsFilled = true;
 
             //start from top-left
@@ -118,16 +122,18 @@ namespace ImGui.Rendering
             figure.Segments.Add(new LineSegment(figure.StartPoint, false));
             figure.IsClosed = true;
 
-            return figure;
+            return geometry;
         }
 
-        private static PathFigure GenerateRightBorderFigure(
+        private static PathGeometry GenerateRightBorderGeometry(
             Rect borderRect,
             Rect paddingRect,
             (double top, double right, double bottom, double left) border,
             (double TopLeft, double TopRight, double BottomRight, double BottomLeft) borderRadius)
         {
+            PathGeometry geometry = new PathGeometry();
             PathFigure figure = new PathFigure();
+            geometry.Figures.Add(figure);
             figure.IsFilled = true;
 
             //top-right
@@ -196,17 +202,19 @@ namespace ImGui.Rendering
             figure.Segments.Add(new LineSegment(figure.StartPoint, false));
             figure.IsClosed = true;
 
-            return figure;
+            return geometry;
         }
 
-        private static PathFigure GenerateBottomBorderFigure(
+        private static PathGeometry GenerateBottomBorderGeometry(
             Rect borderRect,
             Rect paddingRect,
             (double top, double right, double bottom, double left) border,
             (double TopLeft, double TopRight, double BottomRight, double BottomLeft) borderRadius
             )
         {
+            PathGeometry geometry = new PathGeometry();
             PathFigure figure = new PathFigure();
+            geometry.Figures.Add(figure);
             figure.IsFilled = true;
 
             //bottom right
@@ -275,17 +283,19 @@ namespace ImGui.Rendering
             figure.Segments.Add(new LineSegment(figure.StartPoint, false));
             figure.IsClosed = true;
 
-            return figure;
+            return geometry;
         }
 
-        private static PathFigure GenerateLeftBorderFigure(
+        private static PathGeometry GenerateLeftBorderGeometry(
             Rect borderRect,
             Rect paddingRect,
             (double top, double right, double bottom, double left) border,
             (double TopLeft, double TopRight, double BottomRight, double BottomLeft) borderRadius
             )
         {
+            PathGeometry geometry = new PathGeometry();
             PathFigure figure = new PathFigure();
+            geometry.Figures.Add(figure);
             figure.IsFilled = true;
 
             //bottom left
@@ -353,7 +363,7 @@ namespace ImGui.Rendering
             figure.Segments.Add(new LineSegment(figure.StartPoint, false));
             figure.IsClosed = true;
 
-            return figure;
+            return geometry;
         }
 
         private void DrawBackground(Rect paddingBoxRect)
