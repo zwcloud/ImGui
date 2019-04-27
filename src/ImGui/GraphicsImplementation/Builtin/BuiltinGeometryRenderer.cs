@@ -626,65 +626,6 @@ namespace ImGui.GraphicsImplementation
 
         #endregion
 
-        public void DrawPath(PathGeometry geometry, Vector offset)
-        {
-            foreach (var command in geometry.Path)
-            {
-                switch (command.Type)
-                {
-                    case PathCommandType.PathMoveTo:
-                    {
-                        var cmd = (MoveToCommand)command;
-                        this.PathMoveTo(cmd.Point + offset);
-                        break;
-                    }
-                    case PathCommandType.PathLineTo:
-                    {
-                        var cmd = (LineToCommand)command;
-                        this.PathLineTo(cmd.Point + offset);
-                        break;
-                    }
-                    case PathCommandType.PathCurveTo:
-                    {
-                        throw new NotImplementedException();
-                        break;
-                    }
-                    case PathCommandType.PathClosePath:
-                    {
-                        this.PathClose();
-                        break;
-                    }
-                    case PathCommandType.PathArc:
-                    {
-                        var cmd = (ArcCommand)command;
-                        this.PathArcFast(cmd.Center + offset, cmd.Radius, cmd.Amin, cmd.Amax);
-                        break;
-                    }
-                    case PathCommandType.PathEllipse:
-                    {
-                        var cmd = (EllipseCommand)command;
-                        PathEllipse(cmd.Center + offset, cmd.RadiusX, cmd.RadiusY, cmd.FromAngle, cmd.ToAngle);
-                        break;
-                    }
-                    case PathCommandType.Stroke:
-                    {
-                        var cmd = (StrokeCommand)command;
-                        this.PathStroke(cmd.Color, false, cmd.LineWidth);
-                        break;
-                    }
-                    case PathCommandType.Fill:
-                    {
-                        var cmd = (FillCommand)command;
-                        this.PathFill(cmd.Color);
-                        break;
-                    }
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-        public void DrawPath(PathGeometry geometry) => this.DrawPath(geometry, Vector.Zero);
-
         private bool CheckTextPrimitive(TextGeometry geometry, StyleRuleSet style)
         {
             do
@@ -723,6 +664,11 @@ namespace ImGui.GraphicsImplementation
             } while (false);
 
             return true;
+        }
+
+        [Obsolete]
+        public void DrawPath(PathGeometry geometry, Vector offset)
+        {
         }
 
         /// <summary>

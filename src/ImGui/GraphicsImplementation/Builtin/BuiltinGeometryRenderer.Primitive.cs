@@ -8,7 +8,7 @@ namespace ImGui.GraphicsImplementation
         public void DrawPathPrimitive(Mesh shapeMesh, PathGeometry pathGeometry, Vector offset)
         {
             this.SetShapeMesh(shapeMesh);
-            this.DrawPath(pathGeometry, offset);
+            //this.DrawPath(pathGeometry, offset);
             this.SetShapeMesh(null);
         }
 
