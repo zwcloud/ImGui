@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define ForceStrokePathGeometry //Open this when debugging PathGeometry rendering
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.GraphicsAbstraction;
@@ -53,8 +54,6 @@ namespace ImGui.GraphicsImplementation
         {
             throw new System.NotImplementedException();
         }
-
-        private bool forceStrokeGeometry = true;//TEMP: for debugging geometry drawing
 
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)
         {
@@ -155,10 +154,12 @@ namespace ImGui.GraphicsImplementation
                         this.AddConvexPolyFilled(Path, brush.FillColor, true);
                     }
 
-                    if (this.forceStrokeGeometry && pen != null)
+#if ForceStrokePathGeometry
+                    if (pen != null)
                     {
                         this.AddPolyline(Path, pen.LineColor, false, pen.LineWidth);
                     }
+#endif
                 }
             }
         }
