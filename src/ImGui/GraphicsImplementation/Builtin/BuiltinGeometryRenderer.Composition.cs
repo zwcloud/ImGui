@@ -17,7 +17,7 @@ namespace ImGui.GraphicsImplementation
                 Point* scratchForLine = stackalloc Point[2];
                 scratchForLine[0] = point0;
                 scratchForLine[1] = point1;
-                AddPolyline(scratchForLine, 2, pen.LineColor, false, pen.LineWidth);
+                this.AddPolyline(scratchForLine, 2, pen.LineColor, false, pen.LineWidth);
             }
         }
 
@@ -32,14 +32,14 @@ namespace ImGui.GraphicsImplementation
                 scratchForRectangle[2] = rectangle.BottomRight;
                 scratchForRectangle[3] = rectangle.BottomLeft;
 
-                if(pen != null)
+                if (pen != null)
                 {
-                    AddPolyline(scratchForRectangle, 4, pen.LineColor, true, pen.LineWidth);
+                    this.AddPolyline(scratchForRectangle, 4, pen.LineColor, true, pen.LineWidth);
                 }
 
                 if (brush != null)
                 {
-                    AddConvexPolyFilled(scratchForRectangle, 4, brush.FillColor, false);
+                    this.AddConvexPolyFilled(scratchForRectangle, 4, brush.FillColor, false);
                 }
             }
         }
@@ -74,13 +74,13 @@ namespace ImGui.GraphicsImplementation
                             case ArcSegment arcSegment:
                             {
                                 var generatedPoints = arcSegment.Flatten(currentPoint);
-                                if (arcSegment.IsStroked)
+                                if (arcSegment.IsStroked && pen != null)
                                 {
-                                    AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                    this.AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
                                 }
                                 Path.AddRange(generatedPoints);
                             }
-                                break;
+                            break;
                             case CubicBezierSegment cubicBezierSegment:
                             {
                                 List<Point> generatedPoints;
@@ -90,41 +90,41 @@ namespace ImGui.GraphicsImplementation
                                     scratch[0] = cubicBezierSegment.ControlPoint1;
                                     scratch[1] = cubicBezierSegment.ControlPoint2;
                                     scratch[2] = cubicBezierSegment.EndPoint;
-                                    generatedPoints = CubicBezier_GeneratePolyLinePoints(currentPoint, scratch, 3);
+                                    generatedPoints = this.CubicBezier_GeneratePolyLinePoints(currentPoint, scratch, 3);
                                 }
-                                if (cubicBezierSegment.IsStroked)
+                                if (cubicBezierSegment.IsStroked && pen != null)
                                 {
-                                    AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                    this.AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
                                 }
                                 Path.AddRange(generatedPoints);
                             }
-                                break;
+                            break;
                             case LineSegment lineSegment:
-                                if (lineSegment.IsStroked)
+                                if (lineSegment.IsStroked && pen != null)
                                 {
                                     unsafe
                                     {
                                         var scratch = stackalloc Point[2];
                                         scratch[0] = currentPoint;
                                         scratch[1] = lineSegment.Point;
-                                        AddPolyline(scratch, 2, pen.LineColor, false, pen.LineWidth);
+                                        this.AddPolyline(scratch, 2, pen.LineColor, false, pen.LineWidth);
                                     }
                                 }
                                 Path.Add(lineSegment.Point);
                                 break;
                             case PolyCubicBezierSegment polyCubicBezierSegment:
                             {
-                                var generatedPoints = CubicBezier_GeneratePolyLinePoints(currentPoint, polyCubicBezierSegment.Points);
-                                if (polyCubicBezierSegment.IsStroked)
+                                var generatedPoints = this.CubicBezier_GeneratePolyLinePoints(currentPoint, polyCubicBezierSegment.Points);
+                                if (polyCubicBezierSegment.IsStroked && pen != null)
                                 {
-                                    AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                    this.AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
                                 }
                                 Path.AddRange(generatedPoints);
                             }
-                                break;
+                            break;
                             case PolyLineSegment polyLineSegment:
                                 var points = polyLineSegment.Points;
-                                if (polyLineSegment.IsStroked)
+                                if (polyLineSegment.IsStroked && pen != null)
                                 {
                                     unsafe
                                     {
@@ -135,7 +135,7 @@ namespace ImGui.GraphicsImplementation
                                         {
                                             scratch[1 + i] = points[i];
                                         }
-                                        AddPolyline(scratch, pointCount, pen.LineColor, false, pen.LineWidth);
+                                        this.AddPolyline(scratch, pointCount, pen.LineColor, false, pen.LineWidth);
                                     }
                                 }
                                 Path.AddRange(points);
@@ -152,12 +152,12 @@ namespace ImGui.GraphicsImplementation
 
                     if (figure.IsFilled && brush != null)
                     {
-                        AddConvexPolyFilled(Path, brush.FillColor, true);
+                        this.AddConvexPolyFilled(Path, brush.FillColor, true);
                     }
 
-                    if (forceStrokeGeometry)
+                    if (this.forceStrokeGeometry && pen != null)
                     {
-                        AddPolyline(Path, pen.LineColor, false, pen.LineWidth);
+                        this.AddPolyline(Path, pen.LineColor, false, pen.LineWidth);
                     }
                 }
             }

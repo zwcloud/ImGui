@@ -1,4 +1,5 @@
-﻿using ImGui.GraphicsImplementation;
+﻿using System.Runtime.CompilerServices;
+using ImGui.GraphicsImplementation;
 using ImGui.Rendering;
 using Xunit;
 
@@ -6,34 +7,19 @@ namespace ImGui.UnitTest.Rendering
 {
     public class BuiltinPrimitiveRendererFacts
     {
-        public class DrawPath
+        private const string RootDir = @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts\";
+
+        public class DrawGeometry
         {
-            internal static void CheckExpectedImage(PathGeometry geometry, int width, int height, string expectedImageFilePath)
-            {
-                byte[] imageRawBytes;
-                using (var context = new RenderContextForTest(width, height))
-                {
-                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-                    var mesh = new Mesh();
-                    geometryRenderer.DrawPathPrimitive(mesh, geometry, Vector.Zero);
-
-                    context.Clear();
-                    context.DrawShapeMesh(mesh);
-
-                    imageRawBytes = context.GetRenderedRawBytes();
-                }
-
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
-            }
-
-            internal static void DrawGeometry(PathGeometry geometry, Brush brush, Pen pen, int width, int height, string expectedImageFilePath)
+            internal static void CheckGeometry(Geometry geometry, Brush brush, Pen pen, int width, int height,
+                [CallerMemberName] string methodName = "unknown")
             {
                 Application.EnableMSAA = false;
 
                 MeshBuffer meshBuffer = new MeshBuffer();
                 MeshList meshList = new MeshList();
                 BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
-                byte[] imageRawBytes;
+                byte[] bytes;
 
                 using (var context = new RenderContextForTest(width, height))
                 {
@@ -66,56 +52,45 @@ namespace ImGui.UnitTest.Rendering
                     context.Clear();
                     context.DrawMeshes(meshBuffer);
 
-                    imageRawBytes = context.GetRenderedRawBytes();
+                    bytes = context.GetRenderedRawBytes();
                 }
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawGeometry)}\\{methodName}.png");
             }
 
-
             [Fact]
-            public void StrokeAPath()
+            public void StrokeAPathGeometry()
             {
                 var geometry = new PathGeometry();
                 var figure = new PathFigure();
                 geometry.Figures.Add(figure);
-
                 figure.StartPoint = new Point(10, 10);
-
                 figure.Segments.Add(new LineSegment(new Point(10, 10), true));
                 figure.Segments.Add(new LineSegment(new Point(10, 80), true));
                 figure.Segments.Add(new LineSegment(new Point(80, 80), true));
                 figure.Segments.Add(new LineSegment(new Point(80, 10), true));
                 figure.Segments.Add(new LineSegment(new Point(10, 10), true));
-
+                figure.IsClosed = true;
                 Pen pen = new Pen(Color.Red, 2);
-
-                DrawGeometry(geometry, null, pen, 100, 100,
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts\DrawPath\StrokeAPath.png");
+                CheckGeometry(geometry, null, pen, 100, 100);
             }
 
             [Fact]
-            public void FillAPath()
+            public void FillAPathGeometry()
             {
-                var primitive = new PathGeometry();
-                primitive.PathMoveTo(new Point(10, 10));
-                primitive.PathLineTo(new Point(10, 80));
-                primitive.PathLineTo(new Point(80, 80));
-                primitive.PathClose();
-                primitive.PathFill(Color.Red);
-
-                CheckExpectedImage(primitive, 100, 100,
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillAPath.png");
-            }
-
-            [Fact]
-            public void FillARect()
-            {
-                var primitive = new PathGeometry();
-                primitive.PathRect(new Rect(10, 10, 80, 60));
-                primitive.PathFill(Color.Red);
-
-                CheckExpectedImage(primitive, 100, 100,
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawPath.FillARect.png");
+                var geometry = new PathGeometry();
+                var figure = new PathFigure();
+                figure.IsFilled = true;
+                geometry.Figures.Add(figure);
+                figure.StartPoint = new Point(10, 10);
+                figure.Segments.Add(new LineSegment(new Point(10, 10), false));
+                figure.Segments.Add(new LineSegment(new Point(10, 80), false));
+                figure.Segments.Add(new LineSegment(new Point(80, 80), false));
+                figure.Segments.Add(new LineSegment(new Point(80, 10), false));
+                figure.Segments.Add(new LineSegment(new Point(10, 10), false));
+                figure.IsClosed = true;
+                Brush brush = new Brush(Color.Red);
+                CheckGeometry(geometry, brush, null, 100, 100);
             }
         }
 
