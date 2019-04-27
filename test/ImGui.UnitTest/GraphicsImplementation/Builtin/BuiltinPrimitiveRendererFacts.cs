@@ -9,6 +9,142 @@ namespace ImGui.UnitTest.Rendering
     {
         private const string RootDir = @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts\";
 
+        public class DrawLine
+        {
+            internal static void CheckLine(Pen pen, Point point0, Point point1,
+                int width, int height,
+                [CallerMemberName] string methodName = "unknown")
+            {
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
+
+                    renderer.SetShapeMesh(shapeMesh);
+                    renderer.SetTextMesh(textMesh);
+                    renderer.SetImageMesh(imageMesh);
+
+                    renderer.DrawLine(pen, point0, point1);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+
+                    renderer.SetShapeMesh(null);
+                    renderer.SetTextMesh(null);
+                    renderer.SetImageMesh(null);
+
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
+
+                    bytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawLine)}\\{methodName}.png");
+            }
+
+            [Fact]
+            public void DrawALine()
+            {
+                Pen pen = new Pen(Color.Black, 1);
+                Point p0 = new Point(10, 10);
+                Point p1 = new Point(90, 10);
+
+                CheckLine(pen, p0, p1, 100, 100);
+            }
+
+            [Fact]
+            public void DrawAThickLine()
+            {
+                Pen pen = new Pen(Color.Black, 5);
+                Point p0 = new Point(10, 10);
+                Point p1 = new Point(90, 10);
+
+                CheckLine(pen, p0, p1, 100, 100);
+            }
+        }
+
+        public class DrawRectangle
+        {
+            internal static void CheckRectangle(Brush brush, Pen pen, Rect rectangle,
+                int width, int height,
+                [CallerMemberName] string methodName = "unknown")
+            {
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
+
+                    renderer.SetShapeMesh(shapeMesh);
+                    renderer.SetTextMesh(textMesh);
+                    renderer.SetImageMesh(imageMesh);
+
+                    renderer.DrawRectangle(brush, pen, rectangle);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+
+                    renderer.SetShapeMesh(null);
+                    renderer.SetTextMesh(null);
+                    renderer.SetImageMesh(null);
+
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
+
+                    bytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawRectangle)}\\{methodName}.png");
+            }
+
+            [Fact]
+            public void DrawARectangle()
+            {
+                Brush brush = new Brush(Color.Aqua);
+                Pen pen = new Pen(Color.Black, 4);
+                Rect rectangle = new Rect(new Point(20, 20), new Point(80, 80));
+
+                CheckRectangle(brush, pen, rectangle, 100, 100);
+            }
+        }
+
         public class DrawGeometry
         {
             internal static void CheckGeometry(Geometry geometry, Brush brush, Pen pen, int width, int height,
