@@ -145,6 +145,66 @@ namespace ImGui.UnitTest.Rendering
             }
         }
 
+        public class DrawRoundedRectangle
+        {
+            internal static void Check(Rect rectangle, double radiusX, double radiusY, Brush brush, Pen pen, int width, int height,
+                [CallerMemberName] string methodName = "unknown")
+            {
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
+
+                    renderer.SetShapeMesh(shapeMesh);
+                    renderer.SetTextMesh(textMesh);
+                    renderer.SetImageMesh(imageMesh);
+                    renderer.DrawRoundedRectangle(brush, pen, rectangle, radiusX, radiusY);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.SetShapeMesh(null);
+                    renderer.SetTextMesh(null);
+                    renderer.SetImageMesh(null);
+
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
+
+                    bytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawRoundedRectangle)}\\{methodName}.png");
+            }
+
+            [Fact]
+            public void DrawARectangle()
+            {
+                Brush brush = new Brush(Color.Aqua);
+                Pen pen = new Pen(Color.Black, 1);
+                Rect rectangle = new Rect(new Point(20, 20), new Point(160, 160));
+
+                Check(rectangle, 20, 40, brush, pen, 200, 200);
+            }
+        }
+
         public class DrawGeometry
         {
             internal static void CheckGeometry(Geometry geometry, Brush brush, Pen pen, int width, int height,

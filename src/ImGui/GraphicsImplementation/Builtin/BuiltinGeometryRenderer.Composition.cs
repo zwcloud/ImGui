@@ -47,7 +47,13 @@ namespace ImGui.GraphicsImplementation
 
         public override void DrawRoundedRectangle(Brush brush, Pen pen, Rect rectangle, double radiusX, double radiusY)
         {
-            throw new System.NotImplementedException();
+            Debug.Assert(brush != null || pen != null);
+
+            var rectangleGeometry = new RectangleGeometry(rectangle, radiusX, radiusY);
+            var geometry = new PathGeometry();
+            geometry.Figures.Add(rectangleGeometry.GetPathFigure());
+
+            DrawGeometry(brush, pen, geometry);
         }
 
         public override void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY)
@@ -162,6 +168,10 @@ namespace ImGui.GraphicsImplementation
 #endif
                 }
             }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public override void DrawImage(Image image, Rect rectangle)
@@ -173,5 +183,6 @@ namespace ImGui.GraphicsImplementation
         {
             throw new System.NotImplementedException();
         }
+
     }
 }

@@ -42,7 +42,7 @@ namespace ImGui.Rendering
         /// </summary>
         /// <param name="start">The path's startpoint</param>
         /// <param name="segments">A collection of segments</param>
-        public PathFigure(Point start, IEnumerable<PathSegment> segments)
+        public PathFigure(Point start, IEnumerable<PathSegment> segments, bool closed)
         {
             if (segments == null)
             {
@@ -51,6 +51,7 @@ namespace ImGui.Rendering
 
             StartPoint = start;
             Segments.AddRange(segments);
+            IsClosed = closed;
         }
 
     }
