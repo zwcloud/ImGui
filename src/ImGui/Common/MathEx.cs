@@ -329,5 +329,22 @@ namespace ImGui
         {
             return radian * 180 / Math.PI;
         }
+
+        /// <summary>
+        /// unit circle points: point at index i is the point at degree i of the unit circle.
+        /// </summary>
+        public static IReadOnlyList<Point> UnitCirclePoints = InitUnitCirclePoints();
+
+        private static IReadOnlyList<Point> InitUnitCirclePoints()
+        {
+            Point[] result = new Point[360];
+            for (int i = 0; i < result.Length; i++)
+            {
+                var a = MathEx.Deg2Rad(i);
+                result[i].X = Math.Cos(a);
+                result[i].Y = Math.Sin(a);
+            }
+            return result;
+        }
     }
 }
