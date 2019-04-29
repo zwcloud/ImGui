@@ -324,33 +324,79 @@ namespace ImGui.UnitTest.Rendering
 
         public class DrawImage
         {
-            internal static void CheckExpectedImage(ImageGeometry geometry, int width, int height, Rect contentRect, StyleRuleSet style, string expectedImageFilePath)
+            internal static void Check(System.Func<ImGui.OSAbstraction.Graphics.ITexture> textureGettter, Rect rectangle, int width, int height,
+                [CallerMemberName] string methodName = "unknown")
             {
-                byte[] imageRawBytes;
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-                    var mesh = new Mesh();
-                    geometryRenderer.DrawImagePrimitive(mesh, geometry, contentRect, style, Vector.Zero);
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
 
+                    renderer.SetShapeMesh(shapeMesh);
+                    renderer.SetTextMesh(textMesh);
+                    renderer.SetImageMesh(imageMesh);
+                    renderer.DrawImage(textureGettter(), rectangle);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.SetShapeMesh(null);
+                    renderer.SetTextMesh(null);
+                    renderer.SetImageMesh(null);
+
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
                     context.Clear();
-                    context.DrawImageMesh(mesh);
+                    context.DrawMeshes(meshBuffer);
 
-                    imageRawBytes = context.GetRenderedRawBytes();
+                    bytes = context.GetRenderedRawBytes();
                 }
 
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawImage)}\\{methodName}.png");
             }
 
             [Fact]
             public void DrawOriginalImage()
             {
-                var primitive = new ImageGeometry(@"assets\images\logo.png");
-                var styleRuleSet = new StyleRuleSet {BackgroundColor = Color.White};
+                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\logo.png");
 
-                CheckExpectedImage(primitive, 300, 400,
-                    new Rect(10, 10, primitive.Image.Width, primitive.Image.Height), styleRuleSet,
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawImage.DrawOriginalImage.png");
+                Check(() =>
+                    {
+                        var texture = Application.PlatformContext.CreateTexture();
+                        texture.LoadImage(image.Data, image.Width, image.Height);
+                        return texture;
+                    },
+                    new Rect(10, 10, image.Width, image.Height), 300, 300);
+            }
+
+            [Fact]
+            public void DrawScaledImage()
+            {
+                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\logo.png");
+
+                Check(() =>
+                    {
+                        var texture = Application.PlatformContext.CreateTexture();
+                        texture.LoadImage(image.Data, image.Width, image.Height);
+                        return texture;
+                    },
+                    new Rect(10, 10, 200, 100), 250, 250);
             }
         }
 

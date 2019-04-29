@@ -81,7 +81,7 @@ namespace ImGui.Rendering
             }
         }
 
-        public override void DrawImage(Image image, Rect rectangle)
+        public override void DrawImage(ImGui.OSAbstraction.Graphics.ITexture image, Rect rectangle)
         {
             throw new System.NotImplementedException();
         }

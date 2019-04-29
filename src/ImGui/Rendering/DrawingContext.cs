@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGui.GraphicsAbstraction;
+using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui.Rendering
 {
@@ -131,9 +132,7 @@ namespace ImGui.Rendering
         /// <param name="rectangle">
         ///     The Rect into which the Image will be fit.
         /// </param>
-        public abstract void DrawImage(
-            Image image,
-            Rect rectangle);
+        public abstract void DrawImage(ITexture image, Rect rectangle);
 
 #if false //TODO
         /// <summary>
