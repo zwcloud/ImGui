@@ -371,6 +371,53 @@ namespace ImGui.UnitTest.Rendering
                 Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawImage)}\\{methodName}.png");
             }
 
+            internal static void Check(System.Func<ImGui.OSAbstraction.Graphics.ITexture> textureGettter, Rect rectangle, (double top, double right, double bottom, double left) slice, int width, int height,
+                [CallerMemberName] string methodName = "unknown")
+            {
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
+
+                    renderer.SetShapeMesh(shapeMesh);
+                    renderer.SetTextMesh(textMesh);
+                    renderer.SetImageMesh(imageMesh);
+                    renderer.DrawImage(textureGettter(), rectangle, slice);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.SetShapeMesh(null);
+                    renderer.SetTextMesh(null);
+                    renderer.SetImageMesh(null);
+
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
+
+                    bytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawImage)}\\{methodName}.png");
+            }
+
             [Fact]
             public void DrawOriginalImage()
             {
@@ -398,37 +445,37 @@ namespace ImGui.UnitTest.Rendering
                     },
                     new Rect(10, 10, 200, 100), 250, 250);
             }
-        }
 
-        public class DrawSlicedImage
-        {
-            internal static void CheckExpectedImage(ImageGeometry geometry, int width, int height, Rect rect, StyleRuleSet style, string expectedImageFilePath)
+            [Fact]
+            public void DrawSlicedImage1()
             {
-                byte[] imageRawBytes;
-                using (var context = new RenderContextForTest(width, height))
-                {
-                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-                    var mesh = new Mesh();
-                    geometryRenderer.DrawSlicedImagePrimitive(mesh, geometry, rect, style, Vector.Zero);
+                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\button.png");
 
-                    context.Clear();
-                    context.DrawImageMesh(mesh);
-
-                    imageRawBytes = context.GetRenderedRawBytes();
-                }
-
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+                Check(() =>
+                    {
+                        var texture = Application.PlatformContext.CreateTexture();
+                        texture.LoadImage(image.Data, image.Width, image.Height);
+                        return texture;
+                    },
+                    new Rect(2, 2, image.Width + 50, image.Height*0.8),
+                    (83, 54, 54, 54),
+                    500, 500);
             }
 
             [Fact]
-            public void DrawOneImage()
+            public void DrawSlicedImage2()
             {
-                var primitive = new ImageGeometry(@"assets\images\button.png");
-                var styleRuleSet = new StyleRuleSet {BorderImageSlice = (83, 54, 54, 54)};
+                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\button.png");
 
-                CheckExpectedImage(primitive, 300, 400,
-                    new Rect(2, 2, primitive.Image.Width + 50, primitive.Image.Height + 100), styleRuleSet,
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawSlicedImage.DrawOneImage.png");
+                Check(() =>
+                    {
+                        var texture = Application.PlatformContext.CreateTexture();
+                        texture.LoadImage(image.Data, image.Width, image.Height);
+                        return texture;
+                    },
+                    new Rect(2, 2, image.Width*1.5, image.Height*1.8),
+                    (83, 54, 54, 54),
+                    500, 500);
             }
         }
 

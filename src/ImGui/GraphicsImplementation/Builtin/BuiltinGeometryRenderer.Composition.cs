@@ -181,7 +181,7 @@ namespace ImGui.GraphicsImplementation
                 throw new ArgumentNullException(nameof(texture));
             }
 
-            Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
+            Color tintColor = Color.White;//TODO define tint color as a brush property
 
             //add a new draw command
             //TODO check if we need to add a new draw command
@@ -194,6 +194,81 @@ namespace ImGui.GraphicsImplementation
             var uvMax = new Point(1, 1);
             this.ImageMesh.PrimReserve(6, 4);
             AddImageRect(rectangle, uvMin, uvMax, tintColor);
+        }
+
+        public override void DrawImage(ITexture image, Rect rect,
+            (double top, double right, double bottom, double left) slice)
+        {
+            if (!image.Valid){ throw new InvalidOperationException("Texture is not valid for rendering."); }
+
+            var (top, right, bottom, left) = slice;
+            Point uv0 = new Point(left / image.Width, top / image.Height);
+            Point uv1 = new Point(1 - right / image.Width, 1 - bottom / image.Height);
+
+            //     | L |   | R |
+            // ----a---b---c---+
+            //   T | 1 | 2 | 3 |
+            // ----d---e---f---g
+            //     | 4 | 5 | 6 |
+            // ----h---i---j---k
+            //   B | 7 | 8 | 9 |
+            // ----+---l---m---n
+
+            var a = rect.TopLeft;
+            var b = a + new Vector(left, 0);
+            var c = rect.TopRight + new Vector(-right, 0);
+
+            var d = a + new Vector(0, top);
+            var e = b + new Vector(0, top);
+            var f = c + new Vector(0, top);
+            var g = f + new Vector(right, 0);
+
+            var h = rect.BottomLeft + new Vector(0, -bottom);
+            var i = h + new Vector(left, 0);
+            var j = rect.BottomRight + new Vector(-right, -bottom);
+            var k = j + new Vector(right, 0);
+
+            var l = i + new Vector(0, bottom);
+            var m = rect.BottomRight + new Vector(-right, 0);
+            var n = rect.BottomRight;
+
+            var uv_a = new Point(0, 0);
+            var uv_b = new Point(uv0.X, 0);
+            var uv_c = new Point(uv1.X, 0);
+
+            var uv_d = new Point(0, uv0.Y);
+            var uv_e = new Point(uv0.X, uv0.Y);
+            var uv_f = new Point(uv1.X, uv0.Y);
+            var uv_g = new Point(1, uv0.Y);
+
+            var uv_h = new Point(0, uv1.Y);
+            var uv_i = new Point(uv0.X, uv1.Y);
+            var uv_j = new Point(uv1.X, uv1.Y);
+            var uv_k = new Point(1, uv1.Y);
+
+            var uv_l = new Point(uv0.X, 1);
+            var uv_m = new Point(uv1.X, 1);
+            var uv_n = new Point(1, 1);
+
+            Color tintColor = Color.White;//TODO define tint color as a brush property
+
+            //add a new draw command
+            DrawCommand cmd = new DrawCommand();
+            cmd.ClipRect = Rect.Big;
+            cmd.TextureData = image;
+            this.ImageMesh.CommandBuffer.Add(cmd);
+
+            this.ImageMesh.PrimReserve(6*9, 4*9);
+
+            this.AddImageRect(a, e, uv_a, uv_e, tintColor); //1
+            this.AddImageRect(b, f, uv_b, uv_f, tintColor); //2
+            this.AddImageRect(c, g, uv_c, uv_g, tintColor); //3
+            this.AddImageRect(d, i, uv_d, uv_i, tintColor); //4
+            this.AddImageRect(e, j, uv_e, uv_j, tintColor); //5
+            this.AddImageRect(f, k, uv_f, uv_k, tintColor); //6
+            this.AddImageRect(h, l, uv_h, uv_l, tintColor); //7
+            this.AddImageRect(i, m, uv_i, uv_m, tintColor); //8
+            this.AddImageRect(j, n, uv_j, uv_n, tintColor); //9
         }
 
         public override void DrawDrawing(Drawing drawing)

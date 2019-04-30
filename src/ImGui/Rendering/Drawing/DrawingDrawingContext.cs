@@ -1,4 +1,4 @@
-﻿using ImGui.GraphicsAbstraction;
+﻿using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui.Rendering
 {
@@ -32,6 +32,11 @@ namespace ImGui.Rendering
         }
 
         public override void DrawImage(ImGui.OSAbstraction.Graphics.ITexture image, Rect rectangle)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void DrawImage(ITexture image, Rect rectangle, (double top, double right, double bottom, double left) slice)
         {
             throw new System.NotImplementedException();
         }
