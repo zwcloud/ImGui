@@ -109,6 +109,8 @@ namespace ImGui.OSImplentation.Web
             return this.textureObject;
         }
 
+        public bool Valid => GetNativeTextureId() > 0;
+
 #region Implementation of IDisposable
 
         public void Dispose()

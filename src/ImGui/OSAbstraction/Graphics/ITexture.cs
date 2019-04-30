@@ -64,5 +64,7 @@ namespace ImGui.OSAbstraction.Graphics
         /// e.g. The WebGLTexture object (JSObject).
         /// </returns>
         object GetNativeTextureObject();
+
+        bool Valid { get; }
     }
 }

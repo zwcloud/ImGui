@@ -90,6 +90,8 @@ namespace ImGui.UnitTest.DrawList
                 {
                     throw new NotImplementedException();
                 }
+
+                public bool Valid => true;
             }
 
             [Fact]

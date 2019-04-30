@@ -14,7 +14,7 @@ namespace ImGui.OSImplentation.Android
         private Image<Rgba32> image;
         private readonly uint[] textureIdBuffer = {0};
         private Rgba32[] textureData;
-        
+
         public void LoadImage(byte[] data)
         {
             throw new NotImplementedException();
@@ -113,6 +113,8 @@ namespace ImGui.OSImplentation.Android
         {
             return GetNativeTextureId();
         }
+
+        public bool Valid => GetNativeTextureId() > 0;
 
 #region Implementation of IDisposable
 
