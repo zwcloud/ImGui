@@ -278,6 +278,38 @@ namespace ImGui.GraphicsImplementation
         /// </summary>
         public TextMesh TextMesh { get; private set; }
 
+        public void AddText(Point origin, List<GlyphData> Glyphs, List<Vector> Offsets, string fontFamily, double fontSize, Color color)
+        {
+            if (Glyphs.Count != Offsets.Count)
+            {
+                throw new ArgumentException($"The length of {nameof(Glyphs)} must be equal to {nameof(Offsets)}.");
+            }
+
+            DrawCommand cmd = new DrawCommand();
+            cmd.ClipRect = Rect.Big;
+            cmd.TextureData = null;
+            this.TextMesh.Commands.Add(cmd);
+
+            var oldIndexBufferCount = this.TextMesh.IndexBuffer.Count;
+
+            var scale = OSImplentation.TypographyTextContext.GetScale(fontFamily, fontSize);
+
+            // get glyph data from typeface
+            for(var i=0;i<Glyphs.Count;i++)
+            {
+                var glyphData = Glyphs[i];
+                Vector glyphOffset = Offsets[i];
+                this.TextMesh.Append((Vector)origin, glyphData, glyphOffset, scale, color, false);
+            }
+
+            var newIndexBufferCount = this.TextMesh.IndexBuffer.Count;
+
+            // Update command
+            var command = this.TextMesh.Commands[this.TextMesh.Commands.Count - 1];
+            command.ElemCount += newIndexBufferCount - oldIndexBufferCount;
+            this.TextMesh.Commands[this.TextMesh.Commands.Count - 1] = command;
+        }
+
         #endregion
 
         #region Image

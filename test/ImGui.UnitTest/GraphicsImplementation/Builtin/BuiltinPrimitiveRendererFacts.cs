@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using ImGui.GraphicsImplementation;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using Xunit;
 
@@ -290,36 +292,93 @@ namespace ImGui.UnitTest.Rendering
             }
         }
 
-        public class DrawText
+        public class DrawGlyphRun
         {
-            internal static void CheckExpectedImage(TextGeometry geometry, int width, int height, Rect contentRect, string expectedImageFilePath)
+            internal static void Check(Rect rectangle, GlyphRun glyphRun, Brush brush, int width, int height,
+                [CallerMemberName] string methodName = "unknown")
             {
-                byte[] imageRawBytes;
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-                    var textMesh = new TextMesh();
-                    geometryRenderer.DrawTextPrimitive(textMesh, geometry, contentRect, new StyleRuleSet(), Vector.Zero);
+                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
+                    shapeMesh.Clear();
+                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+                    var textMesh = MeshPool.TextMeshPool.Get();
+                    textMesh.Clear();
+                    var imageMesh = MeshPool.ImageMeshPool.Get();
+                    imageMesh.Clear();
 
+                    renderer.SetShapeMesh(shapeMesh);
+                    renderer.SetTextMesh(textMesh);
+                    renderer.SetImageMesh(imageMesh);
+                    renderer.DrawGlyphRun(brush, glyphRun, rectangle);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.SetShapeMesh(null);
+                    renderer.SetTextMesh(null);
+                    renderer.SetImageMesh(null);
+
+                    meshList.AddOrUpdateShapeMesh(shapeMesh);
+                    meshList.AddOrUpdateTextMesh(textMesh);
+                    meshList.AddOrUpdateImageMesh(imageMesh);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
                     context.Clear();
-                    context.DrawTextMesh(textMesh);
+                    context.DrawMeshes(meshBuffer);
 
-                    imageRawBytes = context.GetRenderedRawBytes();
+                    bytes = context.GetRenderedRawBytes();
                 }
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawGlyphRun)}\\{methodName}.png");
             }
 
-            [Theory]
-            [InlineData("Hello你好こんにちは")]
-            [InlineData("textwithoutspace")]
-            [InlineData("text with space")]
-            public void DrawOnelineText(string text)
+            [Fact]
+            public void DrawOneLineText()
             {
-                TextGeometry geometry = new TextGeometry(text);
+                GlyphRun glyphRun = new GlyphRun("Hello你好こんにちは", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                Brush brush = new Brush(Color.Black);
 
-                CheckExpectedImage(geometry, 200, 50, new Rect(10, 10, 200, 40),
-                    $@"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawText.DrawOnelineText_{text}.png");
+                Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
             }
+
+            [Fact]
+            public void DrawOneLineTextWithoutSpace()
+            {
+                GlyphRun glyphRun = new GlyphRun("textwithoutspace", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                Brush brush = new Brush(Color.Black);
+
+                Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
+            }
+
+            [Fact]
+            public void DrawOneLineTextWithSpace()
+            {
+                GlyphRun glyphRun = new GlyphRun("text with space", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                Brush brush = new Brush(Color.Black);
+
+                Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
+            }
+
+            [Fact]
+            public void DrawMultipleLineText()
+            {
+                throw new Exception("The result is incorrect. FIXME.");
+
+                GlyphRun glyphRun = new GlyphRun("Hello\n你好\nこんにちは", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                Brush brush = new Brush(Color.Black);
+
+                Check(new Rect(10, 10, 400, 120), glyphRun, brush, 400, 130);
+            }
+
         }
 
         public class DrawImage

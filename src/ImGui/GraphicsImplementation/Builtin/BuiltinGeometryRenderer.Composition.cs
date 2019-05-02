@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Rendering.Composition;
 
@@ -271,9 +272,20 @@ namespace ImGui.GraphicsImplementation
             this.AddImageRect(j, n, uv_j, uv_n, tintColor); //9
         }
 
+        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
+        {
+            glyphRun.BuildGlyphData(new Rect(maxTextWidth, maxTextWidth));
+            AddText(origin, glyphRun.Glyphs, glyphRun.Offsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
+        }
+
         public override void DrawDrawing(Drawing drawing)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
     }

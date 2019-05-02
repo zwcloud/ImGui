@@ -1,4 +1,6 @@
-﻿using ImGui.OSAbstraction.Graphics;
+﻿using System;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
 
 namespace ImGui.Rendering
 {
@@ -39,6 +41,16 @@ namespace ImGui.Rendering
         public override void DrawImage(ITexture image, Rect rectangle, (double top, double right, double bottom, double left) slice)
         {
             throw new System.NotImplementedException();
+        }
+
+        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
+        {
+            throw new NotImplementedException();
         }
 
         public override void DrawDrawing(Drawing drawing)
