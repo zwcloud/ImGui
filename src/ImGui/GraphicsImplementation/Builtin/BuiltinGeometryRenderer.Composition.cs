@@ -277,6 +277,8 @@ namespace ImGui.GraphicsImplementation
             throw new NotImplementedException();
         }
 
+        //TODO move this overload to implementation of DrawingContext.DrawText, considering abstraction like WPF's TextLine
+        //Then we can unify all text rendering records type to RecordType.DrawGlyphRun
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
         {
             glyphRun.BuildGlyphData(new Rect(maxTextWidth, maxTextWidth));

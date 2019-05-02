@@ -278,11 +278,11 @@ namespace ImGui.GraphicsImplementation
         /// </summary>
         public TextMesh TextMesh { get; private set; }
 
-        public void AddText(Point origin, List<GlyphData> Glyphs, List<Vector> Offsets, string fontFamily, double fontSize, Color color)
+        public void AddText(Point origin, List<GlyphData> glyphs, List<Vector> offsets, string fontFamily, double fontSize, Color color)
         {
-            if (Glyphs.Count != Offsets.Count)
+            if (glyphs.Count != offsets.Count)
             {
-                throw new ArgumentException($"The length of {nameof(Glyphs)} must be equal to {nameof(Offsets)}.");
+                throw new ArgumentException($"The length of {nameof(glyphs)} must be equal to {nameof(offsets)}.");
             }
 
             DrawCommand cmd = new DrawCommand();
@@ -295,10 +295,10 @@ namespace ImGui.GraphicsImplementation
             var scale = OSImplentation.TypographyTextContext.GetScale(fontFamily, fontSize);
 
             // get glyph data from typeface
-            for(var i=0;i<Glyphs.Count;i++)
+            for(var i=0;i<glyphs.Count;i++)
             {
-                var glyphData = Glyphs[i];
-                Vector glyphOffset = Offsets[i];
+                var glyphData = glyphs[i];
+                Vector glyphOffset = offsets[i];
                 this.TextMesh.Append((Vector)origin, glyphData, glyphOffset, scale, color, false);
             }
 
