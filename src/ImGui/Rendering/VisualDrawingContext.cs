@@ -53,7 +53,21 @@ namespace ImGui.Rendering
 
         public override void DrawRoundedRectangle(Brush brush, Pen pen, Rect rectangle, double radiusX, double radiusY)
         {
-            throw new System.NotImplementedException();
+            if (brush == null && pen == null)
+            {
+                return;
+            }
+            EnsureContent();
+
+            unsafe
+            {
+                var record = new DrawRoundedRectangleCommand(
+                    content.AddDependentResource(brush),
+                    content.AddDependentResource(pen),
+                    rectangle, radiusX, radiusY);
+
+                content.WriteRecord(RecordType.DrawRoundedRectangle, (byte*)&record, sizeof(DrawRectangleCommand));
+            }
         }
 
         public override void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY)
@@ -85,22 +99,66 @@ namespace ImGui.Rendering
 
         public override void DrawImage(ImGui.OSAbstraction.Graphics.ITexture image, Rect rectangle)
         {
-            throw new System.NotImplementedException();
+            if (image == null)
+            {
+                return;
+            }
+            EnsureContent();
+
+            unsafe
+            {
+                var record = new DrawImageCommand(
+                    content.AddDependentResource(image),
+                    rectangle);
+
+                content.WriteRecord(RecordType.DrawImage, (byte*)&record, sizeof(DrawRectangleCommand));
+            }
         }
 
         public override void DrawImage(ITexture image, Rect rectangle, (double top, double right, double bottom, double left) slice)
         {
-            throw new NotImplementedException();
+            if (image == null)
+            {
+                return;
+            }
+            EnsureContent();
+
+            unsafe
+            {
+                var record = new DrawSlicedImageCommand(
+                    content.AddDependentResource(image),
+                    rectangle,
+                    slice);
+
+                content.WriteRecord(RecordType.DrawSlicedImage, (byte*)&record, sizeof(DrawRectangleCommand));
+            }
         }
 
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
         {
-            throw new NotImplementedException();
+            DrawGlyphRun(foregroundBrush, glyphRun, Point.Zero, double.MaxValue, double.MaxValue);
         }
 
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
         {
-            throw new NotImplementedException();
+            //TODO move this abstraction to TextLine and FormattedText
+            //DrawGlyphRun should only draw a single line of characters of the same format
+            if (foregroundBrush == null)
+            {
+                return;
+            }
+            EnsureContent();
+
+            unsafe
+            {
+                var record = new DrawGlyphRunCommand(
+                    content.AddDependentResource(foregroundBrush),
+                    content.AddDependentResource(glyphRun),
+                    origin,
+                    maxTextWidth, maxTextHeight);
+
+                content.WriteRecord(RecordType.DrawGlyphRun, (byte*)&record, sizeof(DrawRectangleCommand));
+            }
         }
 
         public override void DrawDrawing(Drawing drawing)

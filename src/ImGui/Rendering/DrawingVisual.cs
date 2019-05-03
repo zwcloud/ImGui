@@ -38,6 +38,10 @@ namespace ImGui.Rendering
             context.ConsumeContent(content);
         }
 
+        /// <summary>
+        /// Opens the DrawingVisual for rendering. The returned DrawingContext can be used to
+        /// render into the DrawingVisual.
+        /// </summary>
         internal DrawingContext RenderOpen()
         {
             return new VisualDrawingContext(this);

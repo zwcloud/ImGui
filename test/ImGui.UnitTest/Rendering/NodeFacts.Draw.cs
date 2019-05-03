@@ -4,6 +4,7 @@ using ImGui.Input;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using System.Collections.Generic;
+using ImGui.OSAbstraction.Text;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -19,7 +20,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             [Fact]
-            public void DrawANode()
+            public void DrawANodeWithStaticContent()
             {
                 var pathGeometry = new PathGeometry();
                 PathFigure figure = new PathFigure();
@@ -33,14 +34,44 @@ namespace ImGui.UnitTest.Rendering
                 figure.IsFilled = false;
                 pathGeometry.Figures.Add(figure);
 
+                GlyphRun glyphRun = new GlyphRun("123", GUIStyle.Default.FontFamily, 20, FontStyle.Normal, FontWeight.Normal);
+
                 Node node = new Node(1);
                 using (var ctx = node.RenderOpenStatic())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
+                    ctx.DrawGlyphRun(new Brush(Color.Red), glyphRun, new Point(20, 20), 80, 80);
                 }
 
-                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 110, 110);
-                Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANode.png");
+                DrawAndCheck(node, 110, 110, @"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}.DrawANode.png");
+            }
+
+            [Fact]
+            public void DrawANodeWithDynamicContent()
+            {
+                var node = new Node(1, new Rect(10, 20, 300, 60));
+                node.RuleSet.StrokeColor = Color.Black;
+                node.RuleSet.StrokeWidth = 4;
+                node.RuleSet.FillColor = Color.Green;
+                node.RuleSet.Set(GUIStyleName.FillColor, Color.Red, GUIState.Hover);
+
+                {
+                    node.State = GUIState.Normal;
+                    var context = node.RenderOpen();
+                    context.DrawRectangle(new Rect(new Point(30, 30), new Point(80, 80)));
+                    context.Close();
+                    DrawAndCheck(node, 110, 110,
+                        $@"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}\{nameof(DrawANodeWithDynamicContent)}_Normal.png");
+                }
+
+                {
+                    node.State = GUIState.Hover;
+                    var context = node.RenderOpen();
+                    context.DrawRectangle(new Rect(new Point(30, 30), new Point(80, 80)));
+                    context.Close();
+                    DrawAndCheck(node, 110, 110,
+                        $@"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}\{nameof(DrawANodeWithDynamicContent)}_Hover.png");
+                }
             }
 
             [Fact]

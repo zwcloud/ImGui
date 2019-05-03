@@ -240,7 +240,7 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Opens the Node for rendering. The returned DrawingContext can be used to
+        /// Opens the Node for static rendering. The returned DrawingContext can be used to
         /// render into the Node: populate the content.
         /// </summary>
         internal DrawingContext RenderOpenStatic()
@@ -249,7 +249,7 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Opens the Node for rendering. The returned DrawingContext can be used to
+        /// Opens the Node for stateful and styled rendering. The returned DrawingContext can be used to
         /// render into the Node: populate the content.
         /// </summary>
         internal NodeDrawingContext RenderOpen()

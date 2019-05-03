@@ -7,8 +7,11 @@ namespace ImGui.Rendering.Composition
     {
         DrawLine,
         DrawRectangle,
+        DrawRoundedRectangle,
         DrawGlyphRun,
         DrawGeometry,
+        DrawImage,
+        DrawSlicedImage,
     }
 
     internal struct RecordHeader
@@ -49,6 +52,59 @@ namespace ImGui.Rendering.Composition
         }
     }
 
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DrawRoundedRectangleCommand
+    {
+        public DrawRoundedRectangleCommand
+        (
+            uint hBrush,
+            uint hPen,
+            Rect rectangle,
+            double radiusX,
+            double radiusY
+        )
+        {
+            this.hBrush = hBrush;
+            this.hPen = hPen;
+            this.rectangle = rectangle;
+            this.radiusX = radiusX;
+            this.radiusY = radiusY;
+        }
+
+        [FieldOffset(0)] public Rect rectangle;
+        [FieldOffset(32)] public double radiusX;
+        [FieldOffset(40)] public double radiusY;
+        [FieldOffset(48)] public uint hBrush;
+        [FieldOffset(52)] public uint hPen;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DrawGlyphRunCommand
+    {
+        public DrawGlyphRunCommand
+        (
+            uint hForegroundBrush,
+            uint hGlyphRun,
+            Point origin,
+            double maxTextWidth,
+            double maxTextHeight
+        )
+        {
+            this.hForegroundBrush = hForegroundBrush;
+            this.hGlyphRun = hGlyphRun;
+            this.origin = origin;
+            this.maxTextWidth = maxTextWidth;
+            this.maxTextHeight = maxTextHeight;
+        }
+
+        [FieldOffset(0)] public uint hForegroundBrush;
+        [FieldOffset(4)] public uint hGlyphRun;
+        [FieldOffset(8)] public Point origin;
+        [FieldOffset(16)] public double maxTextWidth;
+        [FieldOffset(24)] public double maxTextHeight;
+    }
+
     [StructLayout(LayoutKind.Explicit)]
     internal struct DrawGeometryCommand
     {
@@ -68,6 +124,44 @@ namespace ImGui.Rendering.Composition
         [FieldOffset(4)] public uint hPen;
         [FieldOffset(8)] public uint hGeometry;
         [FieldOffset(12)] private uint QuadWordPad0;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DrawImageCommand
+    {
+        public DrawImageCommand(uint hImageSource, Rect rectangle)
+        {
+            this.hImageSource = hImageSource;
+            this.rectangle = rectangle;
+            this.QuadWordPad0 = 0;
+        }
+
+        [FieldOffset(0)] public Rect rectangle;
+        [FieldOffset(32)] public uint hImageSource;
+        [FieldOffset(36)] private uint QuadWordPad0;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DrawSlicedImageCommand
+    {
+        public DrawSlicedImageCommand(uint hImageSource, Rect rectangle, (double top, double right, double bottom, double left) slice)
+        {
+            this.hImageSource = hImageSource;
+            this.rectangle = rectangle;
+            this.sliceTop = slice.top;
+            this.sliceRight = slice.right;
+            this.sliceBottom = slice.left;
+            this.sliceLeft = slice.bottom;
+            this.QuadWordPad0 = 0;
+        }
+
+        [FieldOffset(0)] public Rect rectangle;
+        [FieldOffset(32)] public uint hImageSource;
+        [FieldOffset(36)] public double sliceTop;
+        [FieldOffset(44)] public double sliceRight;
+        [FieldOffset(52)] public double sliceBottom;
+        [FieldOffset(60)] public double sliceLeft;
+        [FieldOffset(68)] public uint QuadWordPad0;
     }
 
     internal abstract class RecordReader : DrawingContext

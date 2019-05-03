@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering.Composition;
 
 namespace ImGui.Rendering
@@ -124,8 +126,29 @@ namespace ImGui.Rendering
                                         );
                                 }
                                 break;
+                                case RecordType.DrawRoundedRectangle:
+                                {
+                                    DrawRoundedRectangleCommand* data = (DrawRoundedRectangleCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.DrawRoundedRectangle(
+                                        (Brush)DependentLookup(data->hBrush),
+                                        (Pen)DependentLookup(data->hPen),
+                                        data->rectangle,
+                                        data->radiusX,
+                                        data->radiusY
+                                    );
+                                }
+                                    break;
                                 case RecordType.DrawGlyphRun:
-                                    throw new NotImplementedException();
+                                {
+                                    DrawGlyphRunCommand* data = (DrawGlyphRunCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.DrawGlyphRun(
+                                        (Brush)DependentLookup(data->hForegroundBrush),
+                                        (GlyphRun)DependentLookup(data->hGlyphRun),
+                                        data->origin,
+                                        data->maxTextWidth,
+                                        data->maxTextHeight
+                                    );
+                                }
                                     break;
                                 case RecordType.DrawGeometry:
                                 {
@@ -134,6 +157,25 @@ namespace ImGui.Rendering
                                         (Brush)DependentLookup(data->hBrush),
                                         (Pen)DependentLookup(data->hPen),
                                         (Geometry)DependentLookup(data->hGeometry)
+                                    );
+                                }
+                                    break;
+                                case RecordType.DrawImage:
+                                {
+                                    DrawImageCommand* data = (DrawImageCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.DrawImage(
+                                        (ITexture)DependentLookup(data->hImageSource),
+                                        data->rectangle
+                                    );
+                                }
+                                    break;
+                                case RecordType.DrawSlicedImage:
+                                {
+                                    DrawSlicedImageCommand* data = (DrawSlicedImageCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.DrawImage(
+                                        (ITexture)DependentLookup(data->hImageSource),
+                                        data->rectangle,
+                                        (data->sliceLeft, data->sliceTop, data->sliceRight, data->sliceBottom)
                                     );
                                 }
                                     break;
