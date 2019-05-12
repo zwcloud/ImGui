@@ -1,4 +1,4 @@
-﻿using ImGui.GraphicsImplementation;
+﻿using ImGui.Rendering.Composition;
 
 namespace ImGui.Rendering
 {
@@ -7,7 +7,7 @@ namespace ImGui.Rendering
     /// </summary>
     internal class RenderContext
     {
-        public RenderContext(BuiltinGeometryRenderer renderer, MeshList meshList)
+        public RenderContext(RecordReader renderer, MeshList meshList)
         {
             this.renderer = renderer;
             this.meshList = meshList;
@@ -15,28 +15,12 @@ namespace ImGui.Rendering
 
         public void ConsumeContent(DrawingContent content)
         {
-            var shapeMesh = MeshPool.ShapeMeshPool.Get();
-            shapeMesh.Clear();
-            shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-            var textMesh = MeshPool.TextMeshPool.Get();
-            textMesh.Clear();
-            var imageMesh = MeshPool.ImageMeshPool.Get();
-            imageMesh.Clear();
-
-            renderer.SetShapeMesh(shapeMesh);
-            renderer.SetTextMesh(textMesh);
-            renderer.SetImageMesh(imageMesh);
-            content.ReadAllRecords(renderer);
-            renderer.SetShapeMesh(null);
-            renderer.SetTextMesh(null);
-            renderer.SetImageMesh(null);
-
-            meshList.AddOrUpdateShapeMesh(shapeMesh);
-            meshList.AddOrUpdateTextMesh(textMesh);
-            meshList.AddOrUpdateImageMesh(imageMesh);
+            this.renderer.OnBeforeRead();
+            content.ReadAllRecords(this.renderer);
+            this.renderer.OnAfterRead(this.meshList);
         }
 
         private readonly MeshList meshList;
-        private readonly BuiltinGeometryRenderer renderer;
+        private readonly RecordReader renderer;
     }
 }

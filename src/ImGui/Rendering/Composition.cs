@@ -168,6 +168,10 @@ namespace ImGui.Rendering.Composition
     {
         public bool ShouldStopWalking { get; set; }
 
+        public abstract void OnBeforeRead();
+
+        public abstract void OnAfterRead(MeshList meshList);
+
         /// <summary>
         /// RecordReader implementations are never opened, so they shouldn't be closed.
         /// </summary>

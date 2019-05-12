@@ -14,8 +14,28 @@
 
         public Pen(Color lineColor, double lineWidth)
         {
-            LineColor = lineColor;
-            LineWidth = lineWidth;
+            this.LineColor = lineColor;
+            this.LineWidth = lineWidth;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Pen other = obj as Pen;
+            if (other == null)
+            {
+                return false;
+            }
+
+            return other.LineColor.Equals(this.LineColor)
+                && System.Math.Abs(this.LineWidth - other.LineWidth) < 0.001;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (this.LineColor.GetHashCode() * 397) ^ this.LineWidth.GetHashCode();
+            }
         }
     }
 }

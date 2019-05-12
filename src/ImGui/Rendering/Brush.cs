@@ -15,5 +15,21 @@
         {
             FillColor = fillColor;
         }
+
+        public override bool Equals(object obj)
+        {
+            Brush other = obj as Brush;
+            if (other == null)
+            {
+                return false;
+            }
+
+            return other.FillColor.Equals(this.FillColor);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.FillColor.GetHashCode();
+        }
     }
 }

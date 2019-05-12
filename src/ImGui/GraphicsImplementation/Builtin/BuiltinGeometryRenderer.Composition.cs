@@ -290,5 +290,39 @@ namespace ImGui.GraphicsImplementation
             throw new NotImplementedException();
         }
 
+        #region Overrides of RecordReader
+        public override void OnBeforeRead()
+        {
+            var shapeMesh = MeshPool.ShapeMeshPool.Get();
+            shapeMesh.Clear();
+            shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+            var textMesh = MeshPool.TextMeshPool.Get();
+            textMesh.Clear();
+            var imageMesh = MeshPool.ImageMeshPool.Get();
+            imageMesh.Clear();
+
+            SetShapeMesh(shapeMesh);
+            SetTextMesh(textMesh);
+            SetImageMesh(imageMesh);
+        }
+
+        public override void OnAfterRead(MeshList meshList)
+        {
+            meshList.AddOrUpdateShapeMesh(this.ShapeMesh);
+            meshList.AddOrUpdateTextMesh(this.TextMesh);
+            meshList.AddOrUpdateImageMesh(this.ImageMesh);
+
+            SetShapeMesh(null);
+            SetTextMesh(null);
+            SetImageMesh(null);
+        }
+        #endregion
+
+
+        protected override void DisposeCore()
+        {
+
+        }
+
     }
 }
