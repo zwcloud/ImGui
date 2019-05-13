@@ -165,6 +165,7 @@ namespace ImGui.UnitTest.Rendering
         #endregion
 
         #region Record Types
+
         class LineRecord : IEquatable<LineRecord>
         {
             public Pen pen;
@@ -366,7 +367,7 @@ namespace ImGui.UnitTest.Rendering
                 {
                     if (this.geometry is PathGeometry xg && other.geometry is PathGeometry yg)
                     {
-                        return s_PathGeometryComparer.Equals(xg, yg);
+                        return s_PathGeometryComparer.Equals(xg, yg);//deep comparison instead of just comparing the refererence
                     }
                     else
                     {
@@ -489,7 +490,9 @@ namespace ImGui.UnitTest.Rendering
             {
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
-                return Equals(this.foregroundBrush, other.foregroundBrush) && Equals(this.glyphRun, other.glyphRun);
+                return Equals(this.foregroundBrush, other.foregroundBrush)
+                       && Equals(this.glyphRun, other.glyphRun);
+                //TODO Now use reference comparison for GlyphRun, we should implement deep comparison when GlyphRun is stable
             }
 
             public override bool Equals(object obj)
@@ -530,7 +533,12 @@ namespace ImGui.UnitTest.Rendering
             {
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
-                return Equals(this.foregroundBrush, other.foregroundBrush) && Equals(this.glyphRun, other.glyphRun) && this.origin.Equals(other.origin) && this.maxTextWidth.Equals(other.maxTextWidth) && this.maxTextHeight.Equals(other.maxTextHeight);
+                return Equals(this.foregroundBrush, other.foregroundBrush)
+                       && Equals(this.glyphRun, other.glyphRun)
+                       //TODO Now use reference comparison for GlyphRun, we should implement deep comparison when GlyphRun is stable
+                       && this.origin.Equals(other.origin)
+                       && this.maxTextWidth.Equals(other.maxTextWidth)
+                       && this.maxTextHeight.Equals(other.maxTextHeight);
             }
 
             public override bool Equals(object obj)
