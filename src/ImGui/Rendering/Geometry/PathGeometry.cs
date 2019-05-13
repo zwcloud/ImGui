@@ -39,6 +39,8 @@ namespace ImGui.Rendering
             return data;
         }
 
+        #region Old
+
         public void PathMoveTo(Point point)
         {
         }
@@ -82,6 +84,6 @@ namespace ImGui.Rendering
         {
         }
 
-
+        #endregion
     }
 }

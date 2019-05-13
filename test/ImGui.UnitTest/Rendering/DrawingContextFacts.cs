@@ -1,4 +1,5 @@
-﻿using ImGui.Rendering;
+﻿using ImGui.OSAbstraction.Text;
+using ImGui.Rendering;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -31,23 +32,25 @@ namespace ImGui.UnitTest.Rendering
             visual.RenderContent(new RenderContext(checker, null));
         }
 
-
         [Fact]
         public void PopulateNode()
         {
+            var geometry = new PathGeometry();
+            var figure = new PathFigure();
+            figure.StartPoint = new Point(5, 90);
+            figure.Segments.Add(new LineSegment(new Point(125,0),true));
+            figure.Segments.Add(new LineSegment(new Point(245,90),true));
+            figure.Segments.Add(new LineSegment(new Point(200,230),true));
+            figure.Segments.Add(new LineSegment(new Point(52,230),true));
+            figure.Segments.Add(new LineSegment(new Point(5,90),true));
+            geometry.Figures.Add(figure);
+            GlyphRun glyphRun = new GlyphRun("123", GUIStyle.Default.FontFamily, 20, FontStyle.Normal, FontWeight.Normal);
+
             void Populate(DrawingContext drawingContext)
             {
-                var geometry = new PathGeometry();
-                var figure = new PathFigure();
-                figure.StartPoint = new Point(5, 90);
-                figure.Segments.Add(new LineSegment(new Point(125,0),true));
-                figure.Segments.Add(new LineSegment(new Point(245,90),true));
-                figure.Segments.Add(new LineSegment(new Point(200,230),true));
-                figure.Segments.Add(new LineSegment(new Point(52,230),true));
-                figure.Segments.Add(new LineSegment(new Point(5,90),true));
-                geometry.Figures.Add(figure);
                 drawingContext.DrawGeometry(new Brush(Color.BlueViolet), new Pen(Color.Black, 4), geometry);
                 drawingContext.DrawRectangle(new Brush(Color.YellowGreen), new Pen(Color.Cornsilk, 4), new Rect(100, 100, 50, 50));
+                drawingContext.DrawGlyphRun(new Brush(Color.Red), glyphRun, new Point(20, 20), 80, 80);
             }
 
             var node = new Node(1, new Rect(10, 20, 300, 60));
