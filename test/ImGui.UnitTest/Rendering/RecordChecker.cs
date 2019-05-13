@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
@@ -670,7 +669,7 @@ namespace ImGui.UnitTest.Rendering
             this.strategy.Reset();
         }
 
-        private List<object> records = new List<object>();
+        private readonly List<object> records = new List<object>();
         private IStrategy strategy;
 
         private static readonly IStrategy s_fillExpectedRecordStrategy = new FillExpectedRecordStrategy();
