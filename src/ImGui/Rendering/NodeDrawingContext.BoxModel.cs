@@ -7,17 +7,17 @@ namespace ImGui.Rendering
     {
         private void DrawOutline(Rect borderBoxRect)
         {
-            var style = ownerNode.RuleSet;
+            var style = this.ruleSet;
             var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
             if (MathEx.AmostZero(outlineWidth)) return;
             var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
             if (MathEx.AmostZero(outlineColor.A)) return;
-            dc.DrawRectangle(null, new Pen(outlineColor, outlineWidth), borderBoxRect);
+            base.DrawRectangle(null, new Pen(outlineColor, outlineWidth), borderBoxRect);
         }
 
         private void DrawBorder(Rect borderBoxRect, Rect paddingBoxRect)
         {
-            var style = ownerNode.RuleSet;
+            var style = this.ruleSet;
             // draw border between border-box and padding-box
             var borderImageSource = style.BorderImageSource;
             if (borderImageSource != null)
@@ -40,10 +40,10 @@ namespace ImGui.Rendering
                 PathGeometry leftBorder = GenerateRightBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
                 PathGeometry rightBorder = GenerateBottomBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
                 PathGeometry bottomBorder = GenerateLeftBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
-                dc.DrawGeometry(new Brush(borderColor.top),     new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, topBorder);
-                dc.DrawGeometry(new Brush(borderColor.left),    new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, leftBorder);
-                dc.DrawGeometry(new Brush(borderColor.right),   new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, rightBorder);
-                dc.DrawGeometry(new Brush(borderColor.bottom),  new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, bottomBorder);
+                base.DrawGeometry(new Brush(borderColor.top),     new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, topBorder);
+                base.DrawGeometry(new Brush(borderColor.left),    new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, leftBorder);
+                base.DrawGeometry(new Brush(borderColor.right),   new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, rightBorder);
+                base.DrawGeometry(new Brush(borderColor.bottom),  new Pen(Color.Black, 2)/*TEMP stroke border for testing*/, bottomBorder);
             }
         }
 
@@ -368,7 +368,7 @@ namespace ImGui.Rendering
 
         private void DrawBackground(Rect paddingBoxRect)
         {
-            var style = ownerNode.RuleSet;
+            var style = this.ruleSet;
             // draw background in padding-box
             var gradient = (Gradient) style.Get<int>(GUIStyleName.BackgroundGradient);
             if (gradient == Gradient.None)

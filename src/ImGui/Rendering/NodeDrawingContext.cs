@@ -1,43 +1,37 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace ImGui.Rendering
 {
-    internal partial class NodeDrawingContext : IDisposable
+    internal partial class NodeDrawingContext : VisualDrawingContext
     {
-        public NodeDrawingContext(Node node)
+        public NodeDrawingContext(Node node) : base(node)
         {
-            ownerNode = node;
-            dc = new VisualDrawingContext(node);
+            this.rect = node.Rect;
+            this.ruleSet = node.RuleSet;
         }
 
         public void DrawLine(Point point0, Point point1)
         {
-            var rule = ownerNode.RuleSet;
+            var rule = this.ruleSet;
             Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
-            dc.DrawLine(pen, point0, point1);
+            base.DrawLine(pen, point0, point1);
         }
 
-        public void DrawRectangle(Rect rectangle)
+        public void DrawRectangle(Rect rectangleRect)
         {
-            var rule = ownerNode.RuleSet;
+            var rule = this.ruleSet;
             Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
             Brush brush = new Brush(rule.FillColor);
-            dc.DrawRectangle(brush, pen, rectangle);
+            base.DrawRectangle(brush, pen, rectangleRect);
         }
 
-        public void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
+        public void DrawRoundedRectangle(Rect rectangle)
         {
-            dc.DrawRectangle(brush, pen, rectangle);
-        }
-
-        public void DrawRoundedRectangle(Rect rect)
-        {
-            var rule = ownerNode.RuleSet;
+            var rule = this.ruleSet;
             Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
             Brush brush = new Brush(rule.FillColor);
             var cornerRadius = rule.BorderRadius;
-            DrawRoundedRectangle(brush, pen, rect, cornerRadius);
+            DrawRoundedRectangle(brush, pen, rectangle, cornerRadius);
         }
 
         public void DrawRoundedRectangle(Brush brush, Pen pen, Rect rect,
@@ -83,45 +77,25 @@ namespace ImGui.Rendering
             ));
             figure.Segments.Add(new LineSegment(new Point(rect.TopLeft.X, rect.TopLeft.Y + cornerRadius.TopLeft), true));
             geometry.Figures.Add(figure);
-            dc.DrawGeometry(brush, pen, geometry);
+            DrawGeometry(brush, pen, geometry);
         }
 
         public void DrawBoxModel()
         {
-            var rect = ownerNode.Rect;
-            var style = ownerNode.RuleSet;
-            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+            var rectangle = this.rect;
+            var style = this.ruleSet;
+            GetBoxes(rectangle, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
-            this.DrawBackground(paddingBoxRect);
+            DrawBackground(paddingBoxRect);
 
             //Content
             //Content-box
             //no content
 
-            this.DrawBorder(borderBoxRect, paddingBoxRect);
-            this.DrawOutline(borderBoxRect);
+            DrawBorder(borderBoxRect, paddingBoxRect);
+            DrawOutline(borderBoxRect);
 
-            this.DrawDebug(paddingBoxRect, contentBoxRect);
-        }
-
-
-        public void Close()
-        {
-            if (disposed)
-            {
-                throw new ObjectDisposedException(nameof(VisualDrawingContext));
-            }
-
-            ((IDisposable)this).Dispose();
-        }
-
-        void IDisposable.Dispose()
-        {
-            if (!disposed)
-            {
-                dc.Close();
-                disposed = true;
-            }
+            DrawDebug(paddingBoxRect, contentBoxRect);
         }
 
         private void DrawDebug(Rect paddingBoxRect, Rect contentBoxRect)
@@ -184,8 +158,7 @@ namespace ImGui.Rendering
             }
         }
 
-        private bool disposed;
-        private readonly Node ownerNode;
-        private readonly VisualDrawingContext dc;
+        private readonly StyleRuleSet ruleSet;
+        private readonly Rect rect;
     }
 }
