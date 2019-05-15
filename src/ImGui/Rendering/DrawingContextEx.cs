@@ -1,4 +1,6 @@
-﻿namespace ImGui.Rendering
+﻿using ImGui.OSAbstraction.Text;
+
+namespace ImGui.Rendering
 {
     internal static partial class DrawingContextEx
     {
@@ -90,5 +92,25 @@
 
             DrawDebug(dc, style, paddingBoxRect, contentBoxRect);
         }
+
+        public static void DrawBoxModel(this DrawingContext dc, string text, StyleRuleSet rule, Rect rect)
+        {
+            var style = rule;
+            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+
+            DrawBackground(dc, style, paddingBoxRect);
+
+            //Content
+            //Content-box
+            dc.DrawGlyphRun(new Brush(style.BackgroundColor),
+                new GlyphRun(text, style.FontFamily, style.FontSize, style.FontStyle, style.FontWeight)
+                , rect);
+
+            DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
+            DrawOutline(dc, style, borderBoxRect);
+
+            DrawDebug(dc, style, paddingBoxRect, contentBoxRect);
+        }
+
     }
 }
