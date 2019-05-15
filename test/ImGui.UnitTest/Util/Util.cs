@@ -197,6 +197,15 @@ namespace ImGui.UnitTest
 #endif
         }
 
+        internal static void ShowImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
+        {
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+            var path = expectedImageFilePath;
+            Util.SaveImage(image, path);
+            Util.SelectFileInExplorer(path);
+            Util.OpenImage(path);
+        }
+
         internal static void DrawNodeToImage(out byte[] imageRawBytes, Node node, int width, int height)
         {
             Application.EnableMSAA = false;
@@ -278,6 +287,19 @@ namespace ImGui.UnitTest
             => DrawNodeTreeToImage(out imageRawBytes, root, width, height, Rect.Big);
 
         #region new rendering pipeline
+
+        /// <summary>
+        /// Show a rendered image of a node. Used to inspect a node temporarily.
+        /// </summary>
+        /// <param name="node"></param>
+        internal static void Show(Node node)
+        {
+            var width = (int) node.Width + 50;
+            var height = (int) node.Height + 50;
+            var path = $"D:\\{System.Guid.NewGuid()}.png";
+            Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);
+            Util.ShowImage(imageRawBytes, width, height, path);
+        }
 
         internal static void DrawNodeToImage_NewPipeline(out byte[] imageRawBytes, Node node, int width, int height)
         {
