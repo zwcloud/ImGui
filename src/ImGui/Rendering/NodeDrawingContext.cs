@@ -1,37 +1,43 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace ImGui.Rendering
 {
-    internal partial class NodeDrawingContext : VisualDrawingContext
+    internal partial class NodeDrawingContext : IDisposable
     {
-        public NodeDrawingContext(Node node) : base(node)
+        public NodeDrawingContext(Node node)
         {
-            this.rect = node.Rect;
-            this.ruleSet = node.RuleSet;
+            ownerNode = node;
+            dc = new VisualDrawingContext(node);
         }
 
         public void DrawLine(Point point0, Point point1)
         {
-            var rule = this.ruleSet;
+            var rule = ownerNode.RuleSet;
             Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
-            base.DrawLine(pen, point0, point1);
+            dc.DrawLine(pen, point0, point1);
         }
 
-        public void DrawRectangle(Rect rectangleRect)
+        public void DrawRectangle(Rect rectangle)
         {
-            var rule = this.ruleSet;
+            var rule = ownerNode.RuleSet;
             Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
             Brush brush = new Brush(rule.FillColor);
-            base.DrawRectangle(brush, pen, rectangleRect);
+            dc.DrawRectangle(brush, pen, rectangle);
         }
 
-        public void DrawRoundedRectangle(Rect rectangle)
+        public void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
         {
-            var rule = this.ruleSet;
+            dc.DrawRectangle(brush, pen, rectangle);
+        }
+
+        public void DrawRoundedRectangle(Rect rect)
+        {
+            var rule = ownerNode.RuleSet;
             Pen pen = new Pen(rule.StrokeColor, rule.StrokeWidth);
             Brush brush = new Brush(rule.FillColor);
             var cornerRadius = rule.BorderRadius;
-            DrawRoundedRectangle(brush, pen, rectangle, cornerRadius);
+            DrawRoundedRectangle(brush, pen, rect, cornerRadius);
         }
 
         public void DrawRoundedRectangle(Brush brush, Pen pen, Rect rect,
@@ -77,25 +83,45 @@ namespace ImGui.Rendering
             ));
             figure.Segments.Add(new LineSegment(new Point(rect.TopLeft.X, rect.TopLeft.Y + cornerRadius.TopLeft), true));
             geometry.Figures.Add(figure);
-            DrawGeometry(brush, pen, geometry);
+            dc.DrawGeometry(brush, pen, geometry);
         }
 
         public void DrawBoxModel()
         {
-            var rectangle = this.rect;
-            var style = this.ruleSet;
-            GetBoxes(rectangle, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+            var rect = ownerNode.Rect;
+            var style = ownerNode.RuleSet;
+            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
-            DrawBackground(paddingBoxRect);
+            this.DrawBackground(paddingBoxRect);
 
             //Content
             //Content-box
             //no content
 
-            DrawBorder(borderBoxRect, paddingBoxRect);
-            DrawOutline(borderBoxRect);
+            this.DrawBorder(borderBoxRect, paddingBoxRect);
+            this.DrawOutline(borderBoxRect);
 
-            DrawDebug(paddingBoxRect, contentBoxRect);
+            this.DrawDebug(paddingBoxRect, contentBoxRect);
+        }
+
+
+        public void Close()
+        {
+            if (disposed)
+            {
+                throw new ObjectDisposedException(nameof(VisualDrawingContext));
+            }
+
+            ((IDisposable)this).Dispose();
+        }
+
+        void IDisposable.Dispose()
+        {
+            if (!disposed)
+            {
+                dc.Close();
+                disposed = true;
+            }
         }
 
         private void DrawDebug(Rect paddingBoxRect, Rect contentBoxRect)
@@ -158,7 +184,8 @@ namespace ImGui.Rendering
             }
         }
 
-        private readonly StyleRuleSet ruleSet;
-        private readonly Rect rect;
+        private bool disposed;
+        private readonly Node ownerNode;
+        private readonly VisualDrawingContext dc;
     }
 }
