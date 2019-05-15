@@ -4,7 +4,6 @@ using ImGui.Input;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using System.Collections.Generic;
-using ImGui.OSAbstraction.Text;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -13,91 +12,6 @@ namespace ImGui.UnitTest.Rendering
     {
         public class Draw : IClassFixture<ApplicationFixture>
         {
-            [Fact]
-            public void DrawANodePolyLine()
-            {
-                var pathGeometry = new PathGeometry();
-                PathFigure figure = new PathFigure();
-                //for pixel perfect, we need to add 0.5 and 0.51
-                figure.StartPoint = new Point(10+0.5, 10+0.5);
-                figure.Segments.Add(new PolyLineSegment(new[]
-                {
-                    new Point(10 + 0.5, 100 + 0.51),
-                    new Point(100 + 0.51, 100 + 0.51),
-                    new Point(100 + 0.51, 10 + 0.5),
-                    new Point(10 + 0.5, 10 + 0.5)
-                }, true));
-                figure.IsClosed = true;
-                figure.IsFilled = false;
-                pathGeometry.Figures.Add(figure);
-
-                Node node = new Node(1, new Rect(0, 0, 100, 100));
-                using (var ctx = node.RenderOpen())
-                {
-                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
-                }
-                Util.Show(node);
-            }
-
-            [Fact]
-            public void DrawANodeCubicBezier()
-            {
-                var pathGeometry = new PathGeometry();
-                PathFigure figure = new PathFigure();
-                //for pixel perfect, we need to add 0.5 and 0.51
-                figure.StartPoint = new Point(10+0.5, 100+0.5);
-                var segment = new CubicBezierSegment(
-                    new Point(30+0.5, 40+0.5),
-                    new Point(80+0.5, 40+0.5),
-                    new Point(100+0.51, 100+0.51),
-                    true);
-                figure.Segments.Add(segment);
-                figure.IsClosed = true;
-                figure.IsFilled = false;
-                pathGeometry.Figures.Add(figure);
-
-                Node node = new Node(1);
-                using (var ctx = node.RenderOpen())
-                {
-                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
-                }
-
-                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 110, 110);
-                Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANodeCubicBezier.png");
-            }
-
-            [Fact]
-            public void DrawANodePolyLineCubicBezier()
-            {
-                var pathGeometry = new PathGeometry();
-                PathFigure figure = new PathFigure();
-                //for pixel perfect, we need to add 0.51
-                figure.StartPoint = new Point(10+0.51, 100+0.51);
-                var segment = new PolyCubicBezierSegment(new[]
-                    {
-                        new Point(0 + 0.51, 0 + 0.51),
-                        new Point(200 + 0.51, 0 + 0.51),
-                        new Point(300 + 0.51, 100 + 0.51),
-                        new Point(300 + 0.51, 0 + 0.51),
-                        new Point(400 + 0.51, 0 + 0.51),
-                        new Point(600 + 0.51, 100 + 0.51)
-                    },
-                    true);
-                figure.Segments.Add(segment);
-                figure.IsClosed = true;
-                figure.IsFilled = false;
-                pathGeometry.Figures.Add(figure);
-
-                Node node = new Node(1);
-                using (var ctx = node.RenderOpen())
-                {
-                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
-                }
-
-                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 610, 110);
-                Util.CheckExpectedImage(imageRawBytes, 610, 110, @"Rendering\images\NodeFacts.Draw.DrawANodePolyLineCubicBezier.png");
-            }
-
             [Fact]
             public void DrawANodeArc()
             {

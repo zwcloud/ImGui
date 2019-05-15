@@ -321,6 +321,51 @@ namespace ImGui.UnitTest.Rendering
                 Pen pen = new Pen(Color.Black, 1);
                 CheckGeometry(geometry, null, pen, 194, 194);
             }
+
+            [Fact]
+            public void StrokeACubicBezierCurve()
+            {
+                var geometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = new Point(10+0.5, 100+0.5);
+                var segment = new CubicBezierSegment(
+                    new Point(30+0.5, 40+0.5),
+                    new Point(80+0.5, 40+0.5),
+                    new Point(100+0.51, 100+0.51),
+                    true);
+                figure.Segments.Add(segment);
+                figure.IsClosed = false;
+                figure.IsFilled = false;
+                geometry.Figures.Add(figure);
+                Pen pen = new Pen(Color.Black, 1);
+                CheckGeometry(geometry, null, pen, 110, 110);
+            }
+
+            [Fact]
+            public void StrokeACubicBezierPolyLine()
+            {
+                var geometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.51
+                figure.StartPoint = new Point(10+0.51, 100+0.51);
+                var segment = new PolyCubicBezierSegment(new[]
+                    {
+                        new Point(0 + 0.51, 0 + 0.51),
+                        new Point(200 + 0.51, 0 + 0.51),
+                        new Point(300 + 0.51, 100 + 0.51),
+                        new Point(300 + 0.51, 0 + 0.51),
+                        new Point(400 + 0.51, 0 + 0.51),
+                        new Point(600 + 0.51, 100 + 0.51)
+                    },
+                    true);
+                figure.Segments.Add(segment);
+                figure.IsClosed = false;
+                figure.IsFilled = false;
+                geometry.Figures.Add(figure);
+                Pen pen = new Pen(Color.Black, 1);
+                CheckGeometry(geometry, null, pen, 610, 110);
+            }
         }
 
         public class DrawImage
