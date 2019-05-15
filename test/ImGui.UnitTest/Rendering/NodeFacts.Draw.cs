@@ -13,67 +13,6 @@ namespace ImGui.UnitTest.Rendering
     {
         public class Draw : IClassFixture<ApplicationFixture>
         {
-            private static void DrawAndCheck(Node node, int width, int height, string path)
-            {
-                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);
-                Util.CheckExpectedImage(imageRawBytes, width, height, path);
-            }
-
-            [Fact]
-            public void DrawANodeWithStaticContent()
-            {
-                var pathGeometry = new PathGeometry();
-                PathFigure figure = new PathFigure();
-                //for pixel perfect, we need to add 0.5 and 0.51
-                figure.StartPoint = new Point(10+0.5, 10+0.5);
-                figure.Segments.Add(new LineSegment(new Point(10+0.5, 100+0.51), true));
-                figure.Segments.Add(new LineSegment(new Point(100+0.51, 100+0.51), true));
-                figure.Segments.Add(new LineSegment(new Point(100+0.51, 10+0.5), true));
-                figure.Segments.Add(new LineSegment(new Point(10+0.5, 10+0.5), true));
-                figure.IsClosed = true;
-                figure.IsFilled = false;
-                pathGeometry.Figures.Add(figure);
-
-                GlyphRun glyphRun = new GlyphRun("123", GUIStyle.Default.FontFamily, 20, FontStyle.Normal, FontWeight.Normal);
-
-                Node node = new Node(1);
-                using (var ctx = node.RenderOpen())
-                {
-                    ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
-                    ctx.DrawGlyphRun(new Brush(Color.Red), glyphRun, new Point(20, 20), 80, 80);
-                }
-
-                DrawAndCheck(node, 110, 110, @"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}.DrawANode.png");
-            }
-
-            [Fact]
-            public void DrawANodeWithDynamicContent()
-            {
-                var node = new Node(1, new Rect(10, 20, 300, 60));
-                node.RuleSet.StrokeColor = Color.Black;
-                node.RuleSet.StrokeWidth = 4;
-                node.RuleSet.FillColor = Color.Green;
-                node.RuleSet.Set(GUIStyleName.FillColor, Color.Red, GUIState.Hover);
-
-                {
-                    node.State = GUIState.Normal;
-                    var context = node.RenderOpen();
-                    context.DrawRectangle(node.RuleSet, new Rect(new Point(30, 30), new Point(80, 80)));
-                    context.Close();
-                    DrawAndCheck(node, 110, 110,
-                        $@"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}\{nameof(DrawANodeWithDynamicContent)}_Normal.png");
-                }
-
-                {
-                    node.State = GUIState.Hover;
-                    var context = node.RenderOpen();
-                    context.DrawRectangle(node.RuleSet, new Rect(new Point(30, 30), new Point(80, 80)));
-                    context.Close();
-                    DrawAndCheck(node, 110, 110,
-                        $@"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}\{nameof(DrawANodeWithDynamicContent)}_Hover.png");
-                }
-            }
-
             [Fact]
             public void DrawANodePolyLine()
             {
@@ -92,14 +31,12 @@ namespace ImGui.UnitTest.Rendering
                 figure.IsFilled = false;
                 pathGeometry.Figures.Add(figure);
 
-                Node node = new Node(1);
+                Node node = new Node(1, new Rect(0, 0, 100, 100));
                 using (var ctx = node.RenderOpen())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
                 }
-
-                Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, 110, 110);
-                Util.CheckExpectedImage(imageRawBytes, 110, 110, @"Rendering\images\NodeFacts.Draw.DrawANodePolyLine.png");
+                Util.Show(node);
             }
 
             [Fact]

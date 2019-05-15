@@ -295,6 +295,32 @@ namespace ImGui.UnitTest.Rendering
                 Brush brush = new Brush(Color.Red);
                 CheckGeometry(geometry, brush, null, 100, 100);
             }
+
+            [Fact]
+            public void StrokePolyLine()
+            {
+                var geometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                figure.StartPoint = new Point(97.000 ,127.000);
+                figure.Segments.Add(new PolyLineSegment(new[]
+                {
+                    new Point(132.267, 145.541),
+                    new Point(125.532, 106.271),
+                    new Point(154.063, 78.459),
+                    new Point(114.634, 72.729),
+                    new Point(97.000 ,37.000),
+                    new Point(79.366 ,72.729),
+                    new Point(39.937 ,78.459),
+                    new Point(68.468 ,106.271),
+                    new Point(61.733 ,145.541),
+                    new Point(97.000 ,127.000),
+                }, true));
+                figure.IsClosed = true;
+                figure.IsFilled = false;
+                geometry.Figures.Add(figure);
+                Pen pen = new Pen(Color.Black, 1);
+                CheckGeometry(geometry, null, pen, 194, 194);
+            }
         }
 
         public class DrawImage
