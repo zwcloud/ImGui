@@ -37,7 +37,7 @@ namespace ImGui.UnitTest.Rendering
                 GlyphRun glyphRun = new GlyphRun("123", GUIStyle.Default.FontFamily, 20, FontStyle.Normal, FontWeight.Normal);
 
                 Node node = new Node(1);
-                using (var ctx = node.RenderOpenStatic())
+                using (var ctx = node.RenderOpen())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
                     ctx.DrawGlyphRun(new Brush(Color.Red), glyphRun, new Point(20, 20), 80, 80);
@@ -58,7 +58,7 @@ namespace ImGui.UnitTest.Rendering
                 {
                     node.State = GUIState.Normal;
                     var context = node.RenderOpen();
-                    context.DrawRectangle(new Rect(new Point(30, 30), new Point(80, 80)));
+                    context.DrawRectangle(node.RuleSet, new Rect(new Point(30, 30), new Point(80, 80)));
                     context.Close();
                     DrawAndCheck(node, 110, 110,
                         $@"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}\{nameof(DrawANodeWithDynamicContent)}_Normal.png");
@@ -67,7 +67,7 @@ namespace ImGui.UnitTest.Rendering
                 {
                     node.State = GUIState.Hover;
                     var context = node.RenderOpen();
-                    context.DrawRectangle(new Rect(new Point(30, 30), new Point(80, 80)));
+                    context.DrawRectangle(node.RuleSet, new Rect(new Point(30, 30), new Point(80, 80)));
                     context.Close();
                     DrawAndCheck(node, 110, 110,
                         $@"Rendering\images\{nameof(NodeFacts)}\{nameof(Draw)}\{nameof(DrawANodeWithDynamicContent)}_Hover.png");
@@ -93,7 +93,7 @@ namespace ImGui.UnitTest.Rendering
                 pathGeometry.Figures.Add(figure);
 
                 Node node = new Node(1);
-                using (var ctx = node.RenderOpenStatic())
+                using (var ctx = node.RenderOpen())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
                 }
@@ -120,7 +120,7 @@ namespace ImGui.UnitTest.Rendering
                 pathGeometry.Figures.Add(figure);
 
                 Node node = new Node(1);
-                using (var ctx = node.RenderOpenStatic())
+                using (var ctx = node.RenderOpen())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
                 }
@@ -152,7 +152,7 @@ namespace ImGui.UnitTest.Rendering
                 pathGeometry.Figures.Add(figure);
 
                 Node node = new Node(1);
-                using (var ctx = node.RenderOpenStatic())
+                using (var ctx = node.RenderOpen())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
                 }
@@ -181,7 +181,7 @@ namespace ImGui.UnitTest.Rendering
                 pathGeometry.Figures.Add(figure);
 
                 Node node = new Node(1);
-                using (var ctx = node.RenderOpenStatic())
+                using (var ctx = node.RenderOpen())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
                 }
@@ -210,7 +210,7 @@ namespace ImGui.UnitTest.Rendering
                 pathGeometry.Figures.Add(figure);
 
                 Node node = new Node(1);
-                using (var ctx = node.RenderOpenStatic())
+                using (var ctx = node.RenderOpen())
                 {
                     ctx.DrawGeometry(null, new Pen(Color.Black, 1), pathGeometry);
                 }

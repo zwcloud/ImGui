@@ -54,7 +54,7 @@ namespace ImGui.UnitTest.Rendering
             }
 
             var node = new Node(1, new Rect(10, 20, 300, 60));
-            var context = node.RenderOpenStatic();
+            var context = node.RenderOpen();
             Populate(context);
             context.Close();
 
@@ -65,6 +65,52 @@ namespace ImGui.UnitTest.Rendering
             //read records from visual to checker and compare
             checker.StartCheck();
             node.RenderContent(new RenderContext(checker, null));
+        }
+
+        [Fact]
+        public void PopulateNodeWithStyle()
+        {
+            void Populate(DrawingContext drawingContext, Node n)
+            {
+                drawingContext.DrawRectangle(n.RuleSet, new Rect(new Point(30, 30), new Point(80, 80)));
+            }
+
+            var node = new Node(1, new Rect(10, 20, 300, 60));
+            node.RuleSet.StrokeColor = Color.Black;
+            node.RuleSet.StrokeWidth = 4;
+            node.RuleSet.FillColor = Color.Green;
+            node.RuleSet.Set(GUIStyleName.FillColor, Color.Red, GUIState.Hover);
+
+            {
+                node.State = GUIState.Normal;
+                var context = node.RenderOpen();
+                Populate(context, node);
+                context.Close();
+
+                //write records into ContentChecker
+                var checker = new ContentChecker();
+                Populate(checker, node);
+
+                //read records from visual to checker and compare
+                checker.StartCheck();
+                node.RenderContent(new RenderContext(checker, null));
+            }
+
+            {
+                node.State = GUIState.Hover;
+                var context = node.RenderOpen();
+                Populate(context, node);
+                context.Close();
+
+                //write records into ContentChecker
+                var checker = new ContentChecker();
+                Populate(checker, node);
+
+                //read records from visual to checker and compare
+                checker.StartCheck();
+                node.RenderContent(new RenderContext(checker, null));
+            }
+
         }
     }
 }

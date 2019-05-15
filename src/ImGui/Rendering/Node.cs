@@ -243,18 +243,9 @@ namespace ImGui.Rendering
         /// Opens the Node for static rendering. The returned DrawingContext can be used to
         /// render into the Node: populate the content.
         /// </summary>
-        internal DrawingContext RenderOpenStatic()
+        internal DrawingContext RenderOpen()
         {
             return new VisualDrawingContext(this);
-        }
-
-        /// <summary>
-        /// Opens the Node for stateful and styled rendering. The returned DrawingContext can be used to
-        /// render into the Node: populate the content.
-        /// </summary>
-        internal NodeDrawingContext RenderOpen()
-        {
-            return new NodeDrawingContext(this);
         }
 
         internal override void RenderClose(DrawingContent newContent)

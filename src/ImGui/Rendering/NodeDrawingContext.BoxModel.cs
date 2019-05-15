@@ -3,11 +3,10 @@ using System.Diagnostics;
 
 namespace ImGui.Rendering
 {
-    internal partial class NodeDrawingContext
+    internal static partial class DrawingContextEx
     {
-        private void DrawOutline(Rect borderBoxRect)
+        private static void DrawOutline(DrawingContext dc, StyleRuleSet style, Rect borderBoxRect)
         {
-            var style = ownerNode.RuleSet;
             var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
             if (MathEx.AmostZero(outlineWidth)) return;
             var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
@@ -15,9 +14,8 @@ namespace ImGui.Rendering
             dc.DrawRectangle(null, new Pen(outlineColor, outlineWidth), borderBoxRect);
         }
 
-        private void DrawBorder(Rect borderBoxRect, Rect paddingBoxRect)
+        private static void DrawBorder(DrawingContext dc, StyleRuleSet style, Rect borderBoxRect, Rect paddingBoxRect)
         {
-            var style = ownerNode.RuleSet;
             // draw border between border-box and padding-box
             var borderImageSource = style.BorderImageSource;
             if (borderImageSource != null)
@@ -366,15 +364,14 @@ namespace ImGui.Rendering
             return geometry;
         }
 
-        private void DrawBackground(Rect paddingBoxRect)
+        private static void DrawBackground(DrawingContext dc, StyleRuleSet style, Rect paddingBoxRect)
         {
-            var style = ownerNode.RuleSet;
             // draw background in padding-box
             var gradient = (Gradient) style.Get<int>(GUIStyleName.BackgroundGradient);
             if (gradient == Gradient.None)
             {
                 var bgColor = style.BackgroundColor;
-                DrawRectangle(new Brush(bgColor), null, paddingBoxRect);
+                dc.DrawRectangle(style, new Brush(bgColor), null, paddingBoxRect);
                 //TODO apply border-radius clip, which is determined by how border corners are rendered
             }
             else if (gradient == Gradient.TopBottom)
@@ -386,6 +383,66 @@ namespace ImGui.Rendering
             else
             {
                 throw new InvalidOperationException();
+            }
+        }
+
+        private static void DrawDebug(DrawingContext dc, StyleRuleSet rule, Rect paddingBoxRect, Rect contentBoxRect)
+        {
+#if DrawPaddingBox
+            this.PathRect(paddingBoxRect.TopLeft, paddingBoxRect.BottomRight);
+            this.PathStroke(Color.Rgb(0, 100, 100), true, 1);
+#endif
+
+#if DrawContentBox
+            this.PathRect(contentBoxRect.TopLeft, cbr);
+            this.PathStroke(Color.Rgb(100, 0, 100), true, 1);
+#endif
+        }
+
+        //TODO remove out parameter borderBoxRect
+        private static void GetBoxes(Rect rect, StyleRuleSet style, out Rect borderBoxRect, out Rect paddingBoxRect,
+            out Rect contentBoxRect)
+        {
+            //Widths of border
+            var bt = style.Get<double>(GUIStyleName.BorderTop);
+            var br = style.Get<double>(GUIStyleName.BorderRight);
+            var bb = style.Get<double>(GUIStyleName.BorderBottom);
+            var bl = style.Get<double>(GUIStyleName.BorderLeft);
+
+            //Widths of padding
+            var pt = style.Get<double>(GUIStyleName.PaddingTop);
+            var pr = style.Get<double>(GUIStyleName.PaddingRight);
+            var pb = style.Get<double>(GUIStyleName.PaddingBottom);
+            var pl = style.Get<double>(GUIStyleName.PaddingLeft);
+
+            //4 corner of the border-box
+            var btl = new Point(rect.Left, rect.Top);
+            var btr = new Point(rect.Right, rect.Top);
+            var bbr = new Point(rect.Right, rect.Bottom);
+            var bbl = new Point(rect.Left, rect.Bottom);
+            borderBoxRect = new Rect(btl, bbr);
+
+            //4 corner of the padding-box
+            var ptl = new Point(btl.X + bl, btl.Y + bt);
+            var ptr = new Point(btr.X - br, btr.Y + bt);
+            var pbr = new Point(bbr.X - br, bbr.Y - bb);
+            var pbl = new Point(bbl.X + bl, bbl.Y - bb);
+            Debug.Assert(ptl.X < ptr.X);//TODO what if (ptl.X > ptr.X) happens?
+            paddingBoxRect = new Rect(ptl, pbr);
+
+            //4 corner of the content-box
+            var ctl = new Point(ptl.X + pl, ptl.Y + pt);
+            var ctr = new Point(ptr.X - pr, ptr.Y + pr);
+            var cbr = new Point(pbr.X - pr, pbr.Y - pb);
+            var cbl = new Point(pbl.X + pl, pbl.Y - pb);
+            if (ctl.X >= ctr.X)
+            {
+                Log.Warning("Content box is zero-sized.");
+                contentBoxRect = new Rect(ctl, Size.Zero);
+            }
+            else
+            {
+                contentBoxRect = new Rect(ctl, cbr);
             }
         }
     }
