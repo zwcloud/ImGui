@@ -366,6 +366,50 @@ namespace ImGui.UnitTest.Rendering
                 Pen pen = new Pen(Color.Black, 1);
                 CheckGeometry(geometry, null, pen, 610, 110);
             }
+
+            [Fact]
+            public void DrawANodeArc1()
+            {
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = new Point(60,100);
+                figure.Segments.Add(
+                    new ArcSegment(
+                        size: new Size(60, 40),
+                        rotationAngle: 10,
+                        isLargeArc: true,
+                        sweepDirection: SweepDirection.Counterclockwise,
+                        point: new Point(140, 100),
+                        isStroked: true));
+                figure.IsClosed = false;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
+                Pen pen = new Pen(Color.Black, 1);
+                CheckGeometry(pathGeometry, null, pen, 200,200);
+            }
+
+            [Fact]
+            public void DrawANodeArc2()
+            {
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = new Point(87.07, 45.86);
+                figure.Segments.Add(
+                    new ArcSegment(
+                        point: new Point(80, 40),
+                        size: new Size(10, 20),
+                        rotationAngle: 0,
+                        isLargeArc: false,
+                        sweepDirection: SweepDirection.Counterclockwise,
+                        isStroked: true));
+                figure.IsClosed = false;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
+                Pen pen = new Pen(Color.Black, 1);
+                CheckGeometry(pathGeometry, null, pen, 200,200);
+            }
         }
 
         public class DrawImage
