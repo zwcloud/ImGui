@@ -107,7 +107,7 @@ namespace ImGui.UnitTest.Rendering
 
             public int GetHashCode(PathSegment obj)
             {
-                return base.GetHashCode();
+                return obj.GetHashCode();
             }
         }
 
@@ -133,7 +133,7 @@ namespace ImGui.UnitTest.Rendering
 
             public int GetHashCode(PathFigure obj)
             {
-                return base.GetHashCode();
+                return obj.GetHashCode();
             }
         }
 
@@ -158,9 +158,72 @@ namespace ImGui.UnitTest.Rendering
 
             public int GetHashCode(PathGeometry obj)
             {
-                return base.GetHashCode();
+                return obj.GetHashCode();
             }
         }
+
+        private class GlyphDataComparer : IEqualityComparer<GlyphData>
+        {
+            public bool Equals(GlyphData x, GlyphData y)
+            {
+                if (x == null && y != null) return false;
+                if (x != null && y == null) return false;
+                if (ReferenceEquals(x, y)) return true;
+
+                do
+                {
+                    if(x.Character              != y.Character             ) break;
+                    if(x.FontFamily             != y.FontFamily            ) break;
+                    if(x.FontStyle              != y.FontStyle             ) break;
+                    if(x.FontWeight             != y.FontWeight            ) break;
+                    if(x.Polygons               != y.Polygons              ) break;
+                    if(x.QuadraticCurveSegments != y.QuadraticCurveSegments) break;
+                    return true;
+                } while (false);
+
+                return false;
+            }
+
+            public int GetHashCode(GlyphData obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+
+        private class GlyphRunComparer : IEqualityComparer<GlyphRun>
+        {
+            private static GlyphDataComparer s_glyphDataComparer = new GlyphDataComparer();
+
+            public bool Equals(GlyphRun x, GlyphRun y)
+            {
+                if (x == null && y != null) return false;
+                if (x != null && y == null) return false;
+                if (ReferenceEquals(x, y)) return true;
+
+                do
+                {
+                    if(x.Text          != y.Text         ) break;
+                    if(x.FontFamily    != y.FontFamily   ) break;
+                    if(x.FontSize      != y.FontSize     ) break;
+                    if(x.FontStyle     != y.FontStyle    ) break;
+                    if(x.FontWeight    != y.FontWeight   ) break;
+                    if(x.FontStretch   != y.FontStretch  ) break;
+                    if(x.TextAlignment != y.TextAlignment) break;
+                    if(x.Rectangle     != y.Rectangle    ) break;
+                    if(!x.Offsets.SequenceEqual(y.Offsets)) break;
+                    if(!x.Glyphs.SequenceEqual(y.Glyphs, s_glyphDataComparer)) break;
+                    return true;
+                } while (false);
+
+                return false;
+            }
+
+            public int GetHashCode(GlyphRun obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+
         #endregion
 
         #region Record Types
@@ -476,8 +539,10 @@ namespace ImGui.UnitTest.Rendering
 
         class GlyphRunRecord : IEquatable<GlyphRunRecord>
         {
-            private Brush foregroundBrush;
-            private GlyphRun glyphRun;
+            private readonly Brush foregroundBrush;
+            private readonly GlyphRun glyphRun;
+
+            private static readonly GlyphRunComparer s_GlyphRunComparer = new GlyphRunComparer();
 
             public GlyphRunRecord(Brush foregroundBrush, GlyphRun glyphRun)
             {
@@ -490,34 +555,19 @@ namespace ImGui.UnitTest.Rendering
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
                 return Equals(this.foregroundBrush, other.foregroundBrush)
-                       && Equals(this.glyphRun, other.glyphRun);
-                //TODO Now use reference comparison for GlyphRun, we should implement deep comparison when GlyphRun is stable
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
-                return Equals((GlyphRunRecord) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    return ((this.foregroundBrush != null ? this.foregroundBrush.GetHashCode() : 0) * 397) ^ (this.glyphRun != null ? this.glyphRun.GetHashCode() : 0);
-                }
+                       && s_GlyphRunComparer.Equals(this.glyphRun, other.glyphRun);
             }
         }
 
         class TextRecord : IEquatable<TextRecord>
         {
-            private Brush foregroundBrush;
-            private GlyphRun glyphRun;
-            private Point origin;
-            private double maxTextWidth;
-            private double maxTextHeight;
+            private readonly Brush foregroundBrush;
+            private readonly GlyphRun glyphRun;
+            private readonly Point origin;
+            private readonly double maxTextWidth;
+            private readonly double maxTextHeight;
+
+            private static readonly GlyphRunComparer s_GlyphRunComparer = new GlyphRunComparer();
 
             public TextRecord(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
             {
@@ -533,32 +583,10 @@ namespace ImGui.UnitTest.Rendering
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
                 return Equals(this.foregroundBrush, other.foregroundBrush)
-                       && Equals(this.glyphRun, other.glyphRun)
-                       //TODO Now use reference comparison for GlyphRun, we should implement deep comparison when GlyphRun is stable
                        && this.origin.Equals(other.origin)
                        && this.maxTextWidth.Equals(other.maxTextWidth)
-                       && this.maxTextHeight.Equals(other.maxTextHeight);
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
-                return Equals((TextRecord) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    int hashCode = (this.foregroundBrush != null ? this.foregroundBrush.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (this.glyphRun != null ? this.glyphRun.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ this.origin.GetHashCode();
-                    hashCode = (hashCode * 397) ^ this.maxTextWidth.GetHashCode();
-                    hashCode = (hashCode * 397) ^ this.maxTextHeight.GetHashCode();
-                    return hashCode;
-                }
+                       && this.maxTextHeight.Equals(other.maxTextHeight)
+                       && s_GlyphRunComparer.Equals(this.glyphRun, other.glyphRun);
             }
         }
 

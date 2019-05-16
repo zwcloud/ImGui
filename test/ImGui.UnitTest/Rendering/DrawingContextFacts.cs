@@ -33,6 +33,35 @@ namespace ImGui.UnitTest.Rendering
         }
 
         [Fact]
+        public void PopulateDrawingVisualWithGlyphRun()
+        {
+            throw new System.Exception("DrawGlyphRun methods should be unified to a single one:" +
+                                       "void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun);" +
+                                       "Another overload should be removed," +
+                                       "and the text layout/hittest algorithm should be extracted to a proper place");
+
+            void Populate(DrawingContext drawingContext)
+            {
+                drawingContext.DrawGlyphRun(new Brush(Color.Black),
+                    new GlyphRun("啊rABC", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal));
+            }
+
+            //write records into visual's content
+            var visual = new DrawingVisual(1);
+            var context = visual.RenderOpen();
+            Populate(context);
+            context.Close();
+
+            //write records into ContentChecker
+            var checker = new ContentChecker();
+            Populate(checker);
+
+            //read records from visual to checker and compare
+            checker.StartCheck();
+            visual.RenderContent(new RenderContext(checker, null));
+        }
+
+        [Fact]
         public void PopulateNode()
         {
             var geometry = new PathGeometry();
