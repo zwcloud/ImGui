@@ -338,42 +338,6 @@ namespace ImGui.UnitTest.Rendering
                     Util.CheckExpectedImage(imageRawBytes, 150, 150, @"Rendering\images\NodeFacts.Draw.DrawOverlappedRectangles.After.png");
                 }
             }
-
-            [Fact]
-            public void DrawBoxModelText()
-            {
-                Node node = new Node(1, "textNode", new Rect(10, 10, 90, 40));
-                StyleRuleSetBuilder ruleSetBuilder = new StyleRuleSetBuilder(node.RuleSet);
-                ruleSetBuilder
-                    .Border((5, 10, 5, 10))
-                    .BorderColor(Color.HotPink)
-                    .BackgroundColor(Color.Azure)
-                    .Padding((4, 2, 4, 2));
-                node.UseBoxModel = true;
-                var primitive = new TextGeometry("AAA");
-                node.Geometry = primitive;
-
-                Util.DrawNodeToImage(out var imageRawBytes, node, 120, 60);
-                Util.CheckExpectedImage(imageRawBytes, 120, 60,
-                    @"Rendering\images\NodeFacts.Draw.DrawBoxModelText.png");
-            }
-
-            [Fact]
-            public void DrawBoxModelImage()
-            {
-                Node node = new Node(1, "imageNode", new Rect(10, 10, 300, 200));
-                StyleRuleSetBuilder ruleSetBuilder = new StyleRuleSetBuilder(node.RuleSet);
-                ruleSetBuilder
-                    .Border((5, 10, 5, 10))
-                    .BorderColor(Color.HotPink)
-                    .Padding((4, 2, 4, 2));
-                node.UseBoxModel = true;
-                node.Geometry = new ImageGeometry(@"assets\images\logo.png");
-
-                Util.DrawNodeToImage(out var imageRawBytes, node, 400, 300);
-                Util.CheckExpectedImage(imageRawBytes, 400, 300,
-                    @"Rendering\images\NodeFacts.Draw.DrawBoxModelImage.png");
-            }
         }
     }
 }

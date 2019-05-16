@@ -112,5 +112,20 @@ namespace ImGui.Rendering
             DrawDebug(dc, style, paddingBoxRect, contentBoxRect);
         }
 
+        public static void DrawBoxModel(this DrawingContext dc, ImGui.OSAbstraction.Graphics.ITexture texture, StyleRuleSet style, Rect rect)
+        {
+            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+
+            DrawBackground(dc, style, paddingBoxRect);
+
+            //Content
+            //Content-box
+            dc.DrawImage(texture, contentBoxRect, style.BorderImageSlice);
+
+            DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
+            DrawOutline(dc, style, borderBoxRect);
+
+            DrawDebug(dc, style, paddingBoxRect, contentBoxRect);
+        }
     }
 }

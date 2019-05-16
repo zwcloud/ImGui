@@ -202,6 +202,12 @@ namespace ImGui.GraphicsImplementation
         {
             if (!image.Valid){ throw new InvalidOperationException("Texture is not valid for rendering."); }
 
+            if (slice.top == 0 && slice.right == 0 && slice.bottom == 0 && slice.left == 0)
+            {
+                DrawImage(image, rect);
+                return;
+            }
+
             var (top, right, bottom, left) = slice;
             Point uv0 = new Point(left / image.Width, top / image.Height);
             Point uv1 = new Point(1 - right / image.Width, 1 - bottom / image.Height);
