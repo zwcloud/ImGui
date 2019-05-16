@@ -100,6 +100,48 @@ namespace ImGui.UnitTest.Rendering
                 node.RenderContent(new RenderContext(checker, null));
             }
 
+            [Fact]
+            public void DrawABoxModelWithDifferentBorder()
+            {
+                var node = new Node(1, new Rect(20, 20, 200, 80));
+                node.RuleSet.Border = (10, 20, 30, 40);
+                node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.YellowGreen);
+
+                var context = node.RenderOpen();
+                context.DrawBoxModel(node.RuleSet, node.Rect);
+                context.Close();
+
+                //write records into ContentChecker
+                var checker = new ContentChecker();
+                checker.DrawBoxModel(node.RuleSet, node.Rect);
+
+                //read records from visual to checker and compare
+                checker.StartCheck();
+                node.RenderContent(new RenderContext(checker, null));
+            }
+
+            [Fact]
+            public void DrawABoxModelWithRoundBorder()
+            {
+                var node = new Node(1, new Rect(20, 20, 200, 200));
+                node.RuleSet.Border = (top:20, right: 30, bottom: 20, left:40);
+                node.RuleSet.BorderColor = (Color.Red, Color.DarkGreen, Color.DeepSkyBlue, Color.Black);
+                node.RuleSet.BorderRadius = (TopLeft: 50, TopRight: 40, BottomRight: 20, BottomLeft: 30);
+                node.RuleSet.BackgroundColor = Color.AliceBlue;
+
+                var context = node.RenderOpen();
+                context.DrawBoxModel(node.RuleSet, node.Rect);
+                context.Close();
+
+                //write records into ContentChecker
+                var checker = new ContentChecker();
+                checker.DrawBoxModel(node.RuleSet, node.Rect);
+
+                //read records from visual to checker and compare
+                checker.StartCheck();
+                node.RenderContent(new RenderContext(checker, null));
+            }
+
         }
     }
 }
