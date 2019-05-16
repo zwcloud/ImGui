@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
@@ -346,7 +347,7 @@ namespace ImGui.UnitTest.Rendering
 
         public class DrawImage
         {
-            internal static void Check(System.Func<ImGui.OSAbstraction.Graphics.ITexture> textureGettter, Rect rectangle, int width, int height,
+            internal static void Check(Func<OSAbstraction.Graphics.ITexture> textureGettter, Rect rectangle, int width, int height,
                 [CallerMemberName] string methodName = "unknown")
             {
                 Application.EnableMSAA = false;
@@ -377,7 +378,7 @@ namespace ImGui.UnitTest.Rendering
                 Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawImage)}\\{methodName}.png");
             }
 
-            internal static void Check(System.Func<ImGui.OSAbstraction.Graphics.ITexture> textureGettter, Rect rectangle, (double top, double right, double bottom, double left) slice, int width, int height,
+            internal static void Check(Func<OSAbstraction.Graphics.ITexture> textureGettter, Rect rectangle, (double top, double right, double bottom, double left) slice, int width, int height,
                 [CallerMemberName] string methodName = "unknown")
             {
                 Application.EnableMSAA = false;
@@ -411,7 +412,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOriginalImage()
             {
-                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\logo.png");
+                var image = new Image(@"assets\images\logo.png");
 
                 Check(() =>
                     {
@@ -425,7 +426,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawScaledImage()
             {
-                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\logo.png");
+                var image = new Image(@"assets\images\logo.png");
 
                 Check(() =>
                     {
@@ -439,7 +440,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawSlicedImage1()
             {
-                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\button.png");
+                var image = new Image(@"assets\images\button.png");
 
                 Check(() =>
                     {
@@ -455,7 +456,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawSlicedImage2()
             {
-                var image = new ImGui.GraphicsAbstraction.Image(@"assets\images\button.png");
+                var image = new Image(@"assets\images\button.png");
 
                 Check(() =>
                     {
