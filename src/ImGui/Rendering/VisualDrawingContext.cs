@@ -1,5 +1,4 @@
 ﻿using System;
-using ImGui.GraphicsAbstraction;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.Rendering.Composition;
@@ -66,7 +65,7 @@ namespace ImGui.Rendering
                     content.AddDependentResource(pen),
                     rectangle, radiusX, radiusY);
 
-                content.WriteRecord(RecordType.DrawRoundedRectangle, (byte*)&record, sizeof(DrawRectangleCommand));
+                content.WriteRecord(RecordType.DrawRoundedRectangle, (byte*)&record, sizeof(DrawRoundedRectangleCommand));
             }
         }
 
@@ -111,7 +110,7 @@ namespace ImGui.Rendering
                     content.AddDependentResource(image),
                     rectangle);
 
-                content.WriteRecord(RecordType.DrawImage, (byte*)&record, sizeof(DrawRectangleCommand));
+                content.WriteRecord(RecordType.DrawImage, (byte*)&record, sizeof(DrawImageCommand));
             }
         }
 
@@ -130,7 +129,7 @@ namespace ImGui.Rendering
                     rectangle,
                     slice);
 
-                content.WriteRecord(RecordType.DrawSlicedImage, (byte*)&record, sizeof(DrawRectangleCommand));
+                content.WriteRecord(RecordType.DrawSlicedImage, (byte*)&record, sizeof(DrawSlicedImageCommand));
             }
         }
 
@@ -157,7 +156,7 @@ namespace ImGui.Rendering
                     origin,
                     maxTextWidth, maxTextHeight);
 
-                content.WriteRecord(RecordType.DrawGlyphRun, (byte*)&record, sizeof(DrawRectangleCommand));
+                content.WriteRecord(RecordType.DrawGlyphRun, (byte*)&record, sizeof(DrawGlyphRunCommand));
             }
         }
 
