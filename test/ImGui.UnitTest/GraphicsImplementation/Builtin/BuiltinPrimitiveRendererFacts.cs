@@ -26,27 +26,9 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-                    var textMesh = MeshPool.TextMeshPool.Get();
-                    textMesh.Clear();
-                    var imageMesh = MeshPool.ImageMeshPool.Get();
-                    imageMesh.Clear();
-
-                    renderer.SetShapeMesh(shapeMesh);
-                    renderer.SetTextMesh(textMesh);
-                    renderer.SetImageMesh(imageMesh);
-
+                    renderer.OnBeforeRead();
                     renderer.DrawLine(pen, point0, point1);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-
-                    renderer.SetShapeMesh(null);
-                    renderer.SetTextMesh(null);
-                    renderer.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(shapeMesh);
-                    meshList.AddOrUpdateTextMesh(textMesh);
-                    meshList.AddOrUpdateImageMesh(imageMesh);
+                    renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -99,27 +81,9 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-                    var textMesh = MeshPool.TextMeshPool.Get();
-                    textMesh.Clear();
-                    var imageMesh = MeshPool.ImageMeshPool.Get();
-                    imageMesh.Clear();
-
-                    renderer.SetShapeMesh(shapeMesh);
-                    renderer.SetTextMesh(textMesh);
-                    renderer.SetImageMesh(imageMesh);
-
+                    renderer.OnBeforeRead();
                     renderer.DrawRectangle(brush, pen, rectangle);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-
-                    renderer.SetShapeMesh(null);
-                    renderer.SetTextMesh(null);
-                    renderer.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(shapeMesh);
-                    meshList.AddOrUpdateTextMesh(textMesh);
-                    meshList.AddOrUpdateImageMesh(imageMesh);
+                    renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -161,25 +125,9 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-                    var textMesh = MeshPool.TextMeshPool.Get();
-                    textMesh.Clear();
-                    var imageMesh = MeshPool.ImageMeshPool.Get();
-                    imageMesh.Clear();
-
-                    renderer.SetShapeMesh(shapeMesh);
-                    renderer.SetTextMesh(textMesh);
-                    renderer.SetImageMesh(imageMesh);
+                    renderer.OnBeforeRead();
                     renderer.DrawRoundedRectangle(brush, pen, rectangle, radiusX, radiusY);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-                    renderer.SetShapeMesh(null);
-                    renderer.SetTextMesh(null);
-                    renderer.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(shapeMesh);
-                    meshList.AddOrUpdateTextMesh(textMesh);
-                    meshList.AddOrUpdateImageMesh(imageMesh);
+                    renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -226,25 +174,9 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-                    var textMesh = MeshPool.TextMeshPool.Get();
-                    textMesh.Clear();
-                    var imageMesh = MeshPool.ImageMeshPool.Get();
-                    imageMesh.Clear();
-
-                    renderer.SetShapeMesh(shapeMesh);
-                    renderer.SetTextMesh(textMesh);
-                    renderer.SetImageMesh(imageMesh);
+                    renderer.OnBeforeRead();
                     renderer.DrawGeometry(brush, pen, geometry);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-                    renderer.SetShapeMesh(null);
-                    renderer.SetTextMesh(null);
-                    renderer.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(shapeMesh);
-                    meshList.AddOrUpdateTextMesh(textMesh);
-                    meshList.AddOrUpdateImageMesh(imageMesh);
+                    renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -426,25 +358,9 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-                    var textMesh = MeshPool.TextMeshPool.Get();
-                    textMesh.Clear();
-                    var imageMesh = MeshPool.ImageMeshPool.Get();
-                    imageMesh.Clear();
-
-                    renderer.SetShapeMesh(shapeMesh);
-                    renderer.SetTextMesh(textMesh);
-                    renderer.SetImageMesh(imageMesh);
+                    renderer.OnBeforeRead();
                     renderer.DrawImage(textureGettter(), rectangle);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-                    renderer.SetShapeMesh(null);
-                    renderer.SetTextMesh(null);
-                    renderer.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(shapeMesh);
-                    meshList.AddOrUpdateTextMesh(textMesh);
-                    meshList.AddOrUpdateImageMesh(imageMesh);
+                    renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -473,25 +389,9 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-                    var textMesh = MeshPool.TextMeshPool.Get();
-                    textMesh.Clear();
-                    var imageMesh = MeshPool.ImageMeshPool.Get();
-                    imageMesh.Clear();
-
-                    renderer.SetShapeMesh(shapeMesh);
-                    renderer.SetTextMesh(textMesh);
-                    renderer.SetImageMesh(imageMesh);
+                    renderer.OnBeforeRead();
                     renderer.DrawImage(textureGettter(), rectangle, slice);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-                    renderer.SetShapeMesh(null);
-                    renderer.SetTextMesh(null);
-                    renderer.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(shapeMesh);
-                    meshList.AddOrUpdateTextMesh(textMesh);
-                    meshList.AddOrUpdateImageMesh(imageMesh);
+                    renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -583,25 +483,9 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
-                    var shapeMesh = MeshPool.ShapeMeshPool.Get();
-                    shapeMesh.Clear();
-                    shapeMesh.CommandBuffer.Add(DrawCommand.Default);
-                    var textMesh = MeshPool.TextMeshPool.Get();
-                    textMesh.Clear();
-                    var imageMesh = MeshPool.ImageMeshPool.Get();
-                    imageMesh.Clear();
-
-                    renderer.SetShapeMesh(shapeMesh);
-                    renderer.SetTextMesh(textMesh);
-                    renderer.SetImageMesh(imageMesh);
+                    renderer.OnBeforeRead();
                     renderer.DrawGlyphRun(brush, glyphRun, rectangle);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-                    renderer.SetShapeMesh(null);
-                    renderer.SetTextMesh(null);
-                    renderer.SetImageMesh(null);
-
-                    meshList.AddOrUpdateShapeMesh(shapeMesh);
-                    meshList.AddOrUpdateTextMesh(textMesh);
-                    meshList.AddOrUpdateImageMesh(imageMesh);
+                    renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -663,125 +547,5 @@ namespace ImGui.UnitTest.Rendering
             //TODO
         }
 
-        public class DrawBoxModel
-        {
-            [Fact]
-            public void DrawEmptyBoxModel()
-            {
-                var styleRuleSet = new StyleRuleSet();
-                var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
-                styleRuleSetBuilder
-                    .BackgroundColor(Color.White)
-                    .Border((1, 3, 1, 3))
-                    .BorderColor(Color.Black)
-                    .Padding((10, 5, 10, 5));
-                var rect = new Rect(10, 10, 300, 60);
-                const string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawEmptyBoxModel.png";
-                const int width = 400, height = 100;
-
-                byte[] imageRawBytes;
-                using (var context = new RenderContextForTest(width, height))
-                {
-                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-                    var mesh = new Mesh();
-                    mesh.CommandBuffer.Add(DrawCommand.Default);
-                    geometryRenderer.SetShapeMesh(mesh);
-                    var textMesh = new TextMesh();
-                    geometryRenderer.SetTextMesh(textMesh);
-                    var imageMesh = new Mesh();
-                    geometryRenderer.SetImageMesh(imageMesh);
-                    geometryRenderer.DrawBoxModel(rect, styleRuleSet);
-
-                    context.Clear();
-                    context.DrawShapeMesh(mesh);
-
-                    imageRawBytes = context.GetRenderedRawBytes();
-                }
-
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
-            }
-
-            [Fact]
-            public void DrawBoxModelWithTextContent()
-            {
-                TextGeometry textGeometry = new TextGeometry("Hello你好こんにちは");
-                var styleRuleSet = new StyleRuleSet();
-                var styleRuleSetBuilder = new StyleRuleSetBuilder(styleRuleSet);
-                styleRuleSetBuilder
-                    .BackgroundColor(Color.White)
-                    .Border((1, 3, 1, 3))
-                    .BorderColor(Color.Black)
-                    .Padding((10, 5, 10, 5))
-                    .FontSize(24)
-                    .FontColor(Color.Black);
-                var rect = new Rect(10, 10, 350, 60);
-
-                const string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithTextContent.png";
-                const int width = 400, height = 100;
-
-                byte[] imageRawBytes;
-                using (var context = new RenderContextForTest(width, height))
-                {
-                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-                    var mesh = new Mesh();
-                    mesh.CommandBuffer.Add(DrawCommand.Default);
-                    geometryRenderer.SetShapeMesh(mesh);
-                    var textMesh = new TextMesh();
-                    geometryRenderer.SetTextMesh(textMesh);
-                    var imageMesh = new Mesh();
-                    geometryRenderer.SetImageMesh(imageMesh);
-                    geometryRenderer.DrawBoxModel(textGeometry, rect, styleRuleSet);
-
-                    context.Clear();
-                    context.DrawShapeMesh(mesh);
-                    context.DrawTextMesh(textMesh);
-
-                    imageRawBytes = context.GetRenderedRawBytes();
-                }
-
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
-            }
-
-            [Fact]
-            public void DrawBoxModelWithImageContent()
-            {
-                var primitive = new ImageGeometry(@"assets\images\logo.png");
-
-                var ruleSet = new StyleRuleSet();
-                var styleSetBuilder = new StyleRuleSetBuilder(ruleSet);
-                styleSetBuilder
-                    .BackgroundColor(Color.White)
-                    .Border((top: 1, right: 3, bottom: 1, left: 3))
-                    .BorderColor(Color.LightBlue)
-                    .Padding((10, 5, 10, 5));
-                var rect = new Rect(10, 10, 300, 400);
-
-                const string expectedImageFilePath =
-                    @"GraphicsImplementation\Builtin\images\BuiltinPrimitiveRendererFacts.DrawBoxModel.DrawBoxModelWithImageContent.png";
-                const int width = 500, height = 500;
-
-                byte[] imageRawBytes;
-                using (var context = new RenderContextForTest(width, height))
-                {
-                    BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-                    var mesh = new Mesh();
-                    mesh.CommandBuffer.Add(DrawCommand.Default);
-                    geometryRenderer.SetShapeMesh(mesh);
-                    var imageMesh = new Mesh();
-                    geometryRenderer.SetImageMesh(imageMesh);
-                    geometryRenderer.DrawBoxModel(primitive, rect, ruleSet);
-
-                    context.Clear();
-                    context.DrawShapeMesh(mesh);
-                    context.DrawImageMesh(imageMesh);
-
-                    imageRawBytes = context.GetRenderedRawBytes();
-                }
-
-                Util.CheckExpectedImage(imageRawBytes, width, height, expectedImageFilePath);
-            }
-        }
     }
 }

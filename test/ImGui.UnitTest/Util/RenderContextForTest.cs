@@ -1,31 +1,39 @@
-﻿using ImGui.OSImplentation.Windows;
-using System;
+﻿using System;
 using CSharpGL;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Window;
 using ImGui.Rendering;
 
 namespace ImGui.UnitTest
 {
     internal class RenderContextForTest : IDisposable
     {
-        //TODO de-cuple with Windows platform
-
-        public Win32Window Window { get; private set; }
-        public Win32OpenGLRenderer Renderer { get; private set; }
+        public IWindow Window { get; private set; }
+        public IRenderer Renderer { get; private set; }
 
         private readonly int viewportWidth;
         private readonly int viewportHeight;
 
+        private const int WindowWidth = 1000;
+        private const int WindowHeight = 1000;//This size should be enough for unit testing.
+
         public RenderContextForTest(int viewportWidth, int viewportHeight)
         {
+            if (viewportWidth > WindowWidth || viewportHeight > WindowHeight)
+            {
+
+            }
             this.viewportWidth = viewportWidth;
             this.viewportHeight = viewportHeight;
 
             Application.Init();
 
-            this.Window = new Win32Window();
-            this.Window.Init(Point.Zero, new Size(1000, 1000)/*This size should be enough for unit testing.*/, WindowTypes.Regular);
+            this.Window = Application.PlatformContext.CreateWindow(
+                Point.Zero,
+                new Size(WindowWidth, WindowHeight),
+                WindowTypes.Regular);
 
-            this.Renderer = new Win32OpenGLRenderer();
+            this.Renderer = Application.PlatformContext.CreateRenderer();
             this.Renderer.Init(this.Window.Pointer, this.Window.ClientSize);
         }
 
@@ -34,34 +42,15 @@ namespace ImGui.UnitTest
             this.Renderer.Clear(Color.White);
         }
 
-        public void DrawShapeMesh(Mesh shapeMesh)
-        {
-            Win32OpenGLRenderer.DrawMesh(this.Renderer.shapeMaterial, shapeMesh,
-                viewportWidth, viewportHeight);
-        }
-
-        public void DrawImageMesh(Mesh imageMesh)
-        {
-            Win32OpenGLRenderer.DrawMesh(this.Renderer.imageMaterial, imageMesh,
-                viewportWidth, viewportHeight);
-        }
-
-        public void DrawTextMesh(TextMesh textMesh)
-        {
-            Win32OpenGLRenderer.DrawTextMesh(this.Renderer.glyphMaterial, textMesh,
-                viewportWidth, viewportHeight);
-        }
-
         public void DrawMeshes(MeshBuffer meshBuffer)
         {
-            this.DrawShapeMesh(meshBuffer.ShapeMesh);
-            this.DrawImageMesh(meshBuffer.ImageMesh);
-            this.DrawTextMesh(meshBuffer.TextMesh);
+            this.Renderer.DrawMeshes(this.viewportWidth, this.viewportHeight,
+                (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
         }
 
         public byte[] GetRenderedRawBytes()
         {
-            GL.Viewport(0,0, this.viewportWidth, this.viewportHeight);//fix the viewport TODO make this cleaner
+            GL.Viewport(0,0, this.viewportWidth, this.viewportHeight);
             return this.Renderer.GetRawBackBuffer(out _, out _);
         }
 
