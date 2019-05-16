@@ -1,7 +1,4 @@
-﻿using ImGui.OSAbstraction.Graphics;
-using SixLabors.ImageSharp.PixelFormats;
-using System;
-using Xunit;
+﻿using Xunit;
 
 namespace ImGui.UnitTest.DrawList
 {
@@ -53,45 +50,6 @@ namespace ImGui.UnitTest.DrawList
                 Assert.Equal(3, mesh.VertexBuffer[3].pos.x);
                 Assert.Equal(4, mesh.VertexBuffer[4].pos.x);
                 Assert.Equal(5, mesh.VertexBuffer[5].pos.x);
-            }
-
-            public class FakeTexture : ITexture
-            {
-                public void Dispose()
-                {
-                }
-
-                public void LoadImage(byte[] data)
-                {
-                }
-
-                public void LoadImage(Rgba32[] data, int width, int height)
-                {
-                }
-
-                public void LoadImage(string filePath)
-                {
-                }
-
-                public int Width { get; }
-                public int Height { get; }
-                public Size Size { get; }
-                public IntPtr GetNativeTexturePtr()
-                {
-                    throw new NotImplementedException();
-                }
-
-                public int GetNativeTextureId()
-                {
-                    throw new NotImplementedException();
-                }
-
-                public object GetNativeTextureObject()
-                {
-                    throw new NotImplementedException();
-                }
-
-                public bool Valid => true;
             }
 
             [Fact]
