@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.GraphicsAbstraction;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
@@ -278,7 +279,7 @@ namespace ImGui.GraphicsImplementation
         /// </summary>
         public TextMesh TextMesh { get; private set; }
 
-        public void AddText(Point origin, List<GlyphData> glyphs, List<Vector> offsets, string fontFamily, double fontSize, Color color)
+        public void AddText(Point origin, IList<GlyphData> glyphs, IList<Vector> offsets, string fontFamily, double fontSize, Color color)
         {
             if (glyphs.Count != offsets.Count)
             {
@@ -750,11 +751,11 @@ namespace ImGui.GraphicsImplementation
                 foreach (var character in geometry.Text)
                 {
                     Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
-                    Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
-                    var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily, fontStyle, fontWeight);
+                    GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
+                    var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily);
                     if (glyphData == null)
                     {
-                        glyphData = GlyphCache.Default.AddGlyph(character, fontFamily, fontStyle, fontWeight, polygons, bezierSegments);
+                        glyphData = GlyphCache.Default.AddGlyph(character, fontFamily, polygons, bezierSegments);
                     }
                     Debug.Assert(glyphData != null);
 

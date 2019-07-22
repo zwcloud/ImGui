@@ -68,14 +68,30 @@ namespace ImGui.OSImplentation
         private PositionTechnique PositionTechnique { get; set; }
         private bool EnableLigature { get; set; }
         private Typeface CurrentTypeFace { get; set; }
+        private bool singleLine;
 
         private static readonly Dictionary<string, Typeface> TypefaceCache = new Dictionary<string, Typeface>();
+
+        /// <summary>
+        /// Create a single-line text context.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="fontFamily"></param>
+        /// <param name="fontSize"></param>
+        public TypographyTextContext(string text, string fontFamily, double fontSize)
+        {
+            this.singleLine = true;
+            this.Text = text;
+            this.FontFamily = fontFamily;
+            this.FontSize = fontSize;
+        }
 
         public TypographyTextContext(string text, string fontFamily, double fontSize,
             FontStretch stretch, FontStyle style, FontWeight weight,
             int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
+            this.singleLine = false;
             this.Text = text;
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
@@ -229,7 +245,24 @@ namespace ImGui.OSImplentation
 
         public void Build(Point offset)
         {
-            //Profile.Start("TypographyTextContext.Build");
+            if (this.singleLine)
+            {
+                BuildSingleLine();
+            }
+            else
+            {
+                BuildMultipleLine(offset);
+            }
+        }
+
+        private void BuildSingleLine()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void BuildMultipleLine(Point offset)
+        {
+//Profile.Start("TypographyTextContext.Build");
             this.GlyphOffsets.Clear();
 
             // layout glyphs
@@ -264,7 +297,7 @@ namespace ImGui.OSImplentation
 
             // recording line data
             {
-                var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize((float)this.FontSize);
+                var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize((float) this.FontSize);
                 this.LineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender +
                                    this.CurrentTypeFace.LineGap) * scale;
                 this.LineCount = 1;
@@ -278,25 +311,27 @@ namespace ImGui.OSImplentation
                     {
                         this.LineCount++;
                         this.lineWidthList.Add((glyphPlan.x + glyphPlan.advX) * scale - back);
-                        this.lineCharacterCountList.Add((uint)(i + 1 - backCharCount));// count in line break ('\n')
+                        this.lineCharacterCountList.Add((uint) (i + 1 - backCharCount)); // count in line break ('\n')
                         backCharCount = i + 1;
                         back = (glyphPlan.x + glyphPlan.advX) * scale;
                         continue;
                     }
                 }
-                if(this.glyphPlans.Count >0)
+
+                if (this.glyphPlans.Count > 0)
                 {
                     var lastGlyph = this.glyphPlans[this.glyphPlans.Count - 1];
                     this.lineWidthList.Add((lastGlyph.x + lastGlyph.advX) * scale - back);
-                    this.lineCharacterCountList.Add((uint)(i - backCharCount));
-                    if(lastGlyph.glyphIndex == 0)//last glyph is '\n', add an additional empty line
+                    this.lineCharacterCountList.Add((uint) (i - backCharCount));
+                    if (lastGlyph.glyphIndex == 0) //last glyph is '\n', add an additional empty line
                     {
                         this.lineWidthList.Add(0);
                         this.lineCharacterCountList.Add(0);
                         this.LineCount++;
                     }
                 }
-                if(this.lineWidthList.Count == 0)
+
+                if (this.lineWidthList.Count == 0)
                 {
                     this.lineWidthList.Add(0);
                     this.lineCharacterCountList.Add(0);

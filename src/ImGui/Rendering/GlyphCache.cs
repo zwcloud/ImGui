@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace ImGui
@@ -8,21 +7,15 @@ namespace ImGui
     {
         public char Character;
         public string FontFamily;
-        public FontStyle FontStyle { get; }
-        public FontWeight FontWeight { get; }
-
         public List<List<Point>> Polygons;
         public List<(Point, Point, Point)> QuadraticCurveSegments;
 
         public GlyphData(char character, string fontFamily,
-            FontStyle fontStyle, FontWeight fontWeight,
             List<List<Point>> polygons,
             List<(Point, Point, Point)> quadraticCurveSegments)
         {
             this.Character = character;
             this.FontFamily = fontFamily;
-            this.FontStyle = fontStyle;
-            this.FontWeight = fontWeight;
             this.Polygons = polygons;
             this.QuadraticCurveSegments = quadraticCurveSegments;
         }
@@ -34,34 +27,31 @@ namespace ImGui
 
         private MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 
-        private int CalcKey(char character, string fontFamily, FontStyle fontStyle, FontWeight fontWeight)
+        private int CalcKey(char character, string fontFamily)
         {
             int hash = 17;
             hash = hash * 23 + character.GetHashCode();
             hash = hash * 23 + fontFamily.GetHashCode();
             //TODO consider fontStyle and fontWeight when Typography is ready.
-            //hash = hash * 23 + fontStyle.GetHashCode();
-            //hash = hash * 23 + fontWeight.GetHashCode();
             return hash;
         }
 
-        public GlyphData AddGlyph(char character, string fontFamily, FontStyle fontStyle, FontWeight fontWeight,
+        public GlyphData AddGlyph(char character, string fontFamily,
             List<List<Point>> polygons,
             List<(Point, Point, Point)> quadraticCurveSegments)
         {
-            GlyphData glyph = new GlyphData(character, fontFamily, fontStyle, fontWeight,
-            polygons, quadraticCurveSegments);
+            GlyphData glyph = new GlyphData(character, fontFamily, polygons, quadraticCurveSegments);
 
-            int key = CalcKey(character, fontFamily, fontStyle, fontWeight);
+            int key = CalcKey(character, fontFamily);
 
             cache.Set<GlyphData>(key, glyph);
 
             return glyph;
         }
 
-        public GlyphData GetGlyph(char character, string fontFamily, FontStyle fontStyle, FontWeight fontWeight)
+        public GlyphData GetGlyph(char character, string fontFamily)
         {
-            int key = CalcKey(character, fontFamily, fontStyle, fontWeight);
+            int key = CalcKey(character, fontFamily);
             return cache.Get<GlyphData>(key);
         }
     }
