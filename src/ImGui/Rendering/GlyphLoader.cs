@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ImGui;
+using Typography.OpenFont;
 
-namespace Typography.OpenFont
+namespace ImGui.OSAbstraction.Text
 {
     class GlyphLoader
     {

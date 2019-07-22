@@ -280,7 +280,7 @@ namespace ImGui.GraphicsImplementation
 
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
         {
-            throw new NotImplementedException();
+            AddText(glyphRun.OriginPoint, glyphRun.Glyphs, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
         }
 
         //TODO move this overload to implementation of DrawingContext.DrawText, considering abstraction like WPF's TextLine
@@ -288,7 +288,7 @@ namespace ImGui.GraphicsImplementation
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
         {
             glyphRun.BuildGlyphData(new Rect(maxTextWidth, maxTextWidth));
-            AddText(origin, glyphRun.Glyphs, glyphRun.Offsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
+            AddText(origin, glyphRun.Glyphs, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
         }
 
         public override void DrawDrawing(Drawing drawing)

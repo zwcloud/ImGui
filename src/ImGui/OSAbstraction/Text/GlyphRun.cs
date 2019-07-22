@@ -3,9 +3,12 @@ using System.Diagnostics;
 
 namespace ImGui.OSAbstraction.Text
 {
+    /// <summary>
+    /// Represents a sequence of glyphs from a single face of a single font at a single size, and with a single rendering style, and without line break.
+    /// </summary>
     internal class GlyphRun
     {
-        #region human-friendly description
+        public Point OriginPoint { get; private set; }
         public string Text
         {
             get => this.text;
@@ -22,68 +25,46 @@ namespace ImGui.OSAbstraction.Text
                 }
             }
         }
+        public string FontFamily { get; private set; }
+        public double FontSize { get; private set; }
+        public IList<GlyphData> GlyphDataList { get; private set; } = new List<GlyphData>();
+        public IList<Vector> GlyphOffsets { get; private set; } = new List<Vector>();
 
-        public string FontFamily { get; set; }
-        public double FontSize;
-        public FontStyle FontStyle;
-        public FontWeight FontWeight;
-        public FontStretch FontStretch = FontStretch.Normal;//not used
-
-        public TextAlignment TextAlignment = TextAlignment.Leading;//TODO apply text alignment
-
-        private string text;
         public bool TextChanged { get; set; } = false;
-        #endregion
 
-        #region glyph data
-        public Rect Rectangle { get; private set; }
-        public List<Vector> Offsets { get; } = new List<Vector>();
-        public List<GlyphData> Glyphs { get; } = new List<GlyphData>();
-        #endregion
-
-        public GlyphRun(string text, string fontFamily, double fontSize,
-            FontStyle fontStyle, FontWeight fontWeight)
+        public GlyphRun(Point origin, string text, string fontFamily, double fontSize)
         {
-            this.text = text;
+            this.Text = text;
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
-            this.FontStyle = fontStyle;
-            this.FontWeight = fontWeight;
+
+            Initialize(origin, text, fontFamily, fontSize);
         }
 
-        public void BuildGlyphData(Rect rect)
+        private void Initialize(Point origin, string _text, string fontFamily, double fontSize)
         {
-            this.Rectangle = rect;
-            this.Glyphs.Clear();
-            this.Offsets.Clear();
+            var textContext = new OSImplentation.TypographyTextContext(_text, fontFamily, fontSize);
+            textContext.Build(origin);
 
-            var fontStretch = this.FontStretch;
-            var fontStyle = this.FontStyle;
-            var fontWeight = this.FontWeight;
-            var textAlignment = this.TextAlignment;
-
-            var textContext = new OSImplentation.TypographyTextContext(this.Text,
-                this.FontFamily,
-                this.FontSize,
-                this.FontStretch,
-                this.FontStyle,
-                this.FontWeight,
-                (int)rect.Width,
-                (int)rect.Height,
-                textAlignment);
-            textContext.Build(rect.Location);
-
-            this.Offsets.AddRange(textContext.GlyphOffsets);
-
-            foreach (var character in this.Text)
+            var glyphDataList = new List<GlyphData>(_text.Length);
+            foreach (var character in _text)
             {
-                Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(this.FontFamily, character);
-                Typography.OpenFont.GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
-                var glyphData = GlyphCache.Default.GetGlyph(character, this.FontFamily, fontStyle, fontWeight) ??
-                                GlyphCache.Default.AddGlyph(character, this.FontFamily, fontStyle, fontWeight, polygons, bezierSegments);
+                Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
+                GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
+                var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily) ??
+                                GlyphCache.Default.AddGlyph(character, fontFamily, polygons, bezierSegments);
                 Debug.Assert(glyphData != null);
-                this.Glyphs.Add(glyphData);
+                glyphDataList.Add(glyphData);
             }
+
+            this.text = _text;
+            this.OriginPoint = origin;
+            this.FontFamily = fontFamily;
+            this.FontSize = fontSize;
+            this.GlyphDataList = glyphDataList;
+            this.GlyphOffsets = GlyphOffsets;
         }
+
+        private string text;
     }
 }
