@@ -12,7 +12,7 @@ using Size = ImGui.Size;
 
 namespace AndroidTemplate
 {
-    partial class MainView : AndroidGameView
+    internal partial class MainView : AndroidGameView
     {
         private MainForm mainForm;
 

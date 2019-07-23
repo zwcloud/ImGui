@@ -11,7 +11,7 @@ namespace ImGui.OSImplentation
     /// Text context based on Typography
     /// </summary>
     /// <remarks>TypographyTextContext is an pure C# implementation of <see cref="ITextContext"/>.</remarks>
-    class TypographyTextContext : ITextContext
+    internal class TypographyTextContext : ITextContext
     {
         private static Typeface GetTypeFace(string fontFamily)
         {

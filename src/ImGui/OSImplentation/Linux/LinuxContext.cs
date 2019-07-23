@@ -7,7 +7,7 @@ using ImGui.OSAbstraction.Window;
 
 namespace ImGui.OSImplentation.Linux
 {
-    class LinuxContext : PlatformContext
+    internal class LinuxContext : PlatformContext
     {
         public static PlatformContext MapFactory()
         {
@@ -32,7 +32,7 @@ namespace ImGui.OSImplentation.Linux
                 stretch, style, weight,
                 maxWidth, maxHeight, alignment);
         }
-        
+
         private static IWindow CWindow(Point position, Size size, WindowTypes windowType)
         {
             LinuxWindow window = new LinuxWindow();

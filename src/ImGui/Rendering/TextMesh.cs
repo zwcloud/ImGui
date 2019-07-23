@@ -12,7 +12,7 @@ namespace ImGui
     ///   1. triangles: generated from glyph contours
     ///   2. quadratic bezier segments: generated from glyph bezier curves
     /// </remarks>
-    class TextMesh
+    internal class TextMesh
     {
         private int vtxWritePosition;
         private int idxWritePosition;

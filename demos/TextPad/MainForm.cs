@@ -1,5 +1,4 @@
 ﻿using ImGui;
-using ImGui.Common.Primitive;
 
 namespace HostEditor
 {
@@ -20,13 +19,11 @@ namespace HostEditor
             GUILayout.Label("Only *.txt file smaller than 1KB are supported.");
             if(!fileOpened)
             {
-                filePath = GUILayout.InputText("Path", filePath);
+                //TODO filePath = GUILayout.InputText("Path", filePath);
             }
             else
             {
-                GUILayout.PushFontColor(Color.TextDisabled);
-                GUILayout.InputText("Path", filePath);
-                GUILayout.PopStyleVar();
+                //TODO GUILayout.InputText("Path", filePath);
             }
 
             GUILayout.BeginHorizontal("CommandButtons");
@@ -57,9 +54,7 @@ namespace HostEditor
                 fileOpened = false;
             }
 
-            GUILayout.PushHStretchFactor(1);
-            fileContent = GUILayout.TextBox("file content textbox", new Size(400, 400), fileContent);
-            GUILayout.PopStyleVar();
+            //TODO fileContent = GUILayout.TextBox("file content textbox", new Size(400, 400), fileContent);
 
             GUI.End();
         }

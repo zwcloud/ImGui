@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace ImGui.OSImplentation.Linux
 {
-    partial class LinuxOpenGLRenderer
+    internal partial class LinuxOpenGLRenderer
     {
         #region Native
 

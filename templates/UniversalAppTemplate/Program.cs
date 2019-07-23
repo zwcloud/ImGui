@@ -3,7 +3,7 @@ using ImGui;
 
 namespace UniversalAppTemplate
 {
-    class Program
+    public class Program
     {
         [STAThread]
         static void Main()

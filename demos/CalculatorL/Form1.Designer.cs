@@ -12,9 +12,6 @@ namespace Calculator
 
         protected override void OnGUI()
         {
-            GUILayout.PushHStretchFactor(1);
-            GUILayout.PushVStretchFactor(1);// FIXME this doesn't work
-
             GUILayout.Label("Simple Calculator");//Title
 
             if (Current != ButtonType.Idle)
@@ -73,9 +70,7 @@ namespace Calculator
 
             GUILayout.BeginHorizontal("Line3");
             {
-                GUILayout.PushHStretchFactor(4);
-                GUILayout.BeginVertical("VGroup~");
-                GUILayout.PopStyleVar();
+                GUILayout.BeginVertical("VGroup~", GUILayout.StretchWidth(4));
                 {
                     GUILayout.BeginHorizontal("HGroup~0");
                     {
@@ -92,9 +87,7 @@ namespace Calculator
 
                     GUILayout.BeginHorizontal("HGroup~1");
                     {
-                        GUILayout.PushHStretchFactor(2);
-                        number[0] = GUILayout.Button("0");//_0Button
-                        GUILayout.PopStyleVar();
+                        number[0] = GUILayout.Button("0", GUILayout.StretchWidth(2));//_0Button
                         if (number[0]) Current = ButtonType.Number0;
                         var dot = GUILayout.Button(".");//PointButton
                         if (dot) Current = ButtonType.Dot;
@@ -105,13 +98,10 @@ namespace Calculator
                 }
                 GUILayout.EndVertical();
 
-                GUILayout.PushVStretchFactor(1);
-                var equal = GUILayout.Button("=");//_EqualButton
-                GUILayout.PopStyleVar();
+                var equal = GUILayout.Button("=", GUILayout.StretchWidth(1));//_EqualButton
                 if (equal) Current = ButtonType.Equal;
             }
             GUILayout.EndHorizontal();
-            GUILayout.PopStyleVar(2);
 
             if (Current == ButtonType.Idle)
                 return;

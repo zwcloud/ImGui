@@ -2,7 +2,7 @@ using ImGui;
 
 namespace AndroidTemplate
 {
-    class MainForm : Form
+    internal class MainForm : Form
     {
         public MainForm(Point position, Size size) : base(new Rect(position, size)) { }
 
