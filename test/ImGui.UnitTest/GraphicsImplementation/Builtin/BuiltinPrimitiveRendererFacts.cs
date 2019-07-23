@@ -485,7 +485,7 @@ namespace ImGui.UnitTest.Rendering
                 using (var context = new RenderContextForTest(width, height))
                 {
                     renderer.OnBeforeRead();
-                    renderer.DrawGlyphRun(brush, glyphRun, rectangle);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.DrawGlyphRun(brush, glyphRun);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
                     renderer.OnAfterRead(meshList);
 
                     //rebuild mesh buffer
@@ -506,7 +506,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOneLineText()
             {
-                GlyphRun glyphRun = new GlyphRun("Hello你好こんにちは", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                GlyphRun glyphRun = new GlyphRun(Point.Zero, "Hello你好こんにちは", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
                 Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
@@ -515,7 +515,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOneLineTextWithoutSpace()
             {
-                GlyphRun glyphRun = new GlyphRun("textwithoutspace", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                GlyphRun glyphRun = new GlyphRun(Point.Zero, "textwithoutspace", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
                 Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
@@ -524,7 +524,7 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOneLineTextWithSpace()
             {
-                GlyphRun glyphRun = new GlyphRun("text with space", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                GlyphRun glyphRun = new GlyphRun(Point.Zero, "text with space", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
                 Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
@@ -535,7 +535,7 @@ namespace ImGui.UnitTest.Rendering
             {
                 throw new Exception("The result is incorrect. FIXME.");
 
-                GlyphRun glyphRun = new GlyphRun("Hello\n你好\nこんにちは", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal);
+                GlyphRun glyphRun = new GlyphRun(Point.Zero, "Hello\n你好\nこんにちは", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
                 Check(new Rect(10, 10, 400, 120), glyphRun, brush, 400, 130);

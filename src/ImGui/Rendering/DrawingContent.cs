@@ -143,10 +143,7 @@ namespace ImGui.Rendering
                                     DrawGlyphRunCommand* data = (DrawGlyphRunCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawGlyphRun(
                                         (Brush)DependentLookup(data->hForegroundBrush),
-                                        (GlyphRun)DependentLookup(data->hGlyphRun),
-                                        data->origin,
-                                        data->maxTextWidth,
-                                        data->maxTextHeight
+                                        (GlyphRun)DependentLookup(data->hGlyphRun)
                                     );
                                 }
                                     break;

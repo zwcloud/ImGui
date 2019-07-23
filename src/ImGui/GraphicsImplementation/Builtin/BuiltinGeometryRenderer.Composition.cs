@@ -280,20 +280,7 @@ namespace ImGui.GraphicsImplementation
 
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
         {
-            AddText(glyphRun.OriginPoint, glyphRun.Glyphs, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
-        }
-
-        //TODO move this overload to implementation of DrawingContext.DrawText, considering abstraction like WPF's TextLine
-        //Then we can unify all text rendering records type to RecordType.DrawGlyphRun
-        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
-        {
-            glyphRun.BuildGlyphData(new Rect(maxTextWidth, maxTextWidth));
-            AddText(origin, glyphRun.Glyphs, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
-        }
-
-        public override void DrawDrawing(Drawing drawing)
-        {
-            throw new NotImplementedException();
+            AddText(glyphRun.OriginPoint, glyphRun.GlyphDataList, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
         }
 
         #region Overrides of RecordReader
