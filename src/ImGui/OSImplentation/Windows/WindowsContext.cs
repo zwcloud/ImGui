@@ -6,7 +6,7 @@ using ImGui.OSAbstraction.Window;
 
 namespace ImGui.OSImplentation.Windows
 {
-    class WindowsContext : PlatformContext
+    internal class WindowsContext : PlatformContext
     {
         public static PlatformContext MapFactory()
         {

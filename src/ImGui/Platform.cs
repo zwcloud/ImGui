@@ -3,7 +3,7 @@
 namespace ImGui
 {
     [Flags]
-    enum Platform
+    internal enum Platform
     {
         Windows = 0,
         Mac     = 1,

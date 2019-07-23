@@ -3,7 +3,7 @@ using ImGui;
 
 namespace HostEditor
 {
-    class Program
+    public class Program
     {
         [STAThread]
         static void Main()

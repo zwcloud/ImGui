@@ -3,7 +3,7 @@ using Typography.OpenFont;
 
 namespace ImGui.OSAbstraction.Text
 {
-    class GlyphLoader
+    internal static class GlyphLoader
     {
         public static void Read(
             Glyph glyph,

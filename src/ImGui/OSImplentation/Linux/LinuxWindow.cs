@@ -11,7 +11,7 @@ namespace ImGui.OSImplentation.Linux
     using xcb_visualid_t = System.UInt32;//typedef uint32_t xcb_visualid_t;
     using xcb_keycode_t = System.Byte;//typedef uint8_t xcb_keycode_t;
 
-    class LinuxWindow : IWindow
+    internal class LinuxWindow : IWindow
     {
         #region Native
 
@@ -477,7 +477,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
          * example the window title (`WM_NAME`) or its minimum size (`WM_NORMAL_HINTS`).
          * Protocols such as EWMH also use properties - for example EWMH defines the
          * window title, encoded as UTF-8 string, in the `_NET_WM_NAME` property.
-         * 
+         *
          * xcb_void_cookie_t
          * xcb_change_property(xcb_connection_t* c,
          *                     uint8_t mode,
@@ -522,7 +522,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             /// <summary>
             /// Insert the new data before the beginning of existing data.
             /// The `format` must match existing property value.
-            /// If the property is undefined, 
+            /// If the property is undefined,
             /// it is treated as defined with the correct type and format with zero-length data.
             /// </summary>
             XCB_PROP_MODE_PREPEND = 1,
@@ -544,10 +544,10 @@ parent's cursor will cause an immediate change in the displayed cursor. */
          *
          * Unmaps the specified window. This means making the window invisible (and all
          * its child windows).
-         * 
+         *
          * Unmapping a window leads to the `UnmapNotify` event being generated. Also,
          * `Expose` events are generated for formerly obscured windows.
-         * 
+         *
          * xcb_void_cookie_t xcb_unmap_window (xcb_connection_t *c, xcb_window_t window);
          */
         [DllImport(libXcb, CallingConvention = CallingConvention.Cdecl)]
@@ -564,7 +564,7 @@ parent's cursor will cause an immediate change in the displayed cursor. */
          * @return A cookie
          *
          * Configures a window's size, position, border width and stacking order.
-         * 
+         *
            xcb_void_cookie_t
            xcb_configure_window(xcb_connection_t* c,
                                 xcb_window_t window,

@@ -4,7 +4,7 @@ using ImGui.OSAbstraction.Text;
 
 namespace ImGui
 {
-    class TextMeshUtil
+    internal class TextMeshUtil
     {
         static readonly Dictionary<int, ITextContext> TextContextCache = new Dictionary<int, ITextContext>(255);
 
