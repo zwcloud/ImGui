@@ -102,9 +102,9 @@ namespace ImGui.Rendering
 
             //Content
             //Content-box
+            //TODO Use FormattedText instead for multi-line text
             dc.DrawGlyphRun(new Brush(style.BackgroundColor),
-                new GlyphRun(text, style.FontFamily, style.FontSize, style.FontStyle, style.FontWeight)
-                , rect);
+                new GlyphRun(rect.BottomLeft, text, style.FontFamily, style.FontSize));
 
             DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
             DrawOutline(dc, style, borderBoxRect);

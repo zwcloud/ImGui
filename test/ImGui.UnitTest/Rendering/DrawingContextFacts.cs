@@ -35,15 +35,10 @@ namespace ImGui.UnitTest.Rendering
         [Fact]
         public void PopulateDrawingVisualWithGlyphRun()
         {
-            throw new System.Exception("DrawGlyphRun methods should be unified to a single one:" +
-                                       "void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun);" +
-                                       "Another overload should be removed," +
-                                       "and the text layout/hittest algorithm should be extracted to a proper place");
-
             void Populate(DrawingContext drawingContext)
             {
                 drawingContext.DrawGlyphRun(new Brush(Color.Black),
-                    new GlyphRun("啊rABC", GUIStyle.Default.FontFamily, 24, FontStyle.Normal, FontWeight.Normal));
+                    new GlyphRun(Point.Zero, "啊rABC", GUIStyle.Default.FontFamily, 24));
             }
 
             //write records into visual's content
@@ -73,13 +68,13 @@ namespace ImGui.UnitTest.Rendering
             figure.Segments.Add(new LineSegment(new Point(52,230),true));
             figure.Segments.Add(new LineSegment(new Point(5,90),true));
             geometry.Figures.Add(figure);
-            GlyphRun glyphRun = new GlyphRun("123", GUIStyle.Default.FontFamily, 20, FontStyle.Normal, FontWeight.Normal);
+            GlyphRun glyphRun = new GlyphRun(Point.Zero, "123", GUIStyle.Default.FontFamily, 20);
 
             void Populate(DrawingContext drawingContext)
             {
                 drawingContext.DrawGeometry(new Brush(Color.BlueViolet), new Pen(Color.Black, 4), geometry);
                 drawingContext.DrawRectangle(new Brush(Color.YellowGreen), new Pen(Color.Cornsilk, 4), new Rect(100, 100, 50, 50));
-                drawingContext.DrawGlyphRun(new Brush(Color.Red), glyphRun, new Point(20, 20), 80, 80);
+                drawingContext.DrawGlyphRun(new Brush(Color.Red), glyphRun);
             }
 
             var node = new Node(1, new Rect(10, 20, 300, 60));

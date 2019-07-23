@@ -85,24 +85,15 @@ namespace ImGui.Rendering.Composition
         public DrawGlyphRunCommand
         (
             uint hForegroundBrush,
-            uint hGlyphRun,
-            Point origin,
-            double maxTextWidth,
-            double maxTextHeight
+            uint hGlyphRun
         )
         {
             this.hForegroundBrush = hForegroundBrush;
             this.hGlyphRun = hGlyphRun;
-            this.origin = origin;
-            this.maxTextWidth = maxTextWidth;
-            this.maxTextHeight = maxTextHeight;
         }
 
         [FieldOffset(0)] public uint hForegroundBrush;
         [FieldOffset(4)] public uint hGlyphRun;
-        [FieldOffset(8)] public Point origin;
-        [FieldOffset(16)] public double maxTextWidth;
-        [FieldOffset(24)] public double maxTextHeight;
     }
 
     [StructLayout(LayoutKind.Explicit)]

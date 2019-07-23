@@ -10,37 +10,37 @@ namespace ImGui.Rendering
 
         public override void DrawLine(Pen pen, Point point0, Point point1)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void DrawRoundedRectangle(Brush brush, Pen pen, Rect rectangle, double radiusX, double radiusY)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public override void DrawImage(ImGui.OSAbstraction.Graphics.ITexture image, Rect rectangle)
+        public override void DrawImage(ITexture image, Rect rectangle)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void DrawImage(ITexture image, Rect rectangle, (double top, double right, double bottom, double left) slice)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
@@ -48,28 +48,18 @@ namespace ImGui.Rendering
             throw new NotImplementedException();
         }
 
-        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void DrawDrawing(Drawing drawing)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void Close()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void DisposeCore()
         {
             // Dispose may be called multiple times without throwing
             // an exception.
-            if (!disposed)
+            if (!this.disposed)
             {
-                disposed = true;
+                this.disposed = true;
             }
         }
 

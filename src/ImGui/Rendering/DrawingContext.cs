@@ -147,35 +147,7 @@ namespace ImGui.Rendering
         /// <param name="glyphRun"> The <see cref="GlyphRun"/> to draw.  </param>
         public abstract void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun);
 
-        /// <summary>
-        ///     DrawGlyphRun -
-        ///     Draw a GlyphRun
-        /// </summary>
-        /// <param name="foregroundBrush">
-        ///     Foreground brush to draw the GlyphRun with.
-        /// </param>
-        /// <param name="glyphRun"> The <see cref="GlyphRun"/> to draw. </param>
-        /// <param name="origin">The origin of the GlyphRun.</param>
-        /// <param name="maxTextWidth">The maximum text width for a line of text.</param>
-        /// <param name="maxTextHeight">The maximum height of a text column.</param>
-        public abstract void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun,
-            Point origin, double maxTextWidth, double maxTextHeight);
-
-        /// <summary>
-        ///     DrawGlyphRun -
-        ///     Draw a GlyphRun
-        /// </summary>
-        /// <param name="foregroundBrush">
-        ///     Foreground brush to draw the GlyphRun with.
-        /// </param>
-        /// <param name="glyphRun"> The <see cref="GlyphRun"/> to draw.  </param>
-        /// <param name="rect">The rectangle to hold the GlyphRun:
-        /// rect.TopLeft is the origin of the GlyphRun;<br/>
-        /// rect.Width is the maximum text width for a line of text;
-        /// rect.Height is the maximum height of a text column.</param>
-        public void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Rect rect) =>
-            DrawGlyphRun(foregroundBrush, glyphRun, rect.TopLeft, rect.Width, rect.Height);
-
+#if false//TODO
         /// <summary>
         ///     DrawDrawing -
         ///     Draw a Drawing by appending a sub-Drawing to the current Drawing.
@@ -183,10 +155,19 @@ namespace ImGui.Rendering
         /// <param name="drawing"> The drawing to draw. </param>
         public abstract void DrawDrawing(
             Drawing drawing);
+#endif
+
+        public void DrawText(FormattedText formattedText, Point origin)
+        {
+            if (formattedText == null)
+            {
+                return;
+            }
+
+            formattedText.Draw(this, origin);
+        }
 
 #if false//TODO
-        public abstract void DrawText(FormattedText formattedText, Point origin);
-
         /// <summary>
         ///     DrawVideo -
         ///     Draw a Video into the region specified by the Rect.

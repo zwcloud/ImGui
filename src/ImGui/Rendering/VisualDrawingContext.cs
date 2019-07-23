@@ -135,13 +135,6 @@ namespace ImGui.Rendering
 
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
         {
-            DrawGlyphRun(foregroundBrush, glyphRun, Point.Zero, double.MaxValue, double.MaxValue);
-        }
-
-        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
-        {
-            //TODO move this abstraction to TextLine and FormattedText
-            //DrawGlyphRun should only draw a single line of characters of the same format
             if (foregroundBrush == null)
             {
                 return;
@@ -152,17 +145,10 @@ namespace ImGui.Rendering
             {
                 var record = new DrawGlyphRunCommand(
                     content.AddDependentResource(foregroundBrush),
-                    content.AddDependentResource(glyphRun),
-                    origin,
-                    maxTextWidth, maxTextHeight);
+                    content.AddDependentResource(glyphRun));
 
                 content.WriteRecord(RecordType.DrawGlyphRun, (byte*)&record, sizeof(DrawGlyphRunCommand));
             }
-        }
-
-        public override void DrawDrawing(Drawing drawing)
-        {
-            throw new System.NotImplementedException();
         }
 
         public override void Close()

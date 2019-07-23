@@ -174,8 +174,6 @@ namespace ImGui.UnitTest.Rendering
                 {
                     if(x.Character              != y.Character             ) break;
                     if(x.FontFamily             != y.FontFamily            ) break;
-                    if(x.FontStyle              != y.FontStyle             ) break;
-                    if(x.FontWeight             != y.FontWeight            ) break;
                     if(x.Polygons               != y.Polygons              ) break;
                     if(x.QuadraticCurveSegments != y.QuadraticCurveSegments) break;
                     return true;
@@ -205,13 +203,7 @@ namespace ImGui.UnitTest.Rendering
                     if(x.Text          != y.Text         ) break;
                     if(x.FontFamily    != y.FontFamily   ) break;
                     if(x.FontSize      != y.FontSize     ) break;
-                    if(x.FontStyle     != y.FontStyle    ) break;
-                    if(x.FontWeight    != y.FontWeight   ) break;
-                    if(x.FontStretch   != y.FontStretch  ) break;
-                    if(x.TextAlignment != y.TextAlignment) break;
-                    if(x.Rectangle     != y.Rectangle    ) break;
-                    if(!x.Offsets.SequenceEqual(y.Offsets)) break;
-                    if(!x.Glyphs.SequenceEqual(y.Glyphs, s_glyphDataComparer)) break;
+                    if(!x.GlyphDataList.SequenceEqual(y.GlyphDataList, s_glyphDataComparer)) break;
                     return true;
                 } while (false);
 
@@ -563,19 +555,13 @@ namespace ImGui.UnitTest.Rendering
         {
             private readonly Brush foregroundBrush;
             private readonly GlyphRun glyphRun;
-            private readonly Point origin;
-            private readonly double maxTextWidth;
-            private readonly double maxTextHeight;
 
             private static readonly GlyphRunComparer s_GlyphRunComparer = new GlyphRunComparer();
 
-            public TextRecord(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth, double maxTextHeight)
+            public TextRecord(Brush foregroundBrush, GlyphRun glyphRun)
             {
                 this.foregroundBrush = foregroundBrush;
                 this.glyphRun = glyphRun;
-                this.origin = origin;
-                this.maxTextWidth = maxTextWidth;
-                this.maxTextHeight = maxTextHeight;
             }
 
             public bool Equals(TextRecord other)
@@ -583,9 +569,6 @@ namespace ImGui.UnitTest.Rendering
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
                 return Equals(this.foregroundBrush, other.foregroundBrush)
-                       && this.origin.Equals(other.origin)
-                       && this.maxTextWidth.Equals(other.maxTextWidth)
-                       && this.maxTextHeight.Equals(other.maxTextHeight)
                        && s_GlyphRunComparer.Equals(this.glyphRun, other.glyphRun);
             }
         }
@@ -667,17 +650,6 @@ namespace ImGui.UnitTest.Rendering
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
         {
             this.strategy.ReadRecord(this.records, new GlyphRunRecord(foregroundBrush, glyphRun));
-        }
-
-        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun, Point origin, double maxTextWidth,
-            double maxTextHeight)
-        {
-            this.strategy.ReadRecord(this.records, new TextRecord(foregroundBrush, glyphRun, origin, maxTextWidth, maxTextHeight));
-        }
-
-        public override void DrawDrawing(Drawing drawing)
-        {
-            this.strategy.ReadRecord(this.records, new DrawingRecord(drawing));
         }
         #endregion
 
