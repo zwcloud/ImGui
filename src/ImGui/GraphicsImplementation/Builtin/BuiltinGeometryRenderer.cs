@@ -730,19 +730,11 @@ namespace ImGui.GraphicsImplementation
                 geometry.FontStyle = style.FontStyle;
                 geometry.FontWeight = style.FontWeight;
 
-                var fontStretch = FontStretch.Normal;
-                var fontStyle = style.FontStyle;
-                var fontWeight = style.FontWeight;
                 var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment);//TODO apply text alignment
 
                 var textContext = new OSImplentation.TypographyTextContext(geometry.Text,
                     fontFamily,
                     fontSize,
-                    fontStretch,
-                    fontStyle,
-                    fontWeight,
-                    (int)rect.Size.Width,
-                    (int)rect.Size.Height,
                     textAlignment);
                 textContext.Build(rect.Location);
 

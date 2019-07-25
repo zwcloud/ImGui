@@ -147,6 +147,15 @@ namespace ImGui.Rendering
                                     );
                                 }
                                     break;
+                                case RecordType.DrawText:
+                                {
+                                    DrawTextCommand* data = (DrawTextCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.DrawText(
+                                        (Brush)DependentLookup(data->hForegroundBrush),
+                                        (FormattedText)DependentLookup(data->hFormattedText)
+                                    );
+                                }
+                                    break;
                                 case RecordType.DrawGeometry:
                                 {
                                     DrawGeometryCommand* data = (DrawGeometryCommand*)(pCur + sizeof(RecordHeader));
@@ -178,7 +187,7 @@ namespace ImGui.Rendering
                                     break;
                                 default:
                                 {
-                                    Debug.Assert(false);
+                                    throw new ArgumentOutOfRangeException();
                                 }
                                 break;
                             }

@@ -48,6 +48,11 @@ namespace ImGui.Rendering
             throw new NotImplementedException();
         }
 
+        public override void DrawText(Brush foregroundBrush, FormattedText formattedText)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Close()
         {
             throw new NotImplementedException();

@@ -28,9 +28,7 @@ namespace ImGui.OSImplentation.Android
             TextAlignment alignment)
         {
             return new TypographyTextContext(
-                text, fontFamily, fontSize,
-                stretch, style, weight,
-                maxWidth, maxHeight, alignment);
+                text, fontFamily, fontSize, alignment);
         }
 
         private static IWindow CWindow(Point point, Size size, WindowTypes windowType)

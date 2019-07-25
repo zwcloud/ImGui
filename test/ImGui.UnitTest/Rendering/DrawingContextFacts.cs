@@ -57,6 +57,30 @@ namespace ImGui.UnitTest.Rendering
         }
 
         [Fact]
+        public void PopulateDrawingVisualWithFormattedText()
+        {
+            void Populate(DrawingContext drawingContext)
+            {
+                drawingContext.DrawText(new Brush(Color.Black),
+                    new FormattedText(Point.Zero, "啊rABC", GUIStyle.Default.FontFamily, 24));
+            }
+
+            //write records into visual's content
+            var visual = new DrawingVisual(1);
+            var context = visual.RenderOpen();
+            Populate(context);
+            context.Close();
+
+            //write records into ContentChecker
+            var checker = new ContentChecker();
+            Populate(checker);
+
+            //read records from visual to checker and compare
+            checker.StartCheck();
+            visual.RenderContent(new RenderContext(checker, null));
+        }
+
+        [Fact]
         public void PopulateNode()
         {
             var geometry = new PathGeometry();
