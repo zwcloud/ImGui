@@ -9,6 +9,7 @@ namespace ImGui.Rendering.Composition
         DrawRectangle,
         DrawRoundedRectangle,
         DrawGlyphRun,
+        DrawText,
         DrawGeometry,
         DrawImage,
         DrawSlicedImage,
@@ -94,6 +95,23 @@ namespace ImGui.Rendering.Composition
 
         [FieldOffset(0)] public uint hForegroundBrush;
         [FieldOffset(4)] public uint hGlyphRun;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DrawTextCommand
+    {
+        public DrawTextCommand
+        (
+            uint hForegroundBrush,
+            uint hFormattedText
+        )
+        {
+            this.hForegroundBrush = hForegroundBrush;
+            this.hFormattedText = hFormattedText;
+        }
+
+        [FieldOffset(0)] public uint hForegroundBrush;
+        [FieldOffset(4)] public uint hFormattedText;
     }
 
     [StructLayout(LayoutKind.Explicit)]

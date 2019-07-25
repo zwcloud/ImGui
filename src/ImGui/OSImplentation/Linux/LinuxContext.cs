@@ -28,9 +28,7 @@ namespace ImGui.OSImplentation.Linux
             TextAlignment alignment)
         {
             return new TypographyTextContext(
-                text, fontFamily, fontSize,
-                stretch, style, weight,
-                maxWidth, maxHeight, alignment);
+                text, fontFamily, fontSize, alignment);
         }
 
         private static IWindow CWindow(Point position, Size size, WindowTypes windowType)

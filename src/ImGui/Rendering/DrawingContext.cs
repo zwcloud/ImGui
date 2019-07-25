@@ -157,15 +157,7 @@ namespace ImGui.Rendering
             Drawing drawing);
 #endif
 
-        public void DrawText(FormattedText formattedText, Point origin)
-        {
-            if (formattedText == null)
-            {
-                return;
-            }
-
-            formattedText.Draw(this, origin);
-        }
+        public abstract void DrawText(Brush foregroundBrush, FormattedText formattedText);
 
 #if false//TODO
         /// <summary>

@@ -75,9 +75,6 @@ namespace ImGui.OSImplentation
         /// <summary>
         /// Create a single-line text context.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="fontFamily"></param>
-        /// <param name="fontSize"></param>
         public TypographyTextContext(string text, string fontFamily, double fontSize)
         {
             this.singleLine = true;
@@ -86,9 +83,10 @@ namespace ImGui.OSImplentation
             this.FontSize = fontSize;
         }
 
+        /// <summary>
+        /// Create a multi-line text context.
+        /// </summary>
         public TypographyTextContext(string text, string fontFamily, double fontSize,
-            FontStretch stretch, FontStyle style, FontWeight weight,
-            int maxWidth, int maxHeight,
             TextAlignment alignment)
         {
             this.singleLine = false;
@@ -257,12 +255,65 @@ namespace ImGui.OSImplentation
 
         private void BuildSingleLine()
         {
-            throw new NotImplementedException();
+            //Profile.Start(nameof(TypographyTextContext.BuildSingleLine));
+            this.GlyphOffsets.Clear();
+
+            // layout glyphs
+            this.glyphPlans.Clear();
+            this.glyphLayout.Typeface = this.CurrentTypeFace;
+            this.glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, this.glyphPlans, null);
+
+            // collect glyph offsets
+            {
+                for (int i = 0; i < this.glyphPlans.Count; ++i)
+                {
+                    var glyphPlan = this.glyphPlans[i];
+
+                    //1. start with original points/contours from glyph
+                    var offsetX = glyphPlan.x;
+                    var offsetY = glyphPlan.y;
+
+                    this.GlyphOffsets.Add(new Vector(offsetX, offsetY));
+                }
+            }
+
+            // recording line data
+            {
+                var scale = this.CurrentTypeFace.CalculateToPixelScaleFromPointSize((float)this.FontSize);
+                this.LineHeight = (this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender +
+                                   this.CurrentTypeFace.LineGap) * scale;
+                this.LineCount = 1;
+                int i;
+                for (i = 0; i < this.glyphPlans.Count; ++i)
+                {
+                    var glyphPlan = this.glyphPlans[i];
+                    if (glyphPlan.glyphIndex == 0)//Confirm this: glyphIndex = 0 means it is a line break
+                    {
+                        // ignore line break ('\n')
+                        continue;
+                    }
+                }
+
+                if (this.glyphPlans.Count > 0)
+                {
+                    var lastGlyph = this.glyphPlans[this.glyphPlans.Count - 1];
+                    this.lineWidthList.Add((lastGlyph.x + lastGlyph.advX) * scale);
+                    this.lineCharacterCountList.Add((uint)i);
+                }
+
+                if (this.lineWidthList.Count == 0)
+                {
+                    this.lineWidthList.Add(0);
+                    this.lineCharacterCountList.Add(0);
+                }
+            }
+
+            //Profile.End();
         }
 
         private void BuildMultipleLine(Point offset)
         {
-//Profile.Start("TypographyTextContext.Build");
+            //Profile.Start(nameof(TypographyTextContext.BuildMultipleLine));
             this.GlyphOffsets.Clear();
 
             // layout glyphs

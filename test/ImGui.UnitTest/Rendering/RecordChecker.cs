@@ -190,7 +190,7 @@ namespace ImGui.UnitTest.Rendering
 
         private class GlyphRunComparer : IEqualityComparer<GlyphRun>
         {
-            private static GlyphDataComparer s_glyphDataComparer = new GlyphDataComparer();
+            private static readonly GlyphDataComparer s_comparer = new GlyphDataComparer();
 
             public bool Equals(GlyphRun x, GlyphRun y)
             {
@@ -203,7 +203,7 @@ namespace ImGui.UnitTest.Rendering
                     if(x.Text          != y.Text         ) break;
                     if(x.FontFamily    != y.FontFamily   ) break;
                     if(x.FontSize      != y.FontSize     ) break;
-                    if(!x.GlyphDataList.SequenceEqual(y.GlyphDataList, s_glyphDataComparer)) break;
+                    if(!x.GlyphDataList.SequenceEqual(y.GlyphDataList, s_comparer)) break;
                     return true;
                 } while (false);
 
@@ -211,6 +211,34 @@ namespace ImGui.UnitTest.Rendering
             }
 
             public int GetHashCode(GlyphRun obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+
+        private class FormattedTextComparer : IEqualityComparer<FormattedText>
+        {
+            private static readonly GlyphDataComparer s_comparer = new GlyphDataComparer();
+
+            public bool Equals(FormattedText x, FormattedText y)
+            {
+                if (x == null && y != null) return false;
+                if (x != null && y == null) return false;
+                if (ReferenceEquals(x, y)) return true;
+
+                do
+                {
+                    if (x.Text != y.Text) break;
+                    if (x.FontFamily != y.FontFamily) break;
+                    if (x.FontSize != y.FontSize) break;
+                    if (!x.GlyphDataList.SequenceEqual(y.GlyphDataList, s_comparer)) break;
+                    return true;
+                } while (false);
+
+                return false;
+            }
+
+            public int GetHashCode(FormattedText obj)
             {
                 return obj.GetHashCode();
             }
@@ -551,25 +579,25 @@ namespace ImGui.UnitTest.Rendering
             }
         }
 
-        class TextRecord : IEquatable<TextRecord>
+        class FormattedTextRecord : IEquatable<FormattedTextRecord>
         {
             private readonly Brush foregroundBrush;
-            private readonly GlyphRun glyphRun;
+            private readonly FormattedText formattedText;
 
-            private static readonly GlyphRunComparer s_GlyphRunComparer = new GlyphRunComparer();
+            private static readonly FormattedTextComparer s_comparer = new FormattedTextComparer();
 
-            public TextRecord(Brush foregroundBrush, GlyphRun glyphRun)
+            public FormattedTextRecord(Brush foregroundBrush, FormattedText formattedText)
             {
                 this.foregroundBrush = foregroundBrush;
-                this.glyphRun = glyphRun;
+                this.formattedText = formattedText;
             }
 
-            public bool Equals(TextRecord other)
+            public bool Equals(FormattedTextRecord other)
             {
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
                 return Equals(this.foregroundBrush, other.foregroundBrush)
-                       && s_GlyphRunComparer.Equals(this.glyphRun, other.glyphRun);
+                       && s_comparer.Equals(this.formattedText, other.formattedText);
             }
         }
 
@@ -651,6 +679,12 @@ namespace ImGui.UnitTest.Rendering
         {
             this.strategy.ReadRecord(this.records, new GlyphRunRecord(foregroundBrush, glyphRun));
         }
+
+        public override void DrawText(Brush foregroundBrush, FormattedText formattedText)
+        {
+            this.strategy.ReadRecord(this.records, new FormattedTextRecord(foregroundBrush, formattedText));
+        }
+
         #endregion
 
         #region Overrides of RecordReader

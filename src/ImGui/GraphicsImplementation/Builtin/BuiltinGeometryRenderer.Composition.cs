@@ -283,6 +283,11 @@ namespace ImGui.GraphicsImplementation
             AddText(glyphRun.OriginPoint, glyphRun.GlyphDataList, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
         }
 
+        public override void DrawText(Brush foregroundBrush, FormattedText formattedText)
+        {
+            AddText(formattedText.OriginPoint, formattedText.GlyphDataList, formattedText.GlyphOffsets, formattedText.FontFamily, formattedText.FontSize, foregroundBrush.FillColor);
+        }
+
         #region Overrides of RecordReader
         public override void OnBeforeRead()
         {

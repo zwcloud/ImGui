@@ -151,6 +151,24 @@ namespace ImGui.Rendering
             }
         }
 
+        public override void DrawText(Brush foregroundBrush, FormattedText formattedText)
+        {
+            if (formattedText == null)
+            {
+                return;
+            }
+            EnsureContent();
+
+            unsafe
+            {
+                var record = new DrawTextCommand(
+                    content.AddDependentResource(foregroundBrush),
+                    content.AddDependentResource(formattedText));
+
+                content.WriteRecord(RecordType.DrawText, (byte*)&record, sizeof(DrawTextCommand));
+            }
+        }
+
         public override void Close()
         {
             if (disposed)
