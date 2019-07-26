@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -11,9 +12,6 @@ namespace ImGui
         private bool debugWindowOpen = true;
 
         public Color BackgroundColor { get; set; } = Color.Argb(255, 114, 144, 154);
-
-        //FIXME TEMP
-        private readonly BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
         internal void NewFrame()
         {
@@ -176,28 +174,10 @@ namespace ImGui
             g.FrameCountRendered = g.FrameCount;
 
             this.renderer.Clear(this.BackgroundColor);
-
-            var clientRect = new Rect(Point.Zero, this.ClientSize);
             foreach (var window in w.Windows)
             {
                 if (!window.Active) continue;
-
-                window.RenderTree.Foreach(n => this.geometryRenderer.Draw(n, clientRect, window.MeshList));
-                foreach (var visual in window.AbsoluteVisualList)
-                {
-                    this.geometryRenderer.Draw(visual, clientRect, window.MeshList);
-                }
-
-                //rebuild mesh buffer
-                window.MeshBuffer.Clear();
-                window.MeshBuffer.Init();
-                window.MeshBuffer.Build(window.MeshList);
-
-                window.MeshList.Clear();
-
-                //draw mesh buffer
-                this.renderer.DrawMeshes((int)this.ClientSize.Width, (int)this.ClientSize.Height,
-                    (shapeMesh: window.MeshBuffer.ShapeMesh, imageMesh: window.MeshBuffer.ImageMesh, window.MeshBuffer.TextMesh));
+                window.Render(this.renderer);
             }
             this.renderer.SwapBuffers();
         }
@@ -207,14 +187,15 @@ namespace ImGui
         {
             GUIContext g = this.uiContext;
 
-            this.nativeWindow.Title = string.Format("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
+            this.nativeWindow.Title =
+                $"fps:{g.fps,5:0.0}, mouse pos: {Mouse.Instance.Position}, deltaTime: {g.DeltaTime}ms";
 
             var l = Application.Logger;
             if (ImGui.Log.Enabled && ImGui.Log.LogStatus)
             {
                 WindowManager w = g.WindowManager;
                 l.Clear();
-                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, detlaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
+                l.Msg("fps:{0,5:0.0}, mouse pos: {1}, deltaTime: {2}ms", g.fps, Mouse.Instance.Position, g.DeltaTime);
                 l.Msg("Input");
                 l.Msg("    LeftButtonState {0}", Mouse.Instance.LeftButtonState);
                 l.Msg("    LeftButtonDownDuration {0}ms", Mouse.Instance.LeftButtonDownDuration);

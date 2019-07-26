@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ImGui.GraphicsAbstraction;
 using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal partial class BuiltinGeometryRenderer : IGeometryRenderer
+    internal partial class BuiltinGeometryRenderer
     {
         #region Mesh
 
@@ -710,6 +709,7 @@ namespace ImGui.GraphicsImplementation
         /// <param name="geometry"></param>
         /// <param name="rect"></param>
         /// <param name="style"></param>
+        [Obsolete]
         public void DrawText(TextGeometry geometry, Rect rect, StyleRuleSet style)
         {
             //check if we need to rebuild the glyph data of this text Geometry
@@ -789,6 +789,7 @@ namespace ImGui.GraphicsImplementation
         /// <summary>
         /// Draw an image Geometry and merge the result to the image mesh.
         /// </summary>
+        [Obsolete]
         public void DrawImage(ImageGeometry geometry, Rect rect, StyleRuleSet style)
         {
             Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
@@ -836,6 +837,7 @@ namespace ImGui.GraphicsImplementation
         /// <summary>
         /// Draw an image content
         /// </summary>
+        [Obsolete]
         public void DrawSlicedImage(ImageGeometry geometry, Rect rect, StyleRuleSet style)
         {
             var (top, right, bottom, left) = style.BorderImageSlice;

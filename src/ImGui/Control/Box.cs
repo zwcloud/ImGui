@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -32,14 +33,16 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Geometry = new TextGeometry(text);
+                using (var dc = node.RenderOpen())
+                {
+                    dc.DrawText(new Brush(node.RuleSet.FontColor),
+                        new FormattedText(rect.Location, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+                }
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
+            //TODO check how to properly make visual dirty
 
             // rect
             node.Rect = window.GetRect(rect);

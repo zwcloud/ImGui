@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ImGui.Layout;
 using System.Diagnostics;
 using ImGui.GraphicsAbstraction;
+using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
@@ -45,6 +46,11 @@ namespace ImGui
         public WindowFlags Flags;
 
         /// <summary>
+        /// Render context
+        /// </summary>
+        public RenderContext RenderContext;
+
+        /// <summary>
         /// Absolute placed visuals. (non-layout)
         /// </summary>
         public List<Visual> AbsoluteVisualList;
@@ -75,6 +81,8 @@ namespace ImGui
 
         public MeshBuffer MeshBuffer { get; set; } = new MeshBuffer();
 
+        private readonly BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
+
         #region Window original sub nodes
         private Node titleBarNode { get; }
         private Node titleBarTitleNode { get; }
@@ -100,6 +108,7 @@ namespace ImGui
 
             this.AbsoluteVisualList = new List<Visual>();
             this.RenderTree = new RenderTree(this.ID, position, size);
+            this.RenderContext = new RenderContext(this.geometryRenderer, this.MeshList);
 
             this.IDStack.Push(this.ID);
             this.MoveID = this.GetID("#MOVE");
@@ -597,6 +606,27 @@ namespace ImGui
         public void SetWindowScrollY(double newScrollY)
         {
             this.Scroll.Y = newScrollY;
+        }
+
+        public void Render(IRenderer renderer)
+        {
+            this.RenderTree.Root.Render(this.RenderContext);
+
+            foreach (var visual in this.AbsoluteVisualList)
+            {
+                visual.RenderContent(this.RenderContext);
+            }
+
+            //rebuild mesh buffer
+            this.MeshBuffer.Clear();
+            this.MeshBuffer.Init();
+            this.MeshBuffer.Build(this.MeshList);
+
+            this.MeshList.Clear();
+
+            //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
+            renderer.DrawMeshes((int)this.ClipRect.Width, (int)this.ClipRect.Height,
+                (shapeMesh: this.MeshBuffer.ShapeMesh, imageMesh: this.MeshBuffer.ImageMesh, this.MeshBuffer.TextMesh));
         }
     }
 }

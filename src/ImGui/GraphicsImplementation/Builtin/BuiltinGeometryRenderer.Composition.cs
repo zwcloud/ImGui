@@ -316,7 +316,6 @@ namespace ImGui.GraphicsImplementation
         }
         #endregion
 
-
         protected override void DisposeCore()
         {
 

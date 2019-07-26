@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using ImGui.GraphicsAbstraction;
 using ImGui.Layout;
 
 namespace ImGui.Rendering
@@ -202,15 +201,6 @@ namespace ImGui.Rendering
 
             return clipRect;
         }
-
-        internal override void Draw(IGeometryRenderer renderer, MeshList meshList)
-        {
-            //TEMP regard all renderer as the built-in renderer
-            var r = renderer as GraphicsImplementation.BuiltinGeometryRenderer;
-            Debug.Assert(r != null);
-            r.DrawPrimitive(this.Geometry, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
-        }
-
 
         /// <summary>
         /// UI state

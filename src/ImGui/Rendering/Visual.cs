@@ -151,6 +151,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// The Geometry hold by this Visual. (to be removed when new rendering-pipeline is completed)
         /// </summary>
+        [Obsolete("to be removed when new rendering-pipeline is completed", false)]
         internal Geometry Geometry { get; set; }
 
         /// <summary>
@@ -258,14 +259,6 @@ namespace ImGui.Rendering
                 }
             }
         }
-
-        /// <summary>
-        /// Redraw the node's Geometry.
-        /// </summary>
-        /// <param name="renderer"></param>
-        /// <param name="meshList"></param>
-        /// <remarks>A visual can only have one single Geometry.</remarks>
-        internal abstract void Draw(IGeometryRenderer renderer, MeshList meshList);
 
         /// <summary>
         /// Rule Set

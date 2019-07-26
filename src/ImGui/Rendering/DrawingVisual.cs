@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using ImGui.GraphicsAbstraction;
-
-namespace ImGui.Rendering
+﻿namespace ImGui.Rendering
 {
     internal class DrawingVisual : Visual
     {
@@ -20,13 +17,6 @@ namespace ImGui.Rendering
         public override Rect GetClipRect(Rect rootClipRect)
         {
             return rootClipRect;
-        }
-
-        internal override void Draw(IGeometryRenderer renderer, MeshList meshList)
-        {
-            var r = renderer as GraphicsImplementation.BuiltinGeometryRenderer;
-            Debug.Assert(r != null);
-            r.DrawPrimitive(this.Geometry, this.Rect, this.RuleSet, meshList);
         }
 
         /// <summary>
