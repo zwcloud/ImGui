@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define ShowImage
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -184,6 +185,19 @@ namespace ImGui.UnitTest
             var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
 #if DEBUG//check if it matches expected image
             var expectedImage = Util.LoadImage(expectedImageFilePath);
+
+#if ShowImage
+            var actualImagePath = Environment.ExpandEnvironmentVariables("%TEMP%") + Path.DirectorySeparatorChar + "actual.png";
+            var expectedImagePath = Util.UnitTestRootDir + expectedImageFilePath;
+            if (File.Exists(actualImagePath))
+            {
+                File.Delete(actualImagePath);
+            }
+            Util.SaveImage(image, actualImagePath);
+            Util.OpenImage(actualImagePath);
+            Util.OpenImage(expectedImagePath);
+#endif
+
             Assert.True(Util.CompareImage(expectedImage, image));
 #else//generate expected image
             var path = Util.UnitTestRootDir + expectedImageFilePath;
