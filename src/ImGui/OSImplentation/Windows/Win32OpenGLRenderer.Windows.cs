@@ -489,7 +489,7 @@ namespace ImGui.OSImplentation.Windows
             var stencilBits = IntBuffer[0];
             if (stencilBits != 8)
             {
-                throw new Exception("Failed to set stencilBits to 9.");
+                throw new Exception("Failed to set stencilBits to 8.");
             }
             PrintGraphicInfo();
         }
