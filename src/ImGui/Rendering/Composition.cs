@@ -42,14 +42,14 @@ namespace ImGui.Rendering.Composition
     internal struct DrawRectangleCommand
     {
         [FieldOffset(0)] public Rect Rectangle;
-        [FieldOffset(32)] public uint BrushHandle;
-        [FieldOffset(36)] public uint PenHandle;
+        [FieldOffset(32)] public uint BrushIndex;
+        [FieldOffset(36)] public uint PenIndex;
 
         public DrawRectangleCommand(uint brushIndex, uint penIndex, Rect rectangle)
         {
             Rectangle = rectangle;
-            BrushHandle = brushIndex;
-            PenHandle = penIndex;
+            this.BrushIndex = brushIndex;
+            this.PenIndex = penIndex;
         }
     }
 
@@ -59,25 +59,25 @@ namespace ImGui.Rendering.Composition
     {
         public DrawRoundedRectangleCommand
         (
-            uint hBrush,
-            uint hPen,
+            uint brushIndex,
+            uint penIndex,
             Rect rectangle,
             double radiusX,
             double radiusY
         )
         {
-            this.hBrush = hBrush;
-            this.hPen = hPen;
-            this.rectangle = rectangle;
+            this.BrushIndex = brushIndex;
+            this.PenIndex = penIndex;
+            this.Rectangle = rectangle;
             this.radiusX = radiusX;
             this.radiusY = radiusY;
         }
 
-        [FieldOffset(0)] public Rect rectangle;
+        [FieldOffset(0)] public Rect Rectangle;
         [FieldOffset(32)] public double radiusX;
         [FieldOffset(40)] public double radiusY;
-        [FieldOffset(48)] public uint hBrush;
-        [FieldOffset(52)] public uint hPen;
+        [FieldOffset(48)] public uint BrushIndex;
+        [FieldOffset(52)] public uint PenIndex;
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -85,16 +85,16 @@ namespace ImGui.Rendering.Composition
     {
         public DrawGlyphRunCommand
         (
-            uint hForegroundBrush,
-            uint hGlyphRun
+            uint brushIndex,
+            uint glyphRunIndex
         )
         {
-            this.hForegroundBrush = hForegroundBrush;
-            this.hGlyphRun = hGlyphRun;
+            this.BrushIndex = brushIndex;
+            this.GlyphRunIndex = glyphRunIndex;
         }
 
-        [FieldOffset(0)] public uint hForegroundBrush;
-        [FieldOffset(4)] public uint hGlyphRun;
+        [FieldOffset(0)] public uint BrushIndex;
+        [FieldOffset(4)] public uint GlyphRunIndex;
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -102,61 +102,61 @@ namespace ImGui.Rendering.Composition
     {
         public DrawTextCommand
         (
-            uint hForegroundBrush,
-            uint hFormattedText
+            uint brushIndex,
+            uint formattedTextIndex
         )
         {
-            this.hForegroundBrush = hForegroundBrush;
-            this.hFormattedText = hFormattedText;
+            this.BrushIndex = brushIndex;
+            this.FormattedTextIndex = formattedTextIndex;
         }
 
-        [FieldOffset(0)] public uint hForegroundBrush;
-        [FieldOffset(4)] public uint hFormattedText;
+        [FieldOffset(0)] public uint BrushIndex;
+        [FieldOffset(4)] public uint FormattedTextIndex;
     }
 
     [StructLayout(LayoutKind.Explicit)]
     internal struct DrawGeometryCommand
     {
         public DrawGeometryCommand (
-            uint hBrush,
-            uint hPen,
-            uint hGeometry
+            uint brushIndex,
+            uint penIndex,
+            uint geometryIndex
         )
         {
-            this.hBrush = hBrush;
-            this.hPen = hPen;
-            this.hGeometry = hGeometry;
+            this.BrushIndex = brushIndex;
+            this.PenIndex = penIndex;
+            this.GeometryIndex = geometryIndex;
             this.QuadWordPad0 = 0;
         }
 
-        [FieldOffset(0)] public uint hBrush;
-        [FieldOffset(4)] public uint hPen;
-        [FieldOffset(8)] public uint hGeometry;
+        [FieldOffset(0)] public uint BrushIndex;
+        [FieldOffset(4)] public uint PenIndex;
+        [FieldOffset(8)] public uint GeometryIndex;
         [FieldOffset(12)] private uint QuadWordPad0;
     }
 
     [StructLayout(LayoutKind.Explicit)]
     internal struct DrawImageCommand
     {
-        public DrawImageCommand(uint hImageSource, Rect rectangle)
+        public DrawImageCommand(uint imageSourceIndex, Rect rectangle)
         {
-            this.hImageSource = hImageSource;
+            this.ImageSourceIndex = imageSourceIndex;
             this.rectangle = rectangle;
             this.QuadWordPad0 = 0;
         }
 
         [FieldOffset(0)] public Rect rectangle;
-        [FieldOffset(32)] public uint hImageSource;
+        [FieldOffset(32)] public uint ImageSourceIndex;
         [FieldOffset(36)] private uint QuadWordPad0;
     }
 
     [StructLayout(LayoutKind.Explicit)]
     internal struct DrawSlicedImageCommand
     {
-        public DrawSlicedImageCommand(uint hImageSource, Rect rectangle, (double top, double right, double bottom, double left) slice)
+        public DrawSlicedImageCommand(uint imageSourceIndex, Rect rectangle, (double top, double right, double bottom, double left) slice)
         {
-            this.hImageSource = hImageSource;
-            this.rectangle = rectangle;
+            this.ImageSourceIndex = imageSourceIndex;
+            this.Rectangle = rectangle;
             this.sliceTop = slice.top;
             this.sliceRight = slice.right;
             this.sliceBottom = slice.left;
@@ -164,8 +164,8 @@ namespace ImGui.Rendering.Composition
             this.QuadWordPad0 = 0;
         }
 
-        [FieldOffset(0)] public Rect rectangle;
-        [FieldOffset(32)] public uint hImageSource;
+        [FieldOffset(0)] public Rect Rectangle;
+        [FieldOffset(32)] public uint ImageSourceIndex;
         [FieldOffset(36)] public double sliceTop;
         [FieldOffset(44)] public double sliceRight;
         [FieldOffset(52)] public double sliceBottom;

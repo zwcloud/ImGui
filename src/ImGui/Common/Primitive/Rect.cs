@@ -1020,6 +1020,12 @@ namespace ImGui
             throw new NotImplementedException();
         }
 
+        public static bool AlmostEqual(Rect a, Rect b)
+        {
+            return MathEx.AmostEqual(a._x, b._x) && MathEx.AmostEqual(a._y, b._y)
+                && MathEx.AmostEqual(a._width, b._width) && MathEx.AmostEqual(a._height, b._height);
+        }
+
         /// <summary>
         /// Creates a string representation of this object based on the current culture.
         /// </summary>

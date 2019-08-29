@@ -33,16 +33,15 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                using (var dc = node.RenderOpen())
-                {
-                    dc.DrawText(new Brush(node.RuleSet.FontColor),
-                        new FormattedText(rect.Location, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
-                }
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            //TODO check how to properly make visual dirty
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawText(new Brush(node.RuleSet.FontColor),
+                    new FormattedText(rect.Location, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            }
 
             // rect
             node.Rect = window.GetRect(rect);

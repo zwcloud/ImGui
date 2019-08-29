@@ -23,10 +23,47 @@ namespace ImGui.Rendering
             {
                 EnsureContent();
 
-                var penIndex = content.AddDependentResource(pen);
-                var record = new DrawLineCommand(penIndex, point0, point1);
+                if (!this.content.ReadRecord(out DrawLineCommand record))
+                {//different record type: append new record
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    record.StartPoint = point0;
+                    record.EndPoint = point1;
+                    this.content.WriteRecord(RecordType.DrawLine, (byte*) &record, sizeof(DrawLineCommand));
+                    return;
+                }
 
-                content.WriteRecord(RecordType.DrawLine, (byte*)&record, sizeof(DrawLineCommand));
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (!Point.AlmostEqual(record.StartPoint, point0))
+                {
+                    record.StartPoint = point0;
+                    recordNeedOverwrite = true;
+                }
+
+                if (!Point.AlmostEqual(record.EndPoint, point1))
+                {
+                    record.EndPoint = point0;
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.PenIndex, out Pen oldPen))
+                {
+                    if (!Equals(oldPen, pen))
+                    {
+                        record.PenIndex = this.content.AddDependentResource(pen);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawLine, (byte*) &record, sizeof(DrawLineCommand));
+                }
             }
         }
 
@@ -41,12 +78,56 @@ namespace ImGui.Rendering
             {
                 EnsureContent();
 
-                var record = new DrawRectangleCommand(
-                    content.AddDependentResource(brush),
-                    content.AddDependentResource(pen),
-                    rectangle);
+                if (!this.content.ReadRecord(out DrawRectangleCommand record))
+                {//different record type: append new record
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    record.Rectangle = rectangle;
+                    this.content.WriteRecord(RecordType.DrawRectangle, (byte*) &record, sizeof(DrawRectangleCommand));
+                    return;
+                }
 
-                content.WriteRecord(RecordType.DrawRectangle, (byte*)&record, sizeof(DrawRectangleCommand));
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (!Rect.AlmostEqual(record.Rectangle, rectangle))
+                {
+                    record.Rectangle = rectangle;
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.PenIndex, out Pen oldPen))
+                {
+                    if (!oldPen.Equals(pen))
+                    {
+                        record.PenIndex = this.content.AddDependentResource(pen);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.BrushIndex, out Brush oldBrush))
+                {
+                    if (!oldBrush.Equals(brush))
+                    {
+                        record.BrushIndex = this.content.AddDependentResource(brush);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawRectangle, (byte*)&record, sizeof(DrawRectangleCommand));
+                }
+
             }
         }
 
@@ -60,12 +141,70 @@ namespace ImGui.Rendering
 
             unsafe
             {
-                var record = new DrawRoundedRectangleCommand(
-                    content.AddDependentResource(brush),
-                    content.AddDependentResource(pen),
-                    rectangle, radiusX, radiusY);
+                if (!this.content.ReadRecord(out DrawRoundedRectangleCommand record))
+                {//different record type: append new record
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    record.Rectangle = rectangle;
+                    record.radiusX = radiusX;
+                    record.radiusY = radiusY;
+                    this.content.WriteRecord(RecordType.DrawRoundedRectangle, (byte*) &record, sizeof(DrawRoundedRectangleCommand));
+                    return;
+                }
 
-                content.WriteRecord(RecordType.DrawRoundedRectangle, (byte*)&record, sizeof(DrawRoundedRectangleCommand));
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (!Rect.AlmostEqual(record.Rectangle, rectangle))
+                {
+                    record.Rectangle = rectangle;
+                    recordNeedOverwrite = true;
+                }
+
+                if (!MathEx.AmostEqual(record.radiusX, radiusX))
+                {
+                    record.radiusX = radiusX;
+                    recordNeedOverwrite = true;
+                }
+
+                if (!MathEx.AmostEqual(record.radiusY, radiusY))
+                {
+                    record.radiusY = radiusY;
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.PenIndex, out Pen oldPen))
+                {
+                    if (!oldPen.Equals(pen))
+                    {
+                        record.PenIndex = this.content.AddDependentResource(pen);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.BrushIndex, out Brush oldBrush))
+                {
+                    if (!oldBrush.Equals(brush))
+                    {
+                        record.BrushIndex = this.content.AddDependentResource(brush);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawRoundedRectangle, (byte*)&record, sizeof(DrawRoundedRectangleCommand));
+                }
+
             }
         }
 
@@ -85,18 +224,67 @@ namespace ImGui.Rendering
             {
                 EnsureContent();
 
-                var record =
-                    new DrawGeometryCommand (
-                        content.AddDependentResource(brush),
-                        content.AddDependentResource(pen),
-                        content.AddDependentResource(geometry)
-                    );
+                if (!this.content.ReadRecord(out DrawGeometryCommand record))
+                {//different record type: append new record
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    record.GeometryIndex = this.content.AddDependentResource(geometry);
+                    this.content.WriteRecord(RecordType.DrawGeometry, (byte*) &record, sizeof(DrawGeometryCommand));
+                    return;
+                }
 
-                content.WriteRecord(RecordType.DrawGeometry, (byte*) &record, sizeof(DrawGeometryCommand));
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (this.content.ReadDependentResource(record.PenIndex, out Pen oldPen))
+                {
+                    if (!oldPen.Equals(pen))
+                    {
+                        record.PenIndex = this.content.AddDependentResource(pen);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.BrushIndex, out Brush oldBrush))
+                {
+                    if (!oldBrush.Equals(brush))
+                    {
+                        record.BrushIndex = this.content.AddDependentResource(brush);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.BrushIndex, out Geometry oldGeometry))
+                {
+                    if (!oldGeometry.Equals(geometry))
+                    {
+                        record.GeometryIndex = this.content.AddDependentResource(geometry);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.GeometryIndex = this.content.AddDependentResource(geometry);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawGeometry, (byte*) &record, sizeof(DrawGeometryCommand));
+                }
             }
         }
 
-        public override void DrawImage(ImGui.OSAbstraction.Graphics.ITexture image, Rect rectangle)
+        public override void DrawImage(ITexture image, Rect rectangle)
         {
             if (image == null)
             {
@@ -106,11 +294,33 @@ namespace ImGui.Rendering
 
             unsafe
             {
-                var record = new DrawImageCommand(
-                    content.AddDependentResource(image),
-                    rectangle);
+                if (!this.content.ReadRecord(out DrawImageCommand record))
+                {//different record type: append new record
+                    record.ImageSourceIndex = this.content.AddDependentResource(image);
+                    this.content.WriteRecord(RecordType.DrawImage, (byte*) &record, sizeof(DrawImageCommand));
+                    return;
+                }
 
-                content.WriteRecord(RecordType.DrawImage, (byte*)&record, sizeof(DrawImageCommand));
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (this.content.ReadDependentResource(record.ImageSourceIndex, out ITexture oldImage))
+                {
+                    if (!image.Equals(oldImage))
+                    {
+                        record.ImageSourceIndex = this.content.AddDependentResource(image);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.ImageSourceIndex = this.content.AddDependentResource(image);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawImage, (byte*)&record, sizeof(DrawImageCommand));
+                }
             }
         }
 
@@ -124,18 +334,67 @@ namespace ImGui.Rendering
 
             unsafe
             {
-                var record = new DrawSlicedImageCommand(
-                    content.AddDependentResource(image),
-                    rectangle,
-                    slice);
+                if (!this.content.ReadRecord(out DrawSlicedImageCommand record))
+                {//different record type: append new record
+                    record.ImageSourceIndex = this.content.AddDependentResource(image);
+                    record.Rectangle = rectangle;
+                    (record.sliceTop, record.sliceRight, record.sliceBottom, record.sliceLeft) = slice;
+                    this.content.WriteRecord(RecordType.DrawSlicedImage, (byte*) &record, sizeof(DrawSlicedImageCommand));
+                    return;
+                }
+
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (!Rect.AlmostEqual(record.Rectangle, rectangle))
+                {
+                    record.Rectangle = rectangle;
+                    recordNeedOverwrite = true;
+                }
+
+                if (!MathEx.AmostEqual(record.sliceTop, slice.top))
+                {
+                    record.sliceTop = slice.top;
+                    recordNeedOverwrite = true;
+                }
+                if (!MathEx.AmostEqual(record.sliceRight, slice.right))
+                {
+                    record.sliceRight = slice.right;
+                    recordNeedOverwrite = true;
+                }
+                if (!MathEx.AmostEqual(record.sliceBottom, slice.bottom))
+                {
+                    record.sliceBottom = slice.bottom;
+                    recordNeedOverwrite = true;
+                }
+                if (!MathEx.AmostEqual(record.sliceLeft, slice.left))
+                {
+                    record.sliceLeft = slice.left;
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.ImageSourceIndex, out ITexture oldImage))
+                {
+                    if (!image.Equals(oldImage))
+                    {
+                        record.ImageSourceIndex = this.content.AddDependentResource(image);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.ImageSourceIndex = this.content.AddDependentResource(image);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
 
                 content.WriteRecord(RecordType.DrawSlicedImage, (byte*)&record, sizeof(DrawSlicedImageCommand));
             }
         }
 
-        public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
+        public override void DrawGlyphRun(Brush brush, GlyphRun glyphRun)
         {
-            if (foregroundBrush == null)
+            if (brush == null || glyphRun == null)
             {
                 return;
             }
@@ -143,17 +402,54 @@ namespace ImGui.Rendering
 
             unsafe
             {
-                var record = new DrawGlyphRunCommand(
-                    content.AddDependentResource(foregroundBrush),
-                    content.AddDependentResource(glyphRun));
+                if (!this.content.ReadRecord(out DrawGlyphRunCommand record))
+                {//different record type: append new record
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    record.GlyphRunIndex = this.content.AddDependentResource(glyphRun);
+                    this.content.WriteRecord(RecordType.DrawGlyphRun, (byte*) &record, sizeof(DrawGlyphRunCommand));
+                    return;
+                }
 
-                content.WriteRecord(RecordType.DrawGlyphRun, (byte*)&record, sizeof(DrawGlyphRunCommand));
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (this.content.ReadDependentResource(record.BrushIndex, out Brush oldBrush))
+                {
+                    if (!oldBrush.Equals(brush))
+                    {
+                        record.BrushIndex = this.content.AddDependentResource(brush);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.BrushIndex, out GlyphRun oldGlyphRun))
+                {
+                    if (!glyphRun.Equals(oldGlyphRun))
+                    {
+                        record.GlyphRunIndex = this.content.AddDependentResource(glyphRun);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.GlyphRunIndex = this.content.AddDependentResource(glyphRun);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawGlyphRun, (byte*)&record, sizeof(DrawGlyphRunCommand));
+                }
             }
         }
 
-        public override void DrawText(Brush foregroundBrush, FormattedText formattedText)
+        public override void DrawText(Brush brush, FormattedText formattedText)
         {
-            if (formattedText == null)
+            if (brush == null || formattedText == null)
             {
                 return;
             }
@@ -161,11 +457,48 @@ namespace ImGui.Rendering
 
             unsafe
             {
-                var record = new DrawTextCommand(
-                    content.AddDependentResource(foregroundBrush),
-                    content.AddDependentResource(formattedText));
+                if (!this.content.ReadRecord(out DrawTextCommand record))
+                {//different record type: append new record
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    record.FormattedTextIndex = this.content.AddDependentResource(formattedText);
+                    this.content.WriteRecord(RecordType.DrawText, (byte*) &record, sizeof(DrawTextCommand));
+                    return;
+                }
 
-                content.WriteRecord(RecordType.DrawText, (byte*)&record, sizeof(DrawTextCommand));
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (this.content.ReadDependentResource(record.BrushIndex, out Brush oldBrush))
+                {
+                    if (!oldBrush.Equals(brush))
+                    {
+                        record.BrushIndex = this.content.AddDependentResource(brush);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.BrushIndex, out FormattedText oldFormattedText))
+                {
+                    if (!formattedText.Equals(oldFormattedText))
+                    {
+                        record.FormattedTextIndex = this.content.AddDependentResource(formattedText);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.FormattedTextIndex = this.content.AddDependentResource(formattedText);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawText, (byte*)&record, sizeof(DrawTextCommand));
+                }
             }
         }
 

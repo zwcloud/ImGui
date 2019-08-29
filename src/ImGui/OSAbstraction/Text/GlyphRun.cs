@@ -38,7 +38,33 @@ namespace ImGui.OSAbstraction.Text
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
 
+            //pre-compute hash code
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + text.GetHashCode();
+                hash = hash * 23 + fontFamily.GetHashCode();
+                hash = hash * 23 + fontSize.GetHashCode();
+                this.hashCode = hash;
+            }
+
             Initialize(origin, text, fontFamily, fontSize);
+        }
+
+        public override bool Equals(object obj)
+        {
+            GlyphRun other = obj as GlyphRun;
+            if (other == null)
+            {
+                return false;
+            }
+
+            return other.GetHashCode() == GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return this.hashCode;
         }
 
         private void Initialize(Point origin, string _text, string fontFamily, double fontSize)
@@ -62,9 +88,10 @@ namespace ImGui.OSAbstraction.Text
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
             this.GlyphDataList = glyphDataList;
-            this.GlyphOffsets = GlyphOffsets;
+            this.GlyphOffsets = textContext.GlyphOffsets;
         }
 
         private string text;
+        private readonly int hashCode;
     }
 }

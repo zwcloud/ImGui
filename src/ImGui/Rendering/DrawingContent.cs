@@ -14,10 +14,10 @@ namespace ImGui.Rendering
     /// <remarks>
     /// Drawing content contains intermediate rendering data from two sources:
     /// 1. <see cref="Geometry.GetPathGeometryData"/>,
-    /// 2. <see cref="Node.drawingContent"/>
+    /// 2. <see cref="Node.content"/>
     /// Further, DrawingContent will be converted to Mesh or TextMesh for rendering with GPU in <see cref="ImGui.OSAbstraction.Graphics.IRenderer"/> .
     /// </remarks>
-    internal class DrawingContent
+    internal partial class DrawingContent
     {
         public uint AddDependentResource(object resource)
         {
@@ -120,8 +120,8 @@ namespace ImGui.Rendering
                                 {
                                     DrawRectangleCommand* data = (DrawRectangleCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawRectangle(
-                                        (Brush)DependentLookup(data->BrushHandle),
-                                        (Pen)DependentLookup(data->PenHandle),
+                                        (Brush)DependentLookup(data->BrushIndex),
+                                        (Pen)DependentLookup(data->PenIndex),
                                         data->Rectangle
                                         );
                                 }
@@ -130,9 +130,9 @@ namespace ImGui.Rendering
                                 {
                                     DrawRoundedRectangleCommand* data = (DrawRoundedRectangleCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawRoundedRectangle(
-                                        (Brush)DependentLookup(data->hBrush),
-                                        (Pen)DependentLookup(data->hPen),
-                                        data->rectangle,
+                                        (Brush)DependentLookup(data->BrushIndex),
+                                        (Pen)DependentLookup(data->PenIndex),
+                                        data->Rectangle,
                                         data->radiusX,
                                         data->radiusY
                                     );
@@ -142,8 +142,8 @@ namespace ImGui.Rendering
                                 {
                                     DrawGlyphRunCommand* data = (DrawGlyphRunCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawGlyphRun(
-                                        (Brush)DependentLookup(data->hForegroundBrush),
-                                        (GlyphRun)DependentLookup(data->hGlyphRun)
+                                        (Brush)DependentLookup(data->BrushIndex),
+                                        (GlyphRun)DependentLookup(data->GlyphRunIndex)
                                     );
                                 }
                                     break;
@@ -151,8 +151,8 @@ namespace ImGui.Rendering
                                 {
                                     DrawTextCommand* data = (DrawTextCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawText(
-                                        (Brush)DependentLookup(data->hForegroundBrush),
-                                        (FormattedText)DependentLookup(data->hFormattedText)
+                                        (Brush)DependentLookup(data->BrushIndex),
+                                        (FormattedText)DependentLookup(data->FormattedTextIndex)
                                     );
                                 }
                                     break;
@@ -160,9 +160,9 @@ namespace ImGui.Rendering
                                 {
                                     DrawGeometryCommand* data = (DrawGeometryCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawGeometry(
-                                        (Brush)DependentLookup(data->hBrush),
-                                        (Pen)DependentLookup(data->hPen),
-                                        (Geometry)DependentLookup(data->hGeometry)
+                                        (Brush)DependentLookup(data->BrushIndex),
+                                        (Pen)DependentLookup(data->PenIndex),
+                                        (Geometry)DependentLookup(data->GeometryIndex)
                                     );
                                 }
                                     break;
@@ -170,7 +170,7 @@ namespace ImGui.Rendering
                                 {
                                     DrawImageCommand* data = (DrawImageCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawImage(
-                                        (ITexture)DependentLookup(data->hImageSource),
+                                        (ITexture)DependentLookup(data->ImageSourceIndex),
                                         data->rectangle
                                     );
                                 }
@@ -179,8 +179,8 @@ namespace ImGui.Rendering
                                 {
                                     DrawSlicedImageCommand* data = (DrawSlicedImageCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawImage(
-                                        (ITexture)DependentLookup(data->hImageSource),
-                                        data->rectangle,
+                                        (ITexture)DependentLookup(data->ImageSourceIndex),
+                                        data->Rectangle,
                                         (data->sliceLeft, data->sliceTop, data->sliceRight, data->sliceBottom)
                                     );
                                 }

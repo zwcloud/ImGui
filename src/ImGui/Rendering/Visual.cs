@@ -280,31 +280,12 @@ namespace ImGui.Rendering
 
         internal void RenderRecursive(RenderContext context)
         {
-            this.UpdateContent(context);
-            this.UpdateChildren(context);
-
-            SetFlags(false, VisualFlags.IsSubtreeDirtyForRender);
-        }
-
-        internal void UpdateContent(RenderContext context)
-        {
-            if ((Flags & VisualFlags.IsContentDirty) != 0)
-            {
-                RenderContent(context);
-                SetFlags(false, VisualFlags.IsContentDirty);
-            }
-        }
-
-        internal void UpdateChildren(RenderContext context)
-        {
+            RenderContent(context);
             var childCount = ChildCount;
             for (int i = 0; i < childCount; i++)
             {
                 Visual child = GetVisualByIndex(i);
-                if ((child.Flags & VisualFlags.IsSubtreeDirtyForRender) != 0)
-                {
-                    child.RenderRecursive(context);
-                }
+                child.RenderRecursive(context);
             }
         }
 

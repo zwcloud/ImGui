@@ -240,20 +240,7 @@ namespace ImGui.Rendering
 
         internal override void RenderClose(DrawingContent newContent)
         {
-            DrawingContent oldContent;
-
-            oldContent = content;
             content = newContent;
-
-            SetFlags(true, VisualFlags.IsContentDirty);
-
-            if (oldContent != null)
-            {
-                //TODO consider if we need to release/reuse old content via object pool or leave it to GC
-                //TODO remove related Mesh/TextMesh from MeshList
-            }
-
-            //PropagateFlags(this,VisualFlags.IsSubtreeDirtyForRender);//TODO
         }
 
         private DrawingContent content;
