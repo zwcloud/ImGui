@@ -6,6 +6,7 @@ using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -183,23 +184,38 @@ namespace ImGui
                 icon.AttachLayoutEntry(new Size(20, 20));
                 icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 icon.UseBoxModel = false;
-                icon.Geometry = new ImageGeometry(@"assets/images/logo.png");
+                using (var dc = icon.RenderOpen())
+                {
+                    var image = new Image(@"assets\images\logo.png");
+                    var texture = Application.PlatformContext.CreateTexture();
+                    texture.LoadImage(image.Data, image.Width, image.Height);
+                    dc.DrawImage(texture, new Rect(image.Width, image.Height));
+                }
 
                 var title = new Node(this.GetID("title"),"title");
                 var contentSize = title.RuleSet.CalcSize(this.Name, GUIState.Normal);
                 title.AttachLayoutEntry(contentSize);
                 title.RuleSet.ApplyOptions(GUILayout.Height(20));
                 title.UseBoxModel = false;
-                title.Geometry = new TextGeometry(this.Name);
+                using (var dc = title.RenderOpen())
+                {
+                    dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor),
+                        new GlyphRun(title.Rect.BottomLeft, this.Name, title.RuleSet.FontFamily,
+                            title.RuleSet.FontSize));
+                }
                 this.titleBarTitleNode = title;
 
                 var closeButton = new Node(this.GetID("close button"),"close button");
                 closeButton.AttachLayoutEntry(new Size(20, 20));
                 closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 closeButton.UseBoxModel = false;
-                PathGeometry path = new PathGeometry();
-                path.PathRect(new Rect(0, 0, 20, 20));
-                closeButton.Geometry = path;
+                using (var dc = closeButton.RenderOpen())
+                {
+                    PathGeometry path = new PathGeometry();
+                    path.PathRect(new Rect(0, 0, 20, 20));
+                    var s = closeButton.RuleSet;
+                    dc.DrawGeometry(new Brush(s.FillColor), new Pen(s.StrokeColor, s.StrokeWidth), path);
+                }
 
                 titleBarContainer.AppendChild(icon);
                 titleBarContainer.AppendChild(title);
@@ -294,14 +310,13 @@ namespace ImGui
             var windowRounding = (float) this.WindowContainer.RuleSet.Get<double>(GUIStyleName.WindowRounding);
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
-                //text
+                // title text
+                var title = this.titleBarTitleNode;
+                using (var dc = title.RenderOpen())
                 {
-                    // title text
-                    var textPrimitive = (TextGeometry)this.titleBarTitleNode.Geometry;
-                    if (textPrimitive.Text != this.Name)
-                    {
-                        textPrimitive.Text = this.Name;
-                    }
+                    dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor),
+                        new GlyphRun(title.Rect.BottomLeft, this.Name, title.RuleSet.FontFamily,
+                            title.RuleSet.FontSize));
                 }
             }
 

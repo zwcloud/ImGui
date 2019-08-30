@@ -62,8 +62,8 @@ namespace ImGui.OSAbstraction.Text
 
         private void Initialize(Point origin, string s, string fontFamily, double fontSize)
         {
-            var textContext = new OSImplentation.TypographyTextContext(s, fontFamily, fontSize, TextAlignment.Leading);
-            textContext.Build(origin);
+            //TEMP use TypographyTextContext
+            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(origin, s, fontFamily, fontSize, TextAlignment.Leading);
 
             var glyphDataList = new List<GlyphData>(s.Length);
             foreach (var character in s)
@@ -81,7 +81,7 @@ namespace ImGui.OSAbstraction.Text
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
             this.GlyphDataList = glyphDataList;
-            this.GlyphOffsets = GlyphOffsets;
+            this.GlyphOffsets = textContext.GlyphOffsets;
         }
 
         private string text;

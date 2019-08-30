@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using ImGui.Input;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -33,18 +33,20 @@ namespace ImGui
                 container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                node.Geometry = new TextGeometry(text);
             }
 
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
-
             // rect
             node.Rect = window.GetRect(rect);
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawText(new Brush(node.RuleSet.FontColor),
+                    new FormattedText(rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            }
 
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
@@ -83,17 +85,19 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Geometry = new TextGeometry(text);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
-
             // rect
             node.Rect = window.GetRect(id);
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawText(new Brush(node.RuleSet.FontColor),
+                    new FormattedText(node.Rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            }
 
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);

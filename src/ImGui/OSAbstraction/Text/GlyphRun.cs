@@ -69,7 +69,7 @@ namespace ImGui.OSAbstraction.Text
 
         private void Initialize(Point origin, string _text, string fontFamily, double fontSize)
         {
-            var textContext = new OSImplentation.TypographyTextContext(_text, fontFamily, fontSize);
+            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(origin, _text, fontFamily, fontSize, TextAlignment.Leading);
             textContext.Build(origin);
 
             var glyphDataList = new List<GlyphData>(_text.Length);

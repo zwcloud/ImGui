@@ -20,14 +20,9 @@ namespace ImGui.OSImplentation.Web
             };
         }
 
-        private static ITextContext CTextContext(
-            string text, string fontFamily, int fontSize,
-            FontStretch stretch, FontStyle style, FontWeight weight,
-            int maxWidth, int maxHeight,
-            TextAlignment alignment)
+        private static ITextContext CTextContext(string text, string fontFamily, double fontSize, TextAlignment alignment)
         {
-            return new TypographyTextContext(
-                text, fontFamily, fontSize, alignment);
+            return new TypographyTextContext(text, fontFamily, fontSize, alignment);
         }
 
         private static IWindow CWindow(Point point, Size size, WindowTypes windowType)

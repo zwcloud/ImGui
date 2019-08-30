@@ -226,7 +226,10 @@ namespace ImGui.Rendering
 
         internal override void RenderContent(RenderContext context)
         {
-            context.ConsumeContent(content);
+            if (content != null)
+            {
+                context.ConsumeContent(content);
+            }
         }
 
         /// <summary>
