@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using ImGui.GraphicsImplementation;
 using ImGui.Input;
-using ImGui.Rendering;
 
 namespace ImGui
 {
