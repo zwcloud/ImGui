@@ -165,13 +165,13 @@ namespace ImGui.UnitTest
 
         internal static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
         {
-            var diffPercentage = ImageComparer.PercentageDifference(a,b);
+            var diffPercentage = ImageComparer.PercentageDifference(a,b, 20);
             return diffPercentage < 0.1;
         }
 
         internal static bool CompareImage(Image<Rgba32> a, Image<Bgra32> b)
         {
-            var diffPercentage = ImageComparer.PercentageDifference(a,b);
+            var diffPercentage = ImageComparer.PercentageDifference(a,b, 20);
             return diffPercentage < 0.1;
         }
 

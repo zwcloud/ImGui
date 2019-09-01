@@ -8,7 +8,7 @@ namespace ImGui.UnitTest
         [Fact]
         public void GetProjectPathWhenRunningUnitTestInVisualStudio()
         {
-            Assert.Equal(@"D:\Workspace\ImGui\test\ImGui.UnitTest\", Util.UnitTestRootDir);
+            Assert.Contains(@"ImGui\test\ImGui.UnitTest\", Util.UnitTestRootDir);
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace ImGui.UnitTest
             var result = Util.CompareImage(imageA, imageB);
             Assert.True(result);
         }
-        
+
         [Fact]
         public void CompareCompletelyDifferentImage()
         {
