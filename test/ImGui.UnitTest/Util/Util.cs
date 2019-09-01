@@ -270,12 +270,40 @@ namespace ImGui.UnitTest
 
         internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height, Rect clipRect)
         {
+            if (root == null)
+            {
+                throw new ArgumentNullException(nameof(root));
+            }
+
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
             BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
             using (var context = new RenderContextForTest(width, height))
             {
+                if (root is Node rootNode)
+                {
+                    using(var dc = rootNode.RenderOpen())
+                    {
+                        dc.DrawBoxModel(rootNode.RuleSet, rootNode.Rect);
+                    }
+                }
+
+                root.Foreach(visual =>
+                {
+                    if (!(visual is Node node))
+                    {
+                        return true;
+                    }
+
+                    using(var dc = node.RenderOpen())
+                    {
+                        dc.DrawBoxModel(node.RuleSet, node.Rect);
+                    }
+
+                    return true;
+                });
+
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
                 root.Render(new RenderContext(geometryRenderer, meshList));
 
