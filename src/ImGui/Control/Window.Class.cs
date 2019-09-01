@@ -184,6 +184,31 @@ namespace ImGui
                 icon.AttachLayoutEntry(new Size(20, 20));
                 icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 icon.UseBoxModel = false;
+
+                var title = new Node(this.GetID("title"),"title");
+                var contentSize = title.RuleSet.CalcSize(this.Name, GUIState.Normal);
+                title.AttachLayoutEntry(contentSize);
+                title.RuleSet.ApplyOptions(GUILayout.Height(20));
+                title.UseBoxModel = false;
+                this.titleBarTitleNode = title;
+
+                var closeButton = new Node(this.GetID("close button"),"close button");
+                closeButton.AttachLayoutEntry(new Size(20, 20));
+                closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
+                closeButton.UseBoxModel = false;
+
+                titleBarContainer.AppendChild(icon);
+                titleBarContainer.AppendChild(title);
+                //titleBarContainer.AppendChild(closeButton);
+                this.WindowContainer.AppendChild(titleBarContainer);
+
+                this.WindowContainer.Layout(this.Position);
+
+                using (var dc = titleBarNode.RenderOpen())
+                {
+                    dc.DrawBoxModel(titleBarNode.RuleSet, titleBarNode.Rect);
+                }
+
                 using (var dc = icon.RenderOpen())
                 {
                     var image = new Image(@"assets\images\logo.png");
@@ -192,23 +217,14 @@ namespace ImGui
                     dc.DrawImage(texture, new Rect(image.Width, image.Height));
                 }
 
-                var title = new Node(this.GetID("title"),"title");
-                var contentSize = title.RuleSet.CalcSize(this.Name, GUIState.Normal);
-                title.AttachLayoutEntry(contentSize);
-                title.RuleSet.ApplyOptions(GUILayout.Height(20));
-                title.UseBoxModel = false;
+
                 using (var dc = title.RenderOpen())
                 {
                     dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor),
                         new GlyphRun(title.Rect.BottomLeft, this.Name, title.RuleSet.FontFamily,
                             title.RuleSet.FontSize));
                 }
-                this.titleBarTitleNode = title;
 
-                var closeButton = new Node(this.GetID("close button"),"close button");
-                closeButton.AttachLayoutEntry(new Size(20, 20));
-                closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
-                closeButton.UseBoxModel = false;
                 using (var dc = closeButton.RenderOpen())
                 {
                     PathGeometry path = new PathGeometry();
@@ -216,11 +232,6 @@ namespace ImGui
                     var s = closeButton.RuleSet;
                     dc.DrawGeometry(new Brush(s.FillColor), new Pen(s.StrokeColor, s.StrokeWidth), path);
                 }
-
-                titleBarContainer.AppendChild(icon);
-                titleBarContainer.AppendChild(title);
-                //titleBarContainer.AppendChild(closeButton);
-                this.WindowContainer.AppendChild(titleBarContainer);
             }
 
             //client area
@@ -306,12 +317,17 @@ namespace ImGui
             this.Collapsed = !open;
 
             //update title bar
-            var titleBarRect = this.TitleBarRect;
             var windowRounding = (float) this.WindowContainer.RuleSet.Get<double>(GUIStyleName.WindowRounding);
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
+                // rect
+                using (var dc = titleBarNode.RenderOpen())
+                {
+                    dc.DrawBoxModel(titleBarNode.RuleSet, titleBarNode.Rect);
+                }
                 // title text
                 var title = this.titleBarTitleNode;
+                title.ActiveSelf = true;
                 using (var dc = title.RenderOpen())
                 {
                     dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor),
@@ -322,21 +338,17 @@ namespace ImGui
 
             this.ShowWindowClientArea(!this.Collapsed);
 
-            if (this.Collapsed)
-            {
-                //TODO need to do something here?
-            }
-            else//show and update window client area
-            {
+            if (!this.Collapsed)
+            {//show and update window client area
                 if (!flags.HaveFlag(WindowFlags.NoResize) && this.ResizeGripNode == null)
                 {
                     var id = this.GetID("#RESIZE");
                     var node = new Node(id, "Window_ResizeGrip");
-                    node.Geometry = new PathGeometry();
                     this.ResizeGripNode = node;
                     this.AbsoluteVisualList.Add(node);
                 }
                 //resize grip
+                this.ResizeGripNode.ActiveSelf = true;
                 var resizeGripColor = Color.Clear;
                 if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
                 {
@@ -390,12 +402,16 @@ namespace ImGui
                     var br = this.Rect.BottomRight;
                     var borderBottom = this.WindowContainer.RuleSet.BorderBottom;
                     var borderRight = this.WindowContainer.RuleSet.BorderRight;
-                    var primitive = (PathGeometry)this.ResizeGripNode.Geometry;
-                    primitive.PathClear();
-                    primitive.PathLineTo(br + new Vector(-borderRight, -borderBottom));
-                    primitive.PathLineTo(br + new Vector(-borderRight, -windowRounding));
-                    primitive.PathArcFast(br + new Vector(-windowRounding - borderRight, -windowRounding - borderBottom), windowRounding, 0, 3);
-                    primitive.PathFill(resizeGripColor);
+                    using (var dc = this.ResizeGripNode.RenderOpen())
+                    {
+                        var path = new PathGeometry();
+                        path.PathClear();
+                        path.PathLineTo(br + new Vector(-borderRight, -borderBottom));
+                        path.PathLineTo(br + new Vector(-borderRight, -windowRounding));
+                        path.PathArcFast(br + new Vector(-windowRounding - borderRight, -windowRounding - borderBottom), windowRounding, 0, 3);
+                        dc.DrawGeometry(new Brush(resizeGripColor), null,  path);
+                    }
+
                 }
 
                 this.ContentRect = Rect.Zero;

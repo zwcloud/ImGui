@@ -519,19 +519,11 @@ namespace ImGui.OSImplentation.Windows
             Debug.WriteLine("GL_STENCIL_BITS: " + stencilBits);
         }
 
-        private void MakeCurrent()
-        {
-            if (!wglMakeCurrent(this.hDC, this.hglrc))
-            {
-                throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
-            }
-        }
-
         public void SwapBuffers()
         {
             if(!SwapBuffers(this.hDC))
             {
-                throw new Exception(string.Format("SwapBuffers failed: error {0}", Marshal.GetLastWin32Error()));
+                Log.Error($"SwapBuffers failed: Win32 error {Marshal.GetLastWin32Error()}");
             }
         }
 
