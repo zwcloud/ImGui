@@ -88,6 +88,7 @@ namespace ImGui
         private Node titleBar { get; }
         private Node titleIcon { get; }
         private Node titleText { get; }
+        private Node clientArea { get; }
         public Node ClientAreaNode { get; }
         internal Node WindowContainer { get; }
         private Node ResizeGripNode { get; set; }
@@ -122,7 +123,7 @@ namespace ImGui
                 this.WindowContainer = windowContainer;
 
                 var style = windowContainer.RuleSet;
-                style.BackgroundColor = Color.White;
+                style.BackgroundColor = Color.LightBlue;
                 style.Border = (1, 1, 1, 1);
                 style.BorderColor = (Color.Black, Color.Black, Color.Black, Color.Black);
                 style.Set(GUIStyleName.BorderTopColor, Color.Blue, GUIState.Active);
@@ -198,36 +199,22 @@ namespace ImGui
 
                 titleBar.AppendChild(titleIcon);
                 titleBar.AppendChild(titleText);
-                //titleBar.AppendChild(closeButton);
 
                 this.WindowContainer.AppendChild(titleBar);
                 this.WindowContainer.Layout(this.Position);
-
-                using (var dc = this.titleBar.RenderOpen())
-                {
-                    dc.DrawBoxModel(this.titleBar.RuleSet, this.titleBar.Rect);
-                }
-
-                using (var dc = closeButton.RenderOpen())
-                {
-                    PathGeometry path = new PathGeometry();
-                    path.PathRect(new Rect(0, 0, 20, 20));
-                    var s = closeButton.RuleSet;
-                    dc.DrawGeometry(new Brush(s.FillColor), new Pen(s.StrokeColor, s.StrokeWidth), path);
-                }
             }
 
             //client area
             {
-                var node = new Node(this.GetID("client area"),"client area");
-                node.AttachLayoutGroup(true);
-                node.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
-                node.UseBoxModel = true;
-                node.RuleSet.OutlineWidth = 1;
-                node.RuleSet.OutlineColor = Color.Red;
-                node.RuleSet.refNode = node;
-                this.ClientAreaNode = node;
-                this.WindowContainer.AppendChild(node);
+                this.clientArea = new Node(this.GetID("client area"),"client area");
+                clientArea.AttachLayoutGroup(true);
+                clientArea.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
+                clientArea.UseBoxModel = true;
+                clientArea.RuleSet.OutlineWidth = 1;
+                clientArea.RuleSet.OutlineColor = Color.Red;
+                clientArea.RuleSet.refNode = clientArea;
+                this.ClientAreaNode = clientArea;
+                this.WindowContainer.AppendChild(clientArea);
             }
 
             //resize grip (lasy-initialized)
@@ -325,7 +312,15 @@ namespace ImGui
             this.ShowWindowClientArea(!this.Collapsed);
 
             if (!this.Collapsed)
-            {//show and update window client area
+            {
+                //show and update window client area
+                clientArea.Rect = ClientRect;
+                clientArea.RuleSet.BackgroundColor = Color.LightBlue;
+                using (var dc = clientArea.RenderOpen())
+                {
+                    dc.DrawBoxModel(clientArea);
+                }
+
                 if (!flags.HaveFlag(WindowFlags.NoResize) && this.ResizeGripNode == null)
                 {
                     var id = this.GetID("#RESIZE");
@@ -625,7 +620,7 @@ namespace ImGui
             this.Scroll.Y = newScrollY;
         }
 
-        public void Render(IRenderer renderer)
+        public void Render(IRenderer renderer, Size clientSize)
         {
             this.RenderTree.Root.Render(this.RenderContext);
 
@@ -642,7 +637,7 @@ namespace ImGui
             this.MeshList.Clear();
 
             //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
-            renderer.DrawMeshes((int)this.ClipRect.Width, (int)this.ClipRect.Height,
+            renderer.DrawMeshes((int)clientSize.Width, (int)clientSize.Height,
                 (shapeMesh: this.MeshBuffer.ShapeMesh, imageMesh: this.MeshBuffer.ImageMesh, this.MeshBuffer.TextMesh));
         }
     }

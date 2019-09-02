@@ -77,17 +77,18 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Geometry = new TextGeometry(text);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
-
             // rect
             node.Rect = window.GetRect(id);
+
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawText(new Brush(node.RuleSet.FontColor),
+                    new FormattedText(node.Rect.Location, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            }
         }
 
         public static void Box(string text) => Box(text, null);

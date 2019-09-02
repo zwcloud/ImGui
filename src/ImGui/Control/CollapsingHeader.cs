@@ -33,15 +33,10 @@ namespace ImGui
                 container.AppendChild(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.CollapsingHeader]);
-                node.Geometry = new TextGeometry(displayText);
             }
             node.RuleSet.ApplyOptions(options);
             node.RuleSet.ApplyOptions(Height(node.RuleSet.GetLineHeight()));
             node.ActiveSelf = true;
-
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = displayText;
 
             // rect
             Rect rect = window.GetRect(id);
