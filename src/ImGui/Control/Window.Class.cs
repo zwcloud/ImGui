@@ -85,8 +85,9 @@ namespace ImGui
         private readonly BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
         #region Window original sub nodes
-        private Node titleBarNode { get; }
-        private Node titleBarTitleNode { get; }
+        private Node titleBar { get; }
+        private Node titleIcon { get; }
+        private Node titleText { get; }
         public Node ClientAreaNode { get; }
         internal Node WindowContainer { get; }
         private Node ResizeGripNode { get; set; }
@@ -167,12 +168,11 @@ namespace ImGui
 
             //title bar
             {
-                var titleBarContainer = new Node(this.GetID("titleBar"),"title bar");
-                this.titleBarNode = titleBarContainer;
-                titleBarContainer.AttachLayoutGroup(false);
-                titleBarContainer.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(this.TitleBarHeight));
-                titleBarContainer.UseBoxModel = true;
-                StyleRuleSetBuilder b = new StyleRuleSetBuilder(titleBarContainer);
+                this.titleBar = new Node(this.GetID("titleBar"),"title bar");
+                titleBar.AttachLayoutGroup(false);
+                titleBar.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(this.TitleBarHeight));
+                titleBar.UseBoxModel = true;
+                StyleRuleSetBuilder b = new StyleRuleSetBuilder(titleBar);
                 b.Padding((top: 8, right: 8, bottom: 8, left: 8))
                     .FontColor(Color.Black)
                     .FontSize(12)
@@ -180,49 +180,32 @@ namespace ImGui
                     .AlignmentVertical(Alignment.Center)
                     .AlignmentHorizontal(Alignment.Start);
 
-                var icon = new Node(this.GetID("icon"),"icon");
-                icon.AttachLayoutEntry(new Size(20, 20));
-                icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
-                icon.UseBoxModel = false;
+                this.titleIcon = new Node(this.GetID("icon"),"icon");
+                titleIcon.AttachLayoutEntry(new Size(20, 20));
+                titleIcon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
+                titleIcon.UseBoxModel = false;
 
-                var title = new Node(this.GetID("title"),"title");
-                var contentSize = title.RuleSet.CalcSize(this.Name, GUIState.Normal);
-                title.AttachLayoutEntry(contentSize);
-                title.RuleSet.ApplyOptions(GUILayout.Height(20));
-                title.UseBoxModel = false;
-                this.titleBarTitleNode = title;
+                this.titleText = new Node(this.GetID("title"),"title");
+                var contentSize = titleText.RuleSet.CalcSize(this.Name, GUIState.Normal);
+                titleText.AttachLayoutEntry(contentSize);
+                titleText.RuleSet.ApplyOptions(GUILayout.Height(20));
+                titleText.UseBoxModel = false;
 
                 var closeButton = new Node(this.GetID("close button"),"close button");
                 closeButton.AttachLayoutEntry(new Size(20, 20));
                 closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 closeButton.UseBoxModel = false;
 
-                titleBarContainer.AppendChild(icon);
-                titleBarContainer.AppendChild(title);
-                //titleBarContainer.AppendChild(closeButton);
-                this.WindowContainer.AppendChild(titleBarContainer);
+                titleBar.AppendChild(titleIcon);
+                titleBar.AppendChild(titleText);
+                //titleBar.AppendChild(closeButton);
 
+                this.WindowContainer.AppendChild(titleBar);
                 this.WindowContainer.Layout(this.Position);
 
-                using (var dc = titleBarNode.RenderOpen())
+                using (var dc = this.titleBar.RenderOpen())
                 {
-                    dc.DrawBoxModel(titleBarNode.RuleSet, titleBarNode.Rect);
-                }
-
-                using (var dc = icon.RenderOpen())
-                {
-                    var image = new Image(@"assets\images\logo.png");
-                    var texture = Application.PlatformContext.CreateTexture();
-                    texture.LoadImage(image.Data, image.Width, image.Height);
-                    dc.DrawImage(texture, new Rect(image.Width, image.Height));
-                }
-
-
-                using (var dc = title.RenderOpen())
-                {
-                    dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor),
-                        new GlyphRun(title.Rect.BottomLeft, this.Name, title.RuleSet.FontFamily,
-                            title.RuleSet.FontSize));
+                    dc.DrawBoxModel(this.titleBar.RuleSet, this.titleBar.Rect);
                 }
 
                 using (var dc = closeButton.RenderOpen())
@@ -256,8 +239,8 @@ namespace ImGui
 
         public void ShowWindowTitleBar(bool isShow)
         {
-            this.titleBarNode.ActiveSelf = isShow;
-            this.titleBarNode.ActiveSelf = isShow;
+            this.titleBar.ActiveSelf = isShow;
+            this.titleBar.ActiveSelf = isShow;
         }
 
         public void ShowWindowClientArea(bool isShow)
@@ -320,20 +303,23 @@ namespace ImGui
             var windowRounding = (float) this.WindowContainer.RuleSet.Get<double>(GUIStyleName.WindowRounding);
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
-                // rect
-                using (var dc = titleBarNode.RenderOpen())
-                {
-                    dc.DrawBoxModel(titleBarNode.RuleSet, titleBarNode.Rect);
-                }
-                // title text
-                var title = this.titleBarTitleNode;
-                title.ActiveSelf = true;
-                using (var dc = title.RenderOpen())
-                {
-                    dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor),
-                        new GlyphRun(title.Rect.BottomLeft, this.Name, title.RuleSet.FontFamily,
-                            title.RuleSet.FontSize));
-                }
+                // background
+                //using (var dc = this.titleBar.RenderOpen())
+                //{
+                //    dc.DrawBoxModel(this.titleBar.RuleSet, this.titleBar.Rect);
+                //}
+                ////icon
+                //using (var dc = titleIcon.RenderOpen())
+                //{
+                //    dc.DrawImage(@"assets\images\logo.png");
+                //}
+                ////title
+                //using (var dc = titleText.RenderOpen())
+                //{
+                //    dc.DrawGlyphRun(new Brush(titleText.RuleSet.FontColor),
+                //        new GlyphRun(titleText.Rect.BottomLeft, this.Name, titleText.RuleSet.FontFamily,
+                //            titleText.RuleSet.FontSize));
+                //}
             }
 
             this.ShowWindowClientArea(!this.Collapsed);

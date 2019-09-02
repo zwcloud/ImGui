@@ -1,6 +1,7 @@
 ﻿using ImGui.Rendering;
 using ImGui.Style;
 using System.Diagnostics;
+using ImGui.OSAbstraction.Text;
 
 namespace ImGui
 {
@@ -28,14 +29,15 @@ namespace ImGui
                 container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
-                node.Geometry = new TextGeometry(text);
             }
 
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
+                    new GlyphRun(rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            }
 
             // rect
             node.Rect = window.GetRect(rect);
@@ -68,7 +70,6 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Geometry = new TextGeometry(text);
             }
 
             node.ActiveSelf = true;
@@ -76,6 +77,12 @@ namespace ImGui
 
             // rect
             node.Rect = window.GetRect(id);
+
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
+                    new GlyphRun(node.Rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            }
         }
 
         /// <summary>

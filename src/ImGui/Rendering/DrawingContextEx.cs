@@ -1,4 +1,6 @@
-﻿using ImGui.OSAbstraction.Text;
+﻿using ImGui.GraphicsAbstraction;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
 
 namespace ImGui.Rendering
 {
@@ -74,6 +76,12 @@ namespace ImGui.Rendering
             figure.Segments.Add(new LineSegment(new Point(rect.TopLeft.X, rect.TopLeft.Y + cornerRadius.TopLeft), true));
             geometry.Figures.Add(figure);
             dc.DrawGeometry(brush, pen, geometry);
+        }
+
+        public static void DrawImage(this DrawingContext dc, string path)
+        {
+            var texture = TextureCache.Default.GetOrAdd(path);
+            dc.DrawImage(texture, new Rect(texture.Width, texture.Height));
         }
 
         public static void DrawBoxModel(this DrawingContext dc, StyleRuleSet rule, Rect rect)
