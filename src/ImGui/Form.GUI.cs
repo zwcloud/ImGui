@@ -175,7 +175,7 @@ namespace ImGui
             foreach (var window in w.Windows)
             {
                 if (!window.Active) continue;
-                window.Render(this.renderer);
+                window.Render(this.renderer, ClientSize);
             }
             this.renderer.SwapBuffers();
         }

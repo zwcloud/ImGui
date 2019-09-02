@@ -135,5 +135,11 @@ namespace ImGui.Rendering
 
             DrawDebug(dc, style, paddingBoxRect, contentBoxRect);
         }
+
+        public static void DrawBoxModel(this DrawingContext dc, Node node)
+        {
+            dc.DrawRectangle(new Brush(Color.LightBlue), new Pen(Color.Black, 2), node.Rect);
+            //DrawBoxModel(dc, node.RuleSet, node.Rect);
+        }
     }
 }
