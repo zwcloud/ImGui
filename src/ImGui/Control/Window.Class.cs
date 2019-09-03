@@ -201,7 +201,6 @@ namespace ImGui
                 titleBar.AppendChild(titleText);
 
                 this.WindowContainer.AppendChild(titleBar);
-                this.WindowContainer.Layout(this.Position);
             }
 
             //client area
@@ -291,22 +290,22 @@ namespace ImGui
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
                 // background
-                //using (var dc = this.titleBar.RenderOpen())
-                //{
-                //    dc.DrawBoxModel(this.titleBar.RuleSet, this.titleBar.Rect);
-                //}
-                ////icon
-                //using (var dc = titleIcon.RenderOpen())
-                //{
-                //    dc.DrawImage(@"assets\images\logo.png");
-                //}
-                ////title
-                //using (var dc = titleText.RenderOpen())
-                //{
-                //    dc.DrawGlyphRun(new Brush(titleText.RuleSet.FontColor),
-                //        new GlyphRun(titleText.Rect.BottomLeft, this.Name, titleText.RuleSet.FontFamily,
-                //            titleText.RuleSet.FontSize));
-                //}
+                using (var dc = this.titleBar.RenderOpen())
+                {
+                    dc.DrawBoxModel(this.titleBar.RuleSet, this.titleBar.Rect);
+                }
+                //icon
+                using (var dc = titleIcon.RenderOpen())
+                {
+                    dc.DrawImage(@"assets\images\logo.png");
+                }
+                //title
+                using (var dc = titleText.RenderOpen())
+                {
+                    dc.DrawGlyphRun(new Brush(titleText.RuleSet.FontColor),
+                        new GlyphRun(titleText.Rect.BottomLeft, this.Name, titleText.RuleSet.FontFamily,
+                            titleText.RuleSet.FontSize));
+                }
             }
 
             this.ShowWindowClientArea(!this.Collapsed);
@@ -589,8 +588,7 @@ namespace ImGui
             newContentRect.Union(rect);
             this.ContentRect = newContentRect;
 
-            // apply window client area offset
-            rect.Offset(this.RenderTreeNodesPivotPoint.X, this.RenderTreeNodesPivotPoint.Y);
+            // TODO consider if we still need to apply window client area offset, since we have "client area" node
             // apply scroll offset
             rect.Offset(-this.Scroll);
 

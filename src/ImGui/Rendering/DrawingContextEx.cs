@@ -86,6 +86,11 @@ namespace ImGui.Rendering
 
         public static void DrawBoxModel(this DrawingContext dc, StyleRuleSet rule, Rect rect)
         {
+            if (rect.IsZero)
+            {
+                return;
+            }
+
             var style = rule;
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
@@ -103,6 +108,11 @@ namespace ImGui.Rendering
 
         public static void DrawBoxModel(this DrawingContext dc, string text, StyleRuleSet rule, Rect rect)
         {
+            if (rect.IsZero)
+            {
+                return;
+            }
+
             var style = rule;
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
@@ -122,6 +132,11 @@ namespace ImGui.Rendering
 
         public static void DrawBoxModel(this DrawingContext dc, ImGui.OSAbstraction.Graphics.ITexture texture, StyleRuleSet style, Rect rect)
         {
+            if (rect.IsZero)
+            {
+                return;
+            }
+
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
             DrawBackground(dc, style, paddingBoxRect);

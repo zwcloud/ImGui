@@ -41,16 +41,15 @@ namespace ImGui
             // rect
             node.Rect = window.GetRect(rect);
 
-            // draw
-            using (var dc = node.RenderOpen())
-            {
-                dc.DrawText(new Brush(node.RuleSet.FontColor),
-                    new FormattedText(rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
-            }
-
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
 
             return pressed;
         }
@@ -92,16 +91,15 @@ namespace ImGui
             // rect
             node.Rect = window.GetRect(id);
 
-            // draw
-            using (var dc = node.RenderOpen())
-            {
-                dc.DrawText(new Brush(node.RuleSet.FontColor),
-                    new FormattedText(node.Rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
-            }
-
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
 
             return pressed;
         }
@@ -206,9 +204,9 @@ namespace ImGui
                 .Padding(5.0, GUIState.Normal)
                 .Padding(5.0, GUIState.Hover)
                 .Padding(5.0, GUIState.Active)
-                .BorderColor(Color.Red/*Color.Rgb(166, 166, 166)*/, GUIState.Normal)
-                .BorderColor(Color.Red/*Color.Rgb(123, 123, 123)*/, GUIState.Hover)
-                .BorderColor(Color.Red/*Color.Rgb(148, 148, 148)*/, GUIState.Active)
+                .BorderColor(Color.Rgb(166, 166, 166), GUIState.Normal)
+                .BorderColor(Color.Rgb(123, 123, 123), GUIState.Hover)
+                .BorderColor(Color.Rgb(148, 148, 148), GUIState.Active)
                 .BackgroundColor(Color.Rgb(0x65a9d7), GUIState.Normal)
                 .BackgroundColor(Color.Rgb(0x28597a), GUIState.Hover)
                 .BackgroundColor(Color.Rgb(0x1b435e), GUIState.Active)

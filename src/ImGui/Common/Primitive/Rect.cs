@@ -155,6 +155,17 @@ namespace ImGui
 
         public static Rect Zero { get { return s_zero; } }
 
+        public bool IsZero
+        {
+            get
+            {
+                // The funny width and height tests are to handle NaNs
+                System.Diagnostics.Debug.Assert((!(_width < 0) && !(_height < 0)) || (this == Empty));
+
+                return _width == 0 || _height == 0;
+            }
+        }
+
         /// <summary>
         /// IsEmpty - this returns true if this rect is the Empty rectangle.
         /// Note: If width or height are 0 this Rectangle still contains a 0 or 1 dimensional set
