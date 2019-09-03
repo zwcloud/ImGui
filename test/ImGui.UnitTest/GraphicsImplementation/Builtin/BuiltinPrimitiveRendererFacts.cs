@@ -472,6 +472,11 @@ namespace ImGui.UnitTest.Rendering
 
         public class DrawGlyphRun
         {
+            public DrawGlyphRun()
+            {
+                Application.InitSysDependencies();
+            }
+
             internal static void Check(Rect rectangle, GlyphRun glyphRun, Brush brush, int width, int height,
                 [CallerMemberName] string methodName = "unknown")
             {

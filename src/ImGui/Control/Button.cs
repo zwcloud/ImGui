@@ -211,6 +211,7 @@ namespace ImGui
                 .BackgroundColor(Color.Rgb(0x28597a), GUIState.Hover)
                 .BackgroundColor(Color.Rgb(0x1b435e), GUIState.Active)
                 .BackgroundGradient(Gradient.TopBottom)
+                .FontColor(Color.Black)
                 .AlignmentVertical(Alignment.Center, GUIState.Normal)
                 .AlignmentVertical(Alignment.Center, GUIState.Hover)
                 .AlignmentVertical(Alignment.Center, GUIState.Active)

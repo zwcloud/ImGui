@@ -303,7 +303,7 @@ namespace ImGui
                 using (var dc = titleText.RenderOpen())
                 {
                     dc.DrawGlyphRun(new Brush(titleText.RuleSet.FontColor),
-                        new GlyphRun(titleText.Rect.BottomLeft, this.Name, titleText.RuleSet.FontFamily,
+                        new GlyphRun(titleText.Rect.Location, this.Name, titleText.RuleSet.FontFamily,
                             titleText.RuleSet.FontSize));
                 }
             }
