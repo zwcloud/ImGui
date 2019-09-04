@@ -124,8 +124,8 @@ namespace ImGui
 
                 var style = windowContainer.RuleSet;
                 style.BackgroundColor = Color.LightBlue;
-                style.Border = (1, 1, 1, 1);
-                style.BorderColor = (Color.Black, Color.Black, Color.Black, Color.Black);
+                style.BorderRadius = (2, 2, 2, 2);
+                style.BorderColor = (Color.Rgb(0x707070), Color.Rgb(0x707070), Color.Rgb(0x707070), Color.Rgb(0x707070));
                 style.Set(GUIStyleName.BorderTopColor, Color.Blue, GUIState.Active);
                 style.Set(GUIStyleName.BorderRightColor, Color.Blue, GUIState.Active);
                 style.Set(GUIStyleName.BorderBottomColor, Color.Blue, GUIState.Active);
@@ -147,9 +147,9 @@ namespace ImGui
                 style.Set(GUIStyleName.WindowShadowColor, Color.Argb(100, 227, 227, 227));
                 style.Set(GUIStyleName.WindowShadowWidth, 15.0);
                 style.Set(GUIStyleName.BackgroundColor, Color.White);
-                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(75, 102, 102, 102));
-                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(150, 102, 102, 102), GUIState.Hover);
-                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(225, 102, 102, 102), GUIState.Active);
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(0x77303030));
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(0xAA303030), GUIState.Hover);
+                style.Set(GUIStyleName.ResizeGripColor, Color.Argb(0xFF303030), GUIState.Active);
                 style.Set(GUIStyleName.WindowRounding, 20.0);
                 style.Set(GUIStyleName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
                 style.Set(GUIStyleName.ScrollBarBackgroundColor, Color.Rgb(240));
@@ -285,6 +285,12 @@ namespace ImGui
 
             this.Collapsed = !open;
 
+            //window container
+            using(var dc = WindowContainer.RenderOpen())
+            {
+                dc.DrawBoxModel(WindowContainer);
+            }
+
             //update title bar
             var windowRounding = (float) this.WindowContainer.RuleSet.Get<double>(GUIStyleName.WindowRounding);
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
@@ -314,7 +320,6 @@ namespace ImGui
             {
                 //show and update window client area
                 clientArea.Rect = ClientRect;
-                clientArea.RuleSet.BackgroundColor = Color.LightBlue;
                 using (var dc = clientArea.RenderOpen())
                 {
                     dc.DrawBoxModel(clientArea);
@@ -381,15 +386,22 @@ namespace ImGui
                 {
                     var br = this.Rect.BottomRight;
                     var borderBottom = this.WindowContainer.RuleSet.BorderBottom;
+                    var paddingBottom = this.WindowContainer.RuleSet.PaddingBottom;
                     var borderRight = this.WindowContainer.RuleSet.BorderRight;
+                    var paddingRight = this.WindowContainer.RuleSet.PaddingRight;
                     using (var dc = this.ResizeGripNode.RenderOpen())
                     {
                         var path = new PathGeometry();
-                        path.PathClear();
-                        path.PathLineTo(br + new Vector(-borderRight, -borderBottom));
-                        path.PathLineTo(br + new Vector(-borderRight, -windowRounding));
-                        path.PathArcFast(br + new Vector(-windowRounding - borderRight, -windowRounding - borderBottom), windowRounding, 0, 3);
-                        dc.DrawGeometry(new Brush(resizeGripColor), null,  path);
+                        var figure = new PathFigure();
+                        var A = br + new Vector(-10 - borderRight - paddingRight, 0);
+                        var B = br + new Vector(0, -10 - borderBottom - paddingBottom);
+                        figure.StartPoint = A;
+                        figure.IsFilled = true;
+                        figure.Segments.Add(new LineSegment(B, false));
+                        figure.Segments.Add(new LineSegment(br, false));
+                        figure.Segments.Add(new LineSegment(A, false));
+                        path.Figures.Add(figure);
+                        dc.DrawGeometry(new Brush(resizeGripColor), null, path);
                     }
 
                 }

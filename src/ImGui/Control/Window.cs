@@ -88,7 +88,6 @@ namespace ImGui
                     new Point(Math.Floor(0.5f + window.Position.X + window.Size.Width - Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
                               Math.Floor(0.5f + window.Position.Y + window.Size.Height - border_size)));
                 window.ClipRect = clip_rect;
-                //window.DrawList.AddRect(window.ClipRect.TopLeft, window.ClipRect.BottomRight, Color.Red);//test only
             }
 
             // Clear 'accessed' flag last thing
