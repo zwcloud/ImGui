@@ -224,12 +224,15 @@ namespace ImGui.Rendering
 
         #region new rendering pipeline
 
-        internal override void RenderContent(RenderContext context)
+        internal override bool RenderContent(RenderContext context)
         {
-            if (content != null)
+            if (content != null && ActiveInTree)
             {
                 context.ConsumeContent(content);
             }
+
+            //empty active node renders empty content
+            return ActiveInTree;
         }
 
         /// <summary>

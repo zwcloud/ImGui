@@ -280,12 +280,13 @@ namespace ImGui.Rendering
 
         internal void RenderRecursive(RenderContext context)
         {
-            RenderContent(context);
-            var childCount = ChildCount;
-            for (int i = 0; i < childCount; i++)
+            if (RenderContent(context))
             {
-                Visual child = GetVisualByIndex(i);
-                child.RenderRecursive(context);
+                for (var i = 0; i < ChildCount; i++)
+                {
+                    var child = GetVisualByIndex(i);
+                    child.RenderRecursive(context);
+                }
             }
         }
 
@@ -293,7 +294,8 @@ namespace ImGui.Rendering
         /// Convert content into GPU renderable resources: Mesh/TextMesh
         /// </summary>
         /// <param name="context"></param>
-        internal abstract void RenderContent(RenderContext context);
+        /// <returns>true: content is rendered; false: content is not rendered</returns>
+        internal abstract bool RenderContent(RenderContext context);
 
         /// <summary>
         /// Called from the DrawingContext when the DrawingContext is closed.

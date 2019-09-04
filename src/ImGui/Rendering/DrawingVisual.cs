@@ -23,9 +23,10 @@
         /// Convert content into GPU renderable resources: Mesh/TextMesh
         /// </summary>
         /// <param name="context"></param>
-        internal override void RenderContent(RenderContext context)
+        internal override bool RenderContent(RenderContext context)
         {
             context.ConsumeContent(content);
+            return true;
         }
 
         /// <summary>
