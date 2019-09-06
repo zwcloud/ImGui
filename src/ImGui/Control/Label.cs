@@ -33,14 +33,13 @@ namespace ImGui
 
             node.ActiveSelf = true;
 
-            using (var dc = node.RenderOpen())
-            {
-                dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
-                    new GlyphRun(rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
-            }
-
             // rect
             node.Rect = window.GetRect(rect);
+
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
         }
     }
 
@@ -80,8 +79,7 @@ namespace ImGui
 
             using (var dc = node.RenderOpen())
             {
-                dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
-                    new GlyphRun(node.Rect.BottomLeft, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
             }
         }
 
