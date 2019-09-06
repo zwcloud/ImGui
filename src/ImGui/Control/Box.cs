@@ -37,14 +37,13 @@ namespace ImGui
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            using (var dc = node.RenderOpen())
-            {
-                dc.DrawText(new Brush(node.RuleSet.FontColor),
-                    new FormattedText(rect.Location, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
-            }
-
             // rect
             node.Rect = window.GetRect(rect);
+
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
         }
 
         internal static void Box(Rect rect, string text) => Box(rect, text, null);
@@ -86,8 +85,7 @@ namespace ImGui
 
             using (var dc = node.RenderOpen())
             {
-                dc.DrawText(new Brush(node.RuleSet.FontColor),
-                    new FormattedText(node.Rect.Location, text, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
             }
         }
 
