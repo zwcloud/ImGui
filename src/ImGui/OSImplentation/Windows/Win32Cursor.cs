@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ImGui.Input;
 
@@ -10,6 +11,9 @@ namespace ImGui.OSImplentation.Windows
 
         [DllImport("user32.dll")]
         private static extern IntPtr SetCursor(IntPtr hCursor);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetCursor();
 
         [DllImport("user32.dll")]
         private static extern IntPtr LoadCursor(IntPtr hInstance, uint lpCursorName);
@@ -43,6 +47,7 @@ namespace ImGui.OSImplentation.Windows
         private static IntPtr HorizontalResizeCursurHandle;
         private static IntPtr VerticalResizeCursurHandle;
         private static IntPtr MoveCursurHandle;
+        private static IntPtr BottomRightCornerResizeCursorHandle;
 
         private static void LoadCursors()//called by windowcontext
         {
@@ -51,6 +56,7 @@ namespace ImGui.OSImplentation.Windows
             HorizontalResizeCursurHandle = LoadCursor(IntPtr.Zero, (uint)IDC_STANDARD_CURSORS.IDC_SIZEWE);
             VerticalResizeCursurHandle = LoadCursor(IntPtr.Zero, (uint)IDC_STANDARD_CURSORS.IDC_SIZENS);
             MoveCursurHandle = LoadCursor(IntPtr.Zero, (uint)IDC_STANDARD_CURSORS.IDC_SIZEALL);
+            BottomRightCornerResizeCursorHandle = LoadCursor(IntPtr.Zero, (uint)IDC_STANDARD_CURSORS.IDC_SIZENWSE);
         }
 
         private static void RevertCursors()
@@ -62,30 +68,33 @@ namespace ImGui.OSImplentation.Windows
         static Win32Cursor()
         {
             LoadCursors();
+            s_cursorDictionary = new Dictionary<Cursor, IntPtr>
+            {
+                [Cursor.Default] = NormalCursurHandle,
+                [Cursor.Text] = IBeamCursurHandle,
+                [Cursor.EwResize] = HorizontalResizeCursurHandle,
+                [Cursor.NsResize] = VerticalResizeCursurHandle,
+                [Cursor.NeswResize] = MoveCursurHandle,
+                [Cursor.NwseResize] = BottomRightCornerResizeCursorHandle,
+                [Cursor.Default] = NormalCursurHandle,
+            };
         }
+
+        private static readonly Dictionary<Cursor, IntPtr> s_cursorDictionary;
 
         public static void ChangeCursor(Cursor cursor)
         {
-            switch (cursor)
+            if (s_cursorDictionary.TryGetValue(cursor, out var cursorHandle))
             {
-                case Cursor.Default:
-                    SetCursor(NormalCursurHandle);
-                    break;
-                case Cursor.Text:
-                    SetCursor(IBeamCursurHandle);
-                    break;
-                case Cursor.EwResize:
-                    SetCursor(HorizontalResizeCursurHandle);
-                    break;
-                case Cursor.NsResize:
-                    SetCursor(VerticalResizeCursurHandle);
-                    break;
-                case Cursor.NeswResize:
-                    SetCursor(MoveCursurHandle);
-                    break;
-                default:
-                    RevertCursors();
-                    break;
+                if (GetCursor() == cursorHandle)
+                {
+                    return;
+                }
+                SetCursor(cursorHandle);
+            }
+            else
+            {
+                RevertCursors();
             }
         }
     }

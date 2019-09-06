@@ -42,8 +42,8 @@
         EwResize,
         NsResize,
         NeswResize,
-#if false
         NwseResize,
+#if false
         ColResize,
         RowResize,
         AllScroll,

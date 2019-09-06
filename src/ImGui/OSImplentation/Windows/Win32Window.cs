@@ -62,13 +62,13 @@ namespace ImGui.OSImplentation.Windows
             WS_CHILDWINDOW = WS_CHILD,
         }
 
-        delegate IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam);
+        delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern void PostQuitMessage(int nExitCode);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, UIntPtr wParam, IntPtr lParam);
+        static extern IntPtr DefWindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
@@ -195,6 +195,15 @@ namespace ImGui.OSImplentation.Windows
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool KillTimer(IntPtr hWnd, IntPtr uIDEvent);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetCursor(IntPtr handle);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        private static readonly IntPtr TRUE = new IntPtr(1);
+        private static readonly IntPtr FALSE = IntPtr.Zero;
+
         #endregion
 
         IntPtr hwnd;
@@ -203,15 +212,16 @@ namespace ImGui.OSImplentation.Windows
 
         static Microsoft.Win32.SafeHandles.SafeProcessHandle processHandle = Process.GetCurrentProcess().SafeHandle;
 
-        private IntPtr WindowProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
+        private bool insideClient = false;
+        private IntPtr WindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
             switch (msg)
             {
                 #region keyboard
                 case 0x100:/*WM_KEYDOWN*/
                     {
-                        var keyCode = wParam.ToUInt32();
-                        if (wParam.ToUInt64() < 256)
+                        var keyCode = wParam.ToInt32();
+                        if (wParam.ToInt64() < 256)
                         {
                             Keyboard.Instance.lastKeyStates[keyCode] = Keyboard.Instance.keyStates[keyCode];
                             Keyboard.Instance.keyStates[keyCode] = KeyState.Down;
@@ -234,8 +244,8 @@ namespace ImGui.OSImplentation.Windows
                     }
                 case 0x101:/*WM_KEYUP*/
                     {
-                        var keyCode = wParam.ToUInt32();
-                        if (wParam.ToUInt64() < 256)
+                        var keyCode = wParam.ToInt32();
+                        if (wParam.ToInt64() < 256)
                         {
                             Keyboard.Instance.lastKeyStates[keyCode] = Keyboard.Instance.keyStates[keyCode];
                             Keyboard.Instance.keyStates[keyCode] = KeyState.Up;
@@ -244,6 +254,19 @@ namespace ImGui.OSImplentation.Windows
                     }
                 #endregion
                 #region mouse
+                case 0x0020: //WM_SETCURSOR
+                {
+                    if (wParam == hWnd)
+                    {
+                        //HTCLIENT is 1, see https://docs.microsoft.com/en-us/windows/win32/inputdev/wm-nchittest#return-value
+                        if (unchecked((short) lParam) == 1/*HTCLIENT*/)
+                        {
+                            Win32Cursor.ChangeCursor(Mouse.Instance.Cursor);
+                            return TRUE;
+                        }
+                    }
+                    break;
+                }
                 case 0x0201://WM_LBUTTONDOWN
                     Mouse.Instance.LeftButtonState = KeyState.Down;
                     return IntPtr.Zero;
@@ -261,7 +284,7 @@ namespace ImGui.OSImplentation.Windows
                     Mouse.Instance.RightButtonState = KeyState.Up;
                     return IntPtr.Zero;
                 case 0x020A://WM_MOUSEWHEEL
-                    Mouse.Instance.MouseWheel = ((short)(wParam.ToUInt64() >> 16));
+                    Mouse.Instance.MouseWheel = ((short)(wParam.ToInt64() >> 16));
                     return IntPtr.Zero;
                 case 0x0200://WM_MOUSEMOVE
                     var p = new POINT
@@ -560,6 +583,11 @@ namespace ImGui.OSImplentation.Windows
             POINT p = new POINT { X = (int)point.X, Y = (int)point.Y };
             ClientToScreen(this.Pointer, ref p);
             return new Point(p.X, p.Y);
+        }
+
+        public void ChangeCursor(Cursor cursor)
+        {
+            //
         }
 
         public void MainLoop(Action guiMethod)

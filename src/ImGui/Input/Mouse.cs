@@ -140,19 +140,7 @@
 
         #region Cursor
 
-        private Cursor cursor = Cursor.Default;
-        public Cursor Cursor//TODO make this a data-driven operation
-        {
-            get => this.cursor;
-            set
-            {
-                if(this.cursor!=value)
-                {
-                    Application.PlatformContext.ChangeCursor(value);
-                    this.cursor = value;
-                }
-            }
-        }
+        public Cursor Cursor { get; set; } = Cursor.Default;
 
         #endregion
     }

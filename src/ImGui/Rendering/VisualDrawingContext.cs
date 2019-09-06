@@ -297,6 +297,7 @@ namespace ImGui.Rendering
                 if (!this.content.ReadRecord(out DrawImageCommand record))
                 {//different record type: append new record
                     record.ImageSourceIndex = this.content.AddDependentResource(image);
+                    record.rectangle = rectangle;
                     this.content.WriteRecord(RecordType.DrawImage, (byte*) &record, sizeof(DrawImageCommand));
                     return;
                 }

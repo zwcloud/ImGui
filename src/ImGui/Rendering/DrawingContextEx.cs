@@ -84,6 +84,12 @@ namespace ImGui.Rendering
             dc.DrawImage(texture, new Rect(texture.Width, texture.Height));
         }
 
+        public static void DrawImage(this DrawingContext dc, string path, Rect rect)
+        {
+            var texture = TextureCache.Default.GetOrAdd(path);
+            dc.DrawImage(texture, rect);
+        }
+
         public static void DrawBoxModel(this DrawingContext dc, StyleRuleSet rule, Rect rect)
         {
             if (rect.IsZero)

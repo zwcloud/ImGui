@@ -303,7 +303,7 @@ namespace ImGui
                 //icon
                 using (var dc = titleIcon.RenderOpen())
                 {
-                    dc.DrawImage(@"assets\images\logo.png");
+                    dc.DrawImage(@"assets\images\logo.png", this.titleIcon.Rect);
                 }
                 //title
                 using (var dc = titleText.RenderOpen())
@@ -352,7 +352,11 @@ namespace ImGui
 
                     if (hovered || held)
                     {
-                        //Mouse.Instance.Cursor = Cursor.NeswResize;
+                        Mouse.Instance.Cursor = (Cursor.NwseResize);
+                    }
+                    else
+                    {
+                        Mouse.Instance.Cursor = (Cursor.Default);
                     }
 
                     if (held)
