@@ -212,7 +212,6 @@ namespace ImGui.OSImplentation.Windows
 
         static Microsoft.Win32.SafeHandles.SafeProcessHandle processHandle = Process.GetCurrentProcess().SafeHandle;
 
-        private bool insideClient = false;
         private IntPtr WindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
             switch (msg)
