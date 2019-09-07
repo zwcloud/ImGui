@@ -229,6 +229,43 @@ namespace ImGui.UnitTest.Rendering
                 CheckGeometry(geometry, brush, null, 100, 100);
             }
 
+            private static PathGeometry CreateTriangle(Point pMin, bool isOpen, double height,
+                Color color, double scale = 1)
+            {
+                double h = height;
+                double r = h * 0.40f * scale;
+                Point center = pMin + new Vector(h * 0.50f, h * 0.50f) * scale;
+
+                Point a, b, c;
+                if (isOpen)
+                {
+                    center.Y -= r * 0.25f;
+                    a = center + new Vector(0, 1) * r;
+                    b = center + new Vector(0.866f, -0.5f) * r;
+                    c = center + new Vector(-0.866f, -0.5f) * r;
+                }
+                else
+                {
+                    a = center + new Vector(1, 0) * r;
+                    b = center + new Vector(-0.500f, -0.866f) * r;
+                    c = center + new Vector(-0.500f, 0.866f) * r;
+                }
+
+                PathFigure figure = new PathFigure(a,
+                    new[] {new LineSegment(b, false), new LineSegment(c, false), new LineSegment(a, false)},
+                    true);
+                PathGeometry path = new PathGeometry();
+                path.Figures.Add(figure);
+                return path;
+            }
+
+            [Fact]
+            public void FillATriangle()
+            {
+                var geometry = CreateTriangle(new Point(11, 78), true, 28, Color.Blue);
+                CheckGeometry(geometry, new Brush(Color.AliceBlue), null, 400, 300);
+            }
+
             [Fact]
             public void StrokePolyLine()
             {

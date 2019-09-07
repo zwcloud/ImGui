@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 
 namespace ImGui
@@ -49,6 +49,15 @@ namespace ImGui
                 node.State = open ? GUIState.Active : GUIState.Normal;
             }
 
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
+                    new GlyphRun(node.Rect.Location + new Vector(node.Rect.Height, 0), text, node.RuleSet.FontFamily,
+                        node.RuleSet.FontSize));
+                var color = GUISkin.Default[GUIControlName.Button].Get<Color>(GUIStyleName.BackgroundColor, node.State);
+                dc.RenderCollapseTriangle(node.Rect.BottomLeft, open, node.Height, color);
+            }
+
             return open;
         }
 
@@ -56,10 +65,9 @@ namespace ImGui
 
     }
 
-    #if false //old drawlist code, to be integrated to PathGeometry
-    internal static partial class DrawListExtension
+    internal static partial class DrawingContextExtension
     {
-        public static void RenderCollapseTriangle(this DrawList drawList, Point pMin, bool isOpen, double height, Color color, double scale = 1)
+        public static void RenderCollapseTriangle(this DrawingContext dc, Point pMin, bool isOpen, double height, Color color, double scale = 1)
         {
             double h = height;
             double r = h * 0.40f * scale;
@@ -70,20 +78,24 @@ namespace ImGui
             {
                 center.Y -= r * 0.25f;
                 a = center + new Vector(0, 1) * r;
-                b = center + new Vector(-0.866f, -0.5f) * r;
-                c = center + new Vector(0.866f, -0.5f) * r;
+                b = center + new Vector(0.866f, -0.5f) * r;
+                c = center + new Vector(-0.866f, -0.5f) * r;
             }
             else
             {
                 a = center + new Vector(1, 0) * r;
-                b = center + new Vector(-0.500f, 0.866f) * r;
-                c = center + new Vector(-0.500f, -0.866f) * r;
+                b = center + new Vector(-0.500f, -0.866f) * r;
+                c = center + new Vector(-0.500f, 0.866f) * r;
             }
 
-            drawList.AddTriangleFilled(a, b, c, color);
+            PathFigure figure = new PathFigure(a,
+                new[] {new LineSegment(b, false), new LineSegment(c, false), new LineSegment(a, false)},
+                true);
+            PathGeometry path = new PathGeometry();
+            path.Figures.Add(figure);
+            dc.DrawGeometry(new Brush(color), new Pen(Color.Black, 1), path);
         }
     }
-    #endif
 
     internal partial class GUISkin
     {
