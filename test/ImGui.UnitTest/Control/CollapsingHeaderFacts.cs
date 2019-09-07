@@ -21,7 +21,7 @@ namespace ImGui.UnitTest
                         GUILayout.Label("Item 0");
                         GUILayout.Label("Item 1");
                         GUILayout.Label("Item 2");
-                        GUILayout.Label("Item 3");
+                        GUILayout.Button("Item 3");
                     }
                 };
 

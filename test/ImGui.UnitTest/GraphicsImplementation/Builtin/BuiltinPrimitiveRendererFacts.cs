@@ -5,6 +5,7 @@ using ImGui.GraphicsImplementation;
 using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using Xunit;
+using ImGui.Internal;
 
 namespace ImGui.UnitTest.Rendering
 {
@@ -229,31 +230,40 @@ namespace ImGui.UnitTest.Rendering
                 CheckGeometry(geometry, brush, null, 100, 100);
             }
 
-            private static PathGeometry CreateTriangle(Point pMin, bool isOpen, double height,
-                Color color, double scale = 1)
+            private static PathGeometry CreateArrowGeometry(Point pos, double height, Color color, Direcion dir, double scale)
             {
-                double h = height;
-                double r = h * 0.40f * scale;
-                Point center = pMin + new Vector(h * 0.50f, h * 0.50f) * scale;
+                var h = height;
+                var r = h * 0.40f * scale;
+                Point center = pos + new Vector(h * 0.50f, h * 0.50f * scale);
 
-                Point a, b, c;
-                if (isOpen)
+                Vector a, b, c;
+                switch (dir)
                 {
-                    center.Y -= r * 0.25f;
-                    a = center + new Vector(0, 1) * r;
-                    b = center + new Vector(0.866f, -0.5f) * r;
-                    c = center + new Vector(-0.866f, -0.5f) * r;
-                }
-                else
-                {
-                    a = center + new Vector(1, 0) * r;
-                    b = center + new Vector(-0.500f, -0.866f) * r;
-                    c = center + new Vector(-0.500f, 0.866f) * r;
+                    case Direcion.Up:
+                    case Direcion.Down:
+                        if (dir == Direcion.Up) r = -r;
+                        a = new Vector(+0.000f,+0.750f) * r;
+                        b = new Vector(-0.866f,-0.750f) * r;
+                        c = new Vector(+0.866f,-0.750f) * r;
+                        break;
+                    case Direcion.Left:
+                    case Direcion.Right:
+                        if (dir == Direcion.Left) r = -r;
+                        a = new Vector(+0.750f,+0.000f) * r;
+                        b = new Vector(-0.750f,+0.866f) * r;
+                        c = new Vector(-0.750f,-0.866f) * r;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(dir));
                 }
 
-                PathFigure figure = new PathFigure(a,
-                    new[] {new LineSegment(b, false), new LineSegment(c, false), new LineSegment(a, false)},
+                var A = center + a;
+                var B = center + b;
+                var C = center + c;
+                PathFigure figure = new PathFigure(A,
+                    new[] {new LineSegment(B, false), new LineSegment(C, false), new LineSegment(A, false)},
                     true);
+                figure.IsFilled = true;
                 PathGeometry path = new PathGeometry();
                 path.Figures.Add(figure);
                 return path;
@@ -262,8 +272,8 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void FillATriangle()
             {
-                var geometry = CreateTriangle(new Point(11, 78), true, 28, Color.Blue);
-                CheckGeometry(geometry, new Brush(Color.AliceBlue), null, 400, 300);
+                var geometry = CreateArrowGeometry(new Point(5, 5), 28, Color.Blue, Direcion.Right, 1.0);
+                CheckGeometry(geometry, new Brush(Color.Black), null, 40, 40);
             }
 
             [Fact]
