@@ -38,52 +38,5 @@ namespace ImGui.Rendering
 #endif
             return data;
         }
-
-        #region Old
-
-        public void PathMoveTo(Point point)
-        {
-        }
-
-        public void PathLineTo(Point point)
-        {
-        }
-
-        public void PathClose()
-        {
-        }
-
-        public void PathCurveTo(Point control0, Point control1, Point end)
-        {
-        }
-
-        public StrokeCommand PathStroke(double lineWidth, Color lineColor)
-        {
-            var cmd = new StrokeCommand(lineWidth, lineColor);
-            return cmd;
-        }
-
-        public FillCommand PathFill(Color fillColor)
-        {
-            var cmd = new FillCommand(fillColor);
-            return cmd;
-        }
-
-        public void PathRect(Rect rect, float rounding = 0.0f, int roundingCorners = 0x0F) =>
-            this.PathRect(rect.Min, rect.Max, rounding, roundingCorners);
-
-        public void PathRect(Point a, Point b, float rounding = 0.0f, int roundingCorners = 0x0F)
-        {
-        }
-
-        public void PathArcFast(Point center, double radius, int amin, int amax)
-        {
-        }
-
-        public void PathClear()
-        {
-        }
-
-        #endregion
     }
 }

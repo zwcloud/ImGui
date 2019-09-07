@@ -149,12 +149,6 @@ namespace ImGui.Rendering
         public bool ActiveSelf { get; set; } = true;
 
         /// <summary>
-        /// The Geometry hold by this Visual. (to be removed when new rendering-pipeline is completed)
-        /// </summary>
-        [Obsolete("to be removed when new rendering-pipeline is completed", false)]
-        internal Geometry Geometry { get; set; }
-
-        /// <summary>
         /// Whether this visual is clipped: it doesn't intersect with the clip rectangle.
         /// </summary>
         public bool IsClipped(Rect clipRect)
