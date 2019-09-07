@@ -185,18 +185,18 @@ namespace ImGui.Rendering
 
         #endregion
 
-        public override Rect GetClipRect(Rect rootClipRect)
+        public override Rect GetClipRect()
         {
             Rect clipRect;
             if (this.Parent != null)
             {
                 var parentNode = (Node)this.Parent;
                 clipRect = parentNode.UseBoxModel ? parentNode.ContentRect : parentNode.Rect;
-                clipRect.Intersect(rootClipRect);
             }
             else
             {
-                clipRect = rootClipRect;
+                //TODO decuple from Form
+                clipRect = new Rect(0, 0, Form.current.ClientSize);
             }
 
             return clipRect;

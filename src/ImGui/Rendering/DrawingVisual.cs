@@ -14,9 +14,9 @@
         {
         }
 
-        public override Rect GetClipRect(Rect rootClipRect)
+        public override Rect GetClipRect()
         {
-            return rootClipRect;
+            return Rect.Big;
         }
 
         /// <summary>

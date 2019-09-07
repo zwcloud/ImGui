@@ -20,17 +20,7 @@ namespace ImGui
             this.ClipRect = Rect.Big;
             this.LastActiveFrame = currentFrame;
 
-            var fullScreenRect = new Rect(0, 0, form.ClientSize);
-            if (flags.HaveFlag(WindowFlags.ChildWindow) && !flags.HaveFlag(WindowFlags.ComboBox | WindowFlags.Popup))
-            {
-                //PushClipRect(parentWindow.ClipRect, true);
-                //ClipRect = GetCurrentClipRect();
-            }
-            else
-            {
-                //PushClipRect(fullScreenRect, true);
-                //ClipRect = GetCurrentClipRect();
-            }
+            ClipRect = this.WindowContainer.GetClipRect();
 
             // (draw outer clip rect for test only here)
 
@@ -106,7 +96,10 @@ namespace ImGui
                 {
                     // Manual resize
                     var br = this.Rect.BottomRight;
-                    var resizeRect = new Rect(br - new Vector(windowRounding, windowRounding), br);
+                    var resizeRect = new Rect(
+                        br - new Vector(this.WindowContainer.PaddingLeft + this.WindowContainer.BorderLeft,
+                            this.WindowContainer.PaddingBottom + this.WindowContainer.BorderLeft),
+                        br);
                     var resizeId = this.GetID("#RESIZE");
                     GUIBehavior.ButtonBehavior(resizeRect, resizeId, out var hovered, out var held,
                         ButtonFlags.FlattenChilds);

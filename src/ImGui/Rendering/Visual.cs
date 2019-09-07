@@ -169,8 +169,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// Get the clip rect that applies to this visual.
         /// </summary>
-        /// <param name="rootClipRect">The root clip rect</param>
-        public abstract Rect GetClipRect(Rect rootClipRect);
+        public abstract Rect GetClipRect();
 
         /// <summary>
         /// Adds a visual to the end of the list of children.
@@ -263,7 +262,6 @@ namespace ImGui.Rendering
         /// <summary>
         /// Rule Set
         /// </summary>
-        /// //TODO make this stateless, state should be maintained at the Node level
         public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
 
         internal VisualFlags Flags { get; set; } = VisualFlags.None;
@@ -280,13 +278,18 @@ namespace ImGui.Rendering
 
         internal void RenderRecursive(RenderContext context)
         {
-            if (RenderContent(context))
+            if (!RenderContent(context))
             {
-                for (var i = 0; i < ChildCount; i++)
+                return;
+            }
+            for (var i = 0; i < this.ChildCount; i++)
+            {
+                var child = GetVisualByIndex(i);
+                if (child.IsClipped(this.GetClipRect()))
                 {
-                    var child = GetVisualByIndex(i);
-                    child.RenderRecursive(context);
+                    continue;
                 }
+                child.RenderRecursive(context);
             }
         }
 
