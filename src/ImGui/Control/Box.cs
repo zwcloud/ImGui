@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using ImGui.OSAbstraction.Text;
-using ImGui.Rendering;
+﻿using ImGui.Rendering;
 using ImGui.Style;
 
 namespace ImGui
@@ -21,8 +19,8 @@ namespace ImGui
 
             //get or create the root node
             int id = window.GetID(text);
-            var container = window.RenderTree.CurrentContainer;
-            Node node = container.GetNodeById(id);
+            var container = window.AbsoluteVisualList;
+            Node node = (Node)container.Find(visual => visual.Id == id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
@@ -30,9 +28,7 @@ namespace ImGui
                 node = new Node(id, $"Box<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Box]);
-                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
-                node.AttachLayoutEntry(size);
-                container.AppendChild(node);
+                container.Add(node);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
