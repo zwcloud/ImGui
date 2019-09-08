@@ -12,6 +12,12 @@ namespace UniversalAppTemplate
         private bool clicked;
         protected override void OnGUI()
         {
+            GUILayout.BeginHorizontal("group 1");
+            GUILayout.Button("Button1");
+            GUILayout.Button("Button2");
+            GUILayout.Button("Button3");
+            GUILayout.EndHorizontal();
+
             if (GUILayout.Button("Button"))
             {
                 clicked = !clicked;
