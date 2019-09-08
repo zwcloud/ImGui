@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -32,17 +33,17 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Geometry = new TextGeometry(text);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
-
             // rect
             node.Rect = window.GetRect(rect);
+
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
         }
 
         internal static void Box(Rect rect, string text) => Box(rect, text, null);
@@ -75,17 +76,17 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Geometry = new TextGeometry(text);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
-
             // rect
             node.Rect = window.GetRect(id);
+
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
         }
 
         public static void Box(string text) => Box(text, null);

@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using ImGui.GraphicsAbstraction;
-
-namespace ImGui.Rendering
+﻿namespace ImGui.Rendering
 {
     internal class DrawingVisual : Visual
     {
@@ -17,25 +14,19 @@ namespace ImGui.Rendering
         {
         }
 
-        public override Rect GetClipRect(Rect rootClipRect)
+        public override Rect GetClipRect()
         {
-            return rootClipRect;
-        }
-
-        internal override void Draw(IGeometryRenderer renderer, MeshList meshList)
-        {
-            var r = renderer as GraphicsImplementation.BuiltinGeometryRenderer;
-            Debug.Assert(r != null);
-            r.DrawPrimitive(this.Geometry, this.Rect, this.RuleSet, meshList);
+            return Rect.Big;
         }
 
         /// <summary>
         /// Convert content into GPU renderable resources: Mesh/TextMesh
         /// </summary>
         /// <param name="context"></param>
-        internal override void RenderContent(RenderContext context)
+        internal override bool RenderContent(RenderContext context)
         {
             context.ConsumeContent(content);
+            return true;
         }
 
         /// <summary>

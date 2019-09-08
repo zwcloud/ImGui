@@ -149,11 +149,6 @@ namespace ImGui.Rendering
         public bool ActiveSelf { get; set; } = true;
 
         /// <summary>
-        /// The Geometry hold by this Visual. (to be removed when new rendering-pipeline is completed)
-        /// </summary>
-        internal Geometry Geometry { get; set; }
-
-        /// <summary>
         /// Whether this visual is clipped: it doesn't intersect with the clip rectangle.
         /// </summary>
         public bool IsClipped(Rect clipRect)
@@ -168,8 +163,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// Get the clip rect that applies to this visual.
         /// </summary>
-        /// <param name="rootClipRect">The root clip rect</param>
-        public abstract Rect GetClipRect(Rect rootClipRect);
+        public abstract Rect GetClipRect();
 
         /// <summary>
         /// Adds a visual to the end of the list of children.
@@ -260,17 +254,8 @@ namespace ImGui.Rendering
         }
 
         /// <summary>
-        /// Redraw the node's Geometry.
-        /// </summary>
-        /// <param name="renderer"></param>
-        /// <param name="meshList"></param>
-        /// <remarks>A visual can only have one single Geometry.</remarks>
-        internal abstract void Draw(IGeometryRenderer renderer, MeshList meshList);
-
-        /// <summary>
         /// Rule Set
         /// </summary>
-        /// //TODO make this stateless, state should be maintained at the Node level
         public StyleRuleSet RuleSet { get; } = new StyleRuleSet();
 
         internal VisualFlags Flags { get; set; } = VisualFlags.None;
@@ -287,31 +272,18 @@ namespace ImGui.Rendering
 
         internal void RenderRecursive(RenderContext context)
         {
-            this.UpdateContent(context);
-            this.UpdateChildren(context);
-
-            SetFlags(false, VisualFlags.IsSubtreeDirtyForRender);
-        }
-
-        internal void UpdateContent(RenderContext context)
-        {
-            if ((Flags & VisualFlags.IsContentDirty) != 0)
+            if (!RenderContent(context))
             {
-                RenderContent(context);
-                SetFlags(false, VisualFlags.IsContentDirty);
+                return;
             }
-        }
-
-        internal void UpdateChildren(RenderContext context)
-        {
-            var childCount = ChildCount;
-            for (int i = 0; i < childCount; i++)
+            for (var i = 0; i < this.ChildCount; i++)
             {
-                Visual child = GetVisualByIndex(i);
-                if ((child.Flags & VisualFlags.IsSubtreeDirtyForRender) != 0)
+                var child = GetVisualByIndex(i);
+                if (child.IsClipped(this.GetClipRect()))
                 {
-                    child.RenderRecursive(context);
+                    continue;
                 }
+                child.RenderRecursive(context);
             }
         }
 
@@ -319,7 +291,8 @@ namespace ImGui.Rendering
         /// Convert content into GPU renderable resources: Mesh/TextMesh
         /// </summary>
         /// <param name="context"></param>
-        internal abstract void RenderContent(RenderContext context);
+        /// <returns>true: content is rendered; false: content is not rendered</returns>
+        internal abstract bool RenderContent(RenderContext context);
 
         /// <summary>
         /// Called from the DrawingContext when the DrawingContext is closed.

@@ -1,4 +1,6 @@
-﻿using ImGui.OSAbstraction.Text;
+﻿using ImGui.GraphicsAbstraction;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
 
 namespace ImGui.Rendering
 {
@@ -76,8 +78,25 @@ namespace ImGui.Rendering
             dc.DrawGeometry(brush, pen, geometry);
         }
 
+        public static void DrawImage(this DrawingContext dc, string path)
+        {
+            var texture = TextureCache.Default.GetOrAdd(path);
+            dc.DrawImage(texture, new Rect(texture.Width, texture.Height));
+        }
+
+        public static void DrawImage(this DrawingContext dc, string path, Rect rect)
+        {
+            var texture = TextureCache.Default.GetOrAdd(path);
+            dc.DrawImage(texture, rect);
+        }
+
         public static void DrawBoxModel(this DrawingContext dc, StyleRuleSet rule, Rect rect)
         {
+            if (rect.IsZero)
+            {
+                return;
+            }
+
             var style = rule;
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
@@ -95,6 +114,11 @@ namespace ImGui.Rendering
 
         public static void DrawBoxModel(this DrawingContext dc, string text, StyleRuleSet rule, Rect rect)
         {
+            if (rect.IsZero)
+            {
+                return;
+            }
+
             var style = rule;
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
@@ -103,8 +127,8 @@ namespace ImGui.Rendering
             //Content
             //Content-box
             //TODO Use FormattedText instead for multi-line text
-            dc.DrawGlyphRun(new Brush(style.BackgroundColor),
-                new GlyphRun(rect.BottomLeft, text, style.FontFamily, style.FontSize));
+            dc.DrawGlyphRun(new Brush(style.FontColor),
+                new GlyphRun(contentBoxRect.Location, text, style.FontFamily, style.FontSize));
 
             DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
             DrawOutline(dc, style, borderBoxRect);
@@ -114,6 +138,11 @@ namespace ImGui.Rendering
 
         public static void DrawBoxModel(this DrawingContext dc, ImGui.OSAbstraction.Graphics.ITexture texture, StyleRuleSet style, Rect rect)
         {
+            if (rect.IsZero)
+            {
+                return;
+            }
+
             GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
             DrawBackground(dc, style, paddingBoxRect);
@@ -126,6 +155,11 @@ namespace ImGui.Rendering
             DrawOutline(dc, style, borderBoxRect);
 
             DrawDebug(dc, style, paddingBoxRect, contentBoxRect);
+        }
+
+        public static void DrawBoxModel(this DrawingContext dc, Node node)
+        {
+            DrawBoxModel(dc, node.RuleSet, node.Rect);
         }
     }
 }

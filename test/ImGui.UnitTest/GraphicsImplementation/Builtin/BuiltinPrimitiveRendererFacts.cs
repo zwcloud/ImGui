@@ -5,6 +5,7 @@ using ImGui.GraphicsImplementation;
 using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using Xunit;
+using ImGui.Internal;
 
 namespace ImGui.UnitTest.Rendering
 {
@@ -227,6 +228,52 @@ namespace ImGui.UnitTest.Rendering
                 figure.IsClosed = true;
                 Brush brush = new Brush(Color.Red);
                 CheckGeometry(geometry, brush, null, 100, 100);
+            }
+
+            private static PathGeometry CreateArrowGeometry(Point pos, double height, Color color, Direcion dir, double scale)
+            {
+                var h = height;
+                var r = h * 0.40f * scale;
+                Point center = pos + new Vector(h * 0.50f, h * 0.50f * scale);
+
+                Vector a, b, c;
+                switch (dir)
+                {
+                    case Direcion.Up:
+                    case Direcion.Down:
+                        if (dir == Direcion.Up) r = -r;
+                        a = new Vector(+0.000f,+0.750f) * r;
+                        b = new Vector(-0.866f,-0.750f) * r;
+                        c = new Vector(+0.866f,-0.750f) * r;
+                        break;
+                    case Direcion.Left:
+                    case Direcion.Right:
+                        if (dir == Direcion.Left) r = -r;
+                        a = new Vector(+0.750f,+0.000f) * r;
+                        b = new Vector(-0.750f,+0.866f) * r;
+                        c = new Vector(-0.750f,-0.866f) * r;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(dir));
+                }
+
+                var A = center + a;
+                var B = center + b;
+                var C = center + c;
+                PathFigure figure = new PathFigure(A,
+                    new[] {new LineSegment(B, false), new LineSegment(C, false), new LineSegment(A, false)},
+                    true);
+                figure.IsFilled = true;
+                PathGeometry path = new PathGeometry();
+                path.Figures.Add(figure);
+                return path;
+            }
+
+            [Fact]
+            public void FillATriangle()
+            {
+                var geometry = CreateArrowGeometry(new Point(5, 5), 28, Color.Blue, Direcion.Right, 1.0);
+                CheckGeometry(geometry, new Brush(Color.Black), null, 40, 40);
             }
 
             [Fact]
@@ -472,6 +519,11 @@ namespace ImGui.UnitTest.Rendering
 
         public class DrawGlyphRun
         {
+            public DrawGlyphRun()
+            {
+                Application.InitSysDependencies();
+            }
+
             internal static void Check(Rect rectangle, GlyphRun glyphRun, Brush brush, int width, int height,
                 [CallerMemberName] string methodName = "unknown")
             {

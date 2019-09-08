@@ -31,14 +31,39 @@ namespace ImGui.OSAbstraction.Text
 
         public FormattedText(Point origin, string text, string fontFamily, double fontSize)
         {
+            //pre-compute hash code
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + text.GetHashCode();
+                hash = hash * 23 + fontFamily.GetHashCode();
+                hash = hash * 23 + fontSize.GetHashCode();
+                this.hashCode = hash;
+            }
+
             Initialize(origin, text, fontFamily, fontSize);
+        }
+
+        public override bool Equals(object obj)
+        {
+            GlyphRun other = obj as GlyphRun;
+            if (other == null)
+            {
+                return false;
+            }
+
+            return other.GetHashCode() == GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return this.hashCode;
         }
 
         private void Initialize(Point origin, string s, string fontFamily, double fontSize)
         {
-
-            var textContext = new OSImplentation.TypographyTextContext(s, fontFamily, fontSize, TextAlignment.Leading);
-            textContext.Build(origin);
+            //TEMP use TypographyTextContext
+            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(origin, s, fontFamily, fontSize, TextAlignment.Leading);
 
             var glyphDataList = new List<GlyphData>(s.Length);
             foreach (var character in s)
@@ -56,9 +81,10 @@ namespace ImGui.OSAbstraction.Text
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
             this.GlyphDataList = glyphDataList;
-            this.GlyphOffsets = GlyphOffsets;
+            this.GlyphOffsets = textContext.GlyphOffsets;
         }
 
         private string text;
+        private readonly int hashCode;
     }
 }

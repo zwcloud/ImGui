@@ -51,6 +51,7 @@ namespace ImGui.Rendering
                 this.CurrentContainer.AppendChild(group);
             }
             group.RuleSet.ApplyOptions(options);
+            group.ActiveSelf = true;
             this.CurrentContainer = group;
         }
 

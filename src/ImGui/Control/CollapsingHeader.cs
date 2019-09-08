@@ -1,5 +1,7 @@
-using System.Diagnostics;
+using System;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
+using ImGui.Internal;
 
 namespace ImGui
 {
@@ -24,7 +26,6 @@ namespace ImGui
             var container = window.RenderTree.CurrentContainer;
             Node node = container.GetNodeById(id);
             text = Utility.FindRenderedText(text);
-            var displayText = (open ? "-" : "+") + text;
             if (node == null)
             {
                 //create nodes
@@ -33,25 +34,30 @@ namespace ImGui
                 container.AppendChild(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.CollapsingHeader]);
-                node.Geometry = new TextGeometry(displayText);
             }
             node.RuleSet.ApplyOptions(options);
             node.RuleSet.ApplyOptions(Height(node.RuleSet.GetLineHeight()));
             node.ActiveSelf = true;
-
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = displayText;
 
             // rect
             Rect rect = window.GetRect(id);
 
             // interact
             var pressed = GUIBehavior.ButtonBehavior(rect, id, out var hovered, out var held, ButtonFlags.PressedOnClick);
+            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             if (pressed)
             {
                 open = !open;
-                node.State = open ? GUIState.Active : GUIState.Normal;
+            }
+
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(node);
+                dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
+                    new GlyphRun(node.Rect.Location + new Vector(node.Rect.Height + node.PaddingLeft, 0), text, node.RuleSet.FontFamily,
+                        node.RuleSet.FontSize));
+                dc.RenderArrow(node.Rect.Min + new Vector(node.PaddingLeft, 0),
+                    node.Height, node.RuleSet.FontColor, open ? Direcion.Down : Direcion.Right, 1.0);
             }
 
             return open;
@@ -61,34 +67,47 @@ namespace ImGui
 
     }
 
-    #if false //old drawlist code, to be integrated to PathGeometry
-    internal static partial class DrawListExtension
+    internal static partial class DrawingContextExtension
     {
-        public static void RenderCollapseTriangle(this DrawList drawList, Point pMin, bool isOpen, double height, Color color, double scale = 1)
+        public static void RenderArrow(this DrawingContext dc, Point pos, double height, Color color, Direcion dir, double scale)
         {
-            double h = height;
-            double r = h * 0.40f * scale;
-            Point center = pMin + new Vector(h * 0.50f, h * 0.50f) * scale;
+            var h = height;
+            var r = h * 0.40f * scale;
+            Point center = pos + new Vector(h * 0.50f, h * 0.50f * scale);
 
-            Point a, b, c;
-            if (isOpen)
+            Vector a, b, c;
+            switch (dir)
             {
-                center.Y -= r * 0.25f;
-                a = center + new Vector(0, 1) * r;
-                b = center + new Vector(-0.866f, -0.5f) * r;
-                c = center + new Vector(0.866f, -0.5f) * r;
-            }
-            else
-            {
-                a = center + new Vector(1, 0) * r;
-                b = center + new Vector(-0.500f, 0.866f) * r;
-                c = center + new Vector(-0.500f, -0.866f) * r;
+                case Direcion.Up:
+                case Direcion.Down:
+                    if (dir == Direcion.Up) r = -r;
+                    a = new Vector(+0.000f,+0.750f) * r;
+                    b = new Vector(-0.866f,-0.750f) * r;
+                    c = new Vector(+0.866f,-0.750f) * r;
+                    break;
+                case Direcion.Left:
+                case Direcion.Right:
+                    if (dir == Direcion.Left) r = -r;
+                    a = new Vector(+0.750f,+0.000f) * r;
+                    b = new Vector(-0.750f,+0.866f) * r;
+                    c = new Vector(-0.750f,-0.866f) * r;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dir));
             }
 
-            drawList.AddTriangleFilled(a, b, c, color);
+            var A = center + a;
+            var B = center + b;
+            var C = center + c;
+            PathFigure figure = new PathFigure(A,
+                new[] {new LineSegment(B, false), new LineSegment(C, false), new LineSegment(A, false)},
+                true);
+            figure.IsFilled = true;
+            PathGeometry path = new PathGeometry();
+            path.Figures.Add(figure);
+            dc.DrawGeometry(new Brush(color), new Pen(Color.Black, 1), path);
         }
     }
-    #endif
 
     internal partial class GUISkin
     {
@@ -96,6 +115,9 @@ namespace ImGui
         {
             ruleSet = new StyleRuleSet();
             ruleSet.Replace(button);
+            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal);
+            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.80f), GUIState.Hover);
+            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
             ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Normal);
             ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Hover);
             ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Active);

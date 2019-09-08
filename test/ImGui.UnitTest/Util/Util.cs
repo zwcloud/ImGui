@@ -1,20 +1,17 @@
-﻿using System;
+﻿#define ShowImage
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Cairo;
 using ImageSharp.Extension;
-using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
 using ImGui.Rendering;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Xunit;
-using Image = SixLabors.ImageSharp.Image;
-using Path = System.IO.Path;
 
 namespace ImGui.UnitTest
 {
@@ -93,8 +90,8 @@ namespace ImGui.UnitTest
 
         internal static void DrawNode(Node node, [CallerMemberName] string memberName = "")
         {
-            using (ImageSurface surface = new ImageSurface(Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
-            using (Context context = new Context(surface))
+            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
+            using (Cairo.Context context = new Cairo.Context(surface))
             {
                 Draw(context, node);
 
@@ -109,7 +106,7 @@ namespace ImGui.UnitTest
             }
         }
 
-        private static void Draw(Context context, Visual visual)
+        private static void Draw(Cairo.Context context, Visual visual)
         {
             var node = (Node)visual;
             var isGroup =  node.IsGroup;
@@ -168,13 +165,13 @@ namespace ImGui.UnitTest
 
         internal static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
         {
-            var diffPercentage = ImageComparer.PercentageDifference(a,b);
+            var diffPercentage = ImageComparer.PercentageDifference(a,b, 20);
             return diffPercentage < 0.1;
         }
 
         internal static bool CompareImage(Image<Rgba32> a, Image<Bgra32> b)
         {
-            var diffPercentage = ImageComparer.PercentageDifference(a,b);
+            var diffPercentage = ImageComparer.PercentageDifference(a,b, 20);
             return diffPercentage < 0.1;
         }
 
@@ -188,6 +185,19 @@ namespace ImGui.UnitTest
             var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
 #if DEBUG//check if it matches expected image
             var expectedImage = Util.LoadImage(expectedImageFilePath);
+
+#if ShowImage
+            var actualImagePath = Environment.ExpandEnvironmentVariables("%TEMP%") + Path.DirectorySeparatorChar + "actual.png";
+            var expectedImagePath = Util.UnitTestRootDir + expectedImageFilePath;
+            if (File.Exists(actualImagePath))
+            {
+                File.Delete(actualImagePath);
+            }
+            Util.SaveImage(image, actualImagePath);
+            Util.OpenImage(actualImagePath);
+            Util.OpenImage(expectedImagePath);
+#endif
+
             Assert.True(Util.CompareImage(expectedImage, image));
 #else//generate expected image
             var path = Util.UnitTestRootDir + expectedImageFilePath;
@@ -212,12 +222,11 @@ namespace ImGui.UnitTest
 
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
-            IGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-
+            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
             using (var context = new RenderContextForTest(width, height))
             {
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
-                node.Draw(geometryRenderer, meshList);
+                node.Render(new RenderContext(geometryRenderer, meshList));
 
                 //rebuild mesh buffer
                 meshBuffer.Clear();
@@ -236,14 +245,14 @@ namespace ImGui.UnitTest
         {
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
-            IGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
+            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
             using (var context = new RenderContextForTest(width, height))
             {
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
                 foreach (var node in nodes)
                 {
-                    node.Draw(geometryRenderer, meshList);
+                    node.Render(new RenderContext(geometryRenderer, meshList));
                 }
 
                 //rebuild mesh buffer
@@ -261,14 +270,42 @@ namespace ImGui.UnitTest
 
         internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height, Rect clipRect)
         {
+            if (root == null)
+            {
+                throw new ArgumentNullException(nameof(root));
+            }
+
             MeshBuffer meshBuffer = new MeshBuffer();
             MeshList meshList = new MeshList();
-            var primitiveRenderer = new BuiltinGeometryRenderer();
+            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
             using (var context = new RenderContextForTest(width, height))
             {
+                if (root is Node rootNode)
+                {
+                    using(var dc = rootNode.RenderOpen())
+                    {
+                        dc.DrawBoxModel(rootNode.RuleSet, rootNode.Rect);
+                    }
+                }
+
+                root.Foreach(visual =>
+                {
+                    if (!(visual is Node node))
+                    {
+                        return true;
+                    }
+
+                    using(var dc = node.RenderOpen())
+                    {
+                        dc.DrawBoxModel(node.RuleSet, node.Rect);
+                    }
+
+                    return true;
+                });
+
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
-                root.Foreach(n =>primitiveRenderer.Draw(n, clipRect, meshList));
+                root.Render(new RenderContext(geometryRenderer, meshList));
 
                 //rebuild mesh buffer
                 meshBuffer.Clear();

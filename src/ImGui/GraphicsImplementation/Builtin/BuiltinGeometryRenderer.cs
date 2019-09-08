@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ImGui.GraphicsAbstraction;
-using ImGui.OSAbstraction.Text;
-using ImGui.Rendering;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal partial class BuiltinGeometryRenderer : IGeometryRenderer
+    internal partial class BuiltinGeometryRenderer
     {
         #region Mesh
 
@@ -36,6 +33,7 @@ namespace ImGui.GraphicsImplementation
         {
             this.TextMesh = textMesh;
         }
+        #endregion
 
         #region Shape
         /// <summary>
@@ -352,8 +350,6 @@ namespace ImGui.GraphicsImplementation
             this.AddImageRect(rect.Min, rect.Max, uvA, uvC, color);
         #endregion
 
-        #endregion
-
         #region Path APIs
 
         private static readonly List<Point> Path = new List<Point>();
@@ -658,244 +654,5 @@ namespace ImGui.GraphicsImplementation
         #endregion
 
         #endregion
-
-        private bool CheckTextPrimitive(TextGeometry geometry, StyleRuleSet style)
-        {
-            do
-            {
-                if (geometry.TextChanged)
-                {
-                    geometry.TextChanged = false;
-                    break;
-                }
-
-                double fontSize = style.FontSize;
-                if (!MathEx.AmostEqual(geometry.FontSize, fontSize))
-                {
-                    break;
-                }
-
-                string fontFamily = style.FontFamily;
-                if (geometry.FontFamily != fontFamily)
-                {
-                    break;
-                }
-
-                FontStyle fontStyle = style.FontStyle;
-                if (geometry.FontStyle != fontStyle)
-                {
-                    break;
-                }
-
-                FontWeight fontWeight = style.FontWeight;
-                if (geometry.FontWeight != fontWeight)
-                {
-                    break;
-                }
-
-                return false;
-            } while (false);
-
-            return true;
-        }
-
-        [Obsolete]
-        public void DrawPath(PathGeometry geometry, Vector offset)
-        {
-        }
-
-        /// <summary>
-        /// Draw a text Geometry and merge the result to the text mesh.
-        /// </summary>
-        /// <param name="geometry"></param>
-        /// <param name="rect"></param>
-        /// <param name="style"></param>
-        public void DrawText(TextGeometry geometry, Rect rect, StyleRuleSet style)
-        {
-            //check if we need to rebuild the glyph data of this text Geometry
-            var needRebuild = this.CheckTextPrimitive(geometry, style);
-
-            var fontFamily = style.FontFamily;
-            var fontSize = style.FontSize;
-            var fontColor = style.FontColor;
-
-            //build text mesh
-            if (needRebuild)
-            {
-                geometry.Glyphs.Clear();
-                geometry.Offsets.Clear();
-
-                geometry.FontSize = fontSize;
-                geometry.FontFamily = fontFamily;
-                geometry.FontStyle = style.FontStyle;
-                geometry.FontWeight = style.FontWeight;
-
-                var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment);//TODO apply text alignment
-
-                var textContext = new OSImplentation.TypographyTextContext(geometry.Text,
-                    fontFamily,
-                    fontSize,
-                    textAlignment);
-                textContext.Build(rect.Location);
-
-                geometry.Offsets.AddRange(textContext.GlyphOffsets);
-
-                foreach (var character in geometry.Text)
-                {
-                    Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
-                    GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
-                    var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily);
-                    if (glyphData == null)
-                    {
-                        glyphData = GlyphCache.Default.AddGlyph(character, fontFamily, polygons, bezierSegments);
-                    }
-                    Debug.Assert(glyphData != null);
-
-                    geometry.Glyphs.Add(glyphData);
-                }
-            }
-
-            //FIXME Should each text segment consume a draw call? NO!
-
-            //add a new draw command
-            DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
-            cmd.TextureData = null;
-            this.TextMesh.Commands.Add(cmd);
-
-            var oldIndexBufferCount = this.TextMesh.IndexBuffer.Count;
-
-            var scale = OSImplentation.TypographyTextContext.GetScale(fontFamily, fontSize);
-
-            int index = -1;
-
-            // get glyph data from typeface
-            foreach (var character in geometry.Text)
-            {
-                index++;
-                var glyphData = geometry.Glyphs[index];
-                Vector glyphOffset = geometry.Offsets[index];
-                this.TextMesh.Append((Vector)rect.Location + geometry.Offset, glyphData, glyphOffset, scale, fontColor, false);
-            }
-
-            var newIndexBufferCount = this.TextMesh.IndexBuffer.Count;
-
-            // Update command
-            var command = this.TextMesh.Commands[this.TextMesh.Commands.Count - 1];
-            command.ElemCount += newIndexBufferCount - oldIndexBufferCount;
-            this.TextMesh.Commands[this.TextMesh.Commands.Count - 1] = command;
-        }
-
-        /// <summary>
-        /// Draw an image Geometry and merge the result to the image mesh.
-        /// </summary>
-        public void DrawImage(ImageGeometry geometry, Rect rect, StyleRuleSet style)
-        {
-            Color tintColor = Color.White;//TODO define tint color, possibly as a style rule
-
-            if (geometry.Texture == null)
-            {
-                geometry.SendToGPU();
-            }
-
-            //TODO check if we need to add a new draw command
-            //add a new draw command
-            DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
-            cmd.TextureData = geometry.Texture;
-            this.ImageMesh.CommandBuffer.Add(cmd);
-
-            //construct and merge the mesh of this Path into ShapeMesh
-            var uvMin = new Point(0, 0);
-            var uvMax = new Point(1, 1);
-
-            this.ImageMesh.PrimReserve(6, 4);
-            this.AddImageRect(rect, uvMin, uvMax, tintColor);
-        }
-
-        private void AddImage(ImageGeometry geometry, Point a, Point b, Point uv0, Point uv1, Color col)
-        {
-            if (MathEx.AmostZero(col.A))
-                return;
-
-            if (geometry.Texture == null)
-            {
-                geometry.SendToGPU();
-            }
-
-            //add a new draw command
-            DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
-            cmd.TextureData = geometry.Texture;
-            this.ImageMesh.CommandBuffer.Add(cmd);
-
-            this.ImageMesh.PrimReserve(6, 4);
-            this.AddImageRect(a, b, uv0, uv1, col);
-        }
-
-        /// <summary>
-        /// Draw an image content
-        /// </summary>
-        public void DrawSlicedImage(ImageGeometry geometry, Rect rect, StyleRuleSet style)
-        {
-            var (top, right, bottom, left) = style.BorderImageSlice;
-            Point uv0 = new Point(left / geometry.Image.Width, top / geometry.Image.Height);
-            Point uv1 = new Point(1 - right / geometry.Image.Width, 1 - bottom / geometry.Image.Height);
-
-            //     | L |   | R |
-            // ----a---b---c---+
-            //   T | 1 | 2 | 3 |
-            // ----d---e---f---g
-            //     | 4 | 5 | 6 |
-            // ----h---i---j---k
-            //   B | 7 | 8 | 9 |
-            // ----+---l---m---n
-
-            var a = rect.TopLeft;
-            var b = a + new Vector(left, 0);
-            var c = rect.TopRight + new Vector(-right, 0);
-
-            var d = a + new Vector(0, top);
-            var e = b + new Vector(0, top);
-            var f = c + new Vector(0, top);
-            var g = f + new Vector(right, 0);
-
-            var h = rect.BottomLeft + new Vector(0, -bottom);
-            var i = h + new Vector(left, 0);
-            var j = rect.BottomRight + new Vector(-right, -bottom);
-            var k = j + new Vector(right, 0);
-
-            var l = i + new Vector(0, bottom);
-            var m = rect.BottomRight + new Vector(-right, 0);
-            var n = rect.BottomRight;
-
-            var uv_a = new Point(0, 0);
-            var uv_b = new Point(uv0.X, 0);
-            var uv_c = new Point(uv1.X, 0);
-
-            var uv_d = new Point(0, uv0.Y);
-            var uv_e = new Point(uv0.X, uv0.Y);
-            var uv_f = new Point(uv1.X, uv0.Y);
-            var uv_g = new Point(1, uv0.Y);
-
-            var uv_h = new Point(0, uv1.Y);
-            var uv_i = new Point(uv0.X, uv1.Y);
-            var uv_j = new Point(uv1.X, uv1.Y);
-            var uv_k = new Point(1, uv1.Y);
-
-            var uv_l = new Point(uv0.X, 1);
-            var uv_m = new Point(uv1.X, 1);
-            var uv_n = new Point(1, 1);
-
-            this.AddImage(geometry, a, e, uv_a, uv_e, Color.White); //1
-            this.AddImage(geometry, b, f, uv_b, uv_f, Color.White); //2
-            this.AddImage(geometry, c, g, uv_c, uv_g, Color.White); //3
-            this.AddImage(geometry, d, i, uv_d, uv_i, Color.White); //4
-            this.AddImage(geometry, e, j, uv_e, uv_j, Color.White); //5
-            this.AddImage(geometry, f, k, uv_f, uv_k, Color.White); //6
-            this.AddImage(geometry, h, l, uv_h, uv_l, Color.White); //7
-            this.AddImage(geometry, i, m, uv_i, uv_m, Color.White); //8
-            this.AddImage(geometry, j, n, uv_j, uv_n, Color.White); //9
-        }
     }
 }

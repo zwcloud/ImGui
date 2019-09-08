@@ -79,6 +79,10 @@ namespace ImGui.GraphicsImplementation
                         {
                             case ArcSegment arcSegment:
                             {
+                                if (arcSegment.Size == Size.Zero)
+                                {
+                                    continue;
+                                }
                                 var generatedPoints = arcSegment.Flatten(currentPoint);
                                 if (arcSegment.IsStroked && pen != null)
                                 {
@@ -315,7 +319,6 @@ namespace ImGui.GraphicsImplementation
             SetImageMesh(null);
         }
         #endregion
-
 
         protected override void DisposeCore()
         {

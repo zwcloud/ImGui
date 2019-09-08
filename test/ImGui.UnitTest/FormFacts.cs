@@ -27,12 +27,12 @@ namespace ImGui.UnitTest
                     }
 
                     form.MainLoop(form.GUILoop);
-                    
+
                     if (Application.RequestQuit)
                     {
                         break;
                     }
-                    
+
                     Keyboard.Instance.OnFrameEnd();
                     Time.OnFrameEnd();
                 }
@@ -59,19 +59,19 @@ namespace ImGui.UnitTest
                     {
                         Application.Quit();
                     }
-                    
+
                     if (Keyboard.Instance.KeyDown(Key.Space))
                     {
                         form.SaveClientAreaToPng(Util.OutputPath + "/1.png");
                     }
 
                     form.MainLoop(form.GUILoop);
-                    
+
                     if (Application.RequestQuit)
                     {
                         break;
                     }
-                    
+
                     Keyboard.Instance.OnFrameEnd();
                     Time.OnFrameEnd();
                 }

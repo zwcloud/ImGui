@@ -34,6 +34,7 @@ namespace ImGui.Rendering
                 var border = style.Border;
                 var borderColor = style.BorderColor;
                 var borderRadius = style.BorderRadius;
+                //TODO simplify logic and remove needless arc segments in GenerateXXXBorderGeometry when any border radius is zero
                 PathGeometry topBorder = GenerateTopBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
                 PathGeometry leftBorder = GenerateRightBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);
                 PathGeometry rightBorder = GenerateBottomBorderGeometry(borderBoxRect, paddingBoxRect, border, borderRadius);

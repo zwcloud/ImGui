@@ -5,7 +5,7 @@
     <Description>ImGui Framework Library</Description>
     <Company>zwcloud</Company>
     <Product>zwcloud.ImGui</Product>
-    <Copyright>Copyright (c) 2016-2018 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
+    <Copyright>Copyright (c) 2016-2019 Zou Wei, https://zwcloud.net/, zwcloud@hotmail.com</Copyright>
     <PackageProjectUrl>https://github.com/zwcloud/ImGui</PackageProjectUrl>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <SignAssembly>False</SignAssembly>
@@ -31,9 +31,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <NoWarn>1701;1702;1705;0162</NoWarn>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

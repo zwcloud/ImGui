@@ -289,6 +289,11 @@ namespace ImGui
             throw new NotImplementedException();
         }
 
+        public static bool AlmostEqual(Point a, Point b)
+        {
+            return MathEx.AmostEqual(a._x, b._x) && MathEx.AmostEqual(a._y, b._y);
+        }
+
         /// <summary>
         ///     X - double.  Default value is 0.
         /// </summary>

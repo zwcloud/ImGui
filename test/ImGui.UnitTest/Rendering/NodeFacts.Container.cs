@@ -1,4 +1,5 @@
-﻿using ImGui.Rendering;
+﻿using ImGui.OSAbstraction.Text;
+using ImGui.Rendering;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering
@@ -95,23 +96,30 @@ namespace ImGui.UnitTest.Rendering
                 icon.AttachLayoutEntry(new Size(20, 20));
                 icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                 icon.UseBoxModel = false;
-                icon.Geometry = new ImageGeometry(@"assets\images\logo.png");
+                using (var dc = icon.RenderOpen())
+                {
+                    dc.DrawImage(@"assets\images\logo.png", icon.Rect);
+                }
 
                 var title = new Node(3, "title");
                 var titleTextSize = GUIStyle.Default.CalcSize("title", GUIState.Normal);//TODO consider this
                 title.AttachLayoutEntry(titleTextSize);
                 title.RuleSet.ApplyOptions(GUILayout.Height(20).ExpandWidth(true));
                 title.UseBoxModel = false;
-                title.Geometry = new TextGeometry("title");
+                using (var dc = title.RenderOpen())
+                {
+                    var glyphRun = new GlyphRun(title.Rect.Location, "title", title.RuleSet.FontFamily,
+                        title.RuleSet.FontSize);
+                    dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor), glyphRun);
+                }
 
                 var closeButton = new Node(4, "close button");
                 closeButton.AttachLayoutEntry(new Size(20, 20));
                 closeButton.UseBoxModel = false;
-                PathGeometry path = new PathGeometry();
-                path.PathRect(new Rect(0, 0, 20, 20));
-                path.PathFill(Color.Black);
-
-                closeButton.Geometry = path;
+                using (var dc = closeButton.RenderOpen())
+                {
+                    dc.DrawRectangle(new Brush(Color.Black), null, new Rect(0, 0, 20, 20));
+                }
 
                 container.AppendChild(icon);
                 container.AppendChild(title);
@@ -151,21 +159,30 @@ namespace ImGui.UnitTest.Rendering
                     icon.AttachLayoutEntry(new Size(20, 20));
                     icon.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                     icon.UseBoxModel = false;
-                    icon.Geometry = new ImageGeometry(@"assets\images\logo.png");
+                    using (var dc = icon.RenderOpen())
+                    {
+                        dc.DrawImage(@"assets\images\logo.png", icon.Rect);
+                    }
 
                     var title = new Node(3, "#title");
                     title.AttachLayoutEntry(Size.Zero);
                     title.RuleSet.ApplyOptions(GUILayout.Height(20));
                     title.UseBoxModel = false;
-                    title.Geometry = new TextGeometry("The Window Title");
+                    using (var dc = title.RenderOpen())
+                    {
+                        var glyphRun = new GlyphRun(title.Rect.Location, "The Window Title", title.RuleSet.FontFamily,
+                            title.RuleSet.FontSize);
+                        dc.DrawGlyphRun(new Brush(title.RuleSet.FontColor), glyphRun);
+                    }
 
                     var closeButton = new Node(4, "#close button");
                     closeButton.AttachLayoutEntry(new Size(20, 20));
                     closeButton.RuleSet.ApplyOptions(GUILayout.Width(20).Height(20));
                     closeButton.UseBoxModel = false;
-                    PathGeometry path = new PathGeometry();
-                    path.PathRect(new Rect(0, 0, 20, 20));
-                    closeButton.Geometry = path;
+                    using (var dc = closeButton.RenderOpen())
+                    {
+                        dc.DrawRectangle(new Brush(Color.Black), null, new Rect(0, 0, 20, 20));
+                    }
 
                     titleBarContainer.AppendChild(icon);
                     titleBarContainer.AppendChild(title);

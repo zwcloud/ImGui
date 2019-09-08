@@ -6,11 +6,7 @@ using ImGui.OSAbstraction.Window;
 
 namespace ImGui.OSAbstraction
 {
-    delegate ITextContext CTextContext(
-        string text, string fontFamily, int fontSize,
-        FontStretch stretch, FontStyle style, FontWeight weight,
-        int maxWidth, int maxHeight,
-        TextAlignment alignment);
+    delegate ITextContext CTextContext(string text, string fontFamily, double fontSize, TextAlignment alignment);
 
     abstract class PlatformContext
     {

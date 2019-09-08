@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using ImGui.Input;
+using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -33,15 +33,10 @@ namespace ImGui
                 container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                node.Geometry = new TextGeometry(text);
             }
 
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
-
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
 
             // rect
             node.Rect = window.GetRect(rect);
@@ -49,6 +44,12 @@ namespace ImGui
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
 
             return pressed;
         }
@@ -83,14 +84,9 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
-                node.Geometry = new TextGeometry(text);
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
-
-            var textPrimitive = node.Geometry as TextGeometry;
-            Debug.Assert(textPrimitive != null);
-            textPrimitive.Text = text;
 
             // rect
             node.Rect = window.GetRect(id);
@@ -98,6 +94,12 @@ namespace ImGui
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(text, node.RuleSet, node.Rect);
+            }
 
             return pressed;
         }
@@ -202,13 +204,14 @@ namespace ImGui
                 .Padding(5.0, GUIState.Normal)
                 .Padding(5.0, GUIState.Hover)
                 .Padding(5.0, GUIState.Active)
-                .BorderColor(Color.Rgb(166, 166, 166), GUIState.Normal)
-                .BorderColor(Color.Rgb(123, 123, 123), GUIState.Hover)
-                .BorderColor(Color.Rgb(148, 148, 148), GUIState.Active)
+                .BorderColor(new Color(0.26f, 0.59f, 0.98f, 0.40f), GUIState.Normal)
+                .BorderColor(new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Hover)
+                .BorderColor(new Color(0.06f, 0.53f, 0.98f, 1.00f), GUIState.Active)
                 .BackgroundColor(Color.Rgb(0x65a9d7), GUIState.Normal)
                 .BackgroundColor(Color.Rgb(0x28597a), GUIState.Hover)
                 .BackgroundColor(Color.Rgb(0x1b435e), GUIState.Active)
                 .BackgroundGradient(Gradient.TopBottom)
+                .FontColor(Color.Black)
                 .AlignmentVertical(Alignment.Center, GUIState.Normal)
                 .AlignmentVertical(Alignment.Center, GUIState.Hover)
                 .AlignmentVertical(Alignment.Center, GUIState.Active)

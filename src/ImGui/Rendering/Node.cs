@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using ImGui.GraphicsAbstraction;
 using ImGui.Layout;
 
 namespace ImGui.Rendering
@@ -11,7 +10,7 @@ namespace ImGui.Rendering
     /// <remarks>
     /// Persisting styling and layout data for <see cref="Visual"/>s of a control.
     /// </remarks>
-    [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}")]
+    [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}" + "#{" + nameof(Rect) + "}")]
     internal partial class Node : Visual, IStyleRuleSet
     {
         public Node(int id) : base(id)
@@ -186,31 +185,22 @@ namespace ImGui.Rendering
 
         #endregion
 
-        public override Rect GetClipRect(Rect rootClipRect)
+        public override Rect GetClipRect()
         {
             Rect clipRect;
             if (this.Parent != null)
             {
                 var parentNode = (Node)this.Parent;
                 clipRect = parentNode.UseBoxModel ? parentNode.ContentRect : parentNode.Rect;
-                clipRect.Intersect(rootClipRect);
             }
             else
             {
-                clipRect = rootClipRect;
+                //TODO decuple from Form
+                clipRect = new Rect(0, 0, Form.current.ClientSize);
             }
 
             return clipRect;
         }
-
-        internal override void Draw(IGeometryRenderer renderer, MeshList meshList)
-        {
-            //TEMP regard all renderer as the built-in renderer
-            var r = renderer as GraphicsImplementation.BuiltinGeometryRenderer;
-            Debug.Assert(r != null);
-            r.DrawPrimitive(this.Geometry, this.UseBoxModel, this.Rect, this.RuleSet, meshList);
-        }
-
 
         /// <summary>
         /// UI state
@@ -234,9 +224,15 @@ namespace ImGui.Rendering
 
         #region new rendering pipeline
 
-        internal override void RenderContent(RenderContext context)
+        internal override bool RenderContent(RenderContext context)
         {
-            context.ConsumeContent(content);
+            if (content != null && ActiveInTree)
+            {
+                context.ConsumeContent(content);
+            }
+
+            //empty active node renders empty content
+            return ActiveInTree;
         }
 
         /// <summary>
@@ -250,20 +246,7 @@ namespace ImGui.Rendering
 
         internal override void RenderClose(DrawingContent newContent)
         {
-            DrawingContent oldContent;
-
-            oldContent = content;
             content = newContent;
-
-            SetFlags(true, VisualFlags.IsContentDirty);
-
-            if (oldContent != null)
-            {
-                //TODO consider if we need to release/reuse old content via object pool or leave it to GC
-                //TODO remove related Mesh/TextMesh from MeshList
-            }
-
-            //PropagateFlags(this,VisualFlags.IsSubtreeDirtyForRender);//TODO
         }
 
         private DrawingContent content;
