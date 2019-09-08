@@ -1,4 +1,6 @@
 ﻿using ImGui.Input;
+using ImGui.Rendering;
+using ImGui.Style;
 
 namespace ImGui
 {
@@ -13,19 +15,31 @@ namespace ImGui
         /// <returns>new value of the toggle</returns>
         public static bool Toggle(Rect rect, string label, bool value)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var g = GetCurrentContext();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
-            int id = window.GetID(label);
+            //get or create the root node
+            var id = window.GetID(label);
+            var container = window.AbsoluteVisualList;
+            var node = (Node)container.Find(visual => visual.Id == id);
+            var text = Utility.FindRenderedText(label);
+            if (node == null)
+            {
+                node = new Node(id, $"Toggle<{label}>");
+                container.Add(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Toggle]);
+            }
+
+            node.ActiveSelf = true;
 
             // rect
-            rect = window.GetRect(rect);
+            node.Rect = window.GetRect(rect);
 
             // interact
-            bool hovered;
-            value = GUIBehavior.ToggleBehavior(rect, id, value, out hovered);
+            value = GUIBehavior.ToggleBehavior(node.Rect, id, value, out var hovered);
 
             // render
             var state = GUIState.Normal;
@@ -37,7 +51,7 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
-            GUIAppearance.DrawToggle(rect, label, value, state);
+            GUIAppearance.DrawToggle(node, text, value, state);
 
             return value;
         }
@@ -54,22 +68,33 @@ namespace ImGui
         /// <returns>new value of the toggle</returns>
         public static bool Toggle(string label, bool value)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var g = GetCurrentContext();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
-            int id = window.GetID(label);
+            //get or create the root node
+            var id = window.GetID(label);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            var text = Utility.FindRenderedText(label);
+            if (node == null)
+            {
+                node = new Node(id, $"Toggle<{label}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Toggle]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                size.Width += size.Height + node.RuleSet.PaddingLeft;
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
+            node.ActiveSelf = true;
 
             // rect
-            var style = GUIStyle.Basic;
-            var textSize = style.CalcSize(label, GUIState.Normal);
-            var size = new Size(16 + textSize.Width, 16 > textSize.Height ? 16 : textSize.Height);
-            var rect = window.GetRect(id);
+            node.Rect = window.GetRect(id);
 
             // interact
-            bool hovered;
-            value = GUIBehavior.ToggleBehavior(rect, id, value, out hovered);
+            value = GUIBehavior.ToggleBehavior(node.Rect, id, value, out var hovered);
 
             // render
             var state = GUIState.Normal;
@@ -81,7 +106,7 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
-            GUIAppearance.DrawToggle(rect, label, value, state);
+            GUIAppearance.DrawToggle(node, text, value, state);
 
             return value;
         }
@@ -133,35 +158,55 @@ namespace ImGui
         ///      |               |
         ///      +---------------+
         /// </remarks>
-        public static void DrawToggle(Rect rect, string label, bool value, GUIState state)
+        public static void DrawToggle(Node node, string label, bool value, GUIState state)
         {
-            GUIContext g = Form.current.uiContext;
-            WindowManager w = g.WindowManager;
-            Window window = w.CurrentWindow;
-            GUIStyle style = GUIStyle.Basic;
-            DrawList d = window.DrawList;
-
-            var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+            var rect = node.Rect;
+            var spacing = GUISkin.Current.FieldSpacing;
             var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
-            var textRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing),
+            var labelRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing),
                 rect.Height);
 
             // box
             var filledBoxColor = Color.Rgb(0, 151, 167);
             var boxBorderColor = Color.White;
             var tickColor = Color.Rgb(48, 48, 48);
-            d.AddRectFilled(boxRect.TopLeft, boxRect.BottomRight, filledBoxColor); //□
-            d.AddRect(boxRect.TopLeft, boxRect.BottomRight, boxBorderColor, 0, 0, 2); //□
-            if (value) //√
+
+            using (var dc = node.RenderOpen())
             {
-                var h = boxRect.Height;
-                d.PathMoveTo(new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y));
-                d.PathLineTo(new Point(0.333f * h + boxRect.X, 0.75f * h + boxRect.Y));
-                d.PathLineTo(new Point(0.875f * h + boxRect.X, 0.25f * h + boxRect.Y));
-                d.PathStroke(tickColor, false, 2);
+                dc.DrawRectangle(new Brush(filledBoxColor), new Pen(boxBorderColor, 1), boxRect) ; //□
+                if (value) //√
+                {
+                    var h = boxRect.Height;
+                    var tick = new PathGeometry();
+                    var figure = new PathFigure();
+                    figure.StartPoint = new Point(0.125f * h + boxRect.X, 0.50f * h + boxRect.Y);
+                    figure.Segments.Add(new LineSegment(new Point(0.333f * h + boxRect.X, 0.75f * h + boxRect.Y), true));
+                    figure.Segments.Add(new LineSegment(new Point(0.875f * h + boxRect.X, 0.25f * h + boxRect.Y), true));
+                    figure.IsFilled = false;
+                    tick.Figures.Add(figure);
+                    dc.DrawGeometry(null, new Pen(tickColor, 2), tick);
+                }
+                // label
+                dc.DrawBoxModel(label, node.RuleSet, labelRect);
             }
-            // label
-            d.DrawBoxModel(textRect, label, style, state);
+        }
+    }
+
+    internal partial class GUISkin
+    {
+        private void InitToggleStyles(StyleRuleSet ruleSet)
+        {
+            StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
+            builder
+                .Padding(1.0, GUIState.Normal)
+                .Padding(1.0, GUIState.Hover)
+                .Padding(1.0, GUIState.Active)
+                .AlignmentVertical(Alignment.Center, GUIState.Normal)
+                .AlignmentVertical(Alignment.Center, GUIState.Hover)
+                .AlignmentVertical(Alignment.Center, GUIState.Active)
+                .AlignmentHorizontal(Alignment.Start, GUIState.Normal)
+                .AlignmentHorizontal(Alignment.Start, GUIState.Hover)
+                .AlignmentHorizontal(Alignment.Start, GUIState.Active);
         }
     }
 }

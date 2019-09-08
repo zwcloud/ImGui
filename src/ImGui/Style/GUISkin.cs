@@ -49,6 +49,10 @@ namespace ImGui
             skin.InitImageStyles(image);
             skin.styles[GUIControlName.Image] = image;
 
+            StyleRuleSet toggle = new StyleRuleSet();
+            skin.InitToggleStyles(toggle);
+            skin.styles[GUIControlName.Toggle] = toggle;
+
             //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
 

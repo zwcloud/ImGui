@@ -13,14 +13,14 @@ namespace ImGui
         /// <param name="options">style options</param>
         internal static void Box(Rect rect, string text, LayoutOptions? options)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
             //get or create the root node
-            int id = window.GetID(text);
+            var id = window.GetID(text);
             var container = window.AbsoluteVisualList;
-            Node node = (Node)container.Find(visual => visual.Id == id);
+            var node = (Node)container.Find(visual => visual.Id == id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
@@ -54,14 +54,14 @@ namespace ImGui
         /// <param name="options">style options</param>
         public static void Box(string text, LayoutOptions? options)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
             //get or create the root node
-            int id = window.GetID(text);
+            var id = window.GetID(text);
             var container = window.RenderTree.CurrentContainer;
-            Node node = container.GetNodeById(id);
+            var node = container.GetNodeById(id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
@@ -92,7 +92,7 @@ namespace ImGui
     {
         private void InitBoxStyles(StyleRuleSet ruleSet)
         {
-            StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
+            var builder = new StyleRuleSetBuilder(ruleSet);
             builder
                 .Border(1.0)
                 .Padding(5.0)

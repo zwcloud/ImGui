@@ -62,8 +62,6 @@
     <Compile Remove="Control\Selectable.cs" />
     <Compile Remove="Control\Separator.cs" />
     <Compile Remove="Control\Slider.cs" />
-    <Compile Remove="Control\TextBox.cs" />
-    <Compile Remove="Control\Toggle.cs" />
     <Compile Remove="Control\TreeNode.cs" />
     <Compile Remove="Control\Window.Child.cs" />
   </ItemGroup>

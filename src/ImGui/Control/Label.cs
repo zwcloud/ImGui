@@ -1,7 +1,5 @@
 ﻿using ImGui.Rendering;
 using ImGui.Style;
-using System.Diagnostics;
-using ImGui.OSAbstraction.Text;
 
 namespace ImGui
 {
@@ -14,14 +12,14 @@ namespace ImGui
         /// <param name="text">text to display</param>
         public static void Label(Rect rect, string text)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
             //get or create the root node
-            int id = window.GetID(text);
+            var id = window.GetID(text);
             var container = window.AbsoluteVisualList;
-            Node node = (Node)container.Find(visual => visual.Id == id);
+            var node = (Node)container.Find(visual => visual.Id == id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
