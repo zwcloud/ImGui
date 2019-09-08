@@ -55,7 +55,6 @@
     <Compile Remove="Common\ListEx.cs" />
     <Compile Remove="Control\ColorField.cs" />
     <Compile Remove="Control\HoverButton.cs" />
-    <Compile Remove="Control\Image.cs" />
     <Compile Remove="Control\ListBox.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
     <Compile Remove="Control\ProgressBar.cs" />

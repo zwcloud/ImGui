@@ -45,6 +45,10 @@ namespace ImGui
             skin.InitTextBoxStyles(textBox);
             skin.styles[GUIControlName.TextBox] = textBox;
 
+            StyleRuleSet image = new StyleRuleSet();
+            skin.InitImageStyles(image);
+            skin.styles[GUIControlName.Image] = image;
+
             //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
 

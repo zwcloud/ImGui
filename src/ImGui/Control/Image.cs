@@ -1,4 +1,5 @@
-﻿using ImGui.OSAbstraction.Graphics;
+﻿using ImGui.Rendering;
+using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
@@ -11,52 +12,66 @@ namespace ImGui
         /// <param name="filePath">file path of the image. The path should be relative to current dir or absolute.</param>
         public static void Image(Rect rect, string filePath)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
-            // style apply
-            var style = GUIStyle.Basic;
-            style.PushBorder(1.0);//+4
+            var id = window.GetID(filePath);
+            var container = window.AbsoluteVisualList;
+            var node = (Node)container.Find(visual => visual.Id == id);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, $"{nameof(Image)}<{filePath}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Image]);
+                container.Add(node);
+            }
+            node.ActiveSelf = true;
 
             // rect
-            rect = window.GetRect(rect);
+            node.Rect = window.GetRect(rect);
 
-            // render
-            var texture = TextureUtil.GetTexture(filePath);
-            DrawList d = window.DrawList;
-            style.PushBorderColor(Color.Black);//+4
-            d.DrawBoxModel(rect, texture, style);
-
-            style.PopStyle(4+4);
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                var texture = TextureCache.Default.GetOrAdd(filePath);
+                dc.DrawBoxModel(texture, node.RuleSet, node.Rect);
+            }
         }
 
         /// <summary>
-        /// Create an auto-layout image.
+        /// Create an image from an existing texture.
         /// </summary>
         /// <param name="rect">position and size</param>
-        /// <param name="texture">texture, call<see cref="CreateTexture"/>to load it manually.</param>
+        /// <param name="texture">texture, call<see cref="CreateTexture"/>to create it.</param>
         public static void Image(Rect rect, ITexture texture)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
-            // style
-            var style = GUIStyle.Basic;
-            style.PushBorder(1.0);
+            var id = window.GetID(texture.GetHashCode());
+            var container = window.AbsoluteVisualList;
+            var node = (Node)container.Find(visual => visual.Id == id);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, $"{nameof(Image)}<Native_{texture.GetNativeTextureId()}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Image]);
+                container.Add(node);
+            }
+            node.ActiveSelf = true;
 
             // rect
-            rect = window.GetRect(rect);
+            node.Rect = window.GetRect(rect);
 
-            // render
-            DrawList d = window.DrawList;
-            style.PushBorderColor(Color.Black);//+4
-            d.DrawBoxModel(rect, texture, style);
-
-            style.PopStyle(4+4);
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(texture, node.RuleSet, node.Rect);
+            }
         }
     }
 
@@ -68,53 +83,74 @@ namespace ImGui
         /// <param name="filePath">file path of the image to display. The path should be relative to current dir or absolute.</param>
         public static void Image(string filePath)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
             var id = window.GetID(filePath);
-
-            // style
-            var style = GUIStyle.Basic;
-            style.PushBorder(1.0);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            var texture = TextureCache.Default.GetOrAdd(filePath);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, $"{nameof(Image)}<{filePath}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Image]);
+                node.AttachLayoutEntry(texture.Size);
+                container.AppendChild(node);
+            }
+            node.ActiveSelf = true;
 
             // rect
-            var texture = TextureUtil.GetTexture(filePath);
-            Size size = style.CalcSize(texture, GUIState.Normal);
-            var rect = window.GetRect(id);
+            node.Rect = window.GetRect(id);
 
-            // render
-            DrawList d = window.DrawList;
-            style.PushBorderColor(Color.Black);//+4
-            d.DrawBoxModel(rect, texture, style);
-
-            style.PopStyle(4 + 4);
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(texture, node.RuleSet, node.Rect);
+            }
         }
 
         public static void Image(ITexture texture)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
-            var id = window.GetID(texture);
-
-            // style
-            var style = GUIStyle.Basic;
-            style.PushBorder(1.0);//+4
+            var id = window.GetID(texture.GetHashCode());
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, $"{nameof(Image)}<Native_{texture.GetNativeTextureId()}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Image]);
+                node.AttachLayoutEntry(texture.Size);
+                container.AppendChild(node);
+            }
+            node.ActiveSelf = true;
 
             // rect
-            Size size = style.CalcSize(texture, GUIState.Normal);
-            var rect = window.GetRect(id);
+            node.Rect = window.GetRect(id);
 
-            // render
-            DrawList d = window.DrawList;
-            style.PushBorderColor(Color.Black);//+4
-            d.DrawBoxModel(rect, texture, style);
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(texture, node.RuleSet, node.Rect);
+            }
+        }
+    }
 
-            style.PopStyle(4+4);
+    internal partial class GUISkin
+    {
+        private void InitImageStyles(StyleRuleSet ruleSet)
+        {
+            var builder = new StyleRuleSetBuilder(ruleSet);
+            builder
+                .Border(1.0)
+                .BorderColor(Color.Black);
         }
     }
 }
