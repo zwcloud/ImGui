@@ -1,22 +1,36 @@
-﻿namespace ImGui
+﻿using ImGui.Rendering;
+
+namespace ImGui
 {
     public partial class GUILayout
     {
         /// <summary>
         /// Create a fixed size space.
         /// </summary>
-        public static void Space(string str_id, double size)
+        public static void Space(string str_id, double thickness)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
-            int id = window.GetID(str_id);
+            var id = window.GetID(str_id);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            if (node == null)
+            {
+                node = new Node(id, $"Space<{str_id}>");
+                node.UseBoxModel = true;
+                var size = window.RenderTree.CurrentContainer.IsVertical ? new Size(0, thickness) : new Size(thickness, 0);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
+            node.ActiveSelf = true;
+            node.Rect = window.GetRect(id);
 
-            // rect
-            var layout = window.StackLayout;
-            layout.GetRect(id, window.RenderTree.CurrentContainer.IsVertical ? new Size(0, size) : new Size(size, 0));
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(node);
+            }
         }
 
         /// <summary>
@@ -24,22 +38,35 @@
         /// </summary>
         public static void FlexibleSpace(string str_id, int stretchFactor = 1)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return;
 
-            // style apply
-            var style = GUIStyle.Basic;
-            var layout = window.StackLayout;
-            style.PushStretchFactor(window.RenderTree.CurrentContainer.IsVertical, stretchFactor);
+            var id = window.GetID(str_id);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            if (node == null)
+            {
+                node = new Node(id, $"Space<{str_id}>");
+                node.UseBoxModel = true;
+                node.AttachLayoutEntry();
+                if (window.RenderTree.CurrentContainer.IsVertical)
+                {
+                    node.RuleSet.VerticalStretchFactor = stretchFactor;
+                }
+                else
+                {
+                    node.RuleSet.HorizontalStretchFactor = stretchFactor;
+                }
+                container.AppendChild(node);
+            }
+            node.ActiveSelf = true;
+            node.Rect = window.GetRect(id);
 
-            // rect
-            int id = window.GetID(str_id);
-            window.GetRect(id);
-
-            // style restore
-            style.PopStyle();
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(node);
+            }
         }
     }
 }
