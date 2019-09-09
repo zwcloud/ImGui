@@ -1,4 +1,6 @@
 ﻿using ImGui.Input;
+using ImGui.Rendering;
+using ImGui.Style;
 
 namespace ImGui
 {
@@ -13,29 +15,48 @@ namespace ImGui
         /// <returns>new value of the toggle-button</returns>
         public static bool Selectable(Rect rect, string text, bool selected)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
-            int id = window.GetID(text);
+            //get or create the root node
+            var id = window.GetID(text);
+            var container = window.AbsoluteVisualList;
+            var node = (Node)container.Find(visual => visual.Id == id);
+            var renderedText = Utility.FindRenderedText(text);
+            if (node == null)
+            {
+                node = new Node(id, $"Toggle<{text}>");
+                container.Add(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Selectable]);
+            }
 
-            // style
-            var style = GUIStyle.Basic;
-            style.ApplySkin(GUIControlName.Selectable);
+            node.ActiveSelf = true;
 
             // rect
-            Size size = style.CalcSize(text, GUIState.Normal);
-            rect = window.GetRect(rect);
+            node.Rect = window.GetRect(rect);
 
             // interact
-            selected = GUIBehavior.SelectableBehavior(rect, id, selected, out bool hovered, out bool held);
+            selected = GUIBehavior.SelectableBehavior(node.Rect, id, selected, out bool hovered, out bool held);
+
+            node.State = selected ? GUIState.Normal : GUIState.Active;
+
+            if (hovered)
+            {
+                node.State = GUIState.Hover;
+            }
+
+            if (held)
+            {
+                node.State = GUIState.Active;
+            }
 
             // render
-            DrawList d = window.DrawList;
-            var state = (selected || (hovered && held)) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            d.DrawBoxModel(rect, text, style, state);
-
-            style.Restore();
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(renderedText, node.RuleSet, node.Rect);
+            }
 
             return selected;
         }
@@ -52,30 +73,50 @@ namespace ImGui
         /// <returns>new value of the toggle-button</returns>
         public static bool Selectable(string text, bool selected, LayoutOptions? options)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
-            int id = window.GetID(text);
+            //get or create the root node
+            var id = window.GetID(text);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            var renderedText = Utility.FindRenderedText(text);
+            if (node == null)
+            {
+                node = new Node(id, $"Selectable<{text}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Selectable]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
 
-            // style
-            var style = GUIStyle.Basic;
-            style.ApplySkin(GUIControlName.Selectable);
-            style.ApplyOption(options);
+            node.ActiveSelf = true;
 
             // rect
-            Size size = style.CalcSize(text, GUIState.Normal);
-            Rect rect = window.GetRect(id);
+            node.Rect = window.GetRect(id);
 
             // interact
-            selected = GUIBehavior.SelectableBehavior(rect, id, selected, out bool hovered, out bool held);
+            selected = GUIBehavior.SelectableBehavior(node.Rect, id, selected, out bool hovered, out bool held);
+
+            node.State = selected ? GUIState.Normal : GUIState.Active;
+
+            if (hovered)
+            {
+                node.State = GUIState.Hover;
+            }
+
+            if (held)
+            {
+                node.State = GUIState.Active;
+            }
 
             // render
-            DrawList d = window.DrawList;
-            var state = (selected || (hovered && held)) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            d.DrawBoxModel(rect, text, style, state);
-
-            style.Restore();
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(renderedText, node.RuleSet, node.Rect);
+            }
 
             return selected;
         }
@@ -127,15 +168,13 @@ namespace ImGui
 
     internal partial class GUISkin
     {
-        private void InitSelectableStyles()
+        private void InitSelectableStyles(StyleRuleSet ruleSet)
         {
-            StyleModifierBuilder builder = new StyleModifierBuilder();
-            builder.PushPadding(2.0);
-            builder.PushBgColor(Color.Clear, GUIState.Normal);
-            builder.PushBgColor(Color.Rgb(206, 220, 236), GUIState.Hover);
-            builder.PushBgColor(Color.Rgb(30, 144, 255), GUIState.Active);
-
-            this.styles.Add(GUIControlName.Selectable, builder.ToArray());
+            var builder = new StyleRuleSetBuilder(ruleSet);
+            builder.Padding(2.0)
+                .BackgroundColor(new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal)
+                .BackgroundColor(new Color(0.26f, 0.59f, 0.98f, 0.80f), GUIState.Hover)
+                .BackgroundColor(new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
         }
     }
 }

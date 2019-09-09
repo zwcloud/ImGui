@@ -52,8 +52,11 @@ namespace ImGui
             StyleRuleSet toggle = new StyleRuleSet();
             skin.InitToggleStyles(toggle);
             skin.styles[GUIControlName.Toggle] = toggle;
+            
+            StyleRuleSet selectable = new StyleRuleSet();
+            skin.InitSelectableStyles(selectable);
+            skin.styles[GUIControlName.Selectable] = selectable;
 
-            //skin.InitSelectableStyles();
             //skin.InitListBoxStyles();
 
 
