@@ -145,6 +145,18 @@
             this.s.FillColor = value;
             return this;
         }
+
+        public StyleRuleSetBuilder StrokeColor(Color value, GUIState state)
+        {
+            this.Set(GUIStyleName.StrokeColor, value, state);
+            return this;
+        }
+
+        public StyleRuleSetBuilder StrokeWidth(double value, GUIState state)
+        {
+            this.Set(GUIStyleName.StrokeWidth, value, state);
+            return this;
+        }
     }
 
 }

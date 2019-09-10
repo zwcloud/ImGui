@@ -8,6 +8,7 @@ namespace ImGui
         Box,
         Space,
         FlexibleSpace,
+        Separator,
 
         //_StatefulStart,
 
