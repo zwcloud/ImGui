@@ -17,14 +17,14 @@ namespace ImGui
         /// <returns>true when the users clicks the button.</returns>
         public static bool Button(Rect rect, string text, LayoutOptions? options)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
             //get or create the root node
-            int id = window.GetID(text);
+            var id = window.GetID(text);
             var container = window.AbsoluteVisualList;
-            Node node = (Node)container.Find(visual => visual.Id == id);
+            var node = (Node)container.Find(visual => visual.Id == id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
@@ -66,14 +66,14 @@ namespace ImGui
         /// <param name="options">style options</param>
         public static bool Button(string text, LayoutOptions? options)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
             //get or create the root node
-            int id = window.GetID(text);
+            var id = window.GetID(text);
             var container = window.RenderTree.CurrentContainer;
-            Node node = container.GetNodeById(id);
+            var node = container.GetNodeById(id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {

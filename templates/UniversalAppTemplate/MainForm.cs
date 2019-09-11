@@ -1,4 +1,5 @@
-﻿using ImGui;
+﻿using System;
+using ImGui;
 
 namespace UniversalAppTemplate
 {
@@ -12,16 +13,20 @@ namespace UniversalAppTemplate
         private bool clicked;
         protected override void OnGUI()
         {
-            GUILayout.BeginHorizontal("group 1");
-            GUILayout.Button("Button1");
-            GUILayout.Button("Button2");
-            GUILayout.Button("Button3");
-            GUILayout.EndHorizontal();
-
-            if (GUILayout.Button("Button"))
+            if (GUI.HoverButton(new Rect(0, 0, 100, 30), "Active when hovered"))
             {
-                clicked = !clicked;
+                Console.WriteLine("Active");
             }
+            //GUILayout.BeginHorizontal("group 1");
+            //GUILayout.Button("Button1");
+            //GUILayout.Button("Button2");
+            //GUILayout.Button("Button3");
+            //GUILayout.EndHorizontal();
+            //
+            //if (GUILayout.Button("Button"))
+            //{
+            //    clicked = !clicked;
+            //}
             //if (clicked)
             //{
             //    GUILayout.Button("123");
