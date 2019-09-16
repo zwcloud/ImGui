@@ -61,6 +61,9 @@ namespace ImGui
             skin.InitSeparatorStyle(separator);
             skin.styles[GUIControlName.Separator] = separator;
 
+            StyleRuleSet progressBar = new StyleRuleSet();
+            skin.InitProgressBarStyles(progressBar);
+            skin.styles[GUIControlName.ProgressBar] = progressBar;
 
             //skin.InitListBoxStyles();
 

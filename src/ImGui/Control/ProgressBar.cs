@@ -1,5 +1,5 @@
-﻿using ImGui.Common;
-using ImGui.Common.Primitive;
+﻿using ImGui.OSAbstraction.Text;
+using ImGui.Rendering;
 
 namespace ImGui
 {
@@ -7,53 +7,53 @@ namespace ImGui
     {
         public static double ProgressBar(string str_id, double percent, Size size, string overlayText = null)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
-                return percent;
+                return 0;
 
-            GUIContext g = GetCurrentContext();
-            int id = window.GetID(str_id);
-
-            // style
-            var style = GUIStyle.Basic;
+            //get or create the root node
+            var id = window.GetID(str_id);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, $"ProgressBar<{str_id}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.ProgressBar]);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
+            node.ActiveSelf = true;
 
             // rect
-            var rect = window.GetRect(id);
-
-            percent = MathEx.Clamp01(percent);
+            node.Rect = window.GetRect(id);
 
             // render
-            DrawList d = window.DrawList;
-            GUIAppearance.DrawProgressBar(rect, percent);
-            if(overlayText != null)
+            percent = MathEx.Clamp01(percent);
+            var rect = node.Rect;
+            var fillWidth = rect.Width * percent;
+            var fillRect = new Rect(rect.X, rect.Y, fillWidth, rect.Height);
+            using (var dc = node.RenderOpen())
             {
-                style.PushTextAlignment(TextAlignment.Center);
-                d.DrawBoxModel(rect, overlayText, style);
-                style.PopStyle();
+                dc.DrawRectangle(new Brush(new Color(0.80f, 0.80f, 0.80f, 0.30f)), null, rect);
+                dc.DrawRectangle(new Brush(new Color(0.90f, 0.70f, 0.00f, 1.00f)), null, fillRect);
+                if(overlayText != null)
+                {
+                    dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
+                        new GlyphRun(node.Rect.Location, overlayText, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+                }
             }
 
             return percent;
         }
     }
 
-    internal partial class GUIAppearance
+    internal partial class GUISkin
     {
-        public static void DrawProgressBar(Rect rect, double percent, GUIState state = GUIState.Normal)
+        private void InitProgressBarStyles(StyleRuleSet ruleSet)
         {
-            GUIContext g = Form.current.uiContext;
-            WindowManager w = g.WindowManager;
-            Window window = w.CurrentWindow;
-            GUIStyle style = GUIStyle.Basic;
-            DrawList d = window.DrawList;
-
-            style.PushBgColor(new Color(0.80f, 0.80f, 0.80f, 0.30f));//+1
-            d.AddRectFilled(rect, style.BackgroundColor);
-            style.PopStyle();//-1
-            var fillWidth = rect.Width * percent;
-            var fillRect = new Rect(rect.X, rect.Y, fillWidth, rect.Height);
-            style.PushFillColor(new Color(0.90f, 0.70f, 0.00f, 1.00f));//+1
-            d.AddRectFilled(fillRect, style.FillColor);
-            style.PopStyle();//-1
+            ruleSet.TextAlignment = TextAlignment.Center;
         }
     }
 }
