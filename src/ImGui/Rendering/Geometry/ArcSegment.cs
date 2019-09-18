@@ -113,7 +113,7 @@ namespace ImGui.Rendering
             vectRotated.Normalize();
 
             // Distance from chord to center
-            double centerDistance = Math.Sqrt(radiusY * radiusY - halfChord * halfChord);
+            double centerDistance = Math.Sqrt(Math.Abs(radiusY * radiusY - halfChord * halfChord));
 
             // Calculate center point
             Point center = midPoint + centerDistance * vectRotated;
