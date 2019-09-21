@@ -1,4 +1,9 @@
-﻿using ImGui.Input;
+﻿using System;
+using System.Net.Http.Headers;
+using ImGui.Input;
+using ImGui.OSAbstraction.Text;
+using ImGui.Rendering;
+using ImGui.Style;
 
 namespace ImGui
 {
@@ -16,19 +21,32 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double Slider(Rect rect, string label, double value, double minValue, double maxValue)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var g = GetCurrentContext();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
-                return value;
+                return 0;
 
-            int id = window.GetID(label);
+            //get or create the root node
+            var id = window.GetID(label);
+            var container = window.AbsoluteVisualList;
+            var node = (Node)container.Find(visual => visual.Id == id);
+            var text = Utility.FindRenderedText(label);
+            if (node == null)
+            {
+                node = new Node(id, $"Slider<{label}>");
+                container.Add(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Slider]);
+            }
+
+            node.ActiveSelf = true;
 
             // rect
-            rect = window.GetRect(rect);
+            node.Rect = window.GetRect(rect);
 
             // interact
-            var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelWidth = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
+            var spacing = GUISkin.Default.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+            var labelWidth = GUISkin.Default.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
             var sliderWidth = rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
             {
@@ -50,7 +68,7 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
-            GUIAppearance.DrawSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelWidth);
+            GUIAppearance.DrawSlider(node, text, value, minValue, maxValue, state, sliderRect, labelWidth);
 
             return value;
         }
@@ -67,19 +85,32 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double VSlider(Rect rect, string label, double value, double minValue, double maxValue)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var g = GetCurrentContext();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
-                return value;
+                return 0;
 
-            int id = window.GetID(label);
+            //get or create the root node
+            var id = window.GetID(label);
+            var container = window.AbsoluteVisualList;
+            var node = (Node)container.Find(visual => visual.Id == id);
+            var text = Utility.FindRenderedText(label);
+            if (node == null)
+            {
+                node = new Node(id, $"VSlider<{label}>");
+                container.Add(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Slider]);
+            }
+
+            node.ActiveSelf = true;
 
             // rect
-            rect = window.GetRect(rect);
+            node.Rect = window.GetRect(rect);
 
             // interact
-            var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelHeight = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
+            var spacing = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
             var sliderHeight = rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
             {
@@ -100,7 +131,7 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
-            GUIAppearance.DrawVSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelHeight);
+            GUIAppearance.DrawVSlider(node, label, value, minValue, maxValue, state, sliderRect, labelHeight);
 
             return value;
         }
@@ -119,39 +150,44 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double Slider(string label, double value, double minValue, double maxValue)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var g = GetCurrentContext();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
-                return value;
+                return 0;
 
+            //get or create the root node
             var id = window.GetID(label);
-
-            // style apply
-            var style = GUIStyle.Basic;
-
-            // rect
-            Size size = style.CalcSize(label, GUIState.Normal);
-            style.PushStretchFactor(false, 1);//+1
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            var text = Utility.FindRenderedText(label);
+            if (node == null)
             {
+                node = new Node(id, $"Slider<{label}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Toggle]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                size.Width += size.Height + node.RuleSet.PaddingLeft;
                 var minSilderWidth = 200;
                 size.Width += minSilderWidth;
                 size.Height = 20;
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
             }
-            var rect = window.GetRect(id);
+            node.ActiveSelf = true;
+
+            // rect
+            node.Rect = window.GetRect(id);
 
             // interact
-            var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelWidth = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
-            var sliderWidth = rect.Width - spacing - labelWidth;
+            var spacing = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+            var labelWidth = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
+            var sliderWidth = node.Rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
             {
                 sliderWidth = 1;
             }
-            var sliderRect = new Rect(rect.X, rect.Y,
-                sliderWidth,
-                rect.Height);
-            bool hovered, held;
-            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered, out held);
+            var sliderRect = new Rect(node.Rect.Location, sliderWidth, node.Rect.Height);
+            value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out var hovered, out var held);
 
             // render
             var state = GUIState.Normal;
@@ -163,10 +199,7 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
-            GUIAppearance.DrawSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelWidth);
-
-            // style restore
-            style.PopStyle();//-1
+            GUIAppearance.DrawSlider(node, label, value, minValue, maxValue, state, sliderRect, labelWidth);
 
             return value;
         }
@@ -182,40 +215,43 @@ namespace ImGui
         /// <remarks>minValue &lt;= value &lt;= maxValue</remarks>
         public static double VSlider(string label, double value, double minValue, double maxValue)
         {
-            GUIContext g = GetCurrentContext();
-            Window window = GetCurrentWindow();
+            var g = GetCurrentContext();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
-                return value;
+                return 0;
 
+            //get or create the root node
             var id = window.GetID(label);
-
-            // style apply
-            var style = GUIStyle.Basic;
-
-            // rect
-            Size size = style.CalcSize(label, GUIState.Normal);
-            style.PushStretchFactor(true, 1);//+1
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            var text = Utility.FindRenderedText(label);
+            if (node == null)
             {
+                node = new Node(id, $"Slider<{label}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Toggle]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 var minSilderHeight = 200;
                 size.Width = 20;
                 size.Height += minSilderHeight;
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
             }
-            var rect = window.GetRect(id);
+            node.ActiveSelf = true;
+
+            // rect
+            node.Rect = window.GetRect(id);
 
             // interact
-            var spacing = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelHeight = GUISkin.Instance.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
-            var sliderHeight = rect.Height - spacing - labelHeight;
+            var spacing = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
+            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
+            var sliderHeight = node.Rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
             {
                 sliderHeight = 1;
             }
-            var sliderRect = new Rect(rect.X, rect.Y,
-                rect.Width,
-                sliderHeight);
-
-            bool hovered, held;
-            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered, out held);
+            var sliderRect = new Rect(node.Rect.Location, node.Rect.Width, sliderHeight);
+            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out var hovered, out var held);
 
             // render
             var state = GUI.Normal;
@@ -227,10 +263,7 @@ namespace ImGui
             {
                 state = GUI.Active;
             }
-            GUIAppearance.DrawVSlider(rect, label, value, minValue, maxValue, state, sliderRect, labelHeight);
-
-            // style restore
-            style.PopStyle();//-1
+            GUIAppearance.DrawVSlider(node, label, value, minValue, maxValue, state, sliderRect, labelHeight);
 
             return value;
         }
@@ -297,14 +330,10 @@ namespace ImGui
 
     internal partial class GUIAppearance
     {
-        public static void DrawSlider(Rect rect, string label, double value, double minValue, double maxValue, GUIState state,
+        public static void DrawSlider(Node node, string label, double value, double minValue, double maxValue, GUIState state,
             Rect sliderRect, double labelWidth)
         {
-            GUIContext g = Form.current.uiContext;
-            WindowManager w = g.WindowManager;
-            Window window = w.CurrentWindow;
-            GUIStyle style = GUIStyle.Basic;
-            DrawList d = window.DrawList;
+            var rect = node.Rect;
 
             var colorForLineUsed = Color.Rgb(0, 151, 167);
             var colorForLineUnused = state == GUIState.Normal ? Color.Rgb(117, 117, 117) : Color.Rgb(255, 128, 171);
@@ -318,52 +347,45 @@ namespace ImGui
 
             var minX = leftPoint.X;
             var maxX = rightPoint.X;
-            var currentPoint = leftPoint
-                               + new Vector((value - minValue) / (maxValue - minValue) * (maxX - minX), 0);
+            var currentPoint = leftPoint + new Vector((value - minValue) / (maxValue - minValue) * (maxX - minX), 0);
 
-            var topArcCenter = currentPoint + new Vector(0, b);
-            var bottomArcCenter = currentPoint + new Vector(0, -b);
-            var bottomStartPoint = bottomArcCenter + new Vector(-a, 0);
-
-            d.PathMoveTo(leftPoint);
-            d.PathLineTo(currentPoint);
-            d.PathStroke(colorForLineUsed, false, 2);
-
-            d.PathMoveTo(currentPoint);
-            d.PathLineTo(rightPoint);
-            d.PathStroke(colorForLineUnused, false, 2);
-
-            d.PathArcToFast(topArcCenter, a, 0, 6);
-            d.PathLineTo(bottomStartPoint);
-            d.PathArcToFast(bottomArcCenter, a, 6, 12);
-            d.PathClose();
+            var dc = node.RenderOpen();
+            //slider
+            dc.DrawLine(new Pen(colorForLineUsed, 2), leftPoint, currentPoint);
+            dc.DrawLine(new Pen(colorForLineUnused, 2), currentPoint, rightPoint);
+            var A = currentPoint + new Vector(-a, -b);
+            var B = currentPoint + new Vector( a, -b);
+            var C = currentPoint + new Vector( a,  b);
+            var D = currentPoint + new Vector(-a,  b);
+            PathGeometry g = new PathGeometry();
+            PathFigure f = new PathFigure();
+            f.StartPoint = A;
+            f.Segments.Add(new ArcSegment(B, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
+            f.Segments.Add(new LineSegment(C, false));
+            f.Segments.Add(new ArcSegment(D, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
+            f.Segments.Add(new LineSegment(A, false));
+            f.IsClosed = true;
+            f.IsFilled = true;
+            g.Figures.Add(f);
+            var fillColor = node.RuleSet.Get<Color>(GUIStyleName.BackgroundColor, state);
+            dc.DrawGeometry(new Brush(fillColor), null, g);
 
             //label
             var labelRect = new Rect(rect.Right - labelWidth, rect.Y,
                 labelWidth, rect.Height);
-            d.DrawText(labelRect, label, style, state);
-
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
-            var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            d.PathFill(fillColor);
-            style.PopStyle(3);
+            dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
+                new GlyphRun(labelRect.Location, label, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            dc.Close();
         }
 
-        public static void DrawVSlider(Rect rect, string label, double value, double minValue, double maxValue, GUIState state,
+        public static void DrawVSlider(Node node, string label, double value, double minValue, double maxValue, GUIState state,
             Rect sliderRect, double labelHeight)
         {
-            GUIContext g = Form.current.uiContext;
-            WindowManager w = g.WindowManager;
-            Window window = w.CurrentWindow;
-            GUIStyle style = GUIStyle.Basic;
-            DrawList d = window.DrawList;
+            var rect = node.Rect;
 
             var colorForLineUsed = Color.Rgb(0, 151, 167);
             var colorForLineUnused = state == GUIState.Normal ? Color.Rgb(117, 117, 117) : Color.Rgb(255, 128, 171);
 
-            //slider
             var h = sliderRect.Width;
             var a = 0.2 * h;
             var b = 0.3 * h;
@@ -374,36 +396,44 @@ namespace ImGui
             var maxY = bottomPoint.Y;
             var currentPoint = upPoint + new Vector(0, (value - minValue) / (maxValue - minValue) * (maxY - minY));
 
-            var leftArcCenter = currentPoint + new Vector(-b, 0);
-            var rightArcCenter = currentPoint + new Vector(b, 0);
-            var rightStartPoint = rightArcCenter + new Vector(0, -a);
-
-            d.PathMoveTo(upPoint);
-            d.PathLineTo(currentPoint);
-            d.PathStroke(colorForLineUsed, false, 2);
-
-            d.PathMoveTo(currentPoint);
-            d.PathLineTo(bottomPoint);
-            d.PathStroke(colorForLineUnused, false, 2);
-
-            d.PathArcToFast(leftArcCenter, a, 3, 9);
-            d.PathLineTo(rightStartPoint);
-            d.PathArcToFast(rightArcCenter, a, 9, 12);
-            d.PathArcToFast(rightArcCenter, a, 0, 3);
-            d.PathClose();
+            var dc = node.RenderOpen();
+            //slider
+            dc.DrawLine(new Pen(colorForLineUsed, 2), upPoint, currentPoint);
+            dc.DrawLine(new Pen(colorForLineUnused, 2), currentPoint, bottomPoint);
+            var A = currentPoint + new Vector(-b,  a);
+            var B = currentPoint + new Vector(-b, -a);
+            var C = currentPoint + new Vector( b, -a);
+            var D = currentPoint + new Vector( b,  a);
+            PathGeometry g = new PathGeometry();
+            PathFigure f = new PathFigure();
+            f.StartPoint = A;
+            f.Segments.Add(new ArcSegment(B, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
+            f.Segments.Add(new LineSegment(C, false));
+            f.Segments.Add(new ArcSegment(D, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
+            f.Segments.Add(new LineSegment(A, false));
+            f.IsClosed = true;
+            f.IsFilled = true;
+            g.Figures.Add(f);
+            var fillColor = node.RuleSet.Get<Color>(GUIStyleName.BackgroundColor, state);
+            dc.DrawGeometry(new Brush(fillColor), null, g);
 
             //label
             var labelRect = new Rect(rect.X, rect.Bottom - labelHeight,
                 rect.Width, labelHeight);
-            d.DrawText(labelRect, label, style, state);
-
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-            style.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);//+1
-            style.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);//+1
-            var fillColor = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-            d.PathFill(fillColor);
-            style.PopStyle(3);
+            dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
+                new GlyphRun(labelRect.Location, label, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            dc.Close();
         }
     }
 
+    internal partial class GUISkin
+    {
+        private void InitSliderStyles(StyleRuleSet ruleSet)
+        {
+            StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
+            builder.BackgroundColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal)
+                .BackgroundColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover)
+                .BackgroundColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
+        }
+    }
 }

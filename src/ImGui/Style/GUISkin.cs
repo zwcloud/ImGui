@@ -65,6 +65,10 @@ namespace ImGui
             skin.InitProgressBarStyles(progressBar);
             skin.styles[GUIControlName.ProgressBar] = progressBar;
 
+            StyleRuleSet slider = new StyleRuleSet();
+            skin.InitSliderStyles(slider);
+            skin.styles[GUIControlName.Slider] = slider;
+
             //skin.InitListBoxStyles();
 
 

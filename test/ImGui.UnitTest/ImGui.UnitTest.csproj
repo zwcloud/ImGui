@@ -16,7 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Control\SliderFacts.cs" />
     <Compile Remove="Control\TextBoxFacts.cs" />
     <Compile Remove="Layout\StackLayoutFacts.Dynamic.cs" />
     <Compile Remove="OSImplentation\Windows\Win32OpenGLRendererFacts.cs" />

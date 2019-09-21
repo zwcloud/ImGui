@@ -15,9 +15,6 @@ namespace ControlTest
         [Fact]
         public void SliderShouldWork()
         {
-            Application.IsRunningInUnitTest = true;
-            Application.InitSysDependencies();
-
             var value = 0.5;
             var min = 0.0;
             var max = 1.0;
