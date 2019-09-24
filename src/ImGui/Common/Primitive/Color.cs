@@ -2,6 +2,7 @@
 
 namespace ImGui
 {
+    [System.Diagnostics.DebuggerDisplay("({R}, {G}, {B}, {A})")]
     [System.Diagnostics.DebuggerStepThrough]
     public struct Color
     {

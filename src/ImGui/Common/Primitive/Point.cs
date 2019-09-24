@@ -2,6 +2,7 @@ using System;
 
 namespace ImGui
 {
+    [System.Diagnostics.DebuggerDisplay("({X}, {Y})")]
     [System.Diagnostics.DebuggerStepThrough]
     [Serializable]
     public struct Point

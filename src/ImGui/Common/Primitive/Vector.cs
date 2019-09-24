@@ -5,7 +5,7 @@ namespace ImGui
     /// <summary>
     /// Vector - A value type which defined a vector in terms of X and Y
     /// </summary>
-    [System.Diagnostics.DebuggerDisplay("X:{X} Y:{Y}")]
+    [System.Diagnostics.DebuggerDisplay("({X}, {Y})")]
     [System.Diagnostics.DebuggerStepThrough]
     [Serializable]
     public struct Vector : IFormattable
