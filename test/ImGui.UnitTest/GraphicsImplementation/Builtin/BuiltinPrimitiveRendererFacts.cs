@@ -390,6 +390,33 @@ namespace ImGui.UnitTest.Rendering
                 Pen pen = new Pen(Color.Black, 1);
                 CheckGeometry(pathGeometry, null, pen, 200,200);
             }
+            
+            [Fact]
+            public void DrawAHalfCircle()
+            {
+                var start = new Point(10, 90);
+                var end = new Point(110, 90);
+                var radius = 50;
+
+                var pathGeometry = new PathGeometry();
+                PathFigure figure = new PathFigure();
+                //for pixel perfect, we need to add 0.5 and 0.51
+                figure.StartPoint = start;
+                figure.Segments.Add(
+                    new ArcSegment(
+                        point: end,
+                        size: new Size(radius, radius),
+                        rotationAngle: 0,
+                        isLargeArc: false,
+                        sweepDirection: SweepDirection.Clockwise,
+                        isStroked: true));
+                figure.IsClosed = false;
+                figure.IsFilled = false;
+                pathGeometry.Figures.Add(figure);
+                Pen pen = new Pen(Color.Black, 1);
+                CheckGeometry(pathGeometry, new Brush(new Color(1,0,0)), pen, 120,120);
+            }
+
         }
 
         public class DrawImage

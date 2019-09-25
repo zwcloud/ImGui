@@ -52,9 +52,9 @@ namespace ImGui
             {
                 sliderWidth = 1;
             }
-            var sliderRect = new Rect(rect.X, rect.Y,
+            var sliderRect = new Rect(node.Rect.X, node.Rect.Y,
                 sliderWidth,
-                rect.Height);
+                node.Rect.Height);
             bool hovered, held;
             value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered, out held);
 
@@ -116,8 +116,8 @@ namespace ImGui
             {
                 sliderHeight = 1;
             }
-            var sliderRect = new Rect(rect.X, rect.Y,
-                rect.Width, sliderHeight);
+            var sliderRect = new Rect(node.Rect.X, node.Rect.Y,
+                node.Rect.Width, sliderHeight);
             bool hovered, held;
             value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered, out held);
 
@@ -164,7 +164,7 @@ namespace ImGui
             {
                 node = new Node(id, $"Slider<{label}>");
                 node.UseBoxModel = true;
-                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Toggle]);
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Slider]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 size.Width += size.Height + node.RuleSet.PaddingLeft;
                 var minSilderWidth = 200;
@@ -229,7 +229,7 @@ namespace ImGui
             {
                 node = new Node(id, $"Slider<{label}>");
                 node.UseBoxModel = true;
-                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Toggle]);
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Slider]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 var minSilderHeight = 200;
                 size.Width = 20;
@@ -353,17 +353,18 @@ namespace ImGui
             //slider
             dc.DrawLine(new Pen(colorForLineUsed, 2), leftPoint, currentPoint);
             dc.DrawLine(new Pen(colorForLineUnused, 2), currentPoint, rightPoint);
-            var A = currentPoint + new Vector(-a, -b);
-            var B = currentPoint + new Vector( a, -b);
-            var C = currentPoint + new Vector( a,  b);
-            var D = currentPoint + new Vector(-a,  b);
+            var A = currentPoint + new Vector(-a,  b);
+            var B = currentPoint + new Vector(-a, -b);
+            var C = currentPoint + new Vector( a, -b);
+            var D = currentPoint + new Vector( a,  b);
+
             PathGeometry g = new PathGeometry();
             PathFigure f = new PathFigure();
             f.StartPoint = A;
-            f.Segments.Add(new ArcSegment(B, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
-            f.Segments.Add(new LineSegment(C, false));
-            f.Segments.Add(new ArcSegment(D, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
-            f.Segments.Add(new LineSegment(A, false));
+            f.Segments.Add(new LineSegment(B, false));
+            f.Segments.Add(new ArcSegment(C, new Size(a,a), 0, true, SweepDirection.Clockwise, false));
+            f.Segments.Add(new LineSegment(D, false));
+            f.Segments.Add(new ArcSegment(A, new Size(a,a), 0, false, SweepDirection.Clockwise, false));
             f.IsClosed = true;
             f.IsFilled = true;
             g.Figures.Add(f);
@@ -407,9 +408,9 @@ namespace ImGui
             PathGeometry g = new PathGeometry();
             PathFigure f = new PathFigure();
             f.StartPoint = A;
-            f.Segments.Add(new ArcSegment(B, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
+            f.Segments.Add(new ArcSegment(B, new Size(a,a), 0, false, SweepDirection.Clockwise, false));
             f.Segments.Add(new LineSegment(C, false));
-            f.Segments.Add(new ArcSegment(D, new Size(a,a), Math.PI, true, SweepDirection.Clockwise, false));
+            f.Segments.Add(new ArcSegment(D, new Size(a,a), 0, true, SweepDirection.Clockwise, false));
             f.Segments.Add(new LineSegment(A, false));
             f.IsClosed = true;
             f.IsFilled = true;
