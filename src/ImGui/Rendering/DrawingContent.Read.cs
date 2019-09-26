@@ -108,6 +108,40 @@ namespace ImGui.Rendering
             }
         }
 
+        public bool ReadRecord(out DrawEllipseCommand record)
+        {
+            record = default;
+            unsafe
+            {
+                fixed (byte* pByte = this.buffer)
+                {
+                    // This pointer points to the current read point in the
+                    // instruction stream.
+                    byte* pCur = pByte;
+
+                    // This points to the first byte past the end of the
+                    // instruction stream (i.e. when to stop)
+                    byte* pEndOfInstructions = pByte + this.currentReadOffset;
+
+                    if ((pCur >= pEndOfInstructions)) //reach end
+                    {
+                        return false;
+                    }
+
+                    RecordHeader* pCurRecord = (RecordHeader*)pCur;
+                    if (pCurRecord->Type != RecordType.DrawRoundedRectangle)
+                    {
+                        return false;
+                    }
+
+                    DrawEllipseCommand* data = (DrawEllipseCommand*)(pCur + sizeof(RecordHeader));
+                    record = *data;
+                    this.currentReadOffset += pCurRecord->Size;
+                    return true;
+                }
+            }
+        }
+
         public bool ReadRecord(out DrawGeometryCommand record)
         {
             record = default;

@@ -8,6 +8,7 @@ namespace ImGui.Rendering.Composition
         DrawLine,
         DrawRectangle,
         DrawRoundedRectangle,
+        DrawEllipse,
         DrawGlyphRun,
         DrawText,
         DrawGeometry,
@@ -78,6 +79,31 @@ namespace ImGui.Rendering.Composition
         [FieldOffset(40)] public double radiusY;
         [FieldOffset(48)] public uint BrushIndex;
         [FieldOffset(52)] public uint PenIndex;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DrawEllipseCommand
+    {
+        public DrawEllipseCommand(
+            uint brushIndex,
+            uint penIndex,
+            Point center,
+            double radiusX,
+            double radiusY
+        )
+        {
+            this.BrushIndex = brushIndex;
+            this.PenIndex = penIndex;
+            this.Center = center;
+            this.RadiusX = radiusX;
+            this.RadiusY = radiusY;
+        }
+
+        [FieldOffset(0)] public Point Center;
+        [FieldOffset(16)] public double RadiusX;
+        [FieldOffset(24)] public double RadiusY;
+        [FieldOffset(32)] public uint BrushIndex;
+        [FieldOffset(36)] public uint PenIndex;
     }
 
     [StructLayout(LayoutKind.Explicit)]

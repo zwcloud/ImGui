@@ -210,7 +210,76 @@ namespace ImGui.Rendering
 
         public override void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY)
         {
-            throw new System.NotImplementedException();
+            if (brush == null && pen == null)
+            {
+                return;
+            }
+            EnsureContent();
+
+            unsafe
+            {
+                if (!this.content.ReadRecord(out DrawEllipseCommand record))
+                {//different record type: append new record
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    record.Center = center;
+                    record.RadiusX = radiusX;
+                    record.RadiusY = radiusY;
+                    this.content.WriteRecord(RecordType.DrawEllipse, (byte*)&record, sizeof(DrawGeometryCommand));
+                    return;
+                }
+
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (!Point.AlmostEqual(record.Center, center))
+                {
+                    record.Center = center;
+                    recordNeedOverwrite = true;
+                }
+                if (!MathEx.AmostEqual(record.RadiusX, radiusX))
+                {
+                    record.RadiusX = radiusX;
+                    recordNeedOverwrite = true;
+                }
+                if (!MathEx.AmostEqual(record.RadiusY, radiusY))
+                {
+                    record.RadiusY = radiusY;
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.PenIndex, out Pen oldPen))
+                {
+                    if (!oldPen.Equals(pen))
+                    {
+                        record.PenIndex = this.content.AddDependentResource(pen);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.PenIndex = this.content.AddDependentResource(pen);
+                    recordNeedOverwrite = true;
+                }
+
+                if (this.content.ReadDependentResource(record.BrushIndex, out Brush oldBrush))
+                {
+                    if (!oldBrush.Equals(brush))
+                    {
+                        record.BrushIndex = this.content.AddDependentResource(brush);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.BrushIndex = this.content.AddDependentResource(brush);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.DrawEllipse, (byte*)&record, sizeof(DrawEllipseCommand));
+                }
+            }
         }
 
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)

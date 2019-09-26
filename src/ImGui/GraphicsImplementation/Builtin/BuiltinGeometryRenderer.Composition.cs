@@ -59,7 +59,27 @@ namespace ImGui.GraphicsImplementation
 
         public override void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY)
         {
-            throw new System.NotImplementedException();
+            Debug.Assert(brush != null || pen != null);
+
+            var curve = new EllipseCurve(center.X, center.Y, radiusX, radiusY, 0, Math.PI * 2, true, 0);
+            var count = (int) ((radiusX + radiusY) / 3);
+            var unit = 1.0 / count;
+            IList<Point> points = new List<Point>(count);
+            for (int i = 0; i < count; i++)
+            {
+                var p = curve.getPoint(unit*i);
+                points.Add(p);
+            }
+
+            if (pen != null)
+            {
+                this.AddPolyline(points, pen.LineColor, true, pen.LineWidth);
+            }
+
+            if (brush != null)
+            {
+                this.AddConvexPolyFilled(points, brush.FillColor, false);
+            }
         }
 
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)

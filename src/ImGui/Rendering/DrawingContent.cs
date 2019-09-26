@@ -138,6 +138,18 @@ namespace ImGui.Rendering
                                     );
                                 }
                                     break;
+                                case RecordType.DrawEllipse:
+                                {
+                                    DrawEllipseCommand* data = (DrawEllipseCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.DrawEllipse(
+                                        (Brush)DependentLookup(data->BrushIndex),
+                                        (Pen)DependentLookup(data->PenIndex),
+                                        data->Center,
+                                        data->RadiusX,
+                                        data->RadiusY
+                                    );
+                                }
+                                    break;
                                 case RecordType.DrawGlyphRun:
                                 {
                                     DrawGlyphRunCommand* data = (DrawGlyphRunCommand*)(pCur + sizeof(RecordHeader));

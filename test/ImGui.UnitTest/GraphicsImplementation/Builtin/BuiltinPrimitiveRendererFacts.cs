@@ -159,7 +159,46 @@ namespace ImGui.UnitTest.Rendering
 
         public class DrawEllipse
         {
-            //TODO
+            internal static void Check(Point center, double radiusX, double radiusY, Brush brush, Pen pen, int width, int height,
+                [CallerMemberName] string methodName = "unknown")
+            {
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    renderer.OnBeforeRead();
+                    renderer.DrawEllipse(brush, pen, center, radiusX, radiusY);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.OnAfterRead(meshList);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
+
+                    bytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawEllipse)}\\{methodName}.png");
+            }
+
+            [Fact]
+            public void DrawAnEllipse()
+            {
+                Brush brush = new Brush(Color.Aqua);
+                Pen pen = new Pen(Color.Black, 2);
+                Point center = new Point(50, 50);
+
+                Check(center, 20, 40, brush, pen, 100, 100);
+            }
         }
 
         public class DrawGeometry
