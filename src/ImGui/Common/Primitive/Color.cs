@@ -263,9 +263,9 @@ namespace ImGui
 
         #region "System" colors
         public static readonly Color TextDisabled = new Color(0.60f, 0.60f, 0.60f, 1.00f);
-        public static readonly Color FrameBg = new Color(0.80f, 0.80f, 0.80f, 0.30f);
-        public static readonly Color FrameBgHovered = new Color(0.90f, 0.80f, 0.80f, 0.40f);
-        public static readonly Color FrameBgActive = new Color(0.90f, 0.65f, 0.65f, 0.45f);
+        public static readonly Color FrameBg =        new Color(0.43f, 0.43f, 0.43f, 0.39f);
+        public static readonly Color FrameBgHovered = new Color(0.47f, 0.47f, 0.69f, 0.40f);
+        public static readonly Color FrameBgActive =  new Color(0.42f, 0.41f, 0.64f, 0.69f);
         public static readonly Color CheckMark = new Color(0.90f, 0.90f, 0.90f, 0.50f);
         #endregion
 

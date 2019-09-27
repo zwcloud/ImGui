@@ -56,7 +56,6 @@
     <Compile Remove="Control\ColorField.cs" />
     <Compile Remove="Control\ListBox.cs" />
     <Compile Remove="Control\PolygonButton.cs" />
-    <Compile Remove="Control\RadioButton.cs" />
     <Compile Remove="Control\TreeNode.cs" />
     <Compile Remove="Control\Window.Child.cs" />
   </ItemGroup>

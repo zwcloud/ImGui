@@ -60,9 +60,10 @@ namespace ImGui.GraphicsImplementation
         public override void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY)
         {
             Debug.Assert(brush != null || pen != null);
+            Debug.Assert(radiusX >= 0 && radiusY >= 0);
 
             var curve = new EllipseCurve(center.X, center.Y, radiusX, radiusY, 0, Math.PI * 2, true, 0);
-            var count = (int) ((radiusX + radiusY) / 3);
+            var count = (int) ((radiusX + radiusY) );
             var unit = 1.0 / count;
             IList<Point> points = new List<Point>(count);
             for (int i = 0; i < count; i++)

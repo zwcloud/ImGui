@@ -199,6 +199,16 @@ namespace ImGui.UnitTest.Rendering
 
                 Check(center, 20, 40, brush, pen, 100, 100);
             }
+
+            [Fact]
+            public void DrawASmallCircle()
+            {
+                Brush brush = new Brush(Color.Aqua);
+                Pen pen = new Pen(Color.Black, 2);
+                Point center = new Point(50, 50);
+
+                Check(center, 5, 5, brush, pen, 100, 100);
+            }
         }
 
         public class DrawGeometry

@@ -210,7 +210,7 @@ namespace ImGui.Rendering
 
         public override void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY)
         {
-            if (brush == null && pen == null)
+            if (brush == null && pen == null || radiusX <= 0 || radiusY <= 0)
             {
                 return;
             }
@@ -225,7 +225,7 @@ namespace ImGui.Rendering
                     record.Center = center;
                     record.RadiusX = radiusX;
                     record.RadiusY = radiusY;
-                    this.content.WriteRecord(RecordType.DrawEllipse, (byte*)&record, sizeof(DrawGeometryCommand));
+                    this.content.WriteRecord(RecordType.DrawEllipse, (byte*)&record, sizeof(DrawEllipseCommand));
                     return;
                 }
 
