@@ -156,6 +156,8 @@ namespace ImGui
 
         internal static bool EnableMSAA { get; set; } = true;
 
+        internal static Size InitialDebugWindowSize { get; set; } = new Size(200, 140);
+
         internal static ILogger Logger;
     }
 }

@@ -10,6 +10,7 @@ namespace ImGui.UnitTest
             public void ShowOneFixedPolygonButton()
             {
                 Application.IsRunningInUnitTest = true;
+                Application.InitialDebugWindowSize = (200, 240);
                 Application.Init();
 
                 var form = new MainForm(400, 400);
@@ -40,9 +41,10 @@ namespace ImGui.UnitTest
             }
 
             [Fact]
-            public void ShowOneLayoutedPolygonButton()
+            public void ShowTwoLayoutedPolygonButton()
             {
                 Application.IsRunningInUnitTest = true;
+                Application.InitialDebugWindowSize = (200, 300);
                 Application.Init();
 
                 var form = new MainForm(400, 400);
