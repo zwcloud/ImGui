@@ -30,7 +30,7 @@ namespace ImGui
             if (node == null)
             {
                 //create button node
-                node = new Node(id, $"Button<{text}>");
+                node = new Node(id, $"PolygonButton<{text}>");
                 container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
@@ -43,13 +43,41 @@ namespace ImGui
             textRect = window.GetRect(textRect);
 
             // interact
-            var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
-            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            var mousePos = Mouse.Instance.Position;
+            var g = GetCurrentContext();
+            var clicked = false;
+            var hovered = MathEx.IsPointInPolygon(mousePos, points, (Vector)node.Rect.Location);
+            g.KeepAliveID(id);
+            var state = GUIState.Normal;
+            if (hovered)
+            {
+                g.SetHoverID(id);
+
+                if (Mouse.Instance.LeftButtonPressed)//start track
+                {
+                    g.SetActiveID(id);
+                }
+
+                if (Mouse.Instance.LeftButtonReleased)//end track
+                {
+                    clicked = true;
+                    g.SetActiveID(GUIContext.None);
+                }
+            }
+            if (hovered)
+            {
+                state = GUIState.Hover;
+                if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
+                {
+                    state = GUIState.Active;
+                }
+            }
+            node.State = state;
 
             // draw
             GUIAppearance.DrawPolygonButton(points, textRect, text, node);
 
-            return pressed;
+            return clicked;
         }
 
     }
@@ -66,6 +94,11 @@ namespace ImGui
         /// <returns>true when the users clicks the button.</returns>
         internal static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text, LayoutOptions? options)
         {
+            if (points.Count < 3)
+            {
+                return false;
+            }
+
             var window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
@@ -78,11 +111,15 @@ namespace ImGui
             if (node == null)
             {
                 //create node
-                node = new Node(id, $"Button<{text}>");
+                node = new Node(id, $"PolygonButton<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
-                node.AttachLayoutEntry(size);
+                var boundingRect = new Rect(points[0], points[1]);
+                foreach (var point in points)
+                {
+                    boundingRect = Rect.Union(boundingRect, point);
+                }
+                node.AttachLayoutEntry(boundingRect.Size);
                 container.AppendChild(node);
             }
             node.RuleSet.ApplyOptions(options);
@@ -93,13 +130,41 @@ namespace ImGui
             textRect.Offset((Vector) node.Rect.Location);
 
             // interact
-            var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
-            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            var mousePos = Mouse.Instance.Position;
+            var g = GetCurrentContext();
+            var clicked = false;
+            var hovered = MathEx.IsPointInPolygon(mousePos, points, (Vector)node.Rect.Location);
+            g.KeepAliveID(id);
+            var state = GUIState.Normal;
+            if (hovered)
+            {
+                g.SetHoverID(id);
+
+                if (Mouse.Instance.LeftButtonPressed)//start track
+                {
+                    g.SetActiveID(id);
+                }
+
+                if (Mouse.Instance.LeftButtonReleased)//end track
+                {
+                    clicked = true;
+                    g.SetActiveID(GUIContext.None);
+                }
+            }
+            if (hovered)
+            {
+                state = GUIState.Hover;
+                if (g.ActiveId == id && Mouse.Instance.LeftButtonState == KeyState.Down)
+                {
+                    state = GUIState.Active;
+                }
+            }
+            node.State = state;
 
             // draw
             GUIAppearance.DrawPolygonButton(points, textRect, text, node);
 
-            return pressed;
+            return clicked;
         }
 
         public static bool PolygonButton(IReadOnlyList<Point> points, Rect textRect, string text) => PolygonButton(points, textRect, text, null);

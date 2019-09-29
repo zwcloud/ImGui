@@ -12,22 +12,22 @@ namespace ImGui.UnitTest
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
 
-                var form = new MainForm();
+                var form = new MainForm(400, 400);
                 var polygon = new []
                 {
-                    new Point(30, -52),
+                    new Point( 30, -52),
                     new Point(-30, -52),
-                    new Point(-60, 7),
-                    new Point(-30, 52),
-                    new Point(30, 52),
-                    new Point(60, 0)
+                    new Point(-60,  0) ,
+                    new Point(-30,  52),
+                    new Point( 30,  52),
+                    new Point( 60,  0)
                 };
                 for (var i = 0; i < polygon.Length; i++)
                 {
                     var point = polygon[i];
                     polygon[i] = point + new Vector(65, 65);
                 }
-                var textRect = new Rect(new Point(-40, -40) + new Vector(65, 65), 80, 80);
+                var textRect = new Rect(new Point(-40, -20) + new Vector(65, 65), 80, 40);
                 form.OnGUIAction = () =>
                 {
                     if (GUI.PolygonButton(new Rect(0, 0, 100, 100), polygon, textRect, "Apply"))
@@ -45,22 +45,22 @@ namespace ImGui.UnitTest
                 Application.IsRunningInUnitTest = true;
                 Application.Init();
 
-                var form = new MainForm();
+                var form = new MainForm(400, 400);
                 var polygon = new[]
                 {
-                    new Point(30, -52),
+                    new Point( 30, -52),
                     new Point(-30, -52),
-                    new Point(-60, 7),
-                    new Point(-30, 52),
-                    new Point(30, 52),
-                    new Point(60, 0)
+                    new Point(-60,  0) ,
+                    new Point(-30,  52),
+                    new Point( 30,  52),
+                    new Point( 60,  0)
                 };
                 for (var i = 0; i < polygon.Length; i++)
                 {
                     var point = polygon[i];
                     polygon[i] = point + new Vector(65, 65);
                 }
-                var textRect = new Rect(new Point(-40, -40) + new Vector(65, 65), 80, 80);
+                var textRect = new Rect(new Point(-40, -20) + new Vector(65, 65), 80, 40);
                 form.OnGUIAction = () =>
                 {
                     if (GUILayout.PolygonButton(polygon, textRect, "Button A"))
