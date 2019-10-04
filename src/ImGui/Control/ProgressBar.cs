@@ -40,8 +40,7 @@ namespace ImGui
                 dc.DrawRectangle(new Brush(new Color(0.90f, 0.70f, 0.00f, 1.00f)), null, fillRect);
                 if(overlayText != null)
                 {
-                    dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
-                        new GlyphRun(node.Rect.Location, overlayText, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+                    dc.DrawGlyphRun(node.RuleSet, overlayText, node.Rect.Location);
                 }
             }
 

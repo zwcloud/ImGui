@@ -69,8 +69,7 @@ namespace ImGui
 
                 if (!string.IsNullOrWhiteSpace(text))
                 {
-                    var run = new GlyphRun(node.Rect.Location + new Vector(node.Rect.Height + node.RuleSet.PaddingLeft, 0), text, node.RuleSet.FontFamily, node.RuleSet.FontSize);
-                    d.DrawGlyphRun(new Brush(node.RuleSet.FontColor), run);
+                    d.DrawGlyphRun(node.RuleSet, text, node.Rect.Location + new Vector(node.Rect.Height + node.RuleSet.PaddingLeft, 0));
                 }
             }
 

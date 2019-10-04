@@ -193,8 +193,7 @@ namespace ImGui
 
                 if (!string.IsNullOrWhiteSpace(text))
                 {
-                    var run = new GlyphRun(textRect.Location, text, node.RuleSet.FontFamily, node.RuleSet.FontSize);
-                    d.DrawGlyphRun(new Brush(node.RuleSet.FontColor), run);
+                    d.DrawGlyphRun(node.RuleSet, text, textRect.Location);
                 }
             }
         }

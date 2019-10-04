@@ -58,6 +58,13 @@ namespace ImGui.OSImplentation
             return (typeFace.Ascender - typeFace.Descender + typeFace.LineGap) * scale;
         }
 
+        public static double GetAscent(string fontFamily, double fontSize)
+        {
+            Typeface typeFace = GetTypeFace(fontFamily);
+            var scale = typeFace.CalculateToPixelScaleFromPointSize((float)fontSize);
+            return typeFace.Ascender * scale;
+        }
+
         private readonly List<GlyphPlan> glyphPlans = new List<GlyphPlan>();
         private readonly GlyphLayout glyphLayout = new GlyphLayout();
 

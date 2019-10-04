@@ -64,9 +64,7 @@ namespace ImGui
                 //title
                 using (var dc = titleText.RenderOpen())
                 {
-                    dc.DrawGlyphRun(new Brush(titleText.RuleSet.FontColor),
-                        new GlyphRun(titleText.Rect.Location, this.Name, titleText.RuleSet.FontFamily,
-                            titleText.RuleSet.FontSize));
+                    dc.DrawGlyphRun(titleText.RuleSet, this.Name, titleText.Rect.TopLeft);
                 }
             }
 

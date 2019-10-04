@@ -374,8 +374,7 @@ namespace ImGui
             //label
             var labelRect = new Rect(rect.Right - labelWidth, rect.Y,
                 labelWidth, rect.Height);
-            dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
-                new GlyphRun(labelRect.Location, label, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            dc.DrawGlyphRun(node.RuleSet, label, labelRect.Location);
             dc.Close();
         }
 
@@ -419,10 +418,8 @@ namespace ImGui
             dc.DrawGeometry(new Brush(fillColor), null, g);
 
             //label
-            var labelRect = new Rect(rect.X, rect.Bottom - labelHeight,
-                rect.Width, labelHeight);
-            dc.DrawGlyphRun(new Brush(node.RuleSet.FontColor),
-                new GlyphRun(labelRect.Location, label, node.RuleSet.FontFamily, node.RuleSet.FontSize));
+            var labelRect = new Rect(rect.X, rect.Bottom - labelHeight, rect.Width, labelHeight);
+            dc.DrawGlyphRun(node.RuleSet, label, labelRect.TopLeft);
             dc.Close();
         }
     }

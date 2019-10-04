@@ -90,6 +90,15 @@ namespace ImGui.Rendering
             dc.DrawImage(texture, rect);
         }
 
+
+        public static void DrawGlyphRun(this DrawingContext dc, StyleRuleSet rule, string text, Point topLeft)
+        {
+            var ascent = OSImplentation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
+            var baselineOrigin = new Point(topLeft.X, topLeft.Y + ascent);
+            dc.DrawGlyphRun(new Brush(rule.FontColor),
+                new GlyphRun(baselineOrigin, text, rule.FontFamily, rule.FontSize));
+        }
+
         public static void DrawBoxModel(this DrawingContext dc, StyleRuleSet rule, Rect rect)
         {
             if (rect.IsZero)
@@ -126,9 +135,8 @@ namespace ImGui.Rendering
 
             //Content
             //Content-box
-            //TODO Use FormattedText instead for multi-line text
-            dc.DrawGlyphRun(new Brush(style.FontColor),
-                new GlyphRun(contentBoxRect.Location, text, style.FontFamily, style.FontSize));
+            //FIXME Use FormattedText instead of GlyphRun for multi-line text
+            dc.DrawGlyphRun(rule, text, contentBoxRect.TopLeft);
 
             DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
             DrawOutline(dc, style, borderBoxRect);
