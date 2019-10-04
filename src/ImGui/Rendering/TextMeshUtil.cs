@@ -13,7 +13,7 @@ namespace ImGui
             var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
             var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
             var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-            return TextContextCache.Default.GetOrAdd(Point.Zero, text, fontFamily, fontSize, textAlignment);
+            return TextContextCache.Default.GetOrAdd(text, fontFamily, fontSize, textAlignment);
         }
 
         //FIXME remove this method
@@ -25,7 +25,7 @@ namespace ImGui
             var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
             var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
             var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-            return TextContextCache.Default.GetOrAdd(Point.Zero, text, fontFamily, fontSize, textAlignment);
+            return TextContextCache.Default.GetOrAdd(text, fontFamily, fontSize, textAlignment);
         }
     }
 }

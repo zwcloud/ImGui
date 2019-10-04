@@ -68,20 +68,8 @@ namespace ImGui.OSImplentation
         private PositionTechnique PositionTechnique { get; set; }
         private bool EnableLigature { get; set; }
         private Typeface CurrentTypeFace { get; set; }
-        private bool singleLine;
 
         private static readonly Dictionary<string, Typeface> TypefaceCache = new Dictionary<string, Typeface>();
-
-        /// <summary>
-        /// Create a single-line text context.
-        /// </summary>
-        public TypographyTextContext(string text, string fontFamily, double fontSize)
-        {
-            this.singleLine = true;
-            this.Text = text;
-            this.FontFamily = fontFamily;
-            this.FontSize = fontSize;
-        }
 
         /// <summary>
         /// Create a multi-line text context.
@@ -89,7 +77,6 @@ namespace ImGui.OSImplentation
         public TypographyTextContext(string text, string fontFamily, double fontSize,
             TextAlignment alignment)
         {
-            this.singleLine = false;
             this.Text = text;
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
@@ -241,16 +228,14 @@ namespace ImGui.OSImplentation
             return this.Size;
         }
 
+        public void Build()
+        {
+            Build(Point.Zero);
+        }
+
         public void Build(Point offset)
         {
-            if (this.singleLine)
-            {
-                BuildSingleLine();
-            }
-            else
-            {
-                BuildMultipleLine(offset);
-            }
+            BuildMultipleLine(offset);
         }
 
         private void BuildSingleLine()
@@ -263,6 +248,8 @@ namespace ImGui.OSImplentation
             this.glyphLayout.Typeface = this.CurrentTypeFace;
             this.glyphLayout.GenerateGlyphPlans(this.textCharacters, 0, this.textCharacters.Length, this.glyphPlans, null);
 
+            var lineHeightUnscaled = this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender +
+                                     this.CurrentTypeFace.LineGap;
             // collect glyph offsets
             {
                 for (int i = 0; i < this.glyphPlans.Count; ++i)
@@ -273,7 +260,7 @@ namespace ImGui.OSImplentation
                     var offsetX = glyphPlan.x;
                     var offsetY = glyphPlan.y;
 
-                    this.GlyphOffsets.Add(new Vector(offsetX, offsetY));
+                    this.GlyphOffsets.Add(new Vector(offsetX, offsetY + lineHeightUnscaled));
                 }
             }
 
@@ -326,7 +313,7 @@ namespace ImGui.OSImplentation
             {
                 var lineHeightInGlyphUnit = this.CurrentTypeFace.Ascender - this.CurrentTypeFace.Descender +
                                             this.CurrentTypeFace.LineGap;
-                var lineNumber = 1;
+                var lineNumber = 0;
                 float back = 0;
                 for (int i = 0; i < this.glyphPlans.Count; ++i)
                 {

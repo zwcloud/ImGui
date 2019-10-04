@@ -305,7 +305,7 @@ namespace ImGui.GraphicsImplementation
 
         public override void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun)
         {
-            AddText(glyphRun.OriginPoint, glyphRun.GlyphDataList, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
+            AddText(glyphRun.Origin, glyphRun.GlyphDataList, glyphRun.GlyphOffsets, glyphRun.FontFamily, glyphRun.FontSize, foregroundBrush.FillColor);
         }
 
         public override void DrawText(Brush foregroundBrush, FormattedText formattedText)

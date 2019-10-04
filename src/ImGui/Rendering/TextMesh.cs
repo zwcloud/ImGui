@@ -182,11 +182,6 @@ namespace ImGui
             point._y = point._y * scale * (flipY ? -1 : 1) + offsetY;
         }
 
-        internal void Build(Point position, ITextContext textContext)
-        {
-            textContext.Build(position);
-        }
-
         public void Append(Vector positionOffset, GlyphData glyphData, Vector glyphOffset, float scale, Color color, bool flipY)
         {
             var polygons = glyphData.Polygons;

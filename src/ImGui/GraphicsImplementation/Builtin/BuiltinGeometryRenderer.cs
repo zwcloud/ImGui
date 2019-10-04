@@ -277,7 +277,7 @@ namespace ImGui.GraphicsImplementation
         /// </summary>
         public TextMesh TextMesh { get; private set; }
 
-        public void AddText(Point origin, IList<GlyphData> glyphs, IList<Vector> offsets, string fontFamily, double fontSize, Color color)
+        public void AddText(Point baselineOrigin, IList<GlyphData> glyphs, IList<Vector> offsets, string fontFamily, double fontSize, Color color)
         {
             if (glyphs.Count != offsets.Count)
             {
@@ -298,7 +298,7 @@ namespace ImGui.GraphicsImplementation
             {
                 var glyphData = glyphs[i];
                 Vector glyphOffset = offsets[i];
-                this.TextMesh.Append((Vector)origin, glyphData, glyphOffset, scale, color, false);
+                this.TextMesh.Append((Vector)baselineOrigin, glyphData, glyphOffset, scale, color, true);
             }
 
             var newIndexBufferCount = this.TextMesh.IndexBuffer.Count;

@@ -600,7 +600,7 @@ namespace ImGui.UnitTest.Rendering
                 Application.InitSysDependencies();
             }
 
-            internal static void Check(Rect rectangle, GlyphRun glyphRun, Brush brush, int width, int height,
+            internal static void Check(GlyphRun glyphRun, Brush brush, int width, int height,
                 [CallerMemberName] string methodName = "unknown")
             {
                 Application.EnableMSAA = false;
@@ -613,6 +613,10 @@ namespace ImGui.UnitTest.Rendering
                 using (var context = new RenderContextForTest(width, height))
                 {
                     renderer.OnBeforeRead();
+                    renderer.DrawRectangle(null, new Pen(Color.Black, 1),
+                        new Rect(glyphRun.Origin - new Vector(1, 1), glyphRun.Origin + new Vector(1, 1)));
+                    renderer.DrawLine(new Pen(Color.DarkRed, 1), glyphRun.Origin,
+                        glyphRun.Origin + new Vector(width, 0));
                     renderer.DrawGlyphRun(brush, glyphRun);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
                     renderer.OnAfterRead(meshList);
 
@@ -634,28 +638,28 @@ namespace ImGui.UnitTest.Rendering
             [Fact]
             public void DrawOneLineText()
             {
-                GlyphRun glyphRun = new GlyphRun(Point.Zero, "Hello你好こんにちは", GUIStyle.Default.FontFamily, 24);
+                GlyphRun glyphRun = new GlyphRun(new Point(20, 50), "Helloqypgj你好こんにちは", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
-                Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
+                Check(glyphRun, brush, 500, 100);
             }
 
             [Fact]
             public void DrawOneLineTextWithoutSpace()
             {
-                GlyphRun glyphRun = new GlyphRun(Point.Zero, "textwithoutspace", GUIStyle.Default.FontFamily, 24);
+                GlyphRun glyphRun = new GlyphRun(new Point(20, 50), "textwithoutspace", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
-                Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
+                Check(glyphRun, brush, 500, 100);
             }
 
             [Fact]
             public void DrawOneLineTextWithSpace()
             {
-                GlyphRun glyphRun = new GlyphRun(Point.Zero, "text with space", GUIStyle.Default.FontFamily, 24);
+                GlyphRun glyphRun = new GlyphRun(new Point(20, 50), "text with space", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
-                Check(new Rect(10, 10, 400, 40), glyphRun, brush, 400, 50);
+                Check(glyphRun, brush, 500, 100);
             }
 
             [Fact]
@@ -663,10 +667,10 @@ namespace ImGui.UnitTest.Rendering
             {
                 throw new Exception("The result is incorrect. FIXME.");
 
-                GlyphRun glyphRun = new GlyphRun(Point.Zero, "Hello\n你好\nこんにちは", GUIStyle.Default.FontFamily, 24);
+                GlyphRun glyphRun = new GlyphRun("Hello\n你好\nこんにちは", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
-                Check(new Rect(10, 10, 400, 120), glyphRun, brush, 400, 130);
+                Check(glyphRun, brush, 400, 130);
             }
 
         }

@@ -5,7 +5,7 @@ namespace ImGui.OSAbstraction.Text
 {
     internal class FormattedText
     {
-        public Point OriginPoint { get; private set; }
+        public Point OriginPoint { get; private set; }//TODO we should define bounding rect of FormattedText
         public string Text
         {
             get => this.text;
@@ -63,7 +63,7 @@ namespace ImGui.OSAbstraction.Text
         private void Initialize(Point origin, string s, string fontFamily, double fontSize)
         {
             //TEMP use TypographyTextContext
-            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(origin, s, fontFamily, fontSize, TextAlignment.Leading);
+            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(s, fontFamily, fontSize, TextAlignment.Leading);
 
             var glyphDataList = new List<GlyphData>(s.Length);
             foreach (var character in s)

@@ -8,7 +8,6 @@ namespace ImGui.OSAbstraction.Text
     /// </summary>
     internal class GlyphRun
     {
-        public Point OriginPoint { get; private set; }
         public string Text
         {
             get => this.text;
@@ -32,7 +31,12 @@ namespace ImGui.OSAbstraction.Text
 
         public bool TextChanged { get; set; } = false;
 
-        public GlyphRun(Point origin, string text, string fontFamily, double fontSize)
+        public GlyphRun(Point origin, string text, string fontFamily, double fontSize) : this(text, fontFamily, fontSize)
+        {
+            this.origin = origin;
+        }
+
+        public GlyphRun(string text, string fontFamily, double fontSize)
         {
             this.Text = text;
             this.FontFamily = fontFamily;
@@ -48,8 +52,15 @@ namespace ImGui.OSAbstraction.Text
                 this.hashCode = hash;
             }
 
-            Initialize(origin, text, fontFamily, fontSize);
+            Initialize(text, fontFamily, fontSize);
         }
+
+        public void SetOffset(Point origin)
+        {
+            this.origin = origin;
+        }
+
+        public Point Origin => this.origin;
 
         public override bool Equals(object obj)
         {
@@ -67,10 +78,10 @@ namespace ImGui.OSAbstraction.Text
             return this.hashCode;
         }
 
-        private void Initialize(Point origin, string _text, string fontFamily, double fontSize)
+        private void Initialize(string _text, string fontFamily, double fontSize)
         {
-            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(origin, _text, fontFamily, fontSize, TextAlignment.Leading);
-            textContext.Build(origin);
+            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(_text, fontFamily, fontSize, TextAlignment.Leading);
+            textContext.Build(Point.Zero);
 
             var glyphDataList = new List<GlyphData>(_text.Length);
             foreach (var character in _text)
@@ -84,7 +95,6 @@ namespace ImGui.OSAbstraction.Text
             }
 
             this.text = _text;
-            this.OriginPoint = origin;
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
             this.GlyphDataList = glyphDataList;
@@ -92,6 +102,7 @@ namespace ImGui.OSAbstraction.Text
         }
 
         private string text;
+        private Point origin;
         private readonly int hashCode;
     }
 }
