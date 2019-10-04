@@ -1,8 +1,11 @@
-﻿namespace ImGui.Rendering
+﻿using System.Diagnostics;
+
+namespace ImGui.Rendering
 {
     /// <summary>
     /// Describes how to stroke a shape.
     /// </summary>
+    [DebuggerStepThrough]
     internal class Pen
     {
         public Color LineColor { get; set; } = Color.Black;
