@@ -298,7 +298,7 @@ namespace ImGui.GraphicsImplementation
             {
                 var glyphData = glyphs[i];
                 Vector glyphOffset = offsets[i];
-                this.TextMesh.Append((Vector)baselineOrigin, glyphData, glyphOffset, scale, color, true);
+                this.TextMesh.Append((Vector)baselineOrigin, glyphData, glyphOffset, scale, color, false);
             }
 
             var newIndexBufferCount = this.TextMesh.IndexBuffer.Count;

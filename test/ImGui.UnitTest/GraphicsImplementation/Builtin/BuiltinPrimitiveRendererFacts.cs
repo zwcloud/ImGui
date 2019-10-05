@@ -662,19 +662,59 @@ namespace ImGui.UnitTest.Rendering
                 Check(glyphRun, brush, 500, 100);
             }
 
+        }
+
+        public class DrawText
+        {
+            public DrawText()
+            {
+                Application.InitSysDependencies();
+            }
+
+            internal static void Check(FormattedText formattedText, Brush brush, int width, int height,
+                [CallerMemberName] string methodName = "unknown")
+            {
+                Application.EnableMSAA = false;
+
+                MeshBuffer meshBuffer = new MeshBuffer();
+                MeshList meshList = new MeshList();
+                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+                byte[] bytes;
+
+                using (var context = new RenderContextForTest(width, height))
+                {
+                    renderer.OnBeforeRead();
+                    renderer.DrawRectangle(null, new Pen(Color.Black, 1),
+                        new Rect(formattedText.OriginPoint - new Vector(1, 1), formattedText.OriginPoint + new Vector(1, 1)));
+                    renderer.DrawLine(new Pen(Color.DarkRed, 1), formattedText.OriginPoint,
+                        formattedText.OriginPoint + new Vector(width, 0));
+                    renderer.DrawText(brush, formattedText);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
+                    renderer.OnAfterRead(meshList);
+
+                    //rebuild mesh buffer
+                    meshBuffer.Clear();
+                    meshBuffer.Init();
+                    meshBuffer.Build(meshList);
+
+                    //draw mesh buffer to screen
+                    context.Clear();
+                    context.DrawMeshes(meshBuffer);
+
+                    bytes = context.GetRenderedRawBytes();
+                }
+
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawText)}\\{methodName}.png");
+            }
+
             [Fact]
             public void DrawMultipleLineText()
             {
-                throw new Exception("The result is incorrect. FIXME.");
-
-                GlyphRun glyphRun = new GlyphRun("Hello\n你好\nこんにちは", GUIStyle.Default.FontFamily, 24);
+                FormattedText formatedText = new FormattedText(new Point(20, 50), "Helloqypgj\n你好\nこんにちは", GUIStyle.Default.FontFamily, 24);
                 Brush brush = new Brush(Color.Black);
 
-                Check(glyphRun, brush, 400, 130);
+                Check(formatedText, brush, 400, 130);
             }
-
         }
-
         public class DrawDrawing
         {
             //TODO
