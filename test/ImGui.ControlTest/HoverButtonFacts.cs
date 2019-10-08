@@ -1,68 +1,65 @@
 ﻿using Xunit;
 
-namespace ImGui.UnitTest
+namespace ImGui.ControlTest
 {
-    public class HoverButtonFacts
+    public class HoverButton
     {
-        public class HoverButton
+        [Fact]
+        public void FixedHoverButton()
         {
-            [Fact]
-            public void FixedHoverButton()
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
-
-                var form = new MainForm();
-                form.OnGUIAction = () =>
+                if (GUI.Button(new Rect(0, 0, 100, 30), "Active when hovered"))
                 {
-                    if (GUI.Button(new Rect(0, 0, 100, 30), "Active when hovered"))
-                    {
-                        Log.Msg("Active");
-                    }
-                };
+                    Log.Msg("Active");
+                }
+            };
 
-                Application.Run(form);
-            }
+            Application.Run(form);
+        }
 
-            [Fact]
-            public void LayoutedHoverButton()
+        [Fact]
+        public void LayoutedHoverButton()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
-
-                var form = new MainForm();
-                form.OnGUIAction = () =>
+                if (GUILayout.HoverButton("Active when hovered"))
                 {
-                    if (GUILayout.HoverButton("Active when hovered"))
-                    {
-                        Log.Msg("Active");
-                    }
-                };
+                    Log.Msg("Active");
+                }
+            };
 
-                Application.Run(form);
-            }
+            Application.Run(form);
+        }
 
-            [Fact]
-            public void ShowTwoLayoutedButton()
+        [Fact]
+        public void ShowTwoLayoutedButton()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
-
-                var form = new MainForm();
-                form.OnGUIAction = () =>
+                if (GUILayout.Button("Apply"))
                 {
-                    if (GUILayout.Button("Apply"))
-                    {
-                        Log.Msg("clicked Apply");
-                    }
-                    if (GUILayout.Button("Revert"))
-                    {
-                        Log.Msg("clicked Revert");
-                    }
-                };
+                    Log.Msg("clicked Apply");
+                }
+                if (GUILayout.Button("Revert"))
+                {
+                    Log.Msg("clicked Revert");
+                }
+            };
 
-                Application.Run(form);
-            }
+            Application.Run(form);
         }
     }
 }

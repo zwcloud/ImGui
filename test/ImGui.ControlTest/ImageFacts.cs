@@ -1,61 +1,58 @@
 ﻿using Xunit;
 
-namespace ImGui.UnitTest
+namespace ImGui.ControlTest
 {
-    public class ImageFacts
+    public class Image
     {
-        public class Image
+        [Fact]
+        public void ShowOneFixedImage()
         {
-            [Fact]
-            public void ShowOneFixedImage()
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                GUI.Image(new Rect(0, 0, 100, 100), @"assets\images\logo.png");
+            };
 
-                var form = new MainForm();
-                form.OnGUIAction = () =>
-                {
-                    GUI.Image(new Rect(0, 0, 100, 100), @"assets\images\logo.png");
-                };
+            Application.Run(form);
+        }
 
-                Application.Run(form);
-            }
+        [Fact]
+        public void ShowDynamicFixedImage()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
 
-            [Fact]
-            public void ShowDynamicFixedImage()
+            var form = new MainForm();
+            var paths = new[] { @"assets\images\logo.png", @"assets\images\button.png" };
+            var index = 0;
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
-
-                var form = new MainForm();
-                var paths = new[] {@"assets\images\logo.png", @"assets\images\button.png"};
-                var index = 0;
-                form.OnGUIAction = () =>
+                GUI.Image(new Rect(0, 0, 100, 100), paths[index]);
+                if (GUI.Button(new Rect(0, 120, 100, 30), "Change Image"))
                 {
-                    GUI.Image(new Rect(0, 0, 100, 100), paths[index]);
-                    if (GUI.Button(new Rect(0, 120, 100, 30), "Change Image"))
-                    {
-                        index = (index + 1) % 2;
-                    }
-                };
+                    index = (index + 1) % 2;
+                }
+            };
 
-                Application.Run(form);
-            }
+            Application.Run(form);
+        }
 
-            [Fact]
-            public void ShowOneLayoutedImage()
+        [Fact]
+        public void ShowOneLayoutedImage()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                GUILayout.Image(@"assets\images\logo.png");
+            };
 
-                var form = new MainForm();
-                form.OnGUIAction = () =>
-                {
-                    GUILayout.Image(@"assets\images\logo.png");
-                };
-
-                Application.Run(form);
-            }
+            Application.Run(form);
         }
     }
 }

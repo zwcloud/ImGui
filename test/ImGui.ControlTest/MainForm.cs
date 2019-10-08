@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImGui.UnitTest
+namespace ImGui.ControlTest
 {
     public class MainForm : Form
     {

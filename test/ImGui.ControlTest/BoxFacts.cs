@@ -1,77 +1,74 @@
 ﻿using Xunit;
 
-namespace ImGui.UnitTest
+namespace ImGui.ControlTest
 {
-    public class BoxFacts
+    public class Box
     {
-        public class Box
+        [Fact]
+        public void ShowOneFixedBox()
         {
-            [Fact]
-            public void ShowOneFixedBox()
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                GUI.Box(new Rect(0, 0, 100, 30), "Some Text");
+            };
 
-                var form = new MainForm();
-                form.OnGUIAction = () =>
-                {
-                    GUI.Box(new Rect(0, 0, 100, 30), "Some Text");
-                };
+            Application.Run(form);
+        }
 
-                Application.Run(form);
-            }
+        [Fact]
+        public void ShowDynamicFixedBox()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
 
-            [Fact]
-            public void ShowDynamicFixedBox()
+            var form = new MainForm();
+            var text = "before##1";
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
-
-                var form = new MainForm();
-                var text = "before##1";
-                form.OnGUIAction = () =>
+                GUI.Box(new Rect(0, 0, 100, 30), text);
+                if (GUI.Button(new Rect(0, 40, 120, 30), "Change Text"))
                 {
-                    GUI.Box(new Rect(0, 0, 100, 30), text);
-                    if (GUI.Button(new Rect(0, 40, 120, 30), "Change Text"))
-                    {
-                        text = text == "before##1" ? "after##0" : "before##1";
-                    }
-                };
+                    text = text == "before##1" ? "after##0" : "before##1";
+                }
+            };
 
-                Application.Run(form);
-            }
+            Application.Run(form);
+        }
 
-            [Fact]
-            public void ShowOneLayoutedBox()
+        [Fact]
+        public void ShowOneLayoutedBox()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                GUILayout.Box("Some Text");
+            };
 
-                var form = new MainForm();
-                form.OnGUIAction = () =>
-                {
-                    GUILayout.Box("Some Text");
-                };
+            Application.Run(form);
+        }
 
-                Application.Run(form);
-            }
+        [Fact]
+        public void ShowThreeLayoutedBox()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
 
-            [Fact]
-            public void ShowThreeLayoutedBox()
+            var form = new MainForm();
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                GUILayout.Box("Some Text##0");
+                GUILayout.Box("Some Text##1");
+                GUILayout.Box("Some Text##2");
+            };
 
-                var form = new MainForm();
-                form.OnGUIAction = () =>
-                {
-                    GUILayout.Box("Some Text##0");
-                    GUILayout.Box("Some Text##1");
-                    GUILayout.Box("Some Text##2");
-                };
-
-                Application.Run(form);
-            }
+            Application.Run(form);
         }
     }
 }

@@ -1,42 +1,39 @@
 ﻿using Xunit;
 
-namespace ImGui.UnitTest
+namespace ImGui.ControlTest
 {
-    public class SelectableFacts
+    public class Selectable
     {
-        public class Selectable
+        [Fact]
+        public void ShowOneFixedSelectable()
         {
-            [Fact]
-            public void ShowOneFixedSelectable()
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            var enabled = true;
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                enabled = GUI.Selectable(new Rect(0, 0, 100, 30), "select this", enabled);
+            };
 
-                var form = new MainForm();
-                var enabled = true;
-                form.OnGUIAction = () =>
-                {
-                    enabled = GUI.Selectable(new Rect(0, 0, 100, 30), "select this", enabled);
-                };
+            Application.Run(form);
+        }
 
-                Application.Run(form);
-            }
+        [Fact]
+        public void ShowOneLayoutedSelectable()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
 
-            [Fact]
-            public void ShowOneLayoutedSelectable()
+            var form = new MainForm();
+            var enabled = true;
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                enabled = GUILayout.Selectable("select this", enabled);
+            };
 
-                var form = new MainForm();
-                var enabled = true;
-                form.OnGUIAction = () =>
-                {
-                    enabled = GUILayout.Selectable("select this", enabled);
-                };
-
-                Application.Run(form);
-            }
+            Application.Run(form);
         }
     }
 }

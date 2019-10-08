@@ -1,27 +1,24 @@
 ﻿using Xunit;
 
-namespace ImGui.UnitTest
+namespace ImGui.ControlTest
 {
-    public partial class GUIFacts
+    public class Window
     {
-        public class TheBeginEndMethods
+        [Fact]
+        public void CreateAWindow()
         {
-            [Fact]
-            public void TheWindowShouldBeDrawn()
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm(new Rect(320, 180, 800, 600));
+            bool open = true;
+            form.OnGUIAction = () =>
             {
-                Application.IsRunningInUnitTest = true;
-                Application.Init();
+                GUI.Begin("test window", ref open, new Point(100, 100), new Size(100, 100));
+                GUI.End();
+            };
 
-                var form = new MainForm(new Rect(320, 180, 800,600));
-                bool open = true;
-                form.OnGUIAction = () =>
-                {
-                    GUI.Begin("test window", ref open, new Point(100,100), new Size(100, 100));
-                    GUI.End();
-                };
-
-                Application.Run(form);
-            }
+            Application.Run(form);
         }
     }
 }
