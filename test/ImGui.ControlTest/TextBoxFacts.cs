@@ -1,8 +1,7 @@
 ﻿using ImGui;
-using ImGui.UnitTest;
 using Xunit;
 
-namespace ControlTest
+namespace ImGui.ControlTest
 {
     public class TextBoxTest
     {
@@ -19,7 +18,7 @@ namespace ControlTest
 
             Application.Run(new MainForm(() =>
             {
-                text = GUILayout.Textbox("Name", new Size(200, 30), text);
+                text = GUILayout.TextBox("Name", new Size(200, 30), text);
             }));
         }
     }

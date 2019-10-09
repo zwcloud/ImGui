@@ -46,7 +46,7 @@ namespace ImGui.OSAbstraction.Text
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + text.GetHashCode();
+                if (text != null) hash = hash * 23 + text.GetHashCode();
                 hash = hash * 23 + fontFamily.GetHashCode();
                 hash = hash * 23 + fontSize.GetHashCode();
                 this.hashCode = hash;

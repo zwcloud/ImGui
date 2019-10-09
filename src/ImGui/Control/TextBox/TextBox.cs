@@ -37,7 +37,7 @@ namespace ImGui
 
             // render
             var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            GUIAppearance.DrawTextBox(rect, id, text, context, state);
+            GUIAppearance.DrawTextBox(node, id, text, context, state);
 
             return text;
         }
@@ -82,7 +82,7 @@ namespace ImGui
 
             // render
             var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            GUIAppearance.DrawTextBox(rect, id, text, context, state);
+            GUIAppearance.DrawTextBox(node, id, text, context, state);
 
             return text;
         }
@@ -133,11 +133,11 @@ namespace ImGui
             if (flags.HaveFlag(InputTextFlags.Password))
             {
                 var dotText = new string('*', text.Length);//FIXME bad performance
-                GUIAppearance.DrawTextBox(rect, id, dotText, context, state);
+                GUIAppearance.DrawTextBox(node, id, dotText, context, state);
             }
             else
             {
-                GUIAppearance.DrawTextBox(rect, id, text, context, state);
+                GUIAppearance.DrawTextBox(node, id, text, context, state);
             }
 
             return text;
@@ -247,7 +247,6 @@ namespace ImGui
             hovered = false;
             active = false;
             context = null;
-#if false
             GUIContext g = Form.current.uiContext;
 
             active = false;
@@ -339,25 +338,24 @@ namespace ImGui
 #endif
                 return context.Text;
             }
-#endif
             return text;
         }
     }
 
     internal partial class GUIAppearance
     {
-        public static void DrawTextBox(Rect rect, int id, string text, InputTextContext context, GUIState state)
+        public static void DrawTextBox(Node node, int id, string text, InputTextContext context, GUIState state)
         {
-#if false
             GUIContext g = Form.current.uiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
 
-            var d = window.DrawList;
-            var style = GUIStyle.Basic;
+            Rect rect = node.Rect;
+            var d = node.RenderOpen();
+            var style = node.RuleSet;
             // draw text, selection and caret
-            var contentRect = style.GetContentRect(rect);
-            d.PushClipRect(contentRect, true);
+            var contentRect = node.ContentRect;
+            //d.PushClipRect(contentRect, true);//TODO clip rect
             if (g.ActiveId == id)
             {
                 //Calculate positions and sizes
@@ -384,7 +382,7 @@ namespace ImGui
                 }
 
                 //Draw text
-                d.DrawText(contentRect, context.Text, style, GUIState.Normal);
+                d.DrawText(style, context.Text, contentRect);
 
                 //Draw selection rect
                 /*
@@ -418,7 +416,7 @@ namespace ImGui
                             new Point(pointX, pointY),
                             new Point(selectPointX, selectPointY + caretHeight));
                         selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
-                        d.AddRectFilled(selectionRect.Min, selectionRect.Max, Color.Argb(100, 10, 102, 214));
+                        d.DrawRectangle(new Brush(Color.Argb(100, 10, 102, 214)), null, selectionRect);
                     }
                     else//mutiple line
                     {
@@ -448,40 +446,38 @@ namespace ImGui
 
                         // Line 1
                         var rect1 = new Rect(A, r - A.X, caretHeight);
-                        d.AddRectFilled(rect1, Color.Argb(100, 10, 102, 214), 12);
-                        d.AddRect(rect1.Min, rect1.Max, Color.White, 12, 15, 2);
+                        d.DrawRectangle(new Brush(Color.Argb(100, 10, 102, 214)), null, rect1);
+                        d.DrawRectangle(null, new Pen(Color.White, 2), rect1);
 
                         // Line 2
                         var rect2 = new Rect(new Point(l, B.Y), new Point(r, C.Y));
                         if (rect2.Height > 0.5 * caretHeight)//TODO There should more a more reasonable way to detect this: If it only has two lines, we don't draw the inner rectangle.
                         {
-                            d.AddRectFilled(rect2, Color.Argb(100, 10, 102, 214), 12);
-                            d.AddRect(rect2.Min, rect2.Max, Color.White, 12, 15, 2);
+                            d.DrawRectangle(new Brush(Color.Argb(100, 10, 102, 214)), null, rect2);
+                            d.DrawRectangle(null, new Pen(Color.White, 2), rect2);
                         }
 
                         // Line 3
                         var rect3 = new Rect(new Point(l, C.Y), D);
-                        d.AddRectFilled(rect3, Color.Argb(100, 10, 102, 214), 12);
-                        d.AddRect(rect3.Min, rect3.Max, Color.White, 12, 15, 2);
+                        d.DrawRectangle(new Brush(Color.Argb(100, 10, 102, 214)), null, rect3);
+                        d.DrawRectangle(null, new Pen(Color.White, 2), rect3);
                     }
                 }
 
                 //Draw caret
-                d.PathMoveTo(caretTopPoint);
-                d.PathLineTo(caretBottomPoint);
-                d.PathStroke(Color.Argb(caretAlpha, 0, 0, 0), false, 2);
+                d.DrawLine(new Pen(Color.Argb(caretAlpha, 0, 0, 0), 2), caretTopPoint, caretBottomPoint);
             }
             else
             {
-                d.DrawText(contentRect, text, style, GUIState.Normal);
+                d.DrawText(style, text, contentRect);
             }
-            d.PopClipRect();
+            //d.PopClipRect();//TODO clip rect
 
             // draw the box
             {
-                d.AddRect(rect.Min, rect.Max, style.BorderColor);
+                d.DrawRectangle(null, new Pen(Color.Black, 1), rect);
             }
-#endif
+            d.Close();
         }
     }
 

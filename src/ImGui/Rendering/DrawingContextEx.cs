@@ -90,13 +90,20 @@ namespace ImGui.Rendering
             dc.DrawImage(texture, rect);
         }
 
-
         public static void DrawGlyphRun(this DrawingContext dc, StyleRuleSet rule, string text, Point topLeft)
         {
             var ascent = OSImplentation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
             var baselineOrigin = new Point(topLeft.X, topLeft.Y + ascent);
             dc.DrawGlyphRun(new Brush(rule.FontColor),
                 new GlyphRun(baselineOrigin, text, rule.FontFamily, rule.FontSize));
+        }
+
+        public static void DrawText(this DrawingContext dc, StyleRuleSet rule, string text, Rect rect)
+        {
+            var ascent = OSImplentation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
+            var baselineOrigin = new Point(rect.X, rect.Y + ascent);
+            dc.DrawText(new Brush(rule.FontColor),
+                new FormattedText(baselineOrigin, text, rule.FontFamily, rule.FontSize));
         }
 
         public static void DrawBoxModel(this DrawingContext dc, StyleRuleSet rule, Rect rect)
