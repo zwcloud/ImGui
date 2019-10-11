@@ -23,5 +23,6 @@ namespace ImGui
         ColorField,
         ListBox,
         ProgressBar,
+        TreeNode,
     }
 }

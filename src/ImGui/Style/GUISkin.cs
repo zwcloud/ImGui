@@ -73,6 +73,9 @@ namespace ImGui
             skin.InitListBoxStyles(listbox);
             skin.styles[GUIControlName.ListBox] = listbox;
 
+            skin.InitTreeNodeStyles(button, out var treeNode);
+            skin.styles[GUIControlName.TreeNode] = treeNode;
+
             return skin;
         }
 

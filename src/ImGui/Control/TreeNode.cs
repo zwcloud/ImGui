@@ -1,70 +1,53 @@
-﻿using System;
+﻿using ImGui.Rendering;
+using System;
 
 namespace ImGui
 {
     public partial class GUILayout
     {
-        public static bool TreeNode(string label, ref bool open)
+        public static bool TreeNode(string text, ref bool open)
         {
-            GUIContext g = GetCurrentContext();
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
 
-            BeginVertical(label + "_Tree");
+            BeginVertical(text + "_Tree");
 
-                var id = window.GetID(label);
+            //get or create the root node
+            int id = window.GetID(text);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
+            if (node == null)
+            {
+                //create nodes
+                node = new Node(id, $"TreeNode<{text}>");
+                node.AttachLayoutEntry();
+                container.AppendChild(node);
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.TreeNode]);
+            }
+            var lineHeight = node.RuleSet.GetLineHeight();
+            node.RuleSet.ApplyOptions(Height(lineHeight));
+            node.ActiveSelf = true;
 
-                // style apply
-                var style = GUIStyle.Basic;
-                style.PushStretchFactor(false, 1);//+1, always expand width
-                style.PushPadding((1, 1, 1, 5));//+4
+            // rect
+            Rect rect = window.GetRect(id);
 
-                do
-                {
-                    // rect
-                    var lineHeight = style.GetLineHeight();
-                    Rect rect = window.GetRect(id);
-                    if (rect == Layout.StackLayout.DummyRect)//TODO how shold dummy rect be correctly handled in every control?
-                    {
-                        break;
-                    }
+            // interact
+            var pressed = GUIBehavior.ButtonBehavior(rect, id, out var hovered, out var held, ButtonFlags.PressedOnClick);
+            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            if (pressed)
+            {
+                open = !open;
+            }
 
-                    // interact
-                    bool hovered, held;
-                    bool pressed = GUIBehavior.ButtonBehavior(rect, id, out hovered, out held, ButtonFlags.PressedOnClick);
-                    if (pressed)
-                    {
-                        open = !open;
-                    }
-
-                    // render
-                    {
-                        DrawList d = window.DrawList;
-                        var state = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-                        if(hovered || held)
-                        {
-                            style.PushBgColor(new Color(0.40f, 0.40f, 0.90f, 0.45f), GUIState.Normal);//+1 TODO It's stupid to sprcifiy style like this. There should be a better way to do this.
-                            style.PushBgColor(new Color(0.45f, 0.45f, 0.90f, 0.80f), GUIState.Hover);//+1
-                            style.PushBgColor(new Color(0.53f, 0.53f, 0.87f, 0.80f), GUIState.Active);//+1
-                            var color = style.Get<Color>(GUIStyleName.BackgroundColor, state);
-                            d.RenderFrame(rect.Min, rect.Max, color, false, 0);
-                            style.PopStyle(3);//-3
-                        }
-                        d.RenderCollapseTriangle(rect.Min + new Vector(0+style.PaddingTop, lineHeight * 0.15f), open, lineHeight, Color.White, 0.7);
-                        rect.X += rect.Height;
-                        var delta = rect.Width - rect.Height;
-                        if (delta > 0)
-                        {
-                            rect.Width = delta;
-                        }
-                        d.DrawText(rect, label, style, state);
-                    }
-                }while(false);
-
-                // style restore
-                style.PopStyle();//-1
-                style.PopStyle(4);//-4
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawGlyphRun(node.RuleSet, text, node.ContentRect.TopLeft + new Vector(node.Rect.Height + node.PaddingLeft, 0));
+                dc.RenderArrow(node.Rect.Min + new Vector(node.RuleSet.PaddingTop, lineHeight * 0.15),
+                    node.Height, node.RuleSet.FontColor, open ? Internal.Direcion.Down : Internal.Direcion.Right, 0.7);
+            }
 
                 BeginHorizontal("#Content");
                     Space("Space", 20);
@@ -72,11 +55,26 @@ namespace ImGui
             return open;
         }
 
-        public static void TreePop()//TODO using/IDisposable based tree?
+        public static void TreePop()
         {
                     EndVertical();
                 EndHorizontal();
             EndVertical();
+        }
+    }
+
+    internal partial class GUISkin
+    {
+        private void InitTreeNodeStyles(StyleRuleSet button, out StyleRuleSet ruleSet)
+        {
+            ruleSet = new StyleRuleSet();
+            ruleSet.Replace(button);
+            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal);
+            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.80f), GUIState.Hover);
+            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
+            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Normal);
+            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Hover);
+            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Active);
         }
     }
 }

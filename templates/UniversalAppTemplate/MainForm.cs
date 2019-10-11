@@ -18,9 +18,17 @@ int main()
     return 0;
 }
 ";
+        bool open = false;
         protected override void OnGUI()
         {
-            text = GUILayout.TextBox("t1", new Size(300, 500), text);
+            if (GUILayout.TreeNode("single", ref open))
+            {
+                GUILayout.Label("11111");
+                GUILayout.Label("2222");
+                GUILayout.Label("333");
+                GUILayout.Label("44");
+            }
+            GUILayout.TreePop();
         }
     }
 }

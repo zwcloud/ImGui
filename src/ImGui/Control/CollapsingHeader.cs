@@ -53,7 +53,7 @@ namespace ImGui
             using (var dc = node.RenderOpen())
             {
                 dc.DrawBoxModel(node);
-                dc.DrawGlyphRun(node.RuleSet, text, node.Rect.TopLeft);
+                dc.DrawGlyphRun(node.RuleSet, text, node.ContentRect.TopLeft + new Vector(node.Rect.Height + node.PaddingLeft, 0));
                 dc.RenderArrow(node.Rect.Min + new Vector(node.PaddingLeft, 0),
                     node.Height, node.RuleSet.FontColor, open ? Direcion.Down : Direcion.Right, 1.0);
             }
