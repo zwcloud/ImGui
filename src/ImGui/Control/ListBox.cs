@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ImGui.Rendering;
+using System;
+using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -6,48 +8,36 @@ namespace ImGui
     {
         public static int ListBox<T>(string label, IReadOnlyList<T> items, int selectedIndex)
         {
-            Window window = GetCurrentWindow();
+            var window = GetCurrentWindow();
             if (window.SkipItems)
                 return selectedIndex;
 
-            int id = window.GetID(label);
-            PushID("ListboxField" + id);
-
-            var style = GUIStyle.Basic;
-
+            var id = window.GetID(label);
+            PushID(id);
+            //TODO create child window to support clip and render background box here
             BeginHorizontal("Field");
-            BeginVertical("Items", GUILayout.ExpandWidth(true));
             {
-                style.Save();
-                style.ApplySkin(GUIControlName.ListBox);
-                style.PushStretchFactor(false, 1);
-                style.PushCellSpacing(true, 0);
-                for (var i = 0; i < items.Count; i++)
+                BeginVertical("Items", GUILayout.ExpandWidth(true));
                 {
-                    var item = items[i];
-                    string itemText = item.ToString();
-                    var itemId = window.GetID(string.Format("Item_{0}_{1}", i, itemText));
-                    var textSize = style.CalcSize(itemText, GUIState.Normal);
-                    var itemRect = window.GetRect(itemId);
-
-                    bool hovered;
-                    bool on = GUIBehavior.ToggleBehavior(itemRect, id, selectedIndex == i, out hovered);
-                    if (on)
+                    for (var i = 0; i < items.Count; i++)
                     {
-                        selectedIndex = i;
+                        var item_selected = (i == selectedIndex);
+                        var item = items[i];
+                        string itemText = item.ToString();
+
+                        PushID(i);
+                        if (GUILayout.Selectable(itemText, item_selected))
+                        {
+                            selectedIndex = i;
+                        }
+                        PopID();
                     }
-
-                    var d = window.DrawList;
-                    var state = on ? GUIState.Active : GUIState.Normal;
-                    d.DrawBoxModel(itemRect, itemText, style, state);
                 }
-                style.Restore();
+                EndVertical();
+                GUILayout.Space("FieldSpacing", GUISkin.Current.FieldSpacing);
+                GUILayout.Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth)); 
             }
-            EndVertical();
-            GUILayout.Space("FieldSpacing", GUISkin.Current.FieldSpacing);
-            GUILayout.Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
             EndHorizontal();
-
             PopID();
 
             return selectedIndex;
@@ -56,15 +46,14 @@ namespace ImGui
 
     internal partial class GUISkin
     {
-        private void InitListBoxStyles()
+        private void InitListBoxStyles(StyleRuleSet ruleSet)
         {
-            StyleModifierBuilder builder = new StyleModifierBuilder();
-            builder.PushPadding(2.0);
-            builder.PushBgColor(Color.Clear, GUIState.Normal);
-            builder.PushBgColor(Color.Rgb(206, 220, 236), GUIState.Hover);
-            builder.PushBgColor(Color.Rgb(30, 144, 255), GUIState.Active);
-
-            this.styles.Add(GUIControlName.ListBox, builder.ToArray());
+            StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
+            builder
+            .Padding(2.0)
+            .BackgroundColor(Color.Clear, GUIState.Normal)
+            .BackgroundColor(Color.Rgb(206, 220, 236), GUIState.Hover)
+            .BackgroundColor(Color.Rgb(30, 144, 255), GUIState.Active);
         }
     }
 }

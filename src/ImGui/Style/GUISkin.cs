@@ -69,8 +69,9 @@ namespace ImGui
             skin.InitSliderStyles(slider);
             skin.styles[GUIControlName.Slider] = slider;
 
-            //skin.InitListBoxStyles();
-
+            StyleRuleSet listbox = new StyleRuleSet();
+            skin.InitListBoxStyles(listbox);
+            skin.styles[GUIControlName.ListBox] = listbox;
 
             return skin;
         }
