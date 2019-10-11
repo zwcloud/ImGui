@@ -197,7 +197,7 @@ namespace ImGui
                 window.Accessed = false;
 
                 //disable all nodes in the window
-                window.ClientAreaNode.Foreach(n => n.ActiveSelf = false);
+                window.ClientAreaNode.Foreach(n => { n.ActiveSelf = false; return true; });
                 window.AbsoluteVisualList.ForEach(n => n.ActiveSelf = false);
             }
 
