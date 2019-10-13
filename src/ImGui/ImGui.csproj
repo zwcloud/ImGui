@@ -53,7 +53,6 @@
   <ItemGroup>
     <Compile Remove="Common\IO.cs" />
     <Compile Remove="Common\ListEx.cs" />
-    <Compile Remove="Control\ColorField.cs" />
     <Compile Remove="Control\Window.Child.cs" />
   </ItemGroup>
 

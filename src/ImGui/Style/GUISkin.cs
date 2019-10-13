@@ -76,6 +76,10 @@ namespace ImGui
             skin.InitTreeNodeStyles(button, out var treeNode);
             skin.styles[GUIControlName.TreeNode] = treeNode;
 
+            StyleRuleSet colorField = new StyleRuleSet();
+            skin.InitColorFieldStyles(colorField);
+            skin.styles[GUIControlName.ColorField] = colorField;
+
             return skin;
         }
 
