@@ -12,51 +12,79 @@ namespace ImGui
             if (window.SkipItems)
                 return value;
 
-            //get or create the root node
-            var id = window.GetID(label);
-            var container = window.RenderTree.CurrentContainer;
-            var node = container.GetNodeById(id);
-            if (node == null)
-            {
-                //create node
-                node = new Node(id, $"ColorField<{label}>");
-                node.UseBoxModel = true;
-                node.RuleSet.Replace(GUISkin.Current[GUIControlName.ColorField]);
-                node.AttachLayoutGroup(false);
-                container.AppendChild(node);
-            }
-            node.ActiveSelf = true;
-
             // rect
-
-            int rId;
-            int gId;
-            int bId;
-            int aId;
-            int colorId;
-
-            Rect rectR, rectG, rectB, rectA, rectColor;
-
-            BeginHorizontal("FieldGroup~" + id);
+            var text = Utility.FindRenderedText(label);
+            var textSize = GUISkin.Current[GUIControlName.ColorField].CalcSize(text, GUIState.Normal);
+            BeginHorizontal(label, GUILayout.Height(textSize.Height).ExpandWidth(true));
             {
-                using (HScope("#RGBA&Color", GUILayout.ExpandWidth(true)))
+                int rId, gId, bId, aId, colorId;
+                Rect rectR, rectG, rectB, rectA, rectColor;
+                using (HScope("#RGBA&Color", GUILayout.ExpandHeight(true).ExpandWidth(true)))
                 {
-                    using (VScope(label + "#RGBA"))
+                    using (VScope(label + "#RGBA", GUILayout.ExpandHeight(true).ExpandWidth(true)))
                     {
-                        using (HScope("#RGB", GUILayout.ExpandWidth(true)))
+                        using (HScope("#RGB", GUILayout.ExpandHeight(true).ExpandWidth(true)))
                         {
                             rId = window.GetID("#R");
+                            var rNode = window.RenderTree.CurrentContainer.GetNodeById(rId);
+                            if(rNode == null)
+                            {
+                                rNode = new Node(rId, "#R");
+                                rNode.AttachLayoutEntry();
+                                rNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
+                                window.RenderTree.CurrentContainer.AppendChild(rNode);
+                            }
+                            rNode.ActiveSelf = true;
+
                             gId = window.GetID("#G");
+                            var gNode = window.RenderTree.CurrentContainer.GetNodeById(gId);
+                            if (gNode == null)
+                            {
+                                gNode = new Node(gId, "#G");
+                                gNode.AttachLayoutEntry();
+                                gNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
+                                window.RenderTree.CurrentContainer.AppendChild(gNode);
+                            }
+                            gNode.ActiveSelf = true;
+
                             bId = window.GetID("#B");
+                            var bNode = window.RenderTree.CurrentContainer.GetNodeById(bId);
+                            if (bNode == null)
+                            {
+                                bNode = new Node(bId, "#B");
+                                bNode.AttachLayoutEntry();
+                                bNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
+                                window.RenderTree.CurrentContainer.AppendChild(bNode);
+                            }
+                            bNode.ActiveSelf = true;
+
                             rectR = window.GetRect(rId);
                             rectG = window.GetRect(gId);
                             rectB = window.GetRect(bId);
                         }
 
                         aId = window.GetID("#A");
+                        var aNode = window.RenderTree.CurrentContainer.GetNodeById(aId);
+                        if (aNode == null)
+                        {
+                            aNode = new Node(aId, "#A");
+                            aNode.AttachLayoutEntry();
+                            aNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
+                            window.RenderTree.CurrentContainer.AppendChild(aNode);
+                        }
+                        aNode.ActiveSelf = true;
                         rectA = window.GetRect(aId);
                     }
                     colorId = window.GetID("#Color");
+                    var colorNode = window.RenderTree.CurrentContainer.GetNodeById(colorId);
+                    if (colorNode == null)
+                    {
+                        colorNode = new Node(colorId, "#Color");
+                        colorNode.AttachLayoutEntry();
+                        colorNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
+                        window.RenderTree.CurrentContainer.AppendChild(colorNode);
+                    }
+                    colorNode.ActiveSelf = true;
                     rectColor = window.GetRect(colorId);
                 }
 
@@ -67,16 +95,16 @@ namespace ImGui
                 value.A = GUIBehavior.SliderBehavior(rectA, aId, true, value.A, 0, 1.0, out bool A_hovered, out bool A_held);
 
                 // render
+                var node = window.RenderTree.CurrentContainer;
                 using (var d = node.RenderOpen())
                 {
-
                     DrawColorDragButton(d, node.RuleSet, rectR, rId, 'R', value.R, (R_hovered && R_held) ? GUIState.Active : R_hovered ? GUIState.Hover : GUIState.Normal);
                     DrawColorDragButton(d, node.RuleSet, rectG, gId, 'G', value.G, (G_hovered && G_held) ? GUIState.Active : G_hovered ? GUIState.Hover : GUIState.Normal);
                     DrawColorDragButton(d, node.RuleSet, rectB, bId, 'B', value.B, (B_hovered && B_held) ? GUIState.Active : B_hovered ? GUIState.Hover : GUIState.Normal);
 
-                    var fillWidth = node.Rect.Width * value.A;
-                    var fillRect = new Rect(rectA.X, rectA.Y, fillWidth, node.Rect.Height);
-                    d.DrawRectangle(new Brush(new Color(0.80f, 0.80f, 0.80f, 0.30f)), null, node.Rect);
+                    var fillWidth = rectA.Width * value.A;
+                    var fillRect = new Rect(rectA.X, rectA.Y, fillWidth, rectA.Height);
+                    //d.DrawRectangle(new Brush(new Color(0.80f, 0.80f, 0.80f, 0.30f)), null, node.Rect);
                     d.DrawRectangle(new Brush(new Color(0.90f, 0.70f, 0.00f, 1.00f)), null, fillRect);
                     d.DrawRectangle(new Brush(value), null, rectColor);
                 }
@@ -100,7 +128,7 @@ namespace ImGui
                 text = ((int)(value * 255)).ToString();
             }
 
-            dc.DrawGlyphRun(ruleSet, text, buttonRect.TopLeft);
+            dc.DrawBoxModel(text, ruleSet, buttonRect);
         }
     }
 
