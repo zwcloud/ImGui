@@ -73,7 +73,6 @@ namespace ImGui
             if (!this.Collapsed)
             {
                 //show and update window client area
-                clientArea.Rect = ClientRect;
                 using (var dc = clientArea.RenderOpen())
                 {
                     dc.DrawBoxModel(clientArea);
