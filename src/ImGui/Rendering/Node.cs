@@ -195,8 +195,8 @@ namespace ImGui.Rendering
             }
             else
             {
-                //TODO decuple from Form
-                clipRect = new Rect(0, 0, Form.current.ClientSize);
+                //TEMP
+                clipRect = Rect.Big;//new Rect(0, 0, Form.current.ClientSize);//TODO decuple from Form
             }
 
             return clipRect;

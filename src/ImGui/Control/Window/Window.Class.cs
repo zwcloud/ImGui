@@ -209,8 +209,6 @@ namespace ImGui
                 clientArea.AttachLayoutGroup(true);
                 clientArea.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 clientArea.UseBoxModel = true;
-                clientArea.RuleSet.OutlineWidth = 1;
-                clientArea.RuleSet.OutlineColor = Color.Red;
                 clientArea.RuleSet.refNode = clientArea;
                 this.ClientAreaNode = clientArea;
                 this.WindowContainer.AppendChild(clientArea);
@@ -272,13 +270,7 @@ namespace ImGui
         /// Gets or sets the rect of the client area
         /// </summary>
         /// //TODO consider scroll bar, which is not a part of the client area.
-        public Rect ClientRect => new Rect(
-            x: this.Position.X + this.WindowContainer.RuleSet.BorderLeft + this.WindowContainer.RuleSet.PaddingLeft,
-            y: this.Position.Y + this.WindowContainer.RuleSet.BorderTop + this.WindowContainer.RuleSet.PaddingTop + this.TitleBarHeight +
-               this.WindowContainer.RuleSet.PaddingTop,
-            width: this.FullSize.Width - this.WindowContainer.RuleSet.BorderHorizontal - this.WindowContainer.RuleSet.PaddingHorizontal,
-            height: this.FullSize.Height - this.WindowContainer.RuleSet.BorderVertical - this.WindowContainer.RuleSet.PaddingVertical -
-                    this.TitleBarHeight - this.WindowContainer.RuleSet.PaddingTop);
+        public Rect ClientRect => ClientAreaNode.Rect;
 
         /// <summary>
         /// Gets or sets if the window is collapsed.
