@@ -3,10 +3,6 @@ using System.Diagnostics;
 
 namespace ImGui
 {
-    public partial class GUILayout
-    {
-    }
-
     public partial class GUI
     {
         public static bool Begin(string name, ref bool open)
@@ -101,6 +97,7 @@ namespace ImGui
             {
                 Debug.Assert(flags.HaveFlag(WindowFlags.NoTitleBar));
                 window.Collapsed = parent_window != null && parent_window.Collapsed;
+                window.Position = position;
             }
 
             // Return false if we don't intend to display anything to allow user to perform an early out optimization

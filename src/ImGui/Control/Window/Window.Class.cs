@@ -168,6 +168,7 @@ namespace ImGui
             }
 
             //title bar
+            if(!Flags.HaveFlag(WindowFlags.NoTitleBar))
             {
                 this.titleBar = new Node(this.GetID("titleBar"),"title bar");
                 titleBar.AttachLayoutGroup(false);
@@ -216,7 +217,10 @@ namespace ImGui
 
             //resize grip (lasy-initialized)
 
-            this.ShowWindowTitleBar(true);
+            if (!Flags.HaveFlag(WindowFlags.NoTitleBar))
+            {
+                this.ShowWindowTitleBar(true);
+            }
             this.ShowWindowClientArea(!this.Collapsed);
             #endregion
         }

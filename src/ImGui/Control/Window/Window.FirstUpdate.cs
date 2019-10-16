@@ -78,76 +78,75 @@ namespace ImGui
                     dc.DrawBoxModel(clientArea);
                 }
 
-                if (!flags.HaveFlag(WindowFlags.NoResize) && this.ResizeGripNode == null)
+                if (!flags.HaveFlag(WindowFlags.NoResize))
                 {
-                    var id = this.GetID("#RESIZE");
-                    var node = new Node(id, "Window_ResizeGrip");
-                    this.ResizeGripNode = node;
-                    this.AbsoluteVisualList.Add(node);
-                }
+                    if (this.ResizeGripNode == null)
+                    {
+                        var id = this.GetID("#RESIZE");
+                        var node = new Node(id, "Window_ResizeGrip");
+                        this.ResizeGripNode = node;
+                        this.AbsoluteVisualList.Add(node);
+                    }
 
-                //resize grip
-                this.ResizeGripNode.ActiveSelf = true;
-                var resizeGripColor = Color.Clear;
-                if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
-                {
-                    // Manual resize
+                    //resize grip
+                    this.ResizeGripNode.ActiveSelf = true;
+                    var resizeGripColor = Color.Clear;
                     var br = this.Rect.BottomRight;
-                    var resizeRect = new Rect(
-                        br - new Vector(this.WindowContainer.PaddingLeft + this.WindowContainer.BorderLeft,
-                            this.WindowContainer.PaddingBottom + this.WindowContainer.BorderLeft),
-                        br);
-                    var resizeId = this.GetID("#RESIZE");
-                    GUIBehavior.ButtonBehavior(resizeRect, resizeId, out var hovered, out var held,
-                        ButtonFlags.FlattenChilds);
-                    resizeGripColor =
-                        held
-                            ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active)
-                            : hovered
-                                ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover)
-                                : this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor);
-
-                    if (hovered || held)
+                    if (!flags.HaveFlag(WindowFlags.AlwaysAutoResize) && !flags.HaveFlag(WindowFlags.NoResize))
                     {
-                        Mouse.Instance.Cursor = (Cursor.NwseResize);
-                    }
-                    else
-                    {
-                        Mouse.Instance.Cursor = (Cursor.Default);
-                    }
+                        // Manual resize
+                        var resizeRect = new Rect(
+                            br - new Vector(this.WindowContainer.PaddingLeft + this.WindowContainer.BorderLeft,
+                                this.WindowContainer.PaddingBottom + this.WindowContainer.BorderLeft),
+                            br);
+                        var resizeId = this.GetID("#RESIZE");
+                        GUIBehavior.ButtonBehavior(resizeRect, resizeId, out var hovered, out var held,
+                            ButtonFlags.FlattenChilds);
+                        resizeGripColor =
+                            held
+                                ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active)
+                                : hovered
+                                    ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover)
+                                    : this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor);
 
-                    if (held)
-                    {
-                        // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
-                        var t = Mouse.Instance.Position - g.ActiveIdClickOffset - this.Position;
-                        var newSizeWidth = t.X + resizeRect.Width;
-                        var newSizeHeight = t.Y + resizeRect.Height;
-                        var resizeSize = new Size(newSizeWidth, newSizeHeight);
-                        this.ApplySize(resizeSize);
-
-                        // adjust scroll parameters
-                        var contentSize = this.ContentRect.Size;
-                        if (contentSize != Size.Zero)
+                        if (hovered || held)
                         {
-                            var vH = this.Rect.Height - this.TitleBarHeight -
-                                     this.WindowContainer.RuleSet.BorderVertical -
-                                     this.WindowContainer.RuleSet.PaddingVertical;
-                            var cH = contentSize.Height;
-                            if (cH > vH)
+                            Mouse.Instance.Cursor = (Cursor.NwseResize);
+                        }
+                        else
+                        {
+                            Mouse.Instance.Cursor = (Cursor.Default);
+                        }
+
+                        if (held)
+                        {
+                            // We don't use an incremental MouseDelta but rather compute an absolute target size based on mouse position
+                            var t = Mouse.Instance.Position - g.ActiveIdClickOffset - this.Position;
+                            var newSizeWidth = t.X + resizeRect.Width;
+                            var newSizeHeight = t.Y + resizeRect.Height;
+                            var resizeSize = new Size(newSizeWidth, newSizeHeight);
+                            this.ApplySize(resizeSize);
+
+                            // adjust scroll parameters
+                            var contentSize = this.ContentRect.Size;
+                            if (contentSize != Size.Zero)
                             {
-                                var oldScrollY = this.Scroll.Y;
-                                oldScrollY = MathEx.Clamp(oldScrollY, 0, cH - vH);
-                                this.Scroll.Y = oldScrollY;
+                                var vH = this.Rect.Height - this.TitleBarHeight -
+                                         this.WindowContainer.RuleSet.BorderVertical -
+                                         this.WindowContainer.RuleSet.PaddingVertical;
+                                var cH = contentSize.Height;
+                                if (cH > vH)
+                                {
+                                    var oldScrollY = this.Scroll.Y;
+                                    oldScrollY = MathEx.Clamp(oldScrollY, 0, cH - vH);
+                                    this.Scroll.Y = oldScrollY;
+                                }
                             }
                         }
                     }
-                }
 
-                // Render resize grip
-                // (after the input handling so we don't have a frame of latency)
-                if (!flags.HaveFlag(WindowFlags.NoResize))
-                {
-                    var br = this.Rect.BottomRight;
+                    // Render resize grip
+                    // (after the input handling so we don't have a frame of latency)
                     var borderBottom = this.WindowContainer.RuleSet.BorderBottom;
                     var paddingBottom = this.WindowContainer.RuleSet.PaddingBottom;
                     var borderRight = this.WindowContainer.RuleSet.BorderRight;
