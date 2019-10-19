@@ -90,7 +90,6 @@ namespace ImGui
             Label(text, options: null);
         }
 
-#if false
         /// <summary>
         /// Create a colored auto-layout label.
         /// </summary>
@@ -98,9 +97,7 @@ namespace ImGui
         /// <param name="text">text</param>
         public static void Label(Color color, string text)
         {
-            PushFontColor(color);
-            Label(text);
-            PopStyleVar();
+            Label(text, new LayoutOptions().FontColor(color));
         }
 
         /// <summary>
@@ -169,20 +166,30 @@ namespace ImGui
             if (window.SkipItems)
                 return;
 
-            GUIContext g = GetCurrentContext();
+            //get or create the root node
             int id = window.GetID(str_id);
+            var container = window.RenderTree.CurrentContainer;
+            Node node = container.GetNodeById(id);
+            if (node == null)
+            {
+                node = new Node(id, $"Bullet<{str_id}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
+                var size = new Size(0, node.RuleSet.GetLineHeight());
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
 
-            // style
-            var style = GUIStyle.Basic;
+            node.ActiveSelf = true;
 
             // rect
-            var lineHeight = style.GetLineHeight();
-            Rect rect = window.GetRect(id);
+            node.Rect = window.GetRect(id);
 
-            // Render
-            var d = window.DrawList;
-            var bulletPosition = rect.TopLeft + new Vector(0, lineHeight * 0.5f);
-            d.RenderBullet(bulletPosition, lineHeight, style.FontColor);
+            using (var dc = node.RenderOpen())
+            {
+                var bulletPosition = node.Rect.TopLeft + new Vector(node.Rect.Height * 0.5f, node.Rect.Height * 0.5f);
+                GUIAppearance.RenderBullet(dc, bulletPosition, node.Rect.Height, node.RuleSet.FontColor);
+            }
         }
 
         /// <summary>
@@ -194,23 +201,34 @@ namespace ImGui
             if (window.SkipItems)
                 return;
 
-            GUIContext g = GetCurrentContext();
+            //get or create the root node
             int id = window.GetID(text);
+            var container = window.RenderTree.CurrentContainer;
+            Node node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
+            if (node == null)
+            {
+                node = new Node(id, $"BulletText<{text}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
 
-            // style
-            var style = GUIStyle.Basic;
+            node.ActiveSelf = true;
 
             // rect
-            Size contentSize = style.CalcSize(text, GUIState.Normal);
-            var lineHeight = style.GetLineHeight();
-            Rect rect = window.GetRect(id);
+            node.Rect = window.GetRect(id);
 
-            // Render
-            var d = window.DrawList;
-            var bulletPosition = rect.TopLeft + new Vector(0, lineHeight * 0.5f);
-            d.RenderBullet(bulletPosition, lineHeight, style.FontColor);
-            rect.Offset(lineHeight, 0);
-            d.AddText(rect, text, style, GUIState.Normal);
+            using (var dc = node.RenderOpen())
+            {
+                var bulletPosition = node.Rect.TopLeft + new Vector(node.Rect.Height * 0.5f, node.Rect.Height * 0.5f);
+                GUIAppearance.RenderBullet(dc, bulletPosition, node.Rect.Height, node.RuleSet.FontColor);
+                var rect = node.Rect;
+                rect.Offset(node.Rect.Height, 0);
+                dc.DrawGlyphRun(node.RuleSet, text, node.Rect.TopLeft);
+            }
         }
 
         public static void BulletText(string format, params object[] args)
@@ -219,7 +237,15 @@ namespace ImGui
         }
         #endregion
 
-#endif
+    }
+
+    internal partial class GUIAppearance
+    {
+        internal static void RenderBullet(DrawingContext dc, Point bulletPosition, double lineHeight, Color fontColor)
+        {
+            var radius = lineHeight * 0.20f;
+            dc.DrawEllipse(new Brush(fontColor), null, bulletPosition, radius, radius);
+        }
     }
 
     internal partial class GUISkin

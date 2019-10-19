@@ -104,6 +104,52 @@ namespace ImGui
         }
 
         public static bool Button(string text) => Button(text, null);
+
+        public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1)
+        {
+            var window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
+
+            //get or create the root node
+            var id = window.GetID(text);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            text = Utility.FindRenderedText(text);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, $"Button<{text}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
+                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
+            node.RuleSet.BorderImageSlice = ()
+            node.ActiveSelf = true;
+
+            // rect
+            node.Rect = window.GetRect(id);
+
+            // interact
+            var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
+            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                var texture = TextureUtil.GetTexture(filePath);
+                dc.DrawBoxModel(texture, node.RuleSet, node.Rect);
+            }
+
+            return pressed;
+        }
+
+        public static bool ImageButton(string filePath)
+        {
+            return ImageButton(filePath, Size.Empty, Point.Zero, Point.One);
+        }
     }
 
     internal partial class GUIBehavior

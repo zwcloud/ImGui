@@ -24,5 +24,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  
+  <Import Project="..\Demo\Demo.projitems" Label="Shared" />
 
 </Project>

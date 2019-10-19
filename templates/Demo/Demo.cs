@@ -1,6 +1,4 @@
 ﻿using ImGui;
-using ImGui.Common;
-using ImGui.Common.Primitive;
 using ImGui.OSAbstraction.Graphics;
 using System.Collections.Generic;
 
@@ -414,7 +412,7 @@ label:
             GUILayout.PushHStretchFactor(1);//+1
             if (animate)
             {
-                progress += progress_dir * 0.4f * Application.DeltaTime / 1000.0;
+                progress += progress_dir * 0.4f * deltaTime / 1000.0;
                 if (progress >= +1.1f) { progress = +1.1f; progress_dir *= -1.0f; }
                 if (progress <= -0.1f) { progress = -0.1f; progress_dir *= -1.0f; }
             }
