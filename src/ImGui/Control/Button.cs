@@ -104,7 +104,7 @@ namespace ImGui
         }
 
         public static bool Button(string text) => Button(text, null);
-
+#if false
         public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1)
         {
             var window = GetCurrentWindow();
@@ -126,7 +126,6 @@ namespace ImGui
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
             }
-            node.RuleSet.BorderImageSlice = ()
             node.ActiveSelf = true;
 
             // rect
@@ -150,6 +149,7 @@ namespace ImGui
         {
             return ImageButton(filePath, Size.Empty, Point.Zero, Point.One);
         }
+#endif
     }
 
     internal partial class GUIBehavior
