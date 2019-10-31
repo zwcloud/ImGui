@@ -104,7 +104,6 @@ namespace ImGui
         }
 
         public static bool Button(string text) => Button(text, null);
-#if false
         public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1)
         {
             var window = GetCurrentWindow();
@@ -112,18 +111,17 @@ namespace ImGui
                 return false;
 
             //get or create the root node
-            var id = window.GetID(text);
+            var id = window.GetID(filePath);
             var container = window.RenderTree.CurrentContainer;
             var node = container.GetNodeById(id);
-            text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 //create node
-                node = new Node(id, $"Button<{text}>");
+                node = new Node(id, $"Button<{filePath}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
-                node.AttachLayoutEntry(size);
+                var texture = TextureUtil.GetTexture(filePath);
+                node.AttachLayoutEntry(texture.Size);
                 container.AppendChild(node);
             }
             node.ActiveSelf = true;
@@ -149,7 +147,6 @@ namespace ImGui
         {
             return ImageButton(filePath, Size.Empty, Point.Zero, Point.One);
         }
-#endif
     }
 
     internal partial class GUIBehavior

@@ -8,7 +8,7 @@ namespace ImGui
     [DebuggerDisplay("{Name}, {State}, {Value}")]
     internal class StyleRule<T> : IStyleRule
     {
-        public GUIStyleName Name { get; set; }
+        public StylePropertyName Name { get; set; }
         public GUIState State { get; set; }
         public T Value { get; set; }
 
@@ -17,14 +17,14 @@ namespace ImGui
         /// </summary>
         public Geometry Geometry;
 
-        public StyleRule(GUIStyleName name, T value)
+        public StyleRule(StylePropertyName name, T value)
         {
             this.Name = name;
             this.Value = value;
             this.State = GUIState.Normal;
         }
 
-        public StyleRule(GUIStyleName name, T value, GUIState state)
+        public StyleRule(StylePropertyName name, T value, GUIState state)
         {
             this.Name = name;
             this.Value = value;

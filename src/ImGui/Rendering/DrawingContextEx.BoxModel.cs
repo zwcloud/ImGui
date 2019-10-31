@@ -7,9 +7,9 @@ namespace ImGui.Rendering
     {
         private static void DrawOutline(DrawingContext dc, StyleRuleSet style, Rect borderBoxRect)
         {
-            var outlineWidth = style.Get<double>(GUIStyleName.OutlineWidth);
+            var outlineWidth = style.Get<double>(StylePropertyName.OutlineWidth);
             if (MathEx.AmostZero(outlineWidth)) return;
-            var outlineColor = style.Get<Color>(GUIStyleName.OutlineColor);
+            var outlineColor = style.Get<Color>(StylePropertyName.OutlineColor);
             if (MathEx.AmostZero(outlineColor.A)) return;
             dc.DrawRectangle(null, new Pen(outlineColor, outlineWidth), borderBoxRect);
         }
@@ -20,7 +20,7 @@ namespace ImGui.Rendering
             var borderImageSource = style.BorderImageSource;
             if (borderImageSource != null)
             {
-                var rule = style.GetRule<string>(GUIStyleName.BorderImageSource);
+                var rule = style.GetRule<string>(StylePropertyName.BorderImageSource);
                 if (rule.Geometry == null)
                 {
                     rule.Geometry = new ImageGeometry(borderImageSource);
@@ -368,7 +368,7 @@ namespace ImGui.Rendering
         private static void DrawBackground(DrawingContext dc, StyleRuleSet style, Rect paddingBoxRect)
         {
             // draw background in padding-box
-            var gradient = (Gradient) style.Get<int>(GUIStyleName.BackgroundGradient);
+            var gradient = (Gradient) style.Get<int>(StylePropertyName.BackgroundGradient);
             if (gradient == Gradient.None)
             {
                 var bgColor = style.BackgroundColor;
@@ -377,8 +377,8 @@ namespace ImGui.Rendering
             }
             else if (gradient == Gradient.TopBottom)
             {
-                var topColor = style.Get<Color>(GUIStyleName.GradientTopColor);
-                var bottomColor = style.Get<Color>(GUIStyleName.GradientBottomColor);
+                var topColor = style.Get<Color>(StylePropertyName.GradientTopColor);
+                var bottomColor = style.Get<Color>(StylePropertyName.GradientBottomColor);
                 //TODO this.AddRectFilledGradient(paddingBoxRect, topColor, bottomColor);
             }
             else
@@ -405,16 +405,16 @@ namespace ImGui.Rendering
             out Rect contentBoxRect)
         {
             //Widths of border
-            var bt = style.Get<double>(GUIStyleName.BorderTop);
-            var br = style.Get<double>(GUIStyleName.BorderRight);
-            var bb = style.Get<double>(GUIStyleName.BorderBottom);
-            var bl = style.Get<double>(GUIStyleName.BorderLeft);
+            var bt = style.Get<double>(StylePropertyName.BorderTop);
+            var br = style.Get<double>(StylePropertyName.BorderRight);
+            var bb = style.Get<double>(StylePropertyName.BorderBottom);
+            var bl = style.Get<double>(StylePropertyName.BorderLeft);
 
             //Widths of padding
-            var pt = style.Get<double>(GUIStyleName.PaddingTop);
-            var pr = style.Get<double>(GUIStyleName.PaddingRight);
-            var pb = style.Get<double>(GUIStyleName.PaddingBottom);
-            var pl = style.Get<double>(GUIStyleName.PaddingLeft);
+            var pt = style.Get<double>(StylePropertyName.PaddingTop);
+            var pr = style.Get<double>(StylePropertyName.PaddingRight);
+            var pb = style.Get<double>(StylePropertyName.PaddingBottom);
+            var pl = style.Get<double>(StylePropertyName.PaddingLeft);
 
             //4 corner of the border-box
             var btl = new Point(rect.Left, rect.Top);

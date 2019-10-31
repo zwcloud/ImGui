@@ -69,12 +69,12 @@ namespace ImGui
         {
             ruleSet = new StyleRuleSet();
             ruleSet.Replace(button);
-            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal);
-            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.80f), GUIState.Hover);
-            ruleSet.Set(GUIStyleName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
-            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Normal);
-            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Hover);
-            ruleSet.Set(GUIStyleName.HorizontalStretchFactor, 1, GUIState.Active);
+            ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal);
+            ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.80f), GUIState.Hover);
+            ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
+            ruleSet.Set(StylePropertyName.HorizontalStretchFactor, 1, GUIState.Normal);
+            ruleSet.Set(StylePropertyName.HorizontalStretchFactor, 1, GUIState.Hover);
+            ruleSet.Set(StylePropertyName.HorizontalStretchFactor, 1, GUIState.Active);
         }
     }
 }

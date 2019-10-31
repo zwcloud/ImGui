@@ -206,16 +206,16 @@ namespace ImGui
         public static Rect GetContentBox(Rect rect, StyleRuleSet style)
         {
             //Widths of border
-            var bt = style.Get<double>(GUIStyleName.BorderTop);
-            var br = style.Get<double>(GUIStyleName.BorderRight);
-            var bb = style.Get<double>(GUIStyleName.BorderBottom);
-            var bl = style.Get<double>(GUIStyleName.BorderLeft);
+            var bt = style.Get<double>(StylePropertyName.BorderTop);
+            var br = style.Get<double>(StylePropertyName.BorderRight);
+            var bb = style.Get<double>(StylePropertyName.BorderBottom);
+            var bl = style.Get<double>(StylePropertyName.BorderLeft);
 
             //Widths of padding
-            var pt = style.Get<double>(GUIStyleName.PaddingTop);
-            var pr = style.Get<double>(GUIStyleName.PaddingRight);
-            var pb = style.Get<double>(GUIStyleName.PaddingBottom);
-            var pl = style.Get<double>(GUIStyleName.PaddingLeft);
+            var pt = style.Get<double>(StylePropertyName.PaddingTop);
+            var pr = style.Get<double>(StylePropertyName.PaddingRight);
+            var pb = style.Get<double>(StylePropertyName.PaddingBottom);
+            var pl = style.Get<double>(StylePropertyName.PaddingLeft);
 
             //4 corner of the border-box
             var btl = new Point(rect.Left, rect.Top);

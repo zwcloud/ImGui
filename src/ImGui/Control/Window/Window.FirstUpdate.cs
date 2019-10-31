@@ -46,7 +46,7 @@ namespace ImGui
             }
 
             //update title bar
-            var windowRounding = (float) this.WindowContainer.RuleSet.Get<double>(GUIStyleName.WindowRounding);
+            var windowRounding = (float) this.WindowContainer.RuleSet.Get<double>(StylePropertyName.WindowRounding);
             if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
                 // background
@@ -104,10 +104,10 @@ namespace ImGui
                             ButtonFlags.FlattenChilds);
                         resizeGripColor =
                             held
-                                ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Active)
+                                ? this.WindowContainer.RuleSet.Get<Color>(StylePropertyName.ResizeGripColor, GUIState.Active)
                                 : hovered
-                                    ? this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor, GUIState.Hover)
-                                    : this.WindowContainer.RuleSet.Get<Color>(GUIStyleName.ResizeGripColor);
+                                    ? this.WindowContainer.RuleSet.Get<Color>(StylePropertyName.ResizeGripColor, GUIState.Hover)
+                                    : this.WindowContainer.RuleSet.Get<Color>(StylePropertyName.ResizeGripColor);
 
                         if (hovered || held)
                         {

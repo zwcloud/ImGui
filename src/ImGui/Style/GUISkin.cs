@@ -93,10 +93,10 @@ namespace ImGui
 
             this.InternalStyle = new GUIStyle();
             {
-                this.InternalStyle.Set<double>(GUIStyleName._FieldWidth, 200);
-                this.InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, 5);
-                this.InternalStyle.Set<double>(GUIStyleName._LabelWidth, 80);
-                this.InternalStyle.Set<double>(GUIStyleName._LabelHeight, 70);
+                this.InternalStyle.Set<double>(StylePropertyName._FieldWidth, 200);
+                this.InternalStyle.Set<double>(StylePropertyName._ControlLabelSpacing, 5);
+                this.InternalStyle.Set<double>(StylePropertyName._LabelWidth, 80);
+                this.InternalStyle.Set<double>(StylePropertyName._LabelHeight, 70);
             }
         }
 
@@ -126,20 +126,20 @@ namespace ImGui
 
         public double FieldWidth
         {
-            get => InternalStyle.Get<double>(GUIStyleName._FieldWidth);
-            set => InternalStyle.Set<double>(GUIStyleName._FieldWidth, value);
+            get => InternalStyle.Get<double>(StylePropertyName._FieldWidth);
+            set => InternalStyle.Set<double>(StylePropertyName._FieldWidth, value);
         }
 
         public double FieldSpacing
         {
-            get => InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            set => InternalStyle.Set<double>(GUIStyleName._ControlLabelSpacing, value);
+            get => InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            set => InternalStyle.Set<double>(StylePropertyName._ControlLabelSpacing, value);
         }
 
         public double LabelWidth
         {
-            get => InternalStyle.Get<double>(GUIStyleName._LabelWidth);
-            set => InternalStyle.Set<double>(GUIStyleName._LabelWidth, value);
+            get => InternalStyle.Get<double>(StylePropertyName._LabelWidth);
+            set => InternalStyle.Set<double>(StylePropertyName._LabelWidth, value);
         }
 
         #endregion

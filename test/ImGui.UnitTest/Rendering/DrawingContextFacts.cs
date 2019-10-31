@@ -127,7 +127,7 @@ namespace ImGui.UnitTest.Rendering
             node.RuleSet.StrokeColor = Color.Black;
             node.RuleSet.StrokeWidth = 4;
             node.RuleSet.FillColor = Color.Green;
-            node.RuleSet.Set(GUIStyleName.FillColor, Color.Red, GUIState.Hover);
+            node.RuleSet.Set(StylePropertyName.FillColor, Color.Red, GUIState.Hover);
 
             {
                 node.State = GUIState.Normal;

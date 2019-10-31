@@ -9,11 +9,9 @@ namespace UniversalAppTemplate
         {
         }
 
-        bool open = false;
-
         protected override void OnGUI()
         {
-
+            GUILayout.ImageButton("assets/images/logo.png");
         }
     }
 }

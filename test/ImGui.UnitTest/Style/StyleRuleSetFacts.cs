@@ -10,8 +10,8 @@ namespace ImGui.UnitTest.Style
             public void String()
             {
                 var styleRuleSet = new StyleRuleSet();
-                styleRuleSet.Set<string>(GUIStyleName.BorderImageSource, @"assets\images\button.png", GUIState.Normal);
-                var rule = styleRuleSet.GetRule<string>(GUIStyleName.BorderImageSource);
+                styleRuleSet.Set<string>(StylePropertyName.BorderImageSource, @"assets\images\button.png", GUIState.Normal);
+                var rule = styleRuleSet.GetRule<string>(StylePropertyName.BorderImageSource);
                 Assert.Equal(@"assets\images\button.png", rule.Value);
             }
 
@@ -19,8 +19,8 @@ namespace ImGui.UnitTest.Style
             public void Number()
             {
                 var styleRuleSet = new StyleRuleSet();
-                styleRuleSet.Set<double>(GUIStyleName.BorderImageSliceLeft, 12.5, GUIState.Normal);
-                var rule = styleRuleSet.GetRule<double>(GUIStyleName.BorderImageSliceLeft);
+                styleRuleSet.Set<double>(StylePropertyName.BorderImageSliceLeft, 12.5, GUIState.Normal);
+                var rule = styleRuleSet.GetRule<double>(StylePropertyName.BorderImageSliceLeft);
                 Assert.Equal(12.5, rule.Value);
             }
 
@@ -28,8 +28,8 @@ namespace ImGui.UnitTest.Style
             public void Enum()
             {
                 var styleRuleSet = new StyleRuleSet();
-                styleRuleSet.Set<int>(GUIStyleName.BorderImageSliceLeft, (int)Alignment.Center, GUIState.Normal);
-                var rule = styleRuleSet.GetRule<int>(GUIStyleName.BorderImageSliceLeft);
+                styleRuleSet.Set<int>(StylePropertyName.BorderImageSliceLeft, (int)Alignment.Center, GUIState.Normal);
+                var rule = styleRuleSet.GetRule<int>(StylePropertyName.BorderImageSliceLeft);
                 Assert.Equal(Alignment.Center,  (Alignment)rule.Value);
             }
         }

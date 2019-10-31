@@ -45,8 +45,8 @@ namespace ImGui
             node.Rect = window.GetRect(rect);
 
             // interact
-            var spacing = GUISkin.Default.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelWidth = GUISkin.Default.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
+            var spacing = GUISkin.Default.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var labelWidth = GUISkin.Default.InternalStyle.Get<double>(StylePropertyName._LabelWidth);
             var sliderWidth = rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
             {
@@ -109,8 +109,8 @@ namespace ImGui
             node.Rect = window.GetRect(rect);
 
             // interact
-            var spacing = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
+            var spacing = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelHeight);
             var sliderHeight = rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
             {
@@ -179,8 +179,8 @@ namespace ImGui
             node.Rect = window.GetRect(id);
 
             // interact
-            var spacing = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelWidth = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._LabelWidth);
+            var spacing = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var labelWidth = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelWidth);
             var sliderWidth = node.Rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
             {
@@ -243,8 +243,8 @@ namespace ImGui
             node.Rect = window.GetRect(id);
 
             // interact
-            var spacing = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._ControlLabelSpacing);
-            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(GUIStyleName._LabelHeight);
+            var spacing = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelHeight);
             var sliderHeight = node.Rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
             {
@@ -368,7 +368,7 @@ namespace ImGui
             f.IsClosed = true;
             f.IsFilled = true;
             g.Figures.Add(f);
-            var fillColor = node.RuleSet.Get<Color>(GUIStyleName.BackgroundColor, state);
+            var fillColor = node.RuleSet.Get<Color>(StylePropertyName.BackgroundColor, state);
             dc.DrawGeometry(new Brush(fillColor), null, g);
 
             //label
@@ -414,7 +414,7 @@ namespace ImGui
             f.IsClosed = true;
             f.IsFilled = true;
             g.Figures.Add(f);
-            var fillColor = node.RuleSet.Get<Color>(GUIStyleName.BackgroundColor, state);
+            var fillColor = node.RuleSet.Get<Color>(StylePropertyName.BackgroundColor, state);
             dc.DrawGeometry(new Brush(fillColor), null, g);
 
             //label
