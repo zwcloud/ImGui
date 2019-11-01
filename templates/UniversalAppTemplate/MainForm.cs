@@ -11,7 +11,7 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            GUILayout.ImageButton("assets/images/logo.png");
+            GUILayout.Label("Hello ImGui,");
         }
     }
 }

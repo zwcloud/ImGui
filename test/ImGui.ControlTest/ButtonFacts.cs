@@ -4,12 +4,15 @@ namespace ImGui.ControlTest
 {
     public class Button
     {
-        [Fact]
-        public void ShowOneFixedButton()
+        public Button()
         {
             Application.IsRunningInUnitTest = true;
             Application.Init();
+        }
 
+        [Fact]
+        public void ShowOneFixedButton()
+        {
             var form = new MainForm();
             form.OnGUIAction = () =>
             {
@@ -25,9 +28,6 @@ namespace ImGui.ControlTest
         [Fact]
         public void ShowTwoFixedButtons()
         {
-            Application.IsRunningInUnitTest = true;
-            Application.Init();
-
             var form = new MainForm();
             form.OnGUIAction = () =>
             {
@@ -47,9 +47,6 @@ namespace ImGui.ControlTest
         [Fact]
         public void ShowOneLayoutedButton()
         {
-            Application.IsRunningInUnitTest = true;
-            Application.Init();
-
             var form = new MainForm();
             form.OnGUIAction = () =>
             {
@@ -65,9 +62,6 @@ namespace ImGui.ControlTest
         [Fact]
         public void ShowTwoLayoutedButton()
         {
-            Application.IsRunningInUnitTest = true;
-            Application.Init();
-
             var form = new MainForm();
             form.OnGUIAction = () =>
             {
@@ -79,6 +73,30 @@ namespace ImGui.ControlTest
                 {
                     Log.Msg("clicked Revert");
                 }
+            };
+
+            Application.Run(form);
+        }
+
+        [Fact]
+        public void ShowOneLayoutedImageButton()
+        {
+            var form = new MainForm(800, 600);
+            form.OnGUIAction = () =>
+            {
+                GUILayout.ImageButton("assets/images/logo.png");
+            };
+
+            Application.Run(form);
+        }
+
+        [Fact]
+        public void ShowOneLayoutedSlicedImageButton()
+        {
+            var form = new MainForm(800, 600);
+            form.OnGUIAction = () =>
+            {
+                GUILayout.ImageButton("assets/images/button.png", (306, 456), (83, 53, 53, 53));
             };
 
             Application.Run(form);

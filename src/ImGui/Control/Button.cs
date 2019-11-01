@@ -147,6 +147,46 @@ namespace ImGui
         {
             return ImageButton(filePath, Size.Empty, Point.Zero, Point.One);
         }
+
+        public static bool ImageButton(string filePath, Size size, (double top, double left, double right, double bottom) borderSlice)
+        {
+            var window = GetCurrentWindow();
+            if (window.SkipItems)
+                return false;
+
+            //get or create the root node
+            var id = window.GetID(filePath);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, $"Button<{filePath}>");
+                node.UseBoxModel = true;
+                node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
+                node.AttachLayoutEntry(size);
+                container.AppendChild(node);
+            }
+            node.RuleSet.BorderImageSource = filePath;
+            node.RuleSet.BorderImageSlice = borderSlice;
+            node.ActiveSelf = true;
+
+            // rect
+            node.Rect = window.GetRect(id);
+
+            // interact
+            var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
+            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                dc.DrawBoxModel(node.RuleSet, node.Rect);
+            }
+
+            return pressed;
+        }
+
     }
 
     internal partial class GUIBehavior

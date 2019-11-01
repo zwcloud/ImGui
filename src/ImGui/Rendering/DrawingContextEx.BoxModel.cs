@@ -20,14 +20,10 @@ namespace ImGui.Rendering
             var borderImageSource = style.BorderImageSource;
             if (borderImageSource != null)
             {
-                var rule = style.GetRule<string>(StylePropertyName.BorderImageSource);
-                if (rule.Geometry == null)
-                {
-                    rule.Geometry = new ImageGeometry(borderImageSource);
-                }
-
-                Debug.Assert(rule.Geometry is ImageGeometry);
-                //TODO this.DrawSlicedImage((ImageGeometry) rule.Geometry, borderBoxRect, style);
+                var imagePath = borderImageSource;
+                var imageSlice = style.BorderImageSlice;
+                var texture = TextureUtil.GetTexture(imagePath);
+                dc.DrawImage(texture, borderBoxRect, imageSlice);
             }
             else
             {
