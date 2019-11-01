@@ -31,7 +31,7 @@ namespace ImGui
             var rule = this.rules.Find(i =>
             {
                 var r = i as StyleRule<T>;
-                if (r !=null && r.Name == name && r.State == state)
+                if (r != null && r.Name == name && r.State == state)
                 {
                     return true;
                 }
@@ -47,7 +47,7 @@ namespace ImGui
             var rule = this.rules.Find(i =>
             {
                 var r = i as StyleRule<T>;
-                if (r !=null && r.Name == name && r.State == this.currentState)
+                if (r != null && r.Name == name && r.State == this.currentState)
                 {
                     return true;
                 }
@@ -141,7 +141,7 @@ namespace ImGui
         /// TODO refactor
         public void ApplyOptions(LayoutOptions options)
         {
-            if(options.MinWidth.HasValue && options.MaxWidth.HasValue)
+            if (options.MinWidth.HasValue && options.MaxWidth.HasValue)
             {
                 var value = options.MinWidth.Value;
                 if (value < this.PaddingHorizontal + this.BorderHorizontal)
@@ -163,7 +163,7 @@ namespace ImGui
                 this.MinHeight = this.MaxHeight = value;
                 this.VerticalStretchFactor = 0;
             }
-            if(options.HorizontalStretchFactor.HasValue)
+            if (options.HorizontalStretchFactor.HasValue)
             {
                 this.HorizontalStretchFactor = options.HorizontalStretchFactor.Value;
             }
@@ -268,7 +268,7 @@ namespace ImGui
         }
         public (Color top, Color right, Color bottom, Color left) BorderColor
         {
-            get =>(
+            get => (
                 this.Get<Color>(StylePropertyName.BorderTopColor),
                 this.Get<Color>(StylePropertyName.BorderRightColor),
                 this.Get<Color>(StylePropertyName.BorderBottomColor),
@@ -287,7 +287,11 @@ namespace ImGui
         public Color BorderRightColor => Get<Color>(StylePropertyName.BorderRightColor);
         public Color BorderBottomColor => Get<Color>(StylePropertyName.BorderBottomColor);
         public Color BorderLeftColor => Get<Color>(StylePropertyName.BorderLeftColor);
-        public string BorderImageSource => Get<string>(StylePropertyName.BorderImageSource);
+        public string BorderImageSource
+        {
+            get { return Get<string>(StylePropertyName.BorderImageSource); }
+            set { Set<string>(StylePropertyName.BorderImageSource, value); }
+        }
         public (double, double, double, double) BorderImageSlice
         {
             get

@@ -93,7 +93,12 @@ namespace ImGui
         public static StylePropertyName ScrollBarBackgroundColor = new StylePropertyName(nameof(ScrollBarBackgroundColor));
         public static StylePropertyName ScrollBarButtonColor = new StylePropertyName(nameof(ScrollBarButtonColor));
 
-        private static Dictionary<string, StylePropertyName> CustomStylePropertyNameMap = new Dictionary<string, StylePropertyName>();
+        private static readonly Dictionary<string, StylePropertyName> CustomStylePropertyNameMap = new Dictionary<string, StylePropertyName>();
+
+        public static void Add(StylePropertyName stylePropertyName)
+        {
+            CustomStylePropertyNameMap.Add(stylePropertyName.Name, stylePropertyName);
+        }
 
         public StylePropertyName(string name)
         {
