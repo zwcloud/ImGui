@@ -6,15 +6,22 @@ namespace ImGui
 {
     public partial class GUILayout
     {
-        public static void PushStyle(StylePropertyName name, int value)
+        private static readonly List<IStyleRule> styleRuleStack = new List<IStyleRule>(16);
+
+        internal static List<IStyleRule> StyleRuleStack => styleRuleStack;
+
+        public static void PopStyle(int number = 1)
         {
-            var g = GetCurrentContext();
-            //implement a shared stack that will be applied in subsequent GUI call
+            for (int i = 0; i < number && styleRuleStack.Count > 0; i++)
+            {
+                styleRuleStack.RemoveAt(styleRuleStack.Count - 1);
+            }
         }
 
-        public static void PopStyle()
+        public static void PushStyle<T>(StylePropertyName name, T value)
         {
-
+            styleRuleStack.Add(new StyleRule<T>(name, value));
         }
+
     }
 }

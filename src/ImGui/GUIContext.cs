@@ -17,8 +17,6 @@ namespace ImGui
 
         public InputTextState InputTextState = new InputTextState();
 
-        private Stack<IStyleRule> styleRuleStack = new Stack<IStyleRule>(16);
-
         private int hoverId;
         private int activeId;
         private bool activeIdIsAlive;
@@ -154,34 +152,6 @@ namespace ImGui
             }
 
             return false;
-        }
-
-        public void PushStyleRule(IStyleRule rule)
-        {
-            styleRuleStack.Push(rule);
-        }
-
-        public void PopStyleRule()
-        {
-            PopStyleRule(1);
-        }
-
-        public void PopStyleRule(int number)
-        {
-            for (int i = 0; i < number; i++)
-            {
-                styleRuleStack.Pop();
-            }
-        }
-
-        public void ClearStyleRuleStack()
-        {
-            styleRuleStack.Clear();
-        }
-
-        public void ApplyStyleRule(StyleRuleSet ruleSet)
-        {
-
         }
     }
 }

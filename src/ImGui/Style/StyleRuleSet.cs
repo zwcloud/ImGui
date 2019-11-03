@@ -99,6 +99,15 @@ namespace ImGui
 
         public T Get<T>(StylePropertyName styleName, GUIState state)
         {
+            foreach (var stackRule in GUILayout.StyleRuleStack)
+            {
+                var styleRule = stackRule as StyleRule<T>;
+                if (styleRule != null && styleRule.Name == styleName && styleRule.State == state)
+                {
+                    return styleRule.Value;
+                }
+            }
+
             var rule = this.GetRule<T>(styleName, state);
             if (rule == null)
             {
@@ -110,6 +119,15 @@ namespace ImGui
 
         public T Get<T>(StylePropertyName styleName)
         {
+            foreach (var stackRule in GUILayout.StyleRuleStack)
+            {
+                var styleRule = stackRule as StyleRule<T>;
+                if (styleRule != null && styleRule.Name == styleName && styleRule.State == this.currentState)
+                {
+                    return styleRule.Value;
+                }
+            }
+
             var rule = this.GetRule<T>(styleName, this.currentState);
             if (rule == null)
             {
