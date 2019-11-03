@@ -232,10 +232,10 @@ label:
             {
                 GUILayout.BulletText("Bullet point 1");
                 GUILayout.BulletText("Bullet point 2\nOn multiple lines");
-                GUILayout.PushHCellSpacing(0);//remove horizontal cell spacing of following groups.
+                GUILayout.PushStyle(StylePropertyName.CellSpacingHorizontal, 0);//remove horizontal cell spacing of following groups.
                 GUILayout.BeginHorizontal("HGroup~1"); GUILayout.Bullet("_Bullet"); GUILayout.Text("Bullet point 3 (two calls)"); GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal("HGroup~2"); GUILayout.Bullet("_Bullet"); GUILayout.Button("Button"); GUILayout.EndHorizontal();
-                GUILayout.PopStyleVar();
+                GUILayout.PopStyle();
             }
             GUILayout.TreePop();
 

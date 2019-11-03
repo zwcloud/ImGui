@@ -1,4 +1,5 @@
 ﻿using ImGui.Input;
+using System.Collections.Generic;
 
 namespace ImGui
 {
@@ -15,6 +16,8 @@ namespace ImGui
         public WindowManager WindowManager { get; } = new WindowManager();
 
         public InputTextState InputTextState = new InputTextState();
+
+        private Stack<IStyleRule> styleRuleStack = new Stack<IStyleRule>(16);
 
         private int hoverId;
         private int activeId;
@@ -153,5 +156,32 @@ namespace ImGui
             return false;
         }
 
+        public void PushStyleRule(IStyleRule rule)
+        {
+            styleRuleStack.Push(rule);
+        }
+
+        public void PopStyleRule()
+        {
+            PopStyleRule(1);
+        }
+
+        public void PopStyleRule(int number)
+        {
+            for (int i = 0; i < number; i++)
+            {
+                styleRuleStack.Pop();
+            }
+        }
+
+        public void ClearStyleRuleStack()
+        {
+            styleRuleStack.Clear();
+        }
+
+        public void ApplyStyleRule(StyleRuleSet ruleSet)
+        {
+
+        }
     }
 }
