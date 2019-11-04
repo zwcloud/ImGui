@@ -18,10 +18,15 @@ namespace ImGui
             }
         }
 
-        public static void PushStyle<T>(StylePropertyName name, T value)
+        public static void PushStyle<T>(StylePropertyName name, T value, GUIState state)
         {
-            styleRuleStack.Add(new StyleRule<T>(name, value));
+            styleRuleStack.Add(new StyleRule<T>(name, value, state));
         }
 
+        public static void CopyTo(List<IStyleRule> otherStyleRuleList)
+        {
+            otherStyleRuleList.Clear();
+            otherStyleRuleList.AddRange(styleRuleStack);
+        }
     }
 }

@@ -16,6 +16,9 @@ namespace ImGui
         private readonly List<IStyleRule> rules;
         private GUIState currentState = GUIState.Normal;
 
+        private readonly List<IStyleRule> styleRuleStack = new List<IStyleRule>(16);
+        public List<IStyleRule> StyleRuleStack => styleRuleStack;
+
         public StyleRuleSet()
         {
             this.rules = new List<IStyleRule>();
@@ -99,7 +102,7 @@ namespace ImGui
 
         public T Get<T>(StylePropertyName styleName, GUIState state)
         {
-            foreach (var stackRule in GUILayout.StyleRuleStack)
+            foreach (var stackRule in this.StyleRuleStack)
             {
                 var styleRule = stackRule as StyleRule<T>;
                 if (styleRule != null && styleRule.Name == styleName && styleRule.State == state)
@@ -119,7 +122,7 @@ namespace ImGui
 
         public T Get<T>(StylePropertyName styleName)
         {
-            foreach (var stackRule in GUILayout.StyleRuleStack)
+            foreach (var stackRule in this.styleRuleStack)
             {
                 var styleRule = stackRule as StyleRule<T>;
                 if (styleRule != null && styleRule.Name == styleName && styleRule.State == this.currentState)
@@ -142,8 +145,14 @@ namespace ImGui
             return rule.Value;
         }
 
-        #region Options
+        public void ApplyStack()
+        {
+            this.styleRuleStack.Clear();
+            this.styleRuleStack.AddRange(GUILayout.StyleRuleStack);
+        }
 
+        #region Options
+        
         public void ApplyOptions(LayoutOptions? options)
         {
             if (options.HasValue)

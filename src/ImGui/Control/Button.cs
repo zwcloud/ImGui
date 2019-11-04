@@ -33,7 +33,7 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
             }
-
+            node.RuleSet.ApplyStack();
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
@@ -84,6 +84,7 @@ namespace ImGui
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
             }
+            node.RuleSet.ApplyStack();
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 

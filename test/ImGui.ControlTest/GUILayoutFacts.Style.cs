@@ -16,10 +16,12 @@ namespace ImGui.ControlTest
             var form = new MainForm();
             form.OnGUIAction = () =>
             {
-                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0);
+                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0, GUIState.Normal);
+                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0, GUIState.Hover);
+                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0, GUIState.Active);
                 GUILayout.Button("Button1");
                 GUILayout.Button("Button2");
-                GUILayout.PopStyle();
+                GUILayout.PopStyle(3);
                 GUILayout.Button("Button3");
                 GUILayout.Button("Button4");
             };
