@@ -105,6 +105,32 @@ namespace ImGui.UnitTest.Layout
             }
 
             [Fact]
+            public void TheLocationIsCorrect()
+            {
+                Node group = new Node(0); group.AttachLayoutGroup(true);
+                Node item1 = new Node(1); item1.AttachLayoutEntry(new Size(50, 50));
+                item1.RuleSet.Border = (10, 10, 10, 10);
+                item1.RuleSet.Padding = (20, 20, 20, 20);
+                Node item2 = new Node(2); item2.AttachLayoutEntry(new Size(50, 50));
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+
+                group.CalcWidth();
+                group.CalcHeight();
+                group.SetX(0);
+                group.SetY(0);
+
+                Assert.Equal(0, group.X);
+                Assert.Equal(0, group.Y);
+                Assert.Equal(group.X + group.RuleSet.BorderLeft + group.RuleSet.PaddingLeft, item1.Rect.X);
+                Assert.Equal(group.X + group.RuleSet.BorderLeft + group.RuleSet.PaddingLeft, item2.Rect.X);
+                Assert.Equal(group.Y + group.RuleSet.BorderTop + group.RuleSet.PaddingTop, item1.Rect.Y);
+                Assert.Equal(item1.ContentHeight + item1.BorderVertical + item1.PaddingVertical, item1.Rect.Height);
+                Assert.Equal(50 + 10*2 + 20*2, item1.Rect.Height);
+                Assert.Equal(group.X + group.RuleSet.BorderTop + group.RuleSet.PaddingTop + item1.Rect.Height, item2.Rect.Y);
+            }
+
+            [Fact]
             public void TheSizeOfAHorizontalGroupThatContainsMultipleEntriesIsCorrectlyCalculated()
             {
                 Node group = new Node(0); group.AttachLayoutGroup(false);
