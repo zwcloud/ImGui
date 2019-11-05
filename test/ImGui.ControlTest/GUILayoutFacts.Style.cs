@@ -16,14 +16,12 @@ namespace ImGui.ControlTest
             var form = new MainForm();
             form.OnGUIAction = () =>
             {
-                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0, GUIState.Normal);
-                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0, GUIState.Hover);
-                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0, GUIState.Active);
+                GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0);
                 GUILayout.Button("Button1");
                 GUILayout.Button("Button2");
                 GUILayout.Label("Label");
                 GUILayout.CheckBox("Check", true);
-                GUILayout.PopStyle(3);
+                GUILayout.PopStyle();
                 GUILayout.Button("Button3");
                 GUILayout.Button("Button4");
             };

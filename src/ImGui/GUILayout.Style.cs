@@ -18,6 +18,11 @@ namespace ImGui
             }
         }
 
+        public static void PushStyle<T>(StylePropertyName name, T value)
+        {
+            styleRuleStack.Add(new StyleRule<T>(name, value, GUIState.Normal));
+        }
+
         public static void PushStyle<T>(StylePropertyName name, T value, GUIState state)
         {
             styleRuleStack.Add(new StyleRule<T>(name, value, state));

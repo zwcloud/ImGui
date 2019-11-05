@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ImGui.Rendering;
 
 namespace ImGui
@@ -102,13 +103,9 @@ namespace ImGui
 
         public T Get<T>(StylePropertyName styleName, GUIState state)
         {
-            foreach (var stackRule in this.StyleRuleStack)
+            if (GetFromStack<T>(styleName, state, out var value))
             {
-                var styleRule = stackRule as StyleRule<T>;
-                if (styleRule != null && styleRule.Name == styleName && styleRule.State == state)
-                {
-                    return styleRule.Value;
-                }
+                return value;
             }
 
             var rule = this.GetRule<T>(styleName, state);
@@ -122,13 +119,9 @@ namespace ImGui
 
         public T Get<T>(StylePropertyName styleName)
         {
-            foreach (var stackRule in this.styleRuleStack)
+            if (GetFromStack<T>(styleName, this.currentState, out var value))
             {
-                var styleRule = stackRule as StyleRule<T>;
-                if (styleRule != null && styleRule.Name == styleName && styleRule.State == this.currentState)
-                {
-                    return styleRule.Value;
-                }
+                return value;
             }
 
             var rule = this.GetRule<T>(styleName, this.currentState);
@@ -149,6 +142,36 @@ namespace ImGui
         {
             this.styleRuleStack.Clear();
             this.styleRuleStack.AddRange(GUILayout.StyleRuleStack);
+        }
+
+        private bool GetFromStack<T>(StylePropertyName styleName, GUIState state, out T value)
+        {
+            StyleRule<T> normalRule = null;
+            foreach (var stackRule in this.styleRuleStack)
+            {
+                var styleRule = stackRule as StyleRule<T>;
+                if (styleRule != null && styleRule.Name == styleName)
+                {
+                    if (styleRule.State == GUIState.Normal)
+                    {
+                        normalRule = styleRule;
+                    }
+                    if (styleRule.State == state)
+                    {
+                        value = styleRule.Value;
+                        return true;
+                    }
+                }
+            }
+
+            if (normalRule != null)
+            {
+                value = normalRule.Value;
+                return true;
+            }
+
+            value = default;
+            return false;
         }
 
         #region Options

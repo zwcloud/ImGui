@@ -32,6 +32,19 @@ namespace ImGui.UnitTest.Style
                 var rule = styleRuleSet.GetRule<int>(StylePropertyName.BorderImageSliceLeft);
                 Assert.Equal(Alignment.Center,  (Alignment)rule.Value);
             }
+
+            [Fact]
+            public void StackStyleInheritsFromNormal()
+            {
+                var ruleSet = new StyleRuleSet();
+                GUILayout.PushStyle(StylePropertyName.BorderLeft, 10.0, GUIState.Normal);
+                ruleSet.ApplyStack();
+                var hoverValue = ruleSet.Get<double>(StylePropertyName.BorderLeft, GUIState.Hover);
+                var activeValue = ruleSet.Get<double>(StylePropertyName.BorderLeft, GUIState.Active);
+                Assert.Equal(10.0, hoverValue);
+                Assert.Equal(10.0, activeValue);
+            }
+
         }
 
     }
