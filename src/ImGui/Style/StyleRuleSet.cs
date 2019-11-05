@@ -111,7 +111,12 @@ namespace ImGui
             var rule = this.GetRule<T>(styleName, state);
             if (rule == null)
             {
-                return GUIStyle.Default.Get<T>(styleName, this.currentState);
+                rule = this.GetRule<T>(styleName, GUIState.Normal);
+            }
+
+            if (rule == null)
+            {
+                return GUIStyle.Default.Get<T>(styleName, state);
             }
 
             return rule.Value;

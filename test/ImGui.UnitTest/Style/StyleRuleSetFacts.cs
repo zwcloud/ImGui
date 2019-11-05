@@ -34,7 +34,18 @@ namespace ImGui.UnitTest.Style
             }
 
             [Fact]
-            public void StackStyleInheritsFromNormal()
+            public void RegularStyleInheritsFromNormal()
+            {
+                var ruleSet = new StyleRuleSet();
+                ruleSet.Set(StylePropertyName.BorderLeft, 10.0, GUIState.Normal);
+                var hoverValue = ruleSet.Get<double>(StylePropertyName.BorderLeft, GUIState.Hover);
+                var activeValue = ruleSet.Get<double>(StylePropertyName.BorderLeft, GUIState.Active);
+                Assert.Equal(10.0, hoverValue);
+                Assert.Equal(10.0, activeValue);
+            }
+
+            [Fact]
+            public void PushedStyleInheritsFromNormal()
             {
                 var ruleSet = new StyleRuleSet();
                 GUILayout.PushStyle(StylePropertyName.BorderLeft, 10.0, GUIState.Normal);
