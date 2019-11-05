@@ -155,6 +155,8 @@ namespace ImGui
         
         public void ApplyOptions(LayoutOptions? options)
         {
+            this.ApplyStack();
+
             if (options.HasValue)
             {
                 ApplyOptions(options.Value);

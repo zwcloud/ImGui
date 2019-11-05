@@ -84,7 +84,6 @@ namespace ImGui
                 node.AttachLayoutEntry(size);
                 container.AppendChild(node);
             }
-            node.RuleSet.ApplyStack();
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
