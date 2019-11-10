@@ -11,6 +11,16 @@ public class Demo
     #region Demo
     bool showDemoWindow = false;
 
+    System.Diagnostics.Stopwatch watch;
+    private static long startTime;
+    private static long deltaTime;
+
+    public Demo()
+    {
+        watch = new System.Diagnostics.Stopwatch();
+        watch.Start();
+    }
+
     #region Help
     bool helpOn;
     #endregion
@@ -110,6 +120,9 @@ label:
 
     public void OnGUI()
     {
+        deltaTime = watch.ElapsedMilliseconds - startTime;
+        startTime = watch.ElapsedMilliseconds;
+
         // 1. Show a simple window
         // Tip: if we don't call GUI.Begin()/GUI.End() the widgets appears in a window automatically called "Debug"
         {
@@ -313,8 +326,8 @@ label:
             {
                 GUILayout.PushPadding((0,0,0,0));
                 read_only = GUILayout.CheckBox("Read-only", read_only);
-                GUILayout.PopStyleVar(4);
-                GUILayout.PushHStretchFactor(1);
+                GUILayout.PopStyle(4);
+                GUILayout.PushStyle(StylePropertyName.HorizontalStretchFactor, 1);
                 if(read_only)
                 {
                     GUILayout.InputTextMultiline("Text Box", new Size(120, 200), text);
@@ -323,7 +336,7 @@ label:
                 {
                     text = GUILayout.InputTextMultiline("Text Box", new Size(120, 200), text);
                 }
-                GUILayout.PopStyleVar();
+                GUILayout.PopStyle();
             }
             GUILayout.TreePop();
 
@@ -356,11 +369,11 @@ label:
                 for (int i = 0; i < 7; i++)
                 {
                     GUILayout.PushID(i);
-                    GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.6f, 0.6f), GUIState.Normal);
-                    GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.7f, 0.7f), GUIState.Hover);
-                    GUILayout.PushStyleColor(GUIStyleName.BackgroundColor, Color.HSV(i / 7.0f, 0.8f, 0.8f), GUIState.Active);
+                    GUILayout.PushStyle(StylePropertyName.BackgroundColor, Color.HSV(i / 7.0f, 0.6f, 0.6f), GUIState.Normal);
+                    GUILayout.PushStyle(StylePropertyName.BackgroundColor, Color.HSV(i / 7.0f, 0.7f, 0.7f), GUIState.Hover);
+                    GUILayout.PushStyle(StylePropertyName.BackgroundColor, Color.HSV(i / 7.0f, 0.8f, 0.8f), GUIState.Active);
                     GUILayout.Button("Click");
-                    GUILayout.PopStyleVar(3);
+                    GUILayout.PopStyle(3);
                     GUILayout.PopID();
                 }
             }
@@ -409,7 +422,7 @@ label:
         {
             GUILayout.PushID("_GraphsWidgets");
             animate = GUILayout.CheckBox("Animate", animate);
-            GUILayout.PushHStretchFactor(1);//+1
+            GUILayout.PushStyle(StylePropertyName.HorizontalStretchFactor, 1);//+1
             if (animate)
             {
                 progress += progress_dir * 0.4f * deltaTime / 1000.0;
@@ -429,10 +442,10 @@ label:
             GUILayout.EndVertical();
             GUILayout.PushFixedWidth(100);//+2
             GUILayout.Text("Progress");
-            GUILayout.PopStyleVar(2);//-2
+            GUILayout.PopStyle(2);//-2
             GUILayout.EndHorizontal();
 
-            GUILayout.PopStyleVar();//-1
+            GUILayout.PopStyle();//-1
             GUILayout.PopID();
         }
 
@@ -450,7 +463,7 @@ label:
                 {
                     goto_line = true;
                 }
-                GUILayout.PopStyleVar(2);//-2
+                GUILayout.PopStyle(2);//-2
 
                 using (GUILayout.HScope("HGroup~1"))
                 {
@@ -501,21 +514,21 @@ label:
                     GUILayout.Button("1");
                     GUILayout.Button("2");
                     GUILayout.Button("3");
-                    GUILayout.PopStyleVar(2);
+                    GUILayout.PopStyle(2);
                 }
                 GUILayout.EndHorizontal();
                 GUILayout.Label("Three stretched sized buttons with 1/2/3 stretch factor.");
                 GUILayout.BeginHorizontal("H~~~3");
                 {
-                    GUILayout.PushHStretchFactor(1);
+                    GUILayout.PushStyle(StylePropertyName.HorizontalStretchFactor, 1);
                     GUILayout.Button("1");
-                    GUILayout.PopStyleVar();
-                    GUILayout.PushHStretchFactor(2);
+                    GUILayout.PopStyle();
+                    GUILayout.PushStyle(StylePropertyName.HorizontalStretchFactor, 2);
                     GUILayout.Button("2");
-                    GUILayout.PopStyleVar();
-                    GUILayout.PushHStretchFactor(3);
+                    GUILayout.PopStyle();
+                    GUILayout.PushStyle(StylePropertyName.HorizontalStretchFactor, 3);
                     GUILayout.Button("3");
-                    GUILayout.PopStyleVar();
+                    GUILayout.PopStyle();
                 }
                 GUILayout.EndHorizontal();
             }

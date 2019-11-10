@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using S = ImGui.StylePropertyName;
 
 namespace ImGui
 {
@@ -33,5 +34,36 @@ namespace ImGui
             otherStyleRuleList.Clear();
             otherStyleRuleList.AddRange(styleRuleStack);
         }
+
+        #region short-cut
+
+        public static void PushBorder((int top, int left, int right, int bottom) border, GUIState state = GUIState.Normal)
+        {
+            PushStyle<double>(S.BorderTop, border.top, state);
+            PushStyle<double>(S.BorderRight, border.top, state);
+            PushStyle<double>(S.BorderBottom, border.top, state);
+            PushStyle<double>(S.BorderLeft, border.top, state);
+        }
+
+        public static void PushPadding((int top, int left, int right, int bottom) padding, GUIState state = GUIState.Normal)
+        {
+            PushStyle<double>(S.PaddingTop, padding.top, state);
+            PushStyle<double>(S.PaddingRight, padding.top, state);
+            PushStyle<double>(S.PaddingBottom, padding.top, state);
+            PushStyle<double>(S.PaddingLeft, padding.top, state);
+        }
+
+        public static void PushFixedWidth(int width, GUIState state = GUIState.Normal)
+        {
+            PushStyle<double>(S.MinWidth, width, state);
+            PushStyle<double>(S.MaxWidth, width, state);
+        }
+        public static void PushFixedHeight(int height, GUIState state = GUIState.Normal)
+        {
+            PushStyle<double>(S.MinHeight, height, state);
+            PushStyle<double>(S.MaxHeight, height, state);
+        }
+
+        #endregion
     }
 }
