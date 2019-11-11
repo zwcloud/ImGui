@@ -467,7 +467,7 @@ label:
 
                 using (GUILayout.HScope("HGroup~1"))
                 {
-                    if (GUILayout.BeginChild("Sub1", (0, 300), 0, GUILayout.Height(300).ExpandWidth(true)))
+                    if (GUILayout.BeginChild("Sub1", GUILayout.Height(300).ExpandWidth(true)))
                     {
                         for (int i = 0; i < 50; i++)
                         {
@@ -484,7 +484,7 @@ label:
                         GUILayout.EndChild();
                     }
 
-                    if (GUILayout.BeginChild("Sub2", (0, 300), 0, GUILayout.Height(300).ExpandWidth(true)))
+                    if (GUILayout.BeginChild("Sub2", GUILayout.Height(300).ExpandWidth(true)))
                     {
                         GUILayout.Text("With border");
                         for (int i = 0; i < 50; i++)
