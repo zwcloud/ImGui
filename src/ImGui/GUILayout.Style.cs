@@ -29,10 +29,10 @@ namespace ImGui
             styleRuleStack.Add(new StyleRule<T>(name, value, state));
         }
 
-        public static void CopyTo(List<IStyleRule> otherStyleRuleList)
+        public static void PushCustomStyle<T>(string name, T value, GUIState state)
         {
-            otherStyleRuleList.Clear();
-            otherStyleRuleList.AddRange(styleRuleStack);
+            var propertyName = CustomStylePropertyName.GetOrAdd(name);
+            styleRuleStack.Add(new StyleRule<T>(propertyName, value, state));
         }
 
         #region short-cut

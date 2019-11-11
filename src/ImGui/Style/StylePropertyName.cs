@@ -61,9 +61,6 @@ namespace ImGui
         public static StylePropertyName FontSize = new StylePropertyName(nameof(FontSize));
         public static StylePropertyName FontColor = new StylePropertyName(nameof(FontColor));
 
-        public static StylePropertyName Slider_LineUsed = new StylePropertyName(nameof(Slider_LineUsed));
-        public static StylePropertyName Slider_LineUnused = new StylePropertyName(nameof(Slider_LineUnused));
-
         public static StylePropertyName StrokeColor = new StylePropertyName(nameof(StrokeColor));
         public static StylePropertyName StrokeWidth = new StylePropertyName(nameof(StrokeWidth));
         public static StylePropertyName FillColor = new StylePropertyName(nameof(FillColor));
@@ -79,7 +76,6 @@ namespace ImGui
         public static StylePropertyName MaxTextureCoordinateV = new StylePropertyName(nameof(MaxTextureCoordinateV));
 
         public static StylePropertyName _FieldWidth = new StylePropertyName(nameof(_FieldWidth));
-        public static StylePropertyName _ControlLabelSpacing = new StylePropertyName(nameof(_ControlLabelSpacing));
         public static StylePropertyName _LabelWidth = new StylePropertyName(nameof(_LabelWidth));
         public static StylePropertyName _LabelHeight = new StylePropertyName(nameof(_LabelHeight));
 
@@ -93,14 +89,7 @@ namespace ImGui
         public static StylePropertyName ScrollBarBackgroundColor = new StylePropertyName(nameof(ScrollBarBackgroundColor));
         public static StylePropertyName ScrollBarButtonColor = new StylePropertyName(nameof(ScrollBarButtonColor));
 
-        private static readonly Dictionary<string, StylePropertyName> CustomStylePropertyNameMap = new Dictionary<string, StylePropertyName>();
-
-        public static void Add(StylePropertyName stylePropertyName)
-        {
-            CustomStylePropertyNameMap.Add(stylePropertyName.Name, stylePropertyName);
-        }
-
-        public StylePropertyName(string name)
+        protected StylePropertyName(string name)
         {
             this.Name = name;
         }
