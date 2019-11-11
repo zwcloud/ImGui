@@ -135,6 +135,10 @@ namespace ImGui
                 [new NameState {Name = StylePropertyName.StrokeWidth, State = GUIState.Normal}] = 1,
                 [new NameState {Name = StylePropertyName.StrokeWidth, State = GUIState.Hover}] = 1,
                 [new NameState {Name = StylePropertyName.StrokeWidth, State = GUIState.Active}] = 1,
+
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Normal}] = 5,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Hover }] = 5,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Active }] = 5
             };
 
             style.colorStyles = new Dictionary<NameState, Color>

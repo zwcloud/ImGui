@@ -94,7 +94,6 @@ namespace ImGui
             this.InternalStyle = new GUIStyle();
             {
                 this.InternalStyle.Set<double>(StylePropertyName._FieldWidth, 200);
-                this.InternalStyle.Set<double>(StylePropertyName._ControlLabelSpacing, 5);
                 this.InternalStyle.Set<double>(StylePropertyName._LabelWidth, 80);
                 this.InternalStyle.Set<double>(StylePropertyName._LabelHeight, 70);
             }
@@ -128,12 +127,6 @@ namespace ImGui
         {
             get => InternalStyle.Get<double>(StylePropertyName._FieldWidth);
             set => InternalStyle.Set<double>(StylePropertyName._FieldWidth, value);
-        }
-
-        public double FieldSpacing
-        {
-            get => InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
-            set => InternalStyle.Set<double>(StylePropertyName._ControlLabelSpacing, value);
         }
 
         public double LabelWidth

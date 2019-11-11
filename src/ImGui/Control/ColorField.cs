@@ -109,7 +109,7 @@ namespace ImGui
                     d.DrawRectangle(new Brush(value), null, rectColor);
                 }
 
-                Space("FieldSpacing", GUISkin.Current.FieldSpacing);
+                Space("FieldSpacing", node.RuleSet.Get<double>("ControlLabelSpacing"));
                 Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
             }
             EndHorizontal();

@@ -14,6 +14,8 @@ namespace ImGui
         //for test
         public Node refNode;
 
+        public static StyleRuleSet Global = new StyleRuleSet();
+
         private readonly List<IStyleRule> rules;
         private GUIState currentState = GUIState.Normal;
 
@@ -124,23 +126,18 @@ namespace ImGui
 
         public T Get<T>(StylePropertyName styleName)
         {
-            if (GetFromStack<T>(styleName, this.currentState, out var value))
-            {
-                return value;
-            }
+            return Get<T>(styleName, this.currentState);
+        }
 
-            var rule = this.GetRule<T>(styleName, this.currentState);
-            if (rule == null)
+        public T Get<T>(string customStyleName)
+        {
+            var propertyName = CustomStylePropertyName.Get(customStyleName);
+            if (propertyName == null)
             {
-                rule = this.GetRule<T>(styleName, GUIState.Normal);
+                Log.Warning($"Custom style property \"{customStyleName}\" is undefined. Default value returned.");
+                return default;
             }
-
-            if (rule == null)
-            {
-                return GUIStyle.Default.Get<T>(styleName, this.currentState);
-            }
-
-            return rule.Value;
+            return Get<T>(propertyName, this.currentState);
         }
 
         public void ApplyStack()

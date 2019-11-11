@@ -34,7 +34,7 @@ namespace ImGui
                     }
                 }
                 EndVertical();
-                GUILayout.Space("FieldSpacing", GUISkin.Current.FieldSpacing);
+                GUILayout.Space("FieldSpacing", StyleRuleSet.Global.Get<double>("FieldSpacing"));
                 GUILayout.Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth)); 
             }
             EndHorizontal();

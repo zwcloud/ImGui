@@ -150,7 +150,7 @@ namespace ImGui
             BeginHorizontal("FieldGroup~"+id);
             {
                 Label(text, GUILayout.ExpandWidth(true));
-                Space("FieldSpacing", GUISkin.Current.FieldSpacing);
+                Space("FieldSpacing", StyleRuleSet.Global.Get<double>("FieldSpacing"));
                 Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
             }
             EndHorizontal();

@@ -45,7 +45,7 @@ namespace ImGui
             node.Rect = window.GetRect(rect);
 
             // interact
-            var spacing = GUISkin.Default.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
             var labelWidth = GUISkin.Default.InternalStyle.Get<double>(StylePropertyName._LabelWidth);
             var sliderWidth = rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
@@ -109,7 +109,7 @@ namespace ImGui
             node.Rect = window.GetRect(rect);
 
             // interact
-            var spacing = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
             var labelHeight = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelHeight);
             var sliderHeight = rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
@@ -118,8 +118,7 @@ namespace ImGui
             }
             var sliderRect = new Rect(node.Rect.X, node.Rect.Y,
                 node.Rect.Width, sliderHeight);
-            bool hovered, held;
-            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out hovered, out held);
+            value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out var hovered, out _);
 
             // render
             var state = GUIState.Normal;
@@ -179,7 +178,7 @@ namespace ImGui
             node.Rect = window.GetRect(id);
 
             // interact
-            var spacing = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
             var labelWidth = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelWidth);
             var sliderWidth = node.Rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
@@ -243,7 +242,7 @@ namespace ImGui
             node.Rect = window.GetRect(id);
 
             // interact
-            var spacing = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._ControlLabelSpacing);
+            var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
             var labelHeight = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelHeight);
             var sliderHeight = node.Rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
