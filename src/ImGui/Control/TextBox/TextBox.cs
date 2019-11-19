@@ -176,9 +176,8 @@ namespace ImGui
             string result;
             BeginHorizontal("FieldGroup~" + id);
             {
-                result = TextBox(text, GUISkin.Current.FieldWidth, text, flags, checker, GUILayout.ExpandWidth(true));
-                //Space("FieldSpacing", GUISkin.Current.FieldSpacing);
-                Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
+                result = TextBox(text, StyleRuleSet.Global.Get<double>("FieldWidth"), text, flags, checker, GUILayout.ExpandWidth(true));
+                Label(label, GUILayout.Width((int)StyleRuleSet.Global.Get<double>("LabelWidth")));
             }
             EndHorizontal();
 

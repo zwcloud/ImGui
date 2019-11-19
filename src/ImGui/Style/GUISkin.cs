@@ -8,12 +8,14 @@ namespace ImGui
         /// <summary>
         /// Current Skin
         /// </summary>
-        public static GUISkin Current { get; set;}
+        internal static GUISkin Current { get; set;}
 
         /// <summary>
         /// Default skin
         /// </summary>
-        public static GUISkin Default { get; }
+        internal static GUISkin Default { get; }
+
+        internal static GUISkin Custom { get; set;}
 
         static GUISkin()
         {
@@ -85,56 +87,26 @@ namespace ImGui
 
         private readonly Dictionary<GUIControlName, StyleRuleSet> styles;
 
-        public GUIStyle InternalStyle;
-
         private GUISkin()
         {
             styles = new Dictionary<GUIControlName, StyleRuleSet>();
+        }
 
-            this.InternalStyle = new GUIStyle();
+        public GUISkin(Dictionary<GUIControlName, StyleRuleSet> styles)
+        {
+            this.styles = new Dictionary<GUIControlName, StyleRuleSet>(styles);
+        }
+
+        internal StyleRuleSet this[GUIControlName name]
+        {
+            get
             {
-                this.InternalStyle.Set<double>(StylePropertyName._FieldWidth, 200);
-                this.InternalStyle.Set<double>(StylePropertyName._LabelWidth, 80);
-                this.InternalStyle.Set<double>(StylePropertyName._LabelHeight, 70);
+                if (Custom != null && Custom.styles.TryGetValue(name, out var value))
+                {
+                    return value;
+                }
+                return this.styles[name];
             }
         }
-
-        public StyleRuleSet this[GUIControlName name] => this.styles[name];
-
-        #region short-cuts
-
-        /*
-         * # Field and label design
-         *
-         * single-line:
-         * +-----------+         +---------+
-         * | ~ field ~ | spacing |  label  |
-         * +-----------+         +---------+
-         *
-         * multiple-line:
-         * +-----------+         +---------+
-         * | ~ field ~ | spacing |  label  |
-         * |           |         +---------+
-         * |           |
-         * |           |
-         * |           |
-         * +-----------+
-         *
-         * Field is horizontally stretched. Spacing and label is fix-sized.
-         */
-
-        public double FieldWidth
-        {
-            get => InternalStyle.Get<double>(StylePropertyName._FieldWidth);
-            set => InternalStyle.Set<double>(StylePropertyName._FieldWidth, value);
-        }
-
-        public double LabelWidth
-        {
-            get => InternalStyle.Get<double>(StylePropertyName._LabelWidth);
-            set => InternalStyle.Set<double>(StylePropertyName._LabelWidth, value);
-        }
-
-        #endregion
     }
 }

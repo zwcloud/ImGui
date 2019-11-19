@@ -150,8 +150,8 @@ namespace ImGui
             BeginHorizontal("FieldGroup~"+id);
             {
                 Label(text, GUILayout.ExpandWidth(true));
-                Space("FieldSpacing", StyleRuleSet.Global.Get<double>("FieldSpacing"));
-                Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
+                Space("FieldSpacing", StyleRuleSet.Global.Get<double>("ControlLabelSpacing"));
+                Label(label, GUILayout.Width((int)StyleRuleSet.Global.Get<double>("LabelWidth")));
             }
             EndHorizontal();
         }

@@ -162,7 +162,7 @@ namespace ImGui
         public static void DrawToggle(Node node, string label, bool value, GUIState state)
         {
             var rect = node.Rect;
-            var spacing = StyleRuleSet.Global.Get<double>("FieldSpacing");
+            var spacing = StyleRuleSet.Global.Get<double>("ControlLabelSpacing");
             var boxRect = new Rect(rect.X, rect.Y + MathEx.ClampTo0(rect.Height - 16) / 2, 16, 16);
             var labelRect = new Rect(rect.X + 16 + spacing, rect.Y, MathEx.ClampTo0(rect.Width - 16 - spacing),
                 rect.Height);

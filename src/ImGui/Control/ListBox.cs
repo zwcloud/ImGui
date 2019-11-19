@@ -34,8 +34,8 @@ namespace ImGui
                     }
                 }
                 EndVertical();
-                GUILayout.Space("FieldSpacing", StyleRuleSet.Global.Get<double>("FieldSpacing"));
-                GUILayout.Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth)); 
+                GUILayout.Space("FieldSpacing", StyleRuleSet.Global.Get<double>("ControlLabelSpacing"));
+                GUILayout.Label(label, GUILayout.Width(StyleRuleSet.Global.Get<double>("LabelWidth"))); 
             }
             EndHorizontal();
             PopID();

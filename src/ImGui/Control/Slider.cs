@@ -46,7 +46,7 @@ namespace ImGui
 
             // interact
             var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
-            var labelWidth = GUISkin.Default.InternalStyle.Get<double>(StylePropertyName._LabelWidth);
+            var labelWidth = node.RuleSet.Get<double>("LabelWidth");
             var sliderWidth = rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
             {
@@ -110,7 +110,7 @@ namespace ImGui
 
             // interact
             var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
-            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelHeight);
+            var labelHeight = node.RuleSet.Get<double>("LabelHeight");
             var sliderHeight = rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
             {
@@ -179,7 +179,7 @@ namespace ImGui
 
             // interact
             var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
-            var labelWidth = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelWidth);
+            var labelWidth = node.RuleSet.Get<double>("LabelWidth");
             var sliderWidth = node.Rect.Width - spacing - labelWidth;
             if(sliderWidth <= 0)
             {
@@ -243,7 +243,7 @@ namespace ImGui
 
             // interact
             var spacing = node.RuleSet.Get<double>("ControlLabelSpacing");
-            var labelHeight = GUISkin.Current.InternalStyle.Get<double>(StylePropertyName._LabelHeight);
+            var labelHeight = node.RuleSet.Get<double>("LabelHeight");
             var sliderHeight = node.Rect.Height - spacing - labelHeight;
             if (sliderHeight <= 0)
             {

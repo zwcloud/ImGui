@@ -6,16 +6,11 @@ namespace ImGui
     public interface IStyleRule {}
 
     [DebuggerDisplay("{Name}, {State}, {Value}")]
-    internal class StyleRule<T> : IStyleRule
+    public class StyleRule<T> : IStyleRule
     {
         public StylePropertyName Name { get; set; }
         public GUIState State { get; set; }
         public T Value { get; set; }
-
-        /// <summary>
-        /// Geometry owned by this rule.
-        /// </summary>
-        public Geometry Geometry;
 
         public StyleRule(StylePropertyName name, T value)
         {

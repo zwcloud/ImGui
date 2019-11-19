@@ -136,9 +136,22 @@ namespace ImGui
                 [new NameState {Name = StylePropertyName.StrokeWidth, State = GUIState.Hover}] = 1,
                 [new NameState {Name = StylePropertyName.StrokeWidth, State = GUIState.Active}] = 1,
 
+                //TODO Following custom styles should be moved into GUISkin
                 [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Normal}] = 5,
                 [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Hover }] = 5,
-                [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Active }] = 5
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Active }] = 5,
+
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("FieldWidth"), State = GUIState.Normal}] = 200,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("FieldWidth"), State = GUIState.Hover }] = 200,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("FieldWidth"), State = GUIState.Active }] = 200,
+
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("LabelWidth"), State = GUIState.Normal}] = 80,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("LabelWidth"), State = GUIState.Hover }] = 80,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("LabelWidth"), State = GUIState.Active }] = 80,
+
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("LabelHeight"), State = GUIState.Normal}] = 70,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("LabelHeight"), State = GUIState.Hover }] = 70,
+                [new NameState {Name = CustomStylePropertyName.GetOrAdd("LabelHeight"), State = GUIState.Active }] = 70,
             };
 
             style.colorStyles = new Dictionary<NameState, Color>

@@ -110,7 +110,7 @@ namespace ImGui
                 }
 
                 Space("FieldSpacing", node.RuleSet.Get<double>("ControlLabelSpacing"));
-                Label(label, GUILayout.Width((int)GUISkin.Current.LabelWidth));
+                Label(label, GUILayout.Width((int)node.RuleSet.Get<double>("LabelWidth")));
             }
             EndHorizontal();
 
