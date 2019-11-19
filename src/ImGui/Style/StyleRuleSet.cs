@@ -1,18 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ImGui.Rendering;
 
 namespace ImGui
 {
-    internal interface IStyleRuleSet
-    {
-        StyleRuleSet RuleSet { get; }
-    }
-
-    internal class StyleRuleSet
+    public class StyleRuleSet
     {
         //for test
-        public Node refNode;
+        internal Node refNode;
 
         public static StyleRuleSet Global = new StyleRuleSet();
 
@@ -336,11 +330,18 @@ namespace ImGui
                 this.Set<Color>(StylePropertyName.BorderLeftColor, value.left);
             }
         }
-
         public Color BorderTopColor => Get<Color>(StylePropertyName.BorderTopColor);
         public Color BorderRightColor => Get<Color>(StylePropertyName.BorderRightColor);
         public Color BorderBottomColor => Get<Color>(StylePropertyName.BorderBottomColor);
         public Color BorderLeftColor => Get<Color>(StylePropertyName.BorderLeftColor);
+        public void SetBorderColor(Color color, GUIState state = GUIState.Normal)
+        {
+            this.Set<Color>(StylePropertyName.BorderTopColor, color, state);
+            this.Set<Color>(StylePropertyName.BorderRightColor, color, state);
+            this.Set<Color>(StylePropertyName.BorderBottomColor, color, state);
+            this.Set<Color>(StylePropertyName.BorderLeftColor, color, state);
+        }
+
         public string BorderImageSource
         {
             get { return Get<string>(StylePropertyName.BorderImageSource); }
@@ -404,6 +405,8 @@ namespace ImGui
             get => Get<Color>(StylePropertyName.BackgroundColor);
             set => Set<Color>(StylePropertyName.BackgroundColor, value);
         }
+        public void SetBackgroundColor(Color color, GUIState state)
+            => Set(StylePropertyName.BackgroundColor, color, state);
 
         public Gradient BackgroundGradient
         {
