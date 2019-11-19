@@ -9,9 +9,12 @@ namespace UniversalAppTemplate
         {
         }
 
+        Demo demo = new Demo();
+
         protected override void OnGUI()
         {
-            GUILayout.Label("Hello ImGui,");
+            //GUILayout.Label("Hello ImGui,");
+            demo.OnGUI();
         }
     }
 }

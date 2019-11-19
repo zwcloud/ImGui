@@ -647,43 +647,33 @@ label:
         GUILayout.PopID();
     }
 
-    private static Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> dearImGuiSkinRules;
-    private static Dictionary<GUIControlName, IReadOnlyList<StyleModifier>> win10SkinRules;
+    private static ImGui.Style.CustomSkin dearImGuiSkinRules;
+    private static ImGui.Style.CustomSkin win10SkinRules;
 
     private static void InitDearImGuiSkin()
     {
-        StyleModifierBuilder builder = new StyleModifierBuilder();
-
-        dearImGuiSkinRules = new Dictionary<GUIControlName, IReadOnlyList<StyleModifier>>();
-        builder.PushBorder(1);
-        builder.PushPadding(5);
-        builder.PushBorderColor(new Color(0.70f, 0.70f, 0.70f, 0.65f));
-        builder.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);
-        builder.PushBgColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
-        builder.PushBgColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
-        dearImGuiSkinRules.Add(GUIControlName.Button, builder.ToArray());
-
-        builder.Clear();
-        //TODO other controls
+        dearImGuiSkinRules = new ImGui.Style.CustomSkin();
+        var button = dearImGuiSkinRules[GUIControlName.Button];
+        button.Border = (1, 1, 1, 1);
+        button.Padding = (5, 5, 5, 5);
+        button.SetBorderColor(new Color(0.70f, 0.70f, 0.70f, 0.65f));
+        button.SetBackgroundColor(new Color(0.67f, 0.40f, 0.40f, 0.60f), GUIState.Normal);
+        button.SetBackgroundColor(new Color(0.67f, 0.40f, 0.40f, 1.00f), GUIState.Hover);
+        button.SetBackgroundColor(new Color(0.80f, 0.50f, 0.50f, 1.00f), GUIState.Active);
     }
 
     private static void InitWin10Skin()
     {
-        StyleModifierBuilder builder = new StyleModifierBuilder();
-
-        win10SkinRules = new Dictionary<GUIControlName, IReadOnlyList<StyleModifier>>();
-        builder.PushBorder(1);
-        builder.PushPadding(5);
-        builder.PushBorderColor(Color.Rgb(173), GUIState.Normal);
-        builder.PushBorderColor(Color.Rgb(0, 120, 215), GUIState.Hover);
-        builder.PushBorderColor(Color.Rgb(0, 84, 153), GUIState.Active);
-        builder.PushBgColor(Color.Rgb(225), GUIState.Normal);
-        builder.PushBgColor(Color.Rgb(229, 241, 251), GUIState.Hover);
-        builder.PushBgColor(Color.Rgb(204, 228, 247), GUIState.Active);
-        win10SkinRules.Add(GUIControlName.Button, builder.ToArray());
-
-        builder.Clear();
-        //TODO other controls
+        win10SkinRules = new ImGui.Style.CustomSkin();
+        var button = win10SkinRules[GUIControlName.Button];
+        button.Border = (2, 2, 2, 2);
+        button.Padding = (5, 5, 5, 5);
+        button.SetBorderColor(Color.Rgb(204), GUIState.Normal);
+        button.SetBorderColor(Color.Rgb(122), GUIState.Hover);
+        button.SetBorderColor(Color.Rgb(153), GUIState.Active);
+        button.SetBackgroundColor(Color.Rgb(225), GUIState.Normal);
+        button.SetBackgroundColor(Color.Rgb(225), GUIState.Hover);
+        button.SetBackgroundColor(Color.Rgb(153), GUIState.Active);
     }
 
     static Demo()
