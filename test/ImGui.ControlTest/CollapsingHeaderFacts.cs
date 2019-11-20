@@ -25,5 +25,30 @@ namespace ImGui.ControlTest
 
             Application.Run(form);
         }
+
+        [Fact]
+        public void ShowTwoCollapsingHeader()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+
+            var form = new MainForm();
+            bool open1 = false, open2 = false;
+            form.OnGUIAction = () =>
+            {
+                if (GUILayout.CollapsingHeader("Header 1", ref open1))
+                {
+                    GUILayout.Label("Item A");
+                    GUILayout.Label("Item B");
+                }
+                if (GUILayout.CollapsingHeader("Header 2", ref open2))
+                {
+                    GUILayout.Label("Item C");
+                    GUILayout.Label("Item D");
+                }
+            };
+
+            Application.Run(form);
+        }
     }
 }
