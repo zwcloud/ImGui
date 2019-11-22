@@ -3,7 +3,7 @@ using ImGui;
 
 namespace TextRenderingTest
 {
-    public class CairoPathBuilder : ITextPathBuilder
+    public class CairoPathBuilder
     {
         private readonly Cairo.Context g;
         private readonly System.Text.StringBuilder builder = new System.Text.StringBuilder();
