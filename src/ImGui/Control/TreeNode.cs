@@ -23,10 +23,10 @@ namespace ImGui
                 //create nodes
                 node = new Node(id, $"TreeNode<{text}>");
                 node.AttachLayoutEntry();
-                container.AppendChild(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.TreeNode]);
             }
+            container.AppendChild(node);
             var lineHeight = node.RuleSet.GetLineHeight();
             node.RuleSet.ApplyOptions(Height(lineHeight));
             node.ActiveSelf = true;

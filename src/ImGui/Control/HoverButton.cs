@@ -102,8 +102,8 @@ namespace ImGui
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 node.UseBoxModel = true;
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 

@@ -23,8 +23,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Separator]);
                 node.RuleSet.HorizontalStretchFactor = 1;
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
 
             node.ActiveSelf = true;
 

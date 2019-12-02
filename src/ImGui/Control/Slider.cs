@@ -170,8 +170,8 @@ namespace ImGui
                 size.Width += minSilderWidth;
                 size.Height = 20;
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
 
             // rect
@@ -234,8 +234,8 @@ namespace ImGui
                 size.Width = 20;
                 size.Height += minSilderHeight;
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
 
             // rect

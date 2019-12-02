@@ -26,8 +26,8 @@ namespace ImGui
                 {
                     childWindowContainer.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 }
-                window.RenderTree.CurrentContainer.AppendChild(childWindowContainer);
             }
+            window.RenderTree.CurrentContainer.AppendChild(childWindowContainer);
             childWindowContainer.ActiveSelf = true;
             if(childWindowContainer.Rect.Width == 0 || childWindowContainer.Rect.Height == 0)
             {

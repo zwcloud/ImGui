@@ -68,8 +68,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.TextBox]);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
@@ -116,8 +116,8 @@ namespace ImGui
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.TextBox]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 

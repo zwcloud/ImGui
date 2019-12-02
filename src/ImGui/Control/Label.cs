@@ -177,8 +177,8 @@ namespace ImGui
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
                 var size = new Size(0, node.RuleSet.GetLineHeight());
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
 
             node.ActiveSelf = true;
 
@@ -213,8 +213,8 @@ namespace ImGui
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
 
             node.ActiveSelf = true;
 

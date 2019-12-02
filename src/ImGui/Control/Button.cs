@@ -82,8 +82,8 @@ namespace ImGui
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
@@ -122,8 +122,8 @@ namespace ImGui
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
                 var texture = TextureUtil.GetTexture(filePath);
                 node.AttachLayoutEntry(texture.Size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
 
             // rect
@@ -165,8 +165,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.RuleSet.BorderImageSource = filePath;
             node.RuleSet.BorderImageSlice = borderSlice;
             node.ActiveSelf = true;

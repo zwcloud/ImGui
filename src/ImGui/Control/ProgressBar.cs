@@ -22,8 +22,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.ProgressBar]);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
 
             // rect

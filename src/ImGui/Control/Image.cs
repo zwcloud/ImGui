@@ -98,8 +98,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Image]);
                 node.AttachLayoutEntry(texture.Size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
 
             // rect
@@ -128,8 +128,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Image]);
                 node.AttachLayoutEntry(texture.Size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
 
             // rect

@@ -120,8 +120,8 @@ namespace ImGui
                     boundingRect = Rect.Union(boundingRect, point);
                 }
                 node.AttachLayoutEntry(boundingRect.Size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 

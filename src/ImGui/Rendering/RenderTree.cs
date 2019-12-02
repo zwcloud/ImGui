@@ -48,8 +48,8 @@ namespace ImGui.Rendering
             {
                 group = new Node(id, str_id ?? "group");
                 group.AttachLayoutGroup(isVertical);
-                this.CurrentContainer.AppendChild(group);
             }
+            this.CurrentContainer.AppendChild(group);
             group.RuleSet.ApplyOptions(options);
             group.ActiveSelf = true;
             this.CurrentContainer = group;

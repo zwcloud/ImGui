@@ -22,8 +22,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 var size = window.RenderTree.CurrentContainer.IsVertical ? new Size(0, thickness) : new Size(thickness, 0);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
             node.Rect = window.GetRect(id);
 
@@ -58,8 +58,8 @@ namespace ImGui
                 {
                     node.RuleSet.HorizontalStretchFactor = stretchFactor;
                 }
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
             node.ActiveSelf = true;
             node.Rect = window.GetRect(id);
 

@@ -89,8 +89,8 @@ namespace ImGui
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Selectable]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
-                container.AppendChild(node);
             }
+            container.AppendChild(node);
 
             node.ActiveSelf = true;
 

@@ -32,8 +32,8 @@ namespace ImGui
                                 rNode = new Node(rId, "#R");
                                 rNode.AttachLayoutEntry();
                                 rNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
-                                window.RenderTree.CurrentContainer.AppendChild(rNode);
                             }
+                            window.RenderTree.CurrentContainer.AppendChild(rNode);
                             rNode.ActiveSelf = true;
 
                             gId = window.GetID("#G");
@@ -43,8 +43,8 @@ namespace ImGui
                                 gNode = new Node(gId, "#G");
                                 gNode.AttachLayoutEntry();
                                 gNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
-                                window.RenderTree.CurrentContainer.AppendChild(gNode);
                             }
+                            window.RenderTree.CurrentContainer.AppendChild(gNode);
                             gNode.ActiveSelf = true;
 
                             bId = window.GetID("#B");
@@ -54,8 +54,8 @@ namespace ImGui
                                 bNode = new Node(bId, "#B");
                                 bNode.AttachLayoutEntry();
                                 bNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
-                                window.RenderTree.CurrentContainer.AppendChild(bNode);
                             }
+                            window.RenderTree.CurrentContainer.AppendChild(bNode);
                             bNode.ActiveSelf = true;
 
                             rectR = window.GetRect(rId);
@@ -70,8 +70,8 @@ namespace ImGui
                             aNode = new Node(aId, "#A");
                             aNode.AttachLayoutEntry();
                             aNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
-                            window.RenderTree.CurrentContainer.AppendChild(aNode);
                         }
+                        window.RenderTree.CurrentContainer.AppendChild(aNode);
                         aNode.ActiveSelf = true;
                         rectA = window.GetRect(aId);
                     }
@@ -82,8 +82,8 @@ namespace ImGui
                         colorNode = new Node(colorId, "#Color");
                         colorNode.AttachLayoutEntry();
                         colorNode.RuleSet.ApplyOptions(GUILayout.ExpandHeight(true).ExpandWidth(true));
-                        window.RenderTree.CurrentContainer.AppendChild(colorNode);
                     }
+                    window.RenderTree.CurrentContainer.AppendChild(colorNode);
                     colorNode.ActiveSelf = true;
                     rectColor = window.GetRect(colorId);
                 }
