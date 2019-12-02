@@ -26,18 +26,20 @@ namespace ImGui
             var container = window.RenderTree.CurrentContainer;
             Node node = container.GetNodeById(id);
             text = Utility.FindRenderedText(text);
+            bool nodeNotCreated = node == null;
             if (node == null)
             {
                 //create nodes
                 node = new Node(id, $"CollapsingHeader<{text}>");
                 node.AttachLayoutEntry();
-                container.AppendChild(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.CollapsingHeader]);
             }
             node.RuleSet.ApplyOptions(options);
             node.RuleSet.ApplyOptions(Height(node.RuleSet.GetLineHeight()));
             node.ActiveSelf = true;
+
+            container.AppendChild(node);
 
             // rect
             Rect rect = window.GetRect(id);

@@ -11,10 +11,19 @@ namespace UniversalAppTemplate
 
         Demo demo = new Demo();
 
+        bool open1 = false, open2 = false;
         protected override void OnGUI()
         {
-            //GUILayout.Label("Hello ImGui,");
-            demo.OnGUI();
+            if (GUILayout.CollapsingHeader("Header 1", ref open1))
+            {
+                GUILayout.Label("Item A");
+                GUILayout.Label("Item B");
+            }
+            if (GUILayout.CollapsingHeader("Header 2", ref open2))
+            {
+                GUILayout.Label("Item C");
+                GUILayout.Label("Item D");
+            }
         }
     }
 }

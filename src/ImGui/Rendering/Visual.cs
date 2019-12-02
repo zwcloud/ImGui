@@ -165,6 +165,8 @@ namespace ImGui.Rendering
         /// </summary>
         public abstract Rect GetClipRect();
 
+        private int insertIndex = 0;
+
         /// <summary>
         /// Adds a visual to the end of the list of children.
         /// </summary>
@@ -181,7 +183,27 @@ namespace ImGui.Rendering
             }
 
             child.Parent = this;
-            this.Children.Add(child);
+            if(this.Children.Count == 0)
+            {
+                this.insertIndex = 0;
+            }
+
+            var existingIndex = this.Children.IndexOf(child);
+            if(existingIndex < 0)
+            {
+                if(this.insertIndex > 0)
+                {
+                    this.Children.Insert(this.insertIndex, child);
+                }
+                else
+                {
+                    this.Children.Add(child);
+                }
+            }
+            else
+            {
+                this.insertIndex = existingIndex + 1;
+            }
         }
 
         public Visual GetVisualByIndex(int i)
