@@ -1,3 +1,0 @@
-[submodule "templates/WebTemplate/MonoWasm"]
-    path = templates/WebTemplate/MonoWasm
-    url = https://github.com/zwcloud/MonoWasm.git
