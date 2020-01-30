@@ -26,7 +26,6 @@ namespace ImGui
             var container = window.RenderTree.CurrentContainer;
             Node node = container.GetNodeById(id);
             text = Utility.FindRenderedText(text);
-            bool nodeNotCreated = node == null;
             if (node == null)
             {
                 //create nodes

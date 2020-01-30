@@ -38,7 +38,11 @@ namespace ImGui.Rendering
         /// <summary>
         /// The rectangle this visual occupies. Act as the border-box when using box-model.
         /// </summary>
-        public Rect Rect;
+        public Rect Rect
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// identifier number
@@ -56,7 +60,12 @@ namespace ImGui.Rendering
         public double X
         {
             get => this.Rect.X;
-            set => this.Rect.X = value;
+            set
+            {
+                var r = this.Rect;
+                r.X = value;
+                this.Rect = r;
+            }
         }
 
         /// <summary>
@@ -65,7 +74,12 @@ namespace ImGui.Rendering
         public double Y
         {
             get => this.Rect.Y;
-            set => this.Rect.Y = value;
+            set
+            {
+                var r = this.Rect;
+                r.Y = value;
+                this.Rect = r;
+            }
         }
 
         /// <summary>
@@ -74,7 +88,12 @@ namespace ImGui.Rendering
         public double Width
         {
             get => this.Rect.Width;
-            set => this.Rect.Width = value;
+            set
+            {
+                var r = this.Rect;
+                r.Width = value;
+                this.Rect = r;
+            }
         }
 
         /// <summary>
@@ -83,7 +102,12 @@ namespace ImGui.Rendering
         public double Height
         {
             get => this.Rect.Height;
-            set => this.Rect.Height = value;
+            set
+            {
+                var r = this.Rect;
+                r.Height = value;
+                this.Rect = r;
+            }
         }
 
         /// <summary>
