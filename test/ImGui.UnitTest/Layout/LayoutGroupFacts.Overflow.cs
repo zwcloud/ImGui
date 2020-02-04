@@ -99,6 +99,36 @@ namespace ImGui.UnitTest.Layout
             }
 
             [Fact]
+            public void HorizontallyOverflow5()
+            {
+                Node group = new Node(0);
+                group.AttachLayoutGroup(false);
+                group.RuleSet.Padding = (0, 0, 0, 0);
+                group.RuleSet.ApplyOptions(GUILayout.Width(100));
+                group.RuleSet.BorderColor = (Color.DarkRed, Color.DarkGreen, Color.DarkBlue, Color.DarkOrange);
+                group.RuleSet.Border = (10, 10, 10, 10);
+                group.RuleSet.AlignmentHorizontal = Alignment.Start;
+                group.RuleSet.Overflow = OverflowPolicy.Scroll;
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(60).Height(80));
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(60).Height(80));
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(80));
+                item3.ContentSize = new Size(100, 20);
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+                group.AppendChild(item3);
+
+                group.Layout();
+                group.Layout();
+
+                item1.RuleSet.BorderColor = (Color.Red, Color.Red, Color.Red, Color.Red);
+                item2.RuleSet.BorderColor = (Color.Green, Color.Green, Color.Green, Color.Green);
+                item3.RuleSet.BorderColor = (Color.Blue, Color.Blue, Color.Blue, Color.Blue);
+
+                Util.Show(group,new Size(300, 200), $"D:\\{System.Guid.NewGuid()}.png");
+                //CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(HorizontallyOverflow5)}.png");
+            }
+
+            [Fact]
             public void VerticallyOverflow1()
             {
                 Node group = new Node(0);

@@ -494,6 +494,29 @@ namespace ImGui
 
         #endregion Layout
 
+        public OverflowPolicy Overflow
+        {
+            get => (OverflowPolicy)Get<int>(StylePropertyName.Overflow);
+            set => Set<int>(StylePropertyName.Overflow, (int)value);
+        }
+
+        public double ScrollBarWidth
+        {
+            get => Get<double>(StylePropertyName.ScrollBarWidth);
+            set => Set<double>(StylePropertyName.ScrollBarWidth, value);
+        }
+
+        public Color ScrollBarBackgroundColor
+        {
+            get => Get<Color>(StylePropertyName.ScrollBarBackgroundColor);
+            set => Set<Color>(StylePropertyName.ScrollBarBackgroundColor, value);
+        }
+
+        public Color ScrollBarButtonColor
+        {
+            get => Get<Color>(StylePropertyName.ScrollBarButtonColor);
+            set => Set<Color>(StylePropertyName.ScrollBarButtonColor, value);
+        }
 
         #region Font & Text
 

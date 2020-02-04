@@ -8,6 +8,11 @@ namespace ImGui.Rendering
         public bool HorizontallyOverflow { get; set; }
         public bool VerticallyOverflow { get; set; }
 
+        public OverflowPolicy HorizontallyOverflowPolicy { get; set; } = OverflowPolicy.Scroll;
+        public OverflowPolicy VerticallyOverflowPolicy { get; set; } = OverflowPolicy.Scroll;
+
+        internal Node ScrollBarRoot;
+
         public void CheckRuleSetForLayout_Group(IStyleRuleSet child)
         {
             if (this.RuleSet.IsFixedWidth)
@@ -206,7 +211,7 @@ namespace ImGui.Rendering
                 }
 
                 var spaceLeftForStretchedChildren = this.ContentWidth - knownSizedChildrenWidth;
-                if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be hidden
+                if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be reverted to default-sized
                 {
                     this.HorizontallyOverflow = true;
                     foreach (var visual in this.Children)
@@ -216,11 +221,39 @@ namespace ImGui.Rendering
                             continue;
                         }
                         Debug.Assert(visual is Node);//All children should be Node.
-                        Node entry = (Node) visual;
-                        if (entry.RuleSet.IsFixedWidth || entry.RuleSet.IsDefaultWidth)
+                        Node entry = (Node)visual;
+                        if (entry.RuleSet.HorizontallyStretched)
                         {
-                            entry.CalcWidth();
+                            //set to default-sized
+                            entry.RuleSet.HorizontalStretchFactor = 0;
+                            entry.RuleSet.MinWidth = 1;
+                            entry.RuleSet.MaxWidth = 9999;
                         }
+                        entry.CalcWidth();
+                    }
+
+                    if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+                    {
+                        if (ScrollBarRoot == null)
+                        {
+                            ScrollBarRoot = new Node(this.Name + "#ScrollBar");
+                        }
+                        var scrollWidth = this.RuleSet.ScrollBarWidth;
+                        var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
+                        var scrollButtonColor = this.RuleSet.ScrollBarButtonColor;
+                        var min = this.Rect.BottomLeft + new Vector(this.BorderLeft, -scrollWidth-this.BorderBottom);
+                        var max = this.Rect.BottomRight + new Vector(-this.BorderRight, -this.BorderBottom);
+                        Rect scrollBarRect = new Rect(min, max);
+                        //TEMP we should update button rect based on the content and the view
+                        Rect scrollBarButtonRect = new Rect(
+                            scrollBarRect.Center + new Vector(-scrollWidth, -scrollWidth * 0.5),
+                            scrollBarRect.Center + new Vector(scrollWidth, scrollWidth * 0.5));
+                        using (var g = ScrollBarRoot.RenderOpen())
+                        {
+                            g.DrawRectangle(new Brush(scrollBgColor), null, scrollBarRect);
+                            g.DrawRectangle(new Brush(scrollButtonColor), null, scrollBarButtonRect);
+                        }
+                        ScrollBarRoot.ActiveSelf = true;
                     }
                 }
                 else

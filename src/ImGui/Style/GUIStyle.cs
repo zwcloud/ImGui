@@ -136,6 +136,10 @@ namespace ImGui
                 [new NameState {Name = StylePropertyName.StrokeWidth, State = GUIState.Hover}] = 1,
                 [new NameState {Name = StylePropertyName.StrokeWidth, State = GUIState.Active}] = 1,
 
+                [new NameState { Name = StylePropertyName.ScrollBarWidth, State = GUIState.Normal}] = 20,
+                [new NameState { Name = StylePropertyName.ScrollBarWidth, State = GUIState.Hover }] = 20,
+                [new NameState { Name = StylePropertyName.ScrollBarWidth, State = GUIState.Active }] = 20,
+
                 //TODO Following custom styles should be moved into GUISkin
                 [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Normal}] = 5,
                 [new NameState {Name = CustomStylePropertyName.GetOrAdd("ControlLabelSpacing"), State = GUIState.Hover }] = 5,
@@ -207,6 +211,14 @@ namespace ImGui
                 [new NameState { Name = StylePropertyName.FillColor, State = GUIState.Normal }] = Color.White,
                 [new NameState { Name = StylePropertyName.FillColor, State = GUIState.Hover }] = Color.White,
                 [new NameState { Name = StylePropertyName.FillColor, State = GUIState.Active }] = Color.White,
+
+                [new NameState { Name = StylePropertyName.ScrollBarBackgroundColor, State = GUIState.Normal }] = Color.Rgb(232),
+                [new NameState { Name = StylePropertyName.ScrollBarBackgroundColor, State = GUIState.Hover }] = Color.Rgb(232),
+                [new NameState { Name = StylePropertyName.ScrollBarBackgroundColor, State = GUIState.Active }] = Color.Rgb(232),
+
+                [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Normal }] = Color.Rgb(104),
+                [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Hover }] = Color.Rgb(104),
+                [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Active }] = Color.Rgb(104),
             };
 
             style.imageStyles = new Dictionary<NameState, ITexture>

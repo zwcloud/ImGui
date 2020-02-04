@@ -311,7 +311,7 @@ namespace ImGui.Rendering
             Flags = value ? (Flags | flags) : (Flags & (~flags));
         }
 
-        internal void Render(RenderContext context)
+        internal virtual void Render(RenderContext context)
         {
             RenderRecursive(context);
         }

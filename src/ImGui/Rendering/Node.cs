@@ -224,6 +224,16 @@ namespace ImGui.Rendering
 
         #region new rendering pipeline
 
+        internal override void Render(RenderContext context)
+        {
+            base.Render(context);
+
+            if (ScrollBarRoot != null)
+            {
+                ScrollBarRoot.Render(context);
+            }
+        }
+
         internal override bool RenderContent(RenderContext context)
         {
             if (content != null && ActiveInTree)
