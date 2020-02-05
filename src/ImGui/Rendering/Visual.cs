@@ -316,6 +316,10 @@ namespace ImGui.Rendering
             RenderRecursive(context);
         }
 
+        internal virtual void RenderAfterChildren(RenderContext context)
+        {
+        }
+
         internal void RenderRecursive(RenderContext context)
         {
             if (!RenderContent(context))
@@ -331,6 +335,7 @@ namespace ImGui.Rendering
                 }
                 child.RenderRecursive(context);
             }
+            RenderAfterChildren(context);
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using ImGui.Input;
 
 namespace ImGui.Rendering
 {
@@ -12,6 +13,7 @@ namespace ImGui.Rendering
         public OverflowPolicy VerticallyOverflowPolicy { get; set; } = OverflowPolicy.Scroll;
 
         internal Node ScrollBarRoot;
+        internal Vector ScrollOffset;
 
         public void CheckRuleSetForLayout_Group(IStyleRuleSet child)
         {
@@ -230,30 +232,6 @@ namespace ImGui.Rendering
                             entry.RuleSet.MaxWidth = 9999;
                         }
                         entry.CalcWidth();
-                    }
-
-                    if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
-                    {
-                        if (ScrollBarRoot == null)
-                        {
-                            ScrollBarRoot = new Node(this.Name + "#ScrollBar");
-                        }
-                        var scrollWidth = this.RuleSet.ScrollBarWidth;
-                        var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
-                        var scrollButtonColor = this.RuleSet.ScrollBarButtonColor;
-                        var min = this.Rect.BottomLeft + new Vector(this.BorderLeft, -scrollWidth-this.BorderBottom);
-                        var max = this.Rect.BottomRight + new Vector(-this.BorderRight, -this.BorderBottom);
-                        Rect scrollBarRect = new Rect(min, max);
-                        //TEMP we should update button rect based on the content and the view
-                        Rect scrollBarButtonRect = new Rect(
-                            scrollBarRect.Center + new Vector(-scrollWidth, -scrollWidth * 0.5),
-                            scrollBarRect.Center + new Vector(scrollWidth, scrollWidth * 0.5));
-                        using (var g = ScrollBarRoot.RenderOpen())
-                        {
-                            g.DrawRectangle(new Brush(scrollBgColor), null, scrollBarRect);
-                            g.DrawRectangle(new Brush(scrollButtonColor), null, scrollBarButtonRect);
-                        }
-                        ScrollBarRoot.ActiveSelf = true;
                     }
                 }
                 else
@@ -746,6 +724,139 @@ namespace ImGui.Rendering
                     entry.SetY(childY);
                 }
             }
+        }
+
+        internal void OnGUI()
+        {
+            if (!IsGroup)
+            {
+                return;
+            }
+
+            if (HorizontallyOverflow && HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                if (ScrollBarRoot == null)
+                {
+                    ScrollBarRoot = new Node(this.Name + "#ScrollBar");
+                }
+                ScrollBarRoot.ActiveSelf = true;
+                GUIContext g = Form.current.uiContext;
+                g.KeepAliveID(ScrollBarRoot.Id);
+
+                var cellSpacing = this.RuleSet.CellSpacingHorizontal;
+                double occupiedChildrenWidth = 0;
+                foreach (var visual in this.Children)
+                {
+                    if (!visual.ActiveSelf)
+                    {
+                        continue;
+                    }
+                    Debug.Assert(visual is Node);//All children should be Node.
+                    occupiedChildrenWidth += visual.Width + cellSpacing;
+                }
+                if (occupiedChildrenWidth != 0)
+                {
+                    occupiedChildrenWidth -= cellSpacing;
+                }
+
+                var scrollWidth = this.RuleSet.ScrollBarWidth;
+                var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
+                var min = this.Rect.BottomLeft + new Vector(this.BorderLeft, -scrollWidth - this.BorderBottom);
+                var max = this.Rect.BottomRight + new Vector(-this.BorderRight, -this.BorderBottom);
+                Rect scrollBarRect = new Rect(min, max);
+                var paddingboxWidth = this.Rect.Width - this.BorderHorizontal;
+                var buttonScale = paddingboxWidth / occupiedChildrenWidth;
+
+                bool hovered, held;
+                ScrollOffset.X = GUIBehavior.ScrollBehaviorOverlapped(scrollBarRect, ScrollBarRoot.Id, true, ScrollOffset.X, 0, 1, out hovered, out held);
+
+                var state = GUI.Normal;
+                if (hovered)
+                {
+                    state = GUI.Hover;
+                }
+                if (held)
+                {
+                    state = GUI.Active;
+                }
+
+                var scrollButtonSizeX = buttonScale * paddingboxWidth;
+                var scrollSpaceX = paddingboxWidth - scrollButtonSizeX;
+
+                Rect scrollBarButtonRect = new Rect(
+                    scrollBarRect.Min + new Vector(ScrollOffset.X* scrollSpaceX, 0) , new Size(scrollButtonSizeX, scrollBarRect.Height));
+                using (var dc = ScrollBarRoot.RenderOpen())
+                {
+                    var scrollButtonColor = this.RuleSet.Get<Color>(StylePropertyName.ScrollBarButtonColor, state);
+                    dc.DrawRectangle(new Brush(scrollBgColor), null, scrollBarRect);
+                    dc.DrawRectangle(new Brush(scrollButtonColor), null, scrollBarButtonRect);
+                }
+
+            }
+            else
+            {
+                ScrollBarRoot = null;
+            }
+        }
+        
+    }
+
+    internal partial class GUIBehavior
+    {
+        public static double ScrollBehaviorOverlapped(Rect sliderRect, int id, bool horizontal, double value, double minValue, double maxValue, out bool hovered, out bool held)
+        {
+            GUIContext g = Form.current.uiContext;
+
+            hovered = false;
+            held = false;
+
+            hovered = g.IsMouseHoveringRect(sliderRect);
+            g.KeepAliveID(id);
+            if (hovered)
+            {
+                g.SetHoverID(id);
+
+                if (Mouse.Instance.LeftButtonPressed) //start track
+                {
+                    g.SetActiveID(id);
+                }
+            }
+            if (g.ActiveId == id)
+            {
+                if (Mouse.Instance.LeftButtonState == KeyState.Down)
+                {
+                    var mousePos = Mouse.Instance.Position;
+                    if (horizontal)
+                    {
+                        var leftPoint = new Point(sliderRect.X + 10, sliderRect.Y + sliderRect.Height / 2);
+                        var rightPoint = new Point(sliderRect.Right - 10, sliderRect.Y + sliderRect.Height / 2);
+                        var minX = leftPoint.X;
+                        var maxX = rightPoint.X;
+                        var currentPointX = MathEx.Clamp(mousePos.X, minX, maxX);
+                        value = minValue + (currentPointX - minX) / (maxX - minX) * (maxValue - minValue);
+                    }
+                    else
+                    {
+                        var upPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Y + 10);
+                        var bottomPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Bottom - 10);
+                        var minY = upPoint.Y;
+                        var maxY = bottomPoint.Y;
+                        var currentPointY = MathEx.Clamp(mousePos.Y, minY, maxY);
+                        value = (float)(minValue + (currentPointY - minY) / (maxY - minY) * (maxValue - minValue));
+                    }
+                }
+                else //end track
+                {
+                    g.SetActiveID(0);
+                }
+            }
+
+            if (g.ActiveId == id)
+            {
+                held = true;
+            }
+
+            return value;
         }
     }
 }

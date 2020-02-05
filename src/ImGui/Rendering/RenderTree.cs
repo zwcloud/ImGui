@@ -62,6 +62,8 @@ namespace ImGui.Rendering
                 throw new InvalidOperationException("BeginLayoutGroup/EndLayoutGroup mismatch.");
             }
 
+            var group = this.CurrentContainer;
+            group.OnGUI();
             this.CurrentContainer = (Node) this.CurrentContainer.Parent;
         }
     }

@@ -216,9 +216,9 @@ namespace ImGui
                 [new NameState { Name = StylePropertyName.ScrollBarBackgroundColor, State = GUIState.Hover }] = Color.Rgb(232),
                 [new NameState { Name = StylePropertyName.ScrollBarBackgroundColor, State = GUIState.Active }] = Color.Rgb(232),
 
-                [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Normal }] = Color.Rgb(104),
+                [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Normal }] = Color.Rgb(194,195,201),
                 [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Hover }] = Color.Rgb(104),
-                [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Active }] = Color.Rgb(104),
+                [new NameState { Name = StylePropertyName.ScrollBarButtonColor, State = GUIState.Active }] = Color.Rgb(91),
             };
 
             style.imageStyles = new Dictionary<NameState, ITexture>

@@ -421,13 +421,25 @@ namespace ImGui
         public int HorizontalStretchFactor
         {
             get => Get<int>(StylePropertyName.HorizontalStretchFactor);
-            set => Set<int>(StylePropertyName.HorizontalStretchFactor, value);
+            set
+            {
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Normal);
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Hover);
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Active);
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Disabled);
+            }
         }
 
         public int VerticalStretchFactor
         {
             get => Get<int>(StylePropertyName.VerticalStretchFactor);
-            set => Set<int>(StylePropertyName.VerticalStretchFactor, value);
+            set
+            {
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Normal);
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Hover);
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Active);
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Disabled);
+            }
         }
 
         public double CellSpacingHorizontal

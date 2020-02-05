@@ -133,6 +133,11 @@ namespace ImGui
             _height = height;
         }
 
+        public static Rect FromCenterSize(Point center, Size extent)
+        {
+            return new Rect(center.X - extent.Width * 0.5, center.Y - extent.Height * 0.5, extent);
+        }
+
         #endregion
 
         /// <summary>

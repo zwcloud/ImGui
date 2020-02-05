@@ -227,7 +227,10 @@ namespace ImGui.Rendering
         internal override void Render(RenderContext context)
         {
             base.Render(context);
+        }
 
+        internal override void RenderAfterChildren(RenderContext context)
+        {
             if (ScrollBarRoot != null)
             {
                 ScrollBarRoot.Render(context);
