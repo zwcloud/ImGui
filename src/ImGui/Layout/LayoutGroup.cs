@@ -523,6 +523,11 @@ namespace ImGui.Rendering
                 double nextX;//position x of first child
                 if (this.HorizontallyOverflow)//overflow happens so there is no room for to align children
                 {
+                    if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+                    {
+                        x -= ScrollOffset.X;
+                    }
+
                     nextX = x + this.BorderLeft + this.PaddingLeft;
 
                     foreach (var visual in this.Children)
@@ -767,8 +772,12 @@ namespace ImGui.Rendering
                 var paddingboxWidth = this.Rect.Width - this.BorderHorizontal;
                 var buttonScale = paddingboxWidth / occupiedChildrenWidth;
 
+                var scrollButtonSizeX = buttonScale * paddingboxWidth;
+                var scrollSpaceX = paddingboxWidth - scrollButtonSizeX;
+
                 bool hovered, held;
-                ScrollOffset.X = GUIBehavior.ScrollBehaviorOverlapped(scrollBarRect, ScrollBarRoot.Id, true, ScrollOffset.X, 0, 1, out hovered, out held);
+                ScrollOffset.X = GUIBehavior.ScrollBehaviorOverlapped(scrollBarRect, ScrollBarRoot.Id, true, ScrollOffset.X,
+                    0, scrollSpaceX, out hovered, out held);
 
                 var state = GUI.Normal;
                 if (hovered)
@@ -780,11 +789,9 @@ namespace ImGui.Rendering
                     state = GUI.Active;
                 }
 
-                var scrollButtonSizeX = buttonScale * paddingboxWidth;
-                var scrollSpaceX = paddingboxWidth - scrollButtonSizeX;
 
                 Rect scrollBarButtonRect = new Rect(
-                    scrollBarRect.Min + new Vector(ScrollOffset.X* scrollSpaceX, 0) , new Size(scrollButtonSizeX, scrollBarRect.Height));
+                    scrollBarRect.Min + new Vector(ScrollOffset.X, 0) , new Size(scrollButtonSizeX, scrollBarRect.Height));
                 using (var dc = ScrollBarRoot.RenderOpen())
                 {
                     var scrollButtonColor = this.RuleSet.Get<Color>(StylePropertyName.ScrollBarButtonColor, state);
