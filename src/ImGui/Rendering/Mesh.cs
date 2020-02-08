@@ -105,15 +105,20 @@ namespace ImGui
 
             foreach (var command in commandBuffer)
             {
+                if(command.ElemCount == 0)//ignore zero-sized command
+                {
+                    continue;
+                }
+
                 DrawCommand previousCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
-                //TODO check if clip rect is the same
-                if (command.TextureData != previousCommand.TextureData)
+                if (command.TextureData != previousCommand.TextureData
+                    || command.ClipRect != previousCommand.ClipRect)
                 {
                     this.CommandBuffer.Add(command);
                 }
-                else//same texture, only add element count to previous command
+                else//only add element count to previous command
                 {
-                    previousCommand.ElemCount += indexBuffer.Count;
+                    previousCommand.ElemCount += previousCommand.ElemCount;
                     this.CommandBuffer[this.CommandBuffer.Count - 1] = previousCommand;//write back
                 }
 
