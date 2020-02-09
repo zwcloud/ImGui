@@ -229,7 +229,7 @@ namespace ImGui.UnitTest.Rendering
                     dc.DrawBoxModel(item1);
                 }
 
-
+                //TODO show real rendered result instead of using Util.Show
                 Util.Show(group, new Size(300, 200), @"C:\Users\Public\Pictures\1.png");
                 //CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(HorizontallyOverflow5)}.png");
             }
