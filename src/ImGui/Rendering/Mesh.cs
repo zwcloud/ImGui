@@ -98,7 +98,7 @@ namespace ImGui
             var indexBuffer = mesh.IndexBuffer;
             var commandBuffer = mesh.CommandBuffer;
 
-            if (indexBuffer.Count == 0 || vertexBuffer.Count == 0)
+            if (indexBuffer.Count == 0 || vertexBuffer.Count == 0 || commandBuffer.Count == 0)
             {
                 return;
             }
@@ -118,36 +118,37 @@ namespace ImGui
                 }
                 else//only add element count to previous command
                 {
-                    previousCommand.ElemCount += previousCommand.ElemCount;
+                    previousCommand.ElemCount += command.ElemCount;
                     this.CommandBuffer[this.CommandBuffer.Count - 1] = previousCommand;//write back
                 }
-
-                var originalVertexCount = this.VertexBuffer.Count;
-
-                int vtxBufferSize = this.VertexBuffer.Count;
-                this.vtxWritePosition = vtxBufferSize + vertexBuffer.Count;
-                this.VertexBuffer.Append(vertexBuffer);
-
-                int idxBufferSize = this.IndexBuffer.Count;
-                this.idxWritePosition = idxBufferSize + indexBuffer.Count;
-
-                var sizeBefore = this.IndexBuffer.Count;
-                this.IndexBuffer.Append(indexBuffer);
-                var sizeAfter = this.IndexBuffer.Count;
-
-                if (originalVertexCount != 0)
-                {
-                    for (int i = sizeBefore; i < sizeAfter; i++)
-                    {
-                        this.IndexBuffer[i] = new DrawIndex
-                        {
-                            Index = this.IndexBuffer[i].Index + originalVertexCount
-                        };
-                    }
-                }
-
-                this.currentIdx += vertexBuffer.Count;
             }
+
+            var originalVertexCount = this.VertexBuffer.Count;
+
+            int vtxBufferSize = this.VertexBuffer.Count;
+            this.vtxWritePosition = vtxBufferSize + vertexBuffer.Count;
+            this.VertexBuffer.Append(vertexBuffer);
+
+            int idxBufferSize = this.IndexBuffer.Count;
+            this.idxWritePosition = idxBufferSize + indexBuffer.Count;
+
+            var sizeBefore = this.IndexBuffer.Count;
+            this.IndexBuffer.Append(indexBuffer);
+            var sizeAfter = this.IndexBuffer.Count;
+
+            if (originalVertexCount != 0)
+            {
+                for (int i = sizeBefore; i < sizeAfter; i++)
+                {
+                    this.IndexBuffer[i] = new DrawIndex
+                    {
+                        Index = this.IndexBuffer[i].Index + originalVertexCount
+                    };
+                }
+            }
+
+            this.currentIdx += vertexBuffer.Count;
+
         }
     }
 }
