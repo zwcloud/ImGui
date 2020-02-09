@@ -230,7 +230,7 @@ namespace ImGui.UnitTest.Rendering
                 }
 
 
-                Util.Show(group, new Size(300, 200), @"1.png");
+                Util.Show(group, new Size(300, 200), @"C:\Users\Public\Pictures\1.png");
                 //CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(HorizontallyOverflow5)}.png");
             }
 

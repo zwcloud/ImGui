@@ -9,7 +9,7 @@ using ImGui.Rendering.Composition;
 
 namespace ImGui.UnitTest
 {
-    internal class ContentCheckerBase : RecordReader
+    internal class ContentCheckerBase : GeometryRenderer
     {
         public interface IStrategy
         {
