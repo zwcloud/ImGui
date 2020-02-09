@@ -202,6 +202,39 @@ namespace ImGui.UnitTest.Rendering
 
                 CheckExpectedImage(windowContainer, @"Rendering\images\NodeFacts.Container.DrawAWindow.png");
             }
+
+            [Fact]
+            public void DrawAGroupWithClippedContent()
+            {
+                Node group = new Node(0);
+                group.AttachLayoutGroup(false);
+                group.RuleSet.Padding = (0, 0, 0, 0);
+                group.RuleSet.ApplyOptions(GUILayout.Width(50).Height(50));
+                group.RuleSet.BorderColor = (Color.DarkRed, Color.DarkGreen, Color.DarkBlue, Color.DarkOrange);
+                group.RuleSet.Border = (10, 10, 10, 10);
+                group.RuleSet.AlignmentHorizontal = Alignment.Start;
+                group.RuleSet.Overflow = OverflowPolicy.Scroll;
+                Node item1 = new Node(1, "item1"); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(100).Height(100));
+                item1.RuleSet.BackgroundColor = Color.Green;
+                item1.RuleSet.BorderColor = (Color.Red, Color.Red, Color.Red, Color.Red);
+                item1.RuleSet.Border = (0, 0, 0, 0);
+                group.AppendChild(item1);
+
+                group.Layout();
+
+                group.Layout();
+
+                using (var dc = item1.RenderOpen())
+                {
+                    dc.DrawBoxModel(item1);
+                }
+
+
+                Util.Show(group, new Size(300, 200), @"1.png");
+                //CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(HorizontallyOverflow5)}.png");
+            }
+
         }
+
     }
 }

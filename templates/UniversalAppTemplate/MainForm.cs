@@ -14,7 +14,10 @@ namespace UniversalAppTemplate
         protected override void OnGUI()
         {
             //GUILayout.Label("Hello ImGui,");
-            demo.OnGUI();
+            //demo.OnGUI();
+            GUILayout.BeginHorizontal("H", GUILayout.Width(50).Height(50));
+            GUILayout.Button("A",GUILayout.Width(60).Height(60)        );
+            GUILayout.EndHorizontal();
         }
     }
 }

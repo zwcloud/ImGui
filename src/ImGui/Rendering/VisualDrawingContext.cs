@@ -5,6 +5,7 @@ using ImGui.Rendering.Composition;
 
 namespace ImGui.Rendering
 {
+    //TODO consider insert new record instead of overwriting all following records
     internal class VisualDrawingContext : DrawingContext
     {
         public VisualDrawingContext(Visual visual)
@@ -332,9 +333,9 @@ namespace ImGui.Rendering
                     recordNeedOverwrite = true;
                 }
 
-                if (this.content.ReadDependentResource(record.BrushIndex, out Geometry oldGeometry))
+                if (this.content.ReadDependentResource(record.GeometryIndex, out Geometry oldGeometry))
                 {
-                    if (!oldGeometry.Equals(geometry))
+                    if (!ReferenceEquals(oldGeometry, geometry))
                     {
                         record.GeometryIndex = this.content.AddDependentResource(geometry);
                         recordNeedOverwrite = true;
@@ -571,6 +572,64 @@ namespace ImGui.Rendering
                 }
             }
         }
+
+#if Push_Pop_Clip_Geometry
+        public override void PushClip(Geometry clipGeometry)
+        {
+            if (clipGeometry == null)
+            {
+                return;
+            }
+            EnsureContent();
+
+            unsafe
+            {
+                if (!this.content.ReadRecord(out PushClipCommand record))
+                {//different record type: append new record
+                    record.ClipGeometryIndex = this.content.AddDependentResource(clipGeometry);
+                    this.content.WriteRecord(RecordType.PushClip, (byte*)&record, sizeof(PushClipCommand));
+                    return;
+                }
+
+                //same type: update record if different
+                bool recordNeedOverwrite = false;
+                if (this.content.ReadDependentResource(record.ClipGeometryIndex, out Geometry oldClipGeometry))
+                {
+                    if (!ReferenceEquals(oldClipGeometry, clipGeometry))
+                    {
+                        record.ClipGeometryIndex = this.content.AddDependentResource(clipGeometry);
+                        recordNeedOverwrite = true;
+                    }
+                }
+                else
+                {
+                    record.ClipGeometryIndex = this.content.AddDependentResource(clipGeometry);
+                    recordNeedOverwrite = true;
+                }
+
+                if (recordNeedOverwrite)
+                {
+                    content.WriteRecord(RecordType.PushClip, (byte*)&record, sizeof(PushClipCommand));
+                }
+            }
+        }
+
+        public override void Pop()
+        {
+            EnsureContent();
+            
+            unsafe
+            {
+                if (!this.content.ReadRecord(out PopCommand record))
+                {//different record type: append new record
+                    this.content.WriteRecord(RecordType.Pop, (byte*)&record, 0);
+                    return;
+                }
+
+                //same type: no need to update a pop command record
+            }
+        }
+#endif
 
         public override void Close()
         {

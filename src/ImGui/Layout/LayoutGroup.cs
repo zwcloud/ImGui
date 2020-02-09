@@ -738,7 +738,12 @@ namespace ImGui.Rendering
                 return;
             }
 
-            if (HorizontallyOverflow && HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+            if (!HorizontallyOverflow)
+            {
+                return;
+            }
+
+            if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
             {
                 if (ScrollBarRoot == null)
                 {

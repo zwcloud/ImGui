@@ -289,6 +289,7 @@ namespace ImGui.UnitTest
 
             using (var context = new RenderContextForTest(width, height))
             {
+                /*
                 if (root is Node rootNode)
                 {
                     using(var dc = rootNode.RenderOpen())
@@ -311,6 +312,7 @@ namespace ImGui.UnitTest
 
                     return true;
                 });
+                */
 
                 //This must be called after the context is created, for uploading textures to GPU via OpenGL.
                 root.Render(new RenderContext(geometryRenderer, meshList));

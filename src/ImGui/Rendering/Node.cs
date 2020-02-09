@@ -187,16 +187,14 @@ namespace ImGui.Rendering
 
         public override Rect GetClipRect()
         {
-            Rect clipRect;
+            Rect clipRect = Rect.Big;//TODO consider client area rect
             if (this.Parent != null)
             {
                 var parentNode = (Node)this.Parent;
-                clipRect = parentNode.UseBoxModel ? parentNode.ContentRect : parentNode.Rect;
-            }
-            else
-            {
-                //TEMP
-                clipRect = Rect.Big;//new Rect(0, 0, Form.current.ClientSize);//TODO decuple from Form
+                if(parentNode.HorizontallyOverflow || parentNode.VerticallyOverflow)
+                {
+                    clipRect = parentNode.UseBoxModel ? parentNode.ContentRect : parentNode.Rect;
+                }
             }
 
             return clipRect;
@@ -254,14 +252,30 @@ namespace ImGui.Rendering
         /// </summary>
         internal DrawingContext RenderOpen()
         {
+            this.isAppendingContent = false;
+            return new VisualDrawingContext(this);
+        }
+
+        internal DrawingContext RenderAppend()
+        {
+            this.isAppendingContent = true;
             return new VisualDrawingContext(this);
         }
 
         internal override void RenderClose(DrawingContent newContent)
         {
-            content = newContent;
+            if (isAppendingContent)
+            {
+                content.AppendRecords(newContent);
+                isAppendingContent = false;
+            }
+            else
+            {
+                content = newContent;
+            }
         }
 
+        private bool isAppendingContent = false;
         private DrawingContent content;
 
         #endregion

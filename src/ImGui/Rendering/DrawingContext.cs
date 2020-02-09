@@ -147,34 +147,9 @@ namespace ImGui.Rendering
         /// <param name="glyphRun"> The <see cref="GlyphRun"/> to draw.  </param>
         public abstract void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun);
 
-#if false//TODO
-        /// <summary>
-        ///     DrawDrawing -
-        ///     Draw a Drawing by appending a sub-Drawing to the current Drawing.
-        /// </summary>
-        /// <param name="drawing"> The drawing to draw. </param>
-        public abstract void DrawDrawing(
-            Drawing drawing);
-#endif
-
         public abstract void DrawText(Brush foregroundBrush, FormattedText formattedText);
 
-#if false//TODO
-        /// <summary>
-        ///     DrawVideo -
-        ///     Draw a Video into the region specified by the Rect.
-        ///     The Video will potentially be stretched and distorted to fit the Rect.
-        ///     For more fine grained control, consider filling a Rect with an VideoBrush via
-        ///     DrawRectangle.
-        /// </summary>
-        /// <param name="player"> The MediaPlayer to draw. </param>
-        /// <param name="rectangle"> The Rect into which the media will be fit. </param>
-        public abstract void DrawVideo(
-            MediaPlayer player,
-            Rect rectangle);
-#endif
-
-        //TODO animation, effect, clip, transform, etc.
+        //TODO Drawing, video, animation, effect, non-rectangular clip, transform, etc.
 
         /// <summary>
         /// Closes the DrawingContext and flushes the content.

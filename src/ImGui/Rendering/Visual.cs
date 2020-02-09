@@ -322,6 +322,9 @@ namespace ImGui.Rendering
 
         internal void RenderRecursive(RenderContext context)
         {
+            var oldClipRect = context.ClipRect;
+            var clipRect = this.GetClipRect();
+            context.ClipRect = clipRect;
             if (!RenderContent(context))
             {
                 return;
@@ -329,13 +332,14 @@ namespace ImGui.Rendering
             for (var i = 0; i < this.ChildCount; i++)
             {
                 var child = GetVisualByIndex(i);
-                if (child.IsClipped(this.GetClipRect()))
+                if (child.IsClipped(clipRect))
                 {
                     continue;
                 }
                 child.RenderRecursive(context);
             }
             RenderAfterChildren(context);
+            context.ClipRect = oldClipRect;
         }
 
         /// <summary>

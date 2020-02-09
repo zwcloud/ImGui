@@ -17,6 +17,8 @@ namespace ImGui
 
         public InputTextState InputTextState = new InputTextState();
 
+        public Stack<Rect> ClipRectStack { get; } = new Stack<Rect>(new[] { Rect.Big });
+
         private int hoverId;
         private int activeId;
         private bool activeIdIsAlive;

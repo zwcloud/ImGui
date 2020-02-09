@@ -7,20 +7,24 @@ namespace ImGui.Rendering
     /// </summary>
     internal class RenderContext
     {
-        public RenderContext(RecordReader renderer, MeshList meshList)
+        public RenderContext(GeometryRenderer renderer, MeshList meshList)
         {
             this.renderer = renderer;
             this.meshList = meshList;
         }
 
+        public Rect ClipRect { get; set; } = Rect.Big;
+
         public void ConsumeContent(DrawingContent content)
         {
+            this.renderer.PushClipRect(ClipRect);
             this.renderer.OnBeforeRead();
             content.ReadAllRecords(this.renderer);
             this.renderer.OnAfterRead(this.meshList);
+            this.renderer.PopClipRect();
         }
 
         private readonly MeshList meshList;
-        private readonly RecordReader renderer;
+        private readonly GeometryRenderer renderer;
     }
 }

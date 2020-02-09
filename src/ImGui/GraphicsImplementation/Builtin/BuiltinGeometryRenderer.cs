@@ -285,7 +285,7 @@ namespace ImGui.GraphicsImplementation
             }
 
             DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
+            cmd.ClipRect = ClipRectStack.Peek();
             cmd.TextureData = null;
             this.TextMesh.Commands.Add(cmd);
 

@@ -104,13 +104,13 @@ namespace ImGui.UnitTest.Layout
                 Node group = new Node(0);
                 group.AttachLayoutGroup(false);
                 group.RuleSet.Padding = (0, 0, 0, 0);
-                group.RuleSet.ApplyOptions(GUILayout.Width(100));
+                group.RuleSet.ApplyOptions(GUILayout.Width(60));
                 group.RuleSet.BorderColor = (Color.DarkRed, Color.DarkGreen, Color.DarkBlue, Color.DarkOrange);
                 group.RuleSet.Border = (10, 10, 10, 10);
                 group.RuleSet.AlignmentHorizontal = Alignment.Start;
                 group.RuleSet.Overflow = OverflowPolicy.Scroll;
-                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(60).Height(80));
-                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(60).Height(80));
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(80)        );
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(80)        );
                 Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(80));
                 item3.ContentSize = new Size(100, 20);
                 group.AppendChild(item1);
