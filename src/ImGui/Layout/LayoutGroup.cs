@@ -770,19 +770,19 @@ namespace ImGui.Rendering
                 }
 
                 var scrollWidth = this.RuleSet.ScrollBarWidth;
-                var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
-                var min = this.Rect.BottomLeft + new Vector(this.BorderLeft, -scrollWidth - this.BorderBottom);
-                var max = this.Rect.BottomRight + new Vector(-this.BorderRight, -this.BorderBottom);
-                Rect scrollBarRect = new Rect(min, max);
-                var paddingboxWidth = this.Rect.Width - this.BorderHorizontal;
-                var buttonScale = paddingboxWidth / occupiedChildrenWidth;
+                var padding = this.RuleSet.Padding;
+                var border = this.RuleSet.Border;
 
-                var scrollButtonSizeX = buttonScale * paddingboxWidth;
-                var scrollSpaceX = paddingboxWidth - scrollButtonSizeX;
-
+                Rect bgRect = new Rect(
+                    new Point(Rect.Left + padding.left + border.left, Rect.Bottom - padding.bottom - border.bottom + scrollWidth),
+                    new Point(Rect.Right - padding.right - border.right, Rect.Bottom - padding.bottom - border.bottom));
+                double contentSize = occupiedChildrenWidth;
+                double viewSize = Rect.Width - this.RuleSet.PaddingHorizontal - this.RuleSet.BorderHorizontal;
+                double viewPosition = ScrollOffset.X;
                 bool hovered, held;
-                ScrollOffset.X = GUIBehavior.ScrollBehaviorOverlapped(scrollBarRect, ScrollBarRoot.Id, true, ScrollOffset.X,
-                    0, scrollSpaceX, out hovered, out held);
+                viewPosition = GUIBehavior.ScrollBehaviorOverlappedNew(bgRect, contentSize, viewSize, viewPosition,
+                    ScrollBarRoot.Id, true, out var gripRect, out hovered, out held);
+                ScrollOffset.X = viewPosition;
 
                 var state = GUI.Normal;
                 if (hovered)
@@ -794,14 +794,16 @@ namespace ImGui.Rendering
                     state = GUI.Active;
                 }
 
-
-                Rect scrollBarButtonRect = new Rect(
-                    scrollBarRect.Min + new Vector(ScrollOffset.X, 0) , new Size(scrollButtonSizeX, scrollBarRect.Height));
                 using (var dc = ScrollBarRoot.RenderOpen())
                 {
+                    var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
+                    dc.DrawRectangle(new Brush(scrollBgColor), null, bgRect);
                     var scrollButtonColor = this.RuleSet.Get<Color>(StylePropertyName.ScrollBarButtonColor, state);
-                    dc.DrawRectangle(new Brush(scrollBgColor), null, scrollBarRect);
-                    dc.DrawRectangle(new Brush(scrollButtonColor), null, scrollBarButtonRect);
+                    dc.DrawRectangle(new Brush(scrollButtonColor), null, gripRect);
+#if DrawScrollbarBorders
+                    dc.DrawRectangle(null, new Pen(new Color(1, 0, 0, 0.5), 2), bgRect);
+                    dc.DrawRectangle(null, new Pen(new Color(0, 0, 1, 0.5), 2), gripRect);
+#endif
                 }
 
             }
@@ -815,14 +817,43 @@ namespace ImGui.Rendering
 
     internal partial class GUIBehavior
     {
-        public static double ScrollBehaviorOverlapped(Rect sliderRect, int id, bool horizontal, double value, double minValue, double maxValue, out bool hovered, out bool held)
+        public static double ScrollBehaviorOverlappedNew(
+            Rect bgRect,
+            double contentSize,
+            double viewSize,
+            double viewPosition,
+            int id, bool horizontal,
+            out Rect gripRect,
+            out bool hovered, out bool held)
         {
             GUIContext g = Form.current.uiContext;
+
+            //grip size
+            var trackSize = horizontal ? bgRect.Width : bgRect.Height;
+            var contentRatio = viewSize / contentSize;
+            var gripSize = trackSize * contentRatio;
+
+            const double minGripSize = 20.0;
+            if(gripSize < minGripSize)
+            {
+                gripSize = minGripSize;
+            }
+
+            if (gripSize > trackSize)
+            {
+                gripSize = trackSize;
+            }
+
+            //grip position
+            var viewScrollAreaSize = contentSize - viewSize;
+            var viewPositionRatio = viewPosition / viewScrollAreaSize;
+            var trackScrollAreaSize = trackSize - gripSize;
+            var gripPositionOnTrack = trackScrollAreaSize * viewPositionRatio;
 
             hovered = false;
             held = false;
 
-            hovered = g.IsMouseHoveringRect(sliderRect);
+            hovered = g.IsMouseHoveringRect(bgRect);
             g.KeepAliveID(id);
             if (hovered)
             {
@@ -837,25 +868,11 @@ namespace ImGui.Rendering
             {
                 if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
-                    var mousePos = Mouse.Instance.Position;
-                    if (horizontal)
-                    {
-                        var leftPoint = new Point(sliderRect.X + 10, sliderRect.Y + sliderRect.Height / 2);
-                        var rightPoint = new Point(sliderRect.Right - 10, sliderRect.Y + sliderRect.Height / 2);
-                        var minX = leftPoint.X;
-                        var maxX = rightPoint.X;
-                        var currentPointX = MathEx.Clamp(mousePos.X, minX, maxX);
-                        value = minValue + (currentPointX - minX) / (maxX - minX) * (maxValue - minValue);
-                    }
-                    else
-                    {
-                        var upPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Y + 10);
-                        var bottomPoint = new Point(sliderRect.X + sliderRect.Width / 2, sliderRect.Bottom - 10);
-                        var minY = upPoint.Y;
-                        var maxY = bottomPoint.Y;
-                        var currentPointY = MathEx.Clamp(mousePos.Y, minY, maxY);
-                        value = (float)(minValue + (currentPointY - minY) / (maxY - minY) * (maxValue - minValue));
-                    }
+                    var mousePositionDelta = Mouse.Instance.MouseDelta.X;
+                    var newGripPosition = gripPositionOnTrack + mousePositionDelta;
+                    newGripPosition = Math.Clamp(newGripPosition, 0, trackScrollAreaSize);
+                    var newGripPositonRatio = newGripPosition / trackScrollAreaSize;
+                    viewPosition = newGripPositonRatio * viewScrollAreaSize;
                 }
                 else //end track
                 {
@@ -868,7 +885,17 @@ namespace ImGui.Rendering
                 held = true;
             }
 
-            return value;
+            if (horizontal)
+            {
+                gripRect = new Rect(bgRect.X + gripPositionOnTrack, bgRect.Y, gripSize, bgRect.Height);
+            }
+            else
+            {
+                gripRect = new Rect(bgRect.X, bgRect.Y + gripPositionOnTrack, bgRect.Width, gripSize);
+            }
+
+            return viewPosition;
         }
+
     }
 }
