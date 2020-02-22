@@ -13,6 +13,7 @@ namespace ImGui.Rendering
         public OverflowPolicy VerticallyOverflowPolicy { get; set; } = OverflowPolicy.Scroll;
 
         internal Node ScrollBarRoot;
+        internal Node VScrollBarRoot;
         internal Vector ScrollOffset;
 
         public void CheckRuleSetForLayout_Group(IStyleRuleSet child)
@@ -619,6 +620,11 @@ namespace ImGui.Rendering
                 double nextY;//position y of first child
                 if (this.VerticallyOverflow)//overflow happens so there is no room for to align children
                 {
+                    if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+                    {
+                        y -= ScrollOffset.Y;
+                    }
+
                     nextY = y + this.BorderTop + this.PaddingTop;
 
                     foreach (var visual in this.Children)
@@ -738,16 +744,11 @@ namespace ImGui.Rendering
                 return;
             }
 
-            if (!HorizontallyOverflow)
-            {
-                return;
-            }
-
-            if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+            if (HorizontallyOverflow && HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
             {
                 if (ScrollBarRoot == null)
                 {
-                    ScrollBarRoot = new Node(this.Name + "#ScrollBar");
+                    ScrollBarRoot = new Node(this.Name + "#HorizontalScrollBar");
                 }
                 ScrollBarRoot.ActiveSelf = true;
                 GUIContext g = Form.current.uiContext;
@@ -780,7 +781,7 @@ namespace ImGui.Rendering
                 double viewSize = Rect.Width - this.RuleSet.PaddingHorizontal - this.RuleSet.BorderHorizontal;
                 double viewPosition = ScrollOffset.X;
                 bool hovered, held;
-                viewPosition = GUIBehavior.ScrollBehaviorOverlappedNew(bgRect, contentSize, viewSize, viewPosition,
+                viewPosition = GUIBehavior.ScrollBehavior(bgRect, contentSize, viewSize, viewPosition,
                     ScrollBarRoot.Id, true, out var gripRect, out hovered, out held);
                 ScrollOffset.X = viewPosition;
 
@@ -805,11 +806,78 @@ namespace ImGui.Rendering
                     dc.DrawRectangle(null, new Pen(new Color(0, 0, 1, 0.5), 2), gripRect);
 #endif
                 }
-
             }
             else
             {
                 ScrollBarRoot = null;
+            }
+
+            if (VerticallyOverflow && VerticallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                if (VScrollBarRoot == null)
+                {
+                    VScrollBarRoot = new Node(this.Name + "#VerticalScrollBar");
+                }
+                VScrollBarRoot.ActiveSelf = true;
+                GUIContext g = Form.current.uiContext;
+                g.KeepAliveID(VScrollBarRoot.Id);
+
+                var cellSpacing = this.RuleSet.CellSpacingVertical;
+                double occupiedChildrenHeight = 0;
+                foreach (var visual in this.Children)
+                {
+                    if (!visual.ActiveSelf)
+                    {
+                        continue;
+                    }
+                    Debug.Assert(visual is Node);//All children should be Node.
+                    occupiedChildrenHeight += visual.Height + cellSpacing;
+                }
+                if (occupiedChildrenHeight != 0)
+                {
+                    occupiedChildrenHeight -= cellSpacing;
+                }
+
+                var scrollWidth = this.RuleSet.ScrollBarWidth;
+                var padding = this.RuleSet.Padding;
+                var border = this.RuleSet.Border;
+
+                Rect bgRect = new Rect(
+                    new Point(Rect.Right - padding.right - border.right - scrollWidth, Rect.Top + padding.top + border.top),
+                    new Point(Rect.Right - padding.right - border.right, Rect.Bottom - padding.bottom - border.bottom));
+                double contentSize = occupiedChildrenHeight;
+                double viewSize = Rect.Height - this.RuleSet.PaddingVertical - this.RuleSet.BorderVertical;
+                double viewPosition = ScrollOffset.Y;
+                bool hovered, held;
+                viewPosition = GUIBehavior.ScrollBehavior(bgRect, contentSize, viewSize, viewPosition,
+                    VScrollBarRoot.Id, false, out var gripRect, out hovered, out held);
+                ScrollOffset.Y = viewPosition;
+
+                var state = GUI.Normal;
+                if (hovered)
+                {
+                    state = GUI.Hover;
+                }
+                if (held)
+                {
+                    state = GUI.Active;
+                }
+
+                using (var dc = VScrollBarRoot.RenderOpen())
+                {
+                    var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
+                    dc.DrawRectangle(new Brush(scrollBgColor), null, bgRect);
+                    var scrollButtonColor = this.RuleSet.Get<Color>(StylePropertyName.ScrollBarButtonColor, state);
+                    dc.DrawRectangle(new Brush(scrollButtonColor), null, gripRect);
+#if DrawScrollbarBorders
+                    dc.DrawRectangle(null, new Pen(new Color(1, 0, 0, 0.5), 2), bgRect);
+                    dc.DrawRectangle(null, new Pen(new Color(0, 0, 1, 0.5), 2), gripRect);
+#endif
+                }
+            }
+            else
+            {
+                VScrollBarRoot = null;
             }
         }
         
@@ -817,7 +885,7 @@ namespace ImGui.Rendering
 
     internal partial class GUIBehavior
     {
-        public static double ScrollBehaviorOverlappedNew(
+        public static double ScrollBehavior(
             Rect bgRect,
             double contentSize,
             double viewSize,
@@ -868,7 +936,8 @@ namespace ImGui.Rendering
             {
                 if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
-                    var mousePositionDelta = Mouse.Instance.MouseDelta.X;
+                    var v = Mouse.Instance.MouseDelta;
+                    var mousePositionDelta = horizontal ? v.X : v.Y;
                     var newGripPosition = gripPositionOnTrack + mousePositionDelta;
                     newGripPosition = Math.Clamp(newGripPosition, 0, trackScrollAreaSize);
                     var newGripPositonRatio = newGripPosition / trackScrollAreaSize;

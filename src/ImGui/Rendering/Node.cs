@@ -233,6 +233,10 @@ namespace ImGui.Rendering
             {
                 ScrollBarRoot.Render(context);
             }
+            if (VScrollBarRoot != null)
+            {
+                VScrollBarRoot.Render(context);
+            }
         }
 
         internal override bool RenderContent(RenderContext context)
