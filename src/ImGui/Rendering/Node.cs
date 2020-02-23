@@ -10,7 +10,7 @@ namespace ImGui.Rendering
     /// <remarks>
     /// Persisting styling and layout data for <see cref="Visual"/>s of a control.
     /// </remarks>
-    [DebuggerDisplay("{" + nameof(ActiveSelf) + "?\"[*]\":\"[ ]\"}" + "#{" + nameof(Id) + "} " + "{" + nameof(Name) + "}" + "#{" + nameof(Rect) + "}")]
+    [DebuggerDisplay("{ActiveSelf?\"☑️\":\"☐\",nq} Id:{Id} Name:{Name,nq} Rect:{Rect}")]
     internal partial class Node : Visual, IStyleRuleSet
     {
         public Node(int id) : base(id)
