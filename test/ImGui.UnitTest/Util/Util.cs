@@ -60,6 +60,7 @@ namespace ImGui.UnitTest
             {
                 throw new FileNotFoundException("Windows Photo Viewer not found.");
             }
+            path = Path.GetFullPath(path);
             Process.Start("rundll32.exe", @"""C:\Program Files\Windows Photo Viewer\PhotoViewer.dll"",ImageView_Fullscreen " + path);
         }
 

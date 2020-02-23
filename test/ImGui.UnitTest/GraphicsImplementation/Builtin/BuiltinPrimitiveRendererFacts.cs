@@ -675,7 +675,12 @@ namespace ImGui.UnitTest.Rendering
                 [CallerMemberName] string methodName = "unknown")
             {
                 Application.EnableMSAA = false;
+                byte[] bytes = Draw(formattedText, brush, width, height, Rect.Big);
+                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawText)}\\{methodName}.png");
+            }
 
+            private static byte[] Draw(FormattedText formattedText, Brush brush, int width, int height, Rect clipRect)
+            {
                 MeshBuffer meshBuffer = new MeshBuffer();
                 MeshList meshList = new MeshList();
                 BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
@@ -683,6 +688,7 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
+                    renderer.PushClipRect(clipRect);
                     renderer.OnBeforeRead();
                     renderer.DrawRectangle(null, new Pen(Color.Black, 1),
                         new Rect(formattedText.OriginPoint - new Vector(1, 1), formattedText.OriginPoint + new Vector(1, 1)));
@@ -690,6 +696,7 @@ namespace ImGui.UnitTest.Rendering
                         formattedText.OriginPoint + new Vector(width, 0));
                     renderer.DrawText(brush, formattedText);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
                     renderer.OnAfterRead(meshList);
+                    renderer.PopClipRect();
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -703,7 +710,7 @@ namespace ImGui.UnitTest.Rendering
                     bytes = context.GetRenderedRawBytes();
                 }
 
-                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawText)}\\{methodName}.png");
+                return bytes;
             }
 
             [Fact]
@@ -714,6 +721,24 @@ namespace ImGui.UnitTest.Rendering
 
                 Check(formatedText, brush, 400, 130);
             }
+
+            [Fact]
+            public void DrawClippedText()
+            {
+                FormattedText formattedText = new FormattedText(new Point(20, 50),
+                    "ABCDEFGHIJK1234567890立即模式\n" +
+                    "ABCDEFGHIJK1234567890立即模式\n" +
+                    "ABCDEFGHIJK1234567890立即模式\n" +
+                    "ABCDEFGHIJK1234567890立即模式\n" +
+                    "ABCDEFGHIJK1234567890立即模式\n" +
+                    "ABCDEFGHIJK1234567890立即模式\n" +
+                    "ABCDEFGHIJK1234567890立即模式\n", GUIStyle.Default.FontFamily, 14);
+                Brush brush = new Brush(Color.Black);
+                Rect clipRect = new Rect(50, 61, 234, 77);
+                byte[] bytes = Draw(formattedText, brush, 400, 400, clipRect);
+                Util.ShowImageNotOpenFolder(bytes, 400, 400, $"{RootDir}{nameof(DrawText)}\\{nameof(DrawClippedText)}.png");
+            }
+
         }
         public class DrawDrawing
         {
