@@ -25,8 +25,8 @@ namespace ImGui.Rendering
             {
                 throw new ArgumentException("No id is specfied in the name.", nameof(name));
             }
-            this.Id = name.Substring(0, idIndex).GetHashCode();
-            this.Name = name.Substring(idIndex);
+            this.Id = name.Substring(idIndex).GetHashCode();
+            this.Name = name.Substring(0, idIndex);
         }
 
         protected Visual(int id, string name)
