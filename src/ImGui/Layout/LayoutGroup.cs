@@ -512,6 +512,10 @@ namespace ImGui.Rendering
         public void SetX_Group(double x)
         {
             SetX_Entry(x);
+            if (this.HorizontallyOverflow && HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                x -= ScrollOffset.X;
+            }
             if (this.IsVertical)
             {
                 var childX = 0d;
@@ -546,11 +550,6 @@ namespace ImGui.Rendering
                 double nextX;//position x of first child
                 if (this.HorizontallyOverflow)//overflow happens so there is no room for to align children
                 {
-                    if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
-                    {
-                        x -= ScrollOffset.X;
-                    }
-
                     nextX = x + this.BorderLeft + this.PaddingLeft;
 
                     foreach (var visual in this.Children)
@@ -637,16 +636,15 @@ namespace ImGui.Rendering
         public void SetY_Group(double y)
         {
             SetY_Entry(y);
+            if (this.VerticallyOverflow && VerticallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                y -= ScrollOffset.Y;
+            }
             if (this.IsVertical)
             {
                 double nextY;//position y of first child
                 if (this.VerticallyOverflow)//overflow happens so there is no room for to align children
                 {
-                    if (HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
-                    {
-                        y -= ScrollOffset.Y;
-                    }
-
                     nextY = y + this.BorderTop + this.PaddingTop;
 
                     foreach (var visual in this.Children)
@@ -776,20 +774,37 @@ namespace ImGui.Rendering
                 GUIContext g = Form.current.uiContext;
                 g.KeepAliveID(ScrollBarRoot.Id);
 
-                var cellSpacing = this.RuleSet.CellSpacingHorizontal;
                 double occupiedChildrenWidth = 0;
-                foreach (var visual in this.Children)
+                if (this.IsVertical)
                 {
-                    if (!visual.ActiveSelf)
+                    double maxChildWidth = 0;
+                    foreach (var visual in this.Children)
                     {
-                        continue;
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        maxChildWidth = Math.Max(maxChildWidth, visual.Width);
                     }
-                    Debug.Assert(visual is Node);//All children should be Node.
-                    occupiedChildrenWidth += visual.Width + cellSpacing;
+                    occupiedChildrenWidth = maxChildWidth;
                 }
-                if (occupiedChildrenWidth != 0)
+                else
                 {
-                    occupiedChildrenWidth -= cellSpacing;
+                    var cellSpacing = this.RuleSet.CellSpacingHorizontal;
+                    foreach (var visual in this.Children)
+                    {
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        occupiedChildrenWidth += visual.Width + cellSpacing;
+                    }
+                    if (occupiedChildrenWidth != 0)
+                    {
+                        occupiedChildrenWidth -= cellSpacing;
+                    }
                 }
 
                 var scrollWidth = this.RuleSet.ScrollBarWidth;
@@ -838,26 +853,43 @@ namespace ImGui.Rendering
             {
                 if (VScrollBarRoot == null)
                 {
-                    VScrollBarRoot = new Node(this.Name + "#VerticalScrollBar");
+                    VScrollBarRoot = new Node(this.Name + "#VScrollBar");
                 }
                 VScrollBarRoot.ActiveSelf = true;
                 GUIContext g = Form.current.uiContext;
                 g.KeepAliveID(VScrollBarRoot.Id);
 
-                var cellSpacing = this.RuleSet.CellSpacingVertical;
                 double occupiedChildrenHeight = 0;
-                foreach (var visual in this.Children)
+                if (this.IsVertical)
                 {
-                    if (!visual.ActiveSelf)
+                    var cellSpacing = this.RuleSet.CellSpacingVertical;
+                    foreach (var visual in this.Children)
                     {
-                        continue;
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        occupiedChildrenHeight += visual.Height + cellSpacing;
                     }
-                    Debug.Assert(visual is Node);//All children should be Node.
-                    occupiedChildrenHeight += visual.Height + cellSpacing;
+                    if (occupiedChildrenHeight != 0)
+                    {
+                        occupiedChildrenHeight -= cellSpacing;
+                    }
                 }
-                if (occupiedChildrenHeight != 0)
+                else
                 {
-                    occupiedChildrenHeight -= cellSpacing;
+                    double maxChildHeight = 0;
+                    foreach (var visual in this.Children)
+                    {
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        maxChildHeight = Math.Max(maxChildHeight, visual.Height);
+                    }
+                    occupiedChildrenHeight = maxChildHeight;
                 }
 
                 var scrollWidth = this.RuleSet.ScrollBarWidth;
