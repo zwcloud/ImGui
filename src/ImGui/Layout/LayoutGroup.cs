@@ -775,8 +775,8 @@ namespace ImGui.Rendering
                 var border = this.RuleSet.Border;
 
                 Rect bgRect = new Rect(
-                    new Point(Rect.Left + padding.left + border.left, Rect.Bottom - padding.bottom - border.bottom + scrollWidth),
-                    new Point(Rect.Right - padding.right - border.right, Rect.Bottom - padding.bottom - border.bottom));
+                    new Point(Rect.Left + padding.left + border.left, Rect.Bottom - padding.bottom - border.bottom - scrollWidth),
+                    new Point(Rect.Right - padding.right - border.right - scrollWidth, Rect.Bottom - padding.bottom - border.bottom));
                 double contentSize = occupiedChildrenWidth;
                 double viewSize = Rect.Width - this.RuleSet.PaddingHorizontal - this.RuleSet.BorderHorizontal;
                 double viewPosition = ScrollOffset.X;
@@ -844,7 +844,7 @@ namespace ImGui.Rendering
 
                 Rect bgRect = new Rect(
                     new Point(Rect.Right - padding.right - border.right - scrollWidth, Rect.Top + padding.top + border.top),
-                    new Point(Rect.Right - padding.right - border.right, Rect.Bottom - padding.bottom - border.bottom));
+                    new Point(Rect.Right - padding.right - border.right, Rect.Bottom - padding.bottom - border.bottom - scrollWidth));
                 double contentSize = occupiedChildrenHeight;
                 double viewSize = Rect.Height - this.RuleSet.PaddingVertical - this.RuleSet.BorderVertical;
                 double viewPosition = ScrollOffset.Y;

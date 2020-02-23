@@ -15,10 +15,10 @@ namespace UniversalAppTemplate
         {
             //GUILayout.Label("Hello ImGui,");
             //demo.OnGUI();
-            GUILayout.BeginVertical("H", GUILayout.Width(100).ExpandHeight(true));
-            GUILayout.Button("A", GUILayout.Width(60).Height(60));
-            GUILayout.Button("B", GUILayout.Width(60).Height(60));
-            GUILayout.Button("C", GUILayout.Width(60).Height(60));
+            GUILayout.BeginHorizontal("H", GUILayout.ExpandWidth(true).ExpandHeight(true));
+            GUILayout.Button("A", GUILayout.Width(60).Height(260));
+            GUILayout.Button("B", GUILayout.Width(60).Height(260));
+            GUILayout.Button("C", GUILayout.Width(60).Height(260));
             GUILayout.EndVertical();
         }
     }
