@@ -137,6 +137,7 @@ namespace ImGui.Rendering
         {
             if (this.IsVertical) //vertical group
             {
+                double maxChildWidth = 0;
                 foreach (var visual in this.Children)
                 {
                     if (!visual.ActiveSelf)
@@ -159,6 +160,16 @@ namespace ImGui.Rendering
                     {
                         entry.CalcWidth();
                     }
+                    maxChildWidth = Math.Max(maxChildWidth, entry.Width);
+                }
+
+                if (this.ContentWidth < maxChildWidth)
+                {
+                    this.HorizontallyOverflow = true;
+                }
+                else
+                {
+                    this.HorizontallyOverflow = false;
                 }
             }
             else //horizontal group
@@ -464,6 +475,7 @@ namespace ImGui.Rendering
             }
             else // horizontal group
             {
+                double maxChildHeight = 0;
                 foreach (var visual in this.Children)
                 {
                     if (!visual.ActiveSelf)
@@ -483,6 +495,16 @@ namespace ImGui.Rendering
                     {
                         entry.CalcHeight();
                     }
+                    maxChildHeight = Math.Max(maxChildHeight, entry.Height);
+                }
+
+                if(this.ContentHeight < maxChildHeight)
+                {
+                    this.VerticallyOverflow = true;
+                }
+                else
+                {
+                    this.VerticallyOverflow = false;
                 }
             }
         }
@@ -748,7 +770,7 @@ namespace ImGui.Rendering
             {
                 if (ScrollBarRoot == null)
                 {
-                    ScrollBarRoot = new Node(this.Name + "#HorizontalScrollBar");
+                    ScrollBarRoot = new Node(this.Name + "#HScrollBar");
                 }
                 ScrollBarRoot.ActiveSelf = true;
                 GUIContext g = Form.current.uiContext;
