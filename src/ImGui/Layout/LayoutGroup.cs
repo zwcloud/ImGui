@@ -9,8 +9,8 @@ namespace ImGui.Rendering
         public bool HorizontallyOverflow { get; set; }
         public bool VerticallyOverflow { get; set; }
 
-        public OverflowPolicy HorizontallyOverflowPolicy { get; set; } = OverflowPolicy.Scroll;
-        public OverflowPolicy VerticallyOverflowPolicy { get; set; } = OverflowPolicy.Scroll;
+        public OverflowPolicy HorizontallyOverflowPolicy { get => this.RuleSet.OverflowX; }
+        public OverflowPolicy VerticallyOverflowPolicy { get => this.RuleSet.OverflowY; }
 
         internal Node ScrollBarRoot;
         internal Node VScrollBarRoot;

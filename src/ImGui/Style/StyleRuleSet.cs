@@ -506,10 +506,16 @@ namespace ImGui
 
         #endregion Layout
 
-        public OverflowPolicy Overflow
+        public OverflowPolicy OverflowX
         {
-            get => (OverflowPolicy)Get<int>(StylePropertyName.Overflow);
-            set => Set<int>(StylePropertyName.Overflow, (int)value);
+            get => (OverflowPolicy)Get<int>(StylePropertyName.OverflowX);
+            set => Set<int>(StylePropertyName.OverflowX, (int)value);
+        }
+
+        public OverflowPolicy OverflowY
+        {
+            get => (OverflowPolicy)Get<int>(StylePropertyName.OverflowY);
+            set => Set<int>(StylePropertyName.OverflowY, (int)value);
         }
 
         public double ScrollBarWidth

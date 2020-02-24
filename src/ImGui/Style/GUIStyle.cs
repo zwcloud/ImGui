@@ -260,6 +260,13 @@ namespace ImGui
                 [new NameState { Name = StylePropertyName.BackgroundGradient, State = GUIState.Normal }] = (int)Gradient.None,
                 [new NameState { Name = StylePropertyName.BackgroundGradient, State = GUIState.Hover }] = (int)Gradient.None,
                 [new NameState { Name = StylePropertyName.BackgroundGradient, State = GUIState.Active }] = (int)Gradient.None,
+
+                [new NameState { Name = StylePropertyName.OverflowX, State = GUIState.Normal }] = (int)OverflowPolicy.Hidden,
+                [new NameState { Name = StylePropertyName.OverflowX, State = GUIState.Hover }] = (int)OverflowPolicy.Hidden,
+                [new NameState { Name = StylePropertyName.OverflowX, State = GUIState.Active }] = (int)OverflowPolicy.Hidden,
+                [new NameState { Name = StylePropertyName.OverflowY, State = GUIState.Normal }] = (int)OverflowPolicy.Hidden,
+                [new NameState { Name = StylePropertyName.OverflowY, State = GUIState.Hover }] = (int)OverflowPolicy.Hidden,
+                [new NameState { Name = StylePropertyName.OverflowY, State = GUIState.Active }] = (int)OverflowPolicy.Hidden,
             };
 
             style.strStyles = new Dictionary<NameState, string>
