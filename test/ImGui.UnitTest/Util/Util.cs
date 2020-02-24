@@ -60,6 +60,7 @@ namespace ImGui.UnitTest
             {
                 throw new FileNotFoundException("Windows Photo Viewer not found.");
             }
+            path = Path.GetFullPath(path);
             Process.Start("rundll32.exe", @"""C:\Program Files\Windows Photo Viewer\PhotoViewer.dll"",ImageView_Fullscreen " + path);
         }
 
@@ -216,6 +217,14 @@ namespace ImGui.UnitTest
             Util.OpenImage(path);
         }
 
+        internal static void ShowImageNotOpenFolder(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
+        {
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+            var path = expectedImageFilePath;
+            Util.SaveImage(image, path);
+            Util.OpenImage(path);
+        }
+
         internal static void DrawNodeToImage(out byte[] imageRawBytes, Node node, int width, int height)
         {
             Application.EnableMSAA = false;
@@ -329,13 +338,24 @@ namespace ImGui.UnitTest
         /// Show a rendered image of a node. Used to inspect a node temporarily.
         /// </summary>
         /// <param name="node"></param>
-        internal static void Show(Node node)
+        internal static void Show(Node node, string path)
         {
             var width = (int) node.Width + 50;
             var height = (int) node.Height + 50;
-            var path = $"D:\\{System.Guid.NewGuid()}.png";
-            Util.DrawNodeToImage_NewPipeline(out var imageRawBytes, node, width, height);
-            Util.ShowImage(imageRawBytes, width, height, path);
+            Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
+            ShowImageNotOpenFolder(imageRawBytes, width, height, path);
+        }
+
+        /// <summary>
+        /// Show a rendered image of a node with specified image size. Used to inspect a node temporarily.
+        /// </summary>
+        /// <param name="node"></param>
+        internal static void Show(Node node, Size size, string path)
+        {
+            var width = (int)size.Width;
+            var height = (int)size.Height;
+            Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
+            ShowImageNotOpenFolder(imageRawBytes, width, height, path);
         }
 
         internal static void DrawNodeToImage_NewPipeline(out byte[] imageRawBytes, Node node, int width, int height)

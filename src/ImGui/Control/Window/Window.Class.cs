@@ -64,11 +64,6 @@ namespace ImGui
         public Rect ClipRect;
 
         /// <summary>
-        /// Scroll values: (horizontal, vertical)
-        /// </summary>
-        public Vector Scroll;
-
-        /// <summary>
         /// Last frame count when this window is active.
         /// </summary>
         public long LastActiveFrame;
@@ -151,11 +146,6 @@ namespace ImGui
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0xAA303030), GUIState.Hover);
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0xFF303030), GUIState.Active);
                 style.Set(StylePropertyName.WindowRounding, 20.0);
-                style.Set(StylePropertyName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
-                style.Set(StylePropertyName.ScrollBarBackgroundColor, Color.Rgb(240));
-                style.Set(StylePropertyName.ScrollBarButtonColor, Color.Rgb(205), GUIState.Normal);
-                style.Set(StylePropertyName.ScrollBarButtonColor, Color.Rgb(166), GUIState.Hover);
-                style.Set(StylePropertyName.ScrollBarButtonColor, Color.Rgb(96), GUIState.Active);
 
                 windowContainer.AttachLayoutGroup(true);
                 windowContainer.UseBoxModel = true;
@@ -208,6 +198,12 @@ namespace ImGui
             {
                 this.clientArea = new Node(this.GetID("client area"),"client area");
                 clientArea.AttachLayoutGroup(true);
+                clientArea.RuleSet.Set(StylePropertyName.OverflowY, (int)OverflowPolicy.Scroll);
+                clientArea.RuleSet.Set(StylePropertyName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
+                clientArea.RuleSet.Set(StylePropertyName.ScrollBarBackgroundColor, Color.Rgb(240));
+                clientArea.RuleSet.Set(StylePropertyName.ScrollBarButtonColor, Color.Rgb(205), GUIState.Normal);
+                clientArea.RuleSet.Set(StylePropertyName.ScrollBarButtonColor, Color.Rgb(166), GUIState.Hover);
+                clientArea.RuleSet.Set(StylePropertyName.ScrollBarButtonColor, Color.Rgb(96), GUIState.Active);
                 clientArea.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 clientArea.UseBoxModel = true;
                 clientArea.RuleSet.refNode = clientArea;
@@ -427,10 +423,6 @@ namespace ImGui
             newContentRect.Union(rect);
             this.ContentRect = newContentRect;
 
-            // TODO consider if we still need to apply window client area offset, since we have "client area" node
-            // apply scroll offset
-            rect.Offset(-this.Scroll);
-
             return rect;
         }
 
@@ -444,7 +436,6 @@ namespace ImGui
             this.ContentRect = newContentRect;
 
             rect.Offset(this.NodeTreeNodesPivotPoint.X, this.NodeTreeNodesPivotPoint.Y);
-            rect.Offset(-this.Scroll);
             return rect;
         }
 
@@ -454,7 +445,7 @@ namespace ImGui
         /// <param name="newScrollY">new value</param>
         public void SetWindowScrollY(double newScrollY)
         {
-            this.Scroll.Y = newScrollY;
+            this.ClientAreaNode.ScrollOffset.Y = newScrollY;
         }
 
         public void Render(IRenderer renderer, Size clientSize)

@@ -126,22 +126,6 @@ namespace ImGui
                             var newSizeHeight = t.Y + resizeRect.Height;
                             var resizeSize = new Size(newSizeWidth, newSizeHeight);
                             this.ApplySize(resizeSize);
-
-                            // adjust scroll parameters
-                            var contentSize = this.ContentRect.Size;
-                            if (contentSize != Size.Zero)
-                            {
-                                var vH = this.Rect.Height - this.TitleBarHeight -
-                                         this.WindowContainer.RuleSet.BorderVertical -
-                                         this.WindowContainer.RuleSet.PaddingVertical;
-                                var cH = contentSize.Height;
-                                if (cH > vH)
-                                {
-                                    var oldScrollY = this.Scroll.Y;
-                                    oldScrollY = MathEx.Clamp(oldScrollY, 0, cH - vH);
-                                    this.Scroll.Y = oldScrollY;
-                                }
-                            }
                         }
                     }
 

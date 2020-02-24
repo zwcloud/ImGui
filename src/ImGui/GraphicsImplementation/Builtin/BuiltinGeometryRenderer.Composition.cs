@@ -1,19 +1,62 @@
 ﻿//#define ForceStrokePathGeometry //Open this when debugging PathGeometry rendering
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Rendering.Composition;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ImGui.GraphicsImplementation
 {
-    internal partial class BuiltinGeometryRenderer : RecordReader
+    internal partial class BuiltinGeometryRenderer : GeometryRenderer
     {
+        private bool EnsureDrawCommand()
+        {
+            var clipRect = ClipRectStack.Peek();
+            if (clipRect.IsEmpty)
+            {
+                //completely clipped
+                //no render
+                return false;
+            }
+
+            var cmdBuf = this.ShapeMesh.CommandBuffer;
+            if (cmdBuf.Count == 0)
+            {
+                AddCmd();
+                return true;
+            }
+
+            var lastCmd = cmdBuf[cmdBuf.Count - 1];
+            if (lastCmd.ClipRect != clipRect)
+            {
+                AddCmd();
+                return true;
+            }
+
+            return true;
+
+            void AddCmd()
+            {
+                var cmd = new DrawCommand
+                {
+                    ClipRect = clipRect,
+                    ElemCount = 0,
+                    TextureData = null,
+                };
+                cmdBuf.Add(cmd);
+            }
+        }
+
         public override void DrawLine(Pen pen, Point point0, Point point1)
         {
             Debug.Assert(pen != null);
+            if (!EnsureDrawCommand())
+            {
+                return;
+            }
+
             unsafe
             {
                 Point* scratchForLine = stackalloc Point[2];
@@ -26,6 +69,11 @@ namespace ImGui.GraphicsImplementation
         public override void DrawRectangle(Brush brush, Pen pen, Rect rectangle)
         {
             Debug.Assert(brush != null || pen != null);
+            if (!EnsureDrawCommand())
+            {
+                return;
+            }
+
             unsafe
             {
                 Point* scratchForRectangle = stackalloc Point[4];
@@ -61,14 +109,18 @@ namespace ImGui.GraphicsImplementation
         {
             Debug.Assert(brush != null || pen != null);
             Debug.Assert(radiusX >= 0 && radiusY >= 0);
+            if (!EnsureDrawCommand())
+            {
+                return;
+            }
 
             var curve = new EllipseCurve(center.X, center.Y, radiusX, radiusY, 0, Math.PI * 2, true, 0);
-            var count = (int) ((radiusX + radiusY) );
+            var count = (int)((radiusX + radiusY));
             var unit = 1.0 / count;
             IList<Point> points = new List<Point>(count);
             for (int i = 0; i < count; i++)
             {
-                var p = curve.getPoint(unit*i);
+                var p = curve.getPoint(unit * i);
                 points.Add(p);
             }
 
@@ -86,6 +138,10 @@ namespace ImGui.GraphicsImplementation
         public override void DrawGeometry(Brush brush, Pen pen, Geometry geometry)
         {
             Debug.Assert((brush != null || pen != null) && geometry != null);
+            if (!EnsureDrawCommand())
+            {
+                return;
+            }
 
             if (geometry is PathGeometry pathGeometry)
             {
@@ -212,7 +268,7 @@ namespace ImGui.GraphicsImplementation
             //add a new draw command
             //TODO check if we need to add a new draw command
             DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
+            cmd.ClipRect = ClipRectStack.Peek();
             cmd.TextureData = texture;
             this.ImageMesh.CommandBuffer.Add(cmd);
 
@@ -225,7 +281,12 @@ namespace ImGui.GraphicsImplementation
         public override void DrawImage(ITexture image, Rect rect,
             (double top, double right, double bottom, double left) slice)
         {
-            if (!image.Valid){ throw new InvalidOperationException("Texture is not valid for rendering."); }
+            if (!image.Valid) { throw new InvalidOperationException("Texture is not valid for rendering."); }
+
+            if (!ClipRectStack.Peek().IntersectsWith(rect))
+            {
+                return;
+            }
 
             if (slice.top == 0 && slice.right == 0 && slice.bottom == 0 && slice.left == 0)
             {
@@ -286,11 +347,11 @@ namespace ImGui.GraphicsImplementation
 
             //add a new draw command
             DrawCommand cmd = new DrawCommand();
-            cmd.ClipRect = Rect.Big;
+            cmd.ClipRect = ClipRectStack.Peek();
             cmd.TextureData = image;
             this.ImageMesh.CommandBuffer.Add(cmd);
 
-            this.ImageMesh.PrimReserve(6*9, 4*9);
+            this.ImageMesh.PrimReserve(6 * 9, 4 * 9);
 
             this.AddImageRect(a, e, uv_a, uv_e, tintColor); //1
             this.AddImageRect(b, f, uv_b, uv_f, tintColor); //2
@@ -318,7 +379,7 @@ namespace ImGui.GraphicsImplementation
         {
             var shapeMesh = MeshPool.ShapeMeshPool.Get();
             shapeMesh.Clear();
-            shapeMesh.CommandBuffer.Add(DrawCommand.Default);
+            shapeMesh.CommandBuffer.Add(DrawCommand.Default);//TODO remove this, since we have EnsureDrawCommand().
             var textMesh = MeshPool.TextMeshPool.Get();
             textMesh.Clear();
             var imageMesh = MeshPool.ImageMeshPool.Get();
@@ -345,6 +406,5 @@ namespace ImGui.GraphicsImplementation
         {
 
         }
-
     }
 }

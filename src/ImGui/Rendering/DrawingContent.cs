@@ -71,7 +71,7 @@ namespace ImGui.Rendering
             curOffset += totalSize;
         }
 
-        public void ReadAllRecords(RecordReader ctx)
+        public void ReadAllRecords(GeometryRenderer ctx)
         {
             // We shouldn't have any dependent resources if _curOffset is 0
             // (curOffset == 0) -> (renderData.dependentResources.Count == 0)
@@ -197,6 +197,334 @@ namespace ImGui.Rendering
                                     );
                                 }
                                     break;
+#if Push_Pop_Clip_Geometry
+                                case RecordType.PushClip:
+                                {
+                                    PushClipCommand* data = (PushClipCommand*)(pCur + sizeof(RecordHeader));
+                                    ctx.PushClip(
+                                        (Geometry)DependentLookup(data->ClipGeometryIndex)
+                                    );
+                                }
+                                    break;
+                                case RecordType.Pop:
+                                {
+                                    ctx.Pop();
+                                }
+                                break;
+#endif
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                                break;
+                            }
+
+                            pCur += pCurRecord->Size;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void AppendRecords(DrawingContent newContent)
+        {
+            var curOffset = newContent.curOffset;
+            var dependentResources = newContent.dependentResources;
+            var buffer = newContent.buffer;
+
+            // We shouldn't have any dependent resources if _curOffset is 0
+            // (curOffset == 0) -> (renderData.dependentResources.Count == 0)
+            Debug.Assert((curOffset > 0) || (dependentResources.Count == 0));
+
+            // The buffer being null implies that curOffset must be 0.
+            // (buffer == null) -> (curOffset == 0)
+            Debug.Assert((buffer != null) || (curOffset == 0));
+
+            // The _curOffset must be less than the length, if there is a buffer.
+            Debug.Assert((buffer == null) || (curOffset <= buffer.Length));
+
+            if (curOffset > 0)
+            {
+                unsafe
+                {
+                    fixed (byte* pByte = buffer)
+                    {
+                        // This pointer points to the current read point in the
+                        // instruction stream.
+                        byte* pCur = pByte;
+
+                        // This points to the first byte past the end of the
+                        // instruction stream (i.e. when to stop)
+                        byte* pEndOfInstructions = pByte + curOffset;
+
+                        // Iterate across the entire list of instructions, stopping at the
+                        // end or when it has signalled a stop.
+                        while (pCur < pEndOfInstructions)
+                        {
+                            RecordHeader* pCurRecord = (RecordHeader*)pCur;
+
+                            switch (pCurRecord->Type)
+                            {
+                                case RecordType.DrawLine:
+                                {
+                                    DrawLineCommand* data = (DrawLineCommand*)(pCur + sizeof(RecordHeader));
+                                    var pen = (Pen)newContent.DependentLookup(data->PenIndex);
+                                    int penIndexUint = this.dependentResources.IndexOf(pen);
+                                    if (penIndexUint < 0)
+                                    {
+                                        data->PenIndex = this.AddDependentResource(pen);
+                                    }
+                                    else
+                                    {
+                                        data->PenIndex = (uint)penIndexUint;
+                                    }
+                                    this.WriteRecord(RecordType.DrawLine, (byte*)data, sizeof(DrawLineCommand));
+                                }
+                                break;
+                                case RecordType.DrawRectangle:
+                                {
+                                    DrawRectangleCommand* data = (DrawRectangleCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var brush = (Brush)newContent.DependentLookup(data->BrushIndex);
+                                    int brushIndexUint = this.dependentResources.IndexOf(brush);
+                                    if (brushIndexUint < 0)
+                                    {
+                                        data->BrushIndex = this.AddDependentResource(brush);
+                                    }
+                                    else
+                                    {
+                                        data->BrushIndex = (uint)brushIndexUint;
+                                    }
+
+                                    var pen = (Pen)newContent.DependentLookup(data->PenIndex);
+                                    int penIndexUint = this.dependentResources.IndexOf(pen);
+                                    if (penIndexUint < 0)
+                                    {
+                                        data->PenIndex = this.AddDependentResource(pen);
+                                    }
+                                    else
+                                    {
+                                        data->PenIndex = (uint)penIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawRectangle, (byte*)data, sizeof(DrawRectangleCommand));
+                                }
+                                break;
+                                case RecordType.DrawRoundedRectangle:
+                                {
+                                    DrawRoundedRectangleCommand* data = (DrawRoundedRectangleCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var brush = (Brush)newContent.DependentLookup(data->BrushIndex);
+                                    int brushIndexUint = this.dependentResources.IndexOf(brush);
+                                    if (brushIndexUint < 0)
+                                    {
+                                        data->BrushIndex = this.AddDependentResource(brush);
+                                    }
+                                    else
+                                    {
+                                        data->BrushIndex = (uint)brushIndexUint;
+                                    }
+
+                                    var pen = (Pen)newContent.DependentLookup(data->PenIndex);
+                                    int penIndexUint = this.dependentResources.IndexOf(pen);
+                                    if (penIndexUint < 0)
+                                    {
+                                        data->PenIndex = this.AddDependentResource(pen);
+                                    }
+                                    else
+                                    {
+                                        data->PenIndex = (uint)penIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawRoundedRectangle, (byte*)data,
+                                        sizeof(DrawRoundedRectangleCommand));
+                                }
+                                break;
+                                case RecordType.DrawEllipse:
+                                {
+                                    DrawEllipseCommand* data = (DrawEllipseCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var brush = (Brush)newContent.DependentLookup(data->BrushIndex);
+                                    int brushIndexUint = this.dependentResources.IndexOf(brush);
+                                    if (brushIndexUint < 0)
+                                    {
+                                        data->BrushIndex = this.AddDependentResource(brush);
+                                    }
+                                    else
+                                    {
+                                        data->BrushIndex = (uint)brushIndexUint;
+                                    }
+
+                                    var pen = (Pen)newContent.DependentLookup(data->PenIndex);
+                                    int penIndexUint = this.dependentResources.IndexOf(pen);
+                                    if (penIndexUint < 0)
+                                    {
+                                        data->PenIndex = this.AddDependentResource(pen);
+                                    }
+                                    else
+                                    {
+                                        data->PenIndex = (uint)penIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawEllipse, (byte*)data, sizeof(DrawEllipseCommand));
+                                }
+                                break;
+                                case RecordType.DrawGlyphRun:
+                                {
+                                    DrawGlyphRunCommand* data = (DrawGlyphRunCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var brush = (Brush)newContent.DependentLookup(data->BrushIndex);
+                                    int brushIndexUint = this.dependentResources.IndexOf(brush);
+                                    if (brushIndexUint < 0)
+                                    {
+                                        data->BrushIndex = this.AddDependentResource(brush);
+                                    }
+                                    else
+                                    {
+                                        data->BrushIndex = (uint)brushIndexUint;
+                                    }
+
+                                    var glyphRun = (GlyphRun)newContent.DependentLookup(data->GlyphRunIndex);
+                                    int glyphRunIndexUint = this.dependentResources.IndexOf(glyphRun);
+                                    if (glyphRunIndexUint < 0)
+                                    {
+                                        data->GlyphRunIndex = this.AddDependentResource(glyphRun);
+                                    }
+                                    else
+                                    {
+                                        data->GlyphRunIndex = (uint)glyphRunIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawGlyphRun, (byte*)data, sizeof(DrawGlyphRunCommand));
+                                }
+                                break;
+                                case RecordType.DrawText:
+                                {
+                                    DrawTextCommand* data = (DrawTextCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var brush = (Brush)newContent.DependentLookup(data->BrushIndex);
+                                    int brushIndexUint = this.dependentResources.IndexOf(brush);
+                                    if (brushIndexUint < 0)
+                                    {
+                                        data->BrushIndex = this.AddDependentResource(brush);
+                                    }
+                                    else
+                                    {
+                                        data->BrushIndex = (uint)brushIndexUint;
+                                    }
+
+                                    var formattedText = (FormattedText)newContent.DependentLookup(data->FormattedTextIndex);
+                                    int formattedTextIndexUint = this.dependentResources.IndexOf(formattedText);
+                                    if (formattedTextIndexUint < 0)
+                                    {
+                                        data->FormattedTextIndex = this.AddDependentResource(formattedText);
+                                    }
+                                    else
+                                    {
+                                        data->FormattedTextIndex = (uint)formattedTextIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawText, (byte*)data, sizeof(DrawTextCommand));
+                                }
+                                break;
+                                case RecordType.DrawGeometry:
+                                {
+                                    DrawGeometryCommand* data = (DrawGeometryCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var brush = (Brush)newContent.DependentLookup(data->BrushIndex);
+                                    int brushIndexUint = this.dependentResources.IndexOf(brush);
+                                    if (brushIndexUint < 0)
+                                    {
+                                        data->BrushIndex = this.AddDependentResource(brush);
+                                    }
+                                    else
+                                    {
+                                        data->BrushIndex = (uint)brushIndexUint;
+                                    }
+
+                                    var pen = (Pen)newContent.DependentLookup(data->PenIndex);
+                                    int penIndexUint = this.dependentResources.IndexOf(pen);
+                                    if (penIndexUint < 0)
+                                    {
+                                        data->PenIndex = this.AddDependentResource(pen);
+                                    }
+                                    else
+                                    {
+                                        data->PenIndex = (uint)penIndexUint;
+                                    }
+
+                                    var geometry = (Geometry)newContent.DependentLookup(data->GeometryIndex);
+                                    int geometryIndexUint = this.dependentResources.IndexOf(geometry);
+                                    if (geometryIndexUint < 0)
+                                    {
+                                        data->GeometryIndex = this.AddDependentResource(geometry);
+                                    }
+                                    else
+                                    {
+                                        data->GeometryIndex = (uint)geometryIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawGeometry, (byte*)data, sizeof(DrawGeometryCommand));
+                                }
+                                break;
+                                case RecordType.DrawImage:
+                                {
+                                    DrawImageCommand* data = (DrawImageCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var imageSource = (Brush)newContent.DependentLookup(data->ImageSourceIndex);
+                                    int imageSourceIndexUint = this.dependentResources.IndexOf(imageSource);
+                                    if (imageSourceIndexUint < 0)
+                                    {
+                                        data->ImageSourceIndex = this.AddDependentResource(imageSource);
+                                    }
+                                    else
+                                    {
+                                        data->ImageSourceIndex = (uint)imageSourceIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawImage, (byte*)data, sizeof(DrawImageCommand));
+                                }
+                                break;
+                                case RecordType.DrawSlicedImage:
+                                {
+                                    DrawSlicedImageCommand* data = (DrawSlicedImageCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var imageSource = (Brush)newContent.DependentLookup(data->ImageSourceIndex);
+                                    int imageSourceIndexUint = this.dependentResources.IndexOf(imageSource);
+                                    if (imageSourceIndexUint < 0)
+                                    {
+                                        data->ImageSourceIndex = this.AddDependentResource(imageSource);
+                                    }
+                                    else
+                                    {
+                                        data->ImageSourceIndex = (uint)imageSourceIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.DrawSlicedImage, (byte*)data, sizeof(DrawSlicedImageCommand));
+                                }
+                                break;
+                                case RecordType.PushClip:
+                                {
+                                    PushClipCommand* data = (PushClipCommand*)(pCur + sizeof(RecordHeader));
+
+                                    var geometry = (Geometry)newContent.DependentLookup(data->ClipGeometryIndex);
+                                    int geometryIndexUint = this.dependentResources.IndexOf(geometry);
+                                    if (geometryIndexUint < 0)
+                                    {
+                                        data->ClipGeometryIndex = this.AddDependentResource(geometry);
+                                    }
+                                    else
+                                    {
+                                        data->ClipGeometryIndex = (uint)geometryIndexUint;
+                                    }
+
+                                    this.WriteRecord(RecordType.PushClip, (byte*)data, sizeof(PushClipCommand));
+                                }
+                                break;
+                                case RecordType.Pop:
+                                {
+                                    PopCommand* data = (PopCommand*)(pCur + sizeof(RecordHeader));
+                                    this.WriteRecord(RecordType.Pop, (byte*)data, 0);
+                                }
+                                break;
                                 default:
                                 {
                                     throw new ArgumentOutOfRangeException();

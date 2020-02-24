@@ -14,6 +14,8 @@ namespace ImGui.Rendering.Composition
         DrawGeometry,
         DrawImage,
         DrawSlicedImage,
+        PushClip,
+        Pop,
     }
 
     internal struct RecordHeader
@@ -197,6 +199,24 @@ namespace ImGui.Rendering.Composition
         [FieldOffset(52)] public double sliceBottom;
         [FieldOffset(60)] public double sliceLeft;
         [FieldOffset(68)] public uint QuadWordPad0;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct PushClipCommand
+    {
+        public PushClipCommand(uint clipGeometryIndex)
+        {
+            this.ClipGeometryIndex = clipGeometryIndex;
+            this.QuadWordPad0 = 0;
+        }
+
+        [FieldOffset(0)] public uint ClipGeometryIndex;
+        [FieldOffset(4)] public uint QuadWordPad0;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct PopCommand
+    {
     }
 
     internal abstract class RecordReader : DrawingContext

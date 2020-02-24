@@ -312,6 +312,74 @@ namespace ImGui.Rendering
             }
         }
 
+        public bool ReadRecord(out PushClipCommand record)
+        {
+            record = default;
+            unsafe
+            {
+                fixed (byte* pByte = this.buffer)
+                {
+                    // This pointer points to the current read point in the
+                    // instruction stream.
+                    byte* pCur = pByte;
+
+                    // This points to the first byte past the end of the
+                    // instruction stream (i.e. when to stop)
+                    byte* pEndOfInstructions = pByte + this.currentReadOffset;
+
+                    if ((pCur >= pEndOfInstructions)) //reach end
+                    {
+                        return false;
+                    }
+
+                    RecordHeader* pCurRecord = (RecordHeader*)pCur;
+                    if (pCurRecord->Type != RecordType.DrawGlyphRun)
+                    {
+                        return false;
+                    }
+
+                    PushClipCommand* data = (PushClipCommand*)(pCur + sizeof(RecordHeader));
+                    record = *data;
+                    this.currentReadOffset += pCurRecord->Size;
+                    return true;
+                }
+            }
+        }
+
+        public bool ReadRecord(out PopCommand record)
+        {
+            record = default;
+            unsafe
+            {
+                fixed (byte* pByte = this.buffer)
+                {
+                    // This pointer points to the current read point in the
+                    // instruction stream.
+                    byte* pCur = pByte;
+
+                    // This points to the first byte past the end of the
+                    // instruction stream (i.e. when to stop)
+                    byte* pEndOfInstructions = pByte + this.currentReadOffset;
+
+                    if ((pCur >= pEndOfInstructions)) //reach end
+                    {
+                        return false;
+                    }
+
+                    RecordHeader* pCurRecord = (RecordHeader*)pCur;
+                    if (pCurRecord->Type != RecordType.Pop)
+                    {
+                        return false;
+                    }
+
+                    //pop command consumes no space
+
+                    this.currentReadOffset += pCurRecord->Size;
+                    return true;
+                }
+            }
+        }
+
         public bool ReadDependentResource<T>(uint index, out T resource) where T:class
         {
             if (index >= this.dependentResources.Count)

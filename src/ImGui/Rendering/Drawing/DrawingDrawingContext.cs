@@ -6,6 +6,7 @@ namespace ImGui.Rendering
 {
     internal class DrawingDrawingContext : DrawingContext
     {
+        //DrawingDrawingContext will be implemented once DrawingContext.DrawDrawing is implemented
         //TODO implement DrawXXX methods: fill DrawingGroupDrawingContext.drawingGroup
 
         public override void DrawLine(Pen pen, Point point0, Point point1)

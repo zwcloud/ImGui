@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using ImGui.Input;
 
 namespace ImGui.Rendering
 {
@@ -7,6 +8,13 @@ namespace ImGui.Rendering
     {
         public bool HorizontallyOverflow { get; set; }
         public bool VerticallyOverflow { get; set; }
+
+        public OverflowPolicy HorizontallyOverflowPolicy { get => this.RuleSet.OverflowX; }
+        public OverflowPolicy VerticallyOverflowPolicy { get => this.RuleSet.OverflowY; }
+
+        internal Node ScrollBarRoot;
+        internal Node VScrollBarRoot;
+        internal Vector ScrollOffset;
 
         public void CheckRuleSetForLayout_Group(IStyleRuleSet child)
         {
@@ -129,6 +137,7 @@ namespace ImGui.Rendering
         {
             if (this.IsVertical) //vertical group
             {
+                double maxChildWidth = 0;
                 foreach (var visual in this.Children)
                 {
                     if (!visual.ActiveSelf)
@@ -151,6 +160,16 @@ namespace ImGui.Rendering
                     {
                         entry.CalcWidth();
                     }
+                    maxChildWidth = Math.Max(maxChildWidth, entry.Width);
+                }
+
+                if (this.ContentWidth < maxChildWidth)
+                {
+                    this.HorizontallyOverflow = true;
+                }
+                else
+                {
+                    this.HorizontallyOverflow = false;
                 }
             }
             else //horizontal group
@@ -206,7 +225,7 @@ namespace ImGui.Rendering
                 }
 
                 var spaceLeftForStretchedChildren = this.ContentWidth - knownSizedChildrenWidth;
-                if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be hidden
+                if (spaceLeftForStretchedChildren < 0)//overflow, stretched children will be reverted to default-sized
                 {
                     this.HorizontallyOverflow = true;
                     foreach (var visual in this.Children)
@@ -216,11 +235,15 @@ namespace ImGui.Rendering
                             continue;
                         }
                         Debug.Assert(visual is Node);//All children should be Node.
-                        Node entry = (Node) visual;
-                        if (entry.RuleSet.IsFixedWidth || entry.RuleSet.IsDefaultWidth)
+                        Node entry = (Node)visual;
+                        if (entry.RuleSet.HorizontallyStretched)
                         {
-                            entry.CalcWidth();
+                            //set to default-sized
+                            entry.RuleSet.HorizontalStretchFactor = 0;
+                            entry.RuleSet.MinWidth = 1;
+                            entry.RuleSet.MaxWidth = 9999;
                         }
+                        entry.CalcWidth();
                     }
                 }
                 else
@@ -452,6 +475,7 @@ namespace ImGui.Rendering
             }
             else // horizontal group
             {
+                double maxChildHeight = 0;
                 foreach (var visual in this.Children)
                 {
                     if (!visual.ActiveSelf)
@@ -471,6 +495,16 @@ namespace ImGui.Rendering
                     {
                         entry.CalcHeight();
                     }
+                    maxChildHeight = Math.Max(maxChildHeight, entry.Height);
+                }
+
+                if(this.ContentHeight < maxChildHeight)
+                {
+                    this.VerticallyOverflow = true;
+                }
+                else
+                {
+                    this.VerticallyOverflow = false;
                 }
             }
         }
@@ -478,6 +512,10 @@ namespace ImGui.Rendering
         public void SetX_Group(double x)
         {
             SetX_Entry(x);
+            if (this.HorizontallyOverflow && HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                x -= ScrollOffset.X;
+            }
             if (this.IsVertical)
             {
                 var childX = 0d;
@@ -598,6 +636,10 @@ namespace ImGui.Rendering
         public void SetY_Group(double y)
         {
             SetY_Entry(y);
+            if (this.VerticallyOverflow && VerticallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                y -= ScrollOffset.Y;
+            }
             if (this.IsVertical)
             {
                 double nextY;//position y of first child
@@ -714,5 +756,269 @@ namespace ImGui.Rendering
                 }
             }
         }
+
+        internal void OnGUI()
+        {
+            if (!IsGroup)
+            {
+                return;
+            }
+
+            if (HorizontallyOverflow && HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                if (ScrollBarRoot == null)
+                {
+                    ScrollBarRoot = new Node(this.Name + "#HScrollBar");
+                }
+                ScrollBarRoot.ActiveSelf = true;
+                GUIContext g = Form.current.uiContext;
+                g.KeepAliveID(ScrollBarRoot.Id);
+
+                double occupiedChildrenWidth = 0;
+                if (this.IsVertical)
+                {
+                    double maxChildWidth = 0;
+                    foreach (var visual in this.Children)
+                    {
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        maxChildWidth = Math.Max(maxChildWidth, visual.Width);
+                    }
+                    occupiedChildrenWidth = maxChildWidth;
+                }
+                else
+                {
+                    var cellSpacing = this.RuleSet.CellSpacingHorizontal;
+                    foreach (var visual in this.Children)
+                    {
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        occupiedChildrenWidth += visual.Width + cellSpacing;
+                    }
+                    if (occupiedChildrenWidth != 0)
+                    {
+                        occupiedChildrenWidth -= cellSpacing;
+                    }
+                }
+
+                var scrollWidth = this.RuleSet.ScrollBarWidth;
+                var padding = this.RuleSet.Padding;
+                var border = this.RuleSet.Border;
+
+                Rect bgRect = new Rect(
+                    new Point(Rect.Left + padding.left + border.left, Rect.Bottom - padding.bottom - border.bottom - scrollWidth),
+                    new Point(Rect.Right - padding.right - border.right - scrollWidth, Rect.Bottom - padding.bottom - border.bottom));
+                double contentSize = occupiedChildrenWidth;
+                double viewSize = Rect.Width - this.RuleSet.PaddingHorizontal - this.RuleSet.BorderHorizontal;
+                double viewPosition = ScrollOffset.X;
+                bool hovered, held;
+                viewPosition = GUIBehavior.ScrollBehavior(bgRect, contentSize, viewSize, viewPosition,
+                    ScrollBarRoot.Id, true, out var gripRect, out hovered, out held);
+                ScrollOffset.X = viewPosition;
+
+                var state = GUI.Normal;
+                if (hovered)
+                {
+                    state = GUI.Hover;
+                }
+                if (held)
+                {
+                    state = GUI.Active;
+                }
+
+                using (var dc = ScrollBarRoot.RenderOpen())
+                {
+                    var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
+                    dc.DrawRectangle(new Brush(scrollBgColor), null, bgRect);
+                    var scrollButtonColor = this.RuleSet.Get<Color>(StylePropertyName.ScrollBarButtonColor, state);
+                    dc.DrawRectangle(new Brush(scrollButtonColor), null, gripRect);
+#if DrawScrollbarBorders
+                    dc.DrawRectangle(null, new Pen(new Color(1, 0, 0, 0.5), 2), bgRect);
+                    dc.DrawRectangle(null, new Pen(new Color(0, 0, 1, 0.5), 2), gripRect);
+#endif
+                }
+            }
+            else
+            {
+                ScrollBarRoot = null;
+            }
+
+            if (VerticallyOverflow && VerticallyOverflowPolicy == OverflowPolicy.Scroll)
+            {
+                if (VScrollBarRoot == null)
+                {
+                    VScrollBarRoot = new Node(this.Name + "#VScrollBar");
+                }
+                VScrollBarRoot.ActiveSelf = true;
+                GUIContext g = Form.current.uiContext;
+                g.KeepAliveID(VScrollBarRoot.Id);
+
+                double occupiedChildrenHeight = 0;
+                if (this.IsVertical)
+                {
+                    var cellSpacing = this.RuleSet.CellSpacingVertical;
+                    foreach (var visual in this.Children)
+                    {
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        occupiedChildrenHeight += visual.Height + cellSpacing;
+                    }
+                    if (occupiedChildrenHeight != 0)
+                    {
+                        occupiedChildrenHeight -= cellSpacing;
+                    }
+                }
+                else
+                {
+                    double maxChildHeight = 0;
+                    foreach (var visual in this.Children)
+                    {
+                        if (!visual.ActiveSelf)
+                        {
+                            continue;
+                        }
+                        Debug.Assert(visual is Node);//All children should be Node.
+                        maxChildHeight = Math.Max(maxChildHeight, visual.Height);
+                    }
+                    occupiedChildrenHeight = maxChildHeight;
+                }
+
+                var scrollWidth = this.RuleSet.ScrollBarWidth;
+                var padding = this.RuleSet.Padding;
+                var border = this.RuleSet.Border;
+
+                Rect bgRect = new Rect(
+                    new Point(Rect.Right - padding.right - border.right - scrollWidth, Rect.Top + padding.top + border.top),
+                    new Point(Rect.Right - padding.right - border.right, Rect.Bottom - padding.bottom - border.bottom - scrollWidth));
+                double contentSize = occupiedChildrenHeight;
+                double viewSize = Rect.Height - this.RuleSet.PaddingVertical - this.RuleSet.BorderVertical;
+                double viewPosition = ScrollOffset.Y;
+                bool hovered, held;
+                viewPosition = GUIBehavior.ScrollBehavior(bgRect, contentSize, viewSize, viewPosition,
+                    VScrollBarRoot.Id, false, out var gripRect, out hovered, out held);
+                ScrollOffset.Y = viewPosition;
+
+                var state = GUI.Normal;
+                if (hovered)
+                {
+                    state = GUI.Hover;
+                }
+                if (held)
+                {
+                    state = GUI.Active;
+                }
+
+                using (var dc = VScrollBarRoot.RenderOpen())
+                {
+                    var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
+                    dc.DrawRectangle(new Brush(scrollBgColor), null, bgRect);
+                    var scrollButtonColor = this.RuleSet.Get<Color>(StylePropertyName.ScrollBarButtonColor, state);
+                    dc.DrawRectangle(new Brush(scrollButtonColor), null, gripRect);
+#if DrawScrollbarBorders
+                    dc.DrawRectangle(null, new Pen(new Color(1, 0, 0, 0.5), 2), bgRect);
+                    dc.DrawRectangle(null, new Pen(new Color(0, 0, 1, 0.5), 2), gripRect);
+#endif
+                }
+            }
+            else
+            {
+                VScrollBarRoot = null;
+            }
+        }
+        
+    }
+
+    internal partial class GUIBehavior
+    {
+        public static double ScrollBehavior(
+            Rect bgRect,
+            double contentSize,
+            double viewSize,
+            double viewPosition,
+            int id, bool horizontal,
+            out Rect gripRect,
+            out bool hovered, out bool held)
+        {
+            GUIContext g = Form.current.uiContext;
+
+            //grip size
+            var trackSize = horizontal ? bgRect.Width : bgRect.Height;
+            var contentRatio = viewSize / contentSize;
+            var gripSize = trackSize * contentRatio;
+
+            const double minGripSize = 20.0;
+            if(gripSize < minGripSize)
+            {
+                gripSize = minGripSize;
+            }
+
+            if (gripSize > trackSize)
+            {
+                gripSize = trackSize;
+            }
+
+            //grip position
+            var viewScrollAreaSize = contentSize - viewSize;
+            var viewPositionRatio = viewPosition / viewScrollAreaSize;
+            var trackScrollAreaSize = trackSize - gripSize;
+            var gripPositionOnTrack = trackScrollAreaSize * viewPositionRatio;
+
+            hovered = false;
+            held = false;
+
+            hovered = g.IsMouseHoveringRect(bgRect);
+            g.KeepAliveID(id);
+            if (hovered)
+            {
+                g.SetHoverID(id);
+
+                if (Mouse.Instance.LeftButtonPressed) //start track
+                {
+                    g.SetActiveID(id);
+                }
+            }
+            if (g.ActiveId == id)
+            {
+                if (Mouse.Instance.LeftButtonState == KeyState.Down)
+                {
+                    var v = Mouse.Instance.MouseDelta;
+                    var mousePositionDelta = horizontal ? v.X : v.Y;
+                    var newGripPosition = gripPositionOnTrack + mousePositionDelta;
+                    newGripPosition = Math.Clamp(newGripPosition, 0, trackScrollAreaSize);
+                    var newGripPositonRatio = newGripPosition / trackScrollAreaSize;
+                    viewPosition = newGripPositonRatio * viewScrollAreaSize;
+                }
+                else //end track
+                {
+                    g.SetActiveID(0);
+                }
+            }
+
+            if (g.ActiveId == id)
+            {
+                held = true;
+            }
+
+            if (horizontal)
+            {
+                gripRect = new Rect(bgRect.X + gripPositionOnTrack, bgRect.Y, gripSize, bgRect.Height);
+            }
+            else
+            {
+                gripRect = new Rect(bgRect.X, bgRect.Y + gripPositionOnTrack, bgRect.Width, gripSize);
+            }
+
+            return viewPosition;
+        }
+
     }
 }

@@ -99,6 +99,37 @@ namespace ImGui.UnitTest.Layout
             }
 
             [Fact]
+            public void HorizontallyOverflow5()
+            {
+                Node group = new Node(0);
+                group.AttachLayoutGroup(false);
+                group.RuleSet.Padding = (0, 0, 0, 0);
+                group.RuleSet.ApplyOptions(GUILayout.Width(20+50));
+                group.RuleSet.BorderColor = (Color.DarkRed, Color.DarkGreen, Color.DarkBlue, Color.DarkOrange);
+                group.RuleSet.Border = (10, 10, 10, 10);
+                group.RuleSet.AlignmentHorizontal = Alignment.Start;
+                group.RuleSet.Overflow = OverflowPolicy.Scroll;
+                Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(80)        );
+                Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(80)        );
+                Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(80));
+                group.AppendChild(item1);
+                group.AppendChild(item2);
+                group.AppendChild(item3);
+
+                group.Layout();
+
+                item1.RuleSet.BorderColor = (Color.Red, Color.Red, Color.Red, Color.Red);
+                item1.RuleSet.BackgroundColor = Color.DarkRed;
+                item2.RuleSet.BorderColor = (Color.Green, Color.Green, Color.Green, Color.Green);
+                item2.RuleSet.BackgroundColor = Color.DarkGreen;
+                item3.RuleSet.BorderColor = (Color.Blue, Color.Blue, Color.Blue, Color.Blue);
+                item3.RuleSet.BackgroundColor = Color.DarkBlue;
+
+                Util.Show(group,new Size(120, 120), $@"{Util.UnitTestRootDir}Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(HorizontallyOverflow5)}.png");
+                //CheckExpectedImage(group, $@"Layout\images\{nameof(LayoutGroupFacts)}.{nameof(Overflow)}.{nameof(HorizontallyOverflow5)}.png");
+            }
+
+            [Fact]
             public void VerticallyOverflow1()
             {
                 Node group = new Node(0);

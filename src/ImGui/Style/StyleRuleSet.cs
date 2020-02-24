@@ -421,13 +421,25 @@ namespace ImGui
         public int HorizontalStretchFactor
         {
             get => Get<int>(StylePropertyName.HorizontalStretchFactor);
-            set => Set<int>(StylePropertyName.HorizontalStretchFactor, value);
+            set
+            {
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Normal);
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Hover);
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Active);
+                Set<int>(StylePropertyName.HorizontalStretchFactor, value, GUIState.Disabled);
+            }
         }
 
         public int VerticalStretchFactor
         {
             get => Get<int>(StylePropertyName.VerticalStretchFactor);
-            set => Set<int>(StylePropertyName.VerticalStretchFactor, value);
+            set
+            {
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Normal);
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Hover);
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Active);
+                Set<int>(StylePropertyName.VerticalStretchFactor, value, GUIState.Disabled);
+            }
         }
 
         public double CellSpacingHorizontal
@@ -494,6 +506,35 @@ namespace ImGui
 
         #endregion Layout
 
+        public OverflowPolicy OverflowX
+        {
+            get => (OverflowPolicy)Get<int>(StylePropertyName.OverflowX);
+            set => Set<int>(StylePropertyName.OverflowX, (int)value);
+        }
+
+        public OverflowPolicy OverflowY
+        {
+            get => (OverflowPolicy)Get<int>(StylePropertyName.OverflowY);
+            set => Set<int>(StylePropertyName.OverflowY, (int)value);
+        }
+
+        public double ScrollBarWidth
+        {
+            get => Get<double>(StylePropertyName.ScrollBarWidth);
+            set => Set<double>(StylePropertyName.ScrollBarWidth, value);
+        }
+
+        public Color ScrollBarBackgroundColor
+        {
+            get => Get<Color>(StylePropertyName.ScrollBarBackgroundColor);
+            set => Set<Color>(StylePropertyName.ScrollBarBackgroundColor, value);
+        }
+
+        public Color ScrollBarButtonColor
+        {
+            get => Get<Color>(StylePropertyName.ScrollBarButtonColor);
+            set => Set<Color>(StylePropertyName.ScrollBarButtonColor, value);
+        }
 
         #region Font & Text
 

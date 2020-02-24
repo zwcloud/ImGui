@@ -25,8 +25,8 @@ namespace ImGui.Rendering
             {
                 throw new ArgumentException("No id is specfied in the name.", nameof(name));
             }
-            this.Id = name.Substring(0, idIndex).GetHashCode();
-            this.Name = name.Substring(idIndex);
+            this.Id = name.Substring(idIndex).GetHashCode();
+            this.Name = name.Substring(0, idIndex);
         }
 
         protected Visual(int id, string name)
@@ -311,13 +311,20 @@ namespace ImGui.Rendering
             Flags = value ? (Flags | flags) : (Flags & (~flags));
         }
 
-        internal void Render(RenderContext context)
+        internal virtual void Render(RenderContext context)
         {
             RenderRecursive(context);
         }
 
+        internal virtual void RenderAfterChildren(RenderContext context)
+        {
+        }
+
         internal void RenderRecursive(RenderContext context)
         {
+            var oldClipRect = context.ClipRect;
+            var clipRect = this.GetClipRect();
+            context.ClipRect = clipRect;
             if (!RenderContent(context))
             {
                 return;
@@ -325,12 +332,14 @@ namespace ImGui.Rendering
             for (var i = 0; i < this.ChildCount; i++)
             {
                 var child = GetVisualByIndex(i);
-                if (child.IsClipped(this.GetClipRect()))
+                if (child.IsClipped(clipRect))
                 {
                     continue;
                 }
                 child.RenderRecursive(context);
             }
+            RenderAfterChildren(context);
+            context.ClipRect = oldClipRect;
         }
 
         /// <summary>

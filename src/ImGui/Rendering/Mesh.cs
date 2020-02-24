@@ -98,51 +98,57 @@ namespace ImGui
             var indexBuffer = mesh.IndexBuffer;
             var commandBuffer = mesh.CommandBuffer;
 
-            if (indexBuffer.Count == 0 || vertexBuffer.Count == 0)
+            if (indexBuffer.Count == 0 || vertexBuffer.Count == 0 || commandBuffer.Count == 0)
             {
                 return;
             }
 
             foreach (var command in commandBuffer)
             {
+                if(command.ElemCount == 0)//ignore zero-sized command
+                {
+                    continue;
+                }
+
                 DrawCommand previousCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
-                //TODO check if clip rect is the same
-                if (command.TextureData != previousCommand.TextureData)
+                if (command.TextureData != previousCommand.TextureData
+                    || command.ClipRect != previousCommand.ClipRect)
                 {
                     this.CommandBuffer.Add(command);
                 }
-                else//same texture, only add element count to previous command
+                else//only add element count to previous command
                 {
-                    previousCommand.ElemCount += indexBuffer.Count;
+                    previousCommand.ElemCount += command.ElemCount;
                     this.CommandBuffer[this.CommandBuffer.Count - 1] = previousCommand;//write back
                 }
-
-                var originalVertexCount = this.VertexBuffer.Count;
-
-                int vtxBufferSize = this.VertexBuffer.Count;
-                this.vtxWritePosition = vtxBufferSize + vertexBuffer.Count;
-                this.VertexBuffer.Append(vertexBuffer);
-
-                int idxBufferSize = this.IndexBuffer.Count;
-                this.idxWritePosition = idxBufferSize + indexBuffer.Count;
-
-                var sizeBefore = this.IndexBuffer.Count;
-                this.IndexBuffer.Append(indexBuffer);
-                var sizeAfter = this.IndexBuffer.Count;
-
-                if (originalVertexCount != 0)
-                {
-                    for (int i = sizeBefore; i < sizeAfter; i++)
-                    {
-                        this.IndexBuffer[i] = new DrawIndex
-                        {
-                            Index = this.IndexBuffer[i].Index + originalVertexCount
-                        };
-                    }
-                }
-
-                this.currentIdx += vertexBuffer.Count;
             }
+
+            var originalVertexCount = this.VertexBuffer.Count;
+
+            int vtxBufferSize = this.VertexBuffer.Count;
+            this.vtxWritePosition = vtxBufferSize + vertexBuffer.Count;
+            this.VertexBuffer.Append(vertexBuffer);
+
+            int idxBufferSize = this.IndexBuffer.Count;
+            this.idxWritePosition = idxBufferSize + indexBuffer.Count;
+
+            var sizeBefore = this.IndexBuffer.Count;
+            this.IndexBuffer.Append(indexBuffer);
+            var sizeAfter = this.IndexBuffer.Count;
+
+            if (originalVertexCount != 0)
+            {
+                for (int i = sizeBefore; i < sizeAfter; i++)
+                {
+                    this.IndexBuffer[i] = new DrawIndex
+                    {
+                        Index = this.IndexBuffer[i].Index + originalVertexCount
+                    };
+                }
+            }
+
+            this.currentIdx += vertexBuffer.Count;
+
         }
     }
 }

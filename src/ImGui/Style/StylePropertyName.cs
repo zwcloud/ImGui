@@ -85,6 +85,9 @@ namespace ImGui
         public static StylePropertyName WindowShadowColor = new StylePropertyName(nameof(WindowShadowColor));
         public static StylePropertyName WindowShadowWidth = new StylePropertyName(nameof(WindowShadowWidth));
 
+        public static StylePropertyName OverflowX = new StylePropertyName(nameof(OverflowX));
+        public static StylePropertyName OverflowY = new StylePropertyName(nameof(OverflowY));
+
         public static StylePropertyName ScrollBarWidth = new StylePropertyName(nameof(ScrollBarWidth));
         public static StylePropertyName ScrollBarBackgroundColor = new StylePropertyName(nameof(ScrollBarBackgroundColor));
         public static StylePropertyName ScrollBarButtonColor = new StylePropertyName(nameof(ScrollBarButtonColor));

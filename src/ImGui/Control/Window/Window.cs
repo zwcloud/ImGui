@@ -117,7 +117,7 @@ namespace ImGui
             Window window = w.CurrentWindow;
 
             window.RenderTree.CurrentContainer = window.ClientAreaNode;
-
+            window.ClientAreaNode.OnGUI();
             window.Layout();
 
             // Pop

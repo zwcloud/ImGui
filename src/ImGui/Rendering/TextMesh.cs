@@ -195,38 +195,61 @@ namespace ImGui
 
         public void Append(TextMesh textMesh, Vector offset)
         {
-            var oldVertexCount = this.VertexBuffer.Count;
-            var oldIndexCount = this.IndexBuffer.Count;
-            // Update added command
-            var command = this.Commands[this.Commands.Count - 1];
-            command.ElemCount += textMesh.IndexBuffer.Count;
-            this.Commands[this.Commands.Count - 1] = command;
+            var vertexBuffer = textMesh.VertexBuffer;
+            var indexBuffer = textMesh.IndexBuffer;
+            var commandBuffer = textMesh.Commands;
 
-            // TODO merge command with previous one if they share the same clip rect.
+            if (indexBuffer.Count == 0 || vertexBuffer.Count == 0 || commandBuffer.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var command in commandBuffer)
+            {
+                if (command.ElemCount == 0)//ignore zero-sized command
+                {
+                    continue;
+                }
+
+
+                DrawCommand previousCommand = this.Commands[this.Commands.Count - 1];
+                if (command.TextureData != previousCommand.TextureData
+                    || command.ClipRect != previousCommand.ClipRect)
+                {
+                    this.Commands.Add(command);
+                }
+                else//only add element count to previous command
+                {
+                    previousCommand.ElemCount += command.ElemCount;
+                    this.Commands[this.Commands.Count - 1] = previousCommand;//write back
+                }
+            }
+
+            var originalVertexCount = this.VertexBuffer.Count;
+            var oldIndexCount = this.IndexBuffer.Count;
 
             // Append mesh data
+            this.VertexBuffer.Append(textMesh.VertexBuffer);
+            this.IndexBuffer.Append(textMesh.IndexBuffer);
+            var newIndexCount = this.IndexBuffer.Count;
+            for (int i = oldIndexCount; i < newIndexCount; i++)
             {
-                this.VertexBuffer.Append(textMesh.VertexBuffer);
-                this.IndexBuffer.Append(textMesh.IndexBuffer);
-                var newIndexCount = this.IndexBuffer.Count;
-                for (int i = oldIndexCount; i < newIndexCount; i++)
-                {
-                    var index = this.IndexBuffer[i].Index;
-                    index += oldVertexCount;
-                    this.IndexBuffer[i] = new DrawIndex { Index = index };
-                }
+                var index = this.IndexBuffer[i].Index;
+                index += originalVertexCount;
+                this.IndexBuffer[i] = new DrawIndex { Index = index };
             }
 
             // Apply offset to appended part
             if (!MathEx.AmostZero(offset.X) || !MathEx.AmostZero(offset.Y))
             {
-                for (int i = oldVertexCount; i < this.VertexBuffer.Count; i++)
+                for (int i = originalVertexCount; i < this.VertexBuffer.Count; i++)
                 {
                     var vertex = this.VertexBuffer[i];
                     vertex.pos = new Point(vertex.pos.X + offset.X, vertex.pos.Y + offset.Y);
                     this.VertexBuffer[i] = vertex;
                 }
             }
+
         }
     }
 }

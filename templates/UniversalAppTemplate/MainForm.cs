@@ -1,5 +1,4 @@
-﻿using System;
-using ImGui;
+﻿using ImGui;
 
 namespace UniversalAppTemplate
 {
@@ -15,6 +14,12 @@ namespace UniversalAppTemplate
         {
             //GUILayout.Label("Hello ImGui,");
             demo.OnGUI();
+            //GUILayout.BeginVertical("H", GUILayout.ExpandWidth(true).ExpandHeight(true));
+            //    GUILayout.Button("A", GUILayout.Width(200).Height(120));
+            //    GUILayout.Button("B", GUILayout.Width(200).Height(120));
+            //    GUILayout.Button("C", GUILayout.Width(200).Height(120));
+            //    GUILayout.Button("D", GUILayout.Width(200).Height(120));
+            //GUILayout.EndHorizontal();
         }
     }
 }
