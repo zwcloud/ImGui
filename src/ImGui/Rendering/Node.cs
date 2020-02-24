@@ -187,12 +187,13 @@ namespace ImGui.Rendering
 
         public override Rect GetClipRect()
         {
-            Rect clipRect = Rect.Big;//TODO consider client area rect
+            Rect clipRect = Rect.Big;
             if (this.Parent != null)
             {
                 var parentNode = (Node)this.Parent;
                 if(parentNode.HorizontallyOverflow || parentNode.VerticallyOverflow)
                 {
+                    //TODO consider in two aspects: horizontal and vertical
                     clipRect = parentNode.UseBoxModel ? parentNode.ContentRect : parentNode.Rect;
                 }
             }
@@ -229,9 +230,9 @@ namespace ImGui.Rendering
 
         internal override void RenderAfterChildren(RenderContext context)
         {
-            if (ScrollBarRoot != null)
+            if (HScrollBarRoot != null)
             {
-                ScrollBarRoot.Render(context);
+                HScrollBarRoot.Render(context);
             }
             if (VScrollBarRoot != null)
             {

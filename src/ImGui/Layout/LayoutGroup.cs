@@ -12,7 +12,7 @@ namespace ImGui.Rendering
         public OverflowPolicy HorizontallyOverflowPolicy { get => this.RuleSet.OverflowX; }
         public OverflowPolicy VerticallyOverflowPolicy { get => this.RuleSet.OverflowY; }
 
-        internal Node ScrollBarRoot;
+        internal Node HScrollBarRoot;
         internal Node VScrollBarRoot;
         internal Vector ScrollOffset;
 
@@ -766,13 +766,13 @@ namespace ImGui.Rendering
 
             if (HorizontallyOverflow && HorizontallyOverflowPolicy == OverflowPolicy.Scroll)
             {
-                if (ScrollBarRoot == null)
+                if (HScrollBarRoot == null)
                 {
-                    ScrollBarRoot = new Node(this.Name + "#HScrollBar");
+                    HScrollBarRoot = new Node(this.Name + "#HScrollBar");
                 }
-                ScrollBarRoot.ActiveSelf = true;
+                HScrollBarRoot.ActiveSelf = true;
                 GUIContext g = Form.current.uiContext;
-                g.KeepAliveID(ScrollBarRoot.Id);
+                g.KeepAliveID(HScrollBarRoot.Id);
 
                 double occupiedChildrenWidth = 0;
                 if (this.IsVertical)
@@ -819,7 +819,7 @@ namespace ImGui.Rendering
                 double viewPosition = ScrollOffset.X;
                 bool hovered, held;
                 viewPosition = GUIBehavior.ScrollBehavior(bgRect, contentSize, viewSize, viewPosition,
-                    ScrollBarRoot.Id, true, out var gripRect, out hovered, out held);
+                    HScrollBarRoot.Id, true, out var gripRect, out hovered, out held);
                 ScrollOffset.X = viewPosition;
 
                 var state = GUI.Normal;
@@ -832,7 +832,7 @@ namespace ImGui.Rendering
                     state = GUI.Active;
                 }
 
-                using (var dc = ScrollBarRoot.RenderOpen())
+                using (var dc = HScrollBarRoot.RenderOpen())
                 {
                     var scrollBgColor = this.RuleSet.ScrollBarBackgroundColor;
                     dc.DrawRectangle(new Brush(scrollBgColor), null, bgRect);
@@ -846,7 +846,7 @@ namespace ImGui.Rendering
             }
             else
             {
-                ScrollBarRoot = null;
+                HScrollBarRoot = null;
             }
 
             if (VerticallyOverflow && VerticallyOverflowPolicy == OverflowPolicy.Scroll)
