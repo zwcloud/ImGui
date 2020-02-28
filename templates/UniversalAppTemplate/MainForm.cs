@@ -13,7 +13,7 @@ namespace UniversalAppTemplate
         protected override void OnGUI()
         {
             GUILayout.Label("Hello ImGui,");
-            demo.OnGUI();
+            //demo.OnGUI();
         }
     }
 }

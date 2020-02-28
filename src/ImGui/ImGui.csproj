@@ -40,6 +40,7 @@
     <TreatSpecificWarningsAsErrors />
     <NoWarn>1701;1702;1705;0162</NoWarn>
     <WarningsAsErrors />
+    <DefineConstants></DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
