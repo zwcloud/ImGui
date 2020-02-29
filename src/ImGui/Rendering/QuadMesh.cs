@@ -47,10 +47,10 @@ namespace ImGui.Rendering
             this.CommandBuffer.Add(new DrawCommand { });
             this.PrimReserve(6, 4);
 
-            var vertex0 = new DrawVertex { pos = new Point(-1, 1), uv = new Point(0, 1), color = Color.Red };
-            var vertex1 = new DrawVertex { pos = new Point(1, 1), uv = new Point(1, 1), color = Color.Green };
-            var vertex2 = new DrawVertex { pos = new Point(1, -1), uv = new Point(1, 0), color = Color.Blue };
-            var vertex3 = new DrawVertex { pos = new Point(-1, -1), uv = new Point(0, 0), color = Color.Yellow };
+            var vertex0 = new DrawVertex { pos = new Point(-1, 1), uv = new Point(0, 1), color = Color.White };
+            var vertex1 = new DrawVertex { pos = new Point(1, 1), uv = new Point(1, 1), color = Color.White };
+            var vertex2 = new DrawVertex { pos = new Point(1, -1), uv = new Point(1, 0), color = Color.White };
+            var vertex3 = new DrawVertex { pos = new Point(-1, -1), uv = new Point(0, 0), color = Color.White };
             this.AppendVertex(vertex0);
             this.AppendVertex(vertex1);
             this.AppendVertex(vertex2);

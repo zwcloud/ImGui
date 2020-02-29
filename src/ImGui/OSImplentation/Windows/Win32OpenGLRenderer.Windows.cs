@@ -522,29 +522,29 @@ namespace ImGui.OSImplentation.Windows
             Debug.WriteLine("GL_MAX_TEXTURE_SIZE: " + max_texture_size);
 
             GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
-                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE, IntBuffer);
+                GL.GL_BACK_LEFT, GL.GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE, IntBuffer);
             Utility.CheckGLError();
             var redBits = IntBuffer[0];
 
             GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
-                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE, IntBuffer);
+                GL.GL_BACK_LEFT, GL.GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE, IntBuffer);
             Utility.CheckGLError();
             var greenBits = IntBuffer[0];
 
             GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
-                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE, IntBuffer);
+                GL.GL_BACK_LEFT, GL.GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE, IntBuffer);
             Utility.CheckGLError();
             var blueBits = IntBuffer[0];
 
             GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
-                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE, IntBuffer);
+                GL.GL_BACK_LEFT, GL.GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE, IntBuffer);
             Utility.CheckGLError();
             var alphaBits = IntBuffer[0];
 
             Debug.WriteLine("R{0} G{1} B{2} A{3}", redBits, greenBits, blueBits, alphaBits);
 
             GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
-                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, IntBuffer);
+                GL.GL_DEPTH, GL.GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, IntBuffer);
             Utility.CheckGLError();
             var depthBits = IntBuffer[0];
             Debug.WriteLine("Depth: " + depthBits);
