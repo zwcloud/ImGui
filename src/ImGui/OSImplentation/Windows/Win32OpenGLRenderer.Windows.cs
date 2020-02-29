@@ -348,7 +348,12 @@ namespace ImGui.OSImplentation.Windows
             WGL_CONTEXT_MINOR_VERSION_ARB = 0x2092,
             WGL_CONTEXT_LAYER_PLANE_ARB = 0x2093,
             WGL_CONTEXT_FLAGS_ARB = 0x2094,
+            WGL_CONTEXT_DEBUG_BIT_ARB = 0x00000001,
+            WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB = 0x00000002,
             WGL_CONTEXT_PROFILE_MASK_ARB = 0x9126,
+            WGL_CONTEXT_CORE_PROFILE_BIT_ARB = 0x00000001,
+            WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB = 0x00000002,
+            ERROR_INVALID_PROFILE_ARB = 0x2096
         }
 
         #endregion
@@ -445,8 +450,8 @@ namespace ImGui.OSImplentation.Windows
                     (int)WGL.WGL_DEPTH_BITS_ARB,     24,
                     (int)WGL.WGL_STENCIL_BITS_ARB,   8,
                     (int)WGL.WGL_SWAP_METHOD_ARB, (int)WGL.WGL_SWAP_EXCHANGE_ARB,
-                    (int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MSAA
-                    (int)WGL.WGL_SAMPLES_ARB,        16,
+                    //(int)WGL.WGL_SAMPLE_BUFFERS_ARB, (int)GL.GL_TRUE,//Enable MSAA
+                    //(int)WGL.WGL_SAMPLES_ARB,        16,
                 0};
 
                 int pixelFormat;
@@ -467,9 +472,17 @@ namespace ImGui.OSImplentation.Windows
                     throw new Exception(string.Format("SetPixelFormat failed: error {0}", Marshal.GetLastWin32Error()));
                 }
 
-                if ((this.hglrc = wglCreateContext(this.hDC)) == IntPtr.Zero)
+                int[] attributes = {
+                    (int)WGL.WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
+                    (int)WGL.WGL_CONTEXT_MINOR_VERSION_ARB, 5,
+                    (int)WGL.WGL_CONTEXT_FLAGS_ARB, 0,
+                    (int)WGL.WGL_CONTEXT_PROFILE_MASK_ARB, (int)WGL.WGL_CONTEXT_CORE_PROFILE_BIT_ARB
+                    , 0
+                };
+
+                if ((this.hglrc = Wgl.CreateContextAttribsARB(this.hDC, IntPtr.Zero, attributes)) == IntPtr.Zero)
                 {
-                    throw new Exception(string.Format("wglCreateContext failed: error {0}", Marshal.GetLastWin32Error()));
+                    throw new Exception(string.Format("CreateContextAttribsARB failed: error {0}", Marshal.GetLastWin32Error()));
                 }
 
                 Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
@@ -485,38 +498,62 @@ namespace ImGui.OSImplentation.Windows
                 Utility.CheckGLError();
             }
 
-            GL.GetIntegerv(GL.GL_STENCIL_BITS, IntBuffer);
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
+                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, IntBuffer);
+            Utility.CheckGLError();
             var stencilBits = IntBuffer[0];
             if (stencilBits != 8)
             {
                 throw new Exception("Failed to set stencilBits to 8.");
             }
+
             PrintGraphicInfo();
         }
 
         private void PrintGraphicInfo()
         {
             string version = GL.GetString(GL.GL_VERSION);
+            Utility.CheckGLError();
             Debug.WriteLine("OpenGL version info: " + version);
 
             GL.GetIntegerv(GL.GL_MAX_TEXTURE_SIZE, IntBuffer);
+            Utility.CheckGLError();
             int max_texture_size = IntBuffer[0];
             Debug.WriteLine("GL_MAX_TEXTURE_SIZE: " + max_texture_size);
-            GL.GetIntegerv(GL.GL_RED_BITS, IntBuffer);
+
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
+                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE, IntBuffer);
+            Utility.CheckGLError();
             var redBits = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_GREEN_BITS, IntBuffer);
+
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
+                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE, IntBuffer);
+            Utility.CheckGLError();
             var greenBits = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLUE_BITS, IntBuffer);
+
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
+                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE, IntBuffer);
+            Utility.CheckGLError();
             var blueBits = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_ALPHA_BITS, IntBuffer);
+
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
+                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE, IntBuffer);
+            Utility.CheckGLError();
             var alphaBits = IntBuffer[0];
+
             Debug.WriteLine("R{0} G{1} B{2} A{3}", redBits, greenBits, blueBits, alphaBits);
-            GL.GetIntegerv(GL.GL_DEPTH_BITS, IntBuffer);
+
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
+                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, IntBuffer);
+            Utility.CheckGLError();
             var depthBits = IntBuffer[0];
-            Debug.WriteLine("GL_DEPTH_BITS: " + depthBits);
-            GL.GetIntegerv(GL.GL_STENCIL_BITS, IntBuffer);
+            Debug.WriteLine("Depth: " + depthBits);
+
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
+                GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, IntBuffer);
+            Utility.CheckGLError();
             var stencilBits = IntBuffer[0];
-            Debug.WriteLine("GL_STENCIL_BITS: " + stencilBits);
+            Debug.WriteLine("Stencil: " + stencilBits);
         }
 
         public void SwapBuffers()

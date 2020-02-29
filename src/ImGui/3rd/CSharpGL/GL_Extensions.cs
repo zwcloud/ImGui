@@ -65,6 +65,7 @@ namespace CSharpGL
             _glBindRenderbuffer = GetDelegateFor<glBindRenderbuffer>();
             _glRenderbufferStorage = GetDelegateFor<glRenderbufferStorage>();
             _glFramebufferRenderbuffer = GetDelegateFor<glFramebufferRenderbuffer>();
+            _glGetFramebufferAttachmentParameteriv = GetDelegateFor<glGetFramebufferAttachmentParameteriv>();
 
             _glTexImage2DMultisample = GetDelegateFor<glTexImage2DMultisample>();
 
@@ -123,6 +124,7 @@ namespace CSharpGL
 
         private static glFramebufferTexture2D _glFramebufferTexture2D;
         private static glFramebufferRenderbuffer _glFramebufferRenderbuffer;
+        private static glGetFramebufferAttachmentParameteriv _glGetFramebufferAttachmentParameteriv;
         private static glTexImage2DMultisample _glTexImage2DMultisample;
 
         #region OpenGL 1.2
@@ -4705,9 +4707,9 @@ namespace CSharpGL
             _glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
         }
 
-        public static void GetFramebufferAttachmentParameterivEXT(uint target, uint attachment, uint pname, int[] parameters)
+        public static void GetFramebufferAttachmentParameteriv(uint target, uint attachment, uint pname, int[] parameters)
         {
-            GetDelegateFor<glGetFramebufferAttachmentParameterivEXT>()(target, attachment, pname, parameters);
+            _glGetFramebufferAttachmentParameteriv(target, attachment, pname, parameters);
         }
 
         public static void GenerateMipmapEXT(uint target)
@@ -4731,7 +4733,7 @@ namespace CSharpGL
         private delegate void glFramebufferTexture2D(uint target, uint attachment, uint textarget, uint texture, int level);
         private delegate void glFramebufferTexture3DEXT(uint target, uint attachment, uint textarget, uint texture, int level, int zoffset);
         private delegate void glFramebufferRenderbuffer(uint target, uint attachment, uint renderbuffertarget, uint renderbuffer);
-        private delegate void glGetFramebufferAttachmentParameterivEXT(uint target, uint attachment, uint pname, int[] parameters);
+        private delegate void glGetFramebufferAttachmentParameteriv(uint target, uint attachment, uint pname, int[] parameters);
         private delegate void glGenerateMipmapEXT(uint target);
 
         //  Constants

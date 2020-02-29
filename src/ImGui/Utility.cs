@@ -32,7 +32,7 @@ namespace ImGui
         /// <summary>
         /// (Not using, performance is bad.)
         /// </summary>
-        [Conditional("Debug")]
+        [Conditional("DEBUG")]
         public static void CheckGLError()
         {
             var error = GL.GetError();
