@@ -122,7 +122,7 @@ out vec4 Out_Color;
 uniform sampler2D Texture;
 void main()
 {
-    Out_Color = texture2D(Texture, Frag_UV);//*0.001 +  Frag_Color;
+    Out_Color = texture2D(Texture, Frag_UV) * Frag_Color;
 }
 "
     );
@@ -151,7 +151,6 @@ void main()
             this.imageMaterial.Init();
             this.glyphMaterial.Init();
             glyphAntialiasMaterial.Init();
-           
 
             // Other state
             GL.Enable(GL.GL_MULTISAMPLE);
@@ -169,20 +168,25 @@ void main()
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
 
             //attach color texture to the framebuffer
-
             GL.BindTexture(GL.GL_TEXTURE_2D, framebufferColorTexture);
-            GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB,
+            GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA,
                 (int)size.Width, (int)size.Height, 0,
                 GL.GL_RGB, GL.GL_UNSIGNED_BYTE, IntPtr.Zero);
             GL.FramebufferTexture2D(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D,
                 framebufferColorTexture, 0);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
 
+            //attach depth and stencil texture to the framebuffer
             GL.BindTexture(GL.GL_TEXTURE_2D, framebufferDepthStencilTexture);
             GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_DEPTH_STENCIL,
                 (int)size.Width, (int)size.Height, 0,
                 GL.GL_DEPTH_STENCIL, GL.GL_UNSIGNED_INT_24_8, IntPtr.Zero);
             GL.FramebufferTexture2D(GL.GL_FRAMEBUFFER_EXT, GL.GL_DEPTH_STENCIL_ATTACHMENT, GL.GL_TEXTURE_2D,
                 framebufferDepthStencilTexture, 0);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+            GL.BindTexture(GL.GL_TEXTURE_2D, 0);
 
             //attach depth and stencil renderbuffer to the framebuffer
             //GL.GenRenderbuffers(1, renderbuffers);
@@ -408,9 +412,7 @@ void main()
 #if ENABLE_AA
             //Draw framebuffer texture to screen as a quad, applying anti-alias
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
-            GL.Clear(GL.GL_COLOR_BUFFER_BIT);
             glyphAntialiasMaterial.program.Bind();
-            glyphAntialiasMaterial.program.SetUniform("Texture", 0);
             GL.Disable(GL.GL_SCISSOR_TEST);
             GL.Disable(GL.GL_DEPTH_TEST);
             GL.ActiveTexture(GL.GL_TEXTURE0);
