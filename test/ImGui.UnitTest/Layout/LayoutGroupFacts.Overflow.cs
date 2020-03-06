@@ -108,7 +108,8 @@ namespace ImGui.UnitTest.Layout
                 group.RuleSet.BorderColor = (Color.DarkRed, Color.DarkGreen, Color.DarkBlue, Color.DarkOrange);
                 group.RuleSet.Border = (10, 10, 10, 10);
                 group.RuleSet.AlignmentHorizontal = Alignment.Start;
-                group.RuleSet.Overflow = OverflowPolicy.Scroll;
+                group.RuleSet.OverflowX = OverflowPolicy.Scroll;
+                group.RuleSet.OverflowY = OverflowPolicy.Scroll;
                 Node item1 = new Node(1); item1.AttachLayoutEntry(); item1.RuleSet.ApplyOptions(GUILayout.Width(50).Height(80)        );
                 Node item2 = new Node(2); item2.AttachLayoutEntry(); item2.RuleSet.ApplyOptions(GUILayout.Width(50).Height(80)        );
                 Node item3 = new Node(3); item3.AttachLayoutEntry(); item3.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).Height(80));
