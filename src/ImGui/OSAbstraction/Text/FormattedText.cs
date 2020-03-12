@@ -73,10 +73,14 @@ namespace ImGui.OSAbstraction.Text
                 {
                     continue;
                 }
-                Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
-                GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
-                var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily) ??
-                                GlyphCache.Default.AddGlyph(character, fontFamily, polygons, bezierSegments);
+                GlyphData glyphData;
+                glyphData = GlyphCache.Default.GetGlyph(character, fontFamily);
+                if (glyphData == null)
+                {
+                    Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
+                    GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
+                    glyphData = GlyphCache.Default.AddGlyph(character, fontFamily, polygons, bezierSegments);
+                }
                 Debug.Assert(glyphData != null);
                 this.GlyphDataList.Add(glyphData);
                 var glyphOffset = textContext.GlyphOffsets[i];
