@@ -101,7 +101,6 @@ DroidSans.ttf, Droid Sans is a humanist sans serif typeface designed by Steve Ma
 * [Typography](https://github.com/LayoutFarm/Typography): C# Font Reader (TrueType / OpenType / OpenFont) , Glyphs Layout and Rendering
 * [OpenTK](https://github.com/opentk/opentk): low-level C# wrapper for OpenGL
 * [CSharpGL](https://github.com/bitzhuwei/CSharpGL): Object Oriented OpenGL in C#
-* [LogUtility](https://github.com/Ivony/LogUtility): a light log tools
 
 ## License
 
