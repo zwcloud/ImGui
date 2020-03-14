@@ -21,7 +21,6 @@
     <LangVersion>latest</LangVersion>
     <Configurations>Debug;Release</Configurations>
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
