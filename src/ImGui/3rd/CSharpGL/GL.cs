@@ -78,9 +78,8 @@ namespace CSharpGL
             }
 
             //  Get the delegate for the function pointer.
-            Delegate del = Marshal.GetDelegateForFunctionPointer<T>(proc) as Delegate;
-
-            return del as T;
+            T del = Marshal.GetDelegateForFunctionPointer<T>(proc) as T;
+            return del;
         }
     }
 }
