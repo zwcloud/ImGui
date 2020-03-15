@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace ImGui.OSAbstraction.Text
 {
-    internal class FormattedText
+    public class FormattedText
     {
         public Point OriginPoint { get; private set; }//TODO we should define bounding rect of FormattedText
         public string Text
@@ -24,8 +24,8 @@ namespace ImGui.OSAbstraction.Text
         }
         public string FontFamily { get; private set; }
         public double FontSize { get; private set; }
-        public IList<GlyphData> GlyphDataList { get; private set; } = new List<GlyphData>();
-        public IList<Vector> GlyphOffsets { get; private set; } = new List<Vector>();
+        internal IList<GlyphData> GlyphDataList { get; private set; } = new List<GlyphData>();
+        internal IList<Vector> GlyphOffsets { get; private set; } = new List<Vector>();
 
         public bool TextChanged { get; set; } = false;
 

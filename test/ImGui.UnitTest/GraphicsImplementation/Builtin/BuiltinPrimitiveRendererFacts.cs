@@ -739,6 +739,15 @@ namespace ImGui.UnitTest.Rendering
                 Util.ShowImageNotOpenFolder(bytes, 400, 400, $"{RootDir}{nameof(DrawText)}\\{nameof(DrawClippedText)}.png");
             }
 
+            [Fact]
+            public void DrawSingleCharacter()
+            {
+                FormattedText formattedText = new FormattedText(new Point(10, 200),
+                    "e", GUIStyle.Default.FontFamily, 72);
+                Brush brush = new Brush(Color.Black);
+                byte[] bytes = Draw(formattedText, brush, 400, 400, Rect.Big);
+                Util.ShowImageNotOpenFolder(bytes, 400, 400, $"{RootDir}{nameof(DrawText)}\\{nameof(DrawSingleCharacter)}.png");
+            }
         }
         public class DrawDrawing
         {
