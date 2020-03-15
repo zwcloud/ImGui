@@ -1,5 +1,4 @@
-﻿#define ENABLE_AA
-using CSharpGL;
+﻿using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 using System;
@@ -68,7 +67,7 @@ void main()
 "
             );
 
-        public readonly OpenGLMaterial glyphMaterial = new OpenGLMaterial(
+        public static readonly OpenGLMaterial glyphMaterial = new OpenGLMaterial(
     vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
@@ -77,11 +76,12 @@ in vec2 UV;
 in vec4 Color;
 out vec2 Frag_UV;
 out vec4 Frag_Color;
+uniform vec2 offset;
 void main()
 {
 	Frag_UV = UV;
 	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
+	gl_Position = ProjMtx * vec4(offset+Position.xy,0,1);
 }
 ",
     fragmentShader: @"
@@ -89,17 +89,22 @@ void main()
 in vec2 Frag_UV;
 in vec4 Frag_Color;
 out vec4 Out_Color;
+uniform vec4 color;
 void main()
 {
 	if (Frag_UV.s * Frag_UV.s - Frag_UV.t > 0.0)
 	{
 		discard;
 	}
-	Out_Color = Frag_Color;
+
+	// Upper 4 bits: front faces
+	// Lower 4 bits: back faces
+	Out_Color = Frag_Color* color *0.001 + vec4(0.125, 0, 0, 0); /*Frag_Color* color * (gl_FrontFacing ? 16.0 / 255.0 : 1.0 / 255.0);*/
+    Out_Color.a = 1;
 }
 "
     );
-        public static readonly OpenGLMaterial glyphAntialiasMaterial = new OpenGLMaterial(
+        public static readonly OpenGLMaterial textMaterial = new OpenGLMaterial(
     vertexShader: @"
 #version 330
 in vec2 Position;
@@ -122,7 +127,26 @@ out vec4 Out_Color;
 uniform sampler2D Texture;
 void main()
 {
-    Out_Color = texture2D(Texture, Frag_UV) * Frag_Color;
+	// Get samples for -2/3 and -1/3
+	vec2 valueL = texture2D(Texture, vec2(Frag_UV.x + dFdx(Frag_UV.x), Frag_UV.y)).yz * 255.0;
+	vec2 lowerL = mod(valueL, 16.0);
+	vec2 upperL = (valueL - lowerL) / 16.0;
+	vec2 alphaL = min(abs(upperL - lowerL), 2.0);
+
+	// Get samples for 0, +1/3, and +2/3
+	vec3 valueR = texture2D(Texture, Frag_UV).xyz * 255.0;
+	vec3 lowerR = mod(valueR, 16.0);
+	vec3 upperR = (valueR - lowerR) / 16.0;
+	vec3 alphaR = min(abs(upperR - lowerR), 2.0);
+
+	// Average the energy over the pixels on either side
+	vec4 rgba = vec4(
+		(alphaR.x + alphaR.y + alphaR.z) / 6.0,
+		(alphaL.y + alphaR.x + alphaR.y) / 6.0,
+		(alphaL.x + alphaL.y + alphaR.x) / 6.0,
+		0.0);
+
+	Out_Color = vec4(rgba.rgb,1) + Frag_Color*0.001;// + vec4(0,1,0,1);
 }
 "
     );
@@ -134,23 +158,30 @@ void main()
 
         //framebuffer
         private readonly uint[] framebuffers = { 0 };
-        private readonly uint[] textures = { 0, 0 };
-        private readonly uint[] renderbuffers = { 0 };
+        private readonly uint[] textures = { 0 };
 
         static uint framebuffer = 0;
         static uint framebufferColorTexture = 0;
-        static uint framebufferDepthStencilTexture = 0;
         static QuadMesh quadMesh;
         static ITexture checkerTexture;
 
+        static readonly Point[] JITTER_PATTERN =
+        {
+            new Point (- 1 / 12.0, -5 / 12.0),
+            new Point( 1 / 12.0,  1 / 12.0),
+            new Point( 3 / 12.0, -1 / 12.0),
+            new Point( 5 / 12.0,  5 / 12.0),
+            new Point( 7 / 12.0, -3 / 12.0),
+            new Point( 9 / 12.0,  3 / 12.0),
+        };
         public void Init(IntPtr windowHandle, Size size)
         {
             CreateOpenGLContext(windowHandle);
 
             this.shapeMaterial.Init();
             this.imageMaterial.Init();
-            this.glyphMaterial.Init();
-            glyphAntialiasMaterial.Init();
+            glyphMaterial.Init();
+            textMaterial.Init();
 
             // Other state
             GL.Enable(GL.GL_MULTISAMPLE);
@@ -161,10 +192,9 @@ void main()
 
             //set-up framebuffer
             GL.GenFramebuffers(1, framebuffers);
-            GL.GenTextures(2, textures);
+            GL.GenTextures(1, textures);
             framebuffer = framebuffers[0];
             framebufferColorTexture = textures[0];
-            framebufferDepthStencilTexture = textures[1];
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
 
             //attach color texture to the framebuffer
@@ -176,26 +206,17 @@ void main()
                 framebufferColorTexture, 0);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
 
-            //attach depth and stencil texture to the framebuffer
-            GL.BindTexture(GL.GL_TEXTURE_2D, framebufferDepthStencilTexture);
-            GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_DEPTH_STENCIL,
-                (int)size.Width, (int)size.Height, 0,
-                GL.GL_DEPTH_STENCIL, GL.GL_UNSIGNED_INT_24_8, IntPtr.Zero);
-            GL.FramebufferTexture2D(GL.GL_FRAMEBUFFER_EXT, GL.GL_DEPTH_STENCIL_ATTACHMENT, GL.GL_TEXTURE_2D,
-                framebufferDepthStencilTexture, 0);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-            GL.BindTexture(GL.GL_TEXTURE_2D, 0);
-
-            //attach depth and stencil renderbuffer to the framebuffer
-            //GL.GenRenderbuffers(1, renderbuffers);
-            //var renderbuffer = renderbuffers[0];
-            //GL.BindRenderbuffer(GL.GL_RENDERBUFFER, renderbuffer);
-            //GL.RenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH24_STENCIL8, (int)size.Width, (int)size.Height);
-            //GL.BindRenderbuffer(GL.GL_RENDERBUFFER, 0);
-            //GL.FramebufferRenderbuffer(GL.GL_FRAMEBUFFER_EXT, GL.GL_DEPTH_STENCIL_ATTACHMENT, GL.GL_RENDERBUFFER, renderbuffer);
-
+            GL.GetFramebufferAttachmentParameteriv(GL.GL_FRAMEBUFFER_EXT,
+                GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE, IntBuffer);
+            Utility.CheckGLError();
+            var alphaBits = IntBuffer[0];
+            if(alphaBits != 8)
+            {
+                throw new Exception("Framebuffer format is not R8G8B8A8.");
+            }
 
             //check if framebuffer is complete
             if (GL.CheckFramebufferStatus(GL.GL_FRAMEBUFFER_EXT) != GL.GL_FRAMEBUFFER_COMPLETE_EXT)
@@ -220,7 +241,7 @@ void main()
         {
             DrawMesh(this.shapeMaterial, meshes.shapeMesh, width, height);
             DrawMesh(this.imageMaterial, meshes.imageMesh, width, height);
-            DrawTextMesh(this.glyphMaterial, meshes.textMesh, width, height);
+            DrawTextMesh(meshes.textMesh, width, height);
         }
 
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
@@ -323,7 +344,7 @@ void main()
         /// <summary>
         /// Draw text mesh
         /// </summary>
-        internal static void DrawTextMesh(OpenGLMaterial glyphMaterial, TextMesh textMesh, int width, int height)
+        internal static void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
@@ -352,14 +373,10 @@ void main()
             int last_sessor_rect_width = IntBuffer[2];
             int last_sessor_rect_height = IntBuffer[3];
 
-            GL.Viewport(0, 0, width, height);
-
-#if ENABLE_AA
-            GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
-            GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
-#else
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
-#endif
+            GL.Viewport(0, 0, width, height);
+            GL.ClearColor(0, 0, 0, 1);
+            GL.Clear(GL.GL_COLOR_BUFFER_BIT);
 
             glyphMaterial.program.Bind();
             float L = 0;
@@ -380,51 +397,48 @@ void main()
             // Send vertex data
             GL.BindVertexArray(glyphMaterial.VaoHandle);
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, glyphMaterial.VboHandle);
-            GL.BufferData(GL.GL_ARRAY_BUFFER, textMesh.VertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), textMesh.VertexBuffer.Pointer, GL.GL_STREAM_DRAW);
+            GL.BufferData(GL.GL_ARRAY_BUFFER, textMesh.VertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), textMesh.VertexBuffer.Pointer, GL.GL_STATIC_DRAW);
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glyphMaterial.EboHandle);
-            GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, textMesh.IndexBuffer.Count * Marshal.SizeOf<DrawIndex>(), textMesh.IndexBuffer.Pointer, GL.GL_STREAM_DRAW);
+            GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, textMesh.IndexBuffer.Count * Marshal.SizeOf<DrawIndex>(), textMesh.IndexBuffer.Pointer, GL.GL_STATIC_DRAW);
 
             Utility.CheckGLError();
 
-            GL.Enable(GL.GL_STENCIL_TEST);
+            GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
+            GL.BlendFunc(GL.GL_ONE, GL.GL_ONE);
             var indexBufferOffset = IntPtr.Zero;
-            foreach (var drawCmd in textMesh.Commands)
+            //for (int j = 0; j < JITTER_PATTERN.Length; j++)
             {
-                // Draw text mesh to stencil buffer
-                GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_INVERT);
-                GL.StencilFunc(GL.GL_ALWAYS, 1, 1);
-                GL.ColorMask(false, false, false, false);//only draw to stencil buffer
-                GL.Clear(GL.GL_STENCIL_BUFFER_BIT); //clear stencil buffer to 0
-                var clipRect = drawCmd.ClipRect;
-                GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
-                GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
+                //var offset = JITTER_PATTERN[j];
+                //glyphMaterial.program.SetUniform("offset", offset.x, offset.y);
+                //indexBufferOffset = IntPtr.Zero;//reset to redraw with a different offset
+                //if(j % 2 == 0)
+                //{
+                //    glyphMaterial.program.SetUniform("color", j == 0 ? 1 : 0, j == 2 ? 1 : 0, j == 4 ? 1 : 0, 0);
+                //}
+                foreach (var drawCmd in textMesh.Commands)
+                {
+                    // Draw text mesh 
+                    GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
 
-                // Draw text mesh againest stencil buffer
-                GL.StencilFunc(GL.GL_EQUAL, 1, 1);
-                GL.StencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
-                GL.ColorMask(true, true, true, true);
-                GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
-
-                Utility.CheckGLError();
-                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
+                    Utility.CheckGLError();
+                    indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
+                }
             }
-            GL.Disable(GL.GL_STENCIL_TEST);
-
-#if ENABLE_AA
-            //Draw framebuffer texture to screen as a quad, applying anti-alias
+#if false
+            //Draw framebuffer texture to screen as a quad,  with the textMaterial applying sub-pixel anti-aliasing
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
-            glyphAntialiasMaterial.program.Bind();
+            GL.BlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
+            textMaterial.program.Bind();
             GL.Disable(GL.GL_SCISSOR_TEST);
             GL.Disable(GL.GL_DEPTH_TEST);
             GL.ActiveTexture(GL.GL_TEXTURE0);
             GL.BindTexture(GL.GL_TEXTURE_2D, framebufferColorTexture);
-            GL.BindVertexArray(glyphAntialiasMaterial.VaoHandle);
-            GL.BindBuffer(GL.GL_ARRAY_BUFFER, glyphAntialiasMaterial.VboHandle);
+            GL.BindVertexArray(textMaterial.VaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, textMaterial.VboHandle);
             GL.BufferData(GL.GL_ARRAY_BUFFER, quadMesh.VertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), quadMesh.VertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glyphAntialiasMaterial.EboHandle);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, textMaterial.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, quadMesh.IndexBuffer.Count * Marshal.SizeOf<DrawIndex>(), quadMesh.IndexBuffer.Pointer, GL.GL_STREAM_DRAW);
             GL.DrawElements(GL.GL_TRIANGLES, quadMesh.CommandBuffer[0].ElemCount, GL.GL_UNSIGNED_INT, IntPtr.Zero);
-
 #endif
             Utility.CheckGLError();
 
@@ -450,7 +464,7 @@ void main()
         {
             this.shapeMaterial.ShutDown();
             this.imageMaterial.ShutDown();
-            this.glyphMaterial.ShutDown();
+            glyphMaterial.ShutDown();
         }
 
         public byte[] GetRawBackBuffer(out int width, out int height)

@@ -105,7 +105,10 @@ namespace ImGui
 
             w.NewFrame(g);
 
-            // Create implicit window - we will only render it if the user has added something to it.
+            this.BackgroundDrawingContext = backgroundNode.RenderOpen();
+            this.ForegroundDrawingContext = backgroundNode.RenderOpen();
+
+            // Create implicit debug window - we will only render it if the user has added something to it.
             GUI.Begin("Debug", ref this.debugWindowOpen, (0, 0), Application.InitialDebugWindowSize, 0.8);
         }
 
@@ -122,8 +125,10 @@ namespace ImGui
             {
                 w.CurrentWindow.Active = false;
             }
-            GUI.End();
+            GUI.End();//end of the implicit "Debug" window
 
+            this.BackgroundDrawingContext.Close();
+            this.ForegroundDrawingContext.Close();
             w.EndFrame(g);
 
             // Clear Input data for next frame
@@ -172,11 +177,13 @@ namespace ImGui
             g.FrameCountRendered = g.FrameCount;
 
             this.renderer.Clear(this.BackgroundColor);
+            backgroundNode.Render(this.backforegroudRenderContext);
             foreach (var window in w.Windows)
             {
                 if (!window.Active) continue;
                 window.Render(this.renderer, ClientSize);
             }
+            foregroundNode.Render(this.backforegroudRenderContext);
             this.renderer.SwapBuffers();
         }
 

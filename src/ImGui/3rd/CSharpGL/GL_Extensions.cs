@@ -42,6 +42,7 @@ namespace CSharpGL
             _glUseProgram = GetDelegateFor<glUseProgram>();
             _glGetUniformLocation = GetDelegateFor<glGetUniformLocation>();
             _glUniformMatrix4fv = GetDelegateFor<glUniformMatrix4fv>();
+            _glUniform2f = GetDelegateFor<glUniform2f>();
             _glUniform4f = GetDelegateFor<glUniform4f>();
             _glUniform1i = GetDelegateFor<glUniform1i>();
 
@@ -99,7 +100,8 @@ namespace CSharpGL
         private static glGetProgramInfoLog _glGetProgramInfoLog;
         private static glGetAttribLocation _glGetAttribLocation;
         private static glGetUniformLocation _glGetUniformLocation;
-        private static glUniformMatrix4fv _glUniformMatrix4fv;
+        private static glUniformMatrix4fv _glUniformMatrix4fv; 
+        private static glUniform2f _glUniform2f;
         private static glUniform4f _glUniform4f;
         private static glUniform1i _glUniform1i;
 
@@ -1383,7 +1385,7 @@ namespace CSharpGL
         }
         public static void Uniform2(int location, float v0, float v1)
         {
-            GetDelegateFor<glUniform2f>()(location, v0, v1);
+            _glUniform2f(location, v0, v1);
         }
         public static void Uniform3(int location, float v0, float v1, float v2)
         {

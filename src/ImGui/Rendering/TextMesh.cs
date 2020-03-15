@@ -251,5 +251,16 @@ namespace ImGui
             }
 
         }
+
+        public string DevDumpToFloatArrayCode(float viewportWidth, float viewportHeight)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int i = 0; i < this.VertexBuffer.Count; i++)
+            {
+                var pos = this.VertexBuffer.Data[i].pos;
+                sb.AppendFormat("{0:F3}f,{1:F3}f,\n", (2 * pos.x) / viewportWidth, (2 * pos.y) / viewportHeight);
+            }
+            return sb.ToString();
+        }
     }
 }

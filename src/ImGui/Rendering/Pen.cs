@@ -6,7 +6,7 @@ namespace ImGui.Rendering
     /// Describes how to stroke a shape.
     /// </summary>
     [DebuggerStepThrough]
-    internal class Pen
+    public class Pen
     {
         public Color LineColor { get; set; } = Color.Black;
         public double LineWidth { get; set; } = 1;

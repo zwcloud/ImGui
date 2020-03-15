@@ -6,7 +6,7 @@ namespace ImGui.Rendering
     /// Defines how to paint an area.
     /// </summary>
     [DebuggerStepThrough]
-    internal class Brush
+    public class Brush
     {
         public Color FillColor { get; set; } = Color.Black;
 

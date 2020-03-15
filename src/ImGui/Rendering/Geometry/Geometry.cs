@@ -3,7 +3,7 @@
     /// <summary>
     /// Base class for all Geometry
     /// </summary>
-    internal abstract class Geometry
+    public abstract class Geometry
     {
         /// <summary>
         /// Offset applied this this <see cref="Geometry"/>.

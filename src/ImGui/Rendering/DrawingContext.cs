@@ -7,7 +7,7 @@ namespace ImGui.Rendering
     /// <summary>
     /// Describes visual content using draw, push, and pop commands.
     /// </summary>
-    internal abstract class DrawingContext : IDisposable
+    public abstract class DrawingContext : IDisposable
     {
         /// <summary>
         ///     DrawLine -

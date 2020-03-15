@@ -6,7 +6,7 @@ namespace ImGui.OSAbstraction.Text
     /// <summary>
     /// Represents a sequence of glyphs from a single face of a single font at a single size, and with a single rendering style, and without line break.
     /// </summary>
-    internal class GlyphRun
+    public class GlyphRun
     {
         public string Text
         {
@@ -26,8 +26,8 @@ namespace ImGui.OSAbstraction.Text
         }
         public string FontFamily { get; private set; }
         public double FontSize { get; private set; }
-        public IList<GlyphData> GlyphDataList { get; private set; } = new List<GlyphData>();
-        public IList<Vector> GlyphOffsets { get; private set; } = new List<Vector>();
+        internal IList<GlyphData> GlyphDataList { get; private set; } = new List<GlyphData>();
+        internal IList<Vector> GlyphOffsets { get; private set; } = new List<Vector>();
 
         public bool TextChanged { get; set; } = false;
 
