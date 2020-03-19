@@ -11,6 +11,10 @@ namespace ImGui.Rendering
         /// </summary>
         public void BeginPath()
         {
+            if (Geometry == null)
+            {
+                Geometry = new PathGeometry();
+            }
             Figure = new PathFigure();
         }
 
@@ -177,8 +181,15 @@ namespace ImGui.Rendering
         /// <param name="rect">the rectangle</param>
         public void Rect(Rect rect, bool isStroked)
         {
-            PolyLineSegment segment = new PolyLineSegment(
-                new Point[] { rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft }, isStroked);
+            PolyLineSegment segment = new PolyLineSegment();
+            segment.Points = new List<Point>
+            {
+                rect.TopLeft,
+                rect.TopRight,
+                rect.BottomRight,
+                rect.BottomLeft
+            };
+            segment.IsStroked = isStroked;
             Figure.Segments.Add(segment);
         }
 
@@ -223,9 +234,15 @@ namespace ImGui.Rendering
             Figure = null;
         }
 
+        public Geometry ToGeometry()
+        {
+            var result = Geometry;
+            return result;
+        }
+
         #region private implementation
 
-        private readonly PathGeometry Geometry = new PathGeometry();
+        private PathGeometry Geometry;
         private PathFigure Figure;
 
         #endregion

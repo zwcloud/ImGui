@@ -12,6 +12,11 @@ namespace ImGui.Rendering
         /// </summary>
         public List<Point> Points { get; set; }
 
+        public PolyLineSegment()
+        {
+
+        }
+
         public PolyLineSegment(IEnumerable<Point> points, bool isStroked)
         {
             if (points == null)
