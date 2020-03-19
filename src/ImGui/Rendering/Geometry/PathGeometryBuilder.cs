@@ -214,10 +214,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// Strokes the current path.
         /// </summary>
-        /// <param name="color">color</param>
-        /// <param name="close">Set to true if you want the path be closed. A line segment from the last point to first point will be added if this is true.</param>
-        /// <param name="thickness">thickness</param>
-        public void Stroke(Color color, bool close, double thickness = 1)
+        public void Stroke()
         {
             //When stroking current figure, override all segments in the figure.
             foreach (var segment in Figure.Segments)
