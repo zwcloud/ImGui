@@ -219,6 +219,11 @@ namespace ImGui.Rendering
         /// <param name="thickness">thickness</param>
         public void Stroke(Color color, bool close, double thickness = 1)
         {
+            //When stroking current figure, override all segments in the figure.
+            foreach (var segment in Figure.Segments)
+            {
+                segment.IsStroked = true;
+            }
             Figure.IsFilled = false;
             Geometry.Figures.Add(Figure);
             Figure = null;
