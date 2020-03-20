@@ -15,7 +15,14 @@ namespace ImGui.Rendering
             {
                 Geometry = new PathGeometry();
             }
-            Figure = new PathFigure();
+            if(Figure == null)
+            {
+                Figure = new PathFigure();
+            }
+            else
+            {
+                Figure.Segments.Clear();
+            }
         }
 
         /// <summary>
@@ -181,13 +188,14 @@ namespace ImGui.Rendering
         /// <param name="rect">the rectangle</param>
         public void Rect(Rect rect, bool isStroked)
         {
+            MoveTo(rect.TopLeft);
             PolyLineSegment segment = new PolyLineSegment();
             segment.Points = new List<Point>
             {
-                rect.TopLeft,
                 rect.TopRight,
                 rect.BottomRight,
-                rect.BottomLeft
+                rect.BottomLeft,
+                rect.TopLeft
             };
             segment.IsStroked = isStroked;
             Figure.Segments.Add(segment);
