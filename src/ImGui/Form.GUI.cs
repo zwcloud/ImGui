@@ -106,7 +106,7 @@ namespace ImGui
             w.NewFrame(g);
 
             this.BackgroundDrawingContext = backgroundNode.RenderOpen();
-            this.ForegroundDrawingContext = backgroundNode.RenderOpen();
+            this.ForegroundDrawingContext = foregroundNode.RenderOpen();
 
             // Create implicit debug window - we will only render it if the user has added something to it.
             GUI.Begin("Debug", ref this.debugWindowOpen, (0, 0), Application.InitialDebugWindowSize, 0.8);
@@ -177,13 +177,13 @@ namespace ImGui
             g.FrameCountRendered = g.FrameCount;
 
             this.renderer.Clear(this.BackgroundColor);
-            backgroundNode.Render(this.backforegroudRenderContext);
+            RenderBackground();
             foreach (var window in w.Windows)
             {
                 if (!window.Active) continue;
                 window.Render(this.renderer, ClientSize);
             }
-            foregroundNode.Render(this.backforegroudRenderContext);
+            RenderForeground();
             this.renderer.SwapBuffers();
         }
 
