@@ -354,7 +354,7 @@ namespace ImGui.OSImplentation.Windows
             switch (windowType)
             {
                 case WindowTypes.Regular:
-                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW;
+                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_VISIBLE;
                     break;
                 case WindowTypes.ToolBox:
                     windowStyle = WindowStyles.WS_DLGFRAME;
