@@ -247,6 +247,10 @@ void main()
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
         {
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
+            if (commandBuffer.Count == 0 || commandBuffer[0].ElemCount == 0)
+            {
+                return;
+            }
             VertexBuffer vertexBuffer = mesh.VertexBuffer;
             IndexBuffer indexBuffer = mesh.IndexBuffer;
 
@@ -346,6 +350,12 @@ void main()
         /// </summary>
         internal static void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
+            var commandBuffer = textMesh.Commands;
+            if (commandBuffer.Count == 0 || commandBuffer[0].ElemCount == 0)
+            {
+                return;
+            }
+
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
             GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
