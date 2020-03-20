@@ -140,15 +140,8 @@ namespace ImGui.UnitTest.Rendering
                 var pathGeometry = geometry as PathGeometry;
                 Assert.NotNull(pathGeometry);
                 Assert.Equal(2, pathGeometry.Figures.Count);
-
-                {
-                    var figure = pathGeometry.Figures[0];
-                    Assert.NotNull(figure);
-                }
-                {
-                    var figure = pathGeometry.Figures[1];
-                    Assert.NotNull(figure);
-                }
+                Assert.NotNull(pathGeometry.Figures[0]);
+                Assert.NotNull(pathGeometry.Figures[1]);
             }
         }
     }
