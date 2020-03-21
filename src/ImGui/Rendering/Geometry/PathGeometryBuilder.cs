@@ -65,9 +65,22 @@ namespace ImGui.Rendering
         /// <summary>
         /// Adds a cubic Bézier curve to the current path.
         /// </summary>
+        public void BezierCurveTo(double cp1x, double cp1y, double cp2x, double cp2y, double x, double y)
+        {
+            BezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y, false);
+        }
+
+        /// <summary>
+        /// Adds a cubic Bézier curve to the current path.
+        /// </summary>
         public void BezierCurveTo(double cp1x, double cp1y, double cp2x, double cp2y, double x, double y, bool isStroked)
         {
             BezierCurveTo(new Point(cp1x, cp1y), new Point(cp2x, cp2y), new Point(x, y), isStroked);
+        }
+
+        public void BezierCurveTo(Point controlPoint1, Point controlPoint2, Point endPoint)
+        {
+            BezierCurveTo(controlPoint1, controlPoint2, endPoint, false);
         }
 
         /// <summary>
@@ -239,7 +252,7 @@ namespace ImGui.Rendering
         /// </summary>
         public void Fill()
         {
-            Figure.IsFilled = false;
+            Figure.IsFilled = true;
             Geometry.Figures.Add(Figure);
             Figure = null;
         }

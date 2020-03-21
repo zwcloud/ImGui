@@ -1,4 +1,9 @@
 ﻿using ImGui;
+using ImGui.Rendering;
+using ImGui.Style;
+using ImGui.OSImplentation;
+using ImGui.OSAbstraction.Text;
+using ImGui.Development;
 using System;
 using System.Diagnostics;
 using Xunit;
@@ -8,16 +13,18 @@ namespace TextRenderingTest
 {
     public class TypographyTextContextTest
     {
-        const string FontFile = @"W:\VS2015\ImGui\templates\TestUI\Font\DroidSans.ttf";
-        private const string ModelViewerPath = @"E:\Program Files (green)\open3mod_1_1_standalone\open3mod.exe";
+        static readonly string FontFile = Utility.FontDir + "DroidSans.ttf";
+        private const string ModelViewerPath = @"C:\Program Files\Autodesk\FBX Review\fbxreview.exe";
 
         public TypographyTextContextTest()
         {
             Application.InitSysDependencies();
         }
         
-        const string PathImagePath = "D:\\typography_path_image.png";
-        const string PathTextPath = "D:\\typography_path_text.txt";
+        static readonly string PathImagePath =
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop) +  "typography_path_image.png";
+        static readonly string PathTextPath =
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "typography_path_text.txt";
         Cairo.ImageSurface surface;
         Cairo.Context g;
 
@@ -26,8 +33,6 @@ namespace TextRenderingTest
         {
             ITextContext textContext = new TypographyTextContext(
                 "0123456", FontFile, 36,
-                FontStretch.Normal, FontStyle.Normal, FontWeight.Normal,
-                1000, 100,
                 TextAlignment.Leading);
 
             // prepare debug contexts
@@ -44,7 +49,8 @@ namespace TextRenderingTest
             CairoPathBuilder cairoPathBuilder;
             {
                 cairoPathBuilder = new CairoPathBuilder(g, 0, 0, 1);
-                textContext.Build(Point.Zero, cairoPathBuilder);
+                //TODO Implement CairoRenderer as a ImGui.Rendering.Composition.GeometryRenderer
+                //textContext.Build(Point.Zero, cairoPathBuilder);
             }
 
             // show debug results
@@ -70,148 +76,53 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGetCorrectOffsetOfAGlyph()
         {
-            var style = GUIStyle.Default;
-            style.Set<double>(GUIStyleName.FontSize, 36);
+            var text = "A";
+            var fontFamily = Utility.FontDir + "msjh.ttf";
+            var fontSize = 36;
+            GlyphRun glyphRun = new GlyphRun(new Point(50, 100), text, fontFamily, fontSize);
 
-            var state = GUIState.Normal;
-            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
-            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
-            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
-            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
-            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
-            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-            
-            var rect = new Rect(0, 0, 200, 200);
-            var textContext = new TypographyTextContext(
-                "A",
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textAlignment);
-
+            var geometryRenderer = new ImGui.GraphicsImplementation.BuiltinGeometryRenderer();
             var textMesh = new TextMesh();
-            textMesh.Build(new Point(0, fontSize), style, textContext);
+            geometryRenderer.SetTextMesh(textMesh);
+            geometryRenderer.DrawGlyphRun(new Brush(Color.Black), glyphRun);
+            geometryRenderer.SetTextMesh(null);
 
-            DrawList drawList = new DrawList();
-            drawList.Append(textMesh, Vector.Zero);
-
-            var objFilePath = "D:\\TextRenderingTest_ShouldGetARightMeshFromTypography.obj";
-            Utility.SaveToObjFile(objFilePath, drawList.DrawBuffer.VertexBuffer, drawList.DrawBuffer.IndexBuffer);
+            var objFilePath =
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                + "/ShouldGetARightMeshFromTypography.obj";
+            ImGui.Development.Graphics.SaveTextMeshToObjFile(objFilePath, textMesh);
             Process.Start(ModelViewerPath, objFilePath);
         }
 
         [Fact]
         public void ShouldGetARightMeshFromTypography()
         {
-            var style = GUIStyle.Default;
-            style.Set<double>(GUIStyleName.FontSize, 8);
+            var text = "8";
+            var fontFamily = Utility.FontDir + "msjh.ttf";
+            var fontSize = 8;
+            GlyphRun glyphRun = new GlyphRun(new Point(50, 100), text, fontFamily, fontSize);
 
-            var state = GUIState.Normal;
-            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
-            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
-            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
-            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
-            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
-            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-
-            var rect = new Rect(0, 0, 200, 200);
-            var textContext = new TypographyTextContext(
-                "8",
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textAlignment);
-
+            var geometryRenderer = new ImGui.GraphicsImplementation.BuiltinGeometryRenderer();
             var textMesh = new TextMesh();
-            textMesh.Build(new Point(0, fontSize), style, textContext);
+            geometryRenderer.SetTextMesh(textMesh);
+            geometryRenderer.DrawGlyphRun(new Brush(Color.Black), glyphRun);
+            geometryRenderer.SetTextMesh(null);
 
             //PathUtil.SaveToPng(paths, @"D:\TypographyTextPath.png");
 
-            DrawList drawList = new DrawList();
-            drawList.Append(textMesh, Vector.Zero);
-
-            var objFilePath = "D:\\TextRenderingTest_ShouldGetARightMeshFromTypography.obj";
-            Utility.SaveToObjFile(objFilePath, drawList.DrawBuffer.VertexBuffer, drawList.DrawBuffer.IndexBuffer);
+            var objFilePath =
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                + "/ShouldGetARightMeshFromTypography.obj";
+            ImGui.Development.Graphics.SaveTextMeshToObjFile(objFilePath, textMesh);
             Process.Start(ModelViewerPath, objFilePath);
         }
 
-        [Fact]
-        public void ShouldGetARightMeshAfterAppendingATextMesh()
-        {
-            var style = GUIStyle.Default;
-            style.Set<double>(GUIStyleName.FontSize, 36);
-
-            var state = GUIState.Normal;
-            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
-            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
-            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
-            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
-            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
-            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-
-            var rect = new Rect(0, 0, 200, 200);
-            var textContext = new TypographyTextContext(
-                "A",
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textAlignment);
-
-            var textMesh = new TextMesh();
-            textMesh.Build(Point.Zero, style, textContext);
-
-            var anotherTextContext = new TypographyTextContext(
-                "auto-sized",
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textAlignment);
-
-            var anotherTextMesh = new TextMesh();
-            anotherTextMesh.Build(new Point(50, 100), style, anotherTextContext);
-
-            DrawList drawList = new DrawList();
-            var expectedVertexCount = 0;
-            var expectedIndexCount = 0;
-
-            drawList.AddRectFilled(Point.Zero, new Point(200, 100), Color.Metal);
-            expectedVertexCount += 4;
-            expectedIndexCount += 6;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.Append(textMesh, Vector.Zero);
-            expectedVertexCount += textMesh.VertexBuffer.Count;
-            expectedIndexCount += textMesh.IndexBuffer.Count;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.AddRectFilled(new Point(0, 110), new Point(200, 150), Color.Metal);
-            expectedVertexCount += 4;
-            expectedIndexCount += 6;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.AddRectFilled(new Point(0, 160), new Point(200, 200), Color.Metal);
-            expectedVertexCount += 4;
-            expectedIndexCount += 6;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.Append(anotherTextMesh, Vector.Zero);
-            expectedVertexCount += anotherTextMesh.VertexBuffer.Count;
-            expectedIndexCount += anotherTextMesh.IndexBuffer.Count;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            var objFilePath = "D:\\Typography_ShouldGetARightMeshAfterAppendingATextMesh.obj";
-            Utility.SaveToObjFile(objFilePath, drawList.DrawBuffer.VertexBuffer, drawList.DrawBuffer.IndexBuffer);
-            Process.Start(ModelViewerPath, objFilePath);
-        }
 
         [Fact]
         public void XyToIndexShouldWorkCorrectly()
         {
-            ITextContext context = new TypographyTextContext("0123456", FontFile, 36,
-                FontStretch.Normal, FontStyle.Normal, FontWeight.Normal,
-                1000, 100,
-                TextAlignment.Leading);
+            ITextContext context =
+                new TypographyTextContext("0123456", FontFile, 36, TextAlignment.Leading);
 
             // prepare debug contexts
             {
@@ -226,7 +137,8 @@ namespace TextRenderingTest
             // build path
             CairoPathBuilder cairoPathBuilder;
             cairoPathBuilder = new CairoPathBuilder(g, 0, 0, 1);
-            context.Build(Point.Zero, cairoPathBuilder);
+            //FIXME fix this when CairoRenderer is ready
+            //context.Build(Point.Zero, cairoPathBuilder);
 
             bool isInside = false;
             uint charIndex = context.XyToIndex(-1, 0, out isInside);
@@ -255,10 +167,8 @@ namespace TextRenderingTest
         [Fact]
         public void IndexToXyShouldWorkCorrectly()
         {
-            ITextContext context = new TypographyTextContext("0123456", FontFile, 36,
-                FontStretch.Normal, FontStyle.Normal, FontWeight.Normal,
-                1000, 100,
-                TextAlignment.Leading);
+            ITextContext context = 
+                new TypographyTextContext("0123456", FontFile, 36, TextAlignment.Leading);
 
             // prepare debug contexts
             {
@@ -273,7 +183,8 @@ namespace TextRenderingTest
             // build path
             CairoPathBuilder cairoPathBuilder;
             cairoPathBuilder = new CairoPathBuilder(g, 0, 0, 1);
-            context.Build(Point.Zero, cairoPathBuilder);
+            //FIXME fix this when CairoRenderer is ready
+            //context.Build(Point.Zero, cairoPathBuilder);
 
             float x, y, height;
             context.IndexToXY(0, false, out x, out y, out height);
