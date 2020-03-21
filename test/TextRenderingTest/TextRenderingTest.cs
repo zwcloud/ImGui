@@ -160,50 +160,41 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldRenderABigGlyph()
         {
-            var labelStyle = GUISkin.Current[GUIControlName.Label];
-            labelStyle.FontSize = 400;
-
             Application.Run(new Form1(()=> {
-                GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
+                var g = Form.current.ForegroundDrawingContext;
+                g.DrawGlyphRun("D", 400, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
             }));
         }
 
         [Fact]
         public void ShouldRenderAMidiumGlyph()
         {
-            var labelStyle = GUISkin.Current[GUIControlName.Label];
-            labelStyle.FontSize = 32;
-
             Application.Run(new Form1(() => {
-                GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
+                var g = Form.current.ForegroundDrawingContext;
+                g.DrawGlyphRun("D", 32, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
             }));
         }
         
         [Fact]
         public void ShouldRenderASmallGlyph()
         {
-            var labelStyle = GUISkin.Current[GUIControlName.Label];
-            labelStyle.FontSize = 12;
-
             Application.Run(new Form1(() => {
-                GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
+                var g = Form.current.ForegroundDrawingContext;
+                g.DrawGlyphRun("D", 12, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
             }));
         }
 
         [Fact]
         public void ShouldRenderAStringInMeasuredRectangle()
         {
-            string text = "Hello ImGui!你好";
-
-            var ruleSet = GUISkin.Current[GUIControlName.Label];
-
-            var size = ruleSet.CalcSize(text, GUIState.Normal);
-            var rect = new Rect(10, 100, size);
-
+            GlyphRun run = new GlyphRun(new Point(10, 100), "Hello ImGui!你好", Utility.FontDir + "msjh.ttf", 12);
+            Rect rect = new Rect(run.InkBoundingBoxSize);
+            Brush brush = new Brush(Color.Black);
+            Pen pen = new Pen(Color.Red, 1);
             Application.Run(new Form1(() => {
                 var d = Form.current.ForegroundDrawingContext;
-                d.DrawRectangle(null, new Pen(Color.Red, 1), rect);
-                d.DrawGlyphRun(ruleSet, text, rect.TopLeft);
+                d.DrawRectangle(null, pen, rect);
+                d.DrawGlyphRun(brush, run);
             }));
         }
     }
