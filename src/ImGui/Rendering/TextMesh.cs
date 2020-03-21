@@ -211,18 +211,25 @@ namespace ImGui
                     continue;
                 }
 
-
-                DrawCommand previousCommand = this.Commands[this.Commands.Count - 1];
-                if (command.TextureData != previousCommand.TextureData
-                    || command.ClipRect != previousCommand.ClipRect)
+                if (this.Commands.Count == 0)
                 {
                     this.Commands.Add(command);
                 }
-                else//only add element count to previous command
+                else
                 {
-                    previousCommand.ElemCount += command.ElemCount;
-                    this.Commands[this.Commands.Count - 1] = previousCommand;//write back
+                    DrawCommand previousCommand = this.Commands[this.Commands.Count - 1];
+                    if (command.TextureData != previousCommand.TextureData
+                        || command.ClipRect != previousCommand.ClipRect)
+                    {
+                        this.Commands.Add(command);
+                    }
+                    else//only add element count to previous command
+                    {
+                        previousCommand.ElemCount += command.ElemCount;
+                        this.Commands[this.Commands.Count - 1] = previousCommand;//write back
+                    }
                 }
+
             }
 
             var originalVertexCount = this.VertexBuffer.Count;
