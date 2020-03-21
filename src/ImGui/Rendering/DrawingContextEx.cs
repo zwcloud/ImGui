@@ -90,6 +90,17 @@ namespace ImGui.Rendering
             dc.DrawImage(texture, rect);
         }
 
+        //TODO consider cache GlyphRun and FormattedText
+
+        internal static void DrawGlyphRun(this DrawingContext dc, string text,
+            double fontSize, string fontFamily, Color fontColor, Point topLeft)
+        {
+            var ascent = OSImplentation.TypographyTextContext.GetAscent(fontFamily, fontSize);
+            var baselineOrigin = new Point(topLeft.X, topLeft.Y + ascent);
+            dc.DrawGlyphRun(new Brush(fontColor),
+                new GlyphRun(baselineOrigin, text, fontFamily, fontSize));
+        }
+
         public static void DrawGlyphRun(this DrawingContext dc, StyleRuleSet rule, string text, Point topLeft)
         {
             var ascent = OSImplentation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
