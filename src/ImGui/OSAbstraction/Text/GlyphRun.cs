@@ -29,6 +29,11 @@ namespace ImGui.OSAbstraction.Text
         internal IList<GlyphData> GlyphDataList { get; private set; } = new List<GlyphData>();
         internal IList<Vector> GlyphOffsets { get; private set; } = new List<Vector>();
 
+        /// <summary>
+        /// The ink bounding box size of the glyph run.
+        /// </summary>
+        public Size InkBoundingBoxSize { get; private set; }
+
         public bool TextChanged { get; set; } = false;
 
         public GlyphRun(Point origin, string text, string fontFamily, double fontSize) : this(text, fontFamily, fontSize)
@@ -99,6 +104,8 @@ namespace ImGui.OSAbstraction.Text
             this.FontSize = fontSize;
             this.GlyphDataList = glyphDataList;
             this.GlyphOffsets = textContext.GlyphOffsets;
+
+            this.InkBoundingBoxSize = textContext.Measure();
         }
 
         private string text;
