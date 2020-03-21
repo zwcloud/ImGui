@@ -116,6 +116,25 @@ namespace ImGui
         {
             return new Vector(point1._x - point2._x, point1._y - point2._y);
         }
+
+        /// <summary>
+        /// Operator Point * double
+        /// </summary>
+        /// <returns>
+        /// Point - The result of scaling the point with specific scalar
+        /// </returns>
+        /// <param name="point"> The Point </param>
+        /// <param name="scalar"> The scale scalar  </param>
+        public static Point operator *(Point point, double scalar)
+        {
+            return new Point(point._x* scalar, point._y * scalar);
+        }
+
+        public static Point Multiply(Point point, double scalar)
+        {
+            return new Point(point._x * scalar, point._y * scalar);
+        }
+
 #if Matrix
         /// <summary>
         /// Operator Point * Matrix
