@@ -13,7 +13,7 @@ namespace TextRenderingTest
     {
         private Action onGUI;
 
-        public Form1(Action onGUI) : base(new Point(400, 300), new Size(800, 600)) { this.onGUI = onGUI; Form.current = this; }
+        public Form1(Action onGUI) : base(new Point(400, 300), new Size(800, 800)) { this.onGUI = onGUI; Form.current = this; }
 
         protected override void OnGUI()
         {
@@ -46,10 +46,10 @@ namespace TextRenderingTest
         {
             // 76, 410,   93, 312,   119, 188,   193, 190,
             // 193, 190,  267, 190,  292, 366,   311, 521,
-            var p0 = new Point(76,  410);// start point
-            var c0 = new Point(115, 190);// control point 0
-            var c1 = new Point(273, 190);// control point 1
-            var p1 = new Point(311, 521);// end point
+            var p0 = new Point(76,  410)*0.4;// start point
+            var c0 = new Point(115, 190)*0.4;// control point 0
+            var c1 = new Point(273, 190)*0.4;// control point 1
+            var p1 = new Point(311, 521)*0.4;// end point
             
             var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
@@ -61,11 +61,12 @@ namespace TextRenderingTest
                 d.QuadraticCurveTo(c1, p1);
                 d.Fill();
 
-                d.MoveTo(p0);
-                d.LineTo(p);
-                d.LineTo(p1);
-                d.Fill();
-                Form.current.ForegroundDrawingContext.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
+                var g = Form.current.ForegroundDrawingContext;
+                g.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
+                g.DrawLine(new Pen(Color.Red, 2), p0, c0);
+                g.DrawLine(new Pen(Color.Green, 2), c0, c1);
+                g.DrawLine(new Pen(Color.Blue, 2), c1, p1);
+                g.DrawEllipse(new Brush(Color.Gold), null, p, 4, 4);
             }));
         }
 
@@ -73,11 +74,10 @@ namespace TextRenderingTest
         public void ShouldRenderAFilledCubicBezierCurve2()
         {
             // (625,1549) (1040,1508) (1444, 1168) (1442,794)
-            // * 0.1
-            var p0 = new Point(62.5, 154.9);// start point
-            var c0 = new Point(104.0, 150.8);// control point 0
-            var c1 = new Point(144.4, 116.8);// control point 1
-            var p1 = new Point(144.2, 79.4);// end point
+            var p0 = new Point(625,  1549)*0.4; // start point
+            var c0 = new Point(1040, 1508)*0.4;// control point 0
+            var c1 = new Point(1444, 1168)*0.4;// control point 1
+            var p1 = new Point(1442, 794 )*0.4; // end point
 
             var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
@@ -89,11 +89,12 @@ namespace TextRenderingTest
                 d.QuadraticCurveTo(c1, p1);
                 d.Fill();
 
-                d.MoveTo(p0);
-                d.LineTo(p);
-                d.LineTo(p1);
-                d.Fill();
-                Form.current.ForegroundDrawingContext.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
+                var g = Form.current.ForegroundDrawingContext;
+                g.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
+                g.DrawLine(new Pen(Color.Red, 2), p0, c0);
+                g.DrawLine(new Pen(Color.Green, 2), c0, c1);
+                g.DrawLine(new Pen(Color.Blue, 2), c1, p1);
+                g.DrawEllipse(new Brush(Color.Gold), null, p, 4, 4);
             }));
         }
 
