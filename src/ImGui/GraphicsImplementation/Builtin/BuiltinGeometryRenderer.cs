@@ -268,6 +268,62 @@ namespace ImGui.GraphicsImplementation
             }
             return generatedPoints;
         }
+
+        public List<Point> QuadraticBezier_GeneratePolyLinePoints(Point startPoint, IList<Point> segmentPoints)
+        {
+            Debug.Assert(segmentPoints.Count % 2 == 0);
+            var generatedPoints = new List<Point>();
+            generatedPoints.Add(startPoint);
+
+            for (var i = 0; i < segmentPoints.Count; i += 2)
+            {
+                Point start = generatedPoints[generatedPoints.Count - 1];//start point
+
+                //convert quaratic bezier segment points to cubic bezier segment points
+                var x0 = start.X;
+                var y0 = start.Y;
+                var x1 = segmentPoints[i].X;
+                var y1 = segmentPoints[i].Y;
+                var x2 = segmentPoints[i + 1].X;
+                var y2 = segmentPoints[i + 1].Y;
+
+                var c1 = new Point(2.0 / 3.0 * x1 + 1.0 / 3.0 * x0, 2.0 / 3.0 * y1 + 1.0 / 3.0 * y0);//control point 1
+                var c2 = new Point(2.0 / 3.0 * x1 + 1.0 / 3.0 * x2, 2.0 / 3.0 * y1 + 1.0 / 3.0 * y2);//control point 2
+                var end = new Point(x2, y2);//end point
+
+                // Auto-tessellated
+                PathBezierToCasteljau(generatedPoints, start.X, start.Y, c1.X, c1.Y, c2.X, c2.Y, end.X, end.Y, CurveTessellationTol, 0);
+            }
+            return generatedPoints;
+        }
+
+        public unsafe List<Point> QuadraticBezier_GeneratePolyLinePoints(Point startPoint, Point* segmentPoints, int pointCount)
+        {
+            Debug.Assert(pointCount % 2 == 0);
+            var generatedPoints = new List<Point>();
+            generatedPoints.Add(startPoint);
+
+            for (var i = 0; i < pointCount; i += 2)
+            {
+                Point start = generatedPoints[generatedPoints.Count - 1];//start point
+
+                //convert quaratic bezier segment points to cubic bezier segment points
+                var x0 = start.X;
+                var y0 = start.Y;
+                var x1 = segmentPoints[i].X;
+                var y1 = segmentPoints[i].Y;
+                var x2 = segmentPoints[i+1].X;
+                var y2 = segmentPoints[i+1].Y;
+                
+                var c1 = new Point(2.0 / 3.0 * x1 + 1.0 / 3.0 * x0, 2.0 / 3.0 * y1 + 1.0 / 3.0 * y0);//control point 1
+                var c2 = new Point(2.0 / 3.0 * x1 + 1.0 / 3.0 * x2, 2.0 / 3.0 * y1 + 1.0 / 3.0 * y2);//control point 2
+                var end = new Point(x2, y2);//end point
+
+                // Auto-tessellated
+                PathBezierToCasteljau(generatedPoints, start.X, start.Y, c1.X, c1.Y, c2.X, c2.Y, end.X, end.Y, CurveTessellationTol, 0);
+            }
+            return generatedPoints;
+        }
         #endregion
 
         #region Text

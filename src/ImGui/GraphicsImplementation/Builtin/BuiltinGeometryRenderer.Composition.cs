@@ -228,11 +228,32 @@ namespace ImGui.GraphicsImplementation
                                 Path.AddRange(points);
                                 break;
                             case PolyQuadraticBezierSegment polyQuadraticBezierSegment:
-                                throw new NotImplementedException();
-                                break;
+                            {
+                                var generatedPoints = this.QuadraticBezier_GeneratePolyLinePoints(currentPoint, polyQuadraticBezierSegment.Points);
+                                if (polyQuadraticBezierSegment.IsStroked && pen != null)
+                                {
+                                    this.AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                }
+                                Path.AddRange(generatedPoints);
+                            }
+                            break;
                             case QuadraticBezierSegment quadraticBezierSegment:
-                                throw new NotImplementedException();
-                                break;
+                            {
+                                List<Point> generatedPoints;
+                                unsafe
+                                {
+                                    var scratch = stackalloc Point[2];
+                                    scratch[0] = quadraticBezierSegment.ControlPoint;
+                                    scratch[1] = quadraticBezierSegment.EndPoint;
+                                    generatedPoints = this.QuadraticBezier_GeneratePolyLinePoints(currentPoint, scratch, 2);
+                                }
+                                if (quadraticBezierSegment.IsStroked && pen != null)
+                                {
+                                    this.AddPolyline(generatedPoints, pen.LineColor, false, pen.LineWidth);
+                                }
+                                Path.AddRange(generatedPoints);
+                            }
+                            break;
                         }
                         currentPoint = Path[Path.Count - 1];
                     }
