@@ -88,6 +88,9 @@ namespace ImGui.Development
 
         public static void SaveToObjFile(string path, VertexBuffer vertexes, IndexBuffer indexes)
         {
+            var folderPath = Path.GetDirectoryName(path);
+            Directory.CreateDirectory(folderPath);
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("# ImGui Test");
 
