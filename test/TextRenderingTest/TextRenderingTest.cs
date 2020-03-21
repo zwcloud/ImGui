@@ -55,8 +55,12 @@ namespace TextRenderingTest
 
             Application.Run(new Form1(() => {
                 var d = new PathGeometryBuilder();
-                d.BezierCurveTo(p0, c0, p);
-                d.BezierCurveTo(p, c1, p1);
+                d.BeginPath();
+                d.MoveTo(p0);
+                d.QuadraticCurveTo(c0, p);
+                d.QuadraticCurveTo(c1, p1);
+                d.Fill();
+
                 d.MoveTo(p0);
                 d.LineTo(p);
                 d.LineTo(p1);
@@ -79,8 +83,12 @@ namespace TextRenderingTest
 
             Application.Run(new Form1(() => {
                 var d = new PathGeometryBuilder();
-                d.BezierCurveTo(p0, c0, p);
-                d.BezierCurveTo(p, c1, p1);
+                d.BeginPath();
+                d.MoveTo(p0);
+                d.QuadraticCurveTo(c0, p);
+                d.QuadraticCurveTo(c1, p1);
+                d.Fill();
+
                 d.MoveTo(p0);
                 d.LineTo(p);
                 d.LineTo(p1);
