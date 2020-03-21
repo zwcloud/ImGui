@@ -12,7 +12,7 @@ namespace TextRenderingTest
 {
     public class TypographyTest
     {
-        const string FontFile = @"W:\VS2015\ImGui\templates\TestUI\Font\DroidSans.ttf";
+        static readonly string FontFile = Utility.FontDir + "DroidSans.ttf";
         private Typeface typeFace;
 
         public TypographyTest()

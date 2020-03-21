@@ -1,4 +1,8 @@
 ﻿using ImGui;
+using ImGui.Rendering;
+using ImGui.Style;
+using ImGui.OSAbstraction.Text;
+using ImGui.Development;
 using System;
 using System.Diagnostics;
 using Xunit;
@@ -25,7 +29,8 @@ namespace TextRenderingTest
             Application.InitSysDependencies();
         }
 
-        private const string ModelViewerPath = @"E:\Program Files (green)\open3mod_1_1_standalone\open3mod.exe";
+        private const string ModelViewerPath = @"C:\Program Files\Autodesk\FBX Review\fbxreview.exe";
+        //"E:\Program Files (green)\open3mod_1_1_standalone\open3mod.exe";
 
         /// <summary>
         /// This should render a filled cubic bezier curve that commonly used in font
@@ -49,13 +54,14 @@ namespace TextRenderingTest
             var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
             Application.Run(new Form1(() => {
-                var d = Form.current.OverlayDrawList;
-                d.AddBezier(p0, c0, p, Color.Blue);
-                d.AddBezier(p, c1, p1, Color.Red);
-                d.PathMoveTo(p0);
-                d.PathLineTo(p);
-                d.PathLineTo(p1);
-                d.PathFill(Color.Black);
+                var d = new PathGeometryBuilder();
+                d.BezierCurveTo(p0, c0, p);
+                d.BezierCurveTo(p, c1, p1);
+                d.MoveTo(p0);
+                d.LineTo(p);
+                d.LineTo(p1);
+                d.Fill();
+                Form.current.ForegroundDrawingContext.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
             }));
         }
 
@@ -72,13 +78,14 @@ namespace TextRenderingTest
             var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
             Application.Run(new Form1(() => {
-                var d = Form.current.OverlayDrawList;
-                d.AddBezier(p0, c0, p, Color.Blue);
-                d.AddBezier(p, c1, p1, Color.Red);
-                d.PathMoveTo(p0);
-                d.PathLineTo(p);
-                d.PathLineTo(p1);
-                d.PathFill(Color.Black);
+                var d = new PathGeometryBuilder();
+                d.BezierCurveTo(p0, c0, p);
+                d.BezierCurveTo(p, c1, p1);
+                d.MoveTo(p0);
+                d.LineTo(p);
+                d.LineTo(p1);
+                d.Fill();
+                Form.current.ForegroundDrawingContext.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
             }));
         }
 
@@ -86,154 +93,91 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGenerateARightTexMesh()
         {
-            var style = GUIStyle.Default;
-            style.Set<double>(GUIStyleName.FontSize, 36);
+            var text = "ABC";
+            var fontFamily = Utility.FontDir + "msjh.ttf";
+            var fontSize = 36;
+            GlyphRun glyphRun = new GlyphRun(text, fontFamily, fontSize);
 
-            var state = GUIState.Normal;
-            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
-            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
-            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
-            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
-            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
-            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
-
-            var rect = new Rect(0, 0, 200, 200);
-            var textContext = Application.platformContext.CreateTextContext(
-                "ABC",
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textAlignment);
-
+            var geometryRenderer = new ImGui.GraphicsImplementation.BuiltinGeometryRenderer();
             var textMesh = new TextMesh();
-            textMesh.Build(Point.Zero, style, textContext);
-            var objFilePath = "D:\\TextRenderingTest_ShouldGenerateARightTexMesh.obj";
-            Utility.SaveToObjFile(objFilePath, textMesh.VertexBuffer, textMesh.IndexBuffer);
+            geometryRenderer.SetTextMesh(textMesh);
+            geometryRenderer.DrawGlyphRun(new Brush(Color.Black), glyphRun);
+            geometryRenderer.SetTextMesh(null);
+
+            var objFilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/TextRenderingTest/texMesh.obj";
+            Graphics.SaveTextMeshToObjFile(objFilePath, textMesh);
             Process.Start(ModelViewerPath, objFilePath);
         }
 
         [Fact]
         public void ShouldGetARightMeshAfterAppendingATextMesh()
         {
-            var style = GUIStyle.Default;
+            var textMeshA = new TextMesh();
+            {
+                var text = "ij = I::oO(0xB81l);";
+                var fontFamily = Utility.FontDir + "msjh.ttf";
+                var fontSize = 12;
+                GlyphRun glyphRun = new GlyphRun(text, fontFamily, fontSize);
 
-            var state = GUIState.Normal;
-            var fontFamily = style.Get<string>(GUIStyleName.FontFamily, state);
-            var fontSize = style.Get<double>(GUIStyleName.FontSize, state);
-            var fontStretch = (FontStretch)style.Get<int>(GUIStyleName.FontStretch, state);
-            var fontStyle = (FontStyle)style.Get<int>(GUIStyleName.FontStyle, state);
-            var fontWeight = (FontWeight)style.Get<int>(GUIStyleName.FontWeight, state);
-            var textAlignment = (TextAlignment)style.Get<int>(GUIStyleName.TextAlignment, state);
+                var geometryRenderer = new ImGui.GraphicsImplementation.BuiltinGeometryRenderer();
+                geometryRenderer.SetTextMesh(textMeshA);
+                geometryRenderer.DrawGlyphRun(new Brush(Color.Black), glyphRun);
+                geometryRenderer.SetTextMesh(null);
+            }
 
-            var rect = new Rect(0, 0, 200, 200);
-            var textContext = Application.platformContext.CreateTextContext(
-                "ij = I::oO(0xB81l);",
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                (int)Math.Ceiling(rect.Size.Width), (int)Math.Ceiling(rect.Size.Height),
-                textAlignment);
+            var textMeshB = new TextMesh();
+            {
+                var text = "auto-sized";
+                var fontFamily = Utility.FontDir + "msjh.ttf";
+                var fontSize = 12;
+                GlyphRun glyphRun = new GlyphRun(new Point(50, 100), text, fontFamily, fontSize);
 
-            var textMesh = new TextMesh();
-            textMesh.Build(Point.Zero, style, textContext);
-            
-            var anotherTextContext = Application.platformContext.CreateTextContext(
-                "auto-sized",
-                fontFamily, (int)fontSize, fontStretch, fontStyle, fontWeight,
-                200, 200,
-                textAlignment);
+                var geometryRenderer = new ImGui.GraphicsImplementation.BuiltinGeometryRenderer();
+                geometryRenderer.SetTextMesh(textMeshB);
+                geometryRenderer.DrawGlyphRun(new Brush(Color.Black), glyphRun);
+                geometryRenderer.SetTextMesh(null);
+            }
 
-            var anotherTextMesh = new TextMesh();
-            anotherTextMesh.Build(new Point(50, 100), style, anotherTextContext);
+            TextMesh textMesh = new TextMesh();
+            textMesh.Append(textMeshA, Vector.Zero);
+            textMesh.Append(textMeshB, Vector.Zero);
 
-            DrawList drawList = new DrawList();
-            var expectedVertexCount = 0;
-            var expectedIndexCount = 0;
-
-            drawList.AddRectFilled(Point.Zero, new Point(200,100), Color.Metal);
-            expectedVertexCount += 4;
-            expectedIndexCount += 6;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.Append(textMesh, Vector.Zero);
-            expectedVertexCount += textMesh.VertexBuffer.Count;
-            expectedIndexCount += textMesh.IndexBuffer.Count;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.AddRectFilled(new Point(0, 110), new Point(200, 150), Color.Metal);
-            expectedVertexCount += 4;
-            expectedIndexCount += 6;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.AddRectFilled(new Point(0, 160), new Point(200, 200), Color.Metal);
-            expectedVertexCount += 4;
-            expectedIndexCount += 6;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            drawList.Append(anotherTextMesh, Vector.Zero);
-            expectedVertexCount += anotherTextMesh.VertexBuffer.Count;
-            expectedIndexCount += anotherTextMesh.IndexBuffer.Count;
-            Assert.Equal(drawList.DrawBuffer.VertexBuffer.Count, expectedVertexCount);
-            Assert.Equal(drawList.DrawBuffer.IndexBuffer.Count, expectedIndexCount);
-
-            var objFilePath = "D:\\TextRenderingTest_ShouldGetARightMeshAfterAppendingATextMesh.obj";
-            Utility.SaveToObjFile(objFilePath, drawList.DrawBuffer.VertexBuffer, drawList.DrawBuffer.IndexBuffer);
+            var objFilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                + "/TextRenderingTest/ShouldGetARightMeshAfterAppendingATextMesh.obj";
+            Graphics.SaveTextMeshToObjFile(objFilePath, textMesh);
             Process.Start(ModelViewerPath, objFilePath);
         }
-
 
         [Fact]
         public void ShouldRenderABigGlyph()
         {
+            var labelStyle = GUISkin.Current[GUIControlName.Label];
+            labelStyle.FontSize = 400;
+
             Application.Run(new Form1(()=> {
-                var d = Form.current.OverlayDrawList;
-
-                GUIStyle labelStyle = "Label";
-                labelStyle.Set<double>(GUIStyleName.FontSize, 400);
-                labelStyle.Set<string>(GUIStyleName.FontFamily, Utility.FontDir + "msjh.ttf");
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
-
             }));
         }
 
         [Fact]
         public void ShouldRenderAMidiumGlyph()
         {
+            var labelStyle = GUISkin.Current[GUIControlName.Label];
+            labelStyle.FontSize = 32;
+
             Application.Run(new Form1(() => {
-
-                GUIStyle labelStyle = "Label";
-                labelStyle.Set<double>(GUIStyleName.FontSize, 32);
-
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
-
             }));
         }
         
         [Fact]
         public void ShouldRenderASmallGlyph()
         {
+            var labelStyle = GUISkin.Current[GUIControlName.Label];
+            labelStyle.FontSize = 12;
+
             Application.Run(new Form1(() => {
-
-                GUIStyle labelStyle = "Label";
-                labelStyle.Set<double>(GUIStyleName.FontSize, 12);
-
                 GUILayout.Label("D", GUILayout.Height(410), GUILayout.Width(410));
-
-            }));
-        }
-
-        [Fact]
-        public void ShouldRenderAString()
-        {
-            Application.Run(new Form1(() => {
-
-                GUIStyle labelStyle = "Label";
-                labelStyle.Set<double>(GUIStyleName.FontSize, 32);
-
-                GUILayout.Label("A");
-                GUILayout.Label("B");
-                GUILayout.Label("C");
             }));
         }
 
@@ -241,16 +185,16 @@ namespace TextRenderingTest
         public void ShouldRenderAStringInMeasuredRectangle()
         {
             string text = "Hello ImGui!你好";
-            GUIStyle style = new GUIStyle();
-            style.FontSize = 20;
+
+            var ruleSet = GUISkin.Current[GUIControlName.Label];
+
+            var size = ruleSet.CalcSize(text, GUIState.Normal);
+            var rect = new Rect(10, 100, size);
 
             Application.Run(new Form1(() => {
-                GUILayout.Button("dummy");
-                var d = Form.current.OverlayDrawList;
-                var size = style.MeasureText(GUIState.Normal, text);
-                var rect = new Rect(10, 100, size);
-                d.AddRect(rect.Min, rect.Max, Color.Red);
-                d.DrawText(rect, text, style, GUIState.Normal);
+                var d = Form.current.ForegroundDrawingContext;
+                d.DrawRectangle(null, new Pen(Color.Red, 1), rect);
+                d.DrawGlyphRun(ruleSet, text, rect.TopLeft);
             }));
         }
     }
