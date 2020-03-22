@@ -11,7 +11,6 @@ using ImGui.Rendering;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Xunit;
 
 namespace ImGui.UnitTest
 {
@@ -167,13 +166,13 @@ namespace ImGui.UnitTest
             }
         }
 
-        internal static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
+        public static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
         {
             var diffPercentage = ImageComparer.PercentageDifference(a,b, 20);
             return diffPercentage < 0.1;
         }
 
-        internal static bool CompareImage(Image<Rgba32> a, Image<Bgra32> b)
+        public static bool CompareImage(Image<Rgba32> a, Image<Bgra32> b)
         {
             var diffPercentage = ImageComparer.PercentageDifference(a,b, 20);
             return diffPercentage < 0.1;
@@ -184,7 +183,7 @@ namespace ImGui.UnitTest
             return Image.Load<Rgba32>(filePath);
         }
 
-        internal static void CheckExpectedImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
+        public static void CheckExpectedImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
         {
             var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
 #if DEBUG//check if it matches expected image
@@ -202,7 +201,7 @@ namespace ImGui.UnitTest
             Util.OpenImage(expectedImagePath);
 #endif
 
-            Assert.True(Util.CompareImage(expectedImage, image));
+            Debug.Assert(Util.CompareImage(expectedImage, image));
 #else//generate expected image
             var path = Util.UnitTestRootDir + expectedImageFilePath;
             Util.SaveImage(image, path);
@@ -211,7 +210,7 @@ namespace ImGui.UnitTest
 #endif
         }
 
-        internal static void ShowImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
+        public static void ShowImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
         {
             var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
             var path = expectedImageFilePath;

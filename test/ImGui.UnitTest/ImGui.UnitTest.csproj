@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
+    <ProjectReference Include="..\TestUtil\TestUtil.csproj" />
   </ItemGroup>
 
   <ItemGroup>
