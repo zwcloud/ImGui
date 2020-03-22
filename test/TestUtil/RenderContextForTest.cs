@@ -6,10 +6,10 @@ using ImGui.Rendering;
 
 namespace ImGui.UnitTest
 {
-    internal class RenderContextForTest : IDisposable
+    public class RenderContextForTest : IDisposable
     {
-        public IWindow Window { get; private set; }
-        public IRenderer Renderer { get; private set; }
+        private IWindow Window { get; set; }
+        private IRenderer Renderer { get; set; }
 
         private readonly int viewportWidth;
         private readonly int viewportHeight;
@@ -42,7 +42,7 @@ namespace ImGui.UnitTest
             this.Renderer.Clear(Color.White);
         }
 
-        public void DrawMeshes(MeshBuffer meshBuffer)
+        internal void DrawMeshes(MeshBuffer meshBuffer)
         {
             this.Renderer.DrawMeshes(this.viewportWidth, this.viewportHeight,
                 (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));

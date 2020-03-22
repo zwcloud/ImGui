@@ -3,7 +3,6 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Primitives;
 using SixLabors.ImageSharp.Processing;
 using System;
-using Xunit;
 
 namespace ImageSharp.Extension
 {
@@ -22,7 +21,7 @@ namespace ImageSharp.Extension
         {
             var percentage = expected.PercentageDifference(actual, segmentThreshold, scalingFactor);
 
-            Assert.InRange(percentage, 0, imageTheshold);
+            System.Diagnostics.Debug.Assert(0 < percentage && percentage < imageTheshold);
         }
 
         public static float PercentageDifference<TColorA, TColorB>(this Image<TColorA> source, Image<TColorB> target, byte segmentThreshold = DefaultSegmentThreshold, int scalingFactor = DefaultScalingFactor)

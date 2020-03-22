@@ -3,3 +3,4 @@
 [assembly: InternalsVisibleTo("ImGui.UnitTest")]
 [assembly: InternalsVisibleTo("ImGui.ControlTest")]
 [assembly: InternalsVisibleTo("TextRenderingTest")]
+[assembly: InternalsVisibleTo("TestUtil")]
