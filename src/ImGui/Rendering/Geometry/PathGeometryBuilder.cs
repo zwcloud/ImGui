@@ -11,10 +11,6 @@ namespace ImGui.Rendering
         /// </summary>
         public void BeginPath()
         {
-            if (Geometry == null)
-            {
-                Geometry = new PathGeometry();
-            }
             if(Figure == null)
             {
                 Figure = new PathFigure();
@@ -118,6 +114,11 @@ namespace ImGui.Rendering
             Ellipse(center, radius, radius, startAngle, endAngle);
         }
 
+        public void Circle(Point center, double radius)
+        {
+            Ellipse(center, radius, radius);
+        }
+
         /// <summary>
         /// Create a circular arc from current point to (x,y) with specified parameters.
         /// </summary>
@@ -180,7 +181,23 @@ namespace ImGui.Rendering
         /// and expressed in radians.</param>
         public void Ellipse(Point center, double radiusX, double radiusY, double startAngle, double endAngle)
         {
-            //TODO
+            throw new NotImplementedException();
+        }
+
+        public void Ellipse(Point center, double radiusX, double radiusY)
+        {
+            //TODO don't create eg and points here
+            EllipseGeometry eg = new EllipseGeometry(center, radiusX, radiusY);
+            Point[] points = eg.GetPointList();
+
+            PathFigure figure = new PathFigure();
+            figure.StartPoint = points[0];
+            // i == 0, 3, 6, 9
+            for (int i = 0; i < 12; i += 3)
+            {
+                figure.Segments.Add(new CubicBezierSegment(points[i + 1], points[i + 2], points[i + 3], false));
+            }
+            this.Figure = figure;
         }
 
         /// <summary>
@@ -265,7 +282,7 @@ namespace ImGui.Rendering
 
         #region private implementation
 
-        private PathGeometry Geometry;
+        private PathGeometry Geometry = new PathGeometry();
         private PathFigure Figure;
 
         #endregion
