@@ -17,11 +17,14 @@ namespace ImGui.UnitTest
 {
     public static class Util
     {
-        //FIXME this only works on Windows
-        //For macOS and Linux the path should start with "~\" instead.
-        public static readonly string OutputPath = Assembly.GetExecutingAssembly().Location.Substring(0, 2) + "/ImGui.UnitTest.Output";
+        public static readonly string OutputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/ImGui.UnitTest.Output";
 
         public static readonly string UnitTestRootDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")) + Path.DirectorySeparatorChar;
+
+        static Util()
+        {
+            Directory.CreateDirectory(OutputPath);
+        }
 
         public static void CheckEchoLogger()
         {
