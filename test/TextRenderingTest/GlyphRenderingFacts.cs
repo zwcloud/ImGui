@@ -67,10 +67,13 @@ namespace TextRenderingTest
                 aabb.Union(segment.Item2);
                 aabb.Union(segment.Item3);
             }
+            var scale = 0.5;
+            aabb.Scale(scale, scale);
             aabb.Offset(-20, -20);
 
             //offset the glyph points by AABB so the glyph can be rendered in a proper region
             var offset = new Vector(-aabb.Min.X, -aabb.Min.Y);
+
 
             //polygons
             Geometry polygonGeometry;
@@ -80,15 +83,15 @@ namespace TextRenderingTest
                 foreach (var polygon in polygons)
                 {
                     var startPoint = polygon[0];
-                    d.MoveTo(startPoint + offset);
+                    d.MoveTo(startPoint* scale + offset);
                     var lastPoint = startPoint;
                     foreach (var p in polygon.Skip(1))
                     {
-                        d.LineTo(p + offset);
+                        d.LineTo(p* scale + offset);
                         //DrawArrow(d, lastPoint, point);
                         lastPoint = p;
                     }
-                    d.LineTo(startPoint + offset);
+                    d.LineTo(startPoint* scale + offset);
                     //DrawArrow(d, lastPoint, point);
                     d.Stroke();
                 }
@@ -103,8 +106,8 @@ namespace TextRenderingTest
                 d.BeginPath();
                 foreach (var qs in quadraticBezierSegments)
                 {
-                    d.MoveTo(qs.Item1 + offset);
-                    d.QuadraticCurveTo(qs.Item2 + offset, qs.Item3 + offset);
+                    d.MoveTo(qs.Item1* scale + offset);
+                    d.QuadraticCurveTo(qs.Item2* scale + offset, qs.Item3* scale + offset);
                     d.Stroke();
                 }
                 quadraticGeometry = d.ToGeometry();
@@ -112,28 +115,28 @@ namespace TextRenderingTest
             var quadraticPen = new Pen(quadraticSegmentColor, quadraticLineWidth);
 
             //start points
-#if false
             Geometry startPointGeometry;
             {
                 var d = new PathGeometryBuilder();
-                d.BeginPath();
                 for (var i = 0; i < polygons.Count; i++)
                 {
                     var polygon = polygons[i];
                     var startPoint = polygon[0];
-                    d.Arc(startPoint.x, startPoint.y, 10, 0, System.Math.PI * 2, false);
+                    d.Circle(startPoint* scale + offset, 10);
                     d.Fill();
                 }
                 startPointGeometry = d.ToGeometry();
             }
             var startPointBrush = new Brush(startPointColor);
-#endif
 
             //draw the geometry
+            //TODO create an image file instead
+            //TODO remove usage of the temporary 0.5 scale
             Application.Run(new Form1(() => {
                 var g = Form.current.ForegroundDrawingContext;
                 g.DrawGeometry(null, polygonPen, polygonGeometry);
                 g.DrawGeometry(null, quadraticPen, quadraticGeometry);
+                g.DrawGeometry(startPointBrush, null, startPointGeometry);
             }));
         }
 
