@@ -24,9 +24,6 @@ namespace TextRenderingTest
         private static readonly string OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
                 + Path.DirectorySeparatorChar + nameof(GlyphRenderingFacts);
 
-        private const string ModelViewerPath = @"C:\Program Files\Autodesk\FBX Review\fbxreview.exe";
-        //"E:\Program Files (green)\open3mod_1_1_standalone\open3mod.exe";
-
         //glyph settings
         string fontFileName = "DroidSans.ttf";
         const char character = 'e';
@@ -42,55 +39,95 @@ namespace TextRenderingTest
         [Fact]
         public void ShowGlyphAsDirectedGraph_Builtin()
         {
-            //load a glyph
+            //load the glyph
             Typeface typeFace;
-            using (var fs = new FileStream(Utility.FontDir + fontFileName, FileMode.Open))
+            using (var fs = Utility.ReadFile(Utility.FontDir + fontFileName))
             {
-                var fontReader = new OpenFontReader();
-                typeFace = fontReader.Read(fs);
+                var reader = new OpenFontReader();
+                typeFace = reader.Read(fs);
             }
-            var glyph = typeFace.Lookup(character);
+            Glyph glyph = typeFace.Lookup(character);
 
-            //read polygons and curves (quadratic-bezier) from the glyph
+            //read polygons and quadratic bezier segments
             GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
 
-            //calculate the baseline origin
-            var scale = typeFace.CalculateToPixelScaleFromPointSize(fontPointSize);
-            var ascent = typeFace.Ascender * scale;
-            var offset = new Vector(0, ascent);
+            //calcualte the aabb
+            Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
+            for (int i = 0; i < polygons.Count; i++)
+            {
+                var polygon = polygons[i];
+                foreach (var p in polygon)
+                {
+                    aabb.Union(p);
+                }
+            }
+            foreach (var segment in quadraticBezierSegments)
+            {
+                aabb.Union(segment.Item1);
+                aabb.Union(segment.Item2);
+                aabb.Union(segment.Item3);
+            }
+            aabb.Offset(-20, -20);
 
-            //create a geometry for polygons
+            //offset the glyph points by AABB so the glyph can be rendered in a proper region
+            var offset = new Vector(-aabb.Min.X, -aabb.Min.Y);
+
+            //polygons
             Geometry polygonGeometry;
             {
                 var d = new PathGeometryBuilder();
                 d.BeginPath();
                 foreach (var polygon in polygons)
                 {
-                    d.MoveTo(polygon[0] * scale + offset);
+                    var startPoint = polygon[0];
+                    d.MoveTo(startPoint + offset);
+                    var lastPoint = startPoint;
                     foreach (var p in polygon.Skip(1))
                     {
-                        d.LineTo(p * scale + offset);
+                        d.LineTo(p + offset);
+                        //DrawArrow(d, lastPoint, point);
+                        lastPoint = p;
                     }
-                    d.ClosePath();
+                    d.LineTo(startPoint + offset);
+                    //DrawArrow(d, lastPoint, point);
                     d.Stroke();
                 }
                 polygonGeometry = d.ToGeometry();
             }
-            var polygonPen = new Pen(Color.Black, 1);
+            var polygonPen = new Pen(polygonColor, polygonLineWidth);
 
+            //quadratic bezier segments
             Geometry quadraticGeometry;
             {
                 var d = new PathGeometryBuilder();
                 d.BeginPath();
                 foreach (var qs in quadraticBezierSegments)
                 {
-                    d.MoveTo(qs.Item1 * scale + offset);
-                    d.QuadraticCurveTo(qs.Item2 * scale + offset, qs.Item3 * scale + offset);
+                    d.MoveTo(qs.Item1 + offset);
+                    d.QuadraticCurveTo(qs.Item2 + offset, qs.Item3 + offset);
                     d.Stroke();
                 }
                 quadraticGeometry = d.ToGeometry();
             }
-            var quadraticPen = new Pen(Color.Yellow, 1);
+            var quadraticPen = new Pen(quadraticSegmentColor, quadraticLineWidth);
+
+            //start points
+#if false
+            Geometry startPointGeometry;
+            {
+                var d = new PathGeometryBuilder();
+                d.BeginPath();
+                for (var i = 0; i < polygons.Count; i++)
+                {
+                    var polygon = polygons[i];
+                    var startPoint = polygon[0];
+                    d.Arc(startPoint.x, startPoint.y, 10, 0, System.Math.PI * 2, false);
+                    d.Fill();
+                }
+                startPointGeometry = d.ToGeometry();
+            }
+            var startPointBrush = new Brush(startPointColor);
+#endif
 
             //draw the geometry
             Application.Run(new Form1(() => {
@@ -113,7 +150,7 @@ namespace TextRenderingTest
             Glyph glyph = typeFace.Lookup(character);
 
             //read polygons and quadratic bezier segments
-            GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);//TODO unit test GlyphLoader.Read
+            GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
 
             //calcualte the aabb
             Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
@@ -139,6 +176,7 @@ namespace TextRenderingTest
                 MathEx.RoundToInt(2048), MathEx.RoundToInt(2048)))
             using (Cairo.Context g = new Cairo.Context(surface))
             {
+                //apply offset translation by AABB so the glyph can be rendered in a proper region
                 g.Translate(-aabb.Min.X, -aabb.Min.Y);
 
                 //set surface back ground to white (1,1,1,1)
