@@ -142,7 +142,10 @@ namespace TextRenderingTest
 
             //draw the drawingVisual to image
             //TODO use a size of 2048x2048
-            //BUG currently, using 2048x2048 will make the rendered image blank
+            //BUG currently, using 2048x2048 will crash.
+            //The temp window created in Util.DrawDrawingVisualToImage will be resized,
+            //and make the client area and the backbuffer's size smaller than 2048x2048.
+            //We need to use a off-screen rendering method instead.
             int width = 1000, height = 1000;
             Util.DrawDrawingVisualToImage(out var imageBytes, width, height, drawingVisual);
 
