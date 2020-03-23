@@ -10,6 +10,7 @@ using Typography.OpenFont;
 using System.IO;
 using System.Linq;
 using ImGui.UnitTest;
+using ImGui.GraphicsImplementation;
 
 namespace TextRenderingTest
 {
@@ -67,13 +68,13 @@ namespace TextRenderingTest
                 aabb.Union(segment.Item2);
                 aabb.Union(segment.Item3);
             }
+            //TODO remove usage of this temporary 0.5 scale
             var scale = 0.5;
             aabb.Scale(scale, scale);
             aabb.Offset(-20, -20);
 
             //offset the glyph points by AABB so the glyph can be rendered in a proper region
             var offset = new Vector(-aabb.Min.X, -aabb.Min.Y);
-
 
             //polygons
             Geometry polygonGeometry;
@@ -129,15 +130,58 @@ namespace TextRenderingTest
             }
             var startPointBrush = new Brush(startPointColor);
 
-            //draw the geometry
-            //TODO create an image file instead
-            //TODO remove usage of the temporary 0.5 scale
-            Application.Run(new Form1(() => {
-                var g = Form.current.ForegroundDrawingContext;
-                g.DrawGeometry(null, polygonPen, polygonGeometry);
-                g.DrawGeometry(null, quadraticPen, quadraticGeometry);
-                g.DrawGeometry(startPointBrush, null, startPointGeometry);
-            }));
+            //create a DrawingVisual to hold geometries
+            DrawingVisual drawingVisual = new DrawingVisual(0);
+
+            //create geometries and save to DrawingVisual's content
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+            drawingContext.DrawGeometry(null, polygonPen, polygonGeometry);
+            drawingContext.DrawGeometry(null, quadraticPen, quadraticGeometry);
+            drawingContext.DrawGeometry(startPointBrush, null, startPointGeometry);
+            drawingContext.Close();
+
+            //convert geometries inside the drawingVisual's content to meshes stored in a MeshList with a BuiltinGeometryRenderer
+            MeshList meshList = new MeshList();
+            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
+            RenderContext renderContext= new RenderContext(geometryRenderer, meshList);
+            drawingVisual.RenderContent(renderContext);
+
+            //merge meshes in the MeshList to a MeshBuffer
+            MeshBuffer meshBuffer = new MeshBuffer();
+            meshBuffer.Clear();
+            meshBuffer.Init();
+            meshBuffer.Build(meshList);
+
+            //created a mesh IRenderer
+            var size = new Size(1000, 1000);
+            //TODO use a size of 2048x2048
+            //BUG currently, using 2048x2048 will make the rendered image blank
+            Application.Init();
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, size, WindowTypes.Regular);
+            var renderer = Application.PlatformContext.CreateRenderer();
+            renderer.Init(window.Pointer, window.ClientSize);
+            CSharpGL.GL.Viewport(0, 0, (int)size.Width, (int)size.Height);
+
+            //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
+            renderer.Clear(Color.White);
+            renderer.DrawMeshes((int)size.Width, (int)size.Height,
+                (
+                    shapeMesh: meshBuffer.ShapeMesh,
+                    imageMesh: meshBuffer.ImageMesh,
+                    textMesh: meshBuffer.TextMesh
+                )
+            );
+
+            //get drawn pixels data
+            var imageBytes = renderer.GetRawBackBuffer(out _, out _);
+
+            //clear native resources: window and IRenderer
+            renderer.ShutDown();
+            window.Close();
+
+            //save and show the image
+            var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsDirectedGraph_Builtin)}_{fontFileName}_{character.GetHashCode()}.png";
+            Util.ShowImageNotOpenFolder(imageBytes, (int)size.Width, (int)size.Height, path);
         }
 
         [Fact]
