@@ -90,58 +90,7 @@ namespace ImGui.UnitTest
             Process.Start(ModelViewerPath, path);
         }
 
-
-        internal static void DrawNode(Node node, [CallerMemberName] string memberName = "")
-        {
-            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
-            using (Cairo.Context context = new Cairo.Context(surface))
-            {
-                Draw(context, node);
-
-                if (!Directory.Exists(OutputPath))
-                {
-                    Directory.CreateDirectory(OutputPath);
-                }
-
-                string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
-                surface.WriteToPng(filePath);
-                Util.OpenImage(filePath);
-            }
-        }
-
-        private static void Draw(Cairo.Context context, Visual visual)
-        {
-            var node = (Node)visual;
-            var isGroup =  node.IsGroup;
-
-            if (!isGroup)
-            {
-                if (node.RuleSet.HorizontallyStretched || node.RuleSet.VerticallyStretched)
-                {
-                    context.FillRectangle(node.Rect, CairoEx.ColorLightBlue);
-                }
-                else if (node.RuleSet.IsFixedWidth || node.RuleSet.IsFixedHeight)
-                {
-                    context.FillRectangle(node.Rect, CairoEx.ColorOrange);
-                }
-                else
-                {
-                    context.FillRectangle(node.Rect, CairoEx.ColorGreen);
-                }
-            }
-
-            context.StrokeRectangle(node.Rect, CairoEx.ColorBlack);
-
-            if (!isGroup) return;
-
-            context.Save();
-            node.Foreach(v =>
-            {
-                Draw(context, v);
-                return true;
-            });
-            context.Restore();
-        }
+        #region Image
 
         public static Image<Rgba32> CreateImage(byte[] data, int width, int height, bool flip)
         {
@@ -225,6 +174,65 @@ namespace ImGui.UnitTest
             Util.OpenImage(path);
         }
 
+        #endregion
+
+        #region Node
+
+        #region Cairo
+
+        internal static void DrawNode(Node node, [CallerMemberName] string memberName = "")
+        {
+            using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32, (int)node.Rect.Width, (int)node.Rect.Height))
+            using (Cairo.Context context = new Cairo.Context(surface))
+            {
+                Draw(context, node);
+
+                if (!Directory.Exists(OutputPath))
+                {
+                    Directory.CreateDirectory(OutputPath);
+                }
+
+                string filePath = OutputPath + "\\" + DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-fff_") + surface.GetHashCode() + memberName + ".png";
+                surface.WriteToPng(filePath);
+                Util.OpenImage(filePath);
+            }
+        }
+
+        private static void Draw(Cairo.Context context, Visual visual)
+        {
+            var node = (Node)visual;
+            var isGroup = node.IsGroup;
+
+            if (!isGroup)
+            {
+                if (node.RuleSet.HorizontallyStretched || node.RuleSet.VerticallyStretched)
+                {
+                    context.FillRectangle(node.Rect, CairoEx.ColorLightBlue);
+                }
+                else if (node.RuleSet.IsFixedWidth || node.RuleSet.IsFixedHeight)
+                {
+                    context.FillRectangle(node.Rect, CairoEx.ColorOrange);
+                }
+                else
+                {
+                    context.FillRectangle(node.Rect, CairoEx.ColorGreen);
+                }
+            }
+
+            context.StrokeRectangle(node.Rect, CairoEx.ColorBlack);
+
+            if (!isGroup) return;
+
+            context.Save();
+            node.Foreach(v =>
+            {
+                Draw(context, v);
+                return true;
+            });
+            context.Restore();
+        }
+        #endregion
+
         internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height, Rect clipRect)
         {
             if (root == null)
@@ -303,5 +311,7 @@ namespace ImGui.UnitTest
             Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
             ShowImageNotOpenFolder(imageRawBytes, width, height, path);
         }
+
+        #endregion
     }
 }
