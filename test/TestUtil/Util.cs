@@ -334,7 +334,6 @@ namespace ImGui.UnitTest
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Regular);
             var renderer = Application.PlatformContext.CreateRenderer();
             renderer.Init(window.Pointer, window.ClientSize);
-            CSharpGL.GL.Viewport(0, 0, width, height);//TEMP HACK otherwise nothing is drawn
 
             //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
             renderer.Clear(Color.White);
