@@ -225,58 +225,6 @@ namespace ImGui.UnitTest
             Util.OpenImage(path);
         }
 
-        internal static void DrawNodeToImage(out byte[] imageRawBytes, Node node, int width, int height)
-        {
-            Application.EnableMSAA = false;
-
-            MeshBuffer meshBuffer = new MeshBuffer();
-            MeshList meshList = new MeshList();
-            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-            using (var context = new RenderContextForTest(width, height))
-            {
-                //This must be called after the context is created, for uploading textures to GPU via OpenGL.
-                node.Render(new RenderContext(geometryRenderer, meshList));
-
-                //rebuild mesh buffer
-                meshBuffer.Clear();
-                meshBuffer.Init();
-                meshBuffer.Build(meshList);
-
-                //draw mesh buffer to screen
-                context.Clear();
-                context.DrawMeshes(meshBuffer);
-
-                imageRawBytes = context.GetRenderedRawBytes();
-            }
-        }
-
-        internal static void DrawNodesToImage(out byte[] imageRawBytes, IList<Node> nodes, int width, int height)
-        {
-            MeshBuffer meshBuffer = new MeshBuffer();
-            MeshList meshList = new MeshList();
-            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-
-            using (var context = new RenderContextForTest(width, height))
-            {
-                //This must be called after the context is created, for uploading textures to GPU via OpenGL.
-                foreach (var node in nodes)
-                {
-                    node.Render(new RenderContext(geometryRenderer, meshList));
-                }
-
-                //rebuild mesh buffer
-                meshBuffer.Clear();
-                meshBuffer.Init();
-                meshBuffer.Build(meshList);
-
-                //draw mesh buffer to screen
-                context.Clear();
-                context.DrawMeshes(meshBuffer);
-
-                imageRawBytes = context.GetRenderedRawBytes();
-            }
-        }
-
         internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height, Rect clipRect)
         {
             if (root == null)
@@ -332,8 +280,6 @@ namespace ImGui.UnitTest
         internal static void DrawNodeTreeToImage(out byte[] imageRawBytes, Node root, int width, int height)
             => DrawNodeTreeToImage(out imageRawBytes, root, width, height, Rect.Big);
 
-        #region new rendering pipeline
-
         /// <summary>
         /// Show a rendered image of a node. Used to inspect a node temporarily.
         /// </summary>
@@ -357,34 +303,5 @@ namespace ImGui.UnitTest
             Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
             ShowImageNotOpenFolder(imageRawBytes, width, height, path);
         }
-
-        internal static void DrawNodeToImage_NewPipeline(out byte[] imageRawBytes, Node node, int width, int height)
-        {
-            Application.EnableMSAA = false;
-
-            MeshBuffer meshBuffer = new MeshBuffer();
-            MeshList meshList = new MeshList();
-            BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
-
-            using (var context = new RenderContextForTest(width, height))
-            {
-                RenderContext renderContext = new RenderContext(geometryRenderer, meshList);
-                //This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-                node.Render(renderContext);
-
-                //rebuild mesh buffer
-                meshBuffer.Clear();
-                meshBuffer.Init();
-                meshBuffer.Build(meshList);
-
-                //draw mesh buffer to screen
-                context.Clear();
-                context.DrawMeshes(meshBuffer);
-
-                imageRawBytes = context.GetRenderedRawBytes();
-            }
-        }
-
-        #endregion
     }
 }
