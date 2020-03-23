@@ -313,5 +313,46 @@ namespace ImGui.UnitTest
         }
 
         #endregion
+
+        #region Visual
+        internal static void DrawDrawingVisualToImage(out byte[] imageRawBytes, int width, int height, DrawingVisual drawingVisual)
+        {
+            //convert geometries inside the drawingVisual's content to meshes stored in a MeshList with a BuiltinGeometryRenderer
+            MeshList meshList = new MeshList();
+            using BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
+            RenderContext renderContext = new RenderContext(geometryRenderer, meshList);
+            drawingVisual.RenderContent(renderContext);
+
+            //merge meshes in the MeshList to a MeshBuffer
+            MeshBuffer meshBuffer = new MeshBuffer();
+            meshBuffer.Clear();
+            meshBuffer.Init();
+            meshBuffer.Build(meshList);
+
+            //created a mesh IRenderer
+            Application.Init();
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Regular);
+            var renderer = Application.PlatformContext.CreateRenderer();
+            renderer.Init(window.Pointer, window.ClientSize);
+            CSharpGL.GL.Viewport(0, 0, width, height);//TEMP HACK otherwise nothing is drawn
+
+            //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
+            renderer.Clear(Color.White);
+            renderer.DrawMeshes(width, height,
+                (
+                    shapeMesh: meshBuffer.ShapeMesh,
+                    imageMesh: meshBuffer.ImageMesh,
+                    textMesh: meshBuffer.TextMesh
+                )
+            );
+
+            //get drawn pixels data
+            imageRawBytes = renderer.GetRawBackBuffer(out _, out _);
+
+            //clear native resources: window and IRenderer
+            renderer.ShutDown();
+            window.Close();
+        }
+        #endregion
     }
 }
