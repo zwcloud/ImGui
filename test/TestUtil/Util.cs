@@ -210,19 +210,17 @@ namespace ImGui.UnitTest
 #endif
         }
 
-        public static void ShowImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
+        public static void ShowImage(byte[] imageRawBytes, int width, int height, string path)
         {
-            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-            var path = expectedImageFilePath;
-            Util.SaveImage(image, path);
-            Util.SelectFileInExplorer(path);
-            Util.OpenImage(path);
+            using var image = CreateImage(imageRawBytes, width, height, flip: true);
+            SaveImage(image, (string)path);
+            SelectFileInExplorer((string)path);
+            OpenImage((string)path);
         }
 
-        internal static void ShowImageNotOpenFolder(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
+        internal static void ShowImageNotOpenFolder(byte[] imageRawBytes, int width, int height, string path)
         {
-            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
-            var path = expectedImageFilePath;
+            using var image = CreateImage(imageRawBytes, width, height, flip: true);
             Util.SaveImage(image, path);
             Util.OpenImage(path);
         }
