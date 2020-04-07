@@ -52,7 +52,7 @@ namespace TextRenderingTest
             //read polygons and quadratic bezier segments
             GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
 
-            //calcualte the aabb
+            //calculate the AABB
             Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
             for (int i = 0; i < polygons.Count; i++)
             {
@@ -68,9 +68,6 @@ namespace TextRenderingTest
                 aabb.Union(segment.Item2);
                 aabb.Union(segment.Item3);
             }
-            //TODO remove usage of this temporary 0.5 scale
-            var scale = 0.5;
-            aabb.Scale(scale, scale);
             aabb.Offset(-20, -20);
 
             //offset the glyph points by AABB so the glyph can be rendered in a proper region
@@ -84,15 +81,15 @@ namespace TextRenderingTest
                 foreach (var polygon in polygons)
                 {
                     var startPoint = polygon[0];
-                    d.MoveTo(startPoint* scale + offset);
+                    d.MoveTo(startPoint + offset);
                     var lastPoint = startPoint;
                     foreach (var p in polygon.Skip(1))
                     {
-                        d.LineTo(p* scale + offset);
+                        d.LineTo(p + offset);
                         //DrawArrow(d, lastPoint, point);
                         lastPoint = p;
                     }
-                    d.LineTo(startPoint* scale + offset);
+                    d.LineTo(startPoint + offset);
                     //DrawArrow(d, lastPoint, point);
                     d.Stroke();
                 }
@@ -107,8 +104,8 @@ namespace TextRenderingTest
                 d.BeginPath();
                 foreach (var qs in quadraticBezierSegments)
                 {
-                    d.MoveTo(qs.Item1* scale + offset);
-                    d.QuadraticCurveTo(qs.Item2* scale + offset, qs.Item3* scale + offset);
+                    d.MoveTo(qs.Item1 + offset);
+                    d.QuadraticCurveTo(qs.Item2 + offset, qs.Item3 + offset);
                     d.Stroke();
                 }
                 quadraticGeometry = d.ToGeometry();
@@ -123,7 +120,7 @@ namespace TextRenderingTest
                 {
                     var polygon = polygons[i];
                     var startPoint = polygon[0];
-                    d.Circle(startPoint* scale + offset, 10);
+                    d.Circle(startPoint + offset, 10);
                     d.Fill();
                 }
                 startPointGeometry = d.ToGeometry();
@@ -141,12 +138,7 @@ namespace TextRenderingTest
             drawingContext.Close();
 
             //draw the drawingVisual to image
-            //TODO use a size of 2048x2048
-            //BUG currently, using 2048x2048 will crash.
-            //The temp window created in Util.DrawDrawingVisualToImage will be resized,
-            //and make the client area and the backbuffer's size smaller than 2048x2048.
-            //We need to use a off-screen rendering method instead.
-            int width = 1000, height = 1000;
+            int width = 2048, height = 2048;
             Util.DrawDrawingVisualToImage(out var imageBytes, width, height, drawingVisual);
 
             //save and show the image
@@ -169,7 +161,7 @@ namespace TextRenderingTest
             //read polygons and quadratic bezier segments
             GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
 
-            //calcualte the aabb
+            //calculate the AABB
             Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
             for (int i = 0; i < polygons.Count; i++)
             {
