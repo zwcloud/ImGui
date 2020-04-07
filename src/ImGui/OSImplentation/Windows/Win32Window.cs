@@ -362,6 +362,9 @@ namespace ImGui.OSImplentation.Windows
                 case WindowTypes.ToolTip:
                     windowStyle = WindowStyles.WS_POPUP;
                     break;
+                case WindowTypes.Hidden:
+                    windowStyle = 0;
+                    break;
                 default:
                     windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW;
                     break;

@@ -8,5 +8,6 @@ namespace ImGui
         Regular,
         ToolBox,
         ToolTip,
+        Hidden,
     }
 }
