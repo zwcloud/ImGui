@@ -5,8 +5,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using CSharpGL;
 using ImageSharp.Extension;
 using ImGui.GraphicsImplementation;
+using ImGui.OSAbstraction.Graphics;
+using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -332,18 +335,14 @@ namespace ImGui.UnitTest
             //created a mesh IRenderer
             Application.Init();
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Regular);
-            var renderer = Application.PlatformContext.CreateRenderer();
+            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
             renderer.Init(window.Pointer, window.ClientSize);
 
             //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
             renderer.Clear(Color.White);
-            renderer.DrawMeshes(width, height,
-                (
-                    shapeMesh: meshBuffer.ShapeMesh,
-                    imageMesh: meshBuffer.ImageMesh,
-                    textMesh: meshBuffer.TextMesh
-                )
-            );
+            ITexture texture = new OpenGLTexture();
+            texture.LoadImage(new Rgba32[width * height], width, height);
+            renderer.DrawToTexture(texture, meshBuffer.ShapeMesh, renderer.shapeMaterial);
 
             //get drawn pixels data
             imageRawBytes = renderer.GetRawBackBuffer(out _, out _);
