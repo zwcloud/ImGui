@@ -334,7 +334,7 @@ namespace ImGui.UnitTest
 
             //created a mesh IRenderer
             Application.Init();
-            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Regular);
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Hidden);
             var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
             renderer.Init(window.Pointer, window.ClientSize);
 
