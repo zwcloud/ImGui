@@ -3,6 +3,7 @@ using ImGui.OSAbstraction;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
+using ImGui.OSImplentation.Shared;
 
 namespace ImGui.OSImplentation.Windows
 {

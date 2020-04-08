@@ -9,6 +9,7 @@ using CSharpGL;
 using ImageSharp.Extension;
 using ImGui.GraphicsImplementation;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.OSImplentation.Shared;
 using ImGui.OSImplentation.Windows;
 using ImGui.Rendering;
 using SixLabors.ImageSharp;
@@ -342,7 +343,7 @@ namespace ImGui.UnitTest
             renderer.Clear(Color.White);
             ITexture texture = new OpenGLTexture();
             texture.LoadImage(new Rgba32[width * height], width, height);
-            renderer.DrawToTexture(texture, meshBuffer.ShapeMesh, renderer.shapeMaterial);
+            renderer.DrawToTexture(texture, meshBuffer.ShapeMesh, OpenGLMaterial.shapeMaterial);
 
             //get drawn pixels data
             imageRawBytes = renderer.GetRawBackBuffer(out _, out _);

@@ -4,109 +4,12 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.OSImplentation.Shared;
 
 namespace ImGui.OSImplentation.Linux
 {
     internal partial class LinuxOpenGLRenderer : IRenderer
     {
-        #region Materials
-
-        Material shapeMaterial = new Material(
-            vertexShader: @"
-#version 300 es
-precision mediump float;
-uniform mat4 ProjMtx;
-in vec2 Position;
-in vec2 UV;
-in vec4 Color;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-            fragmentShader: @"
-#version 300 es
-precision mediump float;
-uniform sampler2D Texture;
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-out vec4 Out_Color;
-void main()
-{
-	Out_Color = Frag_Color;
-}
-"
-            );
-
-        Material imageMaterial = new Material(
-            vertexShader: @"
-#version 300 es
-uniform mat4 ProjMtx;
-in vec2 Position;
-in vec2 UV;
-in vec4 Color;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-            fragmentShader: @"
-#version 300 es
-precision mediump float;
-uniform sampler2D Texture;
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-out vec4 Out_Color;
-void main()
-{
-	Out_Color = Frag_Color * texture( Texture, Frag_UV.st);
-}
-"
-            );
-
-        private readonly Material glyphMaterial = new Material(
-    vertexShader: @"
-#version 300 es
-uniform mat4 ProjMtx;
-in vec2 Position;
-in vec2 UV;
-in vec4 Color;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-    fragmentShader: @"
-#version 300 es
-precision mediump float;
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-out vec4 Out_Color;
-void main()
-{
-	if (Frag_UV.s * Frag_UV.s - Frag_UV.t > 0.0)
-	{
-		discard;
-	}
-	Out_Color = Frag_Color;
-}
-"
-    );
-
-        #endregion
-
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
         private static readonly float[] FloatBuffer = { 0, 0, 0, 0 };
@@ -127,9 +30,7 @@ void main()
                 return;
             }
 
-            this.shapeMaterial.Init();
-            this.imageMaterial.Init();
-            this.glyphMaterial.Init();
+            OpenGLMaterial.InitCommonMaterials();
 
             // Other state
             GL.Disable(GL.GL_CULL_FACE);
@@ -148,13 +49,13 @@ void main()
 
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
-            DrawMesh(this.shapeMaterial, meshes.shapeMesh, width, height);
-            DrawMesh(this.imageMaterial, meshes.imageMesh, width, height);
+            DrawMesh(OpenGLMaterial.shapeMaterial, meshes.shapeMesh, width, height);
+            DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
 
             DrawTextMesh(meshes.textMesh, width, height);
         }
 
-        private static void DrawMesh(Material material, Mesh mesh, int width, int height)
+        private static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
         {
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
             VertexBuffer vertexBuffer = mesh.VertexBuffer;
@@ -221,10 +122,10 @@ void main()
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex and index data
-            GL.BindVertexArray(material.vaoHandle);
-            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
+            GL.BindVertexArray(material.VaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
             GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
             Utility.CheckGLESError();
@@ -305,7 +206,7 @@ void main()
             };
             GL.Viewport(0, 0, width, height);
 
-            var material = this.glyphMaterial;
+            var material = OpenGLMaterial.glyphMaterial;
             var vertexBuffer = textMesh.VertexBuffer;
             var indexBuffer = textMesh.IndexBuffer;
 
@@ -313,10 +214,10 @@ void main()
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex data
-            GL.BindVertexArray(material.vaoHandle);
-            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
+            GL.BindVertexArray(material.VaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
             GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
             Utility.CheckGLError();
@@ -375,9 +276,7 @@ void main()
 
         public void ShutDown()
         {
-            this.shapeMaterial.ShutDown();
-            this.imageMaterial.ShutDown();
-            this.glyphMaterial.ShutDown();
+            OpenGLMaterial.ShutDownCommonMaterials();
 
             DestroyEGL();
         }
