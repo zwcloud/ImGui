@@ -8,109 +8,16 @@ namespace ImGui.OSImplentation.Android
 {
     internal partial class OpenGLESRenderer : IRenderer
     {
-        Material shapeMaterial = new Material(
-            vertexShader: @"
-#version 300 es
-uniform mat4 ProjMtx;
-in vec2 Position;
-in vec2 UV;
-in vec4 Color;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-            fragmentShader: @"
-#version 300 es
-uniform sampler2D Texture;
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-out vec4 Out_Color;
-void main()
-{
-	Out_Color = Frag_Color;
-}
-"
-            );
-
-        Material imageMaterial = new Material(
-            vertexShader: @"
-#version 300 es
-uniform mat4 ProjMtx;
-in vec2 Position;
-in vec2 UV;
-in vec4 Color;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-            fragmentShader: @"
-#version 300 es
-uniform sampler2D Texture;
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-out vec4 Out_Color;
-void main()
-{
-	Out_Color = Frag_Color * texture( Texture, Frag_UV.st);
-}
-"
-            );
-
-        private readonly Material glyphMaterial = new Material(
-    vertexShader: @"
-#version 300 es
-uniform mat4 ProjMtx;
-in vec2 Position;
-in vec2 UV;
-in vec4 Color;
-out vec2 Frag_UV;
-out vec4 Frag_Color;
-void main()
-{
-	Frag_UV = UV;
-	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
-}
-",
-    fragmentShader: @"
-#version 300 es
-in vec2 Frag_UV;
-in vec4 Frag_Color;
-out vec4 Out_Color;
-void main()
-{
-	if (Frag_UV.s * Frag_UV.s - Frag_UV.t > 0.0)
-	{
-		discard;
-	}
-	Out_Color = Frag_Color;
-}
-"
-    );
-
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
         private static readonly float[] FloatBuffer = { 0, 0, 0, 0 };
-        private static readonly uint[] UIntBuffer = { 0, 0, 0, 0 };
 
         public void Init(IntPtr windowHandle, Size size)
         {
             //CreateOpenGLContext((IntPtr)windowHandle);//done in Xamarin.Android
             //InitGLEW();//done in Xamarin.Android
 
-            this.shapeMaterial.Init();
-            this.imageMaterial.Init();
-            this.glyphMaterial.Init();
+            OpenGLESMaterial.InitCommonMaterials();
 
             // Other state
             GL.Disable(GL.GL_CULL_FACE);
@@ -129,13 +36,13 @@ void main()
 
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
-            DrawMesh(this.shapeMaterial, meshes.shapeMesh, width, height);
-            DrawMesh(this.imageMaterial, meshes.imageMesh, width, height);
+            DrawMesh(OpenGLESMaterial.shapeMaterial, meshes.shapeMesh, width, height);
+            DrawMesh(OpenGLESMaterial.imageMaterial, meshes.imageMesh, width, height);
 
             DrawTextMesh(meshes.textMesh, width, height);
         }
 
-        private static void DrawMesh(Material material, Mesh mesh, int width, int height)
+        private static void DrawMesh(OpenGLESMaterial material, Mesh mesh, int width, int height)
         {
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
             VertexBuffer vertexBuffer = mesh.VertexBuffer;
@@ -191,7 +98,7 @@ void main()
             float R = 0 + width;
             float T = 0;
             float B = 0 + height;
-            float[] ortho_projection = new float[16]
+            float[] ortho_projection = new float[]
             {
                 2.0f/(R-L),   0.0f,         0.0f,   0.0f,
                 0.0f,         2.0f/(T-B),   0.0f,   0.0f,
@@ -202,10 +109,10 @@ void main()
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex and index data
-            GL.BindVertexArray(material.vaoHandle);
-            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
+            GL.BindVertexArray(material.VaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
             GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
             Utility.CheckGLESError();
@@ -277,7 +184,7 @@ void main()
             float R = 0 + width;
             float T = 0;
             float B = 0 + height;
-            float[] ortho_projection = new float[16]
+            float[] ortho_projection = new float[]
             {
                 2.0f/(R-L),   0.0f,         0.0f,   0.0f,
                 0.0f,         2.0f/(T-B),   0.0f,   0.0f,
@@ -286,7 +193,7 @@ void main()
             };
             GL.Viewport(0, 0, width, height);
 
-            var material = this.glyphMaterial;
+            var material = OpenGLESMaterial.glyphMaterial;
             var vertexBuffer = textMesh.VertexBuffer;
             var indexBuffer = textMesh.IndexBuffer;
 
@@ -294,10 +201,10 @@ void main()
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex data
-            GL.BindVertexArray(material.vaoHandle);
-            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.positionVboHandle);
+            GL.BindVertexArray(material.VaoHandle);
+            GL.BindBuffer(GL.GL_ARRAY_BUFFER, material.VboHandle);
             GL.BufferData(GL.GL_ARRAY_BUFFER, vertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), vertexBuffer.Pointer, GL.GL_STREAM_DRAW);
-            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.elementsHandle);
+            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
             Utility.CheckGLError();
@@ -351,9 +258,7 @@ void main()
 
         public void ShutDown()
         {
-            this.shapeMaterial.ShutDown();
-            this.imageMaterial.ShutDown();
-            this.glyphMaterial.ShutDown();
+            OpenGLESMaterial.ShutDownCommonMaterials();
         }
 
         public byte[] GetRawBackBuffer(out int width, out int height)
