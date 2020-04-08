@@ -20,7 +20,7 @@
 
         public static readonly OpenGLESMaterial shapeMaterial = new OpenGLESMaterial(
             vertexShader: @"
-#version 330
+#version 300 es
 uniform mat4 ProjMtx;
 in vec2 Position;
 in vec2 UV;
@@ -35,7 +35,7 @@ void main()
 }
 ",
             fragmentShader: @"
-#version 330
+#version 300 es
 uniform sampler2D Texture;
 in vec2 Frag_UV;
 in vec4 Frag_Color;
@@ -49,7 +49,7 @@ void main()
 
         public static readonly OpenGLESMaterial imageMaterial = new OpenGLESMaterial(
             vertexShader: @"
-#version 330
+#version 300 es
 uniform mat4 ProjMtx;
 in vec2 Position;
 in vec2 UV;
@@ -64,7 +64,7 @@ void main()
 }
 ",
             fragmentShader: @"
-#version 330
+#version 300 es
 uniform sampler2D Texture;
 in vec2 Frag_UV;
 in vec4 Frag_Color;
@@ -78,7 +78,7 @@ void main()
 
         public static readonly OpenGLESMaterial glyphMaterial = new OpenGLESMaterial(
     vertexShader: @"
-#version 330
+#version 300 es
 uniform mat4 ProjMtx;
 in vec2 Position;
 in vec2 UV;
@@ -94,7 +94,7 @@ void main()
 }
 ",
     fragmentShader: @"
-#version 330
+#version 300 es
 in vec2 Frag_UV;
 in vec4 Frag_Color;
 out vec4 Out_Color;
@@ -115,7 +115,7 @@ void main()
     );
         public static readonly OpenGLESMaterial textMaterial = new OpenGLESMaterial(
     vertexShader: @"
-#version 330
+#version 300 es
 in vec2 Position;
 in vec2 UV;
 in vec4 Color;
@@ -129,33 +129,17 @@ void main()
 }
 ",
     fragmentShader: @"
-#version 330
+#version 300 es
 in vec2 Frag_UV;
 in vec4 Frag_Color;
 out vec4 Out_Color;
-uniform sampler2D Texture;
 void main()
 {
-	// Get samples for -2/3 and -1/3
-	vec2 valueL = texture2D(Texture, vec2(Frag_UV.x + dFdx(Frag_UV.x), Frag_UV.y)).yz * 255.0;
-	vec2 lowerL = mod(valueL, 16.0);
-	vec2 upperL = (valueL - lowerL) / 16.0;
-	vec2 alphaL = min(abs(upperL - lowerL), 2.0);
-
-	// Get samples for 0, +1/3, and +2/3
-	vec3 valueR = texture2D(Texture, Frag_UV).xyz * 255.0;
-	vec3 lowerR = mod(valueR, 16.0);
-	vec3 upperR = (valueR - lowerR) / 16.0;
-	vec3 alphaR = min(abs(upperR - lowerR), 2.0);
-
-	// Average the energy over the pixels on either side
-	vec4 rgba = vec4(
-		(alphaR.x + alphaR.y + alphaR.z) / 6.0,
-		(alphaL.y + alphaR.x + alphaR.y) / 6.0,
-		(alphaL.x + alphaL.y + alphaR.x) / 6.0,
-		0.0);
-
-	Out_Color = vec4(rgba.rgb,1) + Frag_Color*0.001;// + vec4(0,1,0,1);
+	if (Frag_UV.s * Frag_UV.s - Frag_UV.t > 0.0)
+	{
+		discard;
+	}
+	Out_Color = Frag_Color;
 }
 "
     );
