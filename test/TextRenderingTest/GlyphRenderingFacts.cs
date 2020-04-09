@@ -241,5 +241,115 @@ namespace TextRenderingTest
                 Util.OpenImage(path);
             }
         }
+
+        [Fact]
+        public void ShowGlyphAsOverlappedTriangles_Builtin()
+        {
+            //load the glyph
+            Typeface typeFace;
+            using (var fs = Utility.ReadFile(Utility.FontDir + fontFileName))
+            {
+                var reader = new OpenFontReader();
+                typeFace = reader.Read(fs);
+            }
+            Glyph glyph = typeFace.Lookup(character);
+
+            //read polygons and quadratic bezier segments
+            GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
+
+            //calculate the AABB
+            Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
+            for (int i = 0; i < polygons.Count; i++)
+            {
+                var polygon = polygons[i];
+                foreach (var p in polygon)
+                {
+                    aabb.Union(p);
+                }
+            }
+            foreach (var segment in quadraticBezierSegments)
+            {
+                aabb.Union(segment.Item1);
+                aabb.Union(segment.Item2);
+                aabb.Union(segment.Item3);
+            }
+            aabb.Offset(-20, -20);
+
+            //offset the glyph points by AABB so the glyph can be rendered in a proper region
+            var offset = new Vector(-aabb.Min.X, -aabb.Min.Y);
+
+            //polygons
+            Geometry polygonGeometry;
+            {
+                var d = new PathGeometryBuilder();
+                d.BeginPath();
+                foreach (var polygon in polygons)
+                {
+                    var startPoint = polygon[0];
+                    d.MoveTo(startPoint + offset);
+                    var previousPoint = startPoint;
+                    foreach (var p in polygon.Skip(1))
+                    {
+                        d.LineTo(p + offset);
+                        //DrawArrow(d, lastPoint, point);
+                        previousPoint = p;
+                    }
+                    d.LineTo(startPoint + offset);
+                    //DrawArrow(d, lastPoint, point);
+                    d.Fill();
+                }
+                polygonGeometry = d.ToGeometry();
+            }
+            Color polygonFillColor = Color.Argb(128, 10, 10, 10);
+            var polygonBrush = new Brush(polygonFillColor);
+
+            //quadratic bezier segments
+            Geometry quadraticGeometry;
+            {
+                var d = new PathGeometryBuilder();
+                d.BeginPath();
+                foreach (var qs in quadraticBezierSegments)
+                {
+                    d.MoveTo(qs.Item1 + offset);
+                    d.QuadraticCurveTo(qs.Item2 + offset, qs.Item3 + offset);
+                    d.Stroke();
+                }
+                quadraticGeometry = d.ToGeometry();
+            }
+            var quadraticPen = new Pen(quadraticSegmentColor, quadraticLineWidth);
+
+            //start points
+            Geometry startPointGeometry;
+            {
+                var d = new PathGeometryBuilder();
+                for (var i = 0; i < polygons.Count; i++)
+                {
+                    var polygon = polygons[i];
+                    var startPoint = polygon[0];
+                    d.Circle(startPoint + offset, 10);
+                    d.Fill();
+                }
+                startPointGeometry = d.ToGeometry();
+            }
+            var startPointBrush = new Brush(startPointColor);
+
+            //create a DrawingVisual to hold geometries
+            DrawingVisual drawingVisual = new DrawingVisual(0);
+
+            //create geometries and save to DrawingVisual's content
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+            drawingContext.DrawGeometry(polygonBrush, null, polygonGeometry);
+            //drawingContext.DrawGeometry(null, quadraticPen, quadraticGeometry);
+            drawingContext.DrawGeometry(startPointBrush, null, startPointGeometry);
+            drawingContext.Close();
+
+            //draw the drawingVisual to image
+            int width = 2048, height = 2048;
+            Util.DrawDrawingVisualToImage(out var imageBytes, width, height, drawingVisual);
+
+            //save and show the image
+            var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsDirectedGraph_Builtin)}_{fontFileName}_{character.GetHashCode()}.png";
+            Util.ShowImageNotOpenFolder(imageBytes, width, height, path);
+        }
     }
 }
