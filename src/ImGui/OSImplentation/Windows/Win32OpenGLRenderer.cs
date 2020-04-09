@@ -177,7 +177,8 @@ namespace ImGui.OSImplentation.Windows
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
         {
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
-            if (commandBuffer.Count == 0 || commandBuffer[0].ElemCount == 0)
+            if (commandBuffer.Count == 0 ||
+                commandBuffer.Count == 1 && commandBuffer[0].ElemCount == 0)
             {
                 return;
             }
@@ -281,7 +282,8 @@ namespace ImGui.OSImplentation.Windows
         internal static void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
             var commandBuffer = textMesh.Commands;
-            if (commandBuffer.Count == 0 || commandBuffer[0].ElemCount == 0)
+            if (commandBuffer.Count == 0 ||
+                commandBuffer.Count == 1 && commandBuffer[0].ElemCount == 0)
             {
                 return;
             }
