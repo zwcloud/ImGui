@@ -302,36 +302,23 @@ namespace TextRenderingTest
             }
             Color polygonFillColor = Color.Argb(128, 10, 10, 10);
             var polygonBrush = new Brush(polygonFillColor);
-
-            //quadratic bezier segments
-            Geometry quadraticGeometry;
-            {
-                var d = new PathGeometryBuilder();
-                d.BeginPath();
-                foreach (var qs in quadraticBezierSegments)
-                {
-                    d.MoveTo(qs.Item1 + offset);
-                    d.QuadraticCurveTo(qs.Item2 + offset, qs.Item3 + offset);
-                    d.Stroke();
-                }
-                quadraticGeometry = d.ToGeometry();
-            }
-            var quadraticPen = new Pen(quadraticSegmentColor, quadraticLineWidth);
-
-            //start points
-            Geometry startPointGeometry;
+            
+            //polygon points
+            Geometry pointsGeometry;
             {
                 var d = new PathGeometryBuilder();
                 for (var i = 0; i < polygons.Count; i++)
                 {
                     var polygon = polygons[i];
-                    var startPoint = polygon[0];
-                    d.Circle(startPoint + offset, 10);
-                    d.Fill();
+                    foreach (var point in polygon)
+                    {
+                        d.Circle(point + offset, 5);
+                        d.Fill();
+                    }
                 }
-                startPointGeometry = d.ToGeometry();
+                pointsGeometry = d.ToGeometry();
             }
-            var startPointBrush = new Brush(startPointColor);
+            var pointsBrush = new Brush(Color.Argb(200, 0, 0, 0));
 
             //create a DrawingVisual to hold geometries
             DrawingVisual drawingVisual = new DrawingVisual(0);
@@ -339,8 +326,7 @@ namespace TextRenderingTest
             //create geometries and save to DrawingVisual's content
             DrawingContext drawingContext = drawingVisual.RenderOpen();
             drawingContext.DrawGeometry(polygonBrush, null, polygonGeometry);
-            //drawingContext.DrawGeometry(null, quadraticPen, quadraticGeometry);
-            drawingContext.DrawGeometry(startPointBrush, null, startPointGeometry);
+            drawingContext.DrawGeometry(pointsBrush, null, pointsGeometry);
             drawingContext.Close();
 
             //draw the drawingVisual to image
