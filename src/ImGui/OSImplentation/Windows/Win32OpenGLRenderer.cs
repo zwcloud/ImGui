@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ImGui.OSImplentation.Shared;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplentation.Windows
 {
@@ -95,15 +96,19 @@ namespace ImGui.OSImplentation.Windows
             DrawTextMesh(meshes.textMesh, width, height);
         }
 
-        public void DrawToTexture(ITexture texture, Mesh mesh, OpenGLMaterial material)
+        public byte[] DrawMeshToImage(int width, int height, Mesh mesh, OpenGLMaterial material)
         {
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
             if (commandBuffer.Count == 0 || commandBuffer[0].ElemCount == 0)
             {
-                return;
+                return null;
             }
             VertexBuffer vertexBuffer = mesh.VertexBuffer;
             IndexBuffer indexBuffer = mesh.IndexBuffer;
+
+            //create texture
+            ITexture texture = new OpenGLTexture();
+            texture.LoadImage(new Rgba32[width * height], width, height);
 
             //create frame buffer
             uint[] framebuffers = { 0 };
@@ -117,9 +122,6 @@ namespace ImGui.OSImplentation.Windows
             {
                 throw new Exception("Framebuffer is not complete.");
             }
-
-            int width = texture.Width;
-            int height = texture.Height;
 
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
             GL.Enable(GL.GL_BLEND);
@@ -171,6 +173,12 @@ namespace ImGui.OSImplentation.Windows
 
                 Utility.CheckGLError();
             }
+
+            //TODO dispose OpenGL resources
+
+            var pixels = new byte[width * height * 4];
+            GL.ReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels);
+            return pixels;
         }
 
 

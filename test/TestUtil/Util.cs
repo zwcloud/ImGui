@@ -341,9 +341,7 @@ namespace ImGui.UnitTest
 
             //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
             renderer.Clear(Color.White);
-            ITexture texture = new OpenGLTexture();
-            texture.LoadImage(new Rgba32[width * height], width, height);
-            renderer.DrawToTexture(texture, meshBuffer.ShapeMesh, OpenGLMaterial.shapeMaterial);
+            renderer.DrawMeshToImage(width, height, meshBuffer.ShapeMesh, OpenGLMaterial.shapeMaterial);
 
             //get drawn pixels data
             imageRawBytes = renderer.GetRawBackBuffer(out _, out _);
