@@ -71,6 +71,37 @@ namespace ImGui.UnitTest
             g.Fill();
         }
 
+        internal static void DrawArrow(this Cairo.Context g, Point p0, Point p1)
+        {
+            var x0 = p0.X;
+            var y0 = p0.Y;
+            var x1 = p1.X;
+            var y1 = p1.Y;
+
+            var dx = x1 - x0;
+            var dy = y1 - y0;
+
+            if (MathEx.AmostZero(dx) && MathEx.AmostZero(dy))
+            {
+                return;
+            }
+
+            var n0 = new Vector(-dy, dx); n0.Normalize();
+            var n1 = new Vector(dy, -dx); n1.Normalize();
+
+            var B = new Point(x1, y1);
+            var d = new Vector(x0 - x1, y0 - y1); d.Normalize();
+
+            var arrowEnd0 = B + 20 * (d + n0);
+            var arrowEnd1 = B + 20 * (d + n1);
+            g.MoveTo(x1, y1);
+            g.LineTo(new Cairo.PointD(arrowEnd0.X, arrowEnd0.Y));
+            g.MoveTo(x1, y1);
+            g.LineTo(new Cairo.PointD(arrowEnd1.X, arrowEnd1.Y));
+            g.MoveTo(x1, y1);
+        }
+
+
         #region Color
 
         public static readonly Cairo.Color ColorClear = ColorArgb(0, 0, 0, 0);
