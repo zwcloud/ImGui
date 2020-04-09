@@ -82,12 +82,12 @@ namespace TextRenderingTest
                 {
                     var startPoint = polygon[0];
                     d.MoveTo(startPoint + offset);
-                    var lastPoint = startPoint;
+                    var previousPoint = startPoint;
                     foreach (var p in polygon.Skip(1))
                     {
                         d.LineTo(p + offset);
                         //DrawArrow(d, lastPoint, point);
-                        lastPoint = p;
+                        previousPoint = p;
                     }
                     d.LineTo(startPoint + offset);
                     //DrawArrow(d, lastPoint, point);
@@ -198,15 +198,15 @@ namespace TextRenderingTest
                     var polygon = polygons[i];
                     var startPoint = polygon[0];
                     g.MoveTo(startPoint.X, startPoint.Y);
-                    var lastPoint = startPoint;
+                    var previousPoint = startPoint;
                     foreach (var point in polygon)
                     {
                         g.LineTo(point.X, point.Y);
-                        DrawArrow(g, lastPoint, point);
-                        lastPoint = point;
+                        g.DrawArrow(previousPoint, point);
+                        previousPoint = point;
                     }
                     g.LineTo(startPoint.X, startPoint.Y);
-                    DrawArrow(g, lastPoint, startPoint);
+                    g.DrawArrow(previousPoint, startPoint);
                 }
                 g.LineWidth = polygonLineWidth;
                 g.SetSourceColor(polygonColor.ToCairoColor());
@@ -240,36 +240,6 @@ namespace TextRenderingTest
                 surface.WriteToPng(path);
                 Util.OpenImage(path);
             }
-        }
-
-        private void DrawArrow(Cairo.Context g, Point p0, Point p1)
-        {
-            var x0 = p0.X;
-            var y0 = p0.Y;
-            var x1 = p1.X;
-            var y1 = p1.Y;
-
-            var dx = x1 - x0;
-            var dy = y1 - y0;
-
-            if (MathEx.AmostZero(dx) && MathEx.AmostZero(dy))
-            {
-                return;
-            }
-
-            var n0 = new Vector(-dy, dx); n0.Normalize();
-            var n1 = new Vector(dy, -dx); n1.Normalize();
-
-            var B = new Point(x1, y1);
-            var d = new Vector(x0 - x1, y0 - y1); d.Normalize();
-
-            var arrowEnd0 = B + 20 * (d + n0);
-            var arrowEnd1 = B + 20 * (d + n1);
-            g.MoveTo(x1, y1);
-            g.LineTo(new Cairo.PointD(arrowEnd0.X, arrowEnd0.Y));
-            g.MoveTo(x1, y1);
-            g.LineTo(new Cairo.PointD(arrowEnd1.X, arrowEnd1.Y));
-            g.MoveTo(x1, y1);
         }
     }
 }
