@@ -87,6 +87,11 @@ namespace ImGui
                 return;
             }
 
+            if (this.Commands.Count == 0)
+            {
+                this.Commands.Add(DrawCommand.Default);
+            }
+
             int vtxBufferSize = this.VertexBuffer.Count;
             this.vtxWritePosition = vtxBufferSize;
             this.VertexBuffer.Resize(vtxBufferSize + vtxCount);

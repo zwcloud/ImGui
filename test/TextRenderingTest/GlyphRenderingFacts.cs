@@ -458,6 +458,58 @@ namespace TextRenderingTest
             var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsMesh_Builtin)}_{fontFileName}_{character.GetHashCode()}.png";
             Util.ShowImageNotOpenFolder(imageBytes, width, height, path);
         }
+        
+        [Fact]
+        public void ShowGlyphAsTextMesh_Builtin()
+        {
+            //load the glyph
+            Typeface typeFace;
+            using (var fs = Utility.ReadFile(Utility.FontDir + fontFileName))
+            {
+                var reader = new OpenFontReader();
+                typeFace = reader.Read(fs);
+            }
+            Glyph glyph = typeFace.Lookup(character);
 
+            //read polygons and quadratic bezier segments
+            GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
+
+            //calculate the AABB
+            Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
+            for (int i = 0; i < polygons.Count; i++)
+            {
+                var polygon = polygons[i];
+                foreach (var p in polygon)
+                {
+                    aabb.Union(p);
+                }
+            }
+            foreach (var segment in quadraticBezierSegments)
+            {
+                aabb.Union(segment.Item1);
+                aabb.Union(segment.Item2);
+                aabb.Union(segment.Item3);
+            }
+            aabb.Offset(-20, -20);
+
+            //offset the glyph points by AABB so the glyph can be rendered in a proper region
+            var offset = new Vector(-aabb.Min.X, -aabb.Min.Y);
+
+            //construct text mesh
+            TextMesh textMesh = new TextMesh();
+            Color polygonFillColor = Color.Argb(128, 10, 10, 10);
+            textMesh.AddTriangles(polygons, polygonFillColor, Vector.Zero, offset, 1, false);
+            var command = textMesh.Commands[^1];
+            command.ElemCount = textMesh.IndexBuffer.Count ;
+            textMesh.Commands[^1] = command;
+
+            //draw the drawingVisual to image
+            int width = 2048, height = 2048;
+            Util.DrawTextMeshToImage(out var imageBytes, width, height, textMesh);
+
+            //save and show the image
+            var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsTextMesh_Builtin)}_{fontFileName}_{character.GetHashCode()}.png";
+            Util.ShowImageNotOpenFolder(imageBytes, width, height, path);
+        }
     }
 }
