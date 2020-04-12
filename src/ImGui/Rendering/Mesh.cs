@@ -58,6 +58,11 @@ namespace ImGui
                 return;
             }
 
+            if (this.CommandBuffer.Count == 0)
+            {
+                this.CommandBuffer.Add(DrawCommand.Default);
+            }
+
             DrawCommand drawCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
             drawCommand.ElemCount += idxCount;
             this.CommandBuffer[this.CommandBuffer.Count - 1] = drawCommand;
