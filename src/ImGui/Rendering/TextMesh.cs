@@ -96,7 +96,7 @@ namespace ImGui
             this.IndexBuffer.Resize(idxBufferSize + idxCount);
         }
 
-        private void AddTriangles(List<List<Point>> polygons, Color color,
+        public void AddTriangles(List<List<Point>> polygons, Color color,
             Vector positionOffset, Vector glyphOffset, float scale, bool flipY)
         {
             float positionOffsetX = positionOffset._x;
