@@ -351,5 +351,28 @@ namespace ImGui.UnitTest
             window.Close();
         }
         #endregion
+
+        #region Mesh
+        
+        internal static void DrawMeshToImage(out byte[] imageRawBytes, int width, int height, Mesh mesh)
+        {
+            //created a mesh IRenderer
+            Application.Init();
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Hidden);
+            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            renderer.Init(window.Pointer, window.ClientSize);
+
+            //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
+            renderer.Clear(Color.White);
+            renderer.DrawMeshToImage(width, height, mesh, OpenGLMaterial.shapeMaterial);
+
+            //get drawn pixels data
+            imageRawBytes = renderer.GetRawBackBuffer(out _, out _);
+
+            //clear native resources: window and IRenderer
+            renderer.ShutDown();
+            window.Close();
+        }
+        #endregion
     }
 }
