@@ -86,10 +86,11 @@ in vec4 Color;
 out vec2 Frag_UV;
 out vec4 Frag_Color;
 uniform vec2 offset;
+uniform vec4 color;
 void main()
 {
 	Frag_UV = UV;
-	Frag_Color = Color;
+	Frag_Color = color;//dummy Frag_Color is useless
 	gl_Position = ProjMtx * vec4(offset+Position.xy,0,1);
 }
 ",
@@ -108,7 +109,8 @@ void main()
 
 	// Upper 4 bits: front faces
 	// Lower 4 bits: back faces
-	Out_Color = Frag_Color; /*Frag_Color* color * (gl_FrontFacing ? 16.0 / 255.0 : 1.0 / 255.0);*/
+	//Out_Color = Frag_Color + color *0.001;
+    Out_Color = Frag_Color *0.001 + color * (gl_FrontFacing ? 16.0 / 255.0 : 1.0 / 255.0);
 }
 "
     );
@@ -133,6 +135,7 @@ in vec2 Frag_UV;
 in vec4 Frag_Color;
 out vec4 Out_Color;
 uniform sampler2D Texture;
+uniform vec4 color;
 void main()
 {
 	// Get samples for -2/3 and -1/3
@@ -154,7 +157,7 @@ void main()
 		(alphaL.x + alphaL.y + alphaR.x) / 6.0,
 		0.0);
 
-	Out_Color = vec4(rgba.rgb,1) + Frag_Color*0.001;// + vec4(0,1,0,1);
+	Out_Color = Frag_Color * 0.001 + (color.a == 0.0 ? 1.0 - rgba : color * rgba);
 }
 "
     );

@@ -1,4 +1,5 @@
-﻿using CSharpGL;
+﻿//#define Enable_Jitter
+using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 using System;
@@ -376,7 +377,9 @@ namespace ImGui.OSImplentation.Windows
                 return;
             }
             var glyphMaterial = OpenGLMaterial.glyphMaterial;
+            var textMaterial = OpenGLMaterial.textMaterial;
 
+            #if false
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
             GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
@@ -403,10 +406,12 @@ namespace ImGui.OSImplentation.Windows
             int last_sessor_rect_y = IntBuffer[1];
             int last_sessor_rect_width = IntBuffer[2];
             int last_sessor_rect_height = IntBuffer[3];
-
-            GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
+            #endif
+            GL.Enable(GL.GL_BLEND);
+            GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
+            GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
             GL.Viewport(0, 0, width, height);
-            GL.ClearColor(0, 0, 0, 1);
+            GL.ClearColor(0, 0, 0, 0);
             GL.Clear(GL.GL_COLOR_BUFFER_BIT);
 
             glyphMaterial.program.Bind();
@@ -437,16 +442,20 @@ namespace ImGui.OSImplentation.Windows
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
             GL.BlendFunc(GL.GL_ONE, GL.GL_ONE);
             var indexBufferOffset = IntPtr.Zero;
-            //for (int j = 0; j < JITTER_PATTERN.Length; j++)
+#if Enable_Jitter
+            for (int j = 0; j < JITTER_PATTERN.Length; j++)
             {
-                //var offset = JITTER_PATTERN[j];
-                //glyphMaterial.program.SetUniform("offset", offset.x, offset.y);
-                //indexBufferOffset = IntPtr.Zero;//reset to redraw with a different offset
-                //if(j % 2 == 0)
-                //{
-                //    glyphMaterial.program.SetUniform("color", j == 0 ? 1 : 0, j == 2 ? 1 : 0, j == 4 ? 1 : 0, 0);
-                //}
-                glyphMaterial.program.SetUniform("color", 1.0f, 1.0f, 1.0f, 1.0f);
+                var offset = JITTER_PATTERN[j];
+                glyphMaterial.program.SetUniform("offset", offset.x, offset.y);
+                indexBufferOffset = IntPtr.Zero;//reset to redraw with a different offset
+                if(j % 2 == 0)
+                {
+                    glyphMaterial.program.SetUniform("color", j == 0 ? 1 : 0, j == 2 ? 1 : 0, j == 4 ? 1 : 0, 0);
+                }
+#else
+                glyphMaterial.program.SetUniform("offset", 0.0f, 0.0f);
+                glyphMaterial.program.SetUniform("color", 1.0f, 1.0f, 1.0f, 0.0f);
+#endif
                 foreach (var drawCmd in textMesh.Commands)
                 {
                     // Draw text mesh 
@@ -455,14 +464,17 @@ namespace ImGui.OSImplentation.Windows
                     Utility.CheckGLError();
                     indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
                 }
+#if Enable_Jitter
             }
-#if false
+#endif
+
+#if true
             //Draw framebuffer texture to screen as a quad,  with the textMaterial applying sub-pixel anti-aliasing
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
             GL.BlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
             textMaterial.program.Bind();
+            textMaterial.program.SetUniform("color", 0.0f, 0.0f, 0.0f, 0.0f);
             GL.Disable(GL.GL_SCISSOR_TEST);
-            GL.Disable(GL.GL_DEPTH_TEST);
             GL.ActiveTexture(GL.GL_TEXTURE0);
             GL.BindTexture(GL.GL_TEXTURE_2D, framebufferColorTexture);
             GL.BindVertexArray(textMaterial.VaoHandle);
@@ -473,7 +485,7 @@ namespace ImGui.OSImplentation.Windows
             GL.DrawElements(GL.GL_TRIANGLES, quadMesh.CommandBuffer[0].ElemCount, GL.GL_UNSIGNED_INT, IntPtr.Zero);
 #endif
             Utility.CheckGLError();
-
+            #if false
             // Restore modified GL state
             GL.UseProgram((uint)last_program);
             GL.ActiveTexture((uint)last_active_texture);
@@ -490,6 +502,7 @@ namespace ImGui.OSImplentation.Windows
             GL.ClearColor(last_clear_color_r, last_clear_color_g, last_clear_color_b, last_clear_color_a);
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
             GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
+            #endif
         }
 
         public void ShutDown()

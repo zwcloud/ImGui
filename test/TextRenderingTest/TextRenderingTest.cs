@@ -162,7 +162,7 @@ namespace TextRenderingTest
         {
             Application.Run(new Form1(()=> {
                 var g = Form.current.ForegroundDrawingContext;
-                g.DrawGlyphRun("D", 400, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
+                g.DrawGlyphRun("e", 400, Utility.FontDir + "msjh.ttf", Color.Black, new Point(50, 50));
             }));
         }
 
@@ -187,7 +187,7 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldRenderAStringInMeasuredRectangle()
         {
-            GlyphRun run = new GlyphRun(new Point(10, 100), "Hello ImGui!你好", Utility.FontDir + "msjh.ttf", 12);
+            GlyphRun run = new GlyphRun(new Point(10, 100), "啊", Utility.FontDir + "msjh.ttf", 12);
             Rect rect = new Rect(run.InkBoundingBoxSize);
             Brush brush = new Brush(Color.Black);
             Pen pen = new Pen(Color.Red, 1);
