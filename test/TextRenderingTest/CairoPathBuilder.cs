@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using ImGui;
+﻿using ImGui;
+using ImGui.UnitTest;
 
 namespace TextRenderingTest
 {
@@ -66,18 +66,6 @@ namespace TextRenderingTest
 
         #endregion
 
-        internal string Result
-        {
-            get { return builder.ToString(); }
-        }
-
-    }
-
-    public static class Ex
-    {
-        public static Cairo.PointD ToPointD(this Point p)
-        {
-            return new Cairo.PointD(p.X, p.Y);
-        }
+        internal string Result => builder.ToString();
     }
 }
