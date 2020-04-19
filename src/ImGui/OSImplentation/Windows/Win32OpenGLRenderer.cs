@@ -1,4 +1,4 @@
-﻿//#define Enable_Jitter
+﻿#define Enable_Jitter
 using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
