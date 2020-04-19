@@ -8,16 +8,11 @@ namespace UniversalAppTemplate
         {
         }
 
-        Demo demo = new Demo();
+        private readonly Demo demo = new Demo();
 
-        bool open = true;
         protected override void OnGUI()
         {
-            GUILayout.Label("Debug Window Text");
-            //demo.OnGUI();
-            GUI.Begin("Test", ref open, new Point(200, 200), new Size(200,300), 0.5);
-            GUILayout.Label("Test Window Text");
-            GUI.End();
+            demo.OnGUI();
         }
     }
 }

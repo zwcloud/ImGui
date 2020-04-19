@@ -1,12 +1,10 @@
 ﻿using ImGui;
-using ImGui.OSAbstraction.Graphics;
-using System.Collections.Generic;
 
 public class Demo
 {
     double f = 0.0f;
     Color clearColor = Color.Argb(255, 114, 144, 154);
-    private bool showAnotherWindow = true;
+    private bool showAnotherWindow = false;
 
     #region Demo
     bool showDemoWindow = false;
@@ -138,7 +136,7 @@ label:
         // 2. Show another simple window, this time using an explicit Begin/End pair
         if (showAnotherWindow)
         {
-            GUI.Begin("Another Window", ref showAnotherWindow, (70, 450), (400, 100));
+            GUI.Begin("Another Window", ref showAnotherWindow, (80, 340), (400, 100));
             GUILayout.Label("Hello");
             GUI.End();
         }
