@@ -167,7 +167,7 @@ namespace TextRenderingTest
         }
 
         [Fact]
-        public void ShouldRenderAMidiumGlyph()
+        public void ShouldRenderAMediumGlyph()
         {
             Application.Run(new Form1(() => {
                 var g = Form.current.ForegroundDrawingContext;
