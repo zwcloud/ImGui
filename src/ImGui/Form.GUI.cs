@@ -109,7 +109,7 @@ namespace ImGui
             this.ForegroundDrawingContext = foregroundNode.RenderOpen();
 
             // Create implicit debug window - we will only render it if the user has added something to it.
-            GUI.Begin("Debug", ref this.debugWindowOpen, (0, 0), Application.InitialDebugWindowSize, 0.8);
+            GUI.Begin("Debug", ref this.debugWindowOpen, Application.InitialDebugWindowRect, 0.8);
         }
 
         internal void EndFrame()

@@ -9,6 +9,11 @@ namespace ImGui
         {
             return Begin(name, ref open, Point.Zero, new Size(400, 300));//TODO stack newly added window automatically
         }
+        
+        public static bool Begin(string name, ref bool open, Rect rect, double bg_alpha = 1)
+        {
+            return Begin(name, ref open, rect.Location, rect.Size, bg_alpha);
+        }
 
         public static bool Begin(string name, ref bool open, Point position, Size size)
         {
