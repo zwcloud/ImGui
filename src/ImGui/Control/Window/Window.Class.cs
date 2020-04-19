@@ -140,7 +140,7 @@ namespace ImGui
                 style.Set(StylePropertyName.WindowBorderColor, Color.Rgb(0, 0, 255), GUIState.Active);
                 style.Set(StylePropertyName.WindowShadowColor, Color.Argb(100, 227, 227, 227));
                 style.Set(StylePropertyName.WindowShadowWidth, 15.0);
-                style.Set(StylePropertyName.BackgroundColor, Color.Argb(122, 0, 34, 200));
+                style.Set(StylePropertyName.BackgroundColor, Color.White);
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0x77303030));
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0xAA303030), GUIState.Hover);
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0xFF303030), GUIState.Active);
