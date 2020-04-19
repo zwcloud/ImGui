@@ -59,11 +59,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui.ControlTest", "test\I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRenderingTest", "test\TextRenderingTest\TextRenderingTest.csproj", "{4278E07C-E302-4F8F-99FF-823932612BF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtil", "test\TestUtil\TestUtil.csproj", "{6D0DFFB5-818F-4D8C-AE49-50543908EAB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtil", "test\TestUtil\TestUtil.csproj", "{6D0DFFB5-818F-4D8C-AE49-50543908EAB5}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		templates\Demo\Demo.projitems*{2af7f9f5-8001-40bf-8c60-c4852ceaa299}*SharedItemsImports = 13
+		templates\Demo\Demo.projitems*{e3255678-3e8a-46a9-bfdb-feaa9263df8a}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
