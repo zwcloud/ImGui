@@ -2,7 +2,7 @@
 using ImGui.Input;
 using WebAssembly;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     internal class WebCursor
     {

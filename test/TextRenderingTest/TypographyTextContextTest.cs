@@ -1,7 +1,7 @@
 ﻿using ImGui;
 using ImGui.Rendering;
 using ImGui.Style;
-using ImGui.OSImplentation;
+using ImGui.OSImplementation;
 using ImGui.OSAbstraction.Text;
 using ImGui.Development;
 using System;

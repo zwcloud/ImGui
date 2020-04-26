@@ -3,9 +3,9 @@ using ImGui.OSAbstraction;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
-using ImGui.OSImplentation.Shared;
+using ImGui.OSImplementation.Shared;
 
-namespace ImGui.OSImplentation.Windows
+namespace ImGui.OSImplementation.Windows
 {
     internal class WindowsContext : PlatformContext
     {

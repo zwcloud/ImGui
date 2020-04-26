@@ -5,7 +5,7 @@ using Typography.OpenFont;
 using Typography.Rendering;
 using Typography.TextLayout;
 
-namespace ImGui.OSImplentation
+namespace ImGui.OSImplementation
 {
     /// <summary>
     /// Text context based on Typography

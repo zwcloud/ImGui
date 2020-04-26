@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
-using ImGui.OSImplentation.Shared;
+using ImGui.OSImplementation.Shared;
 
-namespace ImGui.OSImplentation.Linux
+namespace ImGui.OSImplementation.Linux
 {
     internal partial class LinuxOpenGLRenderer : IRenderer
     {

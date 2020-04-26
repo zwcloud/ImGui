@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
-using ImGui.OSImplentation.Shared;
+using ImGui.OSImplementation.Shared;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace ImGui.OSImplentation.Windows
+namespace ImGui.OSImplementation.Windows
 {
     internal partial class Win32OpenGLRenderer
     {

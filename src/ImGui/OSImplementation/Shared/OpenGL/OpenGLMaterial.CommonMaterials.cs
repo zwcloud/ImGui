@@ -1,4 +1,4 @@
-﻿namespace ImGui.OSImplentation.Shared
+﻿namespace ImGui.OSImplementation.Shared
 {
     internal partial class OpenGLMaterial
     {

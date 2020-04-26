@@ -5,7 +5,7 @@ using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
 
-namespace ImGui.OSImplentation.Android
+namespace ImGui.OSImplementation.Android
 {
     internal class AndroidContext : PlatformContext
     {

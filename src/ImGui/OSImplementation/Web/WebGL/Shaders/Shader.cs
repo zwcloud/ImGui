@@ -1,8 +1,8 @@
 ﻿using System;
 using WebAssembly;
-using GL = ImGui.OSImplentation.Web.WebGL;
+using GL = ImGui.OSImplementation.Web.WebGL;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     /// <summary>
     /// This is the base class for all shaders (vertex and fragment). It offers functionality

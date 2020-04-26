@@ -1,4 +1,4 @@
-﻿namespace ImGui.OSImplentation.Web
+﻿namespace ImGui.OSImplementation.Web
 {
     public static partial class WebGL
     {

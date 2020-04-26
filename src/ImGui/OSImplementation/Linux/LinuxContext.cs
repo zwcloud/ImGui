@@ -5,7 +5,7 @@ using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
 
-namespace ImGui.OSImplentation.Linux
+namespace ImGui.OSImplementation.Linux
 {
     internal class LinuxContext : PlatformContext
     {

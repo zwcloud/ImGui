@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using CSharpGL;
 
-namespace ImGui.OSImplentation.Shared
+namespace ImGui.OSImplementation.Shared
 {
     internal partial class OpenGLMaterial
     {

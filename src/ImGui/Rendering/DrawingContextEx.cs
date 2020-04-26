@@ -95,7 +95,7 @@ namespace ImGui.Rendering
         internal static void DrawGlyphRun(this DrawingContext dc, string text,
             double fontSize, string fontFamily, Color fontColor, Point topLeft)
         {
-            var ascent = OSImplentation.TypographyTextContext.GetAscent(fontFamily, fontSize);
+            var ascent = OSImplementation.TypographyTextContext.GetAscent(fontFamily, fontSize);
             var baselineOrigin = new Point(topLeft.X, topLeft.Y + ascent);
             dc.DrawGlyphRun(new Brush(fontColor),
                 new GlyphRun(baselineOrigin, text, fontFamily, fontSize));
@@ -103,7 +103,7 @@ namespace ImGui.Rendering
 
         public static void DrawGlyphRun(this DrawingContext dc, StyleRuleSet rule, string text, Point topLeft)
         {
-            var ascent = OSImplentation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
+            var ascent = OSImplementation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
             var baselineOrigin = new Point(topLeft.X, topLeft.Y + ascent);
             dc.DrawGlyphRun(new Brush(rule.FontColor),
                 new GlyphRun(baselineOrigin, text, rule.FontFamily, rule.FontSize));
@@ -111,7 +111,7 @@ namespace ImGui.Rendering
 
         public static void DrawText(this DrawingContext dc, StyleRuleSet rule, string text, Rect rect)
         {
-            var ascent = OSImplentation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
+            var ascent = OSImplementation.TypographyTextContext.GetAscent(rule.FontFamily, rule.FontSize);
             var baselineOrigin = new Point(rect.X, rect.Y + ascent);
             dc.DrawText(new Brush(rule.FontColor),
                 new FormattedText(baselineOrigin, text, rule.FontFamily, rule.FontSize));

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using ImGui.OSAbstraction.Window;
 using WebAssembly;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     /// <summary>
     /// Web window based on a canvas element.

@@ -576,7 +576,7 @@ namespace ImGui
 
         public double GetLineHeight()
         {
-            var lineHeight = OSImplentation.TypographyTextContext.GetLineHeight(this.FontFamily, this.FontSize);
+            var lineHeight = OSImplementation.TypographyTextContext.GetLineHeight(this.FontFamily, this.FontSize);
             lineHeight += this.PaddingVertical + this.BorderVertical;
             return lineHeight;
         }

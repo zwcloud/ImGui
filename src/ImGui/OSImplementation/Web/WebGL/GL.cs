@@ -1,7 +1,7 @@
 ﻿using System;
 using WebAssembly;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     /// <summary>
     /// WebGL function bindings

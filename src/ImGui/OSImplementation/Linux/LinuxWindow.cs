@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using ImGui.Input;
 using ImGui.OSAbstraction.Window;
 
-namespace ImGui.OSImplentation.Linux
+namespace ImGui.OSImplementation.Linux
 {
     using xcb_window_t = System.UInt32;//typedef uint32_t xcb_window_t;
     using xcb_colormap_t = System.UInt32;//typedef uint32_t xcb_colormap_t;

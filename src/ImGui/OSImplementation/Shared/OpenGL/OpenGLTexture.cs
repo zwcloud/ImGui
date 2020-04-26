@@ -7,7 +7,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace ImGui.OSImplentation.Shared
+namespace ImGui.OSImplementation.Shared
 {
     internal class OpenGLTexture : ITexture
     {

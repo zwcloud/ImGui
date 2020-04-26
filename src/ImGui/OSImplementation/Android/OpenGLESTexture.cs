@@ -7,7 +7,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace ImGui.OSImplentation.Android
+namespace ImGui.OSImplementation.Android
 {
     internal class OpenGLESTexture : ITexture
     {

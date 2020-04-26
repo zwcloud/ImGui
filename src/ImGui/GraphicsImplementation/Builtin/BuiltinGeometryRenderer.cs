@@ -347,7 +347,7 @@ namespace ImGui.GraphicsImplementation
 
             var oldIndexBufferCount = this.TextMesh.IndexBuffer.Count;
 
-            var scale = OSImplentation.TypographyTextContext.GetScale(fontFamily, fontSize);
+            var scale = OSImplementation.TypographyTextContext.GetScale(fontFamily, fontSize);
 
             // get glyph data from typeface
             for(var i=0;i<glyphs.Count;i++)

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGL;
 
-namespace ImGui.OSImplentation.Windows
+namespace ImGui.OSImplementation.Windows
 {
     internal partial class Win32OpenGLRenderer
     {

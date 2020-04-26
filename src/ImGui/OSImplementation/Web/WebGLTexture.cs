@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
-using GL = ImGui.OSImplentation.Web.WebGL;
+using GL = ImGui.OSImplementation.Web.WebGL;
 using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using WebAssembly;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     internal class WebGLTexture : ITexture
     {

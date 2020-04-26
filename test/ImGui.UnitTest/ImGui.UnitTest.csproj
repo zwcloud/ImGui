@@ -16,9 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="OSImplementation\**" />
+    <EmbeddedResource Remove="OSImplementation\**" />
+    <None Remove="OSImplementation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Control\TextBoxFacts.cs" />
     <Compile Remove="Layout\StackLayoutFacts.Dynamic.cs" />
-    <Compile Remove="OSImplentation\Windows\Win32OpenGLRendererFacts.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,10 +43,6 @@
 
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="OSImplentation\Windows\" />
   </ItemGroup>
 
   <ItemGroup>

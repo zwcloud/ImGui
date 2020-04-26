@@ -1,4 +1,4 @@
-﻿namespace ImGui.OSImplentation.Android
+﻿namespace ImGui.OSImplementation.Android
 {
     internal partial class OpenGLESRenderer
     {

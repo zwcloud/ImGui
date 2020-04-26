@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using CSharpGLES;
 using ImGui.OSAbstraction.Graphics;
 
-namespace ImGui.OSImplentation.Android
+namespace ImGui.OSImplementation.Android
 {
     internal partial class OpenGLESRenderer : IRenderer
     {

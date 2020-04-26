@@ -5,9 +5,9 @@ using ImGui.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using ImGui.OSImplentation.Shared;
+using ImGui.OSImplementation.Shared;
 
-namespace ImGui.OSImplentation.Windows
+namespace ImGui.OSImplementation.Windows
 {
     internal partial class Win32OpenGLRenderer : IRenderer
     {

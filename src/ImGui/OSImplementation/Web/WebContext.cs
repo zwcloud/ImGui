@@ -4,7 +4,7 @@ using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     internal class WebContext : PlatformContext
     {

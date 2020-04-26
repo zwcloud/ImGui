@@ -59,15 +59,15 @@ namespace ImGui
             //     platform-dependent implementation
             if (CurrentOS.IsAndroid)
             {
-                PlatformContext = OSImplentation.Android.AndroidContext.MapFactory();
+                PlatformContext = OSImplementation.Android.AndroidContext.MapFactory();
             }
             else if(CurrentOS.IsWindows)
             {
-                PlatformContext = OSImplentation.Windows.WindowsContext.MapFactory();
+                PlatformContext = OSImplementation.Windows.WindowsContext.MapFactory();
             }
             else if(CurrentOS.IsLinux)
             {
-                PlatformContext = OSImplentation.Linux.LinuxContext.MapFactory();
+                PlatformContext = OSImplementation.Linux.LinuxContext.MapFactory();
             }
         }
 

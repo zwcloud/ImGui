@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     public class ShaderCompilationException : Exception
     {

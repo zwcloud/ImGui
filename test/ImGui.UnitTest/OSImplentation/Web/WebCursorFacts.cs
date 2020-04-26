@@ -1,8 +1,8 @@
 ﻿using ImGui.Input;
-using ImGui.OSImplentation.Web;
+using ImGui.OSImplementation.Web;
 using Xunit;
 
-namespace ImGui.UnitTest.OSImplentation.Web
+namespace ImGui.UnitTest.OSImplementation.Web
 {
     public class WebCursorFacts
     {

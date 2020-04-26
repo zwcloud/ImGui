@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using CSharpGL;
 using System.Reflection;
-using ImGui.OSImplentation.Web;
+using ImGui.OSImplementation.Web;
 
 namespace ImGui
 {

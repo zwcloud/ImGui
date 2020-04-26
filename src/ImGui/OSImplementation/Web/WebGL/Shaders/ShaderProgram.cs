@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using WebAssembly;
-using GL = ImGui.OSImplentation.Web.WebGL;
+using GL = ImGui.OSImplementation.Web.WebGL;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     public class ShaderProgram
     {

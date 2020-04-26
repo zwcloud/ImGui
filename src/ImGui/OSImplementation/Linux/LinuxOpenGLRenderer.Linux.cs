@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace ImGui.OSImplentation.Linux
+namespace ImGui.OSImplementation.Linux
 {
     internal partial class LinuxOpenGLRenderer
     {

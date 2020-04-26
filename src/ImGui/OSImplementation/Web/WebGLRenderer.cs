@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.OSAbstraction.Graphics;
 using WebAssembly;
-using GL = ImGui.OSImplentation.Web.WebGL;
+using GL = ImGui.OSImplementation.Web.WebGL;
 
-namespace ImGui.OSImplentation.Web
+namespace ImGui.OSImplementation.Web
 {
     internal partial class WebGLRenderer : IRenderer
     {

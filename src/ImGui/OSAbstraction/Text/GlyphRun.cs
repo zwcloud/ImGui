@@ -85,13 +85,13 @@ namespace ImGui.OSAbstraction.Text
 
         private void Initialize(string _text, string fontFamily, double fontSize)
         {
-            var textContext = (OSImplentation.TypographyTextContext)TextContextCache.Default.GetOrAdd(_text, fontFamily, fontSize, TextAlignment.Leading);
+            var textContext = (OSImplementation.TypographyTextContext)TextContextCache.Default.GetOrAdd(_text, fontFamily, fontSize, TextAlignment.Leading);
             textContext.Build(Point.Zero);
 
             var glyphDataList = new List<GlyphData>(_text.Length);
             foreach (var character in _text)
             {
-                Typography.OpenFont.Glyph glyph = OSImplentation.TypographyTextContext.LookUpGlyph(fontFamily, character);
+                Typography.OpenFont.Glyph glyph = OSImplementation.TypographyTextContext.LookUpGlyph(fontFamily, character);
                 GlyphLoader.Read(glyph, out var polygons, out var bezierSegments);
                 var glyphData = GlyphCache.Default.GetGlyph(character, fontFamily) ??
                                 GlyphCache.Default.AddGlyph(character, fontFamily, polygons, bezierSegments);

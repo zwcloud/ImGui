@@ -1,7 +1,7 @@
 ﻿using System;
 using ImGui.OSAbstraction.Window;
 
-namespace ImGui.OSImplentation.Android
+namespace ImGui.OSImplementation.Android
 {
     internal class AndroidWindow : IWindow
     {
