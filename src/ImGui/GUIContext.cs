@@ -112,7 +112,7 @@ namespace ImGui
             // Clip
             Rect rectClipped = rect;
             if (clip)
-                rectClipped.Intersect(window.ClipRect);
+                rectClipped.Intersect(window.WindowContainer.Rect);
 
             return rectClipped.Contains(Mouse.Instance.Position);
         }

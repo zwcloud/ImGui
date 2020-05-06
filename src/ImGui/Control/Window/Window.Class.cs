@@ -61,8 +61,6 @@ namespace ImGui
         /// </summary>
         public RenderTree RenderTree;
 
-        public Rect ClipRect;
-
         /// <summary>
         /// Last frame count when this window is active.
         /// </summary>

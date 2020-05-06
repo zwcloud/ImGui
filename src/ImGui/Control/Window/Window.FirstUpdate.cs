@@ -17,12 +17,7 @@ namespace ImGui
 
             this.Active = true;
             this.BeginCount = 0;
-            this.ClipRect = Rect.Big;
             this.LastActiveFrame = currentFrame;
-
-            ClipRect = this.WindowContainer.GetClipRect();
-
-            // (draw outer clip rect for test only here)
 
             // determine if window is collapsed
             if (!flags.HaveFlag(WindowFlags.NoTitleBar) && !flags.HaveFlag(WindowFlags.NoCollapse))

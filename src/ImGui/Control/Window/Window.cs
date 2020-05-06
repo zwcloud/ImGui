@@ -75,22 +75,6 @@ namespace ImGui
                 window.FirstUpdate(name, size, ref open, bg_alpha, flags, current_frame, parent_window);
             }
 
-            // Inner clipping rectangle
-            {
-                // We set this up after processing the resize grip so that our clip rectangle doesn't lag by a frame
-                // Note that if our window is collapsed we will end up with a null clipping rectangle which is the correct behavior.
-                Rect title_bar_rect = window.TitleBarRect;
-                const float border_size = 0;
-                var paddingHorizontal = window.WindowContainer.RuleSet.PaddingHorizontal;
-                // Force round to ensure that e.g. (int)(max.x-min.x) in user's render code produce correct result.
-                Rect clip_rect = new Rect(
-                    new Point(Math.Floor(0.5f + title_bar_rect.Min.X + Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
-                              Math.Floor(0.5f + title_bar_rect.Max.Y + border_size)),
-                    new Point(Math.Floor(0.5f + window.Position.X + window.Size.Width - Math.Max(border_size, Math.Floor(paddingHorizontal * 0.5f))),
-                              Math.Floor(0.5f + window.Position.Y + window.Size.Height - border_size)));
-                window.ClipRect = clip_rect;
-            }
-
             // Clear 'accessed' flag last thing
             if (first_begin_of_the_frame)
                 window.Accessed = false;
