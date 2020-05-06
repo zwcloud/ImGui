@@ -275,6 +275,7 @@ namespace ImGui.OSImplementation.Windows
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
             GL.BlendFunc(GL.GL_ONE, GL.GL_ONE);
             var indexBufferOffset = IntPtr.Zero;
+            GL.Enable(GL.GL_SCISSOR_TEST);
 #if Enable_Jitter
             for (int j = 0; j < JITTER_PATTERN.Length; j++)
             {
@@ -291,6 +292,8 @@ namespace ImGui.OSImplementation.Windows
 #endif
                 foreach (var drawCmd in textMesh.Commands)
                 {
+                    var clipRect = drawCmd.ClipRect;
+                    GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                     // Draw text mesh 
                     GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
 
