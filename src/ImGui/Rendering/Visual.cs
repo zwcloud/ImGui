@@ -322,6 +322,11 @@ namespace ImGui.Rendering
 
         internal void RenderRecursive(RenderContext context)
         {
+            if (context.ClipRect.IsEmpty)//completely clipped
+            {
+                return;
+            }
+
             var oldClipRect = context.ClipRect;
             var clipRect = this.GetClipRect();
             context.ClipRect = clipRect;
