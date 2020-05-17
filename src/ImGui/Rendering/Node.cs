@@ -191,10 +191,18 @@ namespace ImGui.Rendering
             if (this.Parent != null)
             {
                 var parentNode = (Node)this.Parent;
-                if(parentNode.HorizontallyOverflow || parentNode.VerticallyOverflow)
+
+                //check all ancestor nodes
+                while (parentNode != null)
                 {
-                    //TODO consider in two aspects: horizontal and vertical
-                    clipRect = parentNode.UseBoxModel ? parentNode.ContentRect : parentNode.Rect;
+                    if (parentNode.HorizontallyOverflow || parentNode.VerticallyOverflow)
+                    {
+                        //TODO consider in two aspects: horizontal and vertical
+                        var clipRectFromParent = parentNode.UseBoxModel ?
+                            parentNode.ContentRect : parentNode.Rect;
+                        clipRect = Rect.Intersect(clipRect, clipRectFromParent);
+                    }
+                    parentNode = (Node)parentNode.Parent;
                 }
             }
 

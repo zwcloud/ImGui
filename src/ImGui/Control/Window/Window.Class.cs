@@ -204,6 +204,10 @@ namespace ImGui
                 clientArea.RuleSet.ApplyOptions(GUILayout.ExpandWidth(true).ExpandHeight(true));
                 clientArea.UseBoxModel = true;
                 clientArea.RuleSet.refNode = clientArea;
+#if ShowClientAreaOutline
+                clientArea.RuleSet.OutlineWidth = 1;
+                clientArea.RuleSet.OutlineColor = Color.DarkRed;
+#endif
                 this.ClientAreaNode = clientArea;
                 this.WindowContainer.AppendChild(clientArea);
             }

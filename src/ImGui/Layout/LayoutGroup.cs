@@ -89,7 +89,7 @@ namespace ImGui.Rendering
                 // calculate the width of children
                 this.CalcChildrenWidth();
             }
-            else // default width
+            else // default width: group width is determined by width of all children
             {
                 if (this.IsVertical) //vertical group
                 {
@@ -320,7 +320,7 @@ namespace ImGui.Rendering
                 // calculate the height of children
                 this.CalcChildrenHeight();
             }
-            else // default height
+            else // default height: group height is determined by height of all children
             {
                 if (this.IsVertical) // vertical group
                 {
