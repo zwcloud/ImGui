@@ -1,5 +1,3 @@
-__Note__: [ImGui is being heavily refactored to employ a render-tree based architecture](https://github.com/zwcloud/ImGui/projects/6), so most features described below are not working for now. If you are interested in a working ImGui implementation, check out [the old version](https://github.com/zwcloud/ImGui/tree/80ab55b73c8857a328949ef5e13415d202f0c34d), that rebuilds and repaints everything every frame.
-
 Hello ImGui,
 ============
 
@@ -7,7 +5,7 @@ Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](http
 
 ![code sample](https://raw.githubusercontent.com/wiki/zwcloud/imgui/images/code_sample.png)
 
-Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms). MAC and iphone are not supported because I don't have them.
+(outdated and to be updated) Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms). MAC and iphone are not supported because I don't have them.
 
 At present, ImGui lacks usability but will be improved gradually.
 
@@ -18,7 +16,7 @@ At present, ImGui lacks usability but will be improved gradually.
 1. Preparation
     * Download msjh.ttf to directory `ImGui\src\ImGui\assets\fonts`. See [font note](https://github.com/zwcloud/ImGui/blob/master/src/ImGui/assets/fonts/ReadMe.md).
 
-2. Create a .NET Core 2.0 project and reference _ImGui_.
+2. Create a .NET Standard 2.1 compatible project and reference _ImGui_.
 
 3. Add follwing code files to your project,
 
@@ -49,6 +47,7 @@ At present, ImGui lacks usability but will be improved gradually.
             protected override void OnGUI()
             {
                 //your GUI code here
+                GUILayout.Label("Hello, ImGui!");
             }
         }
     }
@@ -61,13 +60,13 @@ At present, ImGui lacks usability but will be improved gradually.
     * run in Windows console:
 
         ```
-        cd MyApp/bin/Debug/netcoreapp2.0
+        cd MyImGuiApp
         dotnet MyApp.dll
        ```
     * run in Linux terminal:
 
         ```
-        cd MyApp/bin/Debug/netcoreapp2.0
+        cd MyApp/bin/Debug/netcoreapp3.0
         dotnet MyApp.dll
        ```
 
@@ -76,6 +75,8 @@ At present, ImGui lacks usability but will be improved gradually.
     Press <kbd>Esc</kbd> or click the close button of the window.
 
 ### For Android
+
+(outdated and to be updated)
 
 1. Copy [Android Templates project](https://github.com/zwcloud/ImGui/tree/master/templates/AndroidTemplate). The referenced Demo can be removed if you don't need that.
 2. Add your GUI code in `MainForm.OnGUI`.
@@ -94,7 +95,7 @@ A Real Universal GUI Framework.
 
 ## Credits
 
-DroidSans.ttf, Droid Sans is a humanist sans serif typeface designed by Steve Matteson [licenced under Apache 2](https://github.com/google/fonts/blob/master/apache/droidsans/LICENSE.txt).
+DroidSans.ttf, Droid Sans is a humanist sans serif typeface designed by Steve Matteson [licensed under Apache 2](https://github.com/google/fonts/blob/master/apache/droidsans/LICENSE.txt).
 
 *ImGui doesn't depend on following projects, some code used by ImGui are taken from them.*
 
