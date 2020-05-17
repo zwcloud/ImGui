@@ -147,6 +147,11 @@ namespace ImGui
         {
             return TextBox(label, width, text, flags, checker, null);
         }
+        
+        public static string TextBox(string label, double width, string text)
+        {
+            return TextBox(label, width, text, InputTextFlags.Default, null, null);
+        }
 
         /// <summary>
         /// Create a multi-line text box.

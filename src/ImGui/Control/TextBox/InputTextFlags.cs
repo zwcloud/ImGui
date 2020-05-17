@@ -3,6 +3,7 @@
     public enum InputTextFlags
     {
         // Default: 0
+        Default = 0,
         CharsDecimal = 1 << 0,   // Allow 0123456789.+-*/
         CharsHexadecimal = 1 << 1,   // Allow 0123456789ABCDEFabcdef
         CharsUppercase = 1 << 2,   // Turn a..z into A..Z
