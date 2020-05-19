@@ -61,7 +61,7 @@ public class Demo
 
     string buf = "日本語";
     bool read_only = false;
-    string text = @"/*\n
+    string multiLineText = @"/*\n
  The Pentium F00F bug, shorthand for F0 0F C7 C8,
  the hexadecimal encoding of one offending instruction,
  more formally, the invalid operand with locked CMPXCHG8B
@@ -115,6 +115,9 @@ label:
     #endregion
 
     #endregion
+    
+    private string text = "Quick brown fox";
+    private double value = 0.6;
 
     public void OnGUI()
     {
@@ -136,8 +139,16 @@ label:
         // 2. Show another simple window, this time using an explicit Begin/End pair
         if (showAnotherWindow)
         {
-            GUI.Begin("Another Window", ref showAnotherWindow, (80, 340), (400, 100));
-            GUILayout.Label("Hello");
+            GUI.Begin("Another Window", ref showAnotherWindow, (80, 340), (400, 150));
+            GUILayout.Text("Hello, ImGui {0}", 123);
+
+            if (GUILayout.Button("OK"))
+            {
+                // do stuff
+            }
+
+            text = GUILayout.TextBox("string", 256, text);
+            value = GUILayout.Slider("float", value, 0, 1);
             GUI.End();
         }
 
@@ -328,11 +339,11 @@ label:
                 GUILayout.PushStyle(StylePropertyName.HorizontalStretchFactor, 1);
                 if(read_only)
                 {
-                    GUILayout.InputTextMultiline("Text Box", new Size(120, 200), text);
+                    GUILayout.InputTextMultiline("Text Box", new Size(120, 200), multiLineText);
                 }
                 else
                 {
-                    text = GUILayout.InputTextMultiline("Text Box", new Size(120, 200), text);
+                    multiLineText = GUILayout.InputTextMultiline("Text Box", new Size(120, 200), multiLineText);
                 }
                 GUILayout.PopStyle();
             }
@@ -435,8 +446,8 @@ label:
             GUILayout.ProgressBar("ProgressBar %", progress, (400, 20), percentText);
 
             const int total = 1753;
-            var text = string.Format("{0}/{1}", (int)(progress_saturated * total), total);
-            GUILayout.ProgressBar("ProgressBar /", progress, (400, 20), text);
+            var progressText = string.Format("{0}/{1}", (int)(progress_saturated * total), total);
+            GUILayout.ProgressBar("ProgressBar /", progress, (400, 20), progressText);
             GUILayout.EndVertical();
             GUILayout.PushFixedWidth(100);//+2
             GUILayout.Text("Progress");
