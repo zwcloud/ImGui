@@ -13,6 +13,31 @@ namespace ImGui
         {
             public StylePropertyName Name { get; set; }
             public GUIState State { get; set; }
+
+            public override int GetHashCode()
+            {
+                unchecked // Overflow is fine, just wrap
+                {
+                    int hash = 17;
+                    hash = hash * 23 + this.Name.GetHashCode();
+                    hash = hash * 23 + this.State.GetHashCode();
+                    return hash;
+                }
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is NameState)
+                {
+                    return this.Equals((NameState)obj);
+                }
+                return false;
+            }
+
+            public bool Equals(NameState nameState)
+            {
+                return nameState.Name == this.Name && nameState.State == this.State;
+            }
         }
 
         /// <summary>
