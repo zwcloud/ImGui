@@ -175,8 +175,8 @@ namespace ImGui
                 node = new Node(id, $"Bullet<{str_id}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
-                var size = new Size(0, node.RuleSet.GetLineHeight());
-                size += new Vector(size.Height, 0);
+                var lineheight = node.RuleSet.GetLineHeight();
+                var size = new Size(lineheight, lineheight);
                 node.AttachLayoutEntry(size);
             }
             container.AppendChild(node);
@@ -189,7 +189,8 @@ namespace ImGui
             using (var dc = node.RenderOpen())
             {
                 var bulletPosition = node.Rect.TopLeft + new Vector(node.Rect.Height * 0.5f, node.Rect.Height * 0.5f);
-                GUIAppearance.RenderBullet(dc, bulletPosition, node.Rect.Height, node.RuleSet.FontColor);
+                var lineheight = node.RuleSet.GetLineHeight();
+                GUIAppearance.RenderBullet(dc, bulletPosition, lineheight, node.RuleSet.FontColor);
             }
         }
 
@@ -213,7 +214,8 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
-                size += new Vector(size.Height, 0);
+                var lineHeight = node.RuleSet.GetLineHeight();
+                size += new Vector(lineHeight, 0);
                 node.AttachLayoutEntry(size);
             }
             container.AppendChild(node);
@@ -225,10 +227,11 @@ namespace ImGui
 
             using (var dc = node.RenderOpen())
             {
-                var bulletPosition = node.Rect.TopLeft + new Vector(node.Rect.Height * 0.5f, node.Rect.Height * 0.5f);
-                GUIAppearance.RenderBullet(dc, bulletPosition, node.Rect.Height, node.RuleSet.FontColor);
+                var lineHeight = node.RuleSet.GetLineHeight();
+                var bulletPosition = node.Rect.TopLeft + new Vector(lineHeight * 0.5f, lineHeight * 0.5f);
+                GUIAppearance.RenderBullet(dc, bulletPosition, lineHeight, node.RuleSet.FontColor);
                 var rect = node.Rect;
-                rect.Offset(node.Rect.Height, 0);
+                rect.Offset(lineHeight, 0);
                 dc.DrawGlyphRun(node.RuleSet, text, rect.TopLeft);
             }
         }
