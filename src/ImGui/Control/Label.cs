@@ -176,6 +176,7 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
                 var size = new Size(0, node.RuleSet.GetLineHeight());
+                size += new Vector(size.Height, 0);
                 node.AttachLayoutEntry(size);
             }
             container.AppendChild(node);
@@ -212,6 +213,7 @@ namespace ImGui
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
                 var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                size += new Vector(size.Height, 0);
                 node.AttachLayoutEntry(size);
             }
             container.AppendChild(node);
@@ -227,7 +229,7 @@ namespace ImGui
                 GUIAppearance.RenderBullet(dc, bulletPosition, node.Rect.Height, node.RuleSet.FontColor);
                 var rect = node.Rect;
                 rect.Offset(node.Rect.Height, 0);
-                dc.DrawGlyphRun(node.RuleSet, text, node.Rect.TopLeft);
+                dc.DrawGlyphRun(node.RuleSet, text, rect.TopLeft);
             }
         }
 

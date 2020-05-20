@@ -70,5 +70,27 @@ namespace ImGui.ControlTest
 
             Application.Run(form);
         }
+
+        [Fact]
+        public void ShowBullet()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+            Application.Run(new MainForm(() =>
+            {
+                GUILayout.BulletText("Bullet point 1");
+                GUILayout.BulletText("Bullet point 2\nOn multiple lines");
+
+                GUILayout.BeginHorizontal("HGroup~1");
+                    GUILayout.Bullet("_Bullet");
+                    GUILayout.Text("Bullet point 3 (two calls)");
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal("HGroup~2");
+                    GUILayout.Bullet("_Bullet");
+                    GUILayout.Button("Button");
+                GUILayout.EndHorizontal();
+            }));
+        }
     }
 }
