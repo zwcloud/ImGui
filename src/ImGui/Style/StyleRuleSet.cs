@@ -504,6 +504,14 @@ namespace ImGui
 
         public bool IsStretchedHeight => VerticallyStretched;
 
+        public (double, double) ObjectPosition
+        {
+            get;
+            set;
+        } = (double.NegativeInfinity, double.NegativeInfinity);
+
+        //TODO implement ObjectFit
+
         #endregion Layout
 
         public OverflowPolicy OverflowX

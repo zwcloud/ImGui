@@ -34,7 +34,7 @@ namespace ImGui.Rendering
             throw new NotImplementedException();
         }
 
-        public override void DrawImage(ITexture image, Rect rectangle)
+        public override void DrawImage(ITexture image, Rect rectangle, Point uvMin, Point uvMax)
         {
             throw new NotImplementedException();
         }

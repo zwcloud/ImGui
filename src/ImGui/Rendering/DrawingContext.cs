@@ -132,7 +132,9 @@ namespace ImGui.Rendering
         /// <param name="rectangle">
         ///     The Rect into which the Image will be fit.
         /// </param>
-        public abstract void DrawImage(ITexture image, Rect rectangle);
+        /// <param name="uvMin"></param>
+        /// <param name="uvMax"></param>
+        public abstract void DrawImage(ITexture image, Rect rectangle, Point uvMin, Point uvMax);
 
         public abstract void DrawImage(ITexture image, Rect rectangle,
             (double top, double right, double bottom, double left) slice);

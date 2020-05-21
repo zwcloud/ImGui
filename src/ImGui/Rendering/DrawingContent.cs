@@ -183,7 +183,9 @@ namespace ImGui.Rendering
                                     DrawImageCommand* data = (DrawImageCommand*)(pCur + sizeof(RecordHeader));
                                     ctx.DrawImage(
                                         (ITexture)DependentLookup(data->ImageSourceIndex),
-                                        data->rectangle
+                                        data->rectangle,
+                                        data->UVMin,
+                                        data->UVMax
                                     );
                                 }
                                     break;

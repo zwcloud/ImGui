@@ -277,7 +277,14 @@ namespace ImGui.GraphicsImplementation
             }
         }
 
-        public override void DrawImage(ITexture texture, Rect rectangle)
+        public void DrawImage(ITexture texture, Rect rectangle)
+        {
+            var uvMin = new Point(0, 0);
+            var uvMax = new Point(1, 1);
+            DrawImage(texture, rectangle, uvMin, uvMax);
+        }
+        
+        public override void DrawImage(ITexture texture, Rect rectangle, Point uvMin, Point uvMax)
         {
             if (texture == null)
             {
@@ -293,8 +300,6 @@ namespace ImGui.GraphicsImplementation
             cmd.TextureData = texture;
             this.ImageMesh.CommandBuffer.Add(cmd);
 
-            var uvMin = new Point(0, 0);
-            var uvMax = new Point(1, 1);
             this.ImageMesh.PrimReserve(6, 4);
             AddImageRect(rectangle, uvMin, uvMax, tintColor);
         }

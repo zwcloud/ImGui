@@ -89,6 +89,33 @@ namespace ImGui.ControlTest
 
             Application.Run(form);
         }
+        
+        [Fact]
+        public void ShowPartialImageButtons()
+        {
+            var form = new MainForm(800, 800);
+            var pressed_count = 0;
+            form.OnGUIAction = () =>
+            {
+                GUILayout.BeginHorizontal("HGroup~1");
+                for (int i = 0; i < 8; i++)
+                {
+                    GUILayout.PushID(i);
+                    if (GUILayout.ImageButton("assets/images/checker.png", new Size(32, 32),
+                        new Vector(32 * i, 0)))
+                    {
+                        pressed_count += 1;
+                    }
+                    GUILayout.PopID();
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.Label("Pressed {0} times.", pressed_count);
+                GUILayout.ImageButton("assets/images/checker.png");
+            };
+            
+            Application.InitialDebugWindowRect = new Rect(10, 10, 600, 700);
+            Application.Run(form);
+        }
 
         [Fact]
         public void ShowOneLayoutedSlicedImageButton()

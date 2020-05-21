@@ -166,16 +166,20 @@ namespace ImGui.Rendering.Composition
     [StructLayout(LayoutKind.Explicit)]
     internal struct DrawImageCommand
     {
-        public DrawImageCommand(uint imageSourceIndex, Rect rectangle)
+        public DrawImageCommand(uint imageSourceIndex, Rect rectangle, Point uvMin, Point uvMax)
         {
             this.ImageSourceIndex = imageSourceIndex;
             this.rectangle = rectangle;
+            this.UVMin = uvMin;
+            this.UVMax = uvMax;
             this.QuadWordPad0 = 0;
         }
 
         [FieldOffset(0)] public Rect rectangle;
         [FieldOffset(32)] public uint ImageSourceIndex;
-        [FieldOffset(36)] private uint QuadWordPad0;
+        [FieldOffset(36)] public Point UVMin;
+        [FieldOffset(52)] public Point UVMax;
+        [FieldOffset(68)] public uint QuadWordPad0;
     }
 
     [StructLayout(LayoutKind.Explicit)]

@@ -81,13 +81,13 @@ namespace ImGui.Rendering
         public static void DrawImage(this DrawingContext dc, string path)
         {
             var texture = TextureCache.Default.GetOrAdd(path);
-            dc.DrawImage(texture, new Rect(texture.Width, texture.Height));
+            dc.DrawImage(texture, new Rect(texture.Width, texture.Height), Point.Zero, Point.One);
         }
 
         public static void DrawImage(this DrawingContext dc, string path, Rect rect)
         {
             var texture = TextureCache.Default.GetOrAdd(path);
-            dc.DrawImage(texture, rect);
+            dc.DrawImage(texture, rect, Point.Zero, Point.One);
         }
 
         //TODO consider cache GlyphRun and FormattedText
@@ -175,7 +175,28 @@ namespace ImGui.Rendering
 
             //Content
             //Content-box
-            dc.DrawImage(texture, contentBoxRect, style.BorderImageSlice);
+            var slice = style.BorderImageSlice;
+            if (slice.Item1 != 0 || slice.Item2 != 0 || slice.Item3 != 0 || slice.Item4 != 0)
+            {
+                dc.DrawImage(texture, contentBoxRect, style.BorderImageSlice);
+            }
+            else
+            {
+                var objectPosition = style.ObjectPosition;
+                (double offsetX, double offsetY) = objectPosition;
+                if (!double.IsInfinity(offsetX) && !double.IsInfinity(offsetY))
+                {
+                    (int w, int h) = (texture.Width, texture.Height);
+                    var uvMin = new Point(offsetX / w, offsetY / h);
+                    var uvMax = new Point((offsetX + contentBoxRect.Width) / w,
+                        (offsetY + contentBoxRect.Height) / h);
+                    dc.DrawImage(texture, contentBoxRect, uvMin, uvMax);
+                }
+                else
+                {
+                    dc.DrawImage(texture, contentBoxRect, Point.Zero, Point.One);
+                }
+            }
 
             DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
             DrawOutline(dc, style, borderBoxRect);

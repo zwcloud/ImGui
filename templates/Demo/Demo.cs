@@ -294,8 +294,11 @@ label:
                 for (int i = 0; i < 8; i++)
                 {
                     GUILayout.PushID(i);
-                    if (GUILayout.ImageButton("images/trees.jpg", new Size(32, 32), new Point(32.0f * i / 256, 0), new Point(32.0f * (i + 1) / 256, 32.0f / 256)))
+                    if (GUILayout.ImageButton("images/trees.jpg", new Size(32, 32),
+                        new Vector(32.0f * i, 0)))
+                    {
                         pressed_count += 1;
+                    }
                     GUILayout.PopID();
                 }
                 GUILayout.EndHorizontal();
@@ -616,9 +619,15 @@ label:
             GUILayout.PopID();
         }
 
+        if (GUILayout.CollapsingHeader("Header", ref headerOn))
+        {
+            GUILayout.Button("Button A");
+            GUILayout.Button("Button B");
+            GUILayout.Button("Button C");
+        }
         GUI.End();
     }
-
+    bool headerOn = false;
     private void ShowUserGuide()
     {
         GUILayout.PushID("UserGuide");

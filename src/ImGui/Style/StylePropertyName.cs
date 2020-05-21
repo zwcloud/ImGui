@@ -40,6 +40,10 @@ namespace ImGui
         public static StylePropertyName OutlineColor = new StylePropertyName(nameof(OutlineColor));
         #endregion Box model
 
+        #region Object-Sizing and Object-Positioning
+        public static StylePropertyName ObjectPosition = new StylePropertyName(nameof(ObjectPosition));
+        #endregion
+
         public static StylePropertyName HorizontalStretchFactor = new StylePropertyName(nameof(HorizontalStretchFactor));
         public static StylePropertyName VerticalStretchFactor = new StylePropertyName(nameof(VerticalStretchFactor));
 

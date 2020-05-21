@@ -354,7 +354,7 @@ namespace ImGui.Rendering
             }
         }
 
-        public override void DrawImage(ITexture image, Rect rectangle)
+        public override void DrawImage(ITexture image, Rect rectangle, Point uvMin, Point uvMax)
         {
             if (image == null)
             {
@@ -368,6 +368,8 @@ namespace ImGui.Rendering
                 {//different record type: append new record
                     record.ImageSourceIndex = this.content.AddDependentResource(image);
                     record.rectangle = rectangle;
+                    record.UVMin = uvMin;
+                    record.UVMax = uvMax;
                     this.content.WriteRecord(RecordType.DrawImage, (byte*) &record, sizeof(DrawImageCommand));
                     return;
                 }
@@ -387,6 +389,18 @@ namespace ImGui.Rendering
                     record.ImageSourceIndex = this.content.AddDependentResource(image);
                     recordNeedOverwrite = true;
                 }
+                
+                if (!Point.AlmostEqual(record.UVMin, uvMin))
+                {
+                    record.UVMin = uvMin;
+                    recordNeedOverwrite = true;
+                }
+                if (!Point.AlmostEqual(record.UVMax, uvMax))
+                {
+                    record.UVMax = uvMax;
+                    recordNeedOverwrite = true;
+                }
+
 
                 if (recordNeedOverwrite)
                 {
@@ -458,8 +472,9 @@ namespace ImGui.Rendering
                 }
 
                 if (recordNeedOverwrite)
-
-                content.WriteRecord(RecordType.DrawSlicedImage, (byte*)&record, sizeof(DrawSlicedImageCommand));
+                {
+                    content.WriteRecord(RecordType.DrawSlicedImage, (byte*)&record, sizeof(DrawSlicedImageCommand));
+                }
             }
         }
 

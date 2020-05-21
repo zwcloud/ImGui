@@ -454,20 +454,27 @@ namespace ImGui.UnitTest
 
         class ImageRecord : IEquatable<ImageRecord>
         {
-            private ITexture image;
-            private Rect rectangle;
+            private readonly ITexture image;
+            private readonly Rect rectangle;
+            private readonly Point uvMin;
+            private readonly Point uvMax;
 
-            public ImageRecord(ITexture image, Rect rectangle)
+            public ImageRecord(ITexture image, Rect rectangle, Point uvMin, Point uvMax)
             {
                 this.image = image;
                 this.rectangle = rectangle;
+                this.uvMin = uvMin;
+                this.uvMax = uvMax;
             }
 
             public bool Equals(ImageRecord other)
             {
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
-                return Equals(this.image, other.image) && this.rectangle.Equals(other.rectangle);
+                return Equals(this.image, other.image)
+                       && Rect.AlmostEqual(this.rectangle, other.rectangle)
+                       && Point.AlmostEqual(this.uvMin, other.uvMin)
+                       && Point.AlmostEqual(this.uvMax, other.uvMax);
             }
 
             public override bool Equals(object obj)
@@ -482,7 +489,11 @@ namespace ImGui.UnitTest
             {
                 unchecked
                 {
-                    return ((this.image != null ? this.image.GetHashCode() : 0) * 397) ^ this.rectangle.GetHashCode();
+                    int hashCode = (this.image != null ? this.image.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ this.rectangle.GetHashCode();
+                    hashCode = (hashCode * 397) ^ this.uvMin.GetHashCode();
+                    hashCode = (hashCode * 397) ^ this.uvMax.GetHashCode();
+                    return hashCode;
                 }
             }
         }
@@ -629,9 +640,9 @@ namespace ImGui.UnitTest
             this.strategy.ReadRecord(this.records, new GeometryRecord(brush, pen, geometry));
         }
 
-        public override void DrawImage(ITexture image, Rect rectangle)
+        public override void DrawImage(ITexture image, Rect rectangle, Point uvMin, Point uvMax)
         {
-            this.strategy.ReadRecord(this.records, new ImageRecord(image, rectangle));
+            this.strategy.ReadRecord(this.records, new ImageRecord(image, rectangle, uvMin, uvMax));
         }
 
         public override void DrawImage(ITexture image, Rect rectangle,

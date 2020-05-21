@@ -104,7 +104,7 @@ namespace ImGui
         }
 
         public static bool Button(string text) => Button(text, null);
-        public static bool ImageButton(string filePath, Size size, Point uv0, Point uv1)
+        public static bool ImageButton(string filePath, Size size, Vector offset)
         {
             var window = GetCurrentWindow();
             if (window.SkipItems)
@@ -120,8 +120,8 @@ namespace ImGui
                 node = new Node(id, $"Button<{filePath}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                var texture = TextureUtil.GetTexture(filePath);
-                node.AttachLayoutEntry(texture.Size);
+                node.RuleSet.ObjectPosition = (offset.X, offset.Y);
+                node.AttachLayoutEntry(size);
             }
             container.AppendChild(node);
             node.ActiveSelf = true;
@@ -145,7 +145,8 @@ namespace ImGui
 
         public static bool ImageButton(string filePath)
         {
-            return ImageButton(filePath, Size.Empty, Point.Zero, Point.One);
+            var texture = TextureUtil.GetTexture(filePath);
+            return ImageButton(filePath, texture.Size, Vector.Zero);
         }
 
         public static bool ImageButton(string filePath, Size size, (double top, double left, double right, double bottom) borderSlice)
