@@ -19,7 +19,7 @@ namespace ImGui.UnitTest
     }
 
     //TODO make these tests standalone without Application and Form.
-
+    #if false
     public class Win32OpenGLRendererFacts
     {
         public class DrawTextMeshFacts
@@ -73,7 +73,8 @@ namespace ImGui.UnitTest
                     GUILayout.PopStyleVar(2);
                 }));
             }
-
+            
         }
     }
+    #endif
 }
