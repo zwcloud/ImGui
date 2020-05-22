@@ -612,6 +612,7 @@ namespace ImGui.UnitTest.Rendering
 
                 using (var context = new RenderContextForTest(width, height))
                 {
+                    renderer.PushClipRect(Rect.Big);
                     renderer.OnBeforeRead();
                     renderer.DrawRectangle(null, new Pen(Color.Black, 1),
                         new Rect(glyphRun.Origin - new Vector(1, 1), glyphRun.Origin + new Vector(1, 1)));
@@ -619,6 +620,7 @@ namespace ImGui.UnitTest.Rendering
                         glyphRun.Origin + new Vector(width, 0));
                     renderer.DrawGlyphRun(brush, glyphRun);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
                     renderer.OnAfterRead(meshList);
+                    renderer.PopClipRect();
 
                     //rebuild mesh buffer
                     meshBuffer.Clear();
@@ -661,7 +663,15 @@ namespace ImGui.UnitTest.Rendering
 
                 Check(glyphRun, brush, 500, 100);
             }
+            
+            [Fact]
+            public void DrawTwoLineTextWithSpace()
+            {
+                GlyphRun glyphRun = new GlyphRun(new Point(20, 80), "text\nspace", GUIStyle.Default.FontFamily, 24);
+                Brush brush = new Brush(Color.Black);
 
+                Check(glyphRun, brush, 500, 100);
+            }
         }
 
         public class DrawText
