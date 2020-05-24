@@ -97,7 +97,7 @@ namespace ImGui.Development
             for (int i = 0; i < vertexes.Count; i++)
             {
                 var position = vertexes[i].pos;
-                sb.AppendFormat("v {0} {1} {2}", -position.X, position.Y, 0);
+                sb.AppendFormat("v {0} {1} {2}", position.X, position.Y, 0);
                 sb.AppendLine();
             }
 
