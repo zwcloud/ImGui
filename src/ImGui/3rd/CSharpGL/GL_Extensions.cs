@@ -61,6 +61,7 @@ namespace CSharpGL
             _glFramebufferTexture2D = GetDelegateFor<glFramebufferTexture2D>();
             _glDrawBuffers = GetDelegateFor<glDrawBuffers>();
             _glCheckFramebufferStatus = GetDelegateFor<glCheckFramebufferStatus>();
+            _glDeleteFramebuffers = GetDelegateFor<glDeleteFramebuffers>();
 
             _glGenRenderbuffers = GetDelegateFor<glGenRenderbuffers>();
             _glBindRenderbuffer = GetDelegateFor<glBindRenderbuffer>();
@@ -119,6 +120,7 @@ namespace CSharpGL
         private static glFramebufferTexture _glFramebufferTexture;
         private static glDrawBuffers _glDrawBuffers;
         private static glCheckFramebufferStatus _glCheckFramebufferStatus;
+        private static glDeleteFramebuffers _glDeleteFramebuffers;
 
         private static glGenRenderbuffers _glGenRenderbuffers;
         private static glBindRenderbuffer _glBindRenderbuffer;
@@ -4674,9 +4676,9 @@ namespace CSharpGL
             _glBindFramebuffer(target, framebuffer);
         }
 
-        public static void DeleteFramebuffersEXT(uint n, uint[] framebuffers)
+        public static void DeleteFramebuffers(uint n, uint[] framebuffers)
         {
-            GetDelegateFor<glDeleteFramebuffersEXT>()(n, framebuffers);
+            _glDeleteFramebuffers(n, framebuffers);
         }
 
         public static void GenFramebuffers(uint n, uint[] framebuffers)
@@ -4728,7 +4730,7 @@ namespace CSharpGL
         private delegate void glGetRenderbufferParameterivEXT(uint target, uint pname, int[] parameters);
         private delegate bool glIsFramebufferEXT(uint framebuffer);
         private delegate void glBindFramebuffer(uint target, uint framebuffer);
-        private delegate void glDeleteFramebuffersEXT(uint n, uint[] framebuffers);
+        private delegate void glDeleteFramebuffers(uint n, uint[] framebuffers);
         private delegate void glGenFramebuffers(uint n, uint[] framebuffers);
         private delegate uint glCheckFramebufferStatus(uint target);
         private delegate void glFramebufferTexture1DEXT(uint target, uint attachment, uint textarget, uint texture, int level);
