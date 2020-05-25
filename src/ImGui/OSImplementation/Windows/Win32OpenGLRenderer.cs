@@ -36,6 +36,7 @@ namespace ImGui.OSImplementation.Windows
         {
             CreateOpenGLContext(windowHandle);
             OpenGLMaterial.InitCommonMaterials();
+            ImGui.Development.SpecialMesh.Init();
 
             // Other state
             GL.Enable(GL.GL_MULTISAMPLE);
