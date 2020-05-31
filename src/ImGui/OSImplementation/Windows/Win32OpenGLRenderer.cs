@@ -143,17 +143,23 @@ namespace ImGui.OSImplementation.Windows
             // Setup viewport, orthographic projection matrix
             GL.Viewport(0, 0, width, height);
             float L = 0;
-            float R = 0 + width;
+            float R = width;
             float T = 0;
-            float B = 0 + height;
+            float B = height;
+            float N = -0.1f;
+            float F = 100.0f;
             float[] ortho_projection = new float[16]
             {
-                2.0f/(R-L),   0.0f,         0.0f,   0.0f,
-                0.0f,         2.0f/(T-B),   0.0f,   0.0f,
-                0.0f,         0.0f,        -1.0f,   0.0f,
-                (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f,
+                2.0f/(R-L),   0.0f,         0.0f,           0.0f,
+                0.0f,         2.0f/(T-B),   0.0f,           0.0f,
+                0.0f,         0.0f,         2.0f/(N-F),     0.0f,
+                (R+L)/(L-R),  (T+B)/(B-T),  (F+N)/(N-F),    1.0f,
             };
+
+            // Setup view transformation
+            var viewMatrix = GetViewMatrix(width, height);
             material.program.Bind();
+            material.program.SetUniformMatrix4("ViewMtx", viewMatrix);
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             // Send vertex and index data
@@ -260,6 +266,9 @@ namespace ImGui.OSImplementation.Windows
                 0.0f,         0.0f,        -1.0f,   0.0f,
                 (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f,
             };
+            var viewMatrix = GetViewMatrix(width, height);
+            glyphMaterial.program.Bind();
+            glyphMaterial.program.SetUniformMatrix4("ViewMtx", viewMatrix);
             glyphMaterial.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
             Utility.CheckGLError();

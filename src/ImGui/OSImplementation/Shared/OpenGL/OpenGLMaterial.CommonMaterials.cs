@@ -21,7 +21,9 @@
         public static readonly OpenGLMaterial shapeMaterial = new OpenGLMaterial(
             vertexShader: @"
 #version 330
+#extension GL_ARB_explicit_uniform_location : require
 uniform mat4 ProjMtx;
+uniform mat4 ViewMtx;
 in vec2 Position;
 in vec2 UV;
 in vec4 Color;
@@ -31,7 +33,7 @@ void main()
 {
 	Frag_UV = UV;
 	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
+	gl_Position = ProjMtx * ViewMtx * vec4(Position.xy,0,1);
 }
 ",
             fragmentShader: @"
@@ -51,6 +53,7 @@ void main()
             vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
+uniform mat4 ViewMtx;
 in vec2 Position;
 in vec2 UV;
 in vec4 Color;
@@ -60,7 +63,7 @@ void main()
 {
 	Frag_UV = UV;
 	Frag_Color = Color;
-	gl_Position = ProjMtx * vec4(Position.xy,0,1);
+	gl_Position = ProjMtx * ViewMtx * vec4(Position.xy,0,1);
 }
 ",
             fragmentShader: @"
@@ -80,6 +83,7 @@ void main()
     vertexShader: @"
 #version 330
 uniform mat4 ProjMtx;
+uniform mat4 ViewMtx;
 in vec2 Position;
 in vec2 UV;
 in vec4 Color;
@@ -91,7 +95,7 @@ void main()
 {
 	Frag_UV = UV;
 	Frag_Color = color;//dummy Frag_Color is useless
-	gl_Position = ProjMtx * vec4(offset+Position.xy,0,1);
+	gl_Position = ProjMtx * ViewMtx * vec4(offset+Position.xy,0,1);
 }
 ",
     fragmentShader: @"
