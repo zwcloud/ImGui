@@ -166,7 +166,7 @@ namespace ImGui.UnitTest
 
         public static void ShowImage(byte[] imageRawBytes, int width, int height, string path)
         {
-            using var image = CreateImage(imageRawBytes, width, height, flip: true);
+            using var image = CreateImage(imageRawBytes, width, height, flip: false);
             SaveImage(image, (string)path);
             SelectFileInExplorer((string)path);
             OpenImage((string)path);
@@ -174,7 +174,7 @@ namespace ImGui.UnitTest
 
         internal static void ShowImageNotOpenFolder(byte[] imageRawBytes, int width, int height, string path)
         {
-            using var image = CreateImage(imageRawBytes, width, height, flip: true);
+            using var image = CreateImage(imageRawBytes, width, height, flip: false);
             Util.SaveImage(image, path);
             Util.OpenImage(path);
         }
