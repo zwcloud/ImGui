@@ -274,6 +274,18 @@ namespace ImGui.Rendering
             Figure = null;
         }
 
+        public void StrokeAndFill()
+        {
+            //When stroking current figure, override all segments in the figure.
+            foreach (var segment in Figure.Segments)
+            {
+                segment.IsStroked = true;
+            }
+            Figure.IsFilled = true;
+            Geometry.Figures.Add(Figure);
+            Figure = null;
+        }
+
         public Geometry ToGeometry()
         {
             var result = Geometry;
