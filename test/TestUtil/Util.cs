@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using CSharpGL;
 using ImageSharp.Extension;
 using ImGui.GraphicsImplementation;
+using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSImplementation.Shared;
 using ImGui.OSImplementation.Windows;
@@ -82,12 +83,12 @@ namespace ImGui.UnitTest
 
         public static void OpenModel(string path)
         {
-            const string ModelViewerPath = @"E:\Program Files (green)\open3mod_1_1_standalone\open3mod.exe";
+            const string ModelViewerPath = @"Z:\Program Files\Side Effects Software\Houdini 18.0.460\bin\gplay.exe";
             if(!File.Exists(ModelViewerPath))
             {
-                throw new FileNotFoundException("ModelViewer(open3mod) not found.");
+                throw new FileNotFoundException("ModelViewer(Houdini gplay) not found.");
             }
-            if (!Directory.Exists(path))
+            if (!File.Exists(path))
             {
                 throw new FileNotFoundException(path);
             }
@@ -138,7 +139,7 @@ namespace ImGui.UnitTest
 
         public static void CheckExpectedImage(byte[] imageRawBytes, int width, int height, string expectedImageFilePath)
         {
-            var image = Util.CreateImage(imageRawBytes, width, height, flip: true);
+            var image = Util.CreateImage(imageRawBytes, width, height, flip: false);
 #if DEBUG//check if it matches expected image
             var expectedImage = Util.LoadImage(expectedImageFilePath);
 
