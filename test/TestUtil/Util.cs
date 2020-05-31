@@ -320,7 +320,8 @@ namespace ImGui.UnitTest
         #endregion
 
         #region Visual
-        internal static void DrawDrawingVisualToImage(out byte[] imageRawBytes, int width, int height, DrawingVisual drawingVisual)
+        internal static void DrawDrawingVisualToImage(out byte[] imageRawBytes,
+            int width, int height, DrawingVisual drawingVisual)
         {
             //convert geometries inside the drawingVisual's content to meshes stored in a MeshList with a BuiltinGeometryRenderer
             MeshList meshList = new MeshList();
@@ -336,16 +337,17 @@ namespace ImGui.UnitTest
 
             //created a mesh IRenderer
             Application.Init();
-            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Hidden);
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(100, 100),
+                WindowTypes.Hidden);
             var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
             //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
             renderer.Clear(Color.White);
-            renderer.DrawMeshToImage(width, height, meshBuffer.ShapeMesh, OpenGLMaterial.shapeMaterial);
-
-            //get drawn pixels data
-            imageRawBytes = renderer.GetRawBackBuffer(out _, out _);
+            renderer.StartDrawMeshToImage(width, height);
+            imageRawBytes = renderer.DrawMeshToImage(width, height, meshBuffer.ShapeMesh, OpenGLMaterial.shapeMaterial);
+            renderer.EndDrawMeshToImage();
 
             //clear native resources: window and IRenderer
             renderer.ShutDown();
@@ -358,40 +360,118 @@ namespace ImGui.UnitTest
         {
             //created a mesh IRenderer
             Application.Init();
-            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Hidden);
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height),
+                WindowTypes.Hidden);
             var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
             //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
             renderer.Clear(Color.White);
-            renderer.DrawMeshToImage(width, height, mesh, OpenGLMaterial.shapeMaterial);
-
-            //get drawn pixels data
-            imageRawBytes = renderer.GetRawBackBuffer(out _, out _);
+            renderer.StartDrawMeshToImage(width, height);
+            imageRawBytes = renderer.DrawMeshToImage(width, height, mesh, OpenGLMaterial.shapeMaterial);
+            renderer.EndDrawMeshToImage();
 
             //clear native resources: window and IRenderer
             renderer.ShutDown();
             window.Close();
         }
         
-        internal static void DrawTextMeshToImage(out byte[] imageRawBytes, int width, int height, TextMesh mesh)
+        internal static void DrawTextMeshToImage(out byte[] imageRawBytes,
+            int width, int height, TextMesh textMesh)
         {
-            //created a mesh IRenderer
             Application.Init();
-            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height), WindowTypes.Hidden);
+
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(200, 200),
+                WindowTypes.Regular);
             var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
-            //clear the canvas and draw mesh in the MeshBuffer with the mesh renderer
-            renderer.DrawTextMeshToImage(width, height, mesh, OpenGLMaterial.glyphMaterial);
+            renderer.StartDrawTextMeshToImage(width, height);
+            Keyboard.Instance.OnFrameBegin();
+            renderer.Clear(Color.White);
+            imageRawBytes = renderer.DrawTextMeshToImage(textMesh, width, height);
+            Keyboard.Instance.OnFrameEnd();
+            renderer.EndDrawTextMeshToImage();
 
-            //get drawn pixels data
-            imageRawBytes = renderer.GetRawBackBuffer(out _, out _);
+            renderer.ShutDown();
+            window.Close();
 
             //clear native resources: window and IRenderer
             renderer.ShutDown();
             window.Close();
         }
+        
+        internal static void DrawTextMeshToImage_Realtime(int width, int height, TextMesh textMesh)
+        {
+            Application.Init();
+
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(200, 200),
+                WindowTypes.Regular);
+            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            Debug.Assert(renderer != null, nameof(renderer) + " != null");
+            renderer.Init(window.Pointer, window.ClientSize);
+
+            renderer.StartDrawTextMeshToImage(width, height);
+            while (true)
+            {
+                if (Keyboard.Instance.KeyDown(Key.Escape))
+                {
+                    break;
+                }
+
+                window.MainLoop(() =>
+                {
+                    Keyboard.Instance.OnFrameBegin();
+                    renderer.Clear(Color.White);
+                    renderer.DrawTextMeshToImage(textMesh, width, height);
+                    Keyboard.Instance.OnFrameEnd();
+                    renderer.SwapBuffers();
+                });
+            }
+            renderer.EndDrawTextMeshToImage();
+
+            renderer.ShutDown();
+            window.Close();
+
+            //clear native resources: window and IRenderer
+            renderer.ShutDown();
+            window.Close();
+        }
+
+        internal static void DrawTextMeshInWindow(int width, int height, TextMesh mesh)
+        {
+            Application.Init();
+
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height),
+                WindowTypes.Hidden);
+            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            Debug.Assert(renderer != null, nameof(renderer) + " != null");
+            renderer.Init(window.Pointer, window.ClientSize);
+            window.Show();
+            while (true)
+            {
+                if (Keyboard.Instance.KeyDown(Key.Escape))
+                {
+                    break;
+                }
+
+                window.MainLoop(() =>
+                {
+                    Keyboard.Instance.OnFrameBegin();
+                    renderer.Clear(Color.White);
+                    Win32OpenGLRenderer.DrawTextMesh(mesh, width, height);
+                    Keyboard.Instance.OnFrameEnd();
+                    renderer.SwapBuffers();
+                });
+            }
+
+            renderer.ShutDown();
+            window.Close();
+        }
+
+
         #endregion
     }
 }
