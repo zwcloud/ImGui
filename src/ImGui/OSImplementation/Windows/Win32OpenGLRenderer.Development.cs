@@ -265,20 +265,21 @@ namespace ImGui.OSImplementation.Windows
                     glyphMaterial.program.SetUniform("color", j == 0 ? 1 : 0, j == 2 ? 1 : 0, j == 4 ? 1 : 0, 0);
                 }
 #else
-            glyphMaterial.program.SetUniform("offset", 0.0f, 0.0f);
-            glyphMaterial.program.SetUniform("color", 1.0f, 1.0f, 1.0f, 0.0f);
+                glyphMaterial.program.SetUniform("offset", 0.0f, 0.0f);
+                glyphMaterial.program.SetUniform("color", 1.0f, 1.0f, 1.0f, 0.0f);
 #endif
 
-            foreach (var drawCmd in textMesh.Commands)
-            {
-                var clipRect = drawCmd.ClipRect;
-                GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                 // Draw text mesh 
-                GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
+                foreach (var drawCmd in textMesh.Commands)
+                {
+                    var clipRect = drawCmd.ClipRect;
+                    GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
 
-                Utility.CheckGLError();
-                indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
-            }
+                    GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
+
+                    Utility.CheckGLError();
+                    indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
+                }
 #if Enable_Jitter
             }
 #endif
@@ -286,6 +287,11 @@ namespace ImGui.OSImplementation.Windows
             // second draw to text framebuffer as a quad, with the textMaterial applying sub-pixel anti-aliasing
             var textMaterial = OpenGLMaterial.textMaterial;
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, textFrameBuffer);
+            //change RGB to change the background of text, change Alpha to change the transparency of background
+            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            GL.Clear(GL.GL_COLOR_BUFFER_BIT);
+            //NOTE clear color's alpha channel is the transparency of the drawn text
+            //NOTE A clear color with alpha 0 will make the drawn text invisible!!
             GL.BlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
             textMaterial.program.Bind();
             textMaterial.program.SetUniform("color", 0.0f, 0.0f, 0.0f, 0.0f);
