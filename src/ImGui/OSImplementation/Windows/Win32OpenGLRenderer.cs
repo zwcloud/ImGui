@@ -318,6 +318,9 @@ namespace ImGui.OSImplementation.Windows
             //Draw framebuffer texture to screen as a quad,  with the textMaterial applying sub-pixel anti-aliasing
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
             GL.BlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
+            //VERY IMPORTANT NOTE: the frame-buffer must be cleared to a color with non-zero alpha,
+            //NOTE clear color's alpha channel is the transparency of the drawn text
+            //NOTE A clear color with alpha 0 will make the drawn text invisible!!
             textMaterial.program.Bind();
             textMaterial.program.SetUniform("color", 0.0f, 0.0f, 0.0f, 0.0f);
             GL.Disable(GL.GL_SCISSOR_TEST);

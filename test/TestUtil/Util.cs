@@ -383,14 +383,13 @@ namespace ImGui.UnitTest
             Application.Init();
 
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(200, 200),
-                WindowTypes.Regular);
+                WindowTypes.Hidden);
             var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
             Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
             renderer.StartDrawTextMeshToImage(width, height);
             Keyboard.Instance.OnFrameBegin();
-            renderer.Clear(Color.White);
             imageRawBytes = renderer.DrawTextMeshToImage(textMesh, width, height);
             Keyboard.Instance.OnFrameEnd();
             renderer.EndDrawTextMeshToImage();

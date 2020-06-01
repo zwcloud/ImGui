@@ -161,7 +161,15 @@ void main()
 		(alphaL.x + alphaL.y + alphaR.x) / 6.0,
 		0.0);
 
-	Out_Color = Frag_Color * 0.001 + (color.a == 0.0 ? 1.0 - rgba : color * rgba);
+	Out_Color =   0.0001 * Frag_Color
+                + 0.0001 * (color.a == 0.0 ? 1.0 - rgba : color * rgba)
+                + 1.0 - rgba;
+
+    //TODO This approach only supports black colored text
+    //NOTE Out_Color's alpha channel is the transparency of the drawn text.
+    //NOTE A clear color with alpha 0 will make the drawn text invisible!!
+    //actual code:
+    //Out_Color = 1.0 - rgba;
 }
 "
     );

@@ -355,22 +355,20 @@ namespace TextRenderingTest
             TextMesh textMesh = new TextMesh();
             Color polygonFillColor = Color.Argb(128, 10, 10, 10);
             textMesh.AddTriangles(polygons, polygonFillColor, Vector.Zero, Vector.Zero, 1, false);
+            textMesh.AddBezierSegments(quadraticBezierSegments, polygonFillColor,
+                Vector.Zero, Vector.Zero, 1, false);
             var command = textMesh.Commands[^1];
             command.ElemCount = textMesh.IndexBuffer.Count ;
             textMesh.Commands[^1] = command;
             
-#if false
             int width = 2048, height = 2048;
+#if false
             Util.DrawTextMeshToImage_Realtime(width, height, textMesh);
-
 #else
             //draw the drawingVisual to image
-            int width = 250, height = 250;
             Util.DrawTextMeshToImage(out var imageBytes, width, height, textMesh);
 
-            //save and show the image
-            var path =
- $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsTextMesh_Builtin)}_{fontFileName}_{character.GetHashCode()}.png";
+            var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsTextMesh_Builtin)}_{fontFileName}_{character.GetHashCode()}.png";
             Util.ShowImageNotOpenFolder(imageBytes, width, height, path);
 #endif
         }
