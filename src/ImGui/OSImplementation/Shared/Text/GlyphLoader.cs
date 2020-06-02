@@ -84,7 +84,7 @@ namespace ImGui.OSAbstraction.Text
                 for (int j = 0; j < contourPoints.Count; j++)
                 {
                     var glyphpoint = contourPoints[j];
-                    var point = new Point(glyphpoint.X, glyphpoint.Y);
+                    var point = new Point(glyphpoint.X, -glyphpoint.Y);
                     if (glyphpoint.onCurve)
                     {
                         polygon.Add(point);
@@ -93,8 +93,8 @@ namespace ImGui.OSAbstraction.Text
                     {
                         var prevGlyphPoint = contourPoints[j - 1 >= 0 ? j - 1 : contourPoints.Count - 1];
                         var nextGlyphPoint = contourPoints[j + 1 <= contourPoints.Count - 1 ? j + 1 : 0];
-                        var prev = new Point(prevGlyphPoint.X, prevGlyphPoint.Y);
-                        var next = new Point(nextGlyphPoint.X, nextGlyphPoint.Y);
+                        var prev = new Point(prevGlyphPoint.X, -prevGlyphPoint.Y);
+                        var next = new Point(nextGlyphPoint.X, -nextGlyphPoint.Y);
                         quadraticBezierSegments.Add((prev, point, next));
                     }
                 }
