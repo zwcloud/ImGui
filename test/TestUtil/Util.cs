@@ -178,6 +178,13 @@ namespace ImGui.UnitTest
             Util.SaveImage(image, path);
             Util.OpenImage(path);
         }
+        
+        internal static void ShowRawPixelsFrom_glReadPixels_NotOpenFolder(byte[] imageRawBytes, int width, int height, string path)
+        {
+            using var image = CreateImage(imageRawBytes, width, height, flip: true);
+            Util.SaveImage(image, path);
+            Util.OpenImage(path);
+        }
 
         #endregion
 

@@ -2,7 +2,6 @@
 using ImGui.Rendering;
 using ImGui.OSAbstraction.Text;
 using System;
-using System.Collections.Generic;
 using Xunit;
 using Typography.OpenFont;
 using System.IO;
@@ -11,6 +10,7 @@ using ImGui.UnitTest;
 
 namespace TextRenderingTest
 {
+    //NOTE The character (glyph) is rendered in original size in font file.
     public class GlyphRenderingFacts
     {
         public GlyphRenderingFacts()
@@ -25,7 +25,6 @@ namespace TextRenderingTest
         //glyph settings
         string fontFileName = "DroidSans.ttf";
         const char character = 'e';
-        const int fontPointSize = 650;
 
         //drawing settings
         const double polygonLineWidth = 4;
@@ -45,26 +44,14 @@ namespace TextRenderingTest
                 typeFace = reader.Read(fs);
             }
             Glyph glyph = typeFace.Lookup(character);
+            Bounds boundingBox = typeFace.Bounds;
+            short ascender = typeFace.Ascender;
 
             //read polygons and quadratic bezier segments
             GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
-
-            //calculate the AABB
-            Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
-            for (int i = 0; i < polygons.Count; i++)
-            {
-                var polygon = polygons[i];
-                foreach (var p in polygon)
-                {
-                    aabb.Union(p);
-                }
-            }
-            foreach (var segment in quadraticBezierSegments)
-            {
-                aabb.Union(segment.Item1);
-                aabb.Union(segment.Item2);
-                aabb.Union(segment.Item3);
-            }
+            
+            //The actual position of points should apply ascender offset
+            var offset = new Vector(0,ascender);
 
             //polygons
             Geometry polygonGeometry;
@@ -73,11 +60,12 @@ namespace TextRenderingTest
                 d.BeginPath();
                 foreach (var polygon in polygons)
                 {
-                    var startPoint = polygon[0];
+                    var startPoint = polygon[0] + offset;
                     d.MoveTo(startPoint);
                     var previousPoint = startPoint;
-                    foreach (var p in polygon.Skip(1))
+                    foreach (var point in polygon.Skip(1))
                     {
+                        var p = point + offset;
                         d.LineTo(p);
                         //DrawArrow(d, lastPoint, point);
                         previousPoint = p;
@@ -97,8 +85,8 @@ namespace TextRenderingTest
                 d.BeginPath();
                 foreach (var qs in quadraticBezierSegments)
                 {
-                    d.MoveTo(qs.Item1);
-                    d.QuadraticCurveTo(qs.Item2, qs.Item3);
+                    d.MoveTo(qs.Item1 + offset);
+                    d.QuadraticCurveTo(qs.Item2 + offset, qs.Item3 + offset);
                     d.Stroke();
                 }
                 quadraticGeometry = d.ToGeometry();
@@ -112,7 +100,7 @@ namespace TextRenderingTest
                 for (var i = 0; i < polygons.Count; i++)
                 {
                     var polygon = polygons[i];
-                    var startPoint = polygon[0];
+                    var startPoint = polygon[0] + offset;
                     d.Circle(startPoint, 10);
                     d.Fill();
                 }
@@ -131,12 +119,12 @@ namespace TextRenderingTest
             drawingContext.Close();
 
             //draw the drawingVisual to image
-            int width = 2048, height = 2048;
+            int width = boundingBox.XMax - boundingBox.XMin, height = boundingBox.YMax - boundingBox.YMin;
             Util.DrawDrawingVisualToImage(out var imageBytes, width, height, drawingVisual);
 
             //save and show the image
             var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsDirectedContours_Builtin)}_{fontFileName}_{character}.png";
-            Util.ShowImageNotOpenFolder(imageBytes, width, height, path);
+            Util.ShowRawPixelsFrom_glReadPixels_NotOpenFolder(imageBytes, width, height, path);
         }
 
         [Fact]
@@ -150,31 +138,19 @@ namespace TextRenderingTest
                 typeFace = reader.Read(fs);
             }
             Glyph glyph = typeFace.Lookup(character);
+            Bounds boundingBox = typeFace.Bounds;
+            short ascender = typeFace.Ascender;
 
             //read polygons and quadratic bezier segments
             GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
-
-            //calculate the AABB
-            Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
-            for (int i = 0; i < polygons.Count; i++)
-            {
-                var polygon = polygons[i];
-                foreach (var p in polygon)
-                {
-                    aabb.Union(p);
-                }
-            }
-
-            foreach (var segment in quadraticBezierSegments)
-            {
-                aabb.Union(segment.Item1);
-                aabb.Union(segment.Item2);
-                aabb.Union(segment.Item3);
-            }
+            
+            //The actual position of points should apply ascender offset
+            var offset = new Vector(0,ascender);
 
             // draw to an image
             using (Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.Argb32,
-                MathEx.RoundToInt(2048), MathEx.RoundToInt(2048)))
+                boundingBox.XMax - boundingBox.XMin,
+                boundingBox.YMax - boundingBox.YMin))
             using (Cairo.Context g = new Cairo.Context(surface))
             {
                 //set surface back ground to white (1,1,1,1)
@@ -185,14 +161,15 @@ namespace TextRenderingTest
                 for (var i = 0; i < polygons.Count; i++)
                 {
                     var polygon = polygons[i];
-                    var startPoint = polygon[0];
+                    var startPoint = polygon[0] + offset;
                     g.MoveTo(startPoint.X, startPoint.Y);
                     var previousPoint = startPoint;
                     foreach (var point in polygon)
                     {
-                        g.LineTo(point.X, point.Y);
-                        g.DrawArrow(previousPoint, point);
-                        previousPoint = point;
+                        var p = point + offset;
+                        g.LineTo(p.X, p.Y);
+                        g.DrawArrow(previousPoint, p);
+                        previousPoint = p;
                     }
                     g.LineTo(startPoint.X, startPoint.Y);
                     g.DrawArrow(previousPoint, startPoint);
@@ -204,9 +181,9 @@ namespace TextRenderingTest
                 //quadratic bezier segments
                 foreach (var segment in quadraticBezierSegments)
                 {
-                    var p0 = segment.Item1;
-                    var c = segment.Item2;
-                    var p1 = segment.Item3;
+                    var p0 = segment.Item1 + offset;
+                    var c = segment.Item2 + offset;
+                    var p1 = segment.Item3 + offset;
                     g.MoveTo(p0.X, p0.Y);
                     g.QuadraticTo(c.X, c.Y, p1.X, p1.Y);
                 }
@@ -219,7 +196,7 @@ namespace TextRenderingTest
                 for (var i = 0; i < polygons.Count; i++)
                 {
                     var polygon = polygons[i];
-                    var startPoint = polygon[0];
+                    var startPoint = polygon[0] + offset;
                     g.Arc(startPoint.x, startPoint.y, 10, 0, System.Math.PI * 2);
                     g.Fill();
                 }
@@ -242,26 +219,14 @@ namespace TextRenderingTest
                 typeFace = reader.Read(fs);
             }
             Glyph glyph = typeFace.Lookup(character);
+            Bounds boundingBox = typeFace.Bounds;
+            short ascender = typeFace.Ascender;
 
             //read polygons and quadratic bezier segments
             GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
-
-            //calculate the AABB
-            Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
-            for (int i = 0; i < polygons.Count; i++)
-            {
-                var polygon = polygons[i];
-                foreach (var p in polygon)
-                {
-                    aabb.Union(p);
-                }
-            }
-            foreach (var segment in quadraticBezierSegments)
-            {
-                aabb.Union(segment.Item1);
-                aabb.Union(segment.Item2);
-                aabb.Union(segment.Item3);
-            }
+            
+            //The actual position of points should apply ascender offset
+            var offset = new Vector(0,ascender);
 
             //polygons
             var polygonBrush = new Brush(Color.Argb(128, 10, 10, 10));
@@ -275,10 +240,10 @@ namespace TextRenderingTest
                         continue;
                     }
 
-                    d.MoveTo(polygon[0]);
+                    d.MoveTo(polygon[0] + offset);
                     foreach (var point in polygon.Skip(1))
                     {
-                        d.LineTo(point);
+                        d.LineTo(point + offset);
                     }
                     d.Fill();
                 }
@@ -293,7 +258,7 @@ namespace TextRenderingTest
                 {
                     foreach (var point in polygon)
                     {
-                        d.Circle(point, 5);
+                        d.Circle(point + offset, 5);
                         d.Fill();
                     }
                 }
@@ -311,12 +276,12 @@ namespace TextRenderingTest
             drawingContext.Close();
 
             //draw the drawingVisual to image
-            int width = 2048, height = 2048;
+            int width = boundingBox.XMax - boundingBox.XMin, height = boundingBox.YMax - boundingBox.YMin;
             Util.DrawDrawingVisualToImage(out var imageBytes, width, height, drawingVisual);
 
             //save and show the image
             var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsOverlappingPolygon_Builtin)}_{fontFileName}_{character}.png";
-            Util.ShowImageNotOpenFolder(imageBytes, width, height, path);
+            Util.ShowRawPixelsFrom_glReadPixels_NotOpenFolder(imageBytes, width, height, path);
         }
 
         [Fact]
@@ -329,39 +294,26 @@ namespace TextRenderingTest
                 var reader = new OpenFontReader();
                 typeFace = reader.Read(fs);
             }
+
+            Bounds boundingBox = typeFace.Bounds;
+            short ascender = typeFace.Ascender;
             Glyph glyph = typeFace.Lookup(character);
 
             //read polygons and quadratic bezier segments
             GlyphLoader.Read(glyph, out var polygons, out var quadraticBezierSegments);
 
-            //calculate the AABB
-            Rect aabb = new Rect(polygons[0][0], polygons[0][1]);
-            for (int i = 0; i < polygons.Count; i++)
-            {
-                var polygon = polygons[i];
-                foreach (var p in polygon)
-                {
-                    aabb.Union(p);
-                }
-            }
-            foreach (var segment in quadraticBezierSegments)
-            {
-                aabb.Union(segment.Item1);
-                aabb.Union(segment.Item2);
-                aabb.Union(segment.Item3);
-            }
-
             //construct text mesh
             TextMesh textMesh = new TextMesh();
             Color polygonFillColor = Color.Argb(128, 10, 10, 10);
-            textMesh.AddTriangles(polygons, polygonFillColor, Vector.Zero, Vector.Zero, 1, false);
+            textMesh.AddTriangles(polygons, polygonFillColor,
+                new Vector(0, ascender), Vector.Zero, 1, false);
             textMesh.AddBezierSegments(quadraticBezierSegments, polygonFillColor,
-                Vector.Zero, Vector.Zero, 1, false);
+                new Vector(0, ascender), Vector.Zero, 1, false);
             var command = textMesh.Commands[^1];
             command.ElemCount = textMesh.IndexBuffer.Count ;
             textMesh.Commands[^1] = command;
-            
-            int width = 2048, height = 2048;
+
+            int width = boundingBox.XMax - boundingBox.XMin, height = boundingBox.YMax - boundingBox.YMin;
 #if false
             Util.DrawTextMeshToImage_Realtime(width, height, textMesh);
 #else
@@ -369,7 +321,7 @@ namespace TextRenderingTest
             Util.DrawTextMeshToImage(out var imageBytes, width, height, textMesh);
 
             var path = $"{OutputDir}{Path.DirectorySeparatorChar}{nameof(ShowGlyphAsTextMesh_Builtin)}_{fontFileName}_{character.GetHashCode()}.png";
-            Util.ShowImageNotOpenFolder(imageBytes, width, height, path);
+            Util.ShowRawPixelsFrom_glReadPixels_NotOpenFolder(imageBytes, width, height, path);
 #endif
         }
     }
