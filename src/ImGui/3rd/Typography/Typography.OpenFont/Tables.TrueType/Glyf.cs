@@ -6,33 +6,35 @@ namespace Typography.OpenFont.Tables
 {
     class Glyf : TableEntry
     {
+        public const string _N = "glyf";
+        public override string Name => _N;
+        //
         Glyph[] _glyphs;
+        GlyphLocations _glyphLocations;
+
+        //--------------------
+        //both ttf and cff
+        //we don't share EmptyGlyph between typefaces
+        internal readonly Glyph _emptyGlyph = new Glyph(new GlyphPointF[0], new ushort[0], Bounds.Zero, null, 0);
+
         public Glyf(GlyphLocations glyphLocations)
         {
-            this.GlyphLocations = glyphLocations;
+            _glyphLocations = glyphLocations;
         }
         public Glyph[] Glyphs
         {
-            get { return _glyphs; }
-        }
-        public override string Name
-        {
-            get { return "glyf"; }
-        }
-        public GlyphLocations GlyphLocations
-        {
-            get;
-            private set;
+            get => _glyphs;
+            internal set => _glyphs = value;
         }
         protected override void ReadContentFrom(BinaryReader reader)
         {
 
             uint tableOffset = this.Header.Offset;
-            GlyphLocations locations = this.GlyphLocations;
+            GlyphLocations locations = _glyphLocations;
             int glyphCount = locations.GlyphCount;
             _glyphs = new Glyph[glyphCount];
 
-            List<int> compositeGlyphs = new List<int>();
+            List<ushort> compositeGlyphs = new List<ushort>();
 
             for (int i = 0; i < glyphCount; i++)
             {
@@ -42,43 +44,37 @@ namespace Typography.OpenFont.Tables
                 {
                     //https://www.microsoft.com/typography/OTSPEC/glyf.htm
                     //header, 
-                    //Type 	Name 	Description
+                    //Type 	    Name 	            Description
                     //SHORT 	numberOfContours 	If the number of contours is greater than or equal to zero, this is a single glyph; if negative, this is a composite glyph.
-                    //SHORT 	xMin 	Minimum x for coordinate data.
-                    //SHORT 	yMin 	Minimum y for coordinate data.
-                    //SHORT 	xMax 	Maximum x for coordinate data.
-                    //SHORT 	yMax 	Maximum y for coordinate data.
+                    //SHORT 	xMin 	            Minimum x for coordinate data.
+                    //SHORT 	yMin 	            Minimum y for coordinate data.
+                    //SHORT 	xMax 	            Maximum x for coordinate data.
+                    //SHORT 	yMax 	            Maximum y for coordinate data.
                     short contoursCount = reader.ReadInt16();
                     if (contoursCount >= 0)
                     {
                         Bounds bounds = Utils.ReadBounds(reader);
-                        _glyphs[i] = ReadSimpleGlyph(reader, contoursCount, bounds);
+                        _glyphs[i] = ReadSimpleGlyph(reader, contoursCount, bounds, (ushort)i);
                     }
                     else
                     {
                         //skip composite glyph,
                         //resolve later
-                        compositeGlyphs.Add(i);
+                        compositeGlyphs.Add((ushort)i);
                     }
                 }
                 else
                 {
-                    _glyphs[i] = Glyph.Empty;
+                    _glyphs[i] = _emptyGlyph;
                 }
             }
 
             //--------------------------------
             //resolve composte glyphs 
             //--------------------------------
-            int compositeGlyphCount = compositeGlyphs.Count;
-            for (int i = 0; i < compositeGlyphCount; ++i)
+
+            foreach (ushort glyphIndex in compositeGlyphs)
             {
-                //move to composite glyph position
-                int glyphIndex = compositeGlyphs[i];
-                reader.BaseStream.Seek(tableOffset + locations.Offsets[glyphIndex], SeekOrigin.Begin);//reset     
-                //------------------------
-                short contoursCount = reader.ReadInt16();
-                Bounds bounds = Utils.ReadBounds(reader);
 
 #if DEBUG
                 if (glyphIndex == 7)
@@ -86,15 +82,17 @@ namespace Typography.OpenFont.Tables
 
                 }
 #endif
-                _glyphs[glyphIndex] = ReadCompositeGlyph(_glyphs, reader, -contoursCount, bounds);
-            }
+                _glyphs[glyphIndex] = ReadCompositeGlyph(_glyphs, reader, tableOffset, glyphIndex);
 
+
+            }
         }
+
         static bool HasFlag(SimpleGlyphFlag target, SimpleGlyphFlag test)
         {
             return (target & test) == test;
         }
-        static bool HasFlag(CompositeGlyphFlags target, CompositeGlyphFlags test)
+        internal static bool HasFlag(CompositeGlyphFlags target, CompositeGlyphFlags test)
         {
             return (target & test) == test;
         }
@@ -125,31 +123,35 @@ namespace Typography.OpenFont.Tables
 
         static short[] ReadCoordinates(BinaryReader input, int pointCount, SimpleGlyphFlag[] flags, SimpleGlyphFlag isByte, SimpleGlyphFlag signOrSame)
         {
-            //https://www.microsoft.com/typography/OTSPEC/glyf.htm
+            //https://docs.microsoft.com/en-us/typography/opentype/spec/glyf
             //Note: In the glyf table, the position of a point is not stored in absolute terms but as a vector relative to the previous point. 
             //The delta-x and delta-y vectors represent these (often small) changes in position.
 
             //Each flag is a single bit. Their meanings are shown below.
             //Bit	Flags  	        Description
-            //0     On Curve 	 	If set, the point is on the curve; otherwise, it is off the curve.
-            //1     x-Short Vector  If set, the corresponding x-coordinate is 1 byte long. If not set, 2 bytes.
-            //2     y-Short Vector 	If set, the corresponding y-coordinate is 1 byte long. If not set, 2 bytes.
-            //3     Repeat 	 	    If set, the next byte specifies the number of additional times this set of flags is to be repeated.
+            //0     ON_CURVE_POINT  If set, the point is on the curve; otherwise, it is off the curve.
+            //1     X_SHORT_VECTOR  If set, the corresponding x-coordinate is 1 byte long. If not set, 2 bytes.
+            //2     Y_SHORT_VECTOR 	If set, the corresponding y-coordinate is 1 byte long. If not set, 2 bytes.
+            //3     REPEAT_FLAG     If set, the next byte specifies the number of additional times this set of flags is to be repeated.
             //                      In this way, the number of flags listed can be smaller than the number of points in a character.
-            //4     This x is same(Positive x-Short Vector) This flag has two meanings, depending on how the x-Short Vector flag is set.
+
+            //4     X_IS_SAME_OR_POSITIVE_X_SHORT_VECTOR
+            //                      This flag has two meanings, depending on how the x-Short Vector flag is set.
             //                      If x-Short Vector is set, this bit describes the sign of the value, 
             //                      with 1 equalling positive and 0 negative. 
             //                      If the x-Short Vector bit is not set and this bit is set, then the current x-coordinate is the same as the previous x-coordinate. 
             //                      If the x-Short Vector bit is not set and this bit is also not set, the current x-coordinate is a signed 16-bit delta vector.
-            //5     This y is same  (Positive y-Short Vector)  This flag has two meanings,
+
+            //5     Y_IS_SAME_OR_POSITIVE_Y_SHORT_VECTOR
+            //                      This flag has two meanings,
             //                      depending on how the y-Short Vector flag is set. 
             //                      If y-Short Vector is set, this bit describes the sign of the value,
             //                      with 1 equalling positive and 0 negative. 
             //                      If the y-Short Vector bit is not set and this bit is set, then the current y-coordinate is the same as the previous y-coordinate.
             //                      If the y-Short Vector bit is not set and this bit is also not set,
             //                      the current y-coordinate is a signed 16-bit delta vector.  
-            //6  Reserved 	 	This bit is reserved. Set it to zero.
-            //7  Reserved 	 	This bit is reserved. Set it to zero.
+            //6     OVERLAP_SIMPLE 	This bit is reserved. Set it to zero. (not used in OpenType)
+            //7     Reserved 	 	This bit is reserved. Set it to zero.
 
             var xs = new short[pointCount];
             int x = 0;
@@ -187,18 +189,21 @@ namespace Typography.OpenFont.Tables
             XSignOrSame = 1 << 4,
             YSignOrSame = 1 << 5
         }
-        static Glyph ReadSimpleGlyph(BinaryReader reader, int contourCount, Bounds bounds)
+
+        static Glyph ReadSimpleGlyph(BinaryReader reader, int contourCount, Bounds bounds, ushort index)
         {
-            //https://www.microsoft.com/typography/OTSPEC/glyf.htm
+            //https://docs.microsoft.com/en-us/typography/opentype/spec/glyf
             //Simple Glyph Description
-            //This is the table information needed if numberOfContours is greater than zero, that is, a glyph is not a composite.
-            //Type 	Name 	Description
-            //USHORT 	endPtsOfContours[n] 	Array of last points of each contour; n is the number of contours.
-            //USHORT 	instructionLength 	Total number of bytes for instructions.
-            //BYTE 	instructions[n] 	Array of instructions for each glyph; n is the number of instructions.
-            //BYTE 	flags[n] 	Array of flags for each coordinate in outline; n is the number of flags.
-            //BYTE or SHORT 	xCoordinates[ ] 	First coordinates relative to (0,0); others are relative to previous point.
-            //BYTE or SHORT 	yCoordinates[ ] 	First coordinates relative to (0,0); others are relative to previous point.
+            //This is the table information needed if numberOfContours is greater than zero, 
+            //that is, a glyph is not a composite.
+
+            //Type 	    Name 	                                Description
+            //uint16 	endPtsOfContours[numberOfContours] 	    Array of last points of each contour; 
+            //uint16 	instructionLength 	                    Total number of bytes for instructions.
+            //uint8 	instructions[instructionLength] 	    Array of instructions for each glyph;
+            //uint8 	flags[variable] 	                    Array of flags for each coordinate in outline; variable is the number of flags.
+            //uint8 or int16 	xCoordinates[variable] 	        First coordinates relative to (0,0); others are relative to previous point.
+            //uint8 or int16 	yCoordinates[variable] 	        First coordinates relative to (0,0); others are relative to previous point.
 
             ushort[] endPoints = Utils.ReadUInt16Array(reader, contourCount);
             //-------------------------------------------------------
@@ -221,22 +226,22 @@ namespace Typography.OpenFont.Tables
             //-----------
             //lets build GlyphPoint set
             //-----------
-            return new Glyph(glyphPoints, endPoints, bounds, instructions);
+            return new Glyph(glyphPoints, endPoints, bounds, instructions, index);
         }
 
 
         [Flags]
-        enum CompositeGlyphFlags : ushort
+        internal enum CompositeGlyphFlags : ushort
         {
             //These are the constants for the flags field:
-            //Bit   Flags 	 	Description
+            //Bit   Flags 	 	            Description
             //0     ARG_1_AND_2_ARE_WORDS  	If this is set, the arguments are words; otherwise, they are bytes.
             //1     ARGS_ARE_XY_VALUES 	  	If this is set, the arguments are xy values; otherwise, they are points.
             //2     ROUND_XY_TO_GRID 	  	For the xy values if the preceding is true.
             //3     WE_HAVE_A_SCALE 	 	This indicates that there is a simple scale for the component. Otherwise, scale = 1.0.
             //4     RESERVED 	        	This bit is reserved. Set it to 0.
             //5     MORE_COMPONENTS 	    Indicates at least one more glyph after this one.
-            //6     WE_HAVE_AN_X_AND_Y_SCALE 	  	The x direction will use a different scale from the y direction.
+            //6     WE_HAVE_AN_X_AND_Y_SCALE 	The x direction will use a different scale from the y direction.
             //7     WE_HAVE_A_TWO_BY_TWO 	  	There is a 2 by 2 transformation that will be used to scale the component.
             //8     WE_HAVE_INSTRUCTIONS 	 	Following the last component are instructions for the composite character.
             //9     USE_MY_METRICS 	 	        If set, this forces the aw and lsb (and rsb) for the composite to be equal to those from this original glyph. This works for hinted and unhinted characters.
@@ -259,11 +264,8 @@ namespace Typography.OpenFont.Tables
             UNSCALED_COMPONENT_OFFSET = 1 << 12
         }
 
-
-
-        static Glyph ReadCompositeGlyph(Glyph[] createdGlyhps, BinaryReader reader, int contourCount, Bounds bounds)
+        Glyph ReadCompositeGlyph(Glyph[] createdGlyphs, BinaryReader reader, uint tableOffset, ushort compositeGlyphIndex)
         {
-
             //------------------------------------------------------ 
             //https://www.microsoft.com/typography/OTSPEC/glyf.htm
             //Composite Glyph Description
@@ -271,40 +273,83 @@ namespace Typography.OpenFont.Tables
             //This is the table information needed for composite glyphs (numberOfContours is -1). 
             //A composite glyph starts with two USHORT values (“flags” and “glyphIndex,” i.e. the index of the first contour in this composite glyph); 
             //the data then varies according to “flags”).
-            //Type 	Name 	Description
-            //USHORT 	flags 	component flag
-            //USHORT 	glyphIndex 	glyph index of component
+            //Type 	    Name 	    Description
+            //uint16 	flags 	    component flag
+            //uint16 	glyphIndex 	glyph index of component
             //VARIABLE 	argument1 	x-offset for component or point number; type depends on bits 0 and 1 in component flags
             //VARIABLE 	argument2 	y-offset for component or point number; type depends on bits 0 and 1 in component flags
             //---------
+            //note: VARIABLE => may be uint8,int8,uint16 or int16
             //see more at https://fontforge.github.io/assets/old/Composites/index.html
             //---------
+
+            //move to composite glyph position
+            reader.BaseStream.Seek(tableOffset + _glyphLocations.Offsets[compositeGlyphIndex], SeekOrigin.Begin);//reset
+            //------------------------
+            short contoursCount = reader.ReadInt16(); // ignored
+            Bounds bounds = Utils.ReadBounds(reader);
 
             Glyph finalGlyph = null;
             CompositeGlyphFlags flags;
 
+#if DEBUG
+            int ncount = 0;
+#endif
             do
             {
-
                 flags = (CompositeGlyphFlags)reader.ReadUInt16();
                 ushort glyphIndex = reader.ReadUInt16();
-                Glyph newGlyph = Glyph.Clone(createdGlyhps[glyphIndex]);
+                if (createdGlyphs[glyphIndex] == null)
+                {
+                    // This glyph is not read yet, resolve it first!
+                    long storedOffset = reader.BaseStream.Position;
+                    Glyph missingGlyph = ReadCompositeGlyph(createdGlyphs, reader, tableOffset, glyphIndex);
+                    createdGlyphs[glyphIndex] = missingGlyph;
+                    reader.BaseStream.Position = storedOffset;
+                }
+                Glyph newGlyph = Glyph.Clone(createdGlyphs[glyphIndex], compositeGlyphIndex);
 
-                short arg1 = 0;
-                short arg2 = 0;
-                ushort arg1and2 = 0;
+                int arg1 = 0;//arg1, arg2 may be int8,uint8,int16,uint 16 
+                int arg2 = 0;//arg1, arg2 may be int8,uint8,int16,uint 16
 
                 if (HasFlag(flags, CompositeGlyphFlags.ARG_1_AND_2_ARE_WORDS))
                 {
-                    arg1 = reader.ReadInt16();
-                    arg2 = reader.ReadInt16();
+
+                    //0x0002  ARGS_ARE_XY_VALUES Bit 1: If this is set,
+                    //the arguments are **signed xy values**
+                    //otherwise, they are unsigned point numbers.
+                    if (HasFlag(flags, CompositeGlyphFlags.ARGS_ARE_XY_VALUES))
+                    {
+                        //singed
+                        arg1 = reader.ReadInt16();
+                        arg2 = reader.ReadInt16();
+                    }
+                    else
+                    {
+                        //unsigned
+                        arg1 = reader.ReadUInt16();
+                        arg2 = reader.ReadUInt16();
+                    }
                 }
                 else
                 {
-                    byte a1 = reader.ReadByte();
-                    byte a2 = reader.ReadByte();
-                    arg1and2 = (ushort)((a1 << 8) | a2);
+                    //0x0002  ARGS_ARE_XY_VALUES Bit 1: If this is set,
+                    //the arguments are **signed xy values**
+                    //otherwise, they are unsigned point numbers.
+                    if (HasFlag(flags, CompositeGlyphFlags.ARGS_ARE_XY_VALUES))
+                    {
+                        //singed
+                        arg1 = (sbyte)reader.ReadByte();
+                        arg2 = (sbyte)reader.ReadByte();
+                    }
+                    else
+                    {
+                        //unsigned
+                        arg1 = reader.ReadByte();
+                        arg2 = reader.ReadByte();
+                    }
                 }
+
                 //-----------------------------------------
                 float xscale = 1;
                 float scale01 = 0;
@@ -319,13 +364,15 @@ namespace Typography.OpenFont.Tables
                     //If the bit WE_HAVE_A_SCALE is set,
                     //the scale value is read in 2.14 format-the value can be between -2 to almost +2.
                     //The glyph will be scaled by this value before grid-fitting. 
-                    xscale = yscale = ((float)reader.ReadInt16()) / (1 << 14); /* Format 2.14 */
+
+                    xscale = yscale = reader.ReadF2Dot14(); /* Format 2.14 */
                     hasScale = true;
                 }
                 else if (HasFlag(flags, CompositeGlyphFlags.WE_HAVE_AN_X_AND_Y_SCALE))
                 {
-                    xscale = ((float)reader.ReadInt16()) / (1 << 14); /* Format 2.14 */
-                    yscale = ((float)reader.ReadInt16()) / (1 << 14); /* Format 2.14 */
+
+                    xscale = reader.ReadF2Dot14(); /* Format 2.14 */
+                    yscale = reader.ReadF2Dot14(); /* Format 2.14 */
                     hasScale = true;
                 }
                 else if (HasFlag(flags, CompositeGlyphFlags.WE_HAVE_A_TWO_BY_TWO))
@@ -346,10 +393,11 @@ namespace Typography.OpenFont.Tables
                     //Note that the behavior of the USE_MY_METRICS operation is undefined for rotated composite components. 
                     useMatrix = true;
                     hasScale = true;
-                    xscale = ((float)reader.ReadInt16()) / (1 << 14); /* Format 2.14 */
-                    scale01 = ((float)reader.ReadInt16()) / (1 << 14); /* Format 2.14 */
-                    scale10 = ((float)reader.ReadInt16()) / (1 << 14); /* Format 2.14 */
-                    yscale = ((float)reader.ReadInt16()) / (1 << 14); /* Format 2.14 */
+
+                    xscale = reader.ReadF2Dot14(); /* Format 2.14 */
+                    scale01 = reader.ReadF2Dot14(); /* Format 2.14 */
+                    scale10 = reader.ReadF2Dot14();/* Format 2.14 */
+                    yscale = reader.ReadF2Dot14(); /* Format 2.14 */
 
                     if (HasFlag(flags, CompositeGlyphFlags.UNSCALED_COMPONENT_OFFSET))
                     {
@@ -367,20 +415,25 @@ namespace Typography.OpenFont.Tables
                     }
                 }
 
+                //Argument1 and argument2 can be either...
+                //   x and y offsets to be added to the glyph(the ARGS_ARE_XY_VALUES flag is set), 
+                //or 
+                //   two point numbers(the ARGS_ARE_XY_VALUES flag is **not** set)
+
+                //When arguments 1 and 2 are an x and a y offset instead of points and the bit ROUND_XY_TO_GRID is set to 1,
+                //the values are rounded to those of the closest grid lines before they are added to the glyph.
+                //X and Y offsets are described in FUnits. 
+
+
                 //--------------------------------------------------------------------
                 if (HasFlag(flags, CompositeGlyphFlags.ARGS_ARE_XY_VALUES))
                 {
-                    //Argument1 and argument2 can be either x and y offsets to be added to the glyph or two point numbers.  
-                    //x and y offsets to be added to the glyph
-                    //When arguments 1 and 2 are an x and a y offset instead of points and the bit ROUND_XY_TO_GRID is set to 1,
-                    //the values are rounded to those of the closest grid lines before they are added to the glyph.
-                    //X and Y offsets are described in FUnits. 
 
                     if (useMatrix)
                     {
                         //use this matrix  
                         Glyph.TransformNormalWith2x2Matrix(newGlyph, xscale, scale01, scale10, yscale);
-                        Glyph.OffsetXY(newGlyph, (short)(arg1), arg2);
+                        Glyph.OffsetXY(newGlyph, (short)arg1, (short)arg2);
                     }
                     else
                     {
@@ -394,7 +447,7 @@ namespace Typography.OpenFont.Tables
                             {
                                 Glyph.TransformNormalWith2x2Matrix(newGlyph, xscale, 0, 0, yscale);
                             }
-                            Glyph.OffsetXY(newGlyph, arg1, arg2);
+                            Glyph.OffsetXY(newGlyph, (short)arg1, (short)arg2);
                         }
                         else
                         {
@@ -404,11 +457,9 @@ namespace Typography.OpenFont.Tables
                                 //----------------------------
                             }
                             //just offset***
-                            Glyph.OffsetXY(newGlyph, arg1, arg2);
+                            Glyph.OffsetXY(newGlyph, (short)arg1, (short)arg2);
                         }
                     }
-
-
                 }
                 else
                 {
@@ -416,6 +467,8 @@ namespace Typography.OpenFont.Tables
                     //the first point number indicates the point that is to be matched to the new glyph. 
                     //The second number indicates the new glyph's “matched” point. 
                     //Once a glyph is added,its point numbers begin directly after the last glyphs (endpoint of first glyph + 1)
+
+                    //TODO: implement this...
 
                 }
 
@@ -429,6 +482,11 @@ namespace Typography.OpenFont.Tables
                     //merge 
                     Glyph.AppendGlyph(finalGlyph, newGlyph);
                 }
+
+
+#if DEBUG
+                ncount++;
+#endif
 
             } while (HasFlag(flags, CompositeGlyphFlags.MORE_COMPONENTS));
             //
@@ -469,10 +527,7 @@ namespace Typography.OpenFont.Tables
             //------------------------------------------------------------ 
 
 
-            return (finalGlyph == null) ? Glyph.Empty : finalGlyph;
-
+            return finalGlyph ?? _emptyGlyph;
         }
-
-
     }
 }

@@ -1,4 +1,4 @@
-﻿//Apahce2, 2017, WinterDev
+﻿//Apache2, 2017-present, WinterDev
 //Apache2, 2014-2016, Samuel Carlsson, WinterDev
 
 using System;
@@ -7,17 +7,13 @@ namespace Typography.OpenFont.Tables
 {
     class Head : TableEntry
     {
+        public const string _N = "head";
+        public override string Name => _N;
+        //
         short _indexToLocFormat;
         Bounds _bounds;
-
-       
-
         public Head()
         {
-        }
-        public override string Name
-        {
-            get { return "head"; }
         }
         protected override void ReadContentFrom(BinaryReader input)
         {
@@ -47,11 +43,11 @@ namespace Typography.OpenFont.Tables
         public ushort UnitsPerEm { get; private set; }
         public ulong Created { get; private set; }
         public ulong Modified { get; private set; }
-        public Bounds Bounds { get { return _bounds; } }
+        public Bounds Bounds => _bounds;
         public ushort MacStyle { get; private set; }
         public ushort LowestRecPPEM { get; private set; }
         public short FontDirectionHint { get; private set; }
-        public bool WideGlyphLocations { get { return _indexToLocFormat > 0; } }
+        public bool WideGlyphLocations => _indexToLocFormat > 0;
         public short GlyphDataFormat { get; private set; }
 
     }

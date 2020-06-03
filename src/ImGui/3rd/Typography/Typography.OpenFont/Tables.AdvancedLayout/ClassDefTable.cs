@@ -1,4 +1,4 @@
-﻿//Apache2, 2016-2017, WinterDev
+﻿//Apache2, 2016-present, WinterDev
 using System;
 using System.IO;
 
@@ -92,7 +92,7 @@ namespace Typography.OpenFont.Tables
     //---------------------------------------
     class ClassDefTable
     {
-        public int Format { get; private set; }
+        public int Format { get; internal set; }
         //----------------
         //format 1
         public ushort startGlyph;
@@ -114,7 +114,7 @@ namespace Typography.OpenFont.Tables
                     {
                         classDefTable.startGlyph = reader.ReadUInt16();
                         ushort glyphCount = reader.ReadUInt16();
-                        classDefTable.classValueArray = Utils.ReadUInt16Array(reader, glyphCount); 
+                        classDefTable.classValueArray = Utils.ReadUInt16Array(reader, glyphCount);
                     }
                     break;
                 case 2:
@@ -163,7 +163,44 @@ namespace Typography.OpenFont.Tables
         }
 
 
+        public int GetClassValue(ushort glyphIndex)
+        {
+            switch (Format)
+            {
+                default: throw new NotSupportedException();
+                case 1:
+                    {
+                        if (glyphIndex >= startGlyph &&
+                            glyphIndex < classValueArray.Length)
+                        {
+                            return classValueArray[glyphIndex - startGlyph];
+                        }
+                        return -1;
+                    }
+                case 2:
+                    {
 
+                        for (int i = 0; i < records.Length; ++i)
+                        {
+                            //TODO: review a proper method here again
+                            //esp. binary search
+                            ClassRangeRecord rec = records[i];
+                            if (rec.startGlyphId <= glyphIndex)
+                            {
+                                if (glyphIndex <= rec.endGlyphId)
+                                {
+                                    return rec.classNo;
+                                }
+                            }
+                            else
+                            {
+                                return -1;//no need to go further
+                            }
+                        }
+                        return -1;
+                    }
+            }
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-﻿//Apache2, 2016-2017, WinterDev
+﻿//Apache2, 2016-present, WinterDev
 using System;
 using System.IO;
 namespace Typography.OpenFont.Tables
@@ -8,6 +8,9 @@ namespace Typography.OpenFont.Tables
     /// </summary>
     class Gasp : TableEntry
     {
+        public const string _N = "gasp";
+        public override string Name => _N;
+        //
         //https://www.microsoft.com/typography/otspec/gasp.htm
 
 
@@ -29,12 +32,7 @@ namespace Typography.OpenFont.Tables
         //the rasterizer may apply default rules to decide how to render the glyphs on grayscale devices.
 
         //The 'gasp' table consists of a header followed by groupings of 'gasp' records:
-        GaspRangeRecord[] rangeRecords;
-
-        public override string Name
-        {
-            get { return "gasp"; }
-        }
+        GaspRangeRecord[] _rangeRecords;
         protected override void ReadContentFrom(BinaryReader reader)
         {
 
@@ -49,10 +47,10 @@ namespace Typography.OpenFont.Tables
             //USHORT 	rangeGaspBehavior 	Flags describing desired rasterizer behavior.
             ushort version = reader.ReadUInt16();
             ushort numRanges = reader.ReadUInt16();
-            rangeRecords = new GaspRangeRecord[numRanges];
+            _rangeRecords = new GaspRangeRecord[numRanges];
             for (int i = 0; i < numRanges; ++i)
             {
-                rangeRecords[i] = new GaspRangeRecord(
+                _rangeRecords[i] = new GaspRangeRecord(
                     reader.ReadUInt16(),
                     (GaspRangeBehavior)reader.ReadUInt16());
             }

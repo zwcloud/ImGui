@@ -1,260 +1,161 @@
-﻿//Apache2, 2016-2017, WinterDev
+﻿//Apache2, 2016-present, WinterDev
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Typography.OpenFont.Tables
 {
-    class CoverageTable
+    // https://www.microsoft.com/typography/otspec/chapter2.htm
+    public abstract class CoverageTable
     {
-        //https://www.microsoft.com/typography/otspec/chapter2.htm
-        ushort _format;
-        ushort[] orderedGlyphIdList; //for format1
-        //----------------------------------
-        int[] rangeOffsets;
-        RangeRecord[] ranges;//for format2
-        //----------------------------------
+        public abstract int FindPosition(ushort glyphIndex);
+        public abstract IEnumerable<ushort> GetExpandedValueIter();
 
-        private CoverageTable()
-        {
-        }
-        public int FindPosition(int glyphIndex)
-        {
-            switch (_format)
-            {
-                //should not occur here
-                default: throw new NotSupportedException();
-                case 1:
-                    {
-                        //TODO: imple fast search here                       
+#if DEBUG
 
-                        for (int i = orderedGlyphIdList.Length - 1; i >= 0; --i)
-                        {
-                            ushort gly = orderedGlyphIdList[i];
-                            if (gly < glyphIndex)
-                            {
-                                //TODO: review here
-                                //we assume that the glyph list is ordered (lesser to greater)
-                                //since we seach backward,so if gly is lesser than glyphIndex 
-                                return -1;//not found
-                            }
-                            else if (gly == glyphIndex)
-                            {
-                                return i;
-                            }
-                        }
-                    }
-                    break;
-                case 2:
-                    {
-                        //return 'logical' coverage index 
-                        int len = rangeOffsets.Length;
-                        int pos_s = 0;
-                        for (int i = 0; i < len; ++i)
-                        {
-                            RangeRecord range = ranges[i];
-                            int pos = range.FindPosition(glyphIndex);
-                            if (pos > -1)
-                            {
-                                return pos_s + pos;
-                            }
-                            if (range.start > glyphIndex)
-                            {
-                                //just stop
-                                return -1;
-                            }
-                            pos_s += range.Width;
-                        }
-                        return -1;
-                    }
-
-            }
-            return -1;//not found
-        }
+#endif
+     
         public static CoverageTable CreateFrom(BinaryReader reader, long beginAt)
         {
             reader.BaseStream.Seek(beginAt, SeekOrigin.Begin);
-            //---------------------------------------------------
-            var coverageTable = new CoverageTable();
-
-            //CoverageFormat1 table: Individual glyph indices
-            //Type      Name                       Description
-            //uint16    CoverageFormat             Format identifier-format = 1
-            //uint16    GlyphCount  	           Number of glyphs in the GlyphArray
-            //uint16    GlyphArray[GlyphCount] 	   Array of glyph IDs — in numerical order
-            //---------------------------------
-            //CoverageFormat2 table: Range of glyphs 
-            //Type      Name                       Description           
-            //uint16    CoverageFormat             Format identifier-format = 2
-            //uint16    RangeCount                 Number of RangeRecords
-            //struct    RangeRecord[RangeCount]    Array of glyph ranges — ordered by StartGlyphID.
-            //------------
-            //RangeRecord
-            //----------
-            //Type      Name                Description
-            //uint16    StartGlyphID        First glyph ID in the range
-            //uint16    EndGlyphID          Last glyph ID in the range
-            //uint16    StartCoverageIndex  Coverage Index of first glyph ID in range
-            //----------
-
-            switch (coverageTable._format = reader.ReadUInt16())
+            ushort format = reader.ReadUInt16();
+            switch (format)
             {
-                default:
-                    throw new NotSupportedException();
-                case 1:    //CoverageFormat1 table: Individual glyph indices
-                    {
-                        ushort glyphCount = reader.ReadUInt16();
-                        ushort[] orderedGlyphIdList = new ushort[glyphCount];
-                        //
-                        for (int i = 0; i < glyphCount; ++i)
-                        {
-                            orderedGlyphIdList[i] = reader.ReadUInt16();
-                        }
-                        coverageTable.orderedGlyphIdList = orderedGlyphIdList;
-                    }
-                    break;
-                case 2:  //CoverageFormat2 table: Range of glyphs
-                    {
-
-                        ushort rangeCount = reader.ReadUInt16();
-                        RangeRecord[] ranges = new RangeRecord[rangeCount];
-                        for (int i = 0; i < rangeCount; ++i)
-                        {
-                            ranges[i] = new RangeRecord(
-                                reader.ReadUInt16(),
-                                reader.ReadUInt16(),
-                                reader.ReadUInt16());
-                        }
-                        coverageTable.ranges = ranges;
-                        coverageTable.UpdateRangeOffsets();
-                    }
-                    break;
-
+                default: throw new NotSupportedException();
+                case 1: return CoverageFmt1.CreateFrom(reader);
+                case 2: return CoverageFmt2.CreateFrom(reader);
             }
-            return coverageTable;
-        }
-
-        void UpdateRangeOffsets()
-        {
-            //for format 2
-#if DEBUG
-            if (this._format != 2)
-            {
-                throw new NotSupportedException();
-            }
-#endif
-            int j = ranges.Length;
-            int total = 0;
-            rangeOffsets = new int[j];
-            for (int i = 0; i < j; ++i)
-            {
-                RangeRecord r = ranges[i];
-                rangeOffsets[i] = total;
-                total += r.Width;
-            }
-
         }
 
         public static CoverageTable[] CreateMultipleCoverageTables(long initPos, ushort[] offsets, BinaryReader reader)
         {
-            int j = offsets.Length;
-            CoverageTable[] results = new CoverageTable[j];
-            for (int i = 0; i < j; ++i)
+            List<CoverageTable> results = new List<CoverageTable>(offsets.Length);
+            foreach (ushort offset in offsets)
             {
-                results[i] = CoverageTable.CreateFrom(reader, initPos + offsets[i]);
+                results.Add(CoverageTable.CreateFrom(reader, initPos + offset));
             }
-            return results;
+            return results.ToArray();
+        }
+    }
+
+    public class CoverageFmt1 : CoverageTable
+    {
+        public static CoverageFmt1 CreateFrom(BinaryReader reader)
+        {
+            // CoverageFormat1 table: Individual glyph indices
+            // Type      Name                     Description
+            // uint16    CoverageFormat           Format identifier-format = 1
+            // uint16    GlyphCount               Number of glyphs in the GlyphArray
+            // uint16    GlyphArray[GlyphCount]   Array of glyph IDs — in numerical order
+
+            ushort glyphCount = reader.ReadUInt16();
+            ushort[] glyphs = Utils.ReadUInt16Array(reader, glyphCount);
+            return new CoverageFmt1() { _orderedGlyphIdList = glyphs };
         }
 
-        struct RangeRecord
+        public override int FindPosition(ushort glyphIndex)
         {
-            //------------
-            //RangeRecord
-            //----------
-            //Type      Name                Description
-            //uint16    StartGlyphID        First glyph ID in the range
-            //uint16    EndGlyphID          Last glyph ID in the range
-            //uint16    StartCoverageIndex  Coverage Index of first glyph ID in range
-            //----------
-            public readonly ushort start;
-            public readonly ushort end;
-            public readonly ushort startCoverageIndex;
-            public RangeRecord(ushort start, ushort end, ushort startCoverageIndex)
+            // "The glyph indices must be in numerical order for binary searching of the list"
+            // (https://www.microsoft.com/typography/otspec/chapter2.htm#coverageFormat1)
+            int n = Array.BinarySearch(_orderedGlyphIdList, glyphIndex);
+            return n < 0 ? -1 : n;
+        }
+        public override IEnumerable<ushort> GetExpandedValueIter() { return _orderedGlyphIdList; }
+
+#if DEBUG
+
+        public override string ToString()
+        {
+            List<string> stringList = new List<string>();
+            foreach (ushort g in _orderedGlyphIdList)
             {
-                this.start = start;
-                this.end = end;
-                this.startCoverageIndex = startCoverageIndex;
+                stringList.Add(g.ToString());
             }
-            public bool Contains(int glyphIndex)
+            return "CoverageFmt1: " + string.Join(",", stringList.ToArray());
+        }
+#endif
+
+        internal ushort[] _orderedGlyphIdList;
+    }
+
+    public class CoverageFmt2 : CoverageTable
+    {
+        public override int FindPosition(ushort glyphIndex)
+        {
+            // Ranges must be in glyph ID order, and they must be distinct, with no overlapping.
+            // [...] quick calculation of the Coverage Index for any glyph in any range using the
+            // formula: Coverage Index (glyphID) = startCoverageIndex + glyphID - startGlyphID.
+            // (https://www.microsoft.com/typography/otspec/chapter2.htm#coverageFormat2)
+            int n = Array.BinarySearch(_endIndices, glyphIndex);
+            n = n < 0 ? ~n : n;
+            if (n >= RangeCount || glyphIndex < _startIndices[n])
             {
-                return glyphIndex >= start && glyphIndex <= end;
-            }
-            public int FindPosition(int glyphIndex)
-            {
-                if (glyphIndex >= start && glyphIndex <= end)
-                {
-                    return glyphIndex - start;
-                }
-                //not found in this range
                 return -1;
             }
-            public int Width
-            {
-                get { return end - start + 1; }
-            }
-#if DEBUG
-            public override string ToString()
-            {
-                return "range: index, " + startCoverageIndex + "[" + start + "," + end + "]";
-            }
-#endif
+            return _coverageIndices[n] + glyphIndex - _startIndices[n];
         }
 
-        //------------------------------------------------------------------------------------------
-        public static bool IsInRange(CoverageTable[] coverageTables, ushort cur_glyphIndex)
+        public override IEnumerable<ushort> GetExpandedValueIter()
         {
-            //just test
-            //TODO: 
-            //reduce loop by make this a dicision table*** 
-            int j = coverageTables.Length;
-            for (int i = 0; i < j; ++i)
+            for (int i = 0; i < RangeCount; ++i)
             {
-                int found = coverageTables[i].FindPosition(cur_glyphIndex);
-                if (found > -1)
+                for (ushort n = _startIndices[i]; n <= _endIndices[i]; ++n)
                 {
-                    return true;
+                    yield return n;
                 }
             }
-            return false;
         }
-#if DEBUG
-        public ushort[] dbugGetExpandedGlyphs()
+        public static CoverageFmt2 CreateFrom(BinaryReader reader)
         {
-            switch (_format)
-            {
-                default:
-                    throw new NotSupportedException();
-                case 1:
-                    return orderedGlyphIdList;
-                case 2:
-                    {
-                        List<ushort> list = new List<ushort>();
-                        int j = ranges.Length;
-                        for (int i = 0; i < j; ++i)
-                        {
-                            RangeRecord range = ranges[i];
-                            for (ushort n = range.start; n <= range.end; ++n)
-                            {
-                                list.Add(n);
-                            }
-                        }
-                        return list.ToArray();
-                    }
+            // CoverageFormat2 table: Range of glyphs
+            // Type      Name                     Description
+            // uint16    CoverageFormat           Format identifier-format = 2
+            // uint16    RangeCount               Number of RangeRecords
+            // struct    RangeRecord[RangeCount]  Array of glyph ranges — ordered by StartGlyphID.
+            //
+            // RangeRecord
+            // Type      Name                Description
+            // uint16    StartGlyphID        First glyph ID in the range
+            // uint16    EndGlyphID          Last glyph ID in the range
+            // uint16    StartCoverageIndex  Coverage Index of first glyph ID in range
 
+            ushort rangeCount = reader.ReadUInt16();
+            ushort[] startIndices = new ushort[rangeCount];
+            ushort[] endIndices = new ushort[rangeCount];
+            ushort[] coverageIndices = new ushort[rangeCount];
+            for (int i = 0; i < rangeCount; ++i)
+            {
+                startIndices[i] = reader.ReadUInt16();
+                endIndices[i] = reader.ReadUInt16();
+                coverageIndices[i] = reader.ReadUInt16();
             }
 
+            return new CoverageFmt2()
+            {
+                _startIndices = startIndices,
+                _endIndices = endIndices,
+                _coverageIndices = coverageIndices
+            };
+        }
+
+#if DEBUG
+
+        public override string ToString()
+        {
+            List<string> stringList = new List<string>();
+            for (int i = 0; i < RangeCount; ++i)
+            {
+                stringList.Add(string.Format("{0}-{1}", _startIndices[i], _endIndices[i]));
+            }
+            return "CoverageFmt2: " + string.Join(",", stringList.ToArray());
         }
 #endif
+
+        internal ushort[] _startIndices;
+        internal ushort[] _endIndices;
+        internal ushort[] _coverageIndices;
+
+        private int RangeCount => _startIndices.Length;
     }
 
 }

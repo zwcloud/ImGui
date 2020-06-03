@@ -1,4 +1,4 @@
-﻿//Apache2, 2016-2017, WinterDev
+﻿//Apache2, 2016-present, WinterDev
 
 using System.IO;
 
@@ -77,10 +77,8 @@ namespace Typography.OpenFont.Tables
                 this.featureTag = featureTag;
                 this.offset = offset;
             }
-            public string FeatureName
-            {
-                get { return Utils.TagToString(featureTag); }
-            }
+
+            public string FeatureName => Utils.TagToString(featureTag);
 #if DEBUG
             public override string ToString()
             {
@@ -134,7 +132,7 @@ namespace Typography.OpenFont.Tables
             //uint16 	LookupListIndex[LookupCount] 	Array of LookupList indices for this feature -zero-based (first lookup is LookupListIndex = 0)
             //--------------------------
 
-            ushort[] lookupListIndice;
+            ushort[] _lookupListIndices;
             public static FeatureTable CreateFrom(BinaryReader reader, long beginAt)
             {
                 reader.BaseStream.Seek(beginAt, SeekOrigin.Begin);
@@ -143,26 +141,12 @@ namespace Typography.OpenFont.Tables
                 ushort lookupCount = reader.ReadUInt16();
 
                 FeatureTable featureTable = new FeatureTable();
-                featureTable.lookupListIndice = Utils.ReadUInt16Array(reader, lookupCount);
-
+                featureTable._lookupListIndices = Utils.ReadUInt16Array(reader, lookupCount);
                 return featureTable;
             }
-            public ushort[] LookupListIndice
-            {
-                get
-                {
-                    return lookupListIndice;
-                }
-            }
-            public uint FeatureTag
-            {
-                get;
-                set;
-            }
-            public string TagName
-            {
-                get { return Utils.TagToString(this.FeatureTag); }
-            }
+            public ushort[] LookupListIndices => _lookupListIndices;
+            public uint FeatureTag { get; set; }
+            public string TagName => Utils.TagToString(this.FeatureTag);
 #if DEBUG
             public override string ToString()
             {

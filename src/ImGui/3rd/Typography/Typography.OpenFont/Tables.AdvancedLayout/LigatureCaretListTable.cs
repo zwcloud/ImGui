@@ -1,4 +1,4 @@
-﻿//Apache2, 2016-2017, WinterDev
+﻿//Apache2, 2016-present, WinterDev
 
 using System.IO;
 
@@ -26,8 +26,8 @@ namespace Typography.OpenFont.Tables
     /// </summary>
     class LigCaretList
     {
-        LigGlyph[] ligGlyphs;
-        CoverageTable coverageTable;
+        LigGlyph[] _ligGlyphs;
+        CoverageTable _coverageTable;
 
         public static LigCaretList CreateFrom(BinaryReader reader, long beginAt)
         {
@@ -42,8 +42,8 @@ namespace Typography.OpenFont.Tables
             {
                 ligGlyphs[i] = LigGlyph.CreateFrom(reader, beginAt + ligGlyphOffsets[i]);
             }
-            ligcaretList.ligGlyphs = ligGlyphs;
-            ligcaretList.coverageTable = CoverageTable.CreateFrom(reader, beginAt + coverageOffset);
+            ligcaretList._ligGlyphs = ligGlyphs;
+            ligcaretList._coverageTable = CoverageTable.CreateFrom(reader, beginAt + coverageOffset);
             return ligcaretList;
         }
     }
@@ -57,16 +57,16 @@ namespace Typography.OpenFont.Tables
 
     //Example 4 at the end of the chapter shows a LigGlyph table.
     //LigGlyph table
-    //Type 	Name 	Description
-    //uint16 	CaretCount 	Number of CaretValues for this ligature (components - 1)
-    //Offset16 	CaretValue[CaretCount] 	Array of offsets to CaretValue tables-from beginning of LigGlyph table-in increasing coordinate order Caret Values Table
+    //Type  	Name 	                    Description
+    //uint16 	CaretCount 	                Number of CaretValues for this ligature (components - 1)
+    //Offset16 	CaretValue[CaretCount] 	    Array of offsets to CaretValue tables-from beginning of LigGlyph table-in increasing coordinate order Caret Values Table
 
     /// <summary>
     /// A Ligature Glyph table (LigGlyph) contains the caret coordinates for a single ligature glyph.
     /// </summary>
     class LigGlyph
     {
-        ushort[] caretValueOffsets;
+        ushort[] _caretValueOffsets;
 
         public static LigGlyph CreateFrom(BinaryReader reader, long beginAt)
         {
@@ -74,7 +74,7 @@ namespace Typography.OpenFont.Tables
             //----------
             LigGlyph ligGlyph = new LigGlyph();
             ushort caretCount = reader.ReadUInt16();
-            ligGlyph.caretValueOffsets = Utils.ReadUInt16Array(reader, caretCount);
+            ligGlyph._caretValueOffsets = Utils.ReadUInt16Array(reader, caretCount);
             return ligGlyph;
         }
     }
@@ -178,9 +178,9 @@ namespace Typography.OpenFont.Tables
     //---------------------------------------------------------
     //MarkGlyphSetsTable
     //---------------------------------------------------------
-    //Type 	Name 	Description
-    //uint16 	MarkSetTableFormat 	Format identifier == 1
-    //uint16 	MarkSetCount 	Number of mark sets defined
+    //Type 	    Name 	                    Description
+    //uint16 	MarkSetTableFormat 	        Format identifier == 1
+    //uint16 	MarkSetCount 	            Number of mark sets defined
     //Offset32 	Coverage [MarkSetCount] 	Array of offsets to mark set coverage tables.
     //---------------------------------------------------------
     //Mark glyph sets are used for the same purpose as mark attachment classes, which is as filters for GSUB and GPOS lookups. 
@@ -192,17 +192,17 @@ namespace Typography.OpenFont.Tables
 
     class MarkGlyphSetsTable
     {
-        ushort format;
-        uint[] coverageOffset;
+        ushort _format;
+        uint[] _coverageOffset;
 
         public static MarkGlyphSetsTable CreateFrom(BinaryReader reader, long beginAt)
         {
             reader.BaseStream.Seek(beginAt, SeekOrigin.Begin);
             //
             MarkGlyphSetsTable markGlyphSetsTable = new MarkGlyphSetsTable();
-            markGlyphSetsTable.format = reader.ReadUInt16();
+            markGlyphSetsTable._format = reader.ReadUInt16();
             ushort markSetCount = reader.ReadUInt16();
-            uint[] coverageOffset = markGlyphSetsTable.coverageOffset = new uint[markSetCount];
+            uint[] coverageOffset = markGlyphSetsTable._coverageOffset = new uint[markSetCount];
             for (int i = 0; i < markSetCount; ++i)
             {
                 //Note that the array of offsets for the Coverage tables uses ULONG 

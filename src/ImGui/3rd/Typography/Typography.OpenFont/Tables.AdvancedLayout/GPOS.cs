@@ -1,275 +1,102 @@
-﻿//Apache2, 2016-2017, WinterDev
+﻿//Apache2, 2016-present, WinterDev, Sam Hocevar <sam@hocevar.net>
+
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 namespace Typography.OpenFont.Tables
 {
-
-    //from https://www.microsoft.com/typography/otspec/otff.htm#otttables
-    //Data Types
-
-    //The following data types are used in the OpenType font file.All OpenType fonts use Motorola-style byte ordering (Big Endian):
-    //Data      Type   Description
-    //uint8     8-bit unsigned integer.
-    //int8	    8-bit signed integer.
-    //uint16	16-bit unsigned integer.
-    //int16	    16-bit signed integer.
-    //uint24	24-bit unsigned integer.
-    //uint32	32-bit unsigned integer.
-    //int32	    32-bit signed integer.
-    //Fixed	    32-bit signed fixed-point number(16.16)
-    //FWORD     int16 that describes a quantity in font design units.
-    //UFWORD    uint16 that describes a quantity in font design units.
-    //F2DOT14   16 - bit signed fixed number with the low 14 bits of fraction(2.14).
-    //LONGDATETIME   Date represented in number of seconds since 12:00 midnight, January 1, 1904.The value is represented as a signed 64 - bit integer.
-    //Tag Array of four uint8s(length = 32 bits) used to identify a script, language system, feature, or baseline
-    //Offset16   Short offset to a table, same as uint16, NULL offset = 0x0000
-    //Offset32   Long offset to a table, same as uint32, NULL offset = 0x00000000
-    //-------
-    //NOTE***
-    //Offset16 => same as uint16
-    //Offset16 => same as uint32
-
-
-
-    //https://www.microsoft.com/typography/otspec/GPOS.htm
-
-    public partial class GPOS : TableEntry
+    // https://www.microsoft.com/typography/otspec/GPOS.htm
+    public partial class GPOS : GlyphShapingTableEntry
     {
-        long gposTableStartAt;
-        ScriptList scriptList = new ScriptList();
-        FeatureList featureList = new FeatureList();
-        List<LookupTable> lookupRecords = new List<LookupTable>();
-        public override string Name
+        public const string _N = "GPOS";
+        public override string Name => _N;
+        //
+        protected override void ReadLookupTable(BinaryReader reader, long lookupTablePos,
+                                                ushort lookupType, ushort lookupFlags,
+                                                ushort[] subTableOffsets, ushort markFilteringSet)
         {
-            get { return "GPOS"; }
-        }
-        public ScriptList ScriptList { get { return scriptList; } }
-        public FeatureList FeatureList { get { return featureList; } }
-        public LookupTable GetLookupTable(int index)
-        {
-            return lookupRecords[index];
-        }
-        protected override void ReadContentFrom(BinaryReader reader)
-        {
-            gposTableStartAt = reader.BaseStream.Position;
-            //-------------------------------------------
-            // GPOS Header
-            //The GPOS table begins with a header that contains a version number for the table. Two versions are defined. 
-            //Version 1.0 contains offsets to three tables: ScriptList, FeatureList, and LookupList. 
-            //Version 1.1 also includes an offset to a FeatureVariations table.
-            //For descriptions of these tables, see the chapter, OpenType Layout Common Table Formats .
-            //Example 1 at the end of this chapter shows a GPOS Header table definition.
-            //GPOS Header, Version 1.0
-            //Value 	Type 	Description
-            //uint16 	MajorVersion 	Major version of the GPOS table, = 1
-            //uint16 	MinorVersion 	Minor version of the GPOS table, = 0
-            //Offset16 	ScriptList 	Offset to ScriptList table, from beginning of GPOS table
-            //Offset16 	FeatureList 	Offset to FeatureList table, from beginning of GPOS table
-            //Offset16 	LookupList 	Offset to LookupList table, from beginning of GPOS table
-
-            //GPOS Header, Version 1.1
-            //Value 	Type 	Description
-            //uint16 	MajorVersion 	Major version of the GPOS table, = 1
-            //uint16 	MinorVersion 	Minor version of the GPOS table, = 1
-            //Offset16 	ScriptList 	Offset to ScriptList table, from beginning of GPOS table
-            //Offset16 	FeatureList 	Offset to FeatureList table, from beginning of GPOS table
-            //Offset16 	LookupList 	Offset to LookupList table, from beginning of GPOS table
-            //Offset32 	FeatureVariations 	Offset to FeatureVariations table, from beginning of GPOS table (may be NULL) 
-
-            this.MajorVersion = reader.ReadUInt16();
-            this.MinorVersion = reader.ReadUInt16();
-
-            ushort scriptListOffset = reader.ReadUInt16();//from beginning of GSUB table
-            ushort featureListOffset = reader.ReadUInt16();//from beginning of GSUB table
-            ushort lookupListOffset = reader.ReadUInt16();//from beginning of GSUB table
-            uint featureVariations = (MinorVersion == 1) ? reader.ReadUInt32() : 0;//from beginning of GSUB table
-
-            //-----------------------
-            //1. scriptlist             
-            scriptList = ScriptList.CreateFrom(reader, gposTableStartAt + scriptListOffset);
-            //-----------------------
-            //2. feature list             
-            featureList = FeatureList.CreateFrom(reader, gposTableStartAt + featureListOffset);
-            //-----------------------
-            //3. lookup list
-
-            ReadLookupListTable(reader, gposTableStartAt + lookupListOffset);
-            //-----------------------
-            //4. feature variations
-            if (featureVariations > 0)
+            LookupTable lookupTable = new LookupTable(lookupType, lookupFlags, markFilteringSet);
+            foreach (long subTableOffset in subTableOffsets)
             {
-                reader.BaseStream.Seek(this.Header.Offset + featureVariations, SeekOrigin.Begin);
-                ReadFeaureVariations(reader);
+                LookupSubTable subTable = lookupTable.ReadSubTable(reader, lookupTablePos + subTableOffset);
+                subTable.OwnerGPos = this;
+                lookupTable.SubTables.Add(subTable);
             }
 
+#if DEBUG
+            lookupTable.dbugLkIndex = LookupList.Count;
+#endif
+
+            LookupList.Add(lookupTable);
         }
-        public ushort MajorVersion { get; private set; }
-        public ushort MinorVersion { get; private set; }
-        void ReadFeaureVariations(BinaryReader reader)
+
+        protected override void ReadFeatureVariations(BinaryReader reader, long featureVariationsBeginAt)
         {
-            throw new NotImplementedException();
+            Utils.WarnUnimplemented("GPOS feature variations");
         }
-        void ReadLookupListTable(BinaryReader reader, long lookupListBeginAt)
-        {
 
-            reader.BaseStream.Seek(lookupListBeginAt, SeekOrigin.Begin);
-            //
+        private List<LookupTable> _lookupList = new List<LookupTable>();
 
-            //https://www.microsoft.com/typography/otspec/chapter2.htm
-            //-----------------------
-            //LookupList table
-            //-----------------------
-            //Type 	    Name 	        Description
-            //uint16 	LookupCount 	Number of lookups in this table
-            //Offset16 	Lookup[LookupCount] 	Array of offsets to Lookup tables-from beginning of LookupList -zero based (first lookup is Lookup index = 0)
-            //-----------------------
-            //
-            //
-            //Lookup Table
-            //A Lookup table (Lookup) defines the specific conditions, type, 
-            //and results of a substitution or positioning action that is used to implement a feature. 
-            //For example, a substitution operation requires a list of target glyph indices to be replaced, 
-            //a list of replacement glyph indices, and a description of the type of substitution action.
-            //Each Lookup table may contain only one type of information (LookupType),
-            //determined by whether the lookup is part of a GSUB or GPOS table. GSUB supports eight LookupTypes, 
-            //and GPOS supports nine LookupTypes (for details about LookupTypes, see the GSUB and GPOS chapters of the document).
-
-            //Each LookupType is defined with one or more subtables, 
-            //and each subtable definition provides a different representation format.
-            //The format is determined by the content of the information required for an operation and by required storage efficiency.
-            //When glyph information is best presented in more than one format,
-            //a single lookup may contain more than one subtable, as long as all the subtables are the same LookupType. 
-            //For example, within a given lookup, a glyph index array format may best represent one set of target glyphs,
-            //whereas a glyph index range format may be better for another set of target glyphs.
-
-            //During text processing, a client applies a lookup to each glyph in the string before moving to the next lookup. 
-            //A lookup is finished for a glyph after the client makes the substitution/positioning operation.
-            //To move to the “next” glyph, the client will typically skip all the glyphs that participated in the lookup operation: glyphs 
-            //that were substituted/positioned as well as any other glyphs that formed a context for the operation. However, in the case of pair positioning operations (i.e., kerning), the “next” glyph in a sequence may be the second glyph of the positioned pair (see pair positioning lookup for details).
-
-            //A Lookup table contains a LookupType, specified as an integer, that defines the type of information stored in the lookup.
-            //The LookupFlag specifies lookup qualifiers that assist a text-processing client in substituting or positioning glyphs.
-            //The SubTableCount specifies the total number of SubTables. 
-            //The SubTable array specifies offsets, measured from the beginning of the Lookup table, to each SubTable enumerated in the SubTable array.
-            //
-            //Lookup table
-            //--------------------------------
-            //Type  	Name 	        Description
-            //unit16 	LookupType  	Different enumerations for GSUB and GPOS
-            //unit16 	LookupFlag 	    Lookup qualifiers
-            //unit16 	SubTableCount 	Number of SubTables for this lookup
-            //Offset16 	SubTable[SubTableCount] 	Array of offsets to SubTables-from beginning of Lookup table
-            //unit16 	MarkFilteringSet   Index (base 0) into GDEF mark glyph sets structure. 
-            //                             *** This field is only present if bit UseMarkFilteringSet of lookup flags is set.
-            //--------------------------------
-            lookupRecords.Clear();
-            ushort lookupCount = reader.ReadUInt16();
-            ushort[] lookupTableOffsets = Utils.ReadUInt16Array(reader, lookupCount);
-
-            //----------------------------------------------
-            //load each sub table
-            //https://www.microsoft.com/typography/otspec/chapter2.htm
-            for (int i = 0; i < lookupCount; ++i)
-            {
-                long lookupTablePos = lookupListBeginAt + lookupTableOffsets[i];
-                reader.BaseStream.Seek(lookupTablePos, SeekOrigin.Begin);
-
-                ushort lookupType = reader.ReadUInt16();//Each Lookup table may contain only one type of information (LookupType)
-                ushort lookupFlags = reader.ReadUInt16();
-                ushort subTableCount = reader.ReadUInt16();
-                //Each LookupType is defined with one or more subtables, and each subtable definition provides a different representation format
-                //
-                ushort[] subTableOffsets = Utils.ReadUInt16Array(reader, subTableCount);
-
-                ushort markFilteringSet =
-                    ((lookupFlags & 0x0010) == 0x0010) ? reader.ReadUInt16() : (ushort)0;
-
-                lookupRecords.Add(
-                    new LookupTable(
-                        lookupTablePos,
-                        lookupType,
-                        lookupFlags,
-                        subTableCount,
-                        subTableOffsets,//Array of offsets to SubTables-from beginning of Lookup table
-                        markFilteringSet));
-            }
-            //----------------------------------------------
-            //read each lookup record content ...
-            for (int i = 0; i < lookupCount; ++i)
-            {
-                LookupTable lookupTable = lookupRecords[i];
-                //set origin
-                reader.BaseStream.Seek(lookupListBeginAt + lookupTableOffsets[i], SeekOrigin.Begin);
-                lookupTable.ReadRecordContent(reader);
-                foreach (var subT in lookupTable.SubTables)
-                {
-                    subT.OwnerGPos = this;
-                }
-            }
-        }
+        public IList<LookupTable> LookupList => _lookupList;
 
         public abstract class LookupSubTable
         {
             public GPOS OwnerGPos;
 
-            public abstract void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len);
+            public abstract void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len);
+        }
+
+        /// <summary>
+        /// Subtable for unhandled/unimplemented features
+        /// </summary>
+        public class UnImplementedLookupSubTable : LookupSubTable
+        {
+            readonly string _msg;
+            public UnImplementedLookupSubTable(string message)
+            {
+                _msg = message;
+                Utils.WarnUnimplemented(message);
+            }
+            public override string ToString()
+            {
+                return _msg;
+            }
+            public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
+            {
+            }
         }
 
         /// <summary>
         /// sub table of a lookup list
         /// </summary>
-        public class LookupTable
+        public partial class LookupTable
         {
-            //Lookup table
-            //--------------------------------
-            //Type  	Name 	        Description
-            //unit16 	LookupType  	Different enumerations for GSUB and GPOS
-            //unit16 	LookupFlag 	    Lookup qualifiers
-            //unit16 	SubTableCount 	Number of SubTables for this lookup
-            //Offset16 	SubTable[SubTableCount] 	Array of offsets to SubTables-from beginning of Lookup table
-            //unit16 	MarkFilteringSet   Index (base 0) into GDEF mark glyph sets structure. 
-            //                             *** This field is only present if bit UseMarkFilteringSet of lookup flags is set.
-            //--------------------------------
+#if DEBUG
+            public int dbugLkIndex;
+#endif
 
-            long lookupTablePos;
-            //--------------------------
-            public readonly ushort lookupType;
+            public ushort lookupType { get; private set; }
             public readonly ushort lookupFlags;
-            public readonly ushort subTableCount;
-            public readonly ushort[] subTableOffsets;
             public readonly ushort markFilteringSet;
             //--------------------------
-            List<LookupSubTable> subTables = new List<LookupSubTable>();
-            public LookupTable(
-                long lookupTablePos,
-                ushort lookupType,
-                ushort lookupFlags,
-                ushort subTableCount,
-                ushort[] subTableOffsets,
-                ushort markFilteringSet
-                 )
+            List<LookupSubTable> _subTables = new List<LookupSubTable>();
+            public LookupTable(ushort lookupType, ushort lookupFlags, ushort markFilteringSet)
             {
-                this.lookupTablePos = lookupTablePos;
                 this.lookupType = lookupType;
                 this.lookupFlags = lookupFlags;
-                this.subTableCount = subTableCount;
-                this.subTableOffsets = subTableOffsets;
                 this.markFilteringSet = markFilteringSet;
             }
-            public void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+            public void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
             {
-
-                int j = subTables.Count;
-                for (int i = 0; i < j; ++i)
+                foreach (LookupSubTable subTable in SubTables)
                 {
-
-                    subTables[i].DoGlyphPosition(inputGlyphs, startAt, len);
+                    subTable.DoGlyphPosition(inputGlyphs, startAt, len);
                     //update len
                     len = inputGlyphs.Count;
                 }
             }
-            public List<LookupSubTable> SubTables { get { return subTables; } }
+            public IList<LookupSubTable> SubTables { get { return _subTables; } }
 
 #if DEBUG
             public override string ToString()
@@ -277,155 +104,289 @@ namespace Typography.OpenFont.Tables
                 return lookupType.ToString();
             }
 #endif
-            public void ReadRecordContent(BinaryReader reader)
+            public LookupSubTable ReadSubTable(BinaryReader reader, long subTableStartAt)
             {
                 switch (lookupType)
                 {
-                    default: throw new NotSupportedException();
-                    case 1:
-                        ReadLookupType1(reader);
-                        break;
-                    case 2:
-                        ReadLookupType2(reader);
-                        break;
-                    case 3:
-                        ReadLookupType3(reader);
-                        break;
-                    case 4:
-                        ReadLookupType4(reader);
-                        break;
-                    case 5:
-                        ReadLookupType5(reader);
-                        break;
-                    case 6:
-                        ReadLookupType6(reader);
-                        break;
-                    case 7:
-                        ReadLookupType7(reader);
-                        break;
-                    case 8:
-                        ReadLookupType8(reader);
-                        break;
-                    case 9:
-                        ReadLookupType9(reader);
-                        break;
+                    case 1: return ReadLookupType1(reader, subTableStartAt);
+                    case 2: return ReadLookupType2(reader, subTableStartAt);
+                    case 3: return ReadLookupType3(reader, subTableStartAt);
+                    case 4: return ReadLookupType4(reader, subTableStartAt);
+                    case 5: return ReadLookupType5(reader, subTableStartAt);
+                    case 6: return ReadLookupType6(reader, subTableStartAt);
+                    case 7: return ReadLookupType7(reader, subTableStartAt);
+                    case 8: return ReadLookupType8(reader, subTableStartAt);
+                    case 9: return ReadLookupType9(reader, subTableStartAt);
                 }
+
+                return new UnImplementedLookupSubTable(string.Format("GPOS Lookup Type {0}", lookupType));
             }
 
             class LkSubTableType1 : LookupSubTable
             {
-                ValueRecord singleValue;
-                ValueRecord[] multiValues;
+                ValueRecord _singleValue;
+                ValueRecord[] _multiValues;
                 public LkSubTableType1(ValueRecord singleValue)
                 {
                     this.Format = 1;
-                    this.singleValue = singleValue;
+                    _singleValue = singleValue;
                 }
                 public LkSubTableType1(ValueRecord[] valueRecords)
                 {
                     this.Format = 2;
-                    this.multiValues = valueRecords;
+                    _multiValues = valueRecords;
                 }
-                public int Format
-                {
-                    get;
-                    private set;
-                }
+                public int Format { get; private set; }
                 public CoverageTable CoverageTable { get; set; }
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 1");
                 }
             }
+
             /// <summary>
             /// Lookup Type 1: Single Adjustment Positioning Subtable
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType1(BinaryReader reader)
+            static LookupSubTable ReadLookupType1(BinaryReader reader, long subTableStartAt)
             {
-                long thisLookupTablePos = reader.BaseStream.Position;
-                int j = subTableOffsets.Length;
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
 
-                for (int i = 0; i < j; ++i)
+                ushort format = reader.ReadUInt16();
+                switch (format)
                 {
-                    //move to read pos
-                    long subTableStartAt = reader.BaseStream.Position + subTableOffsets[i];
-                    reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
-                    //-----------------------
+                    default: throw new NotSupportedException();
+                    case 1:
+                        {
+                            //Single Adjustment Positioning: Format 1
+                            //Value 	    Type 	        Description
+                            //uint16 	    PosFormat 	    Format identifier-format = 1
+                            //Offset16 	    Coverage 	    Offset to Coverage table-from beginning of SinglePos subtable
+                            //uint16 	    ValueFormat     Defines the types of data in the ValueRecord
+                            //ValueRecord 	Value 	        Defines positioning value(s)-applied to all glyphs in the Coverage table 
+                            ushort coverage = reader.ReadUInt16();
+                            ushort valueFormat = reader.ReadUInt16();
+                            var subTable = new LkSubTableType1(ValueRecord.CreateFrom(reader, valueFormat));
+                            //-------
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverage);
+                            //-------
+                            return subTable;
+                        }
+                    case 2:
+                        {
+                            //Single Adjustment Positioning: Format 2
+                            //Value 	    Type 	        Description
+                            //USHORT 	    PosFormat 	    Format identifier-format = 2
+                            //Offset16 	    Coverage 	    Offset to Coverage table-from beginning of SinglePos subtable
+                            //uint16 	    ValueFormat 	Defines the types of data in the ValueRecord
+                            //uint16 	    ValueCount 	    Number of ValueRecords
+                            //ValueRecord 	Value[ValueCount] 	Array of ValueRecords-positioning values applied to glyphs
+                            ushort coverage = reader.ReadUInt16();
+                            ushort valueFormat = reader.ReadUInt16();
+                            ushort valueCount = reader.ReadUInt16();
+                            var values = new ValueRecord[valueCount];
+                            for (int n = 0; n < valueCount; ++n)
+                            {
+                                values[n] = ValueRecord.CreateFrom(reader, valueFormat);
+                            }
+                            var subTable = new LkSubTableType1(values);
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverage);
+                            //-------
+                            return subTable;
+                        }
+                }
+            }
 
-                    ushort format = reader.ReadUInt16();
-                    switch (format)
+            /// <summary>
+            /// Lookup Type 2, Format1: Pair Adjustment Positioning Subtable
+            /// </summary>
+            class LkSubTableType2Fmt1 : LookupSubTable
+            {
+                internal PairSetTable[] _pairSetTables;
+                public LkSubTableType2Fmt1(PairSetTable[] pairSetTables)
+                {
+                    _pairSetTables = pairSetTables;
+                }
+                public CoverageTable CoverageTable { get; set; }
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
+                {
+                    //find marker
+                    CoverageTable covTable = this.CoverageTable;
+                    int lim = inputGlyphs.Count - 1;
+                    for (int i = 0; i < lim; ++i)
                     {
-                        default: throw new NotSupportedException();
-                        case 1:
+                        int firstGlyphFound = covTable.FindPosition(inputGlyphs.GetGlyph(i, out ushort glyph_advW));
+                        if (firstGlyphFound > -1)
+                        {
+                            //test this with Palatino A-Y sequence
+                            PairSetTable pairSet = _pairSetTables[firstGlyphFound];
+
+                            //check second glyph  
+                            ushort second_glyph_index = inputGlyphs.GetGlyph(i + 1, out ushort second_glyph_w);
+
+                            if (pairSet.FindPairSet(second_glyph_index, out PairSet foundPairSet))
                             {
-                                //Single Adjustment Positioning: Format 1
-                                //Value 	Type 	    Description                                
-                                //uint16 	PosFormat 	Format identifier-format = 1
-                                //Offset16 	Coverage 	Offset to Coverage table-from beginning of SinglePos subtable
-                                //uint16 	ValueFormat 	Defines the types of data in the ValueRecord
-                                //ValueRecord 	Value 	Defines positioning value(s)-applied to all glyphs in the Coverage table 
-                                ushort coverage = reader.ReadUInt16();
-                                ushort valueFormat = reader.ReadUInt16();
-                                var subTable = new LkSubTableType1(ValueRecord.CreateFrom(reader, valueFormat));
-                                //-------                                 
-                                subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverage);
-                                //-------
-                                this.subTables.Add(subTable);
-                            }
-                            break;
-                        case 2:
-                            {
-                                //Single Adjustment Positioning: Format 2
-                                //Value 	    Type 	        Description
-                                //USHORT 	    PosFormat 	    Format identifier-format = 2
-                                //Offset16 	    Coverage 	    Offset to Coverage table-from beginning of SinglePos subtable
-                                //uint16 	    ValueFormat 	Defines the types of data in the ValueRecord
-                                //uint16 	    ValueCount 	    Number of ValueRecords
-                                //ValueRecord 	Value[ValueCount] 	Array of ValueRecords-positioning values applied to glyphs
-                                ushort coverage = reader.ReadUInt16();
-                                ushort valueFormat = reader.ReadUInt16();
-                                ushort valueCount = reader.ReadUInt16();
-                                var values = new ValueRecord[valueCount];
-                                for (int n = 0; n < valueCount; ++n)
+                                ValueRecord v1 = foundPairSet.value1;
+                                ValueRecord v2 = foundPairSet.value2;
+                                //TODO: recheck for vertical writing ... (YAdvance)
+                                if (v1 != null)
                                 {
-                                    values[n] = ValueRecord.CreateFrom(reader, valueFormat);
+                                    inputGlyphs.AppendGlyphAdvance(i, v1.XAdvance, 0);
                                 }
-                                var subTable = new LkSubTableType1(values);
-                                subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverage);
-                                //-------
-                                this.subTables.Add(subTable);
+
+                                if (v2 != null)
+                                {
+                                    inputGlyphs.AppendGlyphAdvance(i + 1, v2.XAdvance, 0);
+                                }
+
                             }
-                            break;
+                        }
                     }
                 }
             }
 
             /// <summary>
-            /// Lookup Type 2: Pair Adjustment Positioning Subtable
+            /// Lookup Type2, Format2: Class pair adjustment
             /// </summary>
-            class LkSubTableType2 : LookupSubTable
+            class LkSubTableType2Fmt2 : LookupSubTable
             {
-                PairSetTable[] pairSetTables;
-                public LkSubTableType2(PairSetTable[] pairSetTables)
+                //Format 2 defines a pair as a set of two glyph classes and modifies the positions of all the glyphs in a class
+                internal readonly Lk2Class1Record[] _class1records;
+                internal readonly ClassDefTable _class1Def;
+                internal readonly ClassDefTable _class2Def;
+
+                public LkSubTableType2Fmt2(Lk2Class1Record[] class1records, ClassDefTable class1Def, ClassDefTable class2Def)
                 {
-                    this.pairSetTables = pairSetTables;
+                    _class1records = class1records;
+                    _class1Def = class1Def;
+                    _class2Def = class2Def;
                 }
-                public CoverageTable CoverageTable
+                public CoverageTable CoverageTable { get; set; }
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    get;
-                    set;
-                }
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
-                {
-                    throw new NotImplementedException();
+
+                    //coverage
+                    //The Coverage table lists the indices of the first glyphs that may appear in each glyph pair.
+                    //More than one pair may begin with the same glyph, 
+                    //but the Coverage table lists the glyph index only once
+
+                    CoverageTable covTable = this.CoverageTable;
+                    int lim = inputGlyphs.Count - 1;
+                    for (int i = 0; i < lim; ++i) //start at 0
+                    {
+                        ushort glyph1_index = inputGlyphs.GetGlyph(i, out ushort glyph_advW);
+                        int record1Index = covTable.FindPosition(glyph1_index);
+                        if (record1Index > -1)
+                        {
+                            int class1_no = _class1Def.GetClassValue(glyph1_index);
+                            if (class1_no > -1)
+                            {
+                                ushort glyph2_index = inputGlyphs.GetGlyph(i + 1, out ushort glyph_advW2);
+                                int class2_no = _class2Def.GetClassValue(glyph2_index);
+
+                                if (class2_no > -1)
+                                {
+                                    Lk2Class1Record class1Rec = _class1records[class1_no];
+                                    //TODO: recheck for vertical writing ... (YAdvance)
+                                    Lk2Class2Record pair = class1Rec.class2Records[class2_no];
+
+                                    ValueRecord v1 = pair.value1;
+                                    ValueRecord v2 = pair.value2;
+
+                                    if (v1 != null && v1.XAdvance != 0)
+                                    {
+                                        inputGlyphs.AppendGlyphAdvance(i, v1.XAdvance, 0);
+                                    }
+
+                                    if (v2 != null)
+                                    {
+                                        inputGlyphs.AppendGlyphAdvance(i + 1, v2.XAdvance, 0);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
                 }
             }
+            struct Lk2Class1Record
+            {
+                // a Class1Record enumerates all pairs that contain a particular class as a first component.
+                //The Class1Record array stores all Class1Records according to class value.
+
+                //Note: Class1Records are not tagged with a class value identifier.
+                //Instead, the index value of a Class1Record in the array defines the class value represented by the record.
+                //For example, the first Class1Record enumerates pairs that begin with a Class 0 glyph,
+                //the second Class1Record enumerates pairs that begin with a Class 1 glyph, and so on.
+
+                //Each Class1Record contains an array of Class2Records (Class2Record), which also are ordered by class value. 
+                //One Class2Record must be declared for each class in the ClassDef2 table, including Class 0.
+                //--------------------------------
+                //Class1Record
+                //Value 	Type 	Description
+                //struct 	Class2Record[Class2Count] 	Array of Class2 records-ordered by Class2
+                //--------------------------------
+                public readonly Lk2Class2Record[] class2Records;
+                public Lk2Class1Record(Lk2Class2Record[] class2Records)
+                {
+                    this.class2Records = class2Records;
+                }
+                //#if DEBUG
+                //                public override string ToString()
+                //                {
+                //                    System.Text.StringBuilder stbuilder = new System.Text.StringBuilder();
+                //                    for (int i = 0; i < class2Records.Length; ++i)
+                //                    {
+                //                        Lk2Class2Record rec = class2Records[i];
+                //                        string str = rec.ToString();
+
+                //                        if (str != "value1:,value2:")
+                //                        {
+                //                            //skip
+                //                            stbuilder.Append("i=" + i + "=>" + str + "    ");
+                //                        }
+                //                    }
+                //                    return stbuilder.ToString();
+                //                    //return base.ToString();
+                //                }
+                //#endif
+            }
+
+            class Lk2Class2Record
+            {
+                //A Class2Record consists of two ValueRecords,
+                //one for the first glyph in a class pair (Value1) and one for the second glyph (Value2).
+                //If the PairPos subtable has a value of zero (0) for ValueFormat1 or ValueFormat2, 
+                //the corresponding record (ValueRecord1 or ValueRecord2) will be empty.
+
+                //Class2Record
+                //--------------------------------
+                //Value 	    Type 	Description
+                //ValueRecord 	Value1 	Positioning for first glyph-empty if ValueFormat1 = 0
+                //ValueRecord 	Value2 	Positioning for second glyph-empty if ValueFormat2 = 0
+                //--------------------------------
+                public readonly ValueRecord value1;//null= empty
+                public readonly ValueRecord value2;//null= empty
+
+                public Lk2Class2Record(ValueRecord value1, ValueRecord value2)
+                {
+                    this.value1 = value1;
+                    this.value2 = value2;
+                }
+
+#if DEBUG
+                public override string ToString()
+                {
+                    return "value1:" + (value1?.ToString()) + ",value2:" + value2?.ToString();
+                }
+#endif
+            }
+
             /// <summary>
             ///  Lookup Type 2: Pair Adjustment Positioning Subtable
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType2(BinaryReader reader)
+            static LookupSubTable ReadLookupType2(BinaryReader reader, long subTableStartAt)
             {
                 //A pair adjustment positioning subtable(PairPos) is used to adjust the positions of two glyphs
                 //in relation to one another-for instance, 
@@ -479,14 +440,15 @@ namespace Typography.OpenFont.Tables
                 //uint16 	PairValueCount 	    Number of PairValueRecords
                 //struct 	PairValueRecord[PairValueCount] 	Array of PairValueRecords-ordered by GlyphID of the second glyph
                 //-----------------
-                //A PairValueRecord specifies the second glyph in a pair (SecondGlyph) and defines a ValueRecord for each glyph (Value1 and Value2). If ValueFormat1 is set to zero (0) in the PairPos subtable, ValueRecord1 will be empty; similarly, if ValueFormat2 is 0, Value2 will be empty.
+                //A PairValueRecord specifies the second glyph in a pair (SecondGlyph) and defines a ValueRecord for each glyph (Value1 and Value2). 
+                //If ValueFormat1 is set to zero (0) in the PairPos subtable, ValueRecord1 will be empty; similarly, if ValueFormat2 is 0, Value2 will be empty.
 
-                //Example 4 at the end of this chapter shows a PairPosFormat1 subtable that defines two cases of pair kerning.
+
                 //PairValueRecord
-                //Value 	Type 	Description
-                //GlyphID 	SecondGlyph 	GlyphID of second glyph in the pair-first glyph is listed in the Coverage table
-                //ValueRecord 	Value1 	Positioning data for the first glyph in the pair
-                //ValueRecord 	Value2 	Positioning data for the second glyph in the pair
+                //Value 	    Type 	        Description
+                //GlyphID 	    SecondGlyph 	GlyphID of second glyph in the pair-first glyph is listed in the Coverage table
+                //ValueRecord 	Value1 	        Positioning data for the first glyph in the pair
+                //ValueRecord 	Value2 	        Positioning data for the second glyph in the pair
                 //-----------------------------------------------
 
                 //PairPosFormat2 subtable: Class pair adjustment
@@ -514,73 +476,74 @@ namespace Typography.OpenFont.Tables
                 //If the PairPos subtable has a value of zero (0) for ValueFormat1 or ValueFormat2, 
                 //the corresponding record (ValueRecord1 or ValueRecord2) will be empty.
 
-                //Example 5 at the end of this chapter demonstrates pair kerning with glyph classes in a PairPosFormat2 subtable.
+
                 //Class2Record
                 //--------------------------------
                 //Value 	    Type 	Description
                 //ValueRecord 	Value1 	Positioning for first glyph-empty if ValueFormat1 = 0
                 //ValueRecord 	Value2 	Positioning for second glyph-empty if ValueFormat2 = 0
                 //--------------------------------
-                long thisLookupTablePos = reader.BaseStream.Position;
-                int j = subTableOffsets.Length;
 
-                for (int i = 0; i < j; ++i)
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
+
+                ushort format = reader.ReadUInt16();
+                switch (format)
                 {
-                    //move to read pos
-                    long subTableStartAt = lookupTablePos + subTableOffsets[i];
-                    reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
-
-                    //----------------------- 
-                    ushort format = reader.ReadUInt16();
-
-                    switch (format)
-                    {
-                        default: throw new NotSupportedException();
-                        case 1:
+                    default:
+                        return new UnImplementedLookupSubTable(string.Format("GPOS Lookup Table Type 2 Format {0}", format));
+                    case 1:
+                        {
+                            ushort coverage = reader.ReadUInt16();
+                            ushort value1Format = reader.ReadUInt16();
+                            ushort value2Format = reader.ReadUInt16();
+                            ushort pairSetCount = reader.ReadUInt16();
+                            ushort[] pairSetOffsetArray = Utils.ReadUInt16Array(reader, pairSetCount);
+                            PairSetTable[] pairSetTables = new PairSetTable[pairSetCount];
+                            for (int n = 0; n < pairSetCount; ++n)
                             {
-                                ushort coverage = reader.ReadUInt16();
-                                ushort value1Format = reader.ReadUInt16();
-                                ushort value2Format = reader.ReadUInt16();
-                                ushort pairSetCount = reader.ReadUInt16();
-                                ushort[] pairSetOffsetArray = Utils.ReadUInt16Array(reader, pairSetCount);
-                                PairSetTable[] pairSetTables = new PairSetTable[pairSetCount];
-                                for (int n = 0; n < pairSetCount; ++n)
-                                {
-                                    reader.BaseStream.Seek(subTableStartAt + pairSetOffsetArray[i], SeekOrigin.Begin);
-                                    var pairSetTable = new PairSetTable();
-                                    pairSetTable.ReadFrom(reader, value1Format, value2Format);
-                                    pairSetTables[n] = pairSetTable;
-                                }
-                                var subTable = new LkSubTableType2(pairSetTables);
-                                //coverage        
-                                subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverage);
-                                subTables.Add(subTable);
+                                reader.BaseStream.Seek(subTableStartAt + pairSetOffsetArray[n], SeekOrigin.Begin);
+                                var pairSetTable = new PairSetTable();
+                                pairSetTable.ReadFrom(reader, value1Format, value2Format);
+                                pairSetTables[n] = pairSetTable;
                             }
-                            break;
-                        case 2:
+                            var subTable = new LkSubTableType2Fmt1(pairSetTables);
+                            //coverage
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverage);
+                            return subTable;
+                        }
+                    case 2:
+                        {
+                            ushort coverage = reader.ReadUInt16();
+                            ushort value1Format = reader.ReadUInt16();
+                            ushort value2Format = reader.ReadUInt16();
+                            ushort classDef1_offset = reader.ReadUInt16();
+                            ushort classDef2_offset = reader.ReadUInt16();
+                            ushort class1Count = reader.ReadUInt16();
+                            ushort class2Count = reader.ReadUInt16();
+
+                            Lk2Class1Record[] class1Records = new Lk2Class1Record[class1Count];
+                            for (int c1 = 0; c1 < class1Count; ++c1)
                             {
-                                //.... 
-                                ushort coverage = reader.ReadUInt16();
-                                ushort value1Format = reader.ReadUInt16();
-                                ushort value2Format = reader.ReadUInt16();
-                                ushort classDef1_offset = reader.ReadUInt16();
-                                ushort classDef2_offset = reader.ReadUInt16();
-                                ushort class1Count = reader.ReadUInt16();
-                                ushort class2Count = reader.ReadUInt16();
+                                //for each c1 record
 
-                                for (int c1 = 0; c1 < class1Count; ++c1)
+                                Lk2Class2Record[] class2Records = new Lk2Class2Record[class2Count];
+                                for (int c2 = 0; c2 < class2Count; ++c2)
                                 {
-                                    //for each c1 record
-                                    for (int c2 = 0; c2 < class2Count; ++c2)
-                                    {
-
-                                    }
-
+                                    class2Records[c2] = new Lk2Class2Record(
+                                          ValueRecord.CreateFrom(reader, value1Format),
+                                          ValueRecord.CreateFrom(reader, value2Format));
                                 }
-                                //TODO: impl more
-                                throw new NotImplementedException();
+                                class1Records[c1] = new Lk2Class1Record(class2Records);
                             }
-                    }
+
+                            var subTable = new LkSubTableType2Fmt2(class1Records,
+                                                ClassDefTable.CreateFrom(reader, subTableStartAt + classDef1_offset),
+                                                ClassDefTable.CreateFrom(reader, subTableStartAt + classDef2_offset));
+
+
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverage);
+                            return subTable;
+                        }
                 }
             }
 
@@ -588,14 +551,15 @@ namespace Typography.OpenFont.Tables
             /// Lookup Type 3: Cursive Attachment Positioning Subtable
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType3(BinaryReader reader)
+            static LookupSubTable ReadLookupType3(BinaryReader reader, long subTableStartAt)
             {
-                //TODO: implement this
-                throw new NotImplementedException();
+                // TODO: implement this
+
+                return new UnImplementedLookupSubTable("GPOS Lookup Table Type 3");
             }
-            //-------------------------------------------------------------------------
+
             /// <summary>
-            /// Lookup Type 4:MarkToBase Attachment Positioning, or called (MarkBasePos) table
+            /// Lookup Type 4: MarkToBase Attachment Positioning, or called (MarkBasePos) table
             /// </summary>
             class LkSubTableType4 : LookupSubTable
             {
@@ -607,41 +571,39 @@ namespace Typography.OpenFont.Tables
                 public BaseArrayTable BaseArrayTable { get; set; }
                 public MarkArrayTable MarkArrayTable { get; set; }
 
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
                     int xpos = 0;
                     //find marker
                     int j = inputGlyphs.Count;
-                    for (int i = 1; i < j; ++i) //start at 1
+
+                    startAt = Math.Max(startAt, 1);
+
+                    for (int i = startAt; i < j; ++i) //start at 1
                     {
-                        GlyphPos glyphPos = inputGlyphs[i];
-                        int markFound = MarkCoverageTable.FindPosition(glyphPos.glyphIndex);
+                        ushort glyph_advW;
+                        int markFound = MarkCoverageTable.FindPosition(inputGlyphs.GetGlyph(i, out glyph_advW));
                         if (markFound > -1)
                         {
                             //this is mark glyph
                             //then-> look back for base
-                            int baseFound = BaseCoverageTable.FindPosition(inputGlyphs[i - 1].glyphIndex);
+                            ushort prev_glyph_adv_w;
+                            int baseFound = BaseCoverageTable.FindPosition(inputGlyphs.GetGlyph(i - 1, out prev_glyph_adv_w));
                             if (baseFound > -1)
                             {
                                 ushort markClass = this.MarkArrayTable.GetMarkClass(markFound);
-                                //find anchor on base glyph   
+                                //find anchor on base glyph
                                 AnchorPoint markAnchorPoint = this.MarkArrayTable.GetAnchorPoint(markFound);
                                 BaseRecord baseRecord = BaseArrayTable.GetBaseRecords(baseFound);
                                 AnchorPoint basePointForMark = baseRecord.anchors[markClass];
-
-                                glyphPos.xoffset += (short)((-inputGlyphs[i - 1].advWidth + basePointForMark.xcoord - markAnchorPoint.xcoord));
-
-#if DEBUG
-                                if (markAnchorPoint.ycoord != 0)
-                                {
-
-                                }
-#endif
-                                glyphPos.yoffset += (short)(basePointForMark.ycoord - markAnchorPoint.ycoord);
-
+                                inputGlyphs.AppendGlyphOffset(
+                                    i,
+                                    (short)((-prev_glyph_adv_w + basePointForMark.xcoord - markAnchorPoint.xcoord)),
+                                    (short)(basePointForMark.ycoord - markAnchorPoint.ycoord)
+                                    );
                             }
                         }
-                        xpos += glyphPos.advWidth;
+                        xpos += glyph_advW;
                     }
                 }
 
@@ -649,26 +611,26 @@ namespace Typography.OpenFont.Tables
                 public void dbugTest()
                 {
                     //count base covate
-                    ushort[] expandedMarks = MarkCoverageTable.dbugGetExpandedGlyphs();
-                    if (expandedMarks.Length != MarkArrayTable.dbugGetAnchorCount())
+                    List<ushort> expandedMarks = new List<ushort>(MarkCoverageTable.GetExpandedValueIter());
+                    if (expandedMarks.Count != MarkArrayTable.dbugGetAnchorCount())
                     {
                         throw new NotSupportedException();
                     }
                     //--------------------------
-                    ushort[] expandedBase = BaseCoverageTable.dbugGetExpandedGlyphs();
-                    if (expandedBase.Length != BaseArrayTable.dbugGetRecordCount())
+                    List<ushort> expandedBase = new List<ushort>(BaseCoverageTable.GetExpandedValueIter());
+                    if (expandedBase.Count != BaseArrayTable.dbugGetRecordCount())
                     {
                         throw new NotSupportedException();
                     }
-
                 }
 #endif
             }
+
             /// <summary>
             /// Lookup Type 4: MarkToBase Attachment Positioning Subtable
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType4(BinaryReader reader)
+            static LookupSubTable ReadLookupType4(BinaryReader reader, long subTableStartAt)
             {
                 //The MarkToBase attachment (MarkBasePos) subtable is used to position combining mark glyphs with respect to base glyphs. 
                 //For example, the Arabic, Hebrew, and Thai scripts combine vowels, diacritical marks, and tone marks with base glyphs.
@@ -706,13 +668,13 @@ namespace Typography.OpenFont.Tables
 
                 //MarkBasePosFormat1 subtable: MarkToBase attachment point
                 //----------------------------------------------
-                //Value 	Type 	Description
-                //uint16 	PosFormat 	Format identifier-format = 1
+                //Value 	Type 	        Description
+                //uint16 	PosFormat 	    Format identifier-format = 1
                 //Offset16 	MarkCoverage 	Offset to MarkCoverage table-from beginning of MarkBasePos subtable ( all the mark glyphs referenced in the subtable)
                 //Offset16 	BaseCoverage 	Offset to BaseCoverage table-from beginning of MarkBasePos subtable (all the base glyphs referenced in the subtable)
-                //uint16 	ClassCount 	Number of classes defined for marks
-                //Offset16 	MarkArray 	Offset to MarkArray table-from beginning of MarkBasePos subtable
-                //Offset16 	BaseArray 	Offset to BaseArray table-from beginning of MarkBasePos subtable
+                //uint16 	ClassCount 	    Number of classes defined for marks
+                //Offset16 	MarkArray 	    Offset to MarkArray table-from beginning of MarkBasePos subtable
+                //Offset16 	BaseArray 	    Offset to BaseArray table-from beginning of MarkBasePos subtable
                 //----------------------------------------------
 
                 //The BaseArray table consists of an array (BaseRecord) and count (BaseCount) of BaseRecords. 
@@ -723,46 +685,31 @@ namespace Typography.OpenFont.Tables
                 //Value 	Type 	Description
                 //uint16 	BaseCount 	Number of BaseRecords
                 //struct 	BaseRecord[BaseCount] 	Array of BaseRecords-in order of BaseCoverage Index
-                long thisSubTablePos = reader.BaseStream.Position;
-                int j = subTableOffsets.Length;
-                for (int i = 0; i < j; ++i)
+
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
+
+                ushort format = reader.ReadUInt16();
+                if (format != 1)
                 {
-                    //move to read pos
-                    long subtableStart = thisSubTablePos + subTableOffsets[i]; //beginning of MarkBasePos subtable ***
-                    reader.BaseStream.Seek(subtableStart, SeekOrigin.Begin);
-
-                    //----------------------- 
-                    ushort format = reader.ReadUInt16();
-                    if (format != 1)
-                    {
-                        throw new NotSupportedException();
-                    }
-                    ushort markCoverageOffset = reader.ReadUInt16(); //offset from 
-                    ushort baseCoverageOffset = reader.ReadUInt16();
-                    ushort mark_classCount = reader.ReadUInt16();
-                    ushort markArrayOffset = reader.ReadUInt16();
-                    ushort baseArrayOffset = reader.ReadUInt16();
-
-                    //---------------------------------------------------------------------------
-
-                    //read mark array table
-                    var lookupType4 = new LkSubTableType4();
-                    //---------------------------------------------------------------------------                     
-                    lookupType4.MarkCoverageTable = CoverageTable.CreateFrom(reader, subtableStart + markCoverageOffset);
-                    //---------------------------------------------------------------------------                    
-                    lookupType4.BaseCoverageTable = CoverageTable.CreateFrom(reader, subtableStart + baseCoverageOffset);
-                    //---------------------------------------------------------------------------                     
-                    lookupType4.MarkArrayTable = MarkArrayTable.CreateFrom(reader, subtableStart + markArrayOffset);
-                    //---------------------------------------------------------------------------                     
-                    lookupType4.BaseArrayTable = BaseArrayTable.CreateFrom(reader, subtableStart + baseArrayOffset, mark_classCount);
-                    //---------------------------------------------------------------------------
-#if DEBUG
-                    lookupType4.dbugTest();
-#endif
-                    this.subTables.Add(lookupType4);
+                    return new UnImplementedLookupSubTable(string.Format("GPOS Lookup Sub Table Type 4 Format {0}", format));
                 }
-            }
+                ushort markCoverageOffset = reader.ReadUInt16(); //offset from
+                ushort baseCoverageOffset = reader.ReadUInt16();
+                ushort markClassCount = reader.ReadUInt16();
+                ushort markArrayOffset = reader.ReadUInt16();
+                ushort baseArrayOffset = reader.ReadUInt16();
 
+                //read mark array table
+                var lookupType4 = new LkSubTableType4();
+                lookupType4.MarkCoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + markCoverageOffset);
+                lookupType4.BaseCoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + baseCoverageOffset);
+                lookupType4.MarkArrayTable = MarkArrayTable.CreateFrom(reader, subTableStartAt + markArrayOffset);
+                lookupType4.BaseArrayTable = BaseArrayTable.CreateFrom(reader, subTableStartAt + baseArrayOffset, markClassCount);
+#if DEBUG
+                lookupType4.dbugTest();
+#endif
+                return lookupType4;
+            }
 
             class LkSubTableType5 : LookupSubTable
             {
@@ -770,291 +717,267 @@ namespace Typography.OpenFont.Tables
                 public CoverageTable LigatureCoverage { get; set; }
                 public MarkArrayTable MarkArrayTable { get; set; }
                 public LigatureArrayTable LigatureArrayTable { get; set; }
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 5");
                 }
             }
+
             /// <summary>
             /// Lookup Type 5: MarkToLigature Attachment Positioning Subtable
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType5(BinaryReader reader)
+            static LookupSubTable ReadLookupType5(BinaryReader reader, long subTableStartAt)
             {
-                //uint16 	PosFormat 	Format identifier-format = 1
-                //Offset16 	MarkCoverage 	Offset to Mark Coverage table-from beginning of MarkLigPos subtable
+                //uint16 	PosFormat 	        Format identifier-format = 1
+                //Offset16 	MarkCoverage 	    Offset to Mark Coverage table-from beginning of MarkLigPos subtable
                 //Offset16 	LigatureCoverage 	Offset to Ligature Coverage table-from beginning of MarkLigPos subtable
-                //uint16 	ClassCount 	Number of defined mark classes
-                //Offset16 	MarkArray 	Offset to MarkArray table-from beginning of MarkLigPos subtable
-                //Offset16 	LigatureArray 	Offset to LigatureArray table-from beginning of MarkLigPos subtable
+                //uint16 	ClassCount 	        Number of defined mark classes
+                //Offset16 	MarkArray 	        Offset to MarkArray table-from beginning of MarkLigPos subtable
+                //Offset16 	LigatureArray 	    Offset to LigatureArray table-from beginning of MarkLigPos subtable
 
-                long thisLookupTablePos = reader.BaseStream.Position;
-                int j = subTableOffsets.Length;
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
 
-                for (int i = 0; i < j; ++i)
+                ushort format = reader.ReadUInt16();
+                if (format != 1)
                 {
-
-                    long subTableStartAt = lookupTablePos + subTableOffsets[i];
-                    reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
-                    //-----------------------
-
-                    ushort format = reader.ReadUInt16();
-                    if (format != 1)
-                    {
-                        throw new NotSupportedException();
-                    }
-                    ushort markCoverageOffset = reader.ReadUInt16(); //from beginning of MarkLigPos subtable
-                    ushort ligatureCoverageOffset = reader.ReadUInt16();
-                    ushort classCount = reader.ReadUInt16();
-                    ushort markArrayOffset = reader.ReadUInt16();
-                    ushort ligatureArrayOffset = reader.ReadUInt16();
-                    //-----------------------
-                    var subTable = new LkSubTableType5();
-                    //-----------------------
-                    subTable.MarkCoverage = CoverageTable.CreateFrom(reader, subTableStartAt + markCoverageOffset);
-                    //-----------------------
-                    subTable.LigatureCoverage = CoverageTable.CreateFrom(reader, subTableStartAt + ligatureCoverageOffset);
-                    //-----------------------                     
-                    subTable.MarkArrayTable = MarkArrayTable.CreateFrom(reader, subTableStartAt + markArrayOffset);
-                    //-----------------------
-                    reader.BaseStream.Seek(subTableStartAt + ligatureArrayOffset, SeekOrigin.Begin);
-                    var ligatureArrayTable = new LigatureArrayTable();
-                    ligatureArrayTable.ReadFrom(reader, classCount);
-                    subTable.LigatureArrayTable = ligatureArrayTable;
-                    //-----------------------
-                    this.subTables.Add(subTable);
+                    return new UnImplementedLookupSubTable(string.Format("GPOS Lookup Sub Table Type 5 Format {0}", format));
                 }
+                ushort markCoverageOffset = reader.ReadUInt16(); //from beginning of MarkLigPos subtable
+                ushort ligatureCoverageOffset = reader.ReadUInt16();
+                ushort classCount = reader.ReadUInt16();
+                ushort markArrayOffset = reader.ReadUInt16();
+                ushort ligatureArrayOffset = reader.ReadUInt16();
+                //-----------------------
+                var subTable = new LkSubTableType5();
+                subTable.MarkCoverage = CoverageTable.CreateFrom(reader, subTableStartAt + markCoverageOffset);
+                subTable.LigatureCoverage = CoverageTable.CreateFrom(reader, subTableStartAt + ligatureCoverageOffset);
+                subTable.MarkArrayTable = MarkArrayTable.CreateFrom(reader, subTableStartAt + markArrayOffset);
+
+                reader.BaseStream.Seek(subTableStartAt + ligatureArrayOffset, SeekOrigin.Begin);
+                var ligatureArrayTable = new LigatureArrayTable();
+                ligatureArrayTable.ReadFrom(reader, classCount);
+                subTable.LigatureArrayTable = ligatureArrayTable;
+
+                return subTable;
             }
 
-
             //-----------------------------------------------------------------
+            //https://docs.microsoft.com/en-us/typography/opentype/otspec180/gpos#lookup-type-6--marktomark-attachment-positioning-subtable
             /// <summary>
             /// Lookup Type 6: MarkToMark Attachment
+            /// defines the position of one mark relative to another mark 
             /// </summary>
             class LkSubTableType6 : LookupSubTable
             {
+
                 public CoverageTable MarkCoverage1 { get; set; }
                 public CoverageTable MarkCoverage2 { get; set; }
                 public MarkArrayTable Mark1ArrayTable { get; set; }
                 public Mark2ArrayTable Mark2ArrayTable { get; set; } // Mark2 attachment points used to attach Mark1 glyphs to a specific Mark2 glyph. 
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+
+
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    //find marker 
-                    if (startAt == 0)
+                    //The attaching mark is Mark1, 
+                    //and the base mark being attached to is Mark2.
+
+                    //The Mark2 glyph (that combines with a Mark1 glyph) is the glyph preceding the Mark1 glyph in glyph string order 
+                    //(skipping glyphs according to LookupFlags)
+
+                    //@prepare: we must found mark2 glyph before mark1
+#if DEBUG
+                    if (len == 3 || len == 4)
                     {
-                        startAt++;
+
                     }
-                    int lim = startAt + len;
-                    if (lim > inputGlyphs.Count)
+#endif
+                    //find marker
+                    startAt = Math.Max(startAt, 1);
+                    int lim = Math.Min(startAt + len, inputGlyphs.Count);
+
+                    for (int i = startAt; i < lim; ++i)
                     {
-                        lim = inputGlyphs.Count;
-                    }
-                    //
-                    for (int i = startAt; i < lim; ++i) //start at 1
-                    {
-                        GlyphPos glyphPos = inputGlyphs[i];
-                        int markFound = MarkCoverage1.FindPosition(glyphPos.glyphIndex);
-                        if (markFound > -1)
+                        ushort glyph_adv_w;
+                        int mark1Found = MarkCoverage1.FindPosition(inputGlyphs.GetGlyph(i, out glyph_adv_w));
+                        if (mark1Found > -1)
                         {
                             //this is mark glyph
-                            //then-> look back for base 
-                            GlyphPos prev_pos = inputGlyphs[i - 1];
-                            int baseFound = MarkCoverage2.FindPosition(prev_pos.glyphIndex);
-                            if (baseFound > -1)
+                            //then-> look back for base mark (mark2)
+                            ushort prev_pos_adv_w;
+                            int mark2Found = MarkCoverage2.FindPosition(inputGlyphs.GetGlyph(i - 1, out prev_pos_adv_w));
+                            if (mark2Found > -1)
                             {
-                                int markClassId = this.Mark1ArrayTable.GetMarkClass(markFound);
-                                AnchorPoint mark2BaseAnchor = this.Mark2ArrayTable.GetAnchorPoint(baseFound, markClassId);
-                                AnchorPoint mark1Anchor = this.Mark1ArrayTable.GetAnchorPoint(markFound);
+                                int mark1ClassId = this.Mark1ArrayTable.GetMarkClass(mark1Found);
+                                AnchorPoint mark2BaseAnchor = this.Mark2ArrayTable.GetAnchorPoint(mark2Found, mark1ClassId);
+                                AnchorPoint mark1Anchor = this.Mark1ArrayTable.GetAnchorPoint(mark1Found);
 
-                                //TODO: review here
+                                // TODO: review here
                                 if (mark1Anchor.ycoord < 0)
                                 {
-                                    //eg. น้ำ
-                                    prev_pos.yoffset += (short)(-mark1Anchor.ycoord);
-                                    int actualBasePos = FindActualBaseGlyphBackward(inputGlyphs, i - 1);
-                                    if (actualBasePos > -1)
-                                    {
-                                        GlyphPos prev_pos2 = inputGlyphs[actualBasePos];
-                                        glyphPos.xoffset += (short)((prev_pos2.xoffset + mark2BaseAnchor.xcoord - mark1Anchor.xcoord));
-                                    }
+                                    //temp HACK!
+                                    //eg. น้ำ in Tahoma 
+                                    
+                                    inputGlyphs.AppendGlyphOffset(i - 1 /*PREV*/, mark1Anchor.xcoord, mark1Anchor.ycoord);                                     
                                 }
                                 else
                                 {
-                                    glyphPos.yoffset += (short)(mark1Anchor.ycoord);
-                                    glyphPos.xoffset += (short)((prev_pos.xoffset + mark2BaseAnchor.xcoord - mark1Anchor.xcoord));
+                                    //short offset_x, offset_y;
+                                    //inputGlyphs.GetOffset(i - 1/*PREV*/, out offset_x, out offset_y);
+                                    //inputGlyphs.AppendGlyphOffset(
+                                    //     i,
+                                    //     (short)(offset_x + mark2BaseAnchor.xcoord - mark1Anchor.xcoord),
+                                    //     (short)(offset_y + mark2BaseAnchor.ycoord - mark1Anchor.ycoord));
+
+
+                                    //TEMP hack
+                                    short offset_x, offset_y;
+                                    inputGlyphs.GetOffset(i - 1/*PREV*/, out offset_x, out offset_y);
+                                    inputGlyphs.AppendGlyphOffset(
+                                         i,
+                                         (short)(offset_x + mark2BaseAnchor.xcoord - mark1Anchor.xcoord),
+                                         (short)(offset_y + mark1Anchor.ycoord - mark2BaseAnchor.ycoord));
                                 }
                             }
                         }
                     }
                 }
             }
-            static int FindActualBaseGlyphBackward(List<GlyphPos> inputGlyphs, int startAt)
+
+            static int FindActualBaseGlyphBackward(IGlyphPositions inputGlyphs, int startAt)
             {
                 for (int i = startAt; i >= 0; --i)
                 {
-                    GlyphPos glyphPos = inputGlyphs[i];
-                    if (glyphPos._classKind <= GlyphClassKind.Base)
+                    if (inputGlyphs.GetGlyphClassKind(i) <= GlyphClassKind.Base)
                     {
                         return i;
                     }
                 }
                 return -1;
             }
+
             /// <summary>
             /// Lookup Type 6: MarkToMark Attachment Positioning Subtable
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType6(BinaryReader reader)
+            static LookupSubTable ReadLookupType6(BinaryReader reader, long subTableStartAt)
             {
+                // uint16     PosFormat      Format identifier-format = 1
+                // Offset16   Mark1Coverage  Offset to Combining Mark Coverage table-from beginning of MarkMarkPos subtable
+                // Offset16   Mark2Coverage  Offset to Base Mark Coverage table-from beginning of MarkMarkPos subtable
+                // uint16     ClassCount     Number of Combining Mark classes defined
+                // Offset16   Mark1Array     Offset to MarkArray table for Mark1-from beginning of MarkMarkPos subtable
+                // Offset16   Mark2Array     Offset to Mark2Array table for Mark2-from beginning of MarkMarkPos subtable
 
-                //uint16 	PosFormat 	Format identifier-format = 1
-                //Offset16 	Mark1Coverage 	Offset to Combining Mark Coverage table-from beginning of MarkMarkPos subtable
-                //Offset16 	Mark2Coverage 	Offset to Base Mark Coverage table-from beginning of MarkMarkPos subtable
-                //uint16 	ClassCount 	Number of Combining Mark classes defined
-                //Offset16 	Mark1Array 	Offset to MarkArray table for Mark1-from beginning of MarkMarkPos subtable
-                //Offset16 	Mark2Array 	Offset to Mark2Array table for Mark2-from beginning of MarkMarkPos subtable
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
 
-                long thisLookupTablePos = reader.BaseStream.Position;
-                int j = subTableOffsets.Length;
-
-                for (int i = 0; i < j; ++i)
+                ushort format = reader.ReadUInt16();
+                if (format != 1)
                 {
-                    //move to read pos
-                    long subTableStartAt = lookupTablePos + subTableOffsets[i];
-                    reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
-
-                    //-----------------------
-
-                    ushort format = reader.ReadUInt16();
-                    if (format != 1)
-                    {
-                        throw new NotSupportedException();
-                    }
-                    ushort mark1CoverageOffset = reader.ReadUInt16();
-                    ushort mark2CoverageOffset = reader.ReadUInt16();
-                    ushort classCount = reader.ReadUInt16();
-                    ushort mark1ArrayOffset = reader.ReadUInt16();
-                    ushort mark2ArrayOffset = reader.ReadUInt16();
-                    //
-                    var subTable = new LkSubTableType6();
-                    subTable.MarkCoverage1 = CoverageTable.CreateFrom(reader, subTableStartAt + mark1CoverageOffset);
-                    subTable.MarkCoverage2 = CoverageTable.CreateFrom(reader, subTableStartAt + mark2CoverageOffset);
-                    subTable.Mark1ArrayTable = MarkArrayTable.CreateFrom(reader, subTableStartAt + mark1ArrayOffset);
-                    subTable.Mark2ArrayTable = Mark2ArrayTable.CreateFrom(reader, subTableStartAt + mark2ArrayOffset, classCount);
-
-
-                    this.subTables.Add(subTable);
+                    return new UnImplementedLookupSubTable(string.Format("GPOS Lookup Sub Table Type 6 Format {0}", format));
                 }
+                ushort mark1CoverageOffset = reader.ReadUInt16();
+                ushort mark2CoverageOffset = reader.ReadUInt16();
+                ushort classCount = reader.ReadUInt16();
+                ushort mark1ArrayOffset = reader.ReadUInt16();
+                ushort mark2ArrayOffset = reader.ReadUInt16();
+                //
+                var subTable = new LkSubTableType6();
+                subTable.MarkCoverage1 = CoverageTable.CreateFrom(reader, subTableStartAt + mark1CoverageOffset);
+                subTable.MarkCoverage2 = CoverageTable.CreateFrom(reader, subTableStartAt + mark2CoverageOffset);
+                subTable.Mark1ArrayTable = MarkArrayTable.CreateFrom(reader, subTableStartAt + mark1ArrayOffset);
+                subTable.Mark2ArrayTable = Mark2ArrayTable.CreateFrom(reader, subTableStartAt + mark2ArrayOffset, classCount);
 
+                return subTable;
             }
+
             /// <summary>
             /// Lookup Type 7: Contextual Positioning Subtables
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType7(BinaryReader reader)
+            static LookupSubTable ReadLookupType7(BinaryReader reader, long subTableStartAt)
             {
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
 
-                long thisLookupTablePos = reader.BaseStream.Position;
-                int j = subTableOffsets.Length;
-
-                for (int i = 0; i < j; ++i)
+                ushort format = reader.ReadUInt16();
+                switch (format)
                 {
-                    //move to read pos
-                    long subTableStartAt = lookupTablePos + subTableOffsets[i];
-                    reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
-                    //-----------------------
+                    default:
+                        return new UnImplementedLookupSubTable(string.Format("GPOS Lookup Sub Table Type 7 Format {0}", format));
+                    case 1:
+                        {
+                            //Context Positioning Subtable: Format 1
+                            //ContextPosFormat1 subtable: Simple context positioning
+                            //Value 	Type 	            Description
+                            //uint16 	PosFormat 	        Format identifier-format = 1
+                            //Offset16 	Coverage 	        Offset to Coverage table-from beginning of ContextPos subtable
+                            //uint16 	PosRuleSetCount 	Number of PosRuleSet tables
+                            //Offset16 	PosRuleSet[PosRuleSetCount]
+                            //
+                            ushort coverageOffset = reader.ReadUInt16();
+                            ushort posRuleSetCount = reader.ReadUInt16();
+                            ushort[] posRuleSetOffsets = Utils.ReadUInt16Array(reader, posRuleSetCount);
 
-                    ushort format = reader.ReadUInt16();
-                    switch (format)
-                    {
-                        default: throw new NotSupportedException();
-                        case 1:
+                            LkSubTableType7Fmt1 subTable = new LkSubTableType7Fmt1();
+                            subTable.PosRuleSetTables = CreateMultiplePosRuleSetTables(subTableStartAt, posRuleSetOffsets, reader);
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
+                            return subTable;
+                        }
+                    case 2:
+                        {
+                            //Context Positioning Subtable: Format 2
+                            //uint16 	PosFormat 	        Format identifier-format = 2
+                            //Offset16 	Coverage 	        Offset to Coverage table-from beginning of ContextPos subtable
+                            //Offset16 	ClassDef 	        Offset to ClassDef table-from beginning of ContextPos subtable
+                            //uint16 	PosClassSetCnt      Number of PosClassSet tables
+                            //Offset16 	PosClassSet[PosClassSetCnt] 	Array of offsets to PosClassSet tables-from beginning of ContextPos subtable-ordered by class-may be NULL
+
+                            ushort coverageOffset = reader.ReadUInt16();
+                            ushort classDefOffset = reader.ReadUInt16();
+                            ushort posClassSetCount = reader.ReadUInt16();
+                            ushort[] posClassSetOffsets = Utils.ReadUInt16Array(reader, posClassSetCount);
+
+                            var subTable = new LkSubTableType7Fmt2();
+                            subTable.ClassDefOffset = classDefOffset;
+
+                            PosClassSetTable[] posClassSetTables = new PosClassSetTable[posClassSetCount];
+                            subTable.PosClassSetTables = posClassSetTables;
+                            for (int n = 0; n < posClassSetCount; ++n)
                             {
-                                //Context Positioning Subtable: Format 1
-                                //ContextPosFormat1 subtable: Simple context positioning
-                                //Value 	Type 	Description
-                                //uint16 	PosFormat 	Format identifier-format = 1
-                                //Offset16 	Coverage 	Offset to Coverage table-from beginning of ContextPos subtable
-                                //uint16 	PosRuleSetCount 	Number of PosRuleSet tables
-                                //Offset16 	PosRuleSet[PosRuleSetCount]
-                                //
-                                ushort coverageOffset = reader.ReadUInt16();
-                                ushort posRuleSetCount = reader.ReadUInt16();
-                                ushort[] posRuleSetOffsets = Utils.ReadUInt16Array(reader, posRuleSetCount);
-
-                                LkSubTableType7Fmt1 subTable = new LkSubTableType7Fmt1();
-                                subTable.PosRuleSetTables = CreateMultiplePosRuleSetTables(subTableStartAt, posRuleSetOffsets, reader);
-                                subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
-
-                                //-----------
-                                subTables.Add(subTable);
+                                posClassSetTables[n] = PosClassSetTable.CreateFrom(reader, subTableStartAt + posClassSetOffsets[n]);
                             }
-                            break;
-                        case 2:
-                            {
-                                //Context Positioning Subtable: Format 2
-                                //uint16 	PosFormat 	Format identifier-format = 2
-                                //Offset16 	Coverage 	Offset to Coverage table-from beginning of ContextPos subtable
-                                //Offset16 	ClassDef 	Offset to ClassDef table-from beginning of ContextPos subtable
-                                //uint16 	PosClassSetCnt 	Number of PosClassSet tables
-                                //Offset16 	PosClassSet[PosClassSetCnt] 	Array of offsets to PosClassSet tables-from beginning of ContextPos subtable-ordered by class-may be NULL
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
+                            return subTable;
+                        }
+                    case 3:
+                        {
+                            //ContextPosFormat3 subtable: Coverage-based context glyph positioning
+                            //Value 	Type 	    Description
+                            //uint16 	PosFormat 	Format identifier-format = 3
+                            //uint16 	GlyphCount 	Number of glyphs in the input sequence
+                            //uint16 	PosCount 	Number of PosLookupRecords
+                            //Offset16 	Coverage[GlyphCount] 	Array of offsets to Coverage tables-from beginning of ContextPos subtable
+                            //struct 	PosLookupRecord[PosCount] Array of positioning lookups-in design order
+                            var subTable = new LkSubTableType7Fmt3();
+                            ushort glyphCount = reader.ReadUInt16();
+                            ushort posCount = reader.ReadUInt16();
+                            //read each lookahead record
+                            ushort[] coverageOffsets = Utils.ReadUInt16Array(reader, glyphCount);
+                            subTable.PosLookupRecords = CreateMultiplePosLookupRecords(reader, posCount);
+                            subTable.CoverageTables = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, coverageOffsets, reader);
 
-                                ushort coverageOffset = reader.ReadUInt16();
-                                ushort classDefOffset = reader.ReadUInt16();
-                                ushort posClassSetCount = reader.ReadUInt16();
-                                ushort[] posClassSetOffsets = Utils.ReadUInt16Array(reader, posClassSetCount);
-
-                                var subTable = new LkSubTableType7Fmt2();
-                                subTable.ClassDefOffset = classDefOffset;
-                                //---------- 
-                                PosClassSetTable[] posClassSetTables = new PosClassSetTable[posClassSetCount];
-                                subTable.PosClassSetTables = posClassSetTables;
-                                for (int n = 0; n < posClassSetCount; ++n)
-                                {
-                                    posClassSetTables[n] = PosClassSetTable.CreateFrom(reader, coverageOffset);
-                                }
-                                //----------                                  
-                                subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
-                                //---------- 
-                                subTables.Add(subTable);
-                                //----------
-                            }
-                            break;
-                        case 3:
-                            {
-                                //ContextPosFormat3 subtable: Coverage-based context glyph positioning
-                                //Value 	Type 	Description
-                                //uint16 	PosFormat 	Format identifier-format = 3
-                                //uint16 	GlyphCount 	Number of glyphs in the input sequence
-                                //uint16 	PosCount 	Number of PosLookupRecords
-                                //Offset16 	Coverage[GlyphCount] 	Array of offsets to Coverage tables-from beginning of ContextPos subtable
-                                //struct 	PosLookupRecord[PosCount] Array of positioning lookups-in design order
-                                var subTable = new LkSubTableType7Fmt3();
-                                ushort glyphCount = reader.ReadUInt16();
-                                ushort posCount = reader.ReadUInt16();
-                                //read each lookahead record
-                                ushort[] coverageOffsets = Utils.ReadUInt16Array(reader, glyphCount);
-                                subTable.PosLookupRecords = CreateMultiplePosLookupRecords(reader, posCount);
-                                subTable.CoverageTables = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, coverageOffsets, reader);
-                                //---------- 
-                                subTables.Add(subTable);
-                                //----------
-                            }
-                            break;
-                    }
+                            return subTable;
+                        }
                 }
             }
 
-
-
             class LkSubTableType7Fmt1 : LookupSubTable
             {
-
                 public CoverageTable CoverageTable { get; set; }
                 public PosRuleSetTable[] PosRuleSetTables { get; set; }
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 7 Format 1");
                 }
             }
 
@@ -1063,9 +986,9 @@ namespace Typography.OpenFont.Tables
                 public ushort ClassDefOffset { get; set; }
                 public CoverageTable CoverageTable { get; set; }
                 public PosClassSetTable[] PosClassSetTables { get; set; }
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 7 Format 2");
                 }
 
             }
@@ -1073,9 +996,9 @@ namespace Typography.OpenFont.Tables
             {
                 public CoverageTable[] CoverageTables { get; set; }
                 public PosLookupRecord[] PosLookupRecords { get; set; }
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 7 Format 3");
                 }
             }
             //----------------------------------------------------------------
@@ -1084,9 +1007,9 @@ namespace Typography.OpenFont.Tables
 
                 public CoverageTable CoverageTable { get; set; }
                 public PosRuleSetTable[] PosRuleSetTables { get; set; }
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 8 Format 1");
                 }
             }
 
@@ -1105,9 +1028,9 @@ namespace Typography.OpenFont.Tables
                 public ushort LookaheadClassDefOffset { get; set; }
 
 
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 8 Format 2");
                 }
             }
             class LkSubTableType8Fmt3 : LookupSubTable
@@ -1118,20 +1041,20 @@ namespace Typography.OpenFont.Tables
                 public PosLookupRecord[] PosLookupRecords { get; set; }
 
                 //Chaining Context Positioning Format 3: Coverage-based Chaining Context Glyph Positioning
-                //USHORT 	PosFormat 	Format identifier-format = 3
-                //USHORT 	BacktrackGlyphCount 	Number of glyphs in the backtracking sequence
+                //USHORT 	PosFormat 	                    Format identifier-format = 3
+                //USHORT 	BacktrackGlyphCount 	        Number of glyphs in the backtracking sequence
                 //Offset 	Coverage[BacktrackGlyphCount] 	Array of offsets to coverage tables in backtracking sequence, in glyph sequence order
-                //USHORT 	InputGlyphCount 	Number of glyphs in input sequence
-                //Offset 	Coverage[InputGlyphCount] 	Array of offsets to coverage tables in input sequence, in glyph sequence order
-                //USHORT 	LookaheadGlyphCount 	Number of glyphs in lookahead sequence
+                //USHORT 	InputGlyphCount 	            Number of glyphs in input sequence
+                //Offset 	Coverage[InputGlyphCount] 	    Array of offsets to coverage tables in input sequence, in glyph sequence order
+                //USHORT 	LookaheadGlyphCount 	        Number of glyphs in lookahead sequence
                 //Offset 	Coverage[LookaheadGlyphCount] 	Array of offsets to coverage tables in lookahead sequence, in glyph sequence order
-                //USHORT 	PosCount 	Number of PosLookupRecords
-                //struct 	PosLookupRecord[PosCount] 	Array of PosLookupRecords,in design order
+                //USHORT 	PosCount 	                    Number of PosLookupRecords
+                //struct 	PosLookupRecord[PosCount] 	    Array of PosLookupRecords,in design order
 
 
-                public override void DoGlyphPosition(List<GlyphPos> inputGlyphs, int startAt, int len)
+                public override void DoGlyphPosition(IGlyphPositions inputGlyphs, int startAt, int len)
                 {
-                    throw new NotImplementedException();
+                    Utils.WarnUnimplemented("GPOS Lookup Sub Table Type 8 Format 3");
                 }
             }
 
@@ -1139,128 +1062,122 @@ namespace Typography.OpenFont.Tables
             /// LookupType 8: Chaining Contextual Positioning Subtable
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType8(BinaryReader reader)
+            LookupSubTable ReadLookupType8(BinaryReader reader, long subTableStartAt)
             {
-                long thisLookupTablePos = reader.BaseStream.Position;
-                int j = subTableOffsets.Length;
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
 
-                for (int i = 0; i < j; ++i)
+                ushort format = reader.ReadUInt16();
+                switch (format)
                 {
-                    //move to read pos
-                    long subTableStartAt = lookupTablePos + subTableOffsets[i];
-                    reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
-                    //-----------------------
+                    default:
+                        return new UnImplementedLookupSubTable(string.Format("GPOS Lookup Table Type 8 Format {0}", format));
+                    case 1:
+                        {
+                            //Chaining Context Positioning  Format 1: Simple Chaining Context Glyph Positioning
+                            //uint16 	PosFormat 	        Format identifier-format = 1
+                            //Offset16 	Coverage 	        Offset to Coverage table-from beginning of ContextPos subtable
+                            //uint16 	ChainPosRuleSetCount 	Number of ChainPosRuleSet tables
+                            //Offset16 	ChainPosRuleSet[ChainPosRuleSetCount] 	Array of offsets to ChainPosRuleSet tables-from beginning of ContextPos subtable-ordered by Coverage Index
 
-                    ushort format = reader.ReadUInt16();
-                    switch (format)
-                    {
-                        default: throw new NotSupportedException();
-                        case 1:
+                            ushort coverageOffset = reader.ReadUInt16();
+                            ushort chainPosRuleSetCount = reader.ReadUInt16();
+                            ushort[] chainPosRuleSetOffsetList = Utils.ReadUInt16Array(reader, chainPosRuleSetCount);
+
+                            LkSubTableType8Fmt1 subTable = new LkSubTableType8Fmt1();
+                            subTable.PosRuleSetTables = CreateMultiplePosRuleSetTables(subTableStartAt, chainPosRuleSetOffsetList, reader);
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
+                            return subTable;
+                        }
+                    case 2:
+                        {
+                            //Chaining Context Positioning Format 2: Class-based Chaining Context Glyph Positioning
+                            //uint16 	PosFormat 	                Format identifier-format = 2
+                            //Offset16 	Coverage 	                Offset to Coverage table-from beginning of ChainContextPos subtable
+                            //Offset16 	BacktrackClassDef 	        Offset to ClassDef table containing backtrack sequence context-from beginning of ChainContextPos subtable
+                            //Offset16 	InputClassDef 	            Offset to ClassDef table containing input sequence context-from beginning of ChainContextPos subtable
+                            //Offset16 	LookaheadClassDef                   	Offset to ClassDef table containing lookahead sequence context-from beginning of ChainContextPos subtable
+                            //uint16 	ChainPosClassSetCnt 	                Number of ChainPosClassSet tables
+                            //Offset16 	ChainPosClassSet[ChainPosClassSetCnt] 	Array of offsets to ChainPosClassSet tables-from beginning of ChainContextPos subtable-ordered by input class-may be NULL
+
+                            ushort coverageOffset = reader.ReadUInt16();
+                            ushort backTrackClassDefOffset = reader.ReadUInt16();
+                            ushort inpuClassDefOffset = reader.ReadUInt16();
+                            ushort lookadheadClassDefOffset = reader.ReadUInt16();
+                            ushort chainPosClassSetCnt = reader.ReadUInt16();
+                            ushort[] chainPosClassSetOffsetArray = Utils.ReadUInt16Array(reader, chainPosClassSetCnt);
+
+                            LkSubTableType8Fmt2 subTable = new LkSubTableType8Fmt2(chainPosClassSetOffsetArray);
+                            subTable.BacktrackClassDefOffset = backTrackClassDefOffset;
+                            subTable.InputClassDefOffset = inpuClassDefOffset;
+                            subTable.LookaheadClassDefOffset = lookadheadClassDefOffset;
+                            //----------
+                            PosClassSetTable[] posClassSetTables = new PosClassSetTable[chainPosClassSetCnt];
+                            for (int n = 0; n < chainPosClassSetCnt; ++n)
                             {
-                                //Chaining Context Positioning Format 1: Simple Chaining Context Glyph Positioning
-                                //uint16 	PosFormat 	        Format identifier-format = 1
-                                //Offset16 	Coverage 	        Offset to Coverage table-from beginning of ContextPos subtable
-                                //uint16 	ChainPosRuleSetCount 	Number of ChainPosRuleSet tables
-                                //Offset16 	ChainPosRuleSet[ChainPosRuleSetCount] 	Array of offsets to ChainPosRuleSet tables-from beginning of ContextPos subtable-ordered by Coverage Index
-
-                                ushort coverageOffset = reader.ReadUInt16();
-                                ushort chainPosRuleSetCount = reader.ReadUInt16();
-                                ushort[] chainPosRuleSetOffsetList = Utils.ReadUInt16Array(reader, chainPosRuleSetCount);
-
-                                LkSubTableType8Fmt1 subTable = new LkSubTableType8Fmt1();
-
-                                subTable.PosRuleSetTables = CreateMultiplePosRuleSetTables(subTableStartAt, chainPosRuleSetOffsetList, reader);
-                                subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
-                                //----------
-
-                                subTables.Add(subTable);
+                                posClassSetTables[n] = PosClassSetTable.CreateFrom(reader, subTableStartAt + chainPosClassSetOffsetArray[n]);
                             }
-                            break;
-                        case 2:
-                            {
-                                //Chaining Context Positioning Format 2: Class-based Chaining Context Glyph Positioning
-                                //uint16 	PosFormat 	                Format identifier-format = 2
-                                //Offset16 	Coverage 	                Offset to Coverage table-from beginning of ChainContextPos subtable
-                                //Offset16 	BacktrackClassDef 	        Offset to ClassDef table containing backtrack sequence context-from beginning of ChainContextPos subtable
-                                //Offset16 	InputClassDef 	            Offset to ClassDef table containing input sequence context-from beginning of ChainContextPos subtable
-                                //Offset16 	LookaheadClassDef                   	Offset to ClassDef table containing lookahead sequence context-from beginning of ChainContextPos subtable
-                                //uint16 	ChainPosClassSetCnt 	                Number of ChainPosClassSet tables
-                                //Offset16 	ChainPosClassSet[ChainPosClassSetCnt] 	Array of offsets to ChainPosClassSet tables-from beginning of ChainContextPos subtable-ordered by input class-may be NULL
+                            subTable.PosClassSetTables = posClassSetTables;
 
-                                ushort coverageOffset = reader.ReadUInt16();
-                                ushort backTrackClassDefOffset = reader.ReadUInt16();
-                                ushort inpuClassDefOffset = reader.ReadUInt16();
-                                ushort lookadheadClassDefOffset = reader.ReadUInt16();
-                                ushort chainPosClassSetCnt = reader.ReadUInt16();
-                                ushort[] chainPosClassSetOffsetArray = Utils.ReadUInt16Array(reader, chainPosClassSetCnt);
+                            subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
+                            return subTable;
+                        }
+                    case 3:
+                        {
+                            //Chaining Context Positioning Format 3: Coverage-based Chaining Context Glyph Positioning
+                            //uint16 	PosFormat 	                    Format identifier-format = 3
+                            //uint16 	BacktrackGlyphCount 	        Number of glyphs in the backtracking sequence
+                            //Offset16 	Coverage[BacktrackGlyphCount] 	Array of offsets to coverage tables in backtracking sequence, in glyph sequence order
+                            //uint16 	InputGlyphCount 	            Number of glyphs in input sequence
+                            //Offset16 	Coverage[InputGlyphCount] 	    Array of offsets to coverage tables in input sequence, in glyph sequence order
+                            //uint16 	LookaheadGlyphCount 	        Number of glyphs in lookahead sequence
+                            //Offset16 	Coverage[LookaheadGlyphCount] 	Array of offsets to coverage tables in lookahead sequence, in glyph sequence order
+                            //uint16 	PosCount 	                    Number of PosLookupRecords
+                            //struct 	PosLookupRecord[PosCount] 	    Array of PosLookupRecords,in design order
 
-                                LkSubTableType8Fmt2 subTable = new LkSubTableType8Fmt2(chainPosClassSetOffsetArray);
-                                subTable.BacktrackClassDefOffset = backTrackClassDefOffset;
-                                subTable.InputClassDefOffset = inpuClassDefOffset;
-                                subTable.LookaheadClassDefOffset = lookadheadClassDefOffset;
-                                //----------
-                                PosClassSetTable[] posClassSetTables = new PosClassSetTable[chainPosClassSetCnt];
-                                subTable.PosClassSetTables = posClassSetTables;
-                                for (int n = 0; n < chainPosClassSetCnt; ++n)
-                                {
-                                    posClassSetTables[n] = PosClassSetTable.CreateFrom(reader, subTableStartAt + chainPosClassSetOffsetArray[i]);
-                                }
-                                //----------
+                            var subTable = new LkSubTableType8Fmt3();
 
-                                subTable.CoverageTable = CoverageTable.CreateFrom(reader, subTableStartAt + coverageOffset);
-                                //----------  
-                                subTables.Add(subTable);
-                                //----------
-                            }
-                            break;
-                        case 3:
-                            {
+                            ushort backtrackGlyphCount = reader.ReadUInt16();
+                            ushort[] backtrackCoverageOffsets = Utils.ReadUInt16Array(reader, backtrackGlyphCount);
+                            ushort inputGlyphCount = reader.ReadUInt16();
+                            ushort[] inputGlyphCoverageOffsets = Utils.ReadUInt16Array(reader, inputGlyphCount);
 
-                                //Chaining Context Positioning Format 3: Coverage-based Chaining Context Glyph Positioning
-                                //uint16 	PosFormat 	Format identifier-format = 3
-                                //uint16 	BacktrackGlyphCount 	Number of glyphs in the backtracking sequence
-                                //Offset16 	Coverage[BacktrackGlyphCount] 	Array of offsets to coverage tables in backtracking sequence, in glyph sequence order
-                                //uint16 	InputGlyphCount 	Number of glyphs in input sequence
-                                //Offset16 	Coverage[InputGlyphCount] 	Array of offsets to coverage tables in input sequence, in glyph sequence order
-                                //uint16 	LookaheadGlyphCount 	Number of glyphs in lookahead sequence
-                                //Offset16 	Coverage[LookaheadGlyphCount] 	Array of offsets to coverage tables in lookahead sequence, in glyph sequence order
-                                //uint16 	PosCount 	Number of PosLookupRecords
-                                //struct 	PosLookupRecord[PosCount] 	Array of PosLookupRecords,in design order
+                            ushort lookaheadGlyphCount = reader.ReadUInt16();
+                            ushort[] lookaheadCoverageOffsets = Utils.ReadUInt16Array(reader, lookaheadGlyphCount);
 
-                                var subTable = new LkSubTableType8Fmt3();
-                                //
-                                ushort backtrackGlyphCount = reader.ReadUInt16();
-                                ushort[] backtrackCoverageOffsets = Utils.ReadUInt16Array(reader, backtrackGlyphCount);
-                                ushort inputGlyphCount = reader.ReadUInt16();
-                                ushort[] inputGlyphCoverageOffsets = Utils.ReadUInt16Array(reader, inputGlyphCount);
-                                //
-                                ushort lookaheadGlyphCount = reader.ReadUInt16();
-                                ushort[] lookaheadCoverageOffsets = Utils.ReadUInt16Array(reader, lookaheadGlyphCount);
-                                //
-                                ushort posCount = reader.ReadUInt16();
-                                subTable.PosLookupRecords = CreateMultiplePosLookupRecords(reader, posCount);
-                                //--------------
+                            ushort posCount = reader.ReadUInt16();
+                            subTable.PosLookupRecords = CreateMultiplePosLookupRecords(reader, posCount);
 
-                                subTable.BacktrackCoverages = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, backtrackCoverageOffsets, reader);
-                                subTable.InputGlyphCoverages = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, inputGlyphCoverageOffsets, reader);
-                                subTable.LookaheadCoverages = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, lookaheadCoverageOffsets, reader);
-                                subTables.Add(subTable);
+                            subTable.BacktrackCoverages = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, backtrackCoverageOffsets, reader);
+                            subTable.InputGlyphCoverages = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, inputGlyphCoverageOffsets, reader);
+                            subTable.LookaheadCoverages = CoverageTable.CreateMultipleCoverageTables(subTableStartAt, lookaheadCoverageOffsets, reader);
 
-                            }
-                            break;
-                    }
-
+                            return subTable;
+                        }
                 }
             }
+
             /// <summary>
             /// LookupType 9: Extension Positioning
             /// </summary>
             /// <param name="reader"></param>
-            void ReadLookupType9(BinaryReader reader)
+            LookupSubTable ReadLookupType9(BinaryReader reader, long subTableStartAt)
             {
-                //Console.WriteLine("skip lookup type 9");
+                reader.BaseStream.Seek(subTableStartAt, SeekOrigin.Begin);
+                ushort format = reader.ReadUInt16();
+                ushort extensionLookupType = reader.ReadUInt16();
+                uint extensionOffset = reader.ReadUInt32();
+                if (extensionLookupType == 9)
+                {
+                    throw new NotSupportedException();
+                }
+                // Simply read the lookup table again with updated offsets
+                lookupType = extensionLookupType;
+                LookupSubTable subTable = ReadSubTable(reader, subTableStartAt + extensionOffset);
+                // FIXME: this is a bit hackish, try to find a better construct
+                lookupType = 9;
+                return subTable;
             }
         }
     }
-
 }
+

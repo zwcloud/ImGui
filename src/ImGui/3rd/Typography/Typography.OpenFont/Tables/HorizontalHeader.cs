@@ -1,12 +1,18 @@
-﻿//Apahce2, 2017, WinterDev
+﻿//Apache2, 2017-present, WinterDev
 //Apache2, 2014-2016, Samuel Carlsson, WinterDev
 
 using System;
 using System.IO;
 namespace Typography.OpenFont.Tables
 {
+    /// <summary>
+    /// hhea
+    /// </summary>
     class HorizontalHeader : TableEntry
     {
+        public const string _N = "hhea";
+        public override string Name => _N;
+
         //-----
         // Type     Name            Description
         //uint16    majorVersion    Major version number of the horizontal header table — set to 1.
@@ -14,7 +20,7 @@ namespace Typography.OpenFont.Tables
         //FWORD     Ascender        Typographic ascent(Distance from baseline of highest ascender).
         //FWORD     Descender       Typographic descent(Distance from baseline of lowest descender).
         //FWORD     LineGap         Typographic line gap.
-        //Negative  LineGap         values are treated as zero in Windows 3.1, and in Mac OS System 6 and System 7.
+        //                          Negative  LineGap values are treated as zero in Windows 3.1, and in Mac OS System 6 and System 7.
         //UFWORD    advanceWidthMax     Maximum advance width value in 'hmtx' table.
         //FWORD     minLeftSideBearing  Minimum left sidebearing value in 'hmtx' table.
         //FWORD     minRightSideBearing     Minimum right sidebearing value; calculated as Min(aw - lsb - (xMax - xMin)).
@@ -31,10 +37,6 @@ namespace Typography.OpenFont.Tables
 
         public HorizontalHeader()
         {
-        }
-        public override string Name
-        {
-            get { return "hhea"; }
         }
         protected override void ReadContentFrom(BinaryReader input)
         {

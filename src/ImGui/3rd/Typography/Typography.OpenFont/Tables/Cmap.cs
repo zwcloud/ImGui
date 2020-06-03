@@ -1,10 +1,55 @@
-﻿//Apache2, 2017, WinterDev
+﻿//Apache2, 2017-present, WinterDev
 //Apache2, 2014-2016, Samuel Carlsson, WinterDev
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 namespace Typography.OpenFont.Tables
 {
+
+    //---------------------------------------------------
+    //cmap - Character To Glyph Index Mapping Table
+    //---------------------------------------------------
+    //This table defines the mapping of character codes to the glyph index values used in the font. 
+    //It may contain more than one subtable, in order to support more than one character encoding scheme.
+    //Character codes that do not correspond to any glyph in the font should be mapped to glyph index 0.
+    //The glyph at this location must be a special glyph representing a missing character, commonly known as .notdef.
+
+    //The table header indicates the character encodings for which subtables are present.
+    //Each subtable is in one of seven possible formats and begins with a format code indicating the format used.
+
+    //The platform ID and platform - specific encoding ID in the header entry(and, in the case of the Macintosh platform,
+    //the language field in the subtable itself) are used to specify a particular 'cmap' encoding.
+    //The header entries must be sorted first by platform ID, then by platform - specific encoding ID,
+    //and then by the language field in the corresponding subtable.Each platform ID, 
+    //platform - specific encoding ID, and subtable language combination may appear only once in the 'cmap' table.
+
+    //When building a Unicode font for Windows, the platform ID should be 3 and the encoding ID should be 1.
+    //When building a symbol font for Windows, the platform ID should be 3 and the encoding ID should be 0.
+    //When building a font that will be used on the Macintosh, the platform ID should be 1 and the encoding ID should be 0.
+
+    //All Microsoft Unicode BMP encodings(Platform ID = 3, Encoding ID = 1) must provide at least a Format 4 'cmap' subtable.
+    //If the font is meant to support supplementary(non - BMP) Unicode characters,
+    //it will additionally need a Format 12 subtable with a platform encoding ID 10.
+    //The contents of the Format 12 subtable need to be a superset of the contents of the Format 4 subtable.
+    //Microsoft strongly recommends using a BMP Unicode 'cmap' for all fonts. However, some other encodings that appear in current fonts follow:
+
+    //Windows Encodings
+    //Platform ID Encoding ID Description
+    //3   0   Symbol
+    //3   1   Unicode BMP(UCS - 2)
+    //3   2   ShiftJIS
+    //3   3   PRC
+    //3   4   Big5
+    //3   5   Wansung
+    //3   6   Johab
+    //3   7   Reserved
+    //3   8   Reserved
+    //3   9   Reserved
+    //3   10  Unicode UCS - 4
+    //---------------------------------------------------
+
+
     ////////////////////////////////////////////////////////////////////////
     //from https://www.microsoft.com/typography/developers/opentype/detail.htm
     //CMAP Table
@@ -26,17 +71,74 @@ namespace Typography.OpenFont.Tables
     //or map correctly to these codepoints from other codepages and character sets. 
     ////////////////////////////////////////////////////////////////////////
 
-    class Cmap : TableEntry
+    partial class Cmap : TableEntry
     {
-        CharacterMap[] charMaps;
-        public override string Name
+        public const string _N = "cmap";
+        public override string Name => _N;
+
+        CharacterMap[] _charMaps = null;
+        List<CharMapFormat14> _charMap14List;
+        Dictionary<int, ushort> _codepointToGlyphs = new Dictionary<int, ushort>();
+
+
+        /// <summary>
+        /// find glyph index from given codepoint(s)
+        /// </summary>
+        /// <param name="codepoint"></param>
+        /// <param name="nextCodepoint"></param>
+        /// <returns>glyph index</returns>
+
+        public ushort GetGlyphIndex(int codepoint, int nextCodepoint, out bool skipNextCodepoint)
         {
-            get { return "cmap"; }
+            // https://www.microsoft.com/typography/OTSPEC/cmap.htm
+            // "character codes that do not correspond to any glyph in the font should be mapped to glyph index 0."
+
+            skipNextCodepoint = false; //default
+
+            if (!_codepointToGlyphs.TryGetValue(codepoint, out ushort found))
+            {
+                for (int i = 0; i < _charMaps.Length; ++i)
+                {
+                    CharacterMap cmap = _charMaps[i];
+
+                    //https://www.microsoft.com/typography/OTSPEC/cmap.htm 
+
+                    if (found == 0)
+                    {
+                        found = cmap.GetGlyphIndex(codepoint);
+                    }
+                    else if (cmap.PlatformId == 3 && cmap.EncodingId == 1)
+                    {
+                        //...When building a Unicode font for Windows, 
+                        // the platform ID should be 3 and the encoding ID should be 1
+                        ushort gid = cmap.GetGlyphIndex(codepoint);
+                        if (gid != 0)
+                        {
+                            found = gid;
+                        }
+                    }
+                }
+                _codepointToGlyphs[codepoint] = found;
+            }
+
+            // If there is a second codepoint, we are asked whether this is an UVS sequence
+            //  -> if true, return a glyph ID
+            //  -> otherwise, return 0
+            if (nextCodepoint > 0 && _charMap14List != null)
+            {
+                foreach (CharMapFormat14 cmap14 in _charMap14List)
+                {
+                    ushort gid = cmap14.CharacterPairToGlyphIndex(codepoint, found, nextCodepoint);
+                    if (gid > 0)
+                    {
+                        skipNextCodepoint = true;
+                        return gid;
+                    }
+                }
+            }
+            return found;
         }
-        public CharacterMap[] CharMaps
-        {
-            get { return charMaps; }
-        }
+
         protected override void ReadContentFrom(BinaryReader input)
         {
             //https://www.microsoft.com/typography/otspec/cmap.htm
@@ -45,23 +147,32 @@ namespace Typography.OpenFont.Tables
             ushort version = input.ReadUInt16(); // 0
             ushort tableCount = input.ReadUInt16();
 
-            var entries = new CMapEntry[tableCount];
+            ushort[] platformIds = new ushort[tableCount];
+            ushort[] encodingIds = new ushort[tableCount];
+            uint[] offsets = new uint[tableCount];
             for (int i = 0; i < tableCount; i++)
             {
-                ushort platformId = input.ReadUInt16();
-                ushort encodingId = input.ReadUInt16();
-                uint offset = input.ReadUInt32();
-                entries[i] = new CMapEntry(platformId, encodingId, offset);
+                platformIds[i] = input.ReadUInt16();
+                encodingIds[i] = input.ReadUInt16();
+                offsets[i] = input.ReadUInt32();
             }
 
-            charMaps = new CharacterMap[tableCount];
+            _charMaps = new CharacterMap[tableCount];
             for (int i = 0; i < tableCount; i++)
             {
-                CMapEntry entry = entries[i];
-                input.BaseStream.Seek(beginAt + entry.Offset, SeekOrigin.Begin);
-                CharacterMap cmap = charMaps[i] = ReadCharacterMap(entry, input);
-                cmap.PlatformId = entry.PlatformId;
-                cmap.EncodingId = entry.EncodingId;
+                input.BaseStream.Seek(beginAt + offsets[i], SeekOrigin.Begin);
+                CharacterMap cmap = ReadCharacterMap(input);
+                cmap.PlatformId = platformIds[i];
+                cmap.EncodingId = encodingIds[i];
+                _charMaps[i] = cmap;
+
+                //
+                if (cmap is CharMapFormat14 cmap14)
+                {
+                    if (_charMap14List == null) _charMap14List = new List<CharMapFormat14>();
+                    //
+                    _charMap14List.Add(cmap14);
+                }
             }
         }
 
@@ -89,11 +200,15 @@ namespace Typography.OpenFont.Tables
                 only256UInt16Glyphs[i] = only256Glyphs[i];
             }
             //convert to format4 cmap table
-            return new CharMapFormat4(1, new ushort[] { 0 }, new ushort[] { 255 }, null, null, only256UInt16Glyphs);
+            ushort[] startArray = new ushort[] { 0, 0xFFFF };
+            ushort[] endArray = new ushort[] { 255, 0xFFFF };
+            ushort[] deltaArray = new ushort[] { 0, 1 };
+            ushort[] offsetArray = new ushort[] { 4, 0 };
+            return new CharMapFormat4(startArray, endArray, deltaArray, offsetArray, only256UInt16Glyphs);
         }
+
         static CharacterMap ReadFormat_2(BinaryReader input)
         {
-
             //Format 2: High - byte mapping through table
 
             //This subtable is useful for the national character code standards used for Japanese, Chinese, and Korean characters.
@@ -136,8 +251,10 @@ namespace Typography.OpenFont.Tables
             //The value idDelta permits the same subarray to be used for several different subheaders.
             //The idDelta arithmetic is modulo 65536.
 
-            throw new System.NotImplementedException();
+            Utils.WarnUnimplemented("cmap subtable format 2");
+            return new NullCharMap();
         }
+
         static CharMapFormat4 ReadFormat_4(BinaryReader input)
         {
             ushort lenOfSubTable = input.ReadUInt16(); //This is the length in bytes of the subtable. ****
@@ -171,7 +288,7 @@ namespace Typography.OpenFont.Tables
                                                                       //>To ensure that the search will terminate, the final endCode value must be 0xFFFF.
                                                                       //>This segment need not contain any valid mappings. It can simply map the single character code 0xFFFF to the missing character glyph, glyph 0.
 
-            input.ReadUInt16(); // Reserved = 0               
+            ushort Reserved = input.ReadUInt16(); // always 0
             ushort[] startCode = Utils.ReadUInt16Array(input, segCount); //Starting character code for each segment
             ushort[] idDelta = Utils.ReadUInt16Array(input, segCount); //Delta for all character codes in segment
             ushort[] idRangeOffset = Utils.ReadUInt16Array(input, segCount); //Offset in bytes to glyph indexArray, or 0   
@@ -179,8 +296,9 @@ namespace Typography.OpenFont.Tables
             long remainingLen = tableStartEndAt - input.BaseStream.Position;
             int recordNum2 = (int)(remainingLen / 2);
             ushort[] glyphIdArray = Utils.ReadUInt16Array(input, recordNum2);//Glyph index array                          
-            return new CharMapFormat4(segCount, startCode, endCode, idDelta, idRangeOffset, glyphIdArray);
+            return new CharMapFormat4(startCode, endCode, idDelta, idRangeOffset, glyphIdArray);
         }
+
         static CharMapFormat6 ReadFormat_6(BinaryReader input)
         {
             //Format 6: Trimmed table mapping
@@ -204,9 +322,10 @@ namespace Typography.OpenFont.Tables
             ushort[] glyphIdArray = Utils.ReadUInt16Array(input, entryCount);
             return new CharMapFormat6(firstCode, glyphIdArray);
         }
+
         static CharacterMap ReadFormat_12(BinaryReader input)
         {
-            //TODO: test this agina
+            //TODO: test this again
             // Format 12: Segmented coverage
             //This is the Microsoft standard character to glyph index mapping table for fonts supporting the UCS - 4 characters 
             //in the Unicode Surrogates Area(U + D800 - U + DFFF).
@@ -267,36 +386,30 @@ namespace Typography.OpenFont.Tables
             }
             return new CharMapFormat12(startCharCodes, endCharCodes, startGlyphIds);
         }
-        static CharacterMap ReadCharacterMap(CMapEntry entry, BinaryReader input)
-        {
 
+        private static CharacterMap ReadCharacterMap(BinaryReader input)
+        {
             ushort format = input.ReadUInt16();
             switch (format)
             {
                 default:
-                    throw new Exception("Unknown cmap subtable: " + format); // TODO: Replace all application exceptions 
+                    Utils.WarnUnimplemented("cmap subtable format {0}", format);
+                    return new NullCharMap();
                 case 0: return ReadFormat_0(input);
                 case 2: return ReadFormat_2(input);
                 case 4: return ReadFormat_4(input);
                 case 6: return ReadFormat_6(input);
                 case 12: return ReadFormat_12(input);
+                case 14: return CharMapFormat14.Create(input);
             }
         }
 
-        struct CMapEntry
+        public void CollectUnicode(List<uint> unicodes)
         {
-            readonly ushort _platformId;
-            readonly ushort _encodingId;
-            readonly uint _offset;
-            public CMapEntry(ushort platformId, ushort encodingId, uint offset)
+            foreach (CharacterMap cmap in _charMaps)
             {
-                _platformId = platformId;
-                _encodingId = encodingId;
-                _offset = offset;
+                cmap.CollectUnicodeChars(unicodes);
             }
-            public ushort PlatformId { get { return _platformId; } }
-            public ushort EncodingId { get { return _encodingId; } }
-            public uint Offset { get { return _offset; } }
         }
     }
 }

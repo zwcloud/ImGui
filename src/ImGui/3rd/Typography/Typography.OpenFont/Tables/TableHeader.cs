@@ -1,14 +1,15 @@
-﻿//Apahce2, 2017, WinterDev
+﻿//Apache2, 2017-present, WinterDev
 //Apache2, 2014-2016, Samuel Carlsson, WinterDev
 
 namespace Typography.OpenFont.Tables
 {
-    struct TableHeader
+    class TableHeader
     {
         readonly uint _tag;
         readonly uint _checkSum;
         readonly uint _offset;
         readonly uint _length;
+        readonly string _tagName;
 
         public TableHeader(uint tag, uint checkSum, uint offset, uint len)
         {
@@ -16,25 +17,27 @@ namespace Typography.OpenFont.Tables
             _checkSum = checkSum;
             _offset = offset;
             _length = len;
+            _tagName = Utils.TagToString(_tag);
         }
-        public string Tag { get { return Utils.TagToString(_tag); } }
+        public TableHeader(string tag, uint checkSum, uint offset, uint len)
+        {
+            _tag = 0;
+            _checkSum = checkSum;
+            _offset = offset;
+            _length = len;
+            _tagName = tag;
+        }
+        //
+        public string Tag => _tagName;
 
-        //// TODO: Take offset parameter as commonly two seeks are made in a row
-        //public BinaryReader GetDataReader()
-        //{
-        //    _input.BaseStream.Seek(_offset, SeekOrigin.Begin);
-        //    // TODO: Limit reading to _length by wrapping BinaryReader (or Stream)?
-        //    return _input;
-        //}
-        public uint Offset { get { return _offset; } }
-        public uint CheckSum { get { return _checkSum; } }
-        public uint Length { get { return _length; } }
+
+        public uint Offset => _offset;
+        public uint CheckSum => _checkSum;
+        public uint Length => _length;
 
         public override string ToString()
         {
             return "{" + Tag + "}";
         }
-
-
     }
 }
