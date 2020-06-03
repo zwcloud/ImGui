@@ -23,7 +23,7 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldGetCorrectContourFromTypeFace()
         {
-            var glyph = typeFace.GetGlyphByIndex(36);
+            var glyph = typeFace.GetGlyph(36);
             var points = glyph.GlyphPoints;
             //TODO check points
         }

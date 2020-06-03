@@ -1,4 +1,5 @@
 ﻿using ImGui.OSAbstraction.Text;
+using ImGui.OSImplementation;
 using Typography.OpenFont;
 using Xunit;
 using SixLabors.ImageSharp;

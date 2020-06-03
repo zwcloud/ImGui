@@ -6,6 +6,7 @@ using Xunit;
 using Typography.OpenFont;
 using System.IO;
 using System.Linq;
+using ImGui.OSImplementation;
 using ImGui.UnitTest;
 
 namespace TextRenderingTest
