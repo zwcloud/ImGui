@@ -10,6 +10,7 @@ using ImageSharp.Extension;
 using ImGui.GraphicsImplementation;
 using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Text;
 using ImGui.OSImplementation.Shared;
 using ImGui.OSImplementation.Windows;
 using ImGui.Rendering;
@@ -118,6 +119,14 @@ namespace ImGui.UnitTest
             {
                 image.SaveAsPng(stream);
             }
+        }
+
+        public static byte[] EncodeAsPng(byte[] openGLRawPixelBytes, int width, int height)
+        {
+            var image = CreateImage(openGLRawPixelBytes, width, height, true);
+            using MemoryStream stream = new MemoryStream();
+            image.SaveAsPng(stream);
+            return stream.ToArray();
         }
 
         public static bool CompareImage(Image<Rgba32> a, Image<Rgba32> b)
@@ -323,7 +332,6 @@ namespace ImGui.UnitTest
             Util.DrawNodeTreeToImage(out var imageRawBytes, node, width, height);
             ShowImageNotOpenFolder(imageRawBytes, width, height, path);
         }
-
         #endregion
 
         #region Visual
@@ -403,10 +411,6 @@ namespace ImGui.UnitTest
 
             renderer.ShutDown();
             window.Close();
-
-            //clear native resources: window and IRenderer
-            renderer.ShutDown();
-            window.Close();
         }
         
         internal static void DrawTextMeshToImage_Realtime(int width, int height, TextMesh textMesh)
@@ -478,6 +482,24 @@ namespace ImGui.UnitTest
         }
 
 
+        #endregion
+
+        #region Media
+        public static byte[] DrawAsOpenGLPixelBytes(FormattedText formattedText,
+            Brush brush, int width, int height, Rect clipRect)
+        {
+            BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
+            renderer.PushClipRect(clipRect);
+            renderer.OnBeforeRead();
+            renderer.DrawEllipse(null, new Pen(Color.DarkSeaGreen, 1),
+                formattedText.OriginPoint, 1, 1);
+            renderer.DrawLine(new Pen(Color.Gray, 1), formattedText.OriginPoint,
+                formattedText.OriginPoint + new Vector(width, 0));
+            renderer.DrawText(brush, formattedText);
+            var textMesh = renderer.TextMesh;
+            Util.DrawTextMeshToImage(out var bytes, width, height, textMesh);
+            return bytes;
+        }
         #endregion
     }
 }

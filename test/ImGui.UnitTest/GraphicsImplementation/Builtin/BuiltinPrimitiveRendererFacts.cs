@@ -679,49 +679,17 @@ namespace ImGui.UnitTest.Rendering
             public DrawText()
             {
                 Application.InitSysDependencies();
+                Application.IsRunningInUnitTest = true;
             }
 
             internal static void Check(FormattedText formattedText, Brush brush, int width, int height,
                 [CallerMemberName] string methodName = "unknown")
             {
                 Application.EnableMSAA = false;
-                byte[] bytes = Draw(formattedText, brush, width, height, Rect.Big);
-                Util.CheckExpectedImage(bytes, width, height, $"{RootDir}{nameof(DrawText)}\\{methodName}.png");
+                byte[] bytes = Util.DrawAsOpenGLPixelBytes(formattedText, brush, width, height, Rect.Big);
+                Util.ShowRawPixelsFrom_glReadPixels_NotOpenFolder(bytes, width, height, $"{RootDir}{nameof(DrawText)}\\{methodName}.png");
             }
 
-            private static byte[] Draw(FormattedText formattedText, Brush brush, int width, int height, Rect clipRect)
-            {
-                MeshBuffer meshBuffer = new MeshBuffer();
-                MeshList meshList = new MeshList();
-                BuiltinGeometryRenderer renderer = new BuiltinGeometryRenderer();
-                byte[] bytes;
-
-                using (var context = new RenderContextForTest(width, height))
-                {
-                    renderer.PushClipRect(clipRect);
-                    renderer.OnBeforeRead();
-                    renderer.DrawRectangle(null, new Pen(Color.Black, 1),
-                        new Rect(formattedText.OriginPoint - new Vector(1, 1), formattedText.OriginPoint + new Vector(1, 1)));
-                    renderer.DrawLine(new Pen(Color.DarkRed, 1), formattedText.OriginPoint,
-                        formattedText.OriginPoint + new Vector(width, 0));
-                    renderer.DrawText(brush, formattedText);//This must be called after the RenderContextForTest is created, for uploading textures to GPU via OpenGL.
-                    renderer.OnAfterRead(meshList);
-                    renderer.PopClipRect();
-
-                    //rebuild mesh buffer
-                    meshBuffer.Clear();
-                    meshBuffer.Init();
-                    meshBuffer.Build(meshList);
-
-                    //draw mesh buffer to screen
-                    context.Clear();
-                    context.DrawMeshes(meshBuffer);
-
-                    bytes = context.GetRenderedRawBytes();
-                }
-
-                return bytes;
-            }
 
             [Fact]
             public void DrawMultipleLineText()
@@ -745,8 +713,8 @@ namespace ImGui.UnitTest.Rendering
                     "ABCDEFGHIJK1234567890立即模式\n", GUIStyle.Default.FontFamily, 14);
                 Brush brush = new Brush(Color.Black);
                 Rect clipRect = new Rect(50, 61, 234, 77);
-                byte[] bytes = Draw(formattedText, brush, 400, 400, clipRect);
-                Util.ShowImageNotOpenFolder(bytes, 400, 400, $"{RootDir}{nameof(DrawText)}\\{nameof(DrawClippedText)}.png");
+                byte[] bytes = Util.DrawAsOpenGLPixelBytes(formattedText, brush, 400, 400, clipRect);
+                Util.ShowRawPixelsFrom_glReadPixels_NotOpenFolder(bytes, 400, 400, $"{RootDir}{nameof(DrawText)}\\{nameof(DrawClippedText)}.png");
             }
 
             [Fact]
@@ -755,10 +723,11 @@ namespace ImGui.UnitTest.Rendering
                 FormattedText formattedText = new FormattedText(new Point(10, 200),
                     "e", GUIStyle.Default.FontFamily, 72);
                 Brush brush = new Brush(Color.Black);
-                byte[] bytes = Draw(formattedText, brush, 400, 400, Rect.Big);
-                Util.ShowImageNotOpenFolder(bytes, 400, 400, $"{RootDir}{nameof(DrawText)}\\{nameof(DrawSingleCharacter)}.png");
+                byte[] bytes = Util.DrawAsOpenGLPixelBytes(formattedText, brush, 400, 400, Rect.Big);
+                Util.ShowRawPixelsFrom_glReadPixels_NotOpenFolder(bytes, 400, 400, $"{RootDir}{nameof(DrawText)}\\{nameof(DrawSingleCharacter)}.png");
             }
         }
+
         public class DrawDrawing
         {
             //TODO
