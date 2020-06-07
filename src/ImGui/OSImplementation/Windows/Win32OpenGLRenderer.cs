@@ -130,7 +130,6 @@ namespace ImGui.OSImplementation.Windows
             int last_sessor_rect_width = IntBuffer[2];
             int last_sessor_rect_height = IntBuffer[3];
 
-
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
             GL.Enable(GL.GL_BLEND);
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
@@ -219,34 +218,6 @@ namespace ImGui.OSImplementation.Windows
             var glyphMaterial = OpenGLMaterial.glyphMaterial;
             var textMaterial = OpenGLMaterial.textMaterial;
 
-            #if false
-            // Backup GL state
-            GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_ACTIVE_TEXTURE, IntBuffer); int last_active_texture = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_ARRAY_BUFFER_BINDING, IntBuffer); int last_array_buffer = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_ELEMENT_ARRAY_BUFFER_BINDING, IntBuffer); int last_element_array_buffer = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_VERTEX_ARRAY_BINDING, IntBuffer); int last_vertex_array = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLEND_SRC, IntBuffer); int last_blend_src = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLEND_DST, IntBuffer); int last_blend_dst = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLEND_EQUATION_RGB, IntBuffer); int last_blend_equation_rgb = IntBuffer[0];
-            GL.GetIntegerv(GL.GL_BLEND_EQUATION_ALPHA, IntBuffer); int last_blend_equation_alpha = IntBuffer[0];
-            GL.GetFloatv(GL.GL_COLOR_CLEAR_VALUE, FloatBuffer);
-            float last_clear_color_r = FloatBuffer[0];
-            float last_clear_color_g = FloatBuffer[1];
-            float last_clear_color_b = FloatBuffer[2];
-            float last_clear_color_a = FloatBuffer[3];
-            GL.GetIntegerv(GL.GL_VIEWPORT, IntBuffer); Rect last_viewport = new Rect(IntBuffer[0], IntBuffer[1], IntBuffer[2], IntBuffer[3]);
-            uint last_enable_blend = GL.IsEnabled(GL.GL_BLEND);
-            uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
-            uint last_enable_depth_test = GL.IsEnabled(GL.GL_DEPTH_TEST);
-            uint last_enable_scissor_test = GL.IsEnabled(GL.GL_SCISSOR_TEST);
-            GL.GetIntegerv(GL.GL_SCISSOR_BOX, IntBuffer);
-            int last_sessor_rect_x = IntBuffer[0];
-            int last_sessor_rect_y = IntBuffer[1];
-            int last_sessor_rect_width = IntBuffer[2];
-            int last_sessor_rect_height = IntBuffer[3];
-            #endif
             GL.Enable(GL.GL_BLEND);
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
@@ -314,7 +285,6 @@ namespace ImGui.OSImplementation.Windows
             }
 #endif
 
-#if true
             //Draw framebuffer texture to screen as a quad,  with the textMaterial applying sub-pixel anti-aliasing
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
             GL.BlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
@@ -332,26 +302,7 @@ namespace ImGui.OSImplementation.Windows
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, textMaterial.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, quadMesh.IndexBuffer.Count * Marshal.SizeOf<DrawIndex>(), quadMesh.IndexBuffer.Pointer, GL.GL_STREAM_DRAW);
             GL.DrawElements(GL.GL_TRIANGLES, quadMesh.CommandBuffer[0].ElemCount, GL.GL_UNSIGNED_INT, IntPtr.Zero);
-#endif
             Utility.CheckGLError();
-            #if false
-            // Restore modified GL state
-            GL.UseProgram((uint)last_program);
-            GL.ActiveTexture((uint)last_active_texture);
-            GL.BindTexture(GL.GL_TEXTURE_2D, (uint)last_texture);
-            GL.BindVertexArray((uint)last_vertex_array);
-            GL.BindBuffer(GL.GL_ARRAY_BUFFER, (uint)last_array_buffer);
-            GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, (uint)last_element_array_buffer);
-            GL.BlendEquationSeparate((uint)last_blend_equation_rgb, (uint)last_blend_equation_alpha);
-            GL.BlendFunc((uint)last_blend_src, (uint)last_blend_dst);
-            if (last_enable_blend == GL.GL_TRUE) GL.Enable(GL.GL_BLEND); else GL.Disable(GL.GL_BLEND);
-            if (last_enable_cull_face == GL.GL_TRUE) GL.Enable(GL.GL_CULL_FACE); else GL.Disable(GL.GL_CULL_FACE);
-            if (last_enable_depth_test == GL.GL_TRUE) GL.Enable(GL.GL_DEPTH_TEST); else GL.Disable(GL.GL_DEPTH_TEST);
-            if (last_enable_scissor_test == GL.GL_TRUE) GL.Enable(GL.GL_SCISSOR_TEST); else GL.Disable(GL.GL_SCISSOR_TEST);
-            GL.ClearColor(last_clear_color_r, last_clear_color_g, last_clear_color_b, last_clear_color_a);
-            GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
-            GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
-            #endif
         }
 
         public void ShutDown()
