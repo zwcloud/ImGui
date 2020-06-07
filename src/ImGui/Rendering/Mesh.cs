@@ -93,6 +93,12 @@ namespace ImGui
             this.currentIdx = 0;
         }
 
+        public bool IsEmpty =>
+            CommandBuffer.Count == 0 //no command
+            || CommandBuffer.Count == 1 && CommandBuffer[0].ElemCount == 0 //only an empty command
+            || IndexBuffer.Count == 0 //no index
+            || VertexBuffer.Count == 0;
+
         /// <summary>
         /// Append a mesh to this mesh
         /// </summary>

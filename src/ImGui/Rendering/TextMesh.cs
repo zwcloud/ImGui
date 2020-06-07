@@ -61,6 +61,12 @@ namespace ImGui
             this.Commands.Clear();
         }
 
+        public bool IsEmpty => 
+            Commands.Count == 0 //no command
+            || Commands.Count == 1 && Commands[0].ElemCount == 0 //only an empty command
+            || IndexBuffer.Count == 0 //no index
+            || VertexBuffer.Count == 0;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AppendVertex(DrawVertex vertex)
         {

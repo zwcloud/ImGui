@@ -99,12 +99,11 @@ namespace ImGui.OSImplementation.Windows
 
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
         {
-            List<DrawCommand> commandBuffer = mesh.CommandBuffer;
-            if (commandBuffer.Count == 0 ||
-                commandBuffer.Count == 1 && commandBuffer[0].ElemCount == 0)
+            if (mesh.IsEmpty)
             {
                 return;
             }
+            List<DrawCommand> commandBuffer = mesh.CommandBuffer;
             VertexBuffer vertexBuffer = mesh.VertexBuffer;
             IndexBuffer indexBuffer = mesh.IndexBuffer;
 
@@ -209,9 +208,7 @@ namespace ImGui.OSImplementation.Windows
         /// </summary>
         internal static void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
-            var commandBuffer = textMesh.Commands;
-            if (commandBuffer.Count == 0 ||
-                commandBuffer.Count == 1 && commandBuffer[0].ElemCount == 0)
+            if (textMesh.IsEmpty)
             {
                 return;
             }
