@@ -481,6 +481,26 @@ namespace ImGui.UnitTest
             window.Close();
         }
 
+        internal static byte[] DrawAsOpenGLPixelBytes(Mesh mesh, TextMesh textMesh,
+            int width, int height)
+        {
+            //created a mesh IRenderer
+            Application.Init();
+            var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(10, 200),
+                WindowTypes.Hidden);
+            window.ClientSize = new Size(width, height);
+            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            Debug.Assert(renderer != null, nameof(renderer) + " != null");
+            renderer.Init(window.Pointer, window.ClientSize);
+            var textureRenderer = new OpenGLOffscreenRenderer();
+            var openGLBytes = textureRenderer.DrawMeshToTexture(mesh, textMesh, width, height);
+
+            //clear native resources: window and IRenderer
+            renderer.ShutDown();
+            window.Close();
+
+            return openGLBytes;
+        }
 
         #endregion
 
@@ -492,12 +512,13 @@ namespace ImGui.UnitTest
             renderer.PushClipRect(clipRect);
             renderer.OnBeforeRead();
             renderer.DrawEllipse(null, new Pen(Color.DarkSeaGreen, 1),
-                formattedText.OriginPoint, 1, 1);
+                formattedText.OriginPoint, 2, 2);
             renderer.DrawLine(new Pen(Color.Gray, 1), formattedText.OriginPoint,
                 formattedText.OriginPoint + new Vector(width, 0));
             renderer.DrawText(brush, formattedText);
+            var mesh = renderer.ShapeMesh;
             var textMesh = renderer.TextMesh;
-            Util.DrawTextMeshToImage(out var bytes, width, height, textMesh);
+            var bytes = Util.DrawAsOpenGLPixelBytes(mesh, textMesh, width, height);
             return bytes;
         }
         #endregion
