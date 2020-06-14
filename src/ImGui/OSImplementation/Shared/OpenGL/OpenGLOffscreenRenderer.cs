@@ -45,6 +45,8 @@ namespace ImGui.OSImplementation.Shared
 
         internal byte[] DrawMeshToTexture(Mesh mesh, TextMesh textMesh, int width, int height)
         {
+            //**Key Point 1** check scissor test:
+            //The initially scissor-test rectangle's size is the size of the window client area.
             GL.Disable(GL.GL_SCISSOR_TEST);
 
             //create texture that will be rendered onto
@@ -65,6 +67,8 @@ namespace ImGui.OSImplementation.Shared
                 throw new Exception("Framebuffer is not complete.");
             }
 
+            //**Key point 2** Be sure the state of a framebuffer is expected.
+            //Check if framebuffer need to be cleared to make it into an expected state.
             GL.Viewport(0, 0, width, height);
             GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Clear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -91,6 +95,8 @@ namespace ImGui.OSImplementation.Shared
                 VertexBuffer vertexBuffer = mesh.VertexBuffer;
                 IndexBuffer indexBuffer = mesh.IndexBuffer;
 
+                // **Key Point 3** Blending states have an impact on rendering result.
+                // Check them before **every** draw-call on a framebuffer, **especially the first one**.
                 GL.Enable(GL.GL_BLEND);
                 GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
                 GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);//doing regular alpha blending
