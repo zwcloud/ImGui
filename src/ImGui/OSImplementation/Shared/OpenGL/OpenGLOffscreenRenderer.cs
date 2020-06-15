@@ -47,7 +47,7 @@ namespace ImGui.OSImplementation.Shared
         {
             //**Key Point 1** check scissor test:
             //The initially scissor-test rectangle's size is the size of the window client area.
-            GL.Disable(GL.GL_SCISSOR_TEST);
+            GL.Scissor(-4096, -4096, 8192, 8192);//reset scissor rect to a very big one
 
             //create texture that will be rendered onto
             ITexture texture = new OpenGLTexture();
