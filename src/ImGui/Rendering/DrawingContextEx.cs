@@ -154,7 +154,14 @@ namespace ImGui.Rendering
             //Content
             //Content-box
             //FIXME Use FormattedText instead of GlyphRun for multi-line text
-            dc.DrawGlyphRun(rule, text, contentBoxRect.TopLeft);
+            if (text.Contains('\n'))
+            {
+                dc.DrawText(rule, text, contentBoxRect);
+            }
+            else
+            {
+                dc.DrawGlyphRun(rule, text, contentBoxRect.TopLeft);
+            }
 
             DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
             DrawOutline(dc, style, borderBoxRect);
