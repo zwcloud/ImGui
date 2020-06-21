@@ -82,16 +82,16 @@ namespace ImGui.Style
             var br = style.Get<double>(StylePropertyName.BorderRight);
             var bb = style.Get<double>(StylePropertyName.BorderBottom);
             var bl = style.Get<double>(StylePropertyName.BorderLeft);
-            var borderWidth = br - bl;
-            var borderHeight = bb - bt;
+            var borderWidth = br + bl;
+            var borderHeight = bb + bt;
 
             //Widths of padding
             var pt = style.Get<double>(StylePropertyName.PaddingTop);
             var pr = style.Get<double>(StylePropertyName.PaddingRight);
             var pb = style.Get<double>(StylePropertyName.PaddingBottom);
             var pl = style.Get<double>(StylePropertyName.PaddingLeft);
-            var paddingWidth = pr - pl;
-            var paddingHeight = pb - pt;
+            var paddingWidth = pr + pl;
+            var paddingHeight = pb + pt;
 
             Size contentBoxSize = new Size(
                 borderBoxSize.Width - borderWidth - paddingWidth,
