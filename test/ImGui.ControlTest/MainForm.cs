@@ -22,6 +22,11 @@ namespace ImGui.ControlTest
         {
             this.OnGUIAction = onGUI;
         }
+        
+        public MainForm(int width, int height, Action onGUI) : base(new Rect(320, 180, width, height))
+        {
+            this.OnGUIAction = onGUI;
+        }
 
         protected override void OnGUI()
         {

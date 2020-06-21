@@ -46,10 +46,10 @@ namespace ImGui
     public partial class GUILayout
     {
         /// <summary>
-        /// Create a multi-line text box.
+        /// Create a multi-line text box of fixed size.
         /// </summary>
         /// <param name="str_id">id</param>
-        /// <param name="size">size</param>
+        /// <param name="size">fixed size</param>
         /// <param name="text">text</param>
         /// <returns>(modified) text</returns>
         public static string TextBox(string str_id, Size size, string text, LayoutOptions? options)
@@ -67,7 +67,9 @@ namespace ImGui
                 node = new Node(id, $"{nameof(TextBox)}<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.TextBox]);
-                node.AttachLayoutEntry(size);
+                var contentBoxSize = node.RuleSet.CalcContentBoxSize(size);
+                node.RuleSet.ApplyOptions(GUILayout.Width(size.Width).Height(size.Height));
+                node.AttachLayoutEntry(contentBoxSize);
             }
             container.AppendChild(node);
             node.RuleSet.ApplyOptions(options);
