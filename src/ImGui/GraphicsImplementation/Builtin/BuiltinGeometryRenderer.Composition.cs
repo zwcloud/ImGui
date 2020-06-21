@@ -411,17 +411,13 @@ namespace ImGui.GraphicsImplementation
             var rectangleGeometry = (RectangleGeometry)clipGeometry;
             var rect = rectangleGeometry.Rect;
             //TODO Only a rectangle clip region is supported.
-            ClipRectStack.Push(rect);
+            PushClipRect(rect);
         }
 
         public override void Pop()
         {
             //TODO Only the clip rect stack is being popped
-            if (ClipRectStack.Count == 0)
-            {
-                throw new InvalidOperationException("Cannot not pop: ClipRectStack is empty.");
-            }
-            ClipRectStack.Pop();
+            PopClipRect();
         }
 
         #region Overrides of RecordReader

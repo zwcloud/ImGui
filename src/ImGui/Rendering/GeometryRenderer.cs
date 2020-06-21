@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ImGui.Rendering.Composition
 {
@@ -14,6 +13,13 @@ namespace ImGui.Rendering.Composition
             {
                 throw new ArgumentOutOfRangeException(nameof(rect), "Invalid Clip Rect: empty or zero-sized");
             }
+
+            //pushed rect should be clipped by current clip rect
+            if (ClipRectStack.TryPeek(out var currentRect))
+            {
+                rect = Rect.Intersect(rect, currentRect);
+            }
+
             ClipRectStack.Push(rect);
         }
 
