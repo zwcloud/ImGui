@@ -215,5 +215,10 @@ namespace ImGui.Rendering
         {
             DrawBoxModel(dc, node.RuleSet, node.Rect);
         }
+
+        public static void PushClip(this DrawingContext dc, Rect clipRect)
+        {
+            dc.PushClip(new RectangleGeometry(clipRect));
+        }
     }
 }
