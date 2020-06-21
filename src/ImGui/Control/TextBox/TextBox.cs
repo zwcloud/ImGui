@@ -361,7 +361,8 @@ namespace ImGui
             var style = node.RuleSet;
             // draw text, selection and caret
             var contentRect = node.ContentRect;
-            //d.PushClipRect(contentRect, true);//TODO clip rect
+            // clip text rendering to content-box
+            d.PushClip(contentRect);
             if (g.ActiveId == id)
             {
                 //Calculate positions and sizes
@@ -477,7 +478,7 @@ namespace ImGui
             {
                 d.DrawText(style, text, contentRect);
             }
-            //d.PopClipRect();//TODO clip rect
+            d.Pop();
 
             // draw the box
             {
