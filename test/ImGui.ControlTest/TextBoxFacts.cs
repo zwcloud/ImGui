@@ -47,7 +47,7 @@ namespace ImGui.ControlTest
         }
 
         [Fact]
-        public void MultipleLineTextBoxSelectingFunctionWorksNormally()
+        public void MultipleLineTextBoxWorksNormally()
         {
             string multiLineText = @"/*\n
  The Pentium F00F bug, shorthand for F0 0F C7 C8,
