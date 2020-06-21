@@ -80,7 +80,7 @@ namespace ImGui
                 node = new Node(id, $"Button<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
             }
             container.AppendChild(node);

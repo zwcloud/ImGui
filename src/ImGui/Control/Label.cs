@@ -64,7 +64,7 @@ namespace ImGui
                 node = new Node(id, $"Label<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
-                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxSize(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
             }
             container.AppendChild(node);
@@ -213,7 +213,7 @@ namespace ImGui
                 node = new Node(id, $"BulletText<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Label]);
-                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxSize(text, GUIState.Normal);
                 var lineHeight = node.RuleSet.GetLineHeight();
                 size += new Vector(lineHeight, 0);
                 node.AttachLayoutEntry(size);

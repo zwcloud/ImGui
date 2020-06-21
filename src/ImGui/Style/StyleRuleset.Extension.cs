@@ -5,7 +5,7 @@ namespace ImGui.Style
 {
     internal static class StyleRuleSetEx
     {
-        public static Size CalcContentBoxRect(this StyleRuleSet ruleSet, string text, GUIState state)
+        public static Size CalcContentBoxSize(this StyleRuleSet ruleSet, string text, GUIState state)
         {
             if (text == null)
             {

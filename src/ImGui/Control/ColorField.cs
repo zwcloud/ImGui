@@ -14,7 +14,7 @@ namespace ImGui
 
             // rect
             var text = Utility.FindRenderedText(label);
-            var textSize = GUISkin.Current[GUIControlName.ColorField].CalcContentBoxRect(text, GUIState.Normal);
+            var textSize = GUISkin.Current[GUIControlName.ColorField].CalcContentBoxSize(text, GUIState.Normal);
             BeginHorizontal(label, GUILayout.Height(textSize.Height).ExpandWidth(true));
             {
                 int rId, gId, bId, aId, colorId;
@@ -122,7 +122,7 @@ namespace ImGui
             dc.DrawRectangle(new Brush(new Color(0.80f, 0.80f, 0.80f, 0.30f)), null, buttonRect);
 
             string text = string.Format("{0}:{1,3}", colorChar, (int)(value * 255));
-            var fullTextSize = ruleSet.CalcContentBoxRect(text, state);
+            var fullTextSize = ruleSet.CalcContentBoxSize(text, state);
             if (fullTextSize.Width > buttonRect.Width)
             {
                 text = ((int)(value * 255)).ToString();

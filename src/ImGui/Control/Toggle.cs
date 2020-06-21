@@ -84,7 +84,7 @@ namespace ImGui
                 node = new Node(id, $"Toggle<{label}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Toggle]);
-                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxSize(text, GUIState.Normal);
                 size.Width += size.Height + node.RuleSet.PaddingLeft;
                 node.AttachLayoutEntry(size);
             }
