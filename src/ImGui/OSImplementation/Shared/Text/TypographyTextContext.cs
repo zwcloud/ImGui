@@ -164,9 +164,14 @@ namespace ImGui.OSImplementation
             this.Position = Point.Zero;
             this.glyphLayout.Typeface = this.CurrentTypeFace;
             var scale = this.CurrentTypeFace.CalculateScaleToPixelFromPointSize((float)this.FontSize);
+            this.LineHeight = (CurrentTypeFace.Bounds.YMax-CurrentTypeFace.Bounds.YMin)
+                              *scale
+                              *1.2f;
+            //1.2f is the default value used by most browsers:
+            //css `line-height: normal`
             if (string.IsNullOrEmpty(this.Text))
             {
-                this.Size = Size.Zero;
+                this.Size = new Size(0, LineHeight);
             }
             else
             {
@@ -197,11 +202,6 @@ namespace ImGui.OSImplementation
                         currentTypeface.Descender,
                         currentTypeface.LineGap, 0, 0, 1.0f)*scale;
                 }
-                this.LineHeight = (CurrentTypeFace.Bounds.YMax-CurrentTypeFace.Bounds.YMin)
-                                  *scale
-                                  *1.2f;
-                                  //1.2f is the default value used by most browsers:
-                                  //css `line-height: normal`
 
                 // get line count
                 {

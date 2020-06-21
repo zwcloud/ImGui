@@ -36,6 +36,15 @@ namespace ImGui.ControlTest
             }));
         }
         
+        [Fact]
+        public void EmptyTestBoxSizeIsCorrect()
+        {
+            string str0 = "";
+            Application.Run(new MainForm(() =>
+            {
+                str0 = GUILayout.InputText("default", str0);
+            }));
+        }
     }
 
 }
