@@ -400,6 +400,30 @@ namespace ImGui.GraphicsImplementation
             AddText(formattedText.OriginPoint, formattedText.GlyphDataList, formattedText.GlyphOffsets, formattedText.FontFamily, formattedText.FontSize, foregroundBrush.FillColor);
         }
 
+        public override void PushClip(Geometry clipGeometry)
+        {
+            if (!(clipGeometry is RectangleGeometry))
+            {
+                throw new NotImplementedException(
+                    "Non-rectangle clip geometry isn't supported");
+            }
+
+            var rectangleGeometry = (RectangleGeometry)clipGeometry;
+            var rect = rectangleGeometry.Rect;
+            //TODO Only a rectangle clip region is supported.
+            ClipRectStack.Push(rect);
+        }
+
+        public override void Pop()
+        {
+            //TODO Only the clip rect stack is being popped
+            if (ClipRectStack.Count == 0)
+            {
+                throw new InvalidOperationException("Cannot not pop: ClipRectStack is empty.");
+            }
+            ClipRectStack.Pop();
+        }
+
         #region Overrides of RecordReader
         public override void OnBeforeRead()
         {

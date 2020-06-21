@@ -142,6 +142,34 @@ namespace ImGui.UnitTest.Rendering
                 node.RenderContent(new RenderContext(checker, null));
             }
 
+            [Fact]
+            public void DrawWithClipRect()
+            {
+                var node = new Node(1, new Rect(20, 20, 200, 200));
+                
+                void Populate(DrawingContext dc)
+                {
+                    dc.PushClip(new RectangleGeometry(new Rect(0, 0, 200, 200)));
+                    dc.DrawLine(node.RuleSet, new Point(1,1), new Point(1000, 1000));
+                    dc.PushClip(new RectangleGeometry(new Rect(0, 0, 100, 100)));
+                    dc.DrawLine(node.RuleSet, new Point(1000,1), new Point(1, 1000));
+                    dc.Pop();
+                    dc.Pop();
+                }
+                
+                var context = node.RenderOpen();
+                Populate(context);
+                context.Close();
+                
+                //write records into ContentChecker
+                var checker = new ContentChecker();
+                Populate(checker);
+
+                //read records from visual to checker and compare with node's content
+                checker.StartCheck();
+                node.RenderContent(new RenderContext(checker, null));
+            }
+
         }
     }
 }

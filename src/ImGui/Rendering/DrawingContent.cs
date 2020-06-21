@@ -198,8 +198,7 @@ namespace ImGui.Rendering
                                         (data->sliceLeft, data->sliceTop, data->sliceRight, data->sliceBottom)
                                     );
                                 }
-                                    break;
-#if Push_Pop_Clip_Geometry
+                                break;
                                 case RecordType.PushClip:
                                 {
                                     PushClipCommand* data = (PushClipCommand*)(pCur + sizeof(RecordHeader));
@@ -213,7 +212,6 @@ namespace ImGui.Rendering
                                     ctx.Pop();
                                 }
                                 break;
-#endif
                                 default:
                                     throw new ArgumentOutOfRangeException();
                                 break;

@@ -54,6 +54,16 @@ namespace ImGui.Rendering
             throw new NotImplementedException();
         }
 
+        public override void PushClip(Geometry clipGeometry)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Pop()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Close()
         {
             throw new NotImplementedException();

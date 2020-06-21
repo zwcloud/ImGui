@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ImGui.Rendering;
 using Xunit;
 
 namespace ImGui.UnitTest.Rendering

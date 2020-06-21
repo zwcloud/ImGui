@@ -231,6 +231,10 @@ namespace ImGui.Rendering.Composition
 
         public abstract void OnAfterRead(MeshList meshList);
 
+        public abstract override void PushClip(Geometry clipGeometry);
+
+        public abstract override void Pop();
+
         /// <summary>
         /// RecordReader implementations are never opened, so they shouldn't be closed.
         /// </summary>

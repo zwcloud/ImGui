@@ -588,7 +588,6 @@ namespace ImGui.Rendering
             }
         }
 
-#if Push_Pop_Clip_Geometry
         public override void PushClip(Geometry clipGeometry)
         {
             if (clipGeometry == null)
@@ -644,7 +643,6 @@ namespace ImGui.Rendering
                 //same type: no need to update a pop command record
             }
         }
-#endif
 
         public override void Close()
         {

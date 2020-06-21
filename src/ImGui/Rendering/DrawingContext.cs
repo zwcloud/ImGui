@@ -150,8 +150,21 @@ namespace ImGui.Rendering
         public abstract void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun);
 
         public abstract void DrawText(Brush foregroundBrush, FormattedText formattedText);
+        
+        /// <summary>
+        ///     PushClip - 
+        ///     Push a clip region, which will apply to all drawing primitives until the 
+        ///     corresponding Pop call.
+        /// </summary>
+        /// <param name="clipGeometry"> The Geometry to which we will clip. </param>
+        public abstract void PushClip(Geometry clipGeometry);
 
-        //TODO Drawing, video, animation, effect, non-rectangular clip, transform, etc.
+        /// <summary>
+        /// Pop
+        /// </summary>
+        public abstract void Pop();
+
+        //TODO Drawing, video, animation, effect, transform, etc.
 
         /// <summary>
         /// Closes the DrawingContext and flushes the content.

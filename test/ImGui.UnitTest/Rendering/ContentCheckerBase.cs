@@ -132,6 +132,32 @@ namespace ImGui.UnitTest
             }
         }
 
+        private class RectangleGeometryComparer : IEqualityComparer<RectangleGeometry>
+        {
+            public bool Equals(RectangleGeometry x, RectangleGeometry y)
+            {
+                if (x == null && y != null) return false;
+                if (x != null && y == null) return false;
+                if (ReferenceEquals(x, y)) return true;
+
+                do
+                {
+                    if (!x.Offset.Equals(y.Offset)) break;
+                    if (!x.Rect.Equals(y.Rect)) break;
+                    if (x.RadiusX != y.RadiusX) break;
+                    if (x.RadiusY != y.RadiusY) break;
+                    return true;
+                } while (false);
+
+                return false;
+            }
+
+            public int GetHashCode(RectangleGeometry obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+
         private class GlyphDataComparer : IEqualityComparer<GlyphData>
         {
             public bool Equals(GlyphData x, GlyphData y)
@@ -612,6 +638,75 @@ namespace ImGui.UnitTest
             }
         }
 
+        class ClipRecord : IEquatable<ClipRecord>
+        {
+            private readonly Geometry geometry;
+
+            static PathGeometryComparer s_PathGeometryComparer = new PathGeometryComparer();
+            private static RectangleGeometryComparer s_RectangleGeometryComparer
+                = new RectangleGeometryComparer();
+
+            public ClipRecord(Geometry geometry)
+            {
+                this.geometry = geometry;
+            }
+
+            public bool Equals(ClipRecord other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
+                if (this.geometry is PathGeometry xg && other.geometry is PathGeometry yg)
+                {
+                    return s_PathGeometryComparer
+                            .Equals(xg, yg);
+                           //deep comparison instead of just comparing the reference
+                }
+
+                if (this.geometry is RectangleGeometry x && other.geometry is RectangleGeometry y)
+                {
+                    return s_RectangleGeometryComparer.Equals(x, y);
+                }
+
+                throw new NotImplementedException(
+                    "Comparison methods for other Geometry types are not implemented." +
+                    " Or other geometry is of different type.");
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((ClipRecord) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                int hashCode = this.geometry != null ? this.geometry.GetHashCode() : 0;
+                return hashCode;
+            }
+        }
+
+        class PopRecord : IEquatable<PopRecord>
+        {
+            public bool Equals(PopRecord other)
+            {
+                return other != null;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((PopRecord) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return 0;
+            }
+        }
+
         #endregion
 
         #region Overrides of DrawingContext
@@ -661,6 +756,15 @@ namespace ImGui.UnitTest
             this.strategy.ReadRecord(this.records, new FormattedTextRecord(foregroundBrush, formattedText));
         }
 
+        public override void PushClip(Geometry clipGeometry)
+        {
+            this.strategy.ReadRecord(this.records, new ClipRecord(clipGeometry));
+        }
+
+        public override void Pop()
+        {
+            this.strategy.ReadRecord(this.records, new PopRecord());
+        }
         #endregion
 
         #region Overrides of RecordReader

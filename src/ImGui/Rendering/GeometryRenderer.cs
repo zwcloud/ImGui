@@ -26,5 +26,9 @@ namespace ImGui.Rendering.Composition
 
             ClipRectStack.Pop();
         }
+
+        public abstract override void PushClip(Geometry clipGeometry);
+
+        public abstract override void Pop();
     }
 }
