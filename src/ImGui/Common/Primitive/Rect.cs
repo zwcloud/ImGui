@@ -7,7 +7,7 @@ namespace ImGui
     /// X, Y (Location) and Width and Height (Size).  As a result, Rects cannot have negative
     /// Width or Height.
     /// </summary>
-    [System.Diagnostics.DebuggerDisplay("({Min.X}, {Min.Y}, {Max.X}, {Max.Y})")]
+    [System.Diagnostics.DebuggerDisplay("({Min.X},{Min.Y})~({Max.X},{Max.Y}) W={Width} H={Height}")]
     [System.Diagnostics.DebuggerStepThrough]
     [Serializable]
     public struct Rect : IFormattable
