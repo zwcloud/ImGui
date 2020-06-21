@@ -99,7 +99,7 @@ namespace ImGui
                 //create button node
                 node = new Node(id, $"HoverButton<{text}>");
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
                 node.AttachLayoutEntry(size);
                 node.UseBoxModel = true;
             }

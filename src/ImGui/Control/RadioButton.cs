@@ -24,7 +24,7 @@ namespace ImGui
                 node = new Node(id, $"RadioButton<{text}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Button]);
-                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
                 size.Width += size.Height + node.RuleSet.PaddingLeft;
                 node.AttachLayoutEntry(size);
             }

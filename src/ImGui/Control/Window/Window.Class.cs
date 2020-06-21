@@ -175,7 +175,7 @@ namespace ImGui
                 titleIcon.UseBoxModel = false;
 
                 this.titleText = new Node(this.GetID("title"),"title");
-                var contentSize = titleText.RuleSet.CalcSize(this.Name, GUIState.Normal);
+                var contentSize = titleText.RuleSet.CalcContentBoxRect(this.Name, GUIState.Normal);
                 titleText.AttachLayoutEntry(contentSize);
                 titleText.RuleSet.ApplyOptions(GUILayout.Height(20));
                 titleText.UseBoxModel = false;

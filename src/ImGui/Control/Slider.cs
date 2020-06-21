@@ -164,7 +164,7 @@ namespace ImGui
                 node = new Node(id, $"Slider<{label}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Slider]);
-                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
                 size.Width += size.Height + node.RuleSet.PaddingLeft;
                 var minSilderWidth = 200;
                 size.Width += minSilderWidth;
@@ -229,7 +229,7 @@ namespace ImGui
                 node = new Node(id, $"Slider<{label}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.Slider]);
-                var size = node.RuleSet.CalcSize(text, GUIState.Normal);
+                var size = node.RuleSet.CalcContentBoxRect(text, GUIState.Normal);
                 var minSilderHeight = 200;
                 size.Width = 20;
                 size.Height += minSilderHeight;
