@@ -21,6 +21,21 @@ namespace ImGui.ControlTest
                 text = GUILayout.TextBox("Name", new Size(200, 30), text);
             }));
         }
+        
+        [Fact]
+        public void TestBoxLayoutCorrectly()
+        {
+            string str0 = "Hello, world!";
+            int i0 = 123;
+            float f0 = 0.001f;
+            Application.Run(new MainForm(() =>
+            {
+                str0 = GUILayout.InputText("input text", str0);
+                i0 = GUILayout.InputInt("input int", i0);
+                f0 = GUILayout.InputFloat("input float", f0);
+            }));
+        }
+        
     }
 
 }

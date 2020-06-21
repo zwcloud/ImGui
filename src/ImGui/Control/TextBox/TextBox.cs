@@ -479,7 +479,7 @@ namespace ImGui
 
             // draw the box
             {
-                d.DrawRectangle(null, new Pen(Color.Black, 1), rect);
+                d.DrawBoxModel(style, rect);
             }
             d.Close();
         }
