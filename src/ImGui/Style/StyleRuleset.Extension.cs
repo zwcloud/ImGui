@@ -30,7 +30,6 @@ namespace ImGui.Style
             }
 
             var size = new Size(Math.Ceiling(width), Math.Ceiling(height));
-            size = CalcContentBoxSize(ruleSet, size);
             return size;
         }
         
