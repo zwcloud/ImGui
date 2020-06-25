@@ -67,6 +67,38 @@ label:
                     "Text Box", new Size(200, 200), multiLineText);
             }));
         }
+
+        [Fact]
+        public void MultipleLineTextBoxScrollNormally()
+        {
+            string multiLineText = @"Line0
+Line1
+Line2
+Line3
+Line4
+Line5
+Line6
+Line7
+Line8
+Line9
+Line10
+Line11
+Line12
+Line13
+Line14
+Line15
+Line16
+Line17
+Line18
+Line19
+";
+            Application.InitialDebugWindowRect = new Rect(10, 10, 300, 400);
+            Application.Run(new MainForm(800, 800, () =>
+            {
+                multiLineText = GUILayout.InputTextMultiline(
+                    "Text Box", new Size(200, 200), multiLineText);
+            }));
+        }
     }
 
 }

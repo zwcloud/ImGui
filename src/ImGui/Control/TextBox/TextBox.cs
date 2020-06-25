@@ -57,35 +57,53 @@ namespace ImGui
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return text;
+            
+            var container = window.RenderTree.CurrentContainer;
 
             var id = window.GetID(str_id);
-            var container = window.RenderTree.CurrentContainer;
             Node node = container.GetNodeById(id);
             if (node == null)
             {
                 //create node
-                node = new Node(id, $"{nameof(TextBox)}<{text}>");
+                node = new Node(id, $"{nameof(TextBox)}<{str_id}>");
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.TextBox]);
-                var contentBoxSize = node.RuleSet.CalcContentBoxSize(size);
+                node.AttachLayoutGroup(true);
                 node.RuleSet.ApplyOptions(GUILayout.Width(size.Width).Height(size.Height));
-                node.AttachLayoutEntry(contentBoxSize);
             }
+            
+            var textNodeId = window.GetID($"{nameof(TextBox)}<{str_id}>_Text");
+            var textNode = node.GetDirectNodeById(textNodeId);
+            if (textNode == null)
+            {
+                textNode = new Node(textNodeId);
+            }
+            var textSize = node.RuleSet.CalcContentBoxSize(text, node.State);
+            textNode.RuleSet.Replace(GUISkin.Current[GUIControlName.TextBox]);
+            textNode.ContentSize = textSize;
+            textNode.ActiveSelf = true;
+            node.AppendChild(textNode);
+
             container.AppendChild(node);
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
 
             // rect
-            Rect rect = window.GetRect(id);
+            node.Rect = window.GetRect(node.Id);
+            textNode.Rect = window.GetRect(textNode.Id);
 
             // interact
-            InputTextContext context;
-            text = GUIBehavior.TextBoxBehavior(id, rect, text, out bool hovered, out bool active, out context);
+            text = GUIBehavior.TextBoxBehavior(textNode.Id, textNode.Rect, text,
+                out bool hovered, out bool active, out var context);
 
             // render
             var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
-            GUIAppearance.DrawTextBox(node, id, text, context, state);
+            GUIAppearance.DrawTextBox(textNode, textNode.Id, text, context, state);
 
+            // draw the box
+            var dc = node.RenderOpen();
+            dc.DrawBoxModel(node.RuleSet, node.Rect);
+            dc.Close();
             return text;
         }
 
@@ -353,8 +371,6 @@ namespace ImGui
         public static void DrawTextBox(Node node, int id, string text, InputTextContext context, GUIState state)
         {
             GUIContext g = Form.current.uiContext;
-            WindowManager w = g.WindowManager;
-            Window window = w.CurrentWindow;
 
             Rect rect = node.Rect;
             var d = node.RenderOpen();
@@ -362,7 +378,7 @@ namespace ImGui
             // draw text, selection and caret
             var contentRect = node.ContentRect;
             // clip text rendering to content-box
-            d.PushClip(contentRect);
+            //d.PushClip(contentRect);
             if (g.ActiveId == id)
             {
                 //Calculate positions and sizes
@@ -425,7 +441,7 @@ namespace ImGui
                         selectionRect.Offset(offsetOfTextRect.X, offsetOfTextRect.Y);
                         d.DrawRectangle(new Brush(Color.Argb(100, 10, 102, 214)), null, selectionRect);
                     }
-                    else//mutiple line
+                    else//multiple lines
                     {
                         var l = contentRect.Left;
                         var r = contentRect.Right;
@@ -478,12 +494,7 @@ namespace ImGui
             {
                 d.DrawText(style, text, contentRect);
             }
-            d.Pop();
-
-            // draw the box
-            {
-                d.DrawBoxModel(style, rect);
-            }
+            //d.Pop();
             d.Close();
         }
     }
