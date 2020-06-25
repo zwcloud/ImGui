@@ -7,6 +7,7 @@ namespace ImGui
 {
     public partial class GUI
     {
+        //TODO multiple/single line TextBox
         public static string TextBox(Rect rect, string label, string text, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
@@ -71,7 +72,7 @@ namespace ImGui
                 node.AttachLayoutGroup(true);
                 node.RuleSet.ApplyOptions(GUILayout.Width(size.Width).Height(size.Height));
             }
-            
+
             var textNodeId = window.GetID($"{nameof(TextBox)}<{str_id}>_Text");
             var textNode = node.GetDirectNodeById(textNodeId);
             if (textNode == null)
@@ -104,6 +105,10 @@ namespace ImGui
             var dc = node.RenderOpen();
             dc.DrawBoxModel(node.RuleSet, node.Rect);
             dc.Close();
+            
+            // do GUI logic for possible scroll-bars
+            node.OnGUI();
+
             return text;
         }
 
@@ -510,6 +515,7 @@ namespace ImGui
                 .BorderColor(Color.Rgb(112), GUIState.Normal)
                 .BorderColor(Color.Rgb(23), GUIState.Hover)
                 .BorderColor(Color.Rgb(0, 120, 215), GUIState.Active);
+            ruleSet.OverflowY = OverflowPolicy.Scroll;
         }
     }
 
