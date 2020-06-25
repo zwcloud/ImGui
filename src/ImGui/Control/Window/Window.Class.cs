@@ -69,6 +69,7 @@ namespace ImGui
         /// <summary>
         /// ID stack
         /// </summary>
+        /// TODO move IDStack from window to a singleton class like IDManager or IDService
         public Stack<int> IDStack { get; set; } = new Stack<int>();
 
         public MeshList MeshList { get; set; } = new MeshList();
