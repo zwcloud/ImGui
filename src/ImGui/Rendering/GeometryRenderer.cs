@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ImGui.Rendering.Composition
 {
@@ -18,6 +19,11 @@ namespace ImGui.Rendering.Composition
             if (ClipRectStack.TryPeek(out var currentRect))
             {
                 rect = Rect.Intersect(rect, currentRect);
+                //no intersection
+                if (rect.IsEmpty)
+                {
+                   rect = Rect.Zero;
+                }
             }
 
             ClipRectStack.Push(rect);
