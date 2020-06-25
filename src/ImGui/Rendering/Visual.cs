@@ -193,6 +193,7 @@ namespace ImGui.Rendering
 
         /// <summary>
         /// Adds a visual to the end of the list of children.
+        /// Function call is ignored if the visual is already a child.
         /// </summary>
         public void AppendChild(Visual child)
         {
@@ -212,7 +213,7 @@ namespace ImGui.Rendering
                 this.insertIndex = 0;
             }
 
-            var existingIndex = this.Children.IndexOf(child);
+            var existingIndex = Children.FindIndex(v => v.Id == child.Id);
             if(existingIndex < 0)
             {
                 if(this.insertIndex > 0)
