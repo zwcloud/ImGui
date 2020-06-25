@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace ImGui.Rendering.Composition
 {
@@ -10,9 +9,10 @@ namespace ImGui.Rendering.Composition
 
         public void PushClipRect(Rect rect)
         {
-            if (rect.IsEmpty || rect.IsZero)
+            if (rect.IsEmpty)
             {
-                throw new ArgumentOutOfRangeException(nameof(rect), "Invalid Clip Rect: empty or zero-sized");
+                throw new ArgumentOutOfRangeException(nameof(rect),
+                    "Invalid Clip Rect: it is empty and have infinity size.");
             }
 
             //pushed rect should be clipped by current clip rect
