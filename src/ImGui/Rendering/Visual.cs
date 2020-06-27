@@ -330,8 +330,13 @@ namespace ImGui.Rendering
 
             var oldClipRect = context.ClipRect;
             var clipRect = this.GetClipRect();
+            clipRect.Intersect(oldClipRect);
+            if (clipRect.IsEmpty)//completely clipped by context-decided clip rectangle
+            {
+                return;
+            }
             context.ClipRect = clipRect;
-            if (!RenderContent(context))
+            if (!RenderContent(context))//NOTE RenderContent will use context.ClipRect
             {
                 return;
             }
