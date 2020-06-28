@@ -5,6 +5,7 @@ public class Demo
     double f = 0.0f;
     Color clearColor = Color.Argb(255, 114, 144, 154);
     private bool showAnotherWindow = false;
+    private bool showMetricsWindow = false;
 
     #region Demo
     bool showDemoWindow = false;
@@ -132,6 +133,7 @@ label:
             clearColor = GUILayout.ColorField("clear color", clearColor);
             if (GUILayout.Button("Show Demo Window")) showDemoWindow = !showDemoWindow;
             if (GUILayout.Button("Show Another Window")) showAnotherWindow = !showAnotherWindow;
+            if (GUILayout.Button("Show Metrics Window")) showMetricsWindow = !showMetricsWindow;
             //var fps = Form.current.uiContext.fps;
             //GUILayout.Label(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000.0f / fps, fps));//FIXME Showing text that keeps updating is slow.
         }
@@ -156,6 +158,11 @@ label:
         if (showDemoWindow)
         {
             ShowTestWindow(ref showDemoWindow);
+        }
+
+        if (showMetricsWindow)
+        {
+            ImGui.Development.Metrics.ShowWindow(ref showMetricsWindow);
         }
 
         Form.current.BackgroundColor = clearColor;
