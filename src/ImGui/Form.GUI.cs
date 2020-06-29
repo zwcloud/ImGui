@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using ImGui.Development;
 using ImGui.Input;
 
 namespace ImGui
@@ -176,14 +177,41 @@ namespace ImGui
             }
             g.FrameCountRendered = g.FrameCount;
 
+            Metrics.VertexNumber = 0;
+            Metrics.IndexNumber = 0;
+
             this.renderer.Clear(this.BackgroundColor);
+
             RenderBackground();
+            
+            Metrics.VertexNumber += backgroundMeshBuffer.ShapeMesh.VertexBuffer.Count
+                                    + backgroundMeshBuffer.ImageMesh.VertexBuffer.Count
+                                    + backgroundMeshBuffer.TextMesh.VertexBuffer.Count;
+            Metrics.IndexNumber += backgroundMeshBuffer.ShapeMesh.IndexBuffer.Count
+                                   + backgroundMeshBuffer.ImageMesh.IndexBuffer.Count
+                                   + backgroundMeshBuffer.TextMesh.IndexBuffer.Count;
+
             foreach (var window in w.Windows)
             {
                 if (!window.Active) continue;
                 window.Render(this.renderer, ClientSize);
+                
+                Metrics.VertexNumber += window.MeshBuffer.ShapeMesh.VertexBuffer.Count
+                                       + window.MeshBuffer.ImageMesh.VertexBuffer.Count
+                                       + window.MeshBuffer.TextMesh.VertexBuffer.Count;
+                Metrics.IndexNumber += window.MeshBuffer.ShapeMesh.IndexBuffer.Count
+                                      + window.MeshBuffer.ImageMesh.IndexBuffer.Count
+                                      + window.MeshBuffer.TextMesh.IndexBuffer.Count;
             }
             RenderForeground();
+
+            Metrics.VertexNumber += foregroundMeshBuffer.ShapeMesh.VertexBuffer.Count
+                                    + foregroundMeshBuffer.ImageMesh.VertexBuffer.Count
+                                    + foregroundMeshBuffer.TextMesh.VertexBuffer.Count;
+            Metrics.IndexNumber += foregroundMeshBuffer.ShapeMesh.IndexBuffer.Count
+                                   + foregroundMeshBuffer.ImageMesh.IndexBuffer.Count
+                                   + foregroundMeshBuffer.TextMesh.IndexBuffer.Count;
+
             this.renderer.SwapBuffers();
         }
 
