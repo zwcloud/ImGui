@@ -46,7 +46,7 @@ namespace ImGui.OSAbstraction.Text
 
         public override bool Equals(object obj)
         {
-            GlyphRun other = obj as GlyphRun;
+            FormattedText other = obj as FormattedText;
             if (other == null)
             {
                 return false;
