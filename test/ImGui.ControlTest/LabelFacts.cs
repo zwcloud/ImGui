@@ -71,6 +71,28 @@ namespace ImGui.ControlTest
             Application.Run(form);
         }
 
+        //https://github.com/zwcloud/ImGui/issues/57
+        [Fact]
+        public void ShowDynamicallyAddedLabel()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+            
+            int clickCount = 0;
+            Application.Run(new MainForm(() =>
+            {
+                for (int i = 0; i < clickCount; i++)
+                {
+                    GUILayout.Label($"Some Text {i}");
+                }
+
+                if (GUILayout.Button("Click"))
+                {
+                    clickCount++;
+                }
+            }));
+        }
+
         [Fact]
         public void ShowBullet()
         {

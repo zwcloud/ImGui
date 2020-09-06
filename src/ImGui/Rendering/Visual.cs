@@ -193,7 +193,8 @@ namespace ImGui.Rendering
 
         /// <summary>
         /// Adds a visual to the end of the list of children.
-        /// Function call is ignored if the visual is already a child.
+        /// If the visual is already a child, it will be moved to the last position
+        /// in the children list.
         /// </summary>
         public void AppendChild(Visual child)
         {
@@ -228,6 +229,10 @@ namespace ImGui.Rendering
             else
             {
                 this.insertIndex = existingIndex + 1;
+                this.insertIndex = 0;
+                //Move found child to last element
+                this.Children.RemoveAt(existingIndex);
+                this.Children.Add(child);
             }
         }
 

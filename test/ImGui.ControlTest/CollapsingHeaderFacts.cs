@@ -26,6 +26,26 @@ namespace ImGui.ControlTest
             Application.Run(form);
         }
 
+        //https://github.com/zwcloud/ImGui/issues/57
+        [Fact]
+        public void ShowInitiallyClosedCollapsingHeader()
+        {
+            Application.IsRunningInUnitTest = true;
+            Application.Init();
+            
+            bool headerOn = false;
+            Application.Run(new MainForm(() =>
+            {
+                if (GUILayout.CollapsingHeader("Header", ref headerOn))
+                {
+                    GUILayout.Button("Button A");
+                    GUILayout.Button("Button B");
+                    GUILayout.Button("Button C");
+                }
+            }));
+        }
+
+        //https://github.com/zwcloud/ImGui/issues/35
         [Fact]
         public void ShowTwoCollapsingHeader()
         {
