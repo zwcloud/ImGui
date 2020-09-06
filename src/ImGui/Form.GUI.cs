@@ -196,6 +196,11 @@ namespace ImGui
                 if (!window.Active) continue;
                 window.Render(this.renderer, ClientSize);
                 
+                if (window.Name == Metrics.WindowName)
+                {//ignore metrics window
+                    continue;
+                }
+
                 Metrics.VertexNumber += window.MeshBuffer.ShapeMesh.VertexBuffer.Count
                                        + window.MeshBuffer.ImageMesh.VertexBuffer.Count
                                        + window.MeshBuffer.TextMesh.VertexBuffer.Count;

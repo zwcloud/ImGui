@@ -156,7 +156,7 @@ namespace ImGui
 
         internal static bool EnableMSAA { get; set; } = true;
 
-        internal static Rect InitialDebugWindowRect { get; set; } = new Rect(80, 80, 400, 200);
+        internal static Rect InitialDebugWindowRect { get; set; } = new Rect(80, 80, 400, 250);
 
         internal static ILogger Logger;
     }
