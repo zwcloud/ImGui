@@ -5,6 +5,18 @@ namespace ImGui
 {
     public partial class GUILayout
     {
+        public static bool TreeNode(string text)
+        {
+            Window window = GetCurrentWindow();
+            int id = window.GetID(text);
+            Storage storage = GetCurrentContext().StateStorage;
+
+            var open = storage.GetBool(id);
+            TreeNode(text, ref open);
+            storage.SetBool(id, open);
+            return open;
+        }
+
         public static bool TreeNode(string text, ref bool open)
         {
             Window window = GetCurrentWindow();
