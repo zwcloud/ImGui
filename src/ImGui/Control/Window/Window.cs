@@ -73,6 +73,7 @@ namespace ImGui
             if (first_begin_of_the_frame)
             {
                 window.FirstUpdate(name, size, ref open, bg_alpha, flags, current_frame, parent_window);
+                ImGui.Development.Metrics.ActiveWindows++;
             }
 
             // Clear 'accessed' flag last thing

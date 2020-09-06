@@ -28,6 +28,8 @@ namespace ImGui
             g.DeltaTime = Time.deltaTime;
             g.Time += g.DeltaTime;
             g.FrameCount++;
+            
+            Metrics.ActiveWindows = 0;
 
             //fps
             var detlaTime = g.Time - g.lastFPSUpdateTime;
@@ -179,6 +181,7 @@ namespace ImGui
 
             Metrics.VertexNumber = 0;
             Metrics.IndexNumber = 0;
+            Metrics.RenderWindows = 0;
 
             this.renderer.Clear(this.BackgroundColor);
 
@@ -207,6 +210,7 @@ namespace ImGui
                 Metrics.IndexNumber += window.MeshBuffer.ShapeMesh.IndexBuffer.Count
                                       + window.MeshBuffer.ImageMesh.IndexBuffer.Count
                                       + window.MeshBuffer.TextMesh.IndexBuffer.Count;
+                Metrics.RenderWindows++;
             }
             RenderForeground();
 
