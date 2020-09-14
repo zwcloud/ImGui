@@ -155,7 +155,5 @@ namespace ImGui
 
             return false;
         }
-
-        public Storage StateStorage { get; } = new Storage();
     }
 }

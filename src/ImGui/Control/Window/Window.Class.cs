@@ -79,6 +79,8 @@ namespace ImGui
 
         private readonly BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
+        public Storage StateStorage { get; } = new Storage();
+
         #region Window original sub nodes
         private Node titleBar { get; }
         private Node titleIcon { get; }

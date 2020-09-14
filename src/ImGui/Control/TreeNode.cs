@@ -9,7 +9,7 @@ namespace ImGui
         {
             Window window = GetCurrentWindow();
             int id = window.GetID(text);
-            Storage storage = GetCurrentContext().StateStorage;
+            Storage storage = window.StateStorage;
 
             var open = storage.GetBool(id);
             TreeNode(text, ref open);

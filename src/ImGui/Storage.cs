@@ -37,5 +37,12 @@ namespace ImGui
         private Dictionary<int, int> IntData = new Dictionary<int, int>();
         private Dictionary<int, bool> BoolData = new Dictionary<int, bool>();
         private Dictionary<int, float> FloatData = new Dictionary<int, float>();
+
+        public int EntryCount => IntData.Count + BoolData.Count + FloatData.Count;
+        public int EstimatedDataSizeInBytes =>
+            EntryCount * sizeof(int)
+            + IntData.Count * sizeof(int)
+            + BoolData.Count * sizeof(bool)
+            + FloatData.Count * sizeof(float);
     }
 }
