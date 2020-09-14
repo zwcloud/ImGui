@@ -34,7 +34,7 @@ namespace ImGui.Development
 
             //Windows
             var windowManager = g.WindowManager;
-            NodeWindows(windowManager.Windows, "Windows");
+            NodeWindows(windowManager.Windows.ToArray(), "Windows");
 
             GUI.End();
         }
@@ -48,7 +48,7 @@ namespace ImGui.Development
             return informationalVersion;
         }
 
-        private static void NodeWindows(IList<Window> windows, string label)
+        private static void NodeWindows(IEnumerable<Window> windows, string label)
         {
             if(TreeNode("Windows"))
             {
@@ -72,9 +72,27 @@ namespace ImGui.Development
                          $"Window '{window.Name}', " +
                          $"{(window.Active || window.WasActive ? 1 : 0)}"))
             {
-                Label($"(TODO: display window info here)#TODO_Window{window.ID}");
+                NodeDrawList(window, "DrawList");
+                BulletText(
+                    "Pos: ({0:F1},{1:F1}), Size: ({2:F1},{3:F1}), ContentSize ({4:F1},{5:F1})",
+                    window.Position.X, window.Position.Y, window.Size.Width, window.Size.Height,
+                    window.ContentRect.Width, window.ContentRect.Height);
+                BulletText("Scroll: ({0:F2},{1:F2})",
+                    window.ClientAreaNode.ScrollOffset.X, window.ClientAreaNode.ScrollOffset.Y);
+                BulletText("Active: {0}/{1}, ", window.Active, window.WasActive, window.Accessed);
+                if (window.RootWindow != window)
+                {
+                    NodeWindow(window.RootWindow, "RootWindow");
+                }
+                BulletText("Storage: {0} entries, ~{1} bytes", window.StateStorage.EntryCount,
+                    window.StateStorage.EstimatedDataSizeInBytes);
             }
             TreePop();
+        }
+
+        private static void NodeDrawList(Window window, string label)
+        {
+            //TODO display draw list of the window
         }
     }
 }
