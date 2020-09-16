@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImGui.Rendering;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -92,7 +93,29 @@ namespace ImGui.Development
 
         private static void NodeDrawList(Window window, string label)
         {
-            //TODO display draw list of the window
+            var buffer = window.MeshBuffer;
+            var vertexCount = buffer.ImageMesh.VertexBuffer.Count
+                              + buffer.ShapeMesh.VertexBuffer.Count
+                              + buffer.TextMesh.VertexBuffer.Count;
+            var indexCount = buffer.ImageMesh.IndexBuffer.Count
+                             + buffer.ShapeMesh.IndexBuffer.Count
+                             + buffer.TextMesh.IndexBuffer.Count;
+            var cmdCount = buffer.ImageMesh.CommandBuffer.Count
+                +buffer.ShapeMesh.CommandBuffer.Count
+                +buffer.TextMesh.Commands.Count;
+
+            if (TreeNode(buffer.GetHashCode(),
+                $"{label}: '{buffer.OwnerName}'" +
+                $" {vertexCount} vtx, {indexCount} indices, {cmdCount} cmds"))
+            {
+                if (buffer == GetCurrentWindow().MeshBuffer)
+                {
+                    Text("CURRENTLY APPENDING"); // Can't display stats for active draw list! (we don't have the data double-buffered)
+                    TreePop();
+                    return;
+                }
+            }
+            TreePop();
         }
     }
 }

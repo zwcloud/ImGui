@@ -37,5 +37,7 @@
                 this.TextMesh.Append(textMesh, Vector.Zero);
             }
         }
+
+        internal string OwnerName;
     }
 }

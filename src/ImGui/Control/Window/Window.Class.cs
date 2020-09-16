@@ -113,6 +113,8 @@ namespace ImGui
             this.IDStack.Push(this.ID);
             this.MoveID = this.GetID("#MOVE");
 
+            this.MeshBuffer.OwnerName = this.Name;
+
             #region Window nodes
 
             {
