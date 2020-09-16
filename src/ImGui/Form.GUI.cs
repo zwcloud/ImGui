@@ -108,8 +108,7 @@ namespace ImGui
 
             w.NewFrame(g);
 
-            this.BackgroundDrawingContext = backgroundNode.RenderOpen();
-            this.ForegroundDrawingContext = foregroundNode.RenderOpen();
+            uiContext.ForeBackGroundRenderOpen();
 
             // Create implicit debug window - we will only render it if the user has added something to it.
             GUI.Begin("Debug", ref this.debugWindowOpen, Application.InitialDebugWindowRect, 0.8);
@@ -130,8 +129,7 @@ namespace ImGui
             }
             GUI.End();//end of the implicit "Debug" window
 
-            this.BackgroundDrawingContext.Close();
-            this.ForegroundDrawingContext.Close();
+            uiContext.ForeBackGroundRenderClose();
             w.EndFrame(g);
 
             // Clear Input data for next frame
@@ -185,14 +183,7 @@ namespace ImGui
 
             this.renderer.Clear(this.BackgroundColor);
 
-            RenderBackground();
-            
-            Metrics.VertexNumber += backgroundMeshBuffer.ShapeMesh.VertexBuffer.Count
-                                    + backgroundMeshBuffer.ImageMesh.VertexBuffer.Count
-                                    + backgroundMeshBuffer.TextMesh.VertexBuffer.Count;
-            Metrics.IndexNumber += backgroundMeshBuffer.ShapeMesh.IndexBuffer.Count
-                                   + backgroundMeshBuffer.ImageMesh.IndexBuffer.Count
-                                   + backgroundMeshBuffer.TextMesh.IndexBuffer.Count;
+            uiContext.RenderBackground(ClientSize, renderer);
 
             foreach (var window in w.Windows)
             {
@@ -212,14 +203,7 @@ namespace ImGui
                                       + window.MeshBuffer.TextMesh.IndexBuffer.Count;
                 Metrics.RenderWindows++;
             }
-            RenderForeground();
-
-            Metrics.VertexNumber += foregroundMeshBuffer.ShapeMesh.VertexBuffer.Count
-                                    + foregroundMeshBuffer.ImageMesh.VertexBuffer.Count
-                                    + foregroundMeshBuffer.TextMesh.VertexBuffer.Count;
-            Metrics.IndexNumber += foregroundMeshBuffer.ShapeMesh.IndexBuffer.Count
-                                   + foregroundMeshBuffer.ImageMesh.IndexBuffer.Count
-                                   + foregroundMeshBuffer.TextMesh.IndexBuffer.Count;
+            uiContext.RenderForeground(ClientSize, renderer);
 
             this.renderer.SwapBuffers();
         }

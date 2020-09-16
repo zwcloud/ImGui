@@ -38,7 +38,7 @@ namespace ImGui
             this.renderer.Init(this.Pointer, this.nativeWindow.ClientSize);
             Profile.End();
 
-            InitializeBackForegroundRenderContext();
+            uiContext.InitializeBackForegroundRenderContext();
         }
 
         internal void MainLoop(Action guiMethod)

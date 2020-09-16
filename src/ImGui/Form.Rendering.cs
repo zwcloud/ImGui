@@ -1,10 +1,11 @@
 ﻿using System;
+using ImGui.Development;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 
 namespace ImGui
 {
-    partial class Form
+    partial class GUIContext
     {
         /// <summary>
         /// First draw context to be rendered.
@@ -33,13 +34,26 @@ namespace ImGui
         private RenderContext backgroundRenderContext;
         private RenderContext foregroundRenderContext;
 
-        void InitializeBackForegroundRenderContext()
+        public void InitializeBackForegroundRenderContext()
         {
             backgroundRenderContext = new RenderContext(backgroundGeometryRenderer, backgroundMeshList);
             foregroundRenderContext = new RenderContext(foregroundGeometryRenderer, foregroundMeshList);
         }
 
-        void RenderBackground()
+        public void ForeBackGroundRenderOpen()
+        {
+            this.BackgroundDrawingContext = backgroundNode.RenderOpen();
+            this.ForegroundDrawingContext = foregroundNode.RenderOpen();
+        }
+
+        public void ForeBackGroundRenderClose()
+        {
+            this.BackgroundDrawingContext.Close();
+            this.ForegroundDrawingContext.Close();
+        }
+        
+
+        public void RenderBackground(Size size, IRenderer renderer)
         {
             backgroundNode.Render(this.backgroundRenderContext);
 
@@ -50,7 +64,6 @@ namespace ImGui
 
             backgroundMeshList.Clear();
 
-            var size = ClientSize;
             //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
             renderer.DrawMeshes((int)size.Width, (int)size.Height,
                 (
@@ -59,9 +72,16 @@ namespace ImGui
                     textMesh: this.backgroundMeshBuffer.TextMesh
                 )
             );
+
+            Metrics.VertexNumber += backgroundMeshBuffer.ShapeMesh.VertexBuffer.Count
+                                    + backgroundMeshBuffer.ImageMesh.VertexBuffer.Count
+                                    + backgroundMeshBuffer.TextMesh.VertexBuffer.Count;
+            Metrics.IndexNumber += backgroundMeshBuffer.ShapeMesh.IndexBuffer.Count
+                                   + backgroundMeshBuffer.ImageMesh.IndexBuffer.Count
+                                   + backgroundMeshBuffer.TextMesh.IndexBuffer.Count;
         }
 
-        void RenderForeground()
+        public void RenderForeground(Size size, IRenderer renderer)
         {
             foregroundNode.Render(this.foregroundRenderContext);
 
@@ -72,7 +92,6 @@ namespace ImGui
 
             foregroundMeshList.Clear();
 
-            var size = ClientSize;
             //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
             renderer.DrawMeshes((int)size.Width, (int)size.Height,
                 (
@@ -81,6 +100,13 @@ namespace ImGui
                     textMesh: this.foregroundMeshBuffer.TextMesh
                 )
             );
+            
+            Metrics.VertexNumber += foregroundMeshBuffer.ShapeMesh.VertexBuffer.Count
+                                    + foregroundMeshBuffer.ImageMesh.VertexBuffer.Count
+                                    + foregroundMeshBuffer.TextMesh.VertexBuffer.Count;
+            Metrics.IndexNumber += foregroundMeshBuffer.ShapeMesh.IndexBuffer.Count
+                                   + foregroundMeshBuffer.ImageMesh.IndexBuffer.Count
+                                   + foregroundMeshBuffer.TextMesh.IndexBuffer.Count;
         }
     }
 }

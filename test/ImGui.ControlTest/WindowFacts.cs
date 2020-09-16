@@ -42,7 +42,7 @@ namespace ImGui.ControlTest
             var form = new MainForm(new Rect(320, 180, 800, 600));
             form.OnGUIAction = () =>
             {
-                form.ForegroundDrawingContext.DrawGeometry(null, pen, geometry);
+                form.uiContext.ForegroundDrawingContext.DrawGeometry(null, pen, geometry);
             };
 
             Application.Run(form);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImGui
 {
-    internal class GUIContext
+    internal partial class GUIContext
     {
         public long Time;
         public long FrameCount = 0;
