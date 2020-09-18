@@ -60,7 +60,7 @@ namespace ImGui
             }
             else
             {
-                DefaultFontSize = 12;
+                DefaultFontSize = 10;
                 DefaultFontFamily = Utility.FontDir + "msjh.ttf";
             }
 
