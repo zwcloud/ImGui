@@ -201,6 +201,13 @@ namespace ImGui
                 window.AbsoluteVisualList.ForEach(n => n.ActiveSelf = false);
             }
 
+            // Clear temp data
+            for (int i = 0; i != this.Windows.Count; i++)
+            {
+                Window window = this.Windows[i];
+                window.TempData.Clear();
+            }
+
             // No window should be open at the beginning of the frame.
             // But in order to allow the user to call NewFrame() multiple times without calling Render(), we are doing an explicit clear.
             this.WindowStack.Clear();

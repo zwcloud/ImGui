@@ -81,6 +81,8 @@ namespace ImGui
 
         public Storage StateStorage { get; } = new Storage();
 
+        public WindowTempData TempData = new WindowTempData();
+
         #region Window original sub nodes
         private Node titleBar { get; }
         private Node titleIcon { get; }
@@ -384,6 +386,44 @@ namespace ImGui
             g.KeepAliveID(id);
             return id;
         }
+
+        public int GetID<T>(T obj) where T : class
+        {
+            int seed = this.IDStack.Peek();
+            var id = this.Hash(seed, obj.GetHashCode());
+
+            GUIContext g = Form.current.uiContext;
+            g.KeepAliveID(id);
+            return id;
+        }
+
+        //TODO report text or object related to the control instead of raw ID:
+        //an ID is implicit to user
+        public void CheckStackSize(int id, bool write)
+        {
+            int current = IDStack.Count;
+            if (write)//record id and stack size
+            {
+                TempData.StackSizeMap[id] = current;
+                //Debug.WriteLine($"pushed id<{id}>, current stack size = {current}");
+            }
+            else//checking against recorded id and stack size
+            {
+                //Debug.WriteLine($"checking for id<{id}>, current stack size = {current}");
+                if (!TempData.StackSizeMap.ContainsKey(id))
+                {
+                    throw new PushPopNotMatchException(
+                        $"Id<{id}> is not found, extra PopID/TreePop happened.");
+                }
+
+                if(TempData.StackSizeMap[id] != current)
+                {
+                    throw new PushPopNotMatchException(
+                        $"PushID/PopID or TreeNode/TreePop doesn't match at Id<{id}>.");
+                }
+            }
+        }
+
         #endregion
 
         /// <summary>

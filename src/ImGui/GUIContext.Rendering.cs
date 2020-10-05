@@ -1,5 +1,4 @@
-﻿using System;
-using ImGui.Development;
+﻿using ImGui.Development;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 

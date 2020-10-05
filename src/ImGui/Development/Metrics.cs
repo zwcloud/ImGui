@@ -1,6 +1,5 @@
 ﻿using ImGui.Rendering;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using static ImGui.GUILayout;
@@ -104,7 +103,7 @@ namespace ImGui.Development
                 +buffer.ShapeMesh.CommandBuffer.Count
                 +buffer.TextMesh.Commands.Count;
 
-            if (TreeNode(buffer.GetHashCode(),
+            if (TreeNode(buffer,
                 $"{label}: '{buffer.OwnerName}'" +
                 $" {vertexCount} vtx, {indexCount} indices, {cmdCount} cmds"))
             {

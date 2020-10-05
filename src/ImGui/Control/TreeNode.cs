@@ -5,15 +5,23 @@ namespace ImGui
 {
     public partial class GUILayout
     {
-        public static bool TreeNode(int hashCode, string text)
+        public static bool TreeNode<T>(T obj, string text) where T: class
         {
             Window window = GetCurrentWindow();
-            int id = window.GetID(hashCode);
+            int id = window.GetID(obj);
             Storage storage = window.StateStorage;
 
             var open = storage.GetBool(id);
-            TreeNode(text, ref open);
+            DoTreeNode(id, text, ref open);
             storage.SetBool(id, open);
+            return open;
+        }
+
+        public static bool TreeNode(string text, ref bool open)
+        {
+            Window window = GetCurrentWindow();
+            int id = window.GetID(text);
+            DoTreeNode(id, text, ref open);
             return open;
         }
 
@@ -22,30 +30,32 @@ namespace ImGui
             Window window = GetCurrentWindow();
             int id = window.GetID(text);
             Storage storage = window.StateStorage;
-
             var open = storage.GetBool(id);
-            TreeNode(text, ref open);
+            DoTreeNode(id, text, ref open);
             storage.SetBool(id, open);
             return open;
         }
 
-        public static bool TreeNode(string text, ref bool open)
+        public static bool DoTreeNode(int id, string text, ref bool open)
         {
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
+            
+            window.CheckStackSize(id, true);
+            PushID(id);
 
             BeginVertical(text + "_Tree");
 
             //get or create the root node
-            int id = window.GetID(text);
             var container = window.RenderTree.CurrentContainer;
-            var node = container.GetNodeById(id);
+            var toggleNodeId = window.GetID(text);
+            var node = container.GetNodeById(toggleNodeId);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 //create nodes
-                node = new Node(id, $"TreeNode<{text}>");
+                node = new Node(toggleNodeId, $"TreeNode<{text}>");
                 node.AttachLayoutEntry();
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.TreeNode]);
@@ -56,10 +66,10 @@ namespace ImGui
             node.ActiveSelf = true;
 
             // rect
-            Rect rect = window.GetRect(id);
+            Rect rect = window.GetRect(toggleNodeId);
 
             // interact
-            var pressed = GUIBehavior.ButtonBehavior(rect, id, out var hovered, out var held, ButtonFlags.PressedOnClick);
+            var pressed = GUIBehavior.ButtonBehavior(rect, toggleNodeId, out var hovered, out var held, ButtonFlags.PressedOnClick);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             if (pressed)
             {
@@ -73,17 +83,28 @@ namespace ImGui
                     node.Height, node.RuleSet.FontColor, open ? Internal.Direcion.Down : Internal.Direcion.Right, 0.7);
             }
 
-                BeginHorizontal("#Content");
-                    Space("Space", 20);
-                    BeginVertical("#Items");
+            BeginHorizontal("#Content");
+            Space("Space", 20);
+            BeginVertical("#Items");
+
+            var cpId = HashCode.Combine(id, 23);
+            window.CheckStackSize(cpId, true);
+            PushID(cpId);
             return open;
         }
 
         public static void TreePop()
         {
-                    EndVertical();
-                EndHorizontal();
+            var window = GetCurrentWindow();
+            var cpId = PopID();
+            window.CheckStackSize(cpId, false);
+
             EndVertical();
+            EndHorizontal();
+            EndVertical();
+
+            var poppedId = PopID();
+            window.CheckStackSize(poppedId, false);
         }
     }
 
