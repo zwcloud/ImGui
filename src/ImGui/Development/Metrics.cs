@@ -90,9 +90,9 @@ namespace ImGui.Development
             TreePop();
         }
 
-        private static void NodeDrawList(Window window, string label)
+        private static void NodeDrawList(Window nodeWindow, string label)
         {
-            var buffer = window.MeshBuffer;
+            var buffer = nodeWindow.MeshBuffer;
             var vertexCount = buffer.ImageMesh.VertexBuffer.Count
                               + buffer.ShapeMesh.VertexBuffer.Count
                               + buffer.TextMesh.VertexBuffer.Count;
@@ -115,6 +115,13 @@ namespace ImGui.Development
                 }
             }
             TreePop();
+
+            if(IsItemHovered())
+            {
+                var g = GetCurrentContext();
+                g.ForegroundDrawingContext.DrawRectangle(
+                    null, new Pen(Color.Yellow, 1), nodeWindow.Rect);
+            }
         }
     }
 }

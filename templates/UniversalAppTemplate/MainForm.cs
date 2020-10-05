@@ -12,16 +12,7 @@ namespace UniversalAppTemplate
 
         protected override void OnGUI()
         {
-            //demo.OnGUI();
-            if (GUILayout.TreeNode("NodeA"))
-            {
-                if (GUILayout.TreeNode("NodeB"))
-                {
-                    GUILayout.Label("SomeLabel");
-                }
-                GUILayout.TreePop();
-            }
-            GUILayout.TreePop();
+            demo.OnGUI();
         }
     }
 }
