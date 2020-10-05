@@ -32,10 +32,10 @@ namespace ImGui
 
         #region ID
 
-        public static void PushID(int int_id)
+        public static void PushID(int id)
         {
             Window window = GetCurrentWindow();
-            window.IDStack.Push(window.GetID(int_id));
+            window.IDStack.Push(id);//we don't re-hash pushed raw id
         }
 
         public static void PushID(string str_id)
@@ -44,10 +44,10 @@ namespace ImGui
             window.IDStack.Push(window.GetID(str_id));
         }
 
-        public static void PopID()
+        public static int PopID()
         {
             Window window = GetCurrentWindow();
-            window.IDStack.Pop();
+            return window.IDStack.Pop();
         }
 
         #endregion
