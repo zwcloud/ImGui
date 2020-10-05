@@ -66,6 +66,17 @@ namespace ImGui
             return window;
         }
 
+        internal static bool IsItemHovered()
+        {
+            Window window = GetCurrentWindow();
+            if (window.IDStack.Count == 0)
+            {
+                return false;
+            }
+
+            return window.TempData.LastItemState == GUIState.Hover;
+        }
+
         #region stack-layout
 
         public static GUILayoutScope HScope(string str_id)

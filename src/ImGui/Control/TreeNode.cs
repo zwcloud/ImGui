@@ -44,6 +44,7 @@ namespace ImGui
             
             window.CheckStackSize(id, true);
             PushID(id);
+            window.TempData.LastItemId = id;
 
             BeginVertical(text + "_Tree");
 
@@ -75,6 +76,9 @@ namespace ImGui
             {
                 open = !open;
             }
+
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             using (var dc = node.RenderOpen())
             {
