@@ -66,6 +66,10 @@ namespace ImGui
             return window;
         }
 
+        /// <summary>
+        /// Is last simple control being hovered?
+        /// Note this won't work for composite controls like ListBox.
+        /// </summary>
         internal static bool IsItemHovered()
         {
             Window window = GetCurrentWindow();

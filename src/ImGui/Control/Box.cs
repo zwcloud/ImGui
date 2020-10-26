@@ -32,6 +32,9 @@ namespace ImGui
             }
             node.RuleSet.ApplyOptions(options);
             node.ActiveSelf = true;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // rect
             node.Rect = window.GetRect(rect);
@@ -78,6 +81,9 @@ namespace ImGui
 
             // rect
             node.Rect = window.GetRect(id);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             using (var dc = node.RenderOpen())
             {

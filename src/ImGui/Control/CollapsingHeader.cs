@@ -50,6 +50,9 @@ namespace ImGui
             {
                 open = !open;
             }
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             using (var dc = node.RenderOpen())
             {

@@ -51,6 +51,9 @@ namespace ImGui
             {
                 node.State = GUIState.Active;
             }
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // render
             using (var dc = node.RenderOpen())
@@ -111,6 +114,9 @@ namespace ImGui
             {
                 node.State = GUIState.Active;
             }
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // render
             using (var dc = node.RenderOpen())

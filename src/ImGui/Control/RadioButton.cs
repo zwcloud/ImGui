@@ -37,6 +37,9 @@ namespace ImGui
 
             bool pressed = GUIBehavior.ButtonBehavior(node.Rect, id, out var hovered, out var held);
             node.State = (held && hovered) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             using (var d = node.RenderOpen())
             {

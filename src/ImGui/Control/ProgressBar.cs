@@ -28,6 +28,9 @@ namespace ImGui
 
             // rect
             node.Rect = window.GetRect(id);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // render
             percent = MathEx.Clamp01(percent);

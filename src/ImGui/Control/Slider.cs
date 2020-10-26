@@ -58,7 +58,6 @@ namespace ImGui
             bool hovered, held;
             value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out hovered, out held);
 
-            // render
             var state = GUIState.Normal;
             if (hovered)
             {
@@ -68,6 +67,11 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
+            
+            // render
             GUIAppearance.DrawSlider(node, text, value, minValue, maxValue, state, sliderRect, labelWidth);
 
             return value;
@@ -120,7 +124,6 @@ namespace ImGui
                 node.Rect.Width, sliderHeight);
             value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out var hovered, out _);
 
-            // render
             var state = GUIState.Normal;
             if (hovered)
             {
@@ -130,6 +133,11 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
+            
+            // render
             GUIAppearance.DrawVSlider(node, label, value, minValue, maxValue, state, sliderRect, labelHeight);
 
             return value;
@@ -188,7 +196,6 @@ namespace ImGui
             var sliderRect = new Rect(node.Rect.Location, sliderWidth, node.Rect.Height);
             value = GUIBehavior.SliderBehavior(sliderRect, id, true, value, minValue, maxValue, out var hovered, out var held);
 
-            // render
             var state = GUIState.Normal;
             if (hovered)
             {
@@ -198,6 +205,11 @@ namespace ImGui
             {
                 state = GUIState.Active;
             }
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
+            
+            // render
             GUIAppearance.DrawSlider(node, label, value, minValue, maxValue, state, sliderRect, labelWidth);
 
             return value;
@@ -252,7 +264,6 @@ namespace ImGui
             var sliderRect = new Rect(node.Rect.Location, node.Rect.Width, sliderHeight);
             value = GUIBehavior.SliderBehavior(sliderRect, id, false, value, minValue, maxValue, out var hovered, out var held);
 
-            // render
             var state = GUI.Normal;
             if (hovered)
             {
@@ -262,6 +273,11 @@ namespace ImGui
             {
                 state = GUI.Active;
             }
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
+            
+            // render
             GUIAppearance.DrawVSlider(node, label, value, minValue, maxValue, state, sliderRect, labelHeight);
 
             return value;

@@ -43,6 +43,9 @@ namespace ImGui
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())
@@ -93,6 +96,9 @@ namespace ImGui
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())
@@ -132,6 +138,9 @@ namespace ImGui
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())
@@ -178,6 +187,9 @@ namespace ImGui
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())

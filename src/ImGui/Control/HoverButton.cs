@@ -64,6 +64,9 @@ namespace ImGui
                 state = GUI.Active;
             }
             node.State = state;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())
@@ -140,6 +143,9 @@ namespace ImGui
                 state = GUI.Active;
             }
             node.State = state;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())

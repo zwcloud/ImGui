@@ -73,6 +73,9 @@ namespace ImGui
                 }
             }
             node.State = state;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             GUIAppearance.DrawPolygonButton(points, textRect, text, node);
@@ -160,6 +163,9 @@ namespace ImGui
                 }
             }
             node.State = state;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             GUIAppearance.DrawPolygonButton(points, textRect, text, node);

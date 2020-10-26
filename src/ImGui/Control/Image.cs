@@ -31,6 +31,9 @@ namespace ImGui
 
             // rect
             node.Rect = window.GetRect(rect);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())
@@ -66,6 +69,9 @@ namespace ImGui
 
             // rect
             node.Rect = window.GetRect(rect);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())
@@ -104,6 +110,9 @@ namespace ImGui
 
             // rect
             node.Rect = window.GetRect(id);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())
@@ -134,6 +143,9 @@ namespace ImGui
 
             // rect
             node.Rect = window.GetRect(id);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // draw
             using (var dc = node.RenderOpen())

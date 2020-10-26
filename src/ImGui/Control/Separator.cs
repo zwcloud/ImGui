@@ -27,6 +27,9 @@ namespace ImGui
             container.AppendChild(node);
 
             node.ActiveSelf = true;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             // rect
             node.Rect = window.GetRect(id);

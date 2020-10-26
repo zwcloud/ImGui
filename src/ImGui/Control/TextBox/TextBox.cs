@@ -35,9 +35,12 @@ namespace ImGui
             // interact
             InputTextContext context;
             text = GUIBehavior.TextBoxBehavior(id, rect, text, out bool hovered, out bool active, out context);
+            var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // last item state
+            window.TempData.LastItemState = state;
 
             // render
-            var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             GUIAppearance.DrawTextBox(node, id, text, context, state);
 
             return text;
@@ -96,9 +99,12 @@ namespace ImGui
             // interact
             text = GUIBehavior.TextBoxBehavior(textNode.Id, textNode.Rect, text,
                 out bool hovered, out bool active, out var context);
-
-            // render
             var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // last item state
+            window.TempData.LastItemState = state;
+            
+            // render
             GUIAppearance.DrawTextBox(textNode, textNode.Id, text, context, state);
 
             // draw the box
@@ -152,9 +158,12 @@ namespace ImGui
             // interact
             InputTextContext context;
             text = GUIBehavior.TextBoxBehavior(id, rect, text, out bool hovered, out bool active, out context, flags, checker);
+            var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+
+            // last item state
+            window.TempData.LastItemState = state;
 
             // render
-            var state = active ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             if (flags.HaveFlag(InputTextFlags.Password))
             {
                 var dotText = new string('*', text.Length);//FIXME bad performance

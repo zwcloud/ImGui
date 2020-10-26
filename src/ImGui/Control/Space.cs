@@ -26,6 +26,9 @@ namespace ImGui
             container.AppendChild(node);
             node.ActiveSelf = true;
             node.Rect = window.GetRect(id);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             using (var dc = node.RenderOpen())
             {
@@ -62,6 +65,9 @@ namespace ImGui
             container.AppendChild(node);
             node.ActiveSelf = true;
             node.Rect = window.GetRect(id);
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
 
             using (var dc = node.RenderOpen())
             {
