@@ -6,10 +6,10 @@ namespace ImGui
     public partial class GUI
     {
         /// <summary>
-        /// Create a label.
+        /// Create a fixed label.
         /// </summary>
-        /// <param name="rect">position and size</param>
-        /// <param name="text">text to display</param>
+        /// <param name="rect">The position and size of this control.</param>
+        /// <param name="text">The text to display.</param>
         public static void Label(Rect rect, string text)
         {
             var window = GetCurrentWindow();
@@ -49,8 +49,8 @@ namespace ImGui
         /// <summary>
         /// Create an auto-layout label.
         /// </summary>
-        /// <param name="text">text to display</param>
-        /// <param name="options"></param>
+        /// <param name="text">The text to display.</param>
+        /// <param name="options">Layout options of this control.</param>
         public static void Label(string text, LayoutOptions? options)
         {
             Window window = GetCurrentWindow();
@@ -99,52 +99,83 @@ namespace ImGui
         /// <summary>
         /// Create a colored auto-layout label.
         /// </summary>
-        /// <param name="color">text color</param>
-        /// <param name="text">text</param>
+        /// <param name="color">The color of text.</param>
+        /// <param name="text">The text to display.</param>
         public static void Label(Color color, string text)
         {
             Label(text, new LayoutOptions().FontColor(color));
         }
 
         /// <summary>
-        /// Create a auto-layout and disabled label.
+        /// Create an auto-layout and disabled label.
         /// </summary>
-        /// <param name="text">text</param>
+        /// <param name="text">The text to display.</param>
         public static void LabelDisabled(string text)
         {
             Label(Color.TextDisabled, text);
         }
 
-        public static void Label(string format, object arg0)
+        /// <summary>
+        /// Create an auto-layout label with format string.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="arg">An object to format.</param>
+        public static void Label(string format, object arg)
         {
-            Label(string.Format(format, arg0));
+            Label(string.Format(format, arg));
         }
-
+        
+        /// <summary>
+        /// Create an auto-layout label with format string.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="arg0">First object to format.</param>
+        /// <param name="arg1">Second object to format.</param>
         public static void Label(string format, object arg0, object arg1)
         {
             Label(string.Format(format, arg0, arg1));
         }
-
+        
+        /// <summary>
+        /// Create an auto-layout label with format string.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="arg0">First object to format.</param>
+        /// <param name="arg1">Second object to format.</param>
+        /// <param name="arg2">Third object to format.</param>
         public static void Label(string format, object arg0, object arg1, object arg2)
         {
             Label(string.Format(format, arg0, arg1, arg2));
         }
-
+        
+        /// <summary>
+        /// Create an auto-layout label with format string.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
         public static void Label(string format, params object[] args)
         {
             Label(string.Format(format, args));
         }
-
+        
+        /// <summary>
+        /// Create an auto-layout label.
+        /// </summary>
+        /// <param name="text">The text to display.</param>
         public static void Text(string text) => Label(text);
-
+        
+        /// <summary>
+        /// Create an auto-layout label with format string.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
         public static void Text(string format, params object[] args) => Label(format, args);
 
         /// <summary>
-        /// Create a labeled text.
+        /// Create an auto-layout labeled text.
         /// </summary>
-        /// <param name="label"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
+        /// <param name="label">The label of this control.</param>
+        /// <param name="text">The text to display.</param>
         public static void LabelText(string label, string text)
         {
             Window window = GetCurrentWindow();
@@ -164,7 +195,7 @@ namespace ImGui
 
         #region Bullets
         /// <summary>
-        /// Create a bullet.
+        /// Create an auto-layout bullet mark.
         /// </summary>
         public static void Bullet(string str_id)
         {
@@ -206,6 +237,7 @@ namespace ImGui
         /// <summary>
         /// Create a label with a little bullet.
         /// </summary>
+        /// <param name="text">The text to display.</param>
         public static void BulletText(string text)
         {
             Window window = GetCurrentWindow();
@@ -248,6 +280,11 @@ namespace ImGui
             }
         }
 
+        /// <summary>
+        /// Create an auto-layout label with a little bullet and format string.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
         public static void BulletText(string format, params object[] args)
         {
             BulletText(string.Format(format, args));
