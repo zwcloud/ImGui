@@ -20,8 +20,8 @@ namespace ImGui.ControlTest
                     GUILayout.Label("2222");
                     GUILayout.Label("333");
                     GUILayout.Label("44");
+                    GUILayout.TreePop();
                 }
-                GUILayout.TreePop();
             };
 
             Application.Run(form);
@@ -47,15 +47,15 @@ namespace ImGui.ControlTest
                         if (GUILayout.TreeNode("grandchild", ref open3))
                         {
                             GUILayout.Button("555555");
+                            GUILayout.TreePop();
                         }
                         GUILayout.TreePop();
                     }
-                    GUILayout.TreePop();
                     selected1 = GUILayout.Selectable("2222", selected1);
                     GUILayout.Label("33333");
                     selected2 = GUILayout.Selectable(".NET Core", selected2);
+                    GUILayout.TreePop();
                 }
-                GUILayout.TreePop();
             };
 
             Application.Run(form);

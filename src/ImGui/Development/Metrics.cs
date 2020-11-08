@@ -50,12 +50,13 @@ namespace ImGui.Development
 
         private static void NodeWindows(IEnumerable<Window> windows, string label)
         {
-            if(TreeNode("Windows"))
+            if (!TreeNode(label))
             {
-                foreach (var window in windows)
-                {
-                    NodeWindow(window, "Window");
-                }
+                return;
+            }
+            foreach (var window in windows)
+            {
+                NodeWindow(window, "Window");
             }
             TreePop();
         }
@@ -86,8 +87,8 @@ namespace ImGui.Development
                 }
                 BulletText("Storage: {0} entries, ~{1} bytes", window.StateStorage.EntryCount,
                     window.StateStorage.EstimatedDataSizeInBytes);
+                TreePop();
             }
-            TreePop();
         }
 
         private static void NodeDrawList(Window nodeWindow, string label)
@@ -103,18 +104,18 @@ namespace ImGui.Development
                 +buffer.ShapeMesh.CommandBuffer.Count
                 +buffer.TextMesh.Commands.Count;
 
-            if (TreeNode(buffer,
+            bool nodeOpen = TreeNode(buffer,
                 $"{label}: '{buffer.OwnerName}'" +
-                $" {vertexCount} vtx, {indexCount} indices, {cmdCount} cmds"))
+                $" {vertexCount} vtx, {indexCount} indices, {cmdCount} cmds");
+            if (buffer == GetCurrentWindow().MeshBuffer)
             {
-                if (buffer == GetCurrentWindow().MeshBuffer)
+                if (nodeOpen)
                 {
                     Text("CURRENTLY APPENDING"); // Can't display stats for active draw list! (we don't have the data double-buffered)
                     TreePop();
-                    return;
                 }
+                return;
             }
-            TreePop();
 
             if(IsItemHovered())
             {

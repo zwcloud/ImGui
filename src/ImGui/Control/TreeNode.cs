@@ -119,7 +119,7 @@ namespace ImGui
         private void InitTreeNodeStyles(StyleRuleSet button, out StyleRuleSet ruleSet)
         {
             ruleSet = new StyleRuleSet();
-            ruleSet.Border = (0, 0, 0, 0);
+            ruleSet.Border = (1, 1, 1, 1);
             ruleSet.Padding = (1, 1, 1, 1);
             ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal);
             ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.60f), GUIState.Hover);

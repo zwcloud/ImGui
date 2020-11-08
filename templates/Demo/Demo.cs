@@ -203,13 +203,13 @@ label:
             if (GUILayout.TreeNode("Style", ref styleEditorOpen))
             {
                 ShowStyleEditor();
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
             if (GUILayout.TreeNode("Logging", ref loggingOpen))
             {
                 GUILayout.Text("TODO");
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
             //TODO logging
             GUILayout.PopID();
         }
@@ -229,13 +229,13 @@ label:
                             GUILayout.Label("blah blah");
                             if (GUILayout.Button("print")) System.Console.WriteLine("Child {0} pressed", i);
                             GUILayout.EndHorizontal();
+                            GUILayout.TreePop();
                         }
-                        GUILayout.TreePop();
                     }
+                    GUILayout.TreePop();
                 }
                 GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Collapsing Headers", ref open4))
             {
@@ -254,8 +254,8 @@ label:
                         GUILayout.Label("More content {0}", i);
                     }
                 }
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Bullets", ref open6))
             {
@@ -265,8 +265,8 @@ label:
                 GUILayout.BeginHorizontal("HGroup~1"); GUILayout.Bullet("_Bullet"); GUILayout.Text("Bullet point 3 (two calls)"); GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal("HGroup~2"); GUILayout.Bullet("_Bullet"); GUILayout.Button("Button"); GUILayout.EndHorizontal();
                 GUILayout.PopStyle();
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Colored Text", ref open7))
             {
@@ -274,15 +274,15 @@ label:
                 GUILayout.Label(new Color(1.0f, 0.0f, 1.0f, 1.0f), "Pink");
                 GUILayout.Label(new Color(1.0f, 1.0f, 0.0f, 1.0f), "Yellow");
                 GUILayout.LabelDisabled("Disabled");
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Word Wrapping", ref open8))
             {
                 //TODO
                 GUILayout.Label("TODO");
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Non-ASCII Text", ref open9))
             {
@@ -290,8 +290,8 @@ label:
                 GUILayout.Label("Hiragana: カククケコ (kakikukeko)");
                 GUILayout.Label("Kanjis: 日本語 (nihongo)");
                 buf = GUILayout.InputText("Unicode input", buf);
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Images", ref open10))
             {
@@ -310,8 +310,8 @@ label:
                 }
                 GUILayout.EndHorizontal();
                 GUILayout.Label("Pressed {0} times.", pressed_count);
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Selectables", ref open11))
             {
@@ -321,11 +321,11 @@ label:
                     selected[1] = GUILayout.Selectable("2. I am selectable", selected[1]);
                     GUILayout.Text("3. I am not selectable");
                     selected[2] = GUILayout.Selectable("4. I am selectable", selected[2]);
+                    GUILayout.TreePop();
                 }
-                GUILayout.TreePop();
                 GUILayout.Label("more TODO");
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Filtered Text Input", ref open12))
             {
@@ -338,8 +338,8 @@ label:
                 GUILayout.Text("Password input");
                 password = GUILayout.InputText("password", password, InputTextFlags.Password | InputTextFlags.CharsNoBlank);
                 password = GUILayout.InputText("password (clear)", password, InputTextFlags.CharsNoBlank);
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Multi-line Text Input", ref open13))
             {
@@ -356,8 +356,8 @@ label:
                     multiLineText = GUILayout.InputTextMultiline("Text Box", new Size(120, 200), multiLineText);
                 }
                 GUILayout.PopStyle();
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             using (GUILayout.HScope("HGroup~button_show_text"))
             {
@@ -431,8 +431,8 @@ label:
                 sliderValue = GUILayout.Slider("slider", sliderValue, 0.0, 1.0);
                 GUILayout.Label("Vertical Slder");
                 vSliderValue = GUILayout.VSlider("vslider", vSliderValue, 0.0, 1.0);
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             GUILayout.PopID();
         }
@@ -512,9 +512,9 @@ label:
                         }
                         GUILayout.EndChild();
                     }
+                    GUILayout.TreePop();
                 }
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Stack layout", ref stackLayoutOpen))
             {
@@ -550,8 +550,8 @@ label:
                     GUILayout.PopStyle();
                 }
                 GUILayout.EndHorizontal();
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("Layout scopes", ref layoutScopesOpen))
             {
@@ -571,8 +571,8 @@ label:
                     GUILayout.Button("H2");
                     GUILayout.Button("H3");
                 }
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             GUILayout.PopID();
         }
@@ -592,8 +592,8 @@ label:
                     GUILayout.Button("Button 2");
                     GUILayout.Button("Button 3");
                 }
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             if (GUILayout.TreeNode("dear imgui", ref dearImGuiSkinOpen))
             {
@@ -604,8 +604,8 @@ label:
                     GUILayout.Button("Button 2");
                     GUILayout.Button("Button 3");
                 }
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             GUI.SetDefaultSkin();
 
@@ -618,8 +618,8 @@ label:
                     GUILayout.Button("Button 2");
                     GUILayout.Button("Button 3");
                 }
+                GUILayout.TreePop();
             }
-            GUILayout.TreePop();
 
             GUI.SetDefaultSkin();
 

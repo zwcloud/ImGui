@@ -8,24 +8,11 @@ namespace UniversalAppTemplate
         {
         }
 
-        //private readonly Demo demo = new Demo();
+        private readonly Demo demo = new Demo();
 
         protected override void OnGUI()
         {
-            //demo.OnGUI();
-            if (GUILayout.TreeNode("TreeA"))
-            {
-                GUILayout.Text("ABC");
-                if (GUILayout.TreeNode("TreeB"))
-                {
-                    GUILayout.Text("DEF");
-                    GUILayout.TreePop();
-                }
-                GUILayout.Text("GHI");
-                GUILayout.Text("JKL");
-                GUILayout.TreePop();
-            }
-
+            demo.OnGUI();
         }
     }
 }
