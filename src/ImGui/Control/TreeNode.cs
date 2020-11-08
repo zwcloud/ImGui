@@ -41,22 +41,17 @@ namespace ImGui
             Window window = GetCurrentWindow();
             if (window.SkipItems)
                 return false;
-            
-            window.CheckStackSize(id, true);
-            PushID(id);
-            window.TempData.LastItemId = id;
 
-            BeginVertical(text + "_Tree");
+            window.TempData.LastItemId = id;
 
             //get or create the root node
             var container = window.RenderTree.CurrentContainer;
-            var toggleNodeId = window.GetID(text);
-            var node = container.GetNodeById(toggleNodeId);
+            var node = container.GetNodeById(id);
             text = Utility.FindRenderedText(text);
             if (node == null)
             {
                 //create nodes
-                node = new Node(toggleNodeId, $"TreeNode<{text}>");
+                node = new Node(id, $"TreeNode<{text}>");
                 node.AttachLayoutEntry();
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.TreeNode]);
@@ -67,10 +62,10 @@ namespace ImGui
             node.ActiveSelf = true;
 
             // rect
-            Rect rect = window.GetRect(toggleNodeId);
+            Rect rect = window.GetRect(id);
 
             // interact
-            var pressed = GUIBehavior.ButtonBehavior(rect, toggleNodeId, out var hovered, out var held, ButtonFlags.PressedOnClick);
+            var pressed = GUIBehavior.ButtonBehavior(rect, id, out var hovered, out var held, ButtonFlags.PressedOnClickRelease);
             node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             if (pressed)
             {
@@ -82,18 +77,26 @@ namespace ImGui
 
             using (var dc = node.RenderOpen())
             {
-                dc.DrawGlyphRun(node.RuleSet, text, node.ContentRect.TopLeft + new Vector(node.Rect.Height + node.PaddingLeft, 0));
-                dc.RenderArrow(node.Rect.Min + new Vector(node.RuleSet.PaddingTop, lineHeight * 0.15),
+                dc.DrawRectangle(new Brush(node.RuleSet.BackgroundColor), null, rect);
+                dc.DrawGlyphRun(node.RuleSet, text, node.ContentRect.TopLeft + new Vector(rect.Height + node.PaddingLeft, 0));
+                dc.RenderArrow(rect.Min + new Vector(node.RuleSet.PaddingTop, lineHeight * 0.15),
                     node.Height, node.RuleSet.FontColor, open ? Internal.Direcion.Down : Internal.Direcion.Right, 0.7);
             }
 
-            BeginHorizontal("#Content");
-            Space("Space", 20);
-            BeginVertical("#Items");
+            if (open)
+            {
+                window.CheckStackSize(id, true);
+                PushID(id);
 
-            var cpId = HashCode.Combine(id, 23);
-            window.CheckStackSize(cpId, true);
-            PushID(cpId);
+                BeginHorizontal("#TreeContent");
+                Space("Space", 20);
+                BeginVertical("#Items");
+
+                var cpId = HashCode.Combine(id, 23);
+                window.CheckStackSize(cpId, true);
+                PushID(cpId);
+            }
+
             return open;
         }
 
@@ -105,7 +108,6 @@ namespace ImGui
 
             EndVertical();
             EndHorizontal();
-            EndVertical();
 
             var poppedId = PopID();
             window.CheckStackSize(poppedId, false);
@@ -117,9 +119,10 @@ namespace ImGui
         private void InitTreeNodeStyles(StyleRuleSet button, out StyleRuleSet ruleSet)
         {
             ruleSet = new StyleRuleSet();
-            ruleSet.Replace(button);
+            ruleSet.Border = (0, 0, 0, 0);
+            ruleSet.Padding = (1, 1, 1, 1);
             ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal);
-            ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.80f), GUIState.Hover);
+            ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.60f), GUIState.Hover);
             ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
             ruleSet.Set(StylePropertyName.HorizontalStretchFactor, 1, GUIState.Normal);
             ruleSet.Set(StylePropertyName.HorizontalStretchFactor, 1, GUIState.Hover);
