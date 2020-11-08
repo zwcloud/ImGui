@@ -214,7 +214,10 @@ namespace ImGui
             GUIContext g = this.uiContext;
 
             this.nativeWindow.Title =
-                $"fps:{g.fps,5:0.0}, mouse pos: {Mouse.Instance.Position}, deltaTime: {g.DeltaTime}ms";
+                $"fps:{g.fps,5:0.0}," +
+                $" mouse pos: {Mouse.Instance.Position}," +
+                $" deltaTime: {g.DeltaTime}ms," +
+                $" {g.DevOnly_GetNodeName(g.HoverId)}";
 
             var l = Application.Logger;
             if (ImGui.Log.Enabled && ImGui.Log.LogStatus)

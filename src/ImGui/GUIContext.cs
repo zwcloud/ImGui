@@ -146,14 +146,30 @@ namespace ImGui
             {
                 double delay = Keyboard.KeyRepeatDelay, rate = Keyboard.KeyRepeatRate;
                 if (
-                    ((t - delay)%rate) > rate * 0.5f
+                    ((t - delay) % rate) > rate * 0.5f
                     !=
-                    ((t - delay - g.DeltaTime)% rate) > rate * 0.5f
-                    )
+                    ((t - delay - g.DeltaTime) % rate) > rate * 0.5f
+                )
+                {
                     return true;
+                }
             }
 
             return false;
+        }
+
+        internal string DevOnly_GetNodeName(int id)
+        {
+            foreach (var window in WindowManager.Windows)
+            {
+                var node = window.RenderTree.Root.GetNodeById(id);
+                if (node != null)
+                {
+                    return node.Name;
+                }
+            }
+
+            return "<empty>";
         }
     }
 }
