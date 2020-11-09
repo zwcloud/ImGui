@@ -50,6 +50,12 @@ namespace ImGui.OSImplementation
             var scale = typeFace.CalculateScaleToPixelFromPointSize((float)fontSize);
             return (typeFace.Ascender - typeFace.Descender + typeFace.LineGap) * scale;
         }
+        
+        public static double GetLineHeight(Typeface typeFace, double fontSize)
+        {
+            var scale = typeFace.CalculateScaleToPixelFromPointSize((float)fontSize);
+            return (typeFace.Ascender - typeFace.Descender + typeFace.LineGap) * scale;
+        }
 
         public static double GetAscent(string fontFamily, double fontSize)
         {
@@ -176,8 +182,7 @@ namespace ImGui.OSImplementation
             int lineCount = 1;
             var scale = this.CurrentTypeFace.CalculateScaleToPixelFromPointSize(
                 (float) this.FontSize);
-            float lineHeight = (CurrentTypeFace.Bounds.YMax-CurrentTypeFace.Bounds.YMin)
-                               *1.2f * scale;
+            var lineHeight = GetLineHeight(CurrentTypeFace, FontSize);
             float back = 0;
             int i;
             for (i = 0; i < this.glyphPlans.Count; ++i)
