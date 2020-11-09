@@ -13,7 +13,7 @@ namespace ImGui.Development
         public static int RenderWindows { get; set; }
         public static int ActiveWindows { get; set; }
 
-        public const string WindowName = "Dear ImGui Metrics";
+        public const string WindowName = "Hello ImGui Metrics";
 
         public static void ShowWindow(ref bool windowOpened)
         {
@@ -73,7 +73,7 @@ namespace ImGui.Development
                          $"Window '{window.Name}', " +
                          $"{(window.Active || window.WasActive ? 1 : 0)}"))
             {
-                NodeDrawList(window, "DrawList");
+                NodeMeshBuffer(window, "MeshBuffer");
                 BulletText(
                     "Pos: ({0:F1},{1:F1}), Size: ({2:F1},{3:F1}), ContentSize ({4:F1},{5:F1})",
                     window.Position.X, window.Position.Y, window.Size.Width, window.Size.Height,
@@ -91,7 +91,7 @@ namespace ImGui.Development
             }
         }
 
-        private static void NodeDrawList(Window nodeWindow, string label)
+        private static void NodeMeshBuffer(Window nodeWindow, string label)
         {
             var buffer = nodeWindow.MeshBuffer;
             var vertexCount = buffer.ImageMesh.VertexBuffer.Count
@@ -107,14 +107,20 @@ namespace ImGui.Development
             bool nodeOpen = TreeNode(buffer,
                 $"{label}: '{buffer.OwnerName}'" +
                 $" {vertexCount} vtx, {indexCount} indices, {cmdCount} cmds");
-            if (buffer == GetCurrentWindow().MeshBuffer)
+
+            if (nodeOpen)
             {
-                if (nodeOpen)
+                if (buffer == GetCurrentWindow().MeshBuffer)
                 {
                     Text("CURRENTLY APPENDING"); // Can't display stats for active draw list! (we don't have the data double-buffered)
-                    TreePop();
                 }
-                return;
+                else
+                {
+                    NodeShapeMesh(buffer);
+                    NodeImageMesh(buffer);
+                    NodeTextMesh(buffer);
+                }
+                TreePop();
             }
 
             if(IsItemHovered())
@@ -122,6 +128,53 @@ namespace ImGui.Development
                 var g = GetCurrentContext();
                 g.ForegroundDrawingContext.DrawRectangle(
                     null, new Pen(Color.Yellow, 1), nodeWindow.Rect);
+            }
+        }
+
+        private static void NodeShapeMesh(MeshBuffer buffer)
+        {
+            var mesh = buffer.ShapeMesh;
+            var cmds = mesh.CommandBuffer;
+            foreach (var cmd in cmds)
+            {
+                NodeDrawCommand(cmd);
+            }
+        }
+
+        private static void NodeImageMesh(MeshBuffer buffer)
+        {
+            var mesh = buffer.ShapeMesh;
+            var cmds = mesh.CommandBuffer;
+            foreach (var cmd in cmds)
+            {
+                NodeDrawCommand(cmd);
+            }
+        }
+
+        private static void NodeTextMesh(MeshBuffer buffer)
+        {
+            
+        }
+
+        private static void NodeDrawCommand(DrawCommand cmd)
+        {
+            var tex = cmd.TextureData;
+            var texId = 0;
+            if (tex != null)
+            {
+                texId = tex.GetNativeTextureId();
+            }
+            var clipRect = cmd.ClipRect;
+            var minX = clipRect.Min.X;
+            var minY = clipRect.Min.Y;
+            var maxX = clipRect.Max.X;
+            var maxY = clipRect.Max.Y;
+            if (TreeNode($"Draw {cmd.ElemCount/3:0000} triangles," +
+                         $" tex 0x{texId:X8}," +
+                         $" clip_rect ({minX:0000.0},{minY:0000.0})-({maxX:0000.0},{maxY:0000.0})"))
+            {
+                Text($"ElemCount: {cmd.ElemCount}, ElemCount/3: {cmd.ElemCount/3}");
+                TreePop();
             }
         }
     }
