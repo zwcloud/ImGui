@@ -81,7 +81,7 @@
     <None Update="assets\fonts\DroidSans.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\fonts\msjh.ttf">
+    <None Update="assets\fonts\Terminus.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="assets\images\button.png">

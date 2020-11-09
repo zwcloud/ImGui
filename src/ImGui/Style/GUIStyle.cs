@@ -60,8 +60,8 @@ namespace ImGui
             }
             else
             {
-                DefaultFontSize = 10;
-                DefaultFontFamily = Utility.FontDir + "msjh.ttf";
+                DefaultFontSize = 10.5;
+                DefaultFontFamily = Utility.FontDir + "Terminus.ttf";
             }
 
             Basic = Default = CreateDefaultStyle();
