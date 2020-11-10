@@ -135,9 +135,9 @@ namespace ImGui.Development
         {
             var mesh = buffer.ShapeMesh;
             var cmds = mesh.CommandBuffer;
-            foreach (var cmd in cmds)
+            for (var i = 0; i < cmds.Count; i++)
             {
-                NodeDrawCommand(cmd);
+                NodeDrawCommand(mesh, i);
             }
         }
 
@@ -145,9 +145,9 @@ namespace ImGui.Development
         {
             var mesh = buffer.ShapeMesh;
             var cmds = mesh.CommandBuffer;
-            foreach (var cmd in cmds)
+            for (var i = 0; i < cmds.Count; i++)
             {
-                NodeDrawCommand(cmd);
+                NodeDrawCommand(mesh, i);
             }
         }
 
@@ -156,8 +156,13 @@ namespace ImGui.Development
             
         }
 
-        private static void NodeDrawCommand(DrawCommand cmd)
+        private static void NodeDrawCommand(Mesh mesh, int cmdIndex)
         {
+            DrawCommand cmd = mesh.CommandBuffer[cmdIndex];
+            if (cmd.ElemCount == 0)
+            {
+                return;
+            }
             var tex = cmd.TextureData;
             var texId = 0;
             if (tex != null)
@@ -173,7 +178,21 @@ namespace ImGui.Development
                          $" tex 0x{texId:X8}," +
                          $" clip_rect ({minX:0000.0},{minY:0000.0})-({maxX:0000.0},{maxY:0000.0})"))
             {
-                Text($"ElemCount: {cmd.ElemCount}, ElemCount/3: {cmd.ElemCount/3}");
+                Selectable($"Mesh: ElemCount: {cmd.ElemCount}, ElemCount/3: {cmd.ElemCount/3}");
+                if (IsItemHovered())
+                {
+                    var pen = new Pen(Color.Yellow, 1);
+                    var g = GetCurrentContext();
+                    for (int i = 0; i < cmd.ElemCount; i+=3)
+                    {
+                        var v0 = mesh.VertexBuffer[i].pos;
+                        var v1 = mesh.VertexBuffer[i + 1].pos;
+                        var v2 = mesh.VertexBuffer[i + 2].pos;
+                        g.ForegroundDrawingContext.DrawLine(pen, v0, v1);
+                        g.ForegroundDrawingContext.DrawLine(pen, v1, v2);
+                        g.ForegroundDrawingContext.DrawLine(pen, v2, v0);
+                    }
+                }
                 TreePop();
             }
         }

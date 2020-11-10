@@ -74,7 +74,7 @@ namespace ImGui
         /// <param name="selected">whether this selectable is selected</param>
         /// <param name="options">layout options that specify layouting properties. See also <see cref="GUILayout.Width"/>, <see cref="GUILayout.Height"/>, <see cref="GUILayout.ExpandWidth"/>, <see cref="GUILayout.ExpandHeight"/>, <see cref="GUILayout.StretchWidth"/>, <see cref="GUILayout.StretchHeight"/></param>
         /// <returns>new value of the toggle-button</returns>
-        public static bool Selectable(string text, bool selected, LayoutOptions? options)
+        public static bool Selectable(string text, bool selected = false, LayoutOptions? options = null)
         {
             var window = GetCurrentWindow();
             if (window.SkipItems)
@@ -125,11 +125,6 @@ namespace ImGui
             }
 
             return selected;
-        }
-
-        public static bool Selectable(string text, bool selected)
-        {
-            return Selectable(text, selected, null);
         }
     }
 
