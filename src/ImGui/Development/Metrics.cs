@@ -174,9 +174,9 @@ namespace ImGui.Development
             var minY = clipRect.Min.Y;
             var maxX = clipRect.Max.X;
             var maxY = clipRect.Max.Y;
-            if (TreeNode($"Draw {cmd.ElemCount/3:0000} triangles," +
+            if (TreeNode($"Draw {cmd.ElemCount/3,4} triangles," +
                          $" tex 0x{texId:X8}," +
-                         $" clip_rect ({minX:0000.0},{minY:0000.0})-({maxX:0000.0},{maxY:0000.0})"))
+                         $" clip_rect ({minX,7:.0},{minY,7:.0})-({maxX,7:.0},{maxY,7:.0})"))
             {
                 Selectable($"Mesh: ElemCount: {cmd.ElemCount}, ElemCount/3: {cmd.ElemCount/3}");
                 if (IsItemHovered())
