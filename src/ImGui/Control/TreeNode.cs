@@ -121,7 +121,7 @@ namespace ImGui
             ruleSet = new StyleRuleSet();
             ruleSet.Border = (1, 1, 1, 1);
             ruleSet.Padding = (1, 1, 1, 1);
-            ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal);
+            ruleSet.Set(StylePropertyName.BackgroundColor, Color.Clear, GUIState.Normal);
             ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 0.60f), GUIState.Hover);
             ruleSet.Set(StylePropertyName.BackgroundColor, new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
             ruleSet.Set(StylePropertyName.HorizontalStretchFactor, 1, GUIState.Normal);

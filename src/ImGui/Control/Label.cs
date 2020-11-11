@@ -308,9 +308,7 @@ namespace ImGui
         {
             StyleRuleSetBuilder builder = new StyleRuleSetBuilder(ruleSet);
             builder
-                .Padding(1.0, GUIState.Normal)
-                .Padding(1.0, GUIState.Hover)
-                .Padding(1.0, GUIState.Active)
+                .Padding(1.0)
                 .AlignmentVertical(Alignment.Center, GUIState.Normal)
                 .AlignmentVertical(Alignment.Center, GUIState.Hover)
                 .AlignmentVertical(Alignment.Center, GUIState.Active)
