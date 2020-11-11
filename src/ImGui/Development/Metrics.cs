@@ -209,6 +209,14 @@ namespace ImGui.Development
                     }
                     str = str.TrimEnd('\n');
                     Selectable(str, false);
+                    if (IsItemHovered())
+                    {
+                        var pen = new Pen(Color.Yellow, 1);
+                        var g = GetCurrentContext();
+                        g.ForegroundDrawingContext.DrawLine(pen, triangles_pos[0], triangles_pos[1]);
+                        g.ForegroundDrawingContext.DrawLine(pen, triangles_pos[1], triangles_pos[2]);
+                        g.ForegroundDrawingContext.DrawLine(pen, triangles_pos[2], triangles_pos[0]);
+                    }
                 }
                 TreePop();
             }
