@@ -178,7 +178,7 @@ namespace ImGui.Development
                          $" tex 0x{texId:X8}," +
                          $" clip_rect ({minX,7:.0},{minY,7:.0})-({maxX,7:.0},{maxY,7:.0})"))
             {
-                Selectable($"Mesh: ElemCount: {cmd.ElemCount}, ElemCount/3: {cmd.ElemCount/3}");
+                Text($"Mesh: ElemCount: {cmd.ElemCount}, ElemCount/3: {cmd.ElemCount/3}");
                 if (IsItemHovered())
                 {
                     var pen = new Pen(Color.Yellow, 1);
@@ -192,6 +192,23 @@ namespace ImGui.Development
                         g.ForegroundDrawingContext.DrawLine(pen, v1, v2);
                         g.ForegroundDrawingContext.DrawLine(pen, v2, v0);
                     }
+                }
+                var indexBuffer = mesh.IndexBuffer;
+                var triangles_pos = new Point[3];
+                for (int elemIndex = 0, idx_i = 0; elemIndex < cmd.ElemCount; elemIndex++)
+                {
+                    string str = "";
+                    for (int n = 0; n < 3; n++, idx_i++)
+                    {
+                        var vtx_i = indexBuffer[idx_i];
+                        DrawVertex v = mesh.VertexBuffer[vtx_i];
+                        triangles_pos[n] = v.pos;
+                        str += string.Format(
+                            "{0} {1:0000}: pos ({2,8:F2},{3,8:F2}), uv ({4:F6}, {5:F6}), col {6}\n",
+                            (n == 0) ? "elem" : "    ", idx_i, v.pos.x, v.pos.y, v.uv.x, v.uv.y, v.color);
+                    }
+                    str = str.TrimEnd('\n');
+                    Selectable(str, false);
                 }
                 TreePop();
             }
