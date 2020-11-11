@@ -39,8 +39,8 @@ namespace ImGui
 
             // interact
             selected = GUIBehavior.SelectableBehavior(node.Rect, id, selected, out bool hovered, out bool held);
-
-            node.State = selected ? GUIState.Normal : GUIState.Active;
+            
+            node.State = selected ? GUIState.Active : GUIState.Normal;
 
             if (hovered)
             {
@@ -103,7 +103,7 @@ namespace ImGui
             // interact
             selected = GUIBehavior.SelectableBehavior(node.Rect, id, selected, out bool hovered, out bool held);
 
-            node.State = selected ? GUIState.Normal : GUIState.Active;
+            node.State = selected ? GUIState.Active : GUIState.Normal;
 
             if (hovered)
             {
@@ -173,7 +173,7 @@ namespace ImGui
         {
             var builder = new StyleRuleSetBuilder(ruleSet);
             builder.Padding(2.0)
-                .BackgroundColor(new Color(0.26f, 0.59f, 0.98f, 0.31f), GUIState.Normal)
+                .BackgroundColor(Color.Clear, GUIState.Normal)
                 .BackgroundColor(new Color(0.26f, 0.59f, 0.98f, 0.80f), GUIState.Hover)
                 .BackgroundColor(new Color(0.26f, 0.59f, 0.98f, 1.00f), GUIState.Active);
         }
