@@ -36,6 +36,26 @@ namespace ImGui.Development
             var windowManager = g.WindowManager;
             NodeWindows(windowManager.Windows.ToArray(), "Windows");
 
+            //Internal state
+            if (TreeNode("Internal state"))
+            {
+                var w = g.WindowManager;
+                Text("HoveredWindow: '{0}'",
+                    w.HoveredWindow != null ? w.HoveredWindow.Name : "null");
+                Text("HoveredRootWindow: '{0}'",
+                    w.HoveredRootWindow!= null ? w.HoveredRootWindow.Name : "null");
+                // Data is "in-flight" so depending on when the Metrics window is called we may see
+                // current frame information or not
+                Text("HoveredId: {0:X8}/{1:X8}, AllowOverlap: {2}",
+                    g.HoverId, g.HoveredIdPreviousFrame, g.HoverIdAllowOverlap);
+                Text("ActiveId: {0:X8}/{1:X8}, AllowOverlap: {2}",
+                    g.ActiveId, g.ActiveIdPreviousFrame, g.ActiveIdAllowOverlap);
+                Text("ActiveIdWindow: '{0}'",
+                    w.ActiveIdWindow != null ? w.ActiveIdWindow.Name : "null");
+                Text("MovedWindow: '{0}'", w.MovedWindow != null ? w.MovedWindow.Name : "null");
+                TreePop();
+            }
+
             GUI.End();
         }
         
