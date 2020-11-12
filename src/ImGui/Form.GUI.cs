@@ -110,6 +110,10 @@ namespace ImGui
 
             uiContext.ForeBackGroundRenderOpen();
 
+            // [DEBUG] Item picker tool - start with DebugStartItemPicker()
+            // useful to visually select an item and break into its call-stack.
+            UpdateDebugToolItemPicker();
+
             // Create implicit debug window - we will only render it if the user has added something to it.
             GUI.Begin("Debug", ref this.debugWindowOpen, Application.InitialDebugWindowRect, 0.8);
         }
@@ -244,6 +248,27 @@ namespace ImGui
                     var window = w.Windows[i];
                     l.Msg($"        [{i}]:{window.Name}, active: {window.Active}, rect: {window.Rect}");
                 }
+            }
+        }
+
+        // [DEBUG] Item picker tool - start with DebugStartItemPicker()
+        // useful to visually select an item and break into its call-stack.
+        private void UpdateDebugToolItemPicker()
+        {
+            var g = GUILayout.GetCurrentContext();
+            g.DebugItemPickerBreakID = 0;
+            if (g.DebugItemPickerActive)
+            {
+                var hovered_id = g.HoveredIdPreviousFrame;
+                //Mouse.Instance.Cursor = Cursor.Hand;
+                if (Input.Keyboard.Instance.KeyPressed(Key.Escape))
+                    g.DebugItemPickerActive = false;
+                if (Input.Mouse.Instance.LeftButtonPressed && hovered_id != 0)
+                {
+                    g.DebugItemPickerBreakID = hovered_id;
+                    g.DebugItemPickerActive = false;
+                }
+                //TODO draw tooltip to display hovered item info
             }
         }
     }

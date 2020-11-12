@@ -56,6 +56,14 @@ namespace ImGui.Development
                 TreePop();
             }
 
+            if (TreeNode("Tools"))
+            {
+                // The Item Picker tool is super useful to visually select an item and break into the call-stack of where it was submitted.
+                if (Button("Item Picker.."))
+                    g.DebugStartItemPicker();
+                TreePop();
+            }
+
             GUI.End();
         }
         

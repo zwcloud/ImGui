@@ -79,6 +79,10 @@ namespace ImGui
         public long FrameCountEnded { get; internal set; } = -1;
         public long FrameCountRendered { get; internal set; } = -1;
         public int CaptureMouseNextFrame { get; internal set; }
+        
+        // Debug Tools
+        internal bool DebugItemPickerActive { get; set; } = false;
+        internal int DebugItemPickerBreakID { get; set; } = -1;
 
         public void SetActiveID(int id, Window window = null)
         {
@@ -126,15 +130,35 @@ namespace ImGui
         public bool IsHovered(Rect bb, int id, bool flattenChilds = false)
         {
             GUIContext g = this;
-            if (g.HoverId == 0 || g.HoverId == id || g.HoverIdAllowOverlap)
+            if (g.HoverId != 0 && g.HoverId != id && !g.HoverIdAllowOverlap)
+                return false;
+            Window window = g.WindowManager.CurrentWindow;
+            if (g.WindowManager.HoveredWindow != window &&
+                (!flattenChilds || g.WindowManager.HoveredRootWindow != window.RootWindow))
+                return false;
+            if (g.ActiveId != 0 && g.ActiveId != id && !g.ActiveIdAllowOverlap)
+                return false;
+            if (!IsMouseHoveringRect(bb.Min, bb.Max)) 
+                return false;
+            if (!this.WindowManager.IsWindowContentHoverable(g.WindowManager.HoveredRootWindow))
+                return false;
+
+            // [DEBUG] Item Picker tool!
+            // We perform the check here because SetHoveredID() is not frequently called (1~ time a frame), making
+            // the cost of this tool near-zero.
+            // TODO Consider how to get slightly better call-stack and support picking non-hovered
+            // items.
+            if (g.DebugItemPickerActive && g.HoveredIdPreviousFrame == id)
             {
-                Window window = g.WindowManager.CurrentWindow;
-                if (g.WindowManager.HoveredWindow == window || (flattenChilds && g.WindowManager.HoveredRootWindow == window.RootWindow))
-                    if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
-                        if (this.WindowManager.IsWindowContentHoverable(g.WindowManager.HoveredRootWindow))
-                            return true;
+                g.ForegroundDrawingContext.DrawRectangle(
+                    null, new Rendering.Pen(Color.Argb(255, 255, 255, 0), 1), bb);
             }
-            return false;
+            if (g.DebugItemPickerBreakID == id)
+            {
+                System.Diagnostics.Debugger.Break();
+            }
+
+            return true;
         }
 
         public bool IsMouseLeftButtonClicked(bool repeat)
@@ -170,6 +194,11 @@ namespace ImGui
             }
 
             return "<empty>";
+        }
+
+        internal void DebugStartItemPicker()
+        {
+            DebugItemPickerActive = true;
         }
     }
 }
