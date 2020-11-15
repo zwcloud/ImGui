@@ -61,7 +61,7 @@ namespace TextRenderingTest
                 d.QuadraticCurveTo(c1, p1);
                 d.Fill();
 
-                var g = Form.current.ForegroundDrawingContext;
+                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
                 g.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
                 g.DrawLine(new Pen(Color.Red, 2), p0, c0);
                 g.DrawLine(new Pen(Color.Green, 2), c0, c1);
@@ -88,8 +88,8 @@ namespace TextRenderingTest
                 d.QuadraticCurveTo(c0, p);
                 d.QuadraticCurveTo(c1, p1);
                 d.Fill();
-
-                var g = Form.current.ForegroundDrawingContext;
+                
+                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
                 g.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
                 g.DrawLine(new Pen(Color.Red, 2), p0, c0);
                 g.DrawLine(new Pen(Color.Green, 2), c0, c1);
@@ -161,7 +161,7 @@ namespace TextRenderingTest
         public void ShouldRenderABigGlyph()
         {
             Application.Run(new Form1(()=> {
-                var g = Form.current.ForegroundDrawingContext;
+                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
                 g.DrawGlyphRun("e", 400, Utility.FontDir + "msjh.ttf", Color.Black, new Point(50, 50));
             }));
         }
@@ -170,7 +170,7 @@ namespace TextRenderingTest
         public void ShouldRenderAMediumGlyph()
         {
             Application.Run(new Form1(() => {
-                var g = Form.current.ForegroundDrawingContext;
+                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
                 g.DrawGlyphRun("D", 32, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
             }));
         }
@@ -179,7 +179,7 @@ namespace TextRenderingTest
         public void ShouldRenderASmallGlyph()
         {
             Application.Run(new Form1(() => {
-                var g = Form.current.ForegroundDrawingContext;
+                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
                 g.DrawGlyphRun("D", 12, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
             }));
         }
@@ -192,9 +192,9 @@ namespace TextRenderingTest
             Brush brush = new Brush(Color.Black);
             Pen pen = new Pen(Color.Red, 1);
             Application.Run(new Form1(() => {
-                var d = Form.current.ForegroundDrawingContext;
-                d.DrawRectangle(null, pen, rect);
-                d.DrawGlyphRun(brush, run);
+                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
+                g.DrawRectangle(null, pen, rect);
+                g.DrawGlyphRun(brush, run);
             }));
         }
     }
