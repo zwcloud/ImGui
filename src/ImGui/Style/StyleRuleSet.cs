@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ImGui.Rendering;
 
 namespace ImGui
@@ -20,6 +21,8 @@ namespace ImGui
         {
             this.rules = new List<IStyleRule>();
         }
+
+        //TODO add a constructor that clones rules from another rule-set
 
         public void AppendRule<T>(StyleRule<T> rule)
         {
@@ -226,6 +229,35 @@ namespace ImGui
         }
 
         #endregion
+
+        public Size CalcSize(string text)
+        {
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
+            //Note text height shouldn't be set to zero but to the line height,
+            //since it determines the height of inline controls.
+
+            // apply font and text styles
+            var measureContext = TextMeshUtil.GetTextContext(text, new Size(4096, 4096), this,
+                currentState);
+            var actualSize = measureContext.Measure();
+            double width = actualSize.Width;
+            double height = actualSize.Height;
+            if (width < 0)
+            {
+                width = 0;
+            }
+            if (height < 0)
+            {
+                height = 0;
+            }
+
+            var size = new Size(Math.Ceiling(width), Math.Ceiling(height));
+            return size;
+        }
 
         #region short-cuts
 
