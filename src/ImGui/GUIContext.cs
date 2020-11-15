@@ -76,7 +76,7 @@ namespace ImGui
         
         // Debug Tools
         internal bool DebugItemPickerActive { get; set; } = false;
-        internal int DebugItemPickerBreakID { get; set; } = -1;
+        internal int DebugItemPickerBreakID { get; set; } = 0;
 
         public void SetActiveID(int id, Window window = null)
         {

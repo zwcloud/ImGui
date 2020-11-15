@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ImGui.OSAbstraction.Text;
 using ImGui.Style;
 using static ImGui.GUILayout;
 
@@ -63,6 +64,29 @@ namespace ImGui.Development
                 if (Button("Item Picker.."))
                 {
                     g.DebugStartItemPicker();
+                }
+
+                if (g.DebugItemPickerBreakID != 0)
+                {
+                    lastPickedItemId = g.DebugItemPickerBreakID;
+                }
+
+                if(lastPickedItemId != 0)
+                {
+                    //get picking node
+                    Node pickedNode = null;
+                    var w = g.WindowManager.Windows;
+                    foreach (var window in w)
+                    {
+                        var node = window.RenderTree.GetNodeById(lastPickedItemId);
+                        if (node != null)
+                        {
+                            pickedNode = node;
+                            break;
+                        }
+                    }
+                    
+                    DoBoxModel(pickedNode);
                 }
 
                 TreePop();
@@ -253,5 +277,127 @@ namespace ImGui.Development
                 TreePop();
             }
         }
+
+        private static void DoBoxModel(Node targetNode)
+        {
+            if (targetNode == null)
+            {
+                return;
+            }
+
+            var window = GetCurrentWindow();
+            if (window.SkipItems)
+                return;
+
+            //get or create the root node
+            var id = window.GetID(targetNode);
+            var container = window.RenderTree.CurrentContainer;
+            var node = container.GetNodeById(id);
+            if (node == null)
+            {
+                //create node
+                node = new Node(id, "MetricsBoxModel");
+                node.UseBoxModel = true;
+                var size = new Size(155, 200);
+                node.AttachLayoutEntry(size);
+                node.RuleSet.HorizontalStretchFactor = 1;
+            }
+            container.AppendChild(node);
+            node.ActiveSelf = true;
+
+            // rect
+            node.Rect = window.GetRect(id);
+
+            // interact
+            GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
+            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
+            
+            // last item state
+            window.TempData.LastItemState = node.State;
+
+            // draw
+            using (var dc = node.RenderOpen())
+            {
+                var center = node.Rect.Center;
+
+                PathGeometryBuilder builder = new PathGeometryBuilder();
+
+                var targetRuleSet = targetNode.RuleSet;
+                var contentSize = node.ContentSize;
+                var padding = targetRuleSet.Padding;
+                var border = targetRuleSet.Border;
+
+                // content box
+                var contentLabel = $"{contentSize.Width} x {contentSize.Height}";
+                var contentBoxSize = labelRuleSet.CalcContentBoxSize(contentLabel, GUIState.Normal);
+                contentBoxSize.Width = Math.Max(88, contentBoxSize.Width);
+                var contentRect = Rect.FromCenterSize(center, contentBoxSize);
+                builder.Rect(contentRect, true);
+                builder.Stroke();
+                dc.DrawRectangle(null, new Pen(Color.Red, 1), contentRect);
+                dc.DrawBoxModel(contentLabel, centeredLabelRuleSet, contentRect);
+
+
+                //padding box
+                var paddingLeft = 
+                    labelRuleSet.CalcContentBoxSize(padding.left.ToString(), GUIState.Normal).Width
+                    +5;
+                paddingLeft = Math.Max(paddingLeft, 18);
+                var paddingRight = 
+                    labelRuleSet.CalcContentBoxSize(padding.right.ToString(), GUIState.Normal).Width
+                    +5;
+                var paddingTop = 23;
+                var paddingBottom = 23;
+                var paddingBoxSize = contentBoxSize +
+                    new Vector(paddingLeft + paddingRight, paddingTop + paddingBottom);
+                paddingBoxSize.Width = Math.Max(122, paddingBoxSize.Width);
+                var paddingBoxRect = Rect.FromCenterSize(center, paddingBoxSize);
+                builder.Rect(paddingBoxRect, true);
+                builder.Stroke();
+                dc.DrawGlyphRun(labelRuleSet, "padding", paddingBoxRect.TopLeft + new Vector(1, 1));
+
+
+                //border box
+                var borderLeft = 
+                    labelRuleSet.CalcContentBoxSize(border.left.ToString(), GUIState.Normal).Width
+                    +5;
+                borderLeft = Math.Max(borderLeft, 18);
+                var borderRight = 
+                    labelRuleSet.CalcContentBoxSize(border.right.ToString(), GUIState.Normal).Width
+                    +5;
+                borderRight = Math.Max(borderRight, 18);
+                var borderTop = 23;
+                var borderBottom = 23;
+                var boderBoxSize = paddingBoxSize
+                    + new Vector(borderLeft + borderRight, borderTop + borderBottom);
+                boderBoxSize.Width = Math.Max(156, boderBoxSize.Width);
+                var borderBoxRect = Rect.FromCenterSize(center, boderBoxSize);
+                builder.Rect(borderBoxRect, true);
+                builder.Stroke();
+
+                dc.DrawGlyphRun(labelRuleSet, "border", borderBoxRect.TopLeft + new Vector(1, 1));
+                
+                var geometry = builder.ToGeometry();
+                dc.DrawGeometry(null, new Pen(Color.Black, 1), geometry);
+            }
+        }
+
+        static Metrics()
+        {
+            labelRuleSet = new StyleRuleSet();
+            labelRuleSet.Padding = (1, 1, 1, 1);
+            labelRuleSet.AlignmentHorizontal = Alignment.Start;
+            labelRuleSet.AlignmentVertical = Alignment.Center;
+            
+            centeredLabelRuleSet = new StyleRuleSet();
+            centeredLabelRuleSet.Padding = (1, 1, 1, 1);
+            centeredLabelRuleSet.AlignmentHorizontal = Alignment.Center;
+            centeredLabelRuleSet.AlignmentVertical = Alignment.Center;
+        }
+
+        private static StyleRuleSet labelRuleSet;
+        private static StyleRuleSet centeredLabelRuleSet;
+        private static int lastPickedItemId = -1;
+
     }
 }
