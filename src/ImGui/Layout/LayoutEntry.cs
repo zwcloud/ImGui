@@ -63,6 +63,13 @@ namespace ImGui.Rendering
             else if (this.RuleSet.IsFixedWidth)
             {
                 this.Width = this.RuleSet.MinWidth;
+                this.ContentWidth = Width - PaddingHorizontal - BorderHorizontal;
+                var defalutWidth = GetDefaultWidth();
+                if (ContentWidth < defalutWidth)
+                {
+                    ContentWidth = defalutWidth;
+                    Width = ContentWidth + PaddingHorizontal + BorderHorizontal;
+                }
             }
             else
             {
@@ -88,6 +95,12 @@ namespace ImGui.Rendering
             {
                 this.Height = this.RuleSet.MinHeight;
                 this.ContentHeight = this.Height - this.PaddingVertical - this.BorderVertical;
+                var defalutHeight = GetDefaultHeight();
+                if (ContentHeight < defalutHeight)
+                {
+                    ContentHeight = defalutHeight;
+                    Height = ContentHeight + PaddingVertical + BorderVertical;
+                }
             }
             else
             {
@@ -109,19 +122,11 @@ namespace ImGui.Rendering
 
         public double GetDefaultWidth()
         {
-            if(this.RuleSet.IsFixedWidth)
-            {
-                throw new LayoutException("Cannot get default width of a fixed size entry.");
-            }
             return this.ContentWidth + this.PaddingHorizontal + this.BorderHorizontal;
         }
 
         public double GetDefaultHeight()
         {
-            if (this.RuleSet.IsFixedHeight)
-            {
-                throw new LayoutException("Cannot get default width of a fixed height entry.");
-            }
             return this.ContentHeight + this.PaddingVertical + this.BorderVertical;
         }
     }
