@@ -43,6 +43,7 @@ namespace ImGui.GraphicsImplementation
 
         //TODO remove duplicated code in AddPolyline(IList<Point> points,...) and AddPolyline(Point* points,...)
 
+        
         /// <summary>
         /// Add a poly line.
         /// </summary>
@@ -51,7 +52,23 @@ namespace ImGui.GraphicsImplementation
         /// <param name="close">Should this method close the polyline for you? A line segment from the last point to first point will be added if this is true.</param>
         /// <param name="thickness">thickness</param>
         /// <param name="antiAliased">anti-aliased</param>
-        public void AddPolyline(IList<Point> points, Color color, bool close, double thickness, bool antiAliased = false)
+        public void AddPolyline(IList<Point> points, Color color, bool close,
+            double thickness, bool antiAliased = false)
+        {
+            AddPolyline(points, Vector.Zero, color, close, thickness, antiAliased);
+        }
+
+        /// <summary>
+        /// Add a poly line with offset.
+        /// </summary>
+        /// <param name="points">points</param>
+        /// <param name="offset">offset that applies to every point</param>
+        /// <param name="color">color</param>
+        /// <param name="close">Should this method close the polyline for you? A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public void AddPolyline(IList<Point> points, Vector offset, Color color, bool close,
+            double thickness, bool antiAliased = false)
         {
             var pointsCount = points.Count;
             if (pointsCount < 2)
@@ -83,6 +100,9 @@ namespace ImGui.GraphicsImplementation
                     dx *= (thickness * 0.5);
                     dy *= (thickness * 0.5);
 
+                    p1 += offset;
+                    p2 += offset;
+
                     var vertex0 = new DrawVertex { pos = new Point(p1.X + dy, p1.Y - dx), uv = Point.Zero, color = color };
                     var vertex1 = new DrawVertex { pos = new Point(p2.X + dy, p2.Y - dx), uv = Point.Zero, color = color };
                     var vertex2 = new DrawVertex { pos = new Point(p2.X - dy, p2.Y + dx), uv = Point.Zero, color = color };
@@ -113,7 +133,23 @@ namespace ImGui.GraphicsImplementation
         /// <param name="close">Should this method close the polyline for you? A line segment from the last point to first point will be added if this is true.</param>
         /// <param name="thickness">thickness</param>
         /// <param name="antiAliased">anti-aliased</param>
-        public unsafe void AddPolyline(Point* points, int pointsCount, Color color, bool close, double thickness, bool antiAliased = false)
+        public unsafe void AddPolyline(Point* points, int pointsCount, Color color, bool close,
+            double thickness, bool antiAliased = false)
+        {
+            AddPolyline(points, pointsCount, Vector.Zero, color, close, thickness, antiAliased);
+        }
+
+        /// <summary>
+        /// Add a poly line with offset.
+        /// </summary>
+        /// <param name="points">pointer to points data</param>
+        /// <param name="pointsCount">number of points</param>
+        /// <param name="offset">offset that applies to every point</param>
+        /// <param name="color">color</param>
+        /// <param name="close">Should this method close the polyline for you? A line segment from the last point to first point will be added if this is true.</param>
+        /// <param name="thickness">thickness</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public unsafe void AddPolyline(Point* points, int pointsCount, Vector offset, Color color, bool close, double thickness, bool antiAliased = false)
         {
             if (pointsCount < 2)
                 return;
@@ -144,6 +180,9 @@ namespace ImGui.GraphicsImplementation
                     dx *= (thickness * 0.5);
                     dy *= (thickness * 0.5);
 
+                    p1 += offset;
+                    p2 += offset;
+
                     var vertex0 = new DrawVertex { pos = new Point(p1.X + dy, p1.Y - dx), uv = Point.Zero, color = color };
                     var vertex1 = new DrawVertex { pos = new Point(p2.X + dy, p2.Y - dx), uv = Point.Zero, color = color };
                     var vertex2 = new DrawVertex { pos = new Point(p2.X - dy, p2.Y + dx), uv = Point.Zero, color = color };
@@ -164,7 +203,7 @@ namespace ImGui.GraphicsImplementation
                 }
             }
         }
-
+        
         /// <summary>
         /// Add a filled convex polygon.
         /// </summary>
@@ -172,6 +211,18 @@ namespace ImGui.GraphicsImplementation
         /// <param name="color">color</param>
         /// <param name="antiAliased">anti-aliased</param>
         public void AddConvexPolyFilled(IList<Point> points, Color color, bool antiAliased)
+        {
+            AddConvexPolyFilled(points, Vector.Zero, color, antiAliased);
+        }
+
+        /// <summary>
+        /// Add a filled convex polygon with offset.
+        /// </summary>
+        /// <param name="points">points</param>
+        /// <param name="offset">offset that applies to every point</param>
+        /// <param name="color">color</param>
+        /// <param name="antiAliased">anti-aliased</param>
+        public void AddConvexPolyFilled(IList<Point> points, Vector offset, Color color, bool antiAliased)
         {
             antiAliased = false;//TODO remove this when antiAliased branch is implemented
 
