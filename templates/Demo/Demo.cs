@@ -512,8 +512,8 @@ label:
                         }
                         GUILayout.EndChild();
                     }
-                    GUILayout.TreePop();
                 }
+                GUILayout.TreePop();
             }
 
             if (GUILayout.TreeNode("Stack layout", ref stackLayoutOpen))
