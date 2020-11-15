@@ -39,17 +39,17 @@ namespace ImGui
         public static void PushBorder((int top, int left, int right, int bottom) border, GUIState state = GUIState.Normal)
         {
             PushStyle<double>(S.BorderTop, border.top, state);
-            PushStyle<double>(S.BorderRight, border.top, state);
-            PushStyle<double>(S.BorderBottom, border.top, state);
-            PushStyle<double>(S.BorderLeft, border.top, state);
+            PushStyle<double>(S.BorderRight, border.right, state);
+            PushStyle<double>(S.BorderBottom, border.bottom, state);
+            PushStyle<double>(S.BorderLeft, border.left, state);
         }
 
         public static void PushPadding((int top, int left, int right, int bottom) padding, GUIState state = GUIState.Normal)
         {
             PushStyle<double>(S.PaddingTop, padding.top, state);
-            PushStyle<double>(S.PaddingRight, padding.top, state);
-            PushStyle<double>(S.PaddingBottom, padding.top, state);
-            PushStyle<double>(S.PaddingLeft, padding.top, state);
+            PushStyle<double>(S.PaddingRight, padding.right, state);
+            PushStyle<double>(S.PaddingBottom, padding.bottom, state);
+            PushStyle<double>(S.PaddingLeft, padding.left, state);
         }
 
         public static void PushFixedWidth(int width, GUIState state = GUIState.Normal)
