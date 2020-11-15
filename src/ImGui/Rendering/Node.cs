@@ -73,6 +73,10 @@ namespace ImGui.Rendering
             set => this.ContentRect.Height = value;
         }
 
+        public double NaturalWidth { get; set; }
+
+        public double NaturalHeight { get; set; }
+
         /// <summary>
         /// Make this node a group
         /// </summary>
@@ -87,6 +91,9 @@ namespace ImGui.Rendering
         /// </summary>
         public void AttachLayoutEntry(Size contentSize)
         {
+            this.NaturalWidth = contentSize.Width;
+            this.NaturalHeight = contentSize.Height;
+
             this.ContentRect.Size = contentSize;
         }
 

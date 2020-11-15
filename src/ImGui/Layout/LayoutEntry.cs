@@ -64,11 +64,10 @@ namespace ImGui.Rendering
             {
                 this.Width = this.RuleSet.MinWidth;
                 this.ContentWidth = Width - PaddingHorizontal - BorderHorizontal;
-                var defalutWidth = GetDefaultWidth();
-                if (ContentWidth < defalutWidth)
+                if (ContentWidth < NaturalWidth)
                 {
-                    ContentWidth = defalutWidth;
-                    Width = ContentWidth + PaddingHorizontal + BorderHorizontal;
+                    ContentWidth = NaturalWidth;
+                    Width = NaturalWidth + PaddingHorizontal + BorderHorizontal;
                 }
             }
             else
@@ -95,11 +94,10 @@ namespace ImGui.Rendering
             {
                 this.Height = this.RuleSet.MinHeight;
                 this.ContentHeight = this.Height - this.PaddingVertical - this.BorderVertical;
-                var defalutHeight = GetDefaultHeight();
-                if (ContentHeight < defalutHeight)
+                if (ContentHeight < this.NaturalHeight)
                 {
-                    ContentHeight = defalutHeight;
-                    Height = ContentHeight + PaddingVertical + BorderVertical;
+                    ContentHeight = this.NaturalHeight;
+                    Height = this.NaturalHeight + PaddingVertical + BorderVertical;
                 }
             }
             else
