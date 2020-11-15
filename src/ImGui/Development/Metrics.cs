@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ImGui.Style;
 using static ImGui.GUILayout;
 
 namespace ImGui.Development
@@ -60,7 +61,10 @@ namespace ImGui.Development
             {
                 // The Item Picker tool is super useful to visually select an item and break into the call-stack of where it was submitted.
                 if (Button("Item Picker.."))
+                {
                     g.DebugStartItemPicker();
+                }
+
                 TreePop();
             }
 

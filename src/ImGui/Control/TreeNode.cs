@@ -36,7 +36,7 @@ namespace ImGui
             return open;
         }
 
-        public static bool DoTreeNode(int id, string text, ref bool open)
+        internal static bool DoTreeNode(int id, string text, ref bool open)
         {
             Window window = GetCurrentWindow();
             if (window.SkipItems)

@@ -61,18 +61,12 @@ namespace ImGui
             set => this.activeIdIsJustActivated = value;
         }
 
-        public int HoverIdPreviousFrame
-        {
-            get => this.hoverIdPreviousFrame;
-            set => this.hoverIdPreviousFrame = value;
-        }
-
+        public int HoveredIdPreviousFrame { get; internal set; }
 
         public bool ActiveIdAllowOverlap { get; internal set; }
         public Vector ActiveIdClickOffset { get; internal set; }
         public bool HoverIdAllowOverlap { get; internal set; }
         public long DeltaTime { get; internal set; }
-        public int HoveredIdPreviousFrame { get; internal set; }
 
         public bool Initialized { get; internal set; }
 
@@ -155,9 +149,37 @@ namespace ImGui
             }
             if (g.DebugItemPickerBreakID == id)
             {
-                System.Diagnostics.Debugger.Break();
-            }
+                //System.Diagnostics.Debugger.Break();
 
+                System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(2, true);
+                var frames = stackTrace.GetFrames();
+                if (frames != null)
+                {
+                    System.Diagnostics.StackFrame targetFrame = null;
+                    bool nextFrame = false;
+                    foreach (var frame in frames)
+                    {
+                        var methodInfo = frame.GetMethod();
+                        if (methodInfo.IsPublic && methodInfo.DeclaringType == typeof(GUILayout))
+                        {
+                            nextFrame = true;
+                            continue;
+                        }
+                        if(nextFrame)
+                        {
+                            targetFrame = frame;
+                            break;
+                        }
+                    }
+                    if (targetFrame != null)
+                    {
+                        string fileName = targetFrame.GetFileName();
+                        string methodName = targetFrame.GetMethod().Name;
+                        int lineNumber = targetFrame.GetFileLineNumber();
+                        System.Diagnostics.Debug.WriteLine($"{fileName}({lineNumber}): {methodName}");
+                    }
+                }
+            }
             return true;
         }
 
