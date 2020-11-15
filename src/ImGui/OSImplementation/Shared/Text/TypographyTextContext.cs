@@ -85,6 +85,7 @@ namespace ImGui.OSImplementation
             this.Text = text;
             this.FontFamily = fontFamily;
             this.FontSize = fontSize;
+            //TODO remove Alignment, alignment has no meaning without a rectangle region
             this.Alignment = alignment;
         }
 
