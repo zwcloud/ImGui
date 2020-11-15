@@ -1,5 +1,4 @@
-﻿using ImGui.GraphicsAbstraction;
-using ImGui.OSAbstraction.Graphics;
+﻿using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 
 namespace ImGui.Rendering
@@ -153,14 +152,17 @@ namespace ImGui.Rendering
 
             //Content
             //Content-box
-            //FIXME Use FormattedText instead of GlyphRun for multi-line text
-            if (text.Contains('\n'))
+            if (!string.IsNullOrEmpty(text))
             {
-                dc.DrawText(rule, text, contentBoxRect);
-            }
-            else
-            {
-                dc.DrawGlyphRun(rule, text, contentBoxRect.TopLeft);
+                //TODO reuse alignment logic in StackLayout to layout text content inside the content box
+                if (text.Contains('\n'))
+                {
+                    dc.DrawText(rule, text, contentBoxRect);
+                }
+                else
+                {
+                    dc.DrawGlyphRun(rule, text, contentBoxRect.TopLeft);
+                }
             }
 
             DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
