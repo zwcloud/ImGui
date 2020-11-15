@@ -584,6 +584,15 @@ label:
             GUILayout.Button("MyButton1", this.smallRed);
             GUILayout.Button("MyButton2", new LayoutOptions().FontColor(Color.Blue).FontSize(40));
 
+            GUILayout.PushBorder((10,20,30,40));
+            GUILayout.PushPadding((40,30,20,10));
+            GUILayout.PushStyle(StylePropertyName.BorderTopColor, Color.Red);
+            GUILayout.PushStyle(StylePropertyName.BorderRightColor, Color.Green);
+            GUILayout.PushStyle(StylePropertyName.BorderBottomColor, Color.Blue);
+            GUILayout.PushStyle(StylePropertyName.BorderLeftColor, Color.Yellow);
+            GUILayout.Button("Box Model", GUILayout.Width(161).Height(100));
+            GUILayout.PopStyle(4+4+4);
+
             if (GUILayout.TreeNode("Default", ref defaultSkinOpen))
             {
                 using (GUILayout.HScope("HorizontalScope~", GUILayout.ExpandWidth(false)))

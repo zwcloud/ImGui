@@ -63,6 +63,7 @@ namespace ImGui.Development
                 // The Item Picker tool is super useful to visually select an item and break into the call-stack of where it was submitted.
                 if (Button("Item Picker.."))
                 {
+                    lastPickedItemId = 0;
                     g.DebugStartItemPicker();
                 }
 
@@ -73,7 +74,7 @@ namespace ImGui.Development
 
                 if(lastPickedItemId != 0)
                 {
-                    //get picking node
+                    //get picked node
                     Node pickedNode = null;
                     var w = g.WindowManager.Windows;
                     foreach (var window in w)
@@ -87,6 +88,22 @@ namespace ImGui.Development
                     }
                     
                     DoBoxModel(pickedNode);
+                }
+                else if(g.HoveredIdPreviousFrame != 0)
+                {
+                    //get picking node
+                    Node pickingNode = null;
+                    var w = g.WindowManager.Windows;
+                    foreach (var window in w)
+                    {
+                        var node = window.RenderTree.GetNodeById(g.HoveredIdPreviousFrame);
+                        if (node != null)
+                        {
+                            pickingNode = node;
+                            break;
+                        }
+                    }
+                    DoBoxModel(pickingNode);
                 }
 
                 TreePop();
@@ -323,7 +340,7 @@ namespace ImGui.Development
                 PathGeometryBuilder builder = new PathGeometryBuilder();
 
                 var targetRuleSet = targetNode.RuleSet;
-                var contentSize = node.ContentSize;
+                var contentSize = targetNode.ContentSize;
                 var padding = targetRuleSet.Padding;
                 var border = targetRuleSet.Border;
 
@@ -331,12 +348,16 @@ namespace ImGui.Development
                 var contentLabel = $"{contentSize.Width} x {contentSize.Height}";
                 var contentBoxSize = labelRuleSet.CalcContentBoxSize(contentLabel, GUIState.Normal);
                 contentBoxSize.Width = Math.Max(88, contentBoxSize.Width);
+                contentBoxSize.Height = Math.Max(24, contentBoxSize.Height);
                 var contentRect = Rect.FromCenterSize(center, contentBoxSize);
                 builder.Rect(contentRect, true);
                 builder.Stroke();
-                dc.DrawRectangle(null, new Pen(Color.Red, 1), contentRect);
-                dc.DrawBoxModel(contentLabel, centeredLabelRuleSet, contentRect);
-
+                {
+                    var rect = contentRect;
+                    var text = contentLabel;
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawBoxModel(contentLabel, labelRuleSet, layoutedRect);
+                }
 
                 //padding box
                 var paddingLeft = 
@@ -356,6 +377,34 @@ namespace ImGui.Development
                 builder.Stroke();
                 dc.DrawGlyphRun(labelRuleSet, "padding", paddingBoxRect.TopLeft + new Vector(1, 1));
 
+                {//top
+                    var rect = new Rect(contentRect.TopLeft + new Vector(0, -paddingTop),
+                        contentRect.TopRight);
+                    var text = padding.top.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
+                {//right
+                    var rect = new Rect(contentRect.TopRight,
+                        contentRect.BottomRight + new Vector(paddingRight, 0));
+                    var text = padding.right.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
+                {//bottom
+                    var rect = new Rect(contentRect.BottomLeft,
+                        contentRect.BottomRight + new Vector(0, paddingBottom));
+                    var text = padding.bottom.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
+                {//left
+                    var rect = new Rect(contentRect.TopLeft + new Vector(-paddingLeft, 0),
+                        contentRect.BottomLeft);
+                    var text = padding.left.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
 
                 //border box
                 var borderLeft = 
@@ -374,23 +423,73 @@ namespace ImGui.Development
                 var borderBoxRect = Rect.FromCenterSize(center, boderBoxSize);
                 builder.Rect(borderBoxRect, true);
                 builder.Stroke();
-
                 dc.DrawGlyphRun(labelRuleSet, "border", borderBoxRect.TopLeft + new Vector(1, 1));
+                
+                {//top
+                    var rect = new Rect(paddingBoxRect.TopLeft + new Vector(0, -paddingTop),
+                        paddingBoxRect.TopRight);
+                    var text = border.top.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
+                {//right
+                    var rect = new Rect(paddingBoxRect.TopRight,
+                        paddingBoxRect.BottomRight + new Vector(paddingRight, 0));
+                    var text = border.right.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
+                {//bottom
+                    var rect = new Rect(paddingBoxRect.BottomLeft,
+                        paddingBoxRect.BottomRight + new Vector(0, paddingBottom));
+                    var text = border.bottom.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
+                {//left
+                    var rect = new Rect(paddingBoxRect.TopLeft + new Vector(-paddingLeft, 0),
+                        paddingBoxRect.BottomLeft);
+                    var text = border.left.ToString();
+                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+                }
                 
                 var geometry = builder.ToGeometry();
                 dc.DrawGeometry(null, new Pen(Color.Black, 1), geometry);
             }
         }
 
+        private static Rect LayoutTextInRectCentered(Rect rect, string text)
+        {
+            Node group = new Node(rect.GetHashCode());
+            group.AttachLayoutGroup(false);
+            group.ContentSize = rect.Size;
+            group.RuleSet.ApplyOptions(GUILayout.Width(rect.Width).Height(rect.Height));
+            group.RuleSet.AlignmentVertical = Alignment.Center;
+            group.RuleSet.AlignmentHorizontal = Alignment.Center;
+
+            var textNode = new Node(text.GetHashCode());
+            textNode.AttachLayoutEntry();
+            textNode.ContentSize = centeredLabelRuleSet.CalcSize(text);
+            textNode.RuleSet.AlignmentVertical = Alignment.Center;
+            textNode.RuleSet.AlignmentHorizontal = Alignment.Center;
+
+            group.AppendChild(textNode);
+            group.Layout(rect.TopLeft);
+            return textNode.Rect;
+        }
+
         static Metrics()
         {
             labelRuleSet = new StyleRuleSet();
             labelRuleSet.Padding = (1, 1, 1, 1);
+            labelRuleSet.FontSize = 8;
             labelRuleSet.AlignmentHorizontal = Alignment.Start;
             labelRuleSet.AlignmentVertical = Alignment.Center;
             
             centeredLabelRuleSet = new StyleRuleSet();
             centeredLabelRuleSet.Padding = (1, 1, 1, 1);
+            labelRuleSet.FontSize = 8;
             centeredLabelRuleSet.AlignmentHorizontal = Alignment.Center;
             centeredLabelRuleSet.AlignmentVertical = Alignment.Center;
         }
