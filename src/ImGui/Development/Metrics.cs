@@ -367,23 +367,38 @@ namespace ImGui.Development
             Color paddingBgColor = Color.Rgb(196, 223, 184);
             Color borderBgColor = Color.Rgb(253, 221, 155);
             var g = GetCurrentContext();
+            var v = Math.Clamp(Math.Sin(Time.time / 1000.0 * 2 * Math.PI)* 0.25 + 0.75, 0, 1);
+            var strokeColor = Color.HSV(124, 1.0, v);
             if (g.IsMouseHoveringRect(contentRect))
             {
                 contentBgColor = Color.Rgb(160, 198, 232);
                 paddingBgColor = Color.White;
                 borderBgColor = Color.White;
+                BoxModelUtil.GetBoxes(targetNode.Rect, targetRuleSet, out var bRect, out var pRect,
+                    out var cRect);
+                g.ForegroundDrawingContext.DrawRectangle(null, new Pen(strokeColor, 1), cRect);
             }
             else if(g.IsMouseHoveringRect(paddingBoxRect))
             {
                 contentBgColor = Color.White;
                 paddingBgColor = Color.Rgb(196, 223, 184);
                 borderBgColor = Color.White;
+                
+                BoxModelUtil.GetBoxes(targetNode.Rect, targetRuleSet, out var bRect, out var pRect,
+                    out var cRect);
+                g.ForegroundDrawingContext.DrawRectangleRing(pRect, cRect, new Pen(strokeColor, 1),
+                    null);
             }
             else if(g.IsMouseHoveringRect(borderBoxRect))
             {
                 contentBgColor = Color.White;
                 paddingBgColor = Color.White;
                 borderBgColor = Color.Rgb(255, 238, 188);
+
+                BoxModelUtil.GetBoxes(targetNode.Rect, targetRuleSet, out var bRect, out var pRect,
+                    out var cRect);
+                g.ForegroundDrawingContext.DrawRectangleRing(bRect, pRect, new Pen(strokeColor, 1),
+                    null);
             }
 
             // draw

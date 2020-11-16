@@ -123,19 +123,18 @@ namespace ImGui.Rendering
                 return;
             }
 
-            var style = rule;
-            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+            BoxModelUtil.GetBoxes(rect, rule, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
-            DrawBackground(dc, style, paddingBoxRect);
+            DrawBackground(dc, rule, paddingBoxRect);
 
             //Content
             //Content-box
             //no content
 
-            DrawBorder(dc, style, borderBoxRect, paddingBoxRect);
-            DrawOutline(dc, style, borderBoxRect);
+            DrawBorder(dc, rule, borderBoxRect, paddingBoxRect);
+            DrawOutline(dc, rule, borderBoxRect);
 
-            DrawDebug(dc, style, paddingBoxRect, contentBoxRect);
+            DrawDebug(dc, rule, paddingBoxRect, contentBoxRect);
         }
 
         public static void DrawBoxModel(this DrawingContext dc, string text, StyleRuleSet rule, Rect rect)
@@ -146,7 +145,7 @@ namespace ImGui.Rendering
             }
 
             var style = rule;
-            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+            BoxModelUtil.GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
             DrawBackground(dc, style, paddingBoxRect);
 
@@ -155,6 +154,7 @@ namespace ImGui.Rendering
             if (!string.IsNullOrEmpty(text))
             {
                 //TODO reuse alignment logic in StackLayout to layout text content inside the content box
+                //See Metrics.LayoutTextInRectCentered
                 if (text.Contains('\n'))
                 {
                     dc.DrawText(rule, text, contentBoxRect);
@@ -178,7 +178,7 @@ namespace ImGui.Rendering
                 return;
             }
 
-            GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
+            BoxModelUtil.GetBoxes(rect, style, out var borderBoxRect, out var paddingBoxRect, out var contentBoxRect);
 
             DrawBackground(dc, style, paddingBoxRect);
 
@@ -216,6 +216,46 @@ namespace ImGui.Rendering
         public static void DrawBoxModel(this DrawingContext dc, Node node)
         {
             DrawBoxModel(dc, node.RuleSet, node.Rect);
+        }
+
+        public static void DrawRectangleRing(this DrawingContext dc, Rect outerRect, Rect innerRect,
+            Pen pen, Brush brush)
+        {
+            PathGeometryBuilder b = new PathGeometryBuilder();
+            var A = outerRect;
+            var B = innerRect; 
+            b.MoveTo(B.TopLeft);
+            b.LineTo(A.TopLeft);
+            b.LineTo(A.TopRight);
+            b.LineTo(B.TopRight);
+            b.LineTo(B.TopLeft);
+            b.Fill();
+
+            b.MoveTo(B.TopRight);
+            b.LineTo(A.TopRight);
+            b.LineTo(A.BottomRight);
+            b.LineTo(B.BottomRight);
+            b.LineTo(B.TopRight);
+            b.Fill();
+
+            b.MoveTo(B.BottomRight);
+            b.LineTo(A.BottomRight);
+            b.LineTo(A.BottomLeft);
+            b.LineTo(B.BottomLeft);
+            b.LineTo(B.BottomRight);
+            b.Fill();
+
+            b.MoveTo(B.BottomLeft);
+            b.LineTo(A.BottomLeft);
+            b.LineTo(A.TopLeft);
+            b.LineTo(B.TopLeft);
+            b.LineTo(B.BottomLeft);
+
+            var geometry = b.ToGeometry();
+            dc.DrawGeometry(brush, null, geometry);
+
+            dc.DrawRectangle(null, pen, outerRect);
+            dc.DrawRectangle(null, pen, innerRect);
         }
 
         public static void PushClip(this DrawingContext dc, Rect clipRect)
