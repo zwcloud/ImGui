@@ -11,6 +11,9 @@ namespace ImGui.Rendering
         public Color LineColor { get; set; } = Color.Black;
         public double LineWidth { get; set; } = 1;
 
+        /// <summary>
+        /// Initialize a new instance of Pen class with black color and 1 line-width.
+        /// </summary>
         public Pen()
         {
         }

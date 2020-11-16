@@ -363,56 +363,33 @@ namespace ImGui.Development
             boderBoxSize.Width = Math.Max(156, boderBoxSize.Width);
             var borderBoxRect = Rect.FromCenterSize(center, boderBoxSize);
 
+            Color contentBgColor = Color.Rgb(140, 182, 192);
+            Color paddingBgColor = Color.Rgb(196, 223, 184);
+            Color borderBgColor = Color.Rgb(253, 221, 155);
+            var g = GetCurrentContext();
+            if (g.IsMouseHoveringRect(contentRect))
+            {
+                contentBgColor = Color.Rgb(160, 198, 232);
+                paddingBgColor = Color.White;
+                borderBgColor = Color.White;
+            }
+            else if(g.IsMouseHoveringRect(paddingBoxRect))
+            {
+                contentBgColor = Color.White;
+                paddingBgColor = Color.Rgb(196, 223, 184);
+                borderBgColor = Color.White;
+            }
+            else if(g.IsMouseHoveringRect(borderBoxRect))
+            {
+                contentBgColor = Color.White;
+                paddingBgColor = Color.White;
+                borderBgColor = Color.Rgb(255, 238, 188);
+            }
+
             // draw
             using var dc = node.RenderOpen();
-            PathGeometryBuilder builder = new PathGeometryBuilder();
-
-            // content box
-            builder.Rect(contentRect, true);
-            builder.Stroke();
-            {
-                var rect = contentRect;
-                var text = contentLabel;
-                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                dc.DrawBoxModel(contentLabel, labelRuleSet, layoutedRect);
-            }
-
-            //padding box
-            builder.Rect(paddingBoxRect, true);
-            builder.Stroke();
-            dc.DrawGlyphRun(labelRuleSet, "padding", paddingBoxRect.TopLeft + new Vector(1, 1));
-            {//top
-                var rect = new Rect(contentRect.TopLeft + new Vector(0, -paddingTop),
-                    contentRect.TopRight);
-                var text = padding.top.ToString();
-                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-            }
-            {//right
-                var rect = new Rect(contentRect.TopRight,
-                    contentRect.BottomRight + new Vector(paddingRight, 0));
-                var text = padding.right.ToString();
-                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-            }
-            {//bottom
-                var rect = new Rect(contentRect.BottomLeft,
-                    contentRect.BottomRight + new Vector(0, paddingBottom));
-                var text = padding.bottom.ToString();
-                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-            }
-            {//left
-                var rect = new Rect(contentRect.TopLeft + new Vector(-paddingLeft, 0),
-                    contentRect.BottomLeft);
-                var text = padding.left.ToString();
-                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-            }
 
             //border box
-            builder.Rect(borderBoxRect, true);
-            builder.Stroke();
             dc.DrawGlyphRun(labelRuleSet, "border", borderBoxRect.TopLeft + new Vector(1, 1));
             {//top
                 var rect = new Rect(paddingBoxRect.TopLeft + new Vector(0, -paddingTop),
@@ -442,9 +419,48 @@ namespace ImGui.Development
                 Rect layoutedRect = LayoutTextInRectCentered(rect, text);
                 dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
             }
+            dc.DrawRectangle(new Brush(borderBgColor), new Pen(), borderBoxRect);
 
-            var geometry = builder.ToGeometry();
-            dc.DrawGeometry(null, new Pen(Color.Black, 1), geometry);
+            //padding box
+            dc.DrawGlyphRun(labelRuleSet, "padding", paddingBoxRect.TopLeft + new Vector(1, 1));
+            {//top
+                var rect = new Rect(contentRect.TopLeft + new Vector(0, -paddingTop),
+                    contentRect.TopRight);
+                var text = padding.top.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//right
+                var rect = new Rect(contentRect.TopRight,
+                    contentRect.BottomRight + new Vector(paddingRight, 0));
+                var text = padding.right.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//bottom
+                var rect = new Rect(contentRect.BottomLeft,
+                    contentRect.BottomRight + new Vector(0, paddingBottom));
+                var text = padding.bottom.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//left
+                var rect = new Rect(contentRect.TopLeft + new Vector(-paddingLeft, 0),
+                    contentRect.BottomLeft);
+                var text = padding.left.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            dc.DrawRectangle(new Brush(paddingBgColor), new Pen(), paddingBoxRect);
+            
+            // content box
+            {
+                var rect = contentRect;
+                var text = contentLabel;
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, contentLabel, layoutedRect.TopLeft);
+            }
+            dc.DrawRectangle(new Brush(contentBgColor), new Pen(), contentRect);
         }
 
         private static Rect LayoutTextInRectCentered(Rect rect, string text)
