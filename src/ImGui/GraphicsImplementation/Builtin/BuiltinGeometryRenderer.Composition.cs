@@ -82,14 +82,14 @@ namespace ImGui.GraphicsImplementation
                 scratchForRectangle[2] = rectangle.BottomRight;
                 scratchForRectangle[3] = rectangle.BottomLeft;
 
-                if (pen != null)
-                {
-                    this.AddPolyline(scratchForRectangle, 4, pen.LineColor, true, pen.LineWidth);
-                }
-
                 if (brush != null)
                 {
                     this.AddConvexPolyFilled(scratchForRectangle, 4, brush.FillColor, false);
+                }
+
+                if (pen != null)
+                {
+                    this.AddPolyline(scratchForRectangle, 4, pen.LineColor, true, pen.LineWidth);
                 }
             }
         }
