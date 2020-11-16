@@ -305,7 +305,14 @@ namespace ImGui
                 (byte)(colorValue & 0xff)
                 );
         }
-
+        
+        /// <summary>
+        /// Create a Color from HSV color
+        /// </summary>
+        /// <param name="hue">hue ∈[0, 360]</param>
+        /// <param name="saturation">saturation ∈[0, 1]</param>
+        /// <param name="value">value ∈[0, 1]</param>
+        /// <returns>RGB color</returns>
         public static Color HSV(double hue, double saturation, double value)
         {
             int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
