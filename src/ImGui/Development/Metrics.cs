@@ -324,139 +324,127 @@ namespace ImGui.Development
 
             // rect
             node.Rect = window.GetRect(id);
-
-            // interact
-            GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
-            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             
-            // last item state
-            window.TempData.LastItemState = node.State;
+            var center = node.Rect.Center;
+            var targetRuleSet = targetNode.RuleSet;
+            var padding = targetRuleSet.Padding;
+            var border = targetRuleSet.Border;
+
+            // content box
+            var contentSize = targetNode.ContentSize;
+            var contentLabel = $"{contentSize.Width} x {contentSize.Height}";
+            var contentBoxSize = labelRuleSet.CalcContentBoxSize(contentLabel, GUIState.Normal);
+            contentBoxSize.Width = Math.Max(88, contentBoxSize.Width);
+            contentBoxSize.Height = Math.Max(24, contentBoxSize.Height);
+            var contentRect = Rect.FromCenterSize(center, contentBoxSize);
+            
+            //padding box
+            var paddingLeft = labelRuleSet.CalcSize(padding.left.ToString()).Width + 5;
+            paddingLeft = Math.Max(paddingLeft, 18);
+            var paddingRight = labelRuleSet.CalcSize(padding.right.ToString()).Width + 5;
+            var paddingTop = 23;
+            var paddingBottom = 23;
+            var paddingBoxSize = contentBoxSize +
+                                 new Vector(paddingLeft + paddingRight, paddingTop + paddingBottom);
+            paddingBoxSize.Width = Math.Max(122, paddingBoxSize.Width);
+            var paddingBoxRect = Rect.FromCenterSize(center, paddingBoxSize);
+
+            //border box
+            var borderLeft = labelRuleSet.CalcSize(border.left.ToString()).Width
+                +5;
+            borderLeft = Math.Max(borderLeft, 18);
+            var borderRight = labelRuleSet.CalcSize(border.right.ToString()).Width
+                +5;
+            borderRight = Math.Max(borderRight, 18);
+            var borderTop = 23;
+            var borderBottom = 23;
+            var boderBoxSize = paddingBoxSize
+                               + new Vector(borderLeft + borderRight, borderTop + borderBottom);
+            boderBoxSize.Width = Math.Max(156, boderBoxSize.Width);
+            var borderBoxRect = Rect.FromCenterSize(center, boderBoxSize);
 
             // draw
-            using (var dc = node.RenderOpen())
+            using var dc = node.RenderOpen();
+            PathGeometryBuilder builder = new PathGeometryBuilder();
+
+            // content box
+            builder.Rect(contentRect, true);
+            builder.Stroke();
             {
-                var center = node.Rect.Center;
-
-                PathGeometryBuilder builder = new PathGeometryBuilder();
-
-                var targetRuleSet = targetNode.RuleSet;
-                var contentSize = targetNode.ContentSize;
-                var padding = targetRuleSet.Padding;
-                var border = targetRuleSet.Border;
-
-                // content box
-                var contentLabel = $"{contentSize.Width} x {contentSize.Height}";
-                var contentBoxSize = labelRuleSet.CalcContentBoxSize(contentLabel, GUIState.Normal);
-                contentBoxSize.Width = Math.Max(88, contentBoxSize.Width);
-                contentBoxSize.Height = Math.Max(24, contentBoxSize.Height);
-                var contentRect = Rect.FromCenterSize(center, contentBoxSize);
-                builder.Rect(contentRect, true);
-                builder.Stroke();
-                {
-                    var rect = contentRect;
-                    var text = contentLabel;
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawBoxModel(contentLabel, labelRuleSet, layoutedRect);
-                }
-
-                //padding box
-                var paddingLeft = 
-                    labelRuleSet.CalcContentBoxSize(padding.left.ToString(), GUIState.Normal).Width
-                    +5;
-                paddingLeft = Math.Max(paddingLeft, 18);
-                var paddingRight = 
-                    labelRuleSet.CalcContentBoxSize(padding.right.ToString(), GUIState.Normal).Width
-                    +5;
-                var paddingTop = 23;
-                var paddingBottom = 23;
-                var paddingBoxSize = contentBoxSize +
-                    new Vector(paddingLeft + paddingRight, paddingTop + paddingBottom);
-                paddingBoxSize.Width = Math.Max(122, paddingBoxSize.Width);
-                var paddingBoxRect = Rect.FromCenterSize(center, paddingBoxSize);
-                builder.Rect(paddingBoxRect, true);
-                builder.Stroke();
-                dc.DrawGlyphRun(labelRuleSet, "padding", paddingBoxRect.TopLeft + new Vector(1, 1));
-
-                {//top
-                    var rect = new Rect(contentRect.TopLeft + new Vector(0, -paddingTop),
-                        contentRect.TopRight);
-                    var text = padding.top.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-                {//right
-                    var rect = new Rect(contentRect.TopRight,
-                        contentRect.BottomRight + new Vector(paddingRight, 0));
-                    var text = padding.right.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-                {//bottom
-                    var rect = new Rect(contentRect.BottomLeft,
-                        contentRect.BottomRight + new Vector(0, paddingBottom));
-                    var text = padding.bottom.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-                {//left
-                    var rect = new Rect(contentRect.TopLeft + new Vector(-paddingLeft, 0),
-                        contentRect.BottomLeft);
-                    var text = padding.left.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-
-                //border box
-                var borderLeft = 
-                    labelRuleSet.CalcContentBoxSize(border.left.ToString(), GUIState.Normal).Width
-                    +5;
-                borderLeft = Math.Max(borderLeft, 18);
-                var borderRight = 
-                    labelRuleSet.CalcContentBoxSize(border.right.ToString(), GUIState.Normal).Width
-                    +5;
-                borderRight = Math.Max(borderRight, 18);
-                var borderTop = 23;
-                var borderBottom = 23;
-                var boderBoxSize = paddingBoxSize
-                    + new Vector(borderLeft + borderRight, borderTop + borderBottom);
-                boderBoxSize.Width = Math.Max(156, boderBoxSize.Width);
-                var borderBoxRect = Rect.FromCenterSize(center, boderBoxSize);
-                builder.Rect(borderBoxRect, true);
-                builder.Stroke();
-                dc.DrawGlyphRun(labelRuleSet, "border", borderBoxRect.TopLeft + new Vector(1, 1));
-                
-                {//top
-                    var rect = new Rect(paddingBoxRect.TopLeft + new Vector(0, -paddingTop),
-                        paddingBoxRect.TopRight);
-                    var text = border.top.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-                {//right
-                    var rect = new Rect(paddingBoxRect.TopRight,
-                        paddingBoxRect.BottomRight + new Vector(paddingRight, 0));
-                    var text = border.right.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-                {//bottom
-                    var rect = new Rect(paddingBoxRect.BottomLeft,
-                        paddingBoxRect.BottomRight + new Vector(0, paddingBottom));
-                    var text = border.bottom.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-                {//left
-                    var rect = new Rect(paddingBoxRect.TopLeft + new Vector(-paddingLeft, 0),
-                        paddingBoxRect.BottomLeft);
-                    var text = border.left.ToString();
-                    Rect layoutedRect = LayoutTextInRectCentered(rect, text);
-                    dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
-                }
-                
-                var geometry = builder.ToGeometry();
-                dc.DrawGeometry(null, new Pen(Color.Black, 1), geometry);
+                var rect = contentRect;
+                var text = contentLabel;
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawBoxModel(contentLabel, labelRuleSet, layoutedRect);
             }
+
+            //padding box
+            builder.Rect(paddingBoxRect, true);
+            builder.Stroke();
+            dc.DrawGlyphRun(labelRuleSet, "padding", paddingBoxRect.TopLeft + new Vector(1, 1));
+            {//top
+                var rect = new Rect(contentRect.TopLeft + new Vector(0, -paddingTop),
+                    contentRect.TopRight);
+                var text = padding.top.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//right
+                var rect = new Rect(contentRect.TopRight,
+                    contentRect.BottomRight + new Vector(paddingRight, 0));
+                var text = padding.right.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//bottom
+                var rect = new Rect(contentRect.BottomLeft,
+                    contentRect.BottomRight + new Vector(0, paddingBottom));
+                var text = padding.bottom.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//left
+                var rect = new Rect(contentRect.TopLeft + new Vector(-paddingLeft, 0),
+                    contentRect.BottomLeft);
+                var text = padding.left.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+
+            //border box
+            builder.Rect(borderBoxRect, true);
+            builder.Stroke();
+            dc.DrawGlyphRun(labelRuleSet, "border", borderBoxRect.TopLeft + new Vector(1, 1));
+            {//top
+                var rect = new Rect(paddingBoxRect.TopLeft + new Vector(0, -paddingTop),
+                    paddingBoxRect.TopRight);
+                var text = border.top.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//right
+                var rect = new Rect(paddingBoxRect.TopRight,
+                    paddingBoxRect.BottomRight + new Vector(paddingRight, 0));
+                var text = border.right.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//bottom
+                var rect = new Rect(paddingBoxRect.BottomLeft,
+                    paddingBoxRect.BottomRight + new Vector(0, paddingBottom));
+                var text = border.bottom.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+            {//left
+                var rect = new Rect(paddingBoxRect.TopLeft + new Vector(-paddingLeft, 0),
+                    paddingBoxRect.BottomLeft);
+                var text = border.left.ToString();
+                Rect layoutedRect = LayoutTextInRectCentered(rect, text);
+                dc.DrawGlyphRun(labelRuleSet, text, layoutedRect.TopLeft);
+            }
+
+            var geometry = builder.ToGeometry();
+            dc.DrawGeometry(null, new Pen(Color.Black, 1), geometry);
         }
 
         private static Rect LayoutTextInRectCentered(Rect rect, string text)
