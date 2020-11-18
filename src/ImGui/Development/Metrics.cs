@@ -138,30 +138,42 @@ namespace ImGui.Development
         {
             if(window == null)
             {
-                BulletText("Window: null");
+                BulletText($"{label}: null");
                 return;
             }
 
-            if(TreeNode($"{(window.Collapsed ? "[ ]" : "[x]")}" +
-                         $"Window '{window.Name}', " +
-                         $"{(window.Active || window.WasActive ? 1 : 0)}"))
+            bool isActive = window.WasActive;
+            if (!isActive) { PushStyle(StylePropertyName.FontColor, Color.TextDisabled); }
+            bool open = TreeNode($"{(window.Collapsed ? "[ ]" : "[x] ")}" +
+                                 $"{label} '{window.Name}', {(isActive ? "" : " *Inactive*")}");
+            if (!isActive) { PopStyle(); }
+            if(IsItemHovered() && isActive)
             {
-                NodeMeshBuffer(window, "MeshBuffer");
-                BulletText(
-                    "Pos: ({0:F1},{1:F1}), Size: ({2:F1},{3:F1}), ContentSize ({4:F1},{5:F1})",
-                    window.Position.X, window.Position.Y, window.Size.Width, window.Size.Height,
-                    window.ContentRect.Width, window.ContentRect.Height);
-                BulletText("Scroll: ({0:F2},{1:F2})",
-                    window.ClientAreaNode.ScrollOffset.X, window.ClientAreaNode.ScrollOffset.Y);
-                BulletText("Active: {0}/{1}, ", window.Active, window.WasActive, window.Accessed);
-                if (window.RootWindow != window)
-                {
-                    NodeWindow(window.RootWindow, "RootWindow");
-                }
-                BulletText("Storage: {0} entries, ~{1} bytes", window.StateStorage.EntryCount,
-                    window.StateStorage.EstimatedDataSizeInBytes);
-                TreePop();
+                GetCurrentContext().ForegroundDrawingContext.DrawRectangle(
+                    null, new Pen(Color.Yellow, 1), window.Rect);
             }
+
+            if (!open)
+            {
+                return;
+            }
+
+            NodeMeshBuffer(window, "MeshBuffer");
+            BulletText(
+                "Pos: ({0:F1},{1:F1}), Size: ({2:F1},{3:F1}), ContentSize ({4:F1},{5:F1})",
+                window.Position.X, window.Position.Y, window.Size.Width, window.Size.Height,
+                window.ContentRect.Width, window.ContentRect.Height);
+            BulletText("Scroll: ({0:F2},{1:F2})",
+                window.ClientAreaNode.ScrollOffset.X, window.ClientAreaNode.ScrollOffset.Y);
+            BulletText("Active: {0}/{1}, ", window.Active, window.WasActive, window.Accessed);
+            if (window.RootWindow != window)
+            {
+                NodeWindow(window.RootWindow, "RootWindow");
+            }
+
+            BulletText("Storage: {0} entries, ~{1} bytes", window.StateStorage.EntryCount,
+                window.StateStorage.EstimatedDataSizeInBytes);
+            TreePop();
         }
 
         private static void NodeMeshBuffer(Window nodeWindow, string label)
