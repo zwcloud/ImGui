@@ -82,6 +82,10 @@ namespace ImGui
             skin.InitColorFieldStyles(colorField);
             skin.styles[GUIControlName.ColorField] = colorField;
 
+            var comboBox = new StyleRuleSet();
+            skin.InitComboBoxStyles(comboBox);
+            skin.styles[GUIControlName.ComboBox] = comboBox;
+
             return skin;
         }
 
