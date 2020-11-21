@@ -119,7 +119,6 @@ namespace ImGui.OSImplementation
                 this.CurrentTypeFace = typeFace;
 
                 // Update GlyphLayout
-                this.glyphLayout.ScriptLang = ScriptLangs.Latin;
                 this.glyphLayout.PositionTechnique = this.PositionTechnique;
                 this.glyphLayout.EnableLigature = this.EnableLigature;
             }
