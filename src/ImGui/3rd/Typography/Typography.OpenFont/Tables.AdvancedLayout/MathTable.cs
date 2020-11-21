@@ -1,6 +1,5 @@
 ﻿//MIT, 2018-present, WinterDev
-//https://www.microsoft.com/typography/otspec/math.htm
-
+//https://docs.microsoft.com/en-us/typography/opentype/spec/math
 
 using System.IO;
 
@@ -8,7 +7,7 @@ using System.IO;
 namespace Typography.OpenFont.MathGlyphs
 {
 
-    public struct MathValueRecord
+    public readonly struct MathValueRecord
     {
         //MathValueRecord
         //Type      Name            Description
@@ -401,7 +400,7 @@ namespace Typography.OpenFont.MathGlyphs
     }
 
 
-    public struct GlyphPartRecord
+    public readonly struct GlyphPartRecord
     {
         //Thus, a GlyphPartRecord consists of the following fields: 
         //1) Glyph ID for the part.
@@ -467,14 +466,14 @@ namespace Typography.OpenFont.MathGlyphs
     }
 
 
-    public struct MathGlyphVariantRecord
+    public readonly struct MathGlyphVariantRecord
     {
         //    MathGlyphVariantRecord Table
         //Type      Name                Description
         //uint16    VariantGlyph        Glyph ID for the variant.
         //uint16    AdvanceMeasurement  Advance width/height, in design units, of the variant, in the direction of requested glyph extension.
-        public ushort VariantGlyph;
-        public ushort AdvanceMeasurement;
+        public readonly ushort VariantGlyph;
+        public readonly ushort AdvanceMeasurement;
         public MathGlyphVariantRecord(ushort variantGlyph, ushort advanceMeasurement)
         {
             this.VariantGlyph = variantGlyph;
@@ -510,7 +509,8 @@ namespace Typography.OpenFont.MathGlyphs
         }
 #endif
     }
-    struct MathKernInfoRecord
+
+    readonly struct MathKernInfoRecord
     {
         //resolved value
         public readonly MathKern TopRight;
@@ -527,10 +527,7 @@ namespace Typography.OpenFont.MathGlyphs
             BottomRight = bottomRight;
             BottomLeft = bottomLeft;
         }
-
     }
-
-
 }
 
 namespace Typography.OpenFont.Tables
@@ -555,24 +552,25 @@ namespace Typography.OpenFont.Tables
         }
     }
 
-    struct MathGlyphLoader
+    readonly struct MathGlyphLoader
     {
 
         static MathGlyphInfo GetMathGlyphOrCreateNew(MathGlyphInfo[] mathGlyphInfos, ushort glyphIndex)
         {
             return mathGlyphInfos[glyphIndex] ?? (mathGlyphInfos[glyphIndex] = new MathGlyphInfo(glyphIndex));
         }
-        public void LoadMathGlyph(Typeface typeface, MathTable mathTable)
+
+        public static void LoadMathGlyph(Typeface typeface, MathTable mathTable)
         {
             //expand math info to each glyph in typeface
 
             typeface._mathTable = mathTable;
-            Glyph[] allGlyphs = typeface.GetRawGlyphList();
 
-            //expand all information to the glyph 
-            int glyphCount = allGlyphs.Length;
+
+            //expand all information to the glyph  
+            int glyphCount = typeface.GlyphCount;
             MathGlyphInfo[] mathGlyphInfos = new MathGlyphInfo[glyphCount];
-            typeface._mathGlyphInfos = mathGlyphInfos;
+
 
             int index = 0;
             //-----------------
@@ -657,13 +655,7 @@ namespace Typography.OpenFont.Tables
                     }
                 }
             }
-
-            //-------
-            //fill to original glyph?
-            for (int n = 0; n < allGlyphs.Length; ++n)
-            {
-                allGlyphs[n].MathGlyphInfo = mathGlyphInfos[n];
-            }
+            typeface.LoadMathGlyphInfos(mathGlyphInfos);
         }
 
     }
@@ -1159,7 +1151,11 @@ namespace Typography.OpenFont.Tables
             ushort[] horizonGlyphConstructions = Utils.ReadUInt16Array(reader, horizGlyphCount);
             //
 
-            _mathVariantsTable.vertCoverage = CoverageTable.CreateFrom(reader, beginAt + vertGlyphCoverageOffset);
+            if (vertGlyphCoverageOffset > 0)
+            {
+                _mathVariantsTable.vertCoverage = CoverageTable.CreateFrom(reader, beginAt + vertGlyphCoverageOffset);
+            }
+
             if (horizGlyphCoverageOffset > 0)
             {
                 //may be null?, eg. found in font Linux Libertine Regular (https://sourceforge.net/projects/linuxlibertine/)
@@ -1292,15 +1288,7 @@ namespace Typography.OpenFont.Tables
                     );
             }
         }
-
-
     }
-
-
-
-
-
-
 
     class MathItalicsCorrectonInfoTable
     {
@@ -1319,7 +1307,6 @@ namespace Typography.OpenFont.Tables
 
         public MathValueRecord[] ItalicCorrections;
         public CoverageTable CoverageTable;
-
 
     }
     class MathTopAccentAttachmentTable

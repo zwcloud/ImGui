@@ -81,6 +81,10 @@ namespace Typography.OpenFont
         //for TrueType Font
         public static void Read(this IGlyphTranslator tx, GlyphPointF[] glyphPoints, ushort[] contourEndPoints, float scale = 1)
         {
+            if (glyphPoints == null || contourEndPoints == null)
+            {
+                return;//?
+            }
 
             int startContour = 0;
             int cpoint_index = 0;//current point index
@@ -415,7 +419,7 @@ namespace Typography.OpenFont
         public static void Read(this IGlyphTranslator tx, CFF.Cff1Font cff1Font, CFF.Cff1GlyphData glyphData, float scale = 1)
         {
             CFF.CffEvaluationEngine evalEngine = new CFF.CffEvaluationEngine();
-            evalEngine.Run(tx, cff1Font, glyphData.GlyphInstructions, scale);
+            evalEngine.Run(tx, glyphData.GlyphInstructions, scale);
         }
     }
 

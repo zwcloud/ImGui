@@ -12,15 +12,15 @@ namespace Typography.OpenFont.CFF
     public class CffEvaluationEngine
     {
 
-        CFF.Cff1Font _cff1Font;
+
 
         float _scale = 1;//default 
-        Stack<Type2EvaluationStack> _evalStackPool = new Stack<Type2EvaluationStack>();
+        readonly Stack<Type2EvaluationStack> _evalStackPool = new Stack<Type2EvaluationStack>();
 
         class PxScaleGlyphTx : IGlyphTranslator
         {
-            float _scale;
-            IGlyphTranslator _tx;
+            readonly float _scale;
+            readonly IGlyphTranslator _tx;
 
             bool _is_contour_opened;
 
@@ -70,23 +70,22 @@ namespace Typography.OpenFont.CFF
             }
             //
 
-            public bool IsContourOpened { get { return _is_contour_opened; } }
+            public bool IsContourOpened => _is_contour_opened;
         }
 
         public CffEvaluationEngine()
         {
 
         }
-        public void Run(IGlyphTranslator tx, Cff1Font cff1Font, Cff1GlyphData glyphData, float scale = 1)
+        public void Run(IGlyphTranslator tx, Cff1GlyphData glyphData, float scale = 1)
         {
-            Run(tx, cff1Font, glyphData.GlyphInstructions, scale);
+            Run(tx, glyphData.GlyphInstructions, scale);
         }
-        internal void Run(IGlyphTranslator tx, Cff1Font cff1Font, Type2Instruction[] instructionList, float scale = 1)
+        internal void Run(IGlyphTranslator tx, Type2Instruction[] instructionList, float scale = 1)
         {
 
-            //all fields are set to new values***
+            //all fields are set to new values*** 
 
-            _cff1Font = cff1Font;
             _scale = scale;
 
             double currentX = 0, currentY = 0;

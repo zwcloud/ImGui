@@ -1,5 +1,6 @@
 ﻿//MIT, 2016-present, WinterDev
 
+using System;
 using System.Collections.Generic;
 using Typography.OpenFont;
 using Typography.OpenFont.Tables;
@@ -7,16 +8,104 @@ using Typography.OpenFont.Tables;
 namespace Typography.TextLayout
 {
     /// <summary>
+    /// gsub lookup context
+    /// </summary>
+    class GSubLkContext
+    {
+        public readonly GSUB.LookupTable lookup;
+        public GSubLkContextName ContextName;
+#if DEBUG
+        public string dbugFeatureName;
+#endif
+        public GSubLkContext(GSUB.LookupTable lookup)
+        {
+            this.lookup = lookup;
+        }
+
+
+        int _glyphCount;
+        public void SetGlyphCount(int glyphCount)
+        {
+            _glyphCount = glyphCount;
+        }
+        public bool WillCheckThisGlyph(int pos)
+        {
+            switch (ContextName)
+            {
+                default: return true;
+                case GSubLkContextName.Init: return _glyphCount > 1 && pos == 0; //the first one
+                case GSubLkContextName.Medi: return _glyphCount > 2 && (pos > 0 && pos < _glyphCount); //in between
+                case GSubLkContextName.Fina: return _glyphCount > 1 && pos == _glyphCount - 1;//the last one
+            }
+        }
+    }
+
+    //TODO: review here again
+    enum GSubLkContextName : byte
+    {
+        None,
+
+        Fina, //"fina"
+        Init, //"init"
+        Medi //"medi"
+    }
+
+
+    static class KnownLayoutTags
+    {
+
+        static readonly Dictionary<string, bool> s_knownGSubTags = new Dictionary<string, bool>();
+
+        static KnownLayoutTags()
+        {
+
+            CollectTags(s_knownGSubTags, "ccmp");
+            //arabic-related
+            CollectTags(s_knownGSubTags, "liga,dlig,falt,rclt,rlig,locl,init,medi,fina,isol");
+            //math-glyph related
+            CollectTags(s_knownGSubTags, "math,ssty,dlts,flac");
+            //indic script related
+            CollectTags(s_knownGSubTags, "abvs,akhn,blwf,blws,cjct,half,haln,nukt,pres,psts,rkrf,rphf");
+        }
+
+        public static bool IsKnownGSUB_Tags(string tagName) => s_knownGSubTags.ContainsKey(tagName);
+
+        static void CollectTags(Dictionary<string, bool> dic, string tags_str)
+        {
+            string[] tags = tags_str.Split(',');
+            for (int i = 0; i < tags.Length; ++i)
+            {
+                dic[tags[i].Trim()] = true;//replace
+            }
+        }
+    }
+
+
+
+    /// <summary>
     /// glyph substitution manager
     /// </summary>
     class GlyphSubstitution
     {
-        public GlyphSubstitution(Typeface typeface, string lang)
+
+        bool _enableLigation = true; // enable by default
+        bool _enableComposition = true;
+        bool _mustRebuildTables = true;
+        bool _enableMathFeature = true;
+
+        readonly Typeface _typeface;
+
+        public GlyphSubstitution(Typeface typeface, uint scriptTag, uint langTag)
         {
-            _language = lang;
+            ScriptTag = scriptTag;
+            LangTag = langTag;
+
             _typeface = typeface;
             _mustRebuildTables = true;
         }
+#if DEBUG
+        public string dbugScriptLang;
+#endif
 
         public void DoSubstitution(IGlyphIndexList glyphIndexList)
         {
@@ -27,19 +116,30 @@ namespace Typography.TextLayout
                 _mustRebuildTables = false;
             }
 
+
             // Iterate over lookups, then over glyphs, as explained in the spec:
             // "During text processing, a client applies a lookup to each glyph
             // in the string before moving to the next lookup."
             // https://www.microsoft.com/typography/otspec/gsub.htm
-            foreach (GSUB.LookupTable lookupTable in _lookupTables)
+            foreach (GSubLkContext lookupCtx in _lookupTables)
             {
+                GSUB.LookupTable lookupTable = lookupCtx.lookup;
+                lookupCtx.SetGlyphCount(glyphIndexList.Count);
+
                 for (int pos = 0; pos < glyphIndexList.Count; ++pos)
                 {
+                    if (!lookupCtx.WillCheckThisGlyph(pos))
+                    {
+                        continue;
+                    }
                     lookupTable.DoSubstitutionAt(glyphIndexList, pos, glyphIndexList.Count - pos);
                 }
             }
         }
-        public string Lang => _language;
+
+        public uint ScriptTag { get; }
+        public uint LangTag { get; }
+
         /// <summary>
         /// enable GSUB type 4, ligation (liga)
         /// </summary>
@@ -53,7 +153,6 @@ namespace Typography.TextLayout
                     _mustRebuildTables = true;
                 }
                 _enableLigation = value;
-
             }
         }
 
@@ -71,7 +170,6 @@ namespace Typography.TextLayout
                     _mustRebuildTables = true;
                 }
                 _enableComposition = value;
-
             }
         }
 
@@ -87,16 +185,8 @@ namespace Typography.TextLayout
                 _enableMathFeature = value;
             }
         }
-        readonly string _language;
-        bool _enableLigation = true; // enable by default
-        bool _enableComposition = true;
-        bool _mustRebuildTables = true;
-        bool _enableMathFeature = true;
 
-        Typeface _typeface;
-
-
-        internal List<GSUB.LookupTable> _lookupTables = new List<GSUB.LookupTable>();
+        internal List<GSubLkContext> _lookupTables = new List<GSubLkContext>();
 
         internal void RebuildTables()
         {
@@ -104,25 +194,66 @@ namespace Typography.TextLayout
 
             // check if this lang has
             GSUB gsubTable = _typeface.GSUBTable;
-            ScriptTable scriptTable = gsubTable.ScriptList[_language];
+            ScriptTable scriptTable = gsubTable.ScriptList[ScriptTag];
             if (scriptTable == null) return;
 
-
+            //-------
             ScriptTable.LangSysTable selectedLang = null;
-            if (scriptTable.langSysTables != null && scriptTable.langSysTables.Length > 0)
+            if (LangTag == 0)
             {
-                // TODO: review here
-                selectedLang = scriptTable.langSysTables[0];
+                //use default
+                selectedLang = scriptTable.defaultLang;
+
+                if (selectedLang == null && scriptTable.langSysTables != null && scriptTable.langSysTables.Length > 0)
+                {
+                    //some font not defult lang
+                    //so we use it from langSysTable
+                    //find selected lang,
+                    //if not => choose default
+                    selectedLang = scriptTable.langSysTables[0];
+                }
             }
             else
             {
-                selectedLang = scriptTable.defaultLang;
+                if (LangTag == scriptTable.defaultLang.langSysTagIden)
+                {
+                    //found
+                    selectedLang = scriptTable.defaultLang;
+                }
+
+                if (scriptTable.langSysTables != null && scriptTable.langSysTables.Length > 0)
+                {  //find selected lang,
+                   //if not => choose default
+
+                    for (int i = 0; i < scriptTable.langSysTables.Length; ++i)
+                    {
+                        ScriptTable.LangSysTable s = scriptTable.langSysTables[i];
+                        if (s.langSysTagIden == LangTag)
+                        {
+                            //found
+                            selectedLang = s;
+                            break;
+                        }
+                    }
+                }
             }
 
+            //-----------------------------------
+            //some lang need special management
+            //TODO: review here again
+
+
+#if DEBUG
+            if (selectedLang == null)
+            {
+                //TODO:...
+                throw new NotSupportedException();
+            }
             if (selectedLang.HasRequireFeature)
             {
                 // TODO: review here
             }
+#endif
 
             if (selectedLang.featureIndexList == null)
             {
@@ -135,6 +266,8 @@ namespace Typography.TextLayout
             {
                 FeatureList.FeatureTable feature = gsubTable.FeatureList.featureTables[featureIndex];
                 bool includeThisFeature = false;
+                GSubLkContextName contextName = GSubLkContextName.None;
+
                 switch (feature.TagName)
                 {
                     case "ccmp": // glyph composition/decomposition 
@@ -143,29 +276,57 @@ namespace Typography.TextLayout
                     case "liga": // Standard Ligatures --enable by default
                         includeThisFeature = EnableLigation;
                         break;
-
-
-                    //OpenType Layout tags for math processing:
-                    //https://docs.microsoft.com/en-us/typography/opentype/spec/math
-                    //'math', 'ssty','flac','dtls' 	
-                    case "ssty":
-                        includeThisFeature = EnableMathFeature;
+                    case "init":
+                        includeThisFeature = true;
+                        contextName = GSubLkContextName.Init;
                         break;
-                    case "dlts"://'dtls' 	Dotless Forms 
-                        includeThisFeature = EnableMathFeature;
+                    case "medi":
+                        includeThisFeature = true;
+                        contextName = GSubLkContextName.Medi;
                         break;
-                    case "flac": //Flattened Accents over Capitals  
+                    case "fina":
+                        //Replaces glyphs for characters that have applicable joining properties with an alternate form when occurring in a final context. 
+                        //This applies to characters that have one of the following Unicode Joining_Type property 
+                        includeThisFeature = true;
+                        contextName = GSubLkContextName.Fina;
+                        break;
+                    default:
+                        {
+                            //other, TODO review here
+
+                            includeThisFeature = true;
+                            if (!KnownLayoutTags.IsKnownGSUB_Tags(feature.TagName))
+                            {
+                                includeThisFeature = false;
+
+#if DEBUG
+
+                                System.Diagnostics.Debug.WriteLine("gsub_skip_feature_tag:" + feature.TagName);
+#endif
+                            }
+                            else
+                            {
+
+                            }
+                        }
                         break;
                 }
+
+
 
                 if (includeThisFeature)
                 {
                     foreach (ushort lookupIndex in feature.LookupListIndices)
                     {
-                        _lookupTables.Add(gsubTable.LookupList[lookupIndex]);
+                        var gsubcontext = new GSubLkContext(gsubTable.LookupList[lookupIndex]) { ContextName = contextName };
+#if DEBUG
+                        gsubcontext.dbugFeatureName = feature.TagName;
+#endif
+
+                        _lookupTables.Add(gsubcontext);
                     }
                 }
-            } 
+            }
         }
 
         /// <summary>
@@ -182,9 +343,9 @@ namespace Typography.TextLayout
             //-------------
             //add some glyphs that also need by substitution process 
 
-            foreach (GSUB.LookupTable subLk in _lookupTables)
+            foreach (GSubLkContext subLkctx in _lookupTables)
             {
-                subLk.CollectAssociatedSubstitutionGlyph(outputGlyphIndices);
+                subLkctx.lookup.CollectAssociatedSubstitutionGlyph(outputGlyphIndices);
             }
             //
             //WARN :not ensure glyph unique at this stage
@@ -192,66 +353,20 @@ namespace Typography.TextLayout
         }
     }
 
-
-    public static class TypefaceExtensions
-    {
-
-        static UnicodeLangBits[] FilterOnlySelectedRange(UnicodeLangBits[] inputRanges, UnicodeLangBits[] userSpecificRanges)
-        {
-            List<UnicodeLangBits> selectedRanges = new List<UnicodeLangBits>();
-            foreach (UnicodeLangBits range in inputRanges)
-            {
-                int foundAt = System.Array.IndexOf(userSpecificRanges, range);
-                if (foundAt > 0)
-                {
-                    selectedRanges.Add(range);
-                }
-            }
-            return selectedRanges.ToArray();
-        }
-        public static void CollectAllAssociateGlyphIndex(this Typeface typeface, List<ushort> outputGlyphIndexList, ScriptLang scLang, UnicodeLangBits[] selectedRangs = null)
-        {
-            //-----------
-            //general glyph index in the unicode range
-
-            //if user dose not specific the unicode lanf bit ranges
-            //the we try to select it ourself. 
-
-            if (ScriptLangs.TryGetUnicodeLangBitsArray(scLang.shortname, out UnicodeLangBits[] unicodeLangBitsRanges))
-            {
-                //one lang may contains may ranges
-                if (selectedRangs != null)
-                {
-                    //select only in range 
-                    unicodeLangBitsRanges = FilterOnlySelectedRange(unicodeLangBitsRanges, selectedRangs);
-                }
-
-                foreach (UnicodeLangBits unicodeLangBits in unicodeLangBitsRanges)
-                {
-                    UnicodeRangeInfo rngInfo = unicodeLangBits.ToUnicodeRangeInfo();
-                    int endAt = rngInfo.EndAt;
-                    for (int codePoint = rngInfo.StartAt; codePoint <= endAt; ++codePoint)
-                    {
-
-                        ushort glyphIndex = typeface.GetGlyphIndex(codePoint);
-                        if (glyphIndex > 0)
-                        {
-                            //add this glyph index
-                            outputGlyphIndexList.Add(glyphIndex);
-                        }
-                    }
-                }
-            }
-
-            //-----------
-            if (typeface.GSUBTable != null)
-            {
-                var gsub = new GlyphSubstitution(typeface, scLang.shortname);
-                gsub.CollectAdditionalSubstitutionGlyphIndices(outputGlyphIndexList);
-            }
-        }
-
-    }
 }
 
+namespace Typography.OpenFont.Extensions
+{
+
+    public static class TypefaceExtension5
+    {
+        public static void CollectAdditionalGlyphIndices(this Typeface typeface, List<ushort> outputGlyphs, ScriptLang scLang)
+        {
+            if (typeface.GSUBTable != null)
+            {
+                (new Typography.TextLayout.GlyphSubstitution(typeface, scLang.scriptTag, scLang.sysLangTag)).CollectAdditionalSubstitutionGlyphIndices(outputGlyphs);
+            }
+        }
+    }
+}
 

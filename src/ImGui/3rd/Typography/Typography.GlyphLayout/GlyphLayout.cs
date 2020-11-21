@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Typography.OpenFont;
 
+
 namespace Typography.TextLayout
 {
 
@@ -10,7 +11,7 @@ namespace Typography.TextLayout
     /// <summary>
     /// unscaled glyph-plan
     /// </summary>
-    public struct UnscaledGlyphPlan
+    public readonly struct UnscaledGlyphPlan
     {
         public readonly ushort input_cp_offset;
         public readonly ushort glyphIndex;
@@ -22,17 +23,17 @@ namespace Typography.TextLayout
             this.OffsetY = offsetY;
             this.AdvanceX = advanceW;
         }
-        public short AdvanceX { get; private set; }
+        public readonly short AdvanceX;
         /// <summary>
         /// x offset from current position
         /// </summary>
-        public int OffsetX { get; private set; }
+        public readonly int OffsetX;
         /// <summary>
         /// y offset from current position
         /// </summary>
-        public short OffsetY { get; private set; }
+        public readonly short OffsetY;
 
-        public bool AdvanceMoveForward { get { return this.AdvanceX > 0; } }
+        public bool AdvanceMoveForward => this.AdvanceX > 0;
 
 #if DEBUG
         public override string ToString()
@@ -48,27 +49,22 @@ namespace Typography.TextLayout
         void Append(UnscaledGlyphPlan glyphPlan);
         int Count { get; }
         UnscaledGlyphPlan this[int index] { get; }
+
     }
 
     public class UnscaledGlyphPlanList : IUnscaledGlyphPlanList
     {
-        List<UnscaledGlyphPlan> _list = new List<UnscaledGlyphPlan>();
-        float _accumAdvanceX;
-
+        readonly List<UnscaledGlyphPlan> _list = new List<UnscaledGlyphPlan>();
         public int Count => _list.Count;
         public UnscaledGlyphPlan this[int index] => _list[index];
-
         public void Clear()
         {
             _list.Clear();
-            _accumAdvanceX = 0;
         }
         public void Append(UnscaledGlyphPlan glyphPlan)
         {
             _list.Add(glyphPlan);
-            _accumAdvanceX += glyphPlan.AdvanceX;
         }
-        public float AccumAdvanceX => _accumAdvanceX;
     }
 
     /// <summary>
@@ -79,28 +75,38 @@ namespace Typography.TextLayout
         //
         public static GlyphPlanSequence Empty = new GlyphPlanSequence();
         //
-        readonly IUnscaledGlyphPlanList _glyphBuffer;
-        internal readonly int startAt;
-        internal readonly ushort len;
-        public GlyphPlanSequence(IUnscaledGlyphPlanList glyphBuffer)
+        readonly IUnscaledGlyphPlanList _glyphPlanList;
+        public readonly int startAt;
+        public readonly ushort len;
+
+        bool _isRTL;
+        public GlyphPlanSequence(IUnscaledGlyphPlanList glyphPlanList)
         {
-            _glyphBuffer = glyphBuffer;
+            _glyphPlanList = glyphPlanList;
             this.startAt = 0;
-            this.len = (ushort)glyphBuffer.Count;
+            this.len = (ushort)glyphPlanList.Count;
+            _isRTL = false;
         }
-        public GlyphPlanSequence(IUnscaledGlyphPlanList glyphBuffer, int startAt, int len)
+        public GlyphPlanSequence(IUnscaledGlyphPlanList glyphPlanList, int startAt, int len)
         {
-            _glyphBuffer = glyphBuffer;
+            _glyphPlanList = glyphPlanList;
             this.startAt = startAt;
             this.len = (ushort)len;
+            _isRTL = false;
         }
+        public bool IsRightToLeft
+        {
+            get => _isRTL;
+            set => _isRTL = value;
+        }
+
         public UnscaledGlyphPlan this[int index]
         {
             get
             {
                 if (index >= 0 && index < (startAt + len))
                 {
-                    return _glyphBuffer[startAt + index];
+                    return _glyphPlanList[startAt + index];
                 }
                 else
                 {
@@ -109,13 +115,13 @@ namespace Typography.TextLayout
             }
         }
         //
-        public int Count => (_glyphBuffer != null) ? len : 0;
+        public int Count => (_glyphPlanList != null) ? len : 0;
         //
         public float CalculateWidth()
         {
-            if (_glyphBuffer == null) return 0;
+            if (_glyphPlanList == null) return 0;
             //
-            IUnscaledGlyphPlanList plans = _glyphBuffer;
+            IUnscaledGlyphPlanList plans = _glyphPlanList;
             int end = startAt + len;
             float width = 0;
             for (int i = startAt; i < end; ++i)
@@ -124,7 +130,7 @@ namespace Typography.TextLayout
             }
             return width;
         }
-        public bool IsEmpty() => _glyphBuffer == null;
+        public bool IsEmpty() => _glyphPlanList == null;
 
     }
 
@@ -141,9 +147,11 @@ namespace Typography.TextLayout
         OpenFont,
     }
 
+
+
     class GlyphLayoutPlanCollection
     {
-        Dictionary<GlyphLayoutPlanKey, GlyphLayoutPlanContext> _collection = new Dictionary<GlyphLayoutPlanKey, GlyphLayoutPlanContext>();
+        readonly Dictionary<int, GlyphLayoutPlanContext> _collection = new Dictionary<int, GlyphLayoutPlanContext>();
         /// <summary>
         /// get glyph layout plan or create if not exists
         /// </summary>
@@ -152,29 +160,40 @@ namespace Typography.TextLayout
         /// <returns></returns>
         public GlyphLayoutPlanContext GetPlanOrCreate(Typeface typeface, ScriptLang scriptLang)
         {
-            GlyphLayoutPlanKey key = new GlyphLayoutPlanKey(typeface, scriptLang.internalName);
 
-            if (!_collection.TryGetValue(key, out GlyphLayoutPlanContext context))
+            int hash_code = CalculateHash(typeface, scriptLang);
+            if (!_collection.TryGetValue(hash_code, out GlyphLayoutPlanContext context))
             {
-                var glyphSubstitution = (typeface.GSUBTable != null) ? new GlyphSubstitution(typeface, scriptLang.shortname) : null;
-                var glyphPosition = (typeface.GPOSTable != null) ? new GlyphSetPosition(typeface, scriptLang.shortname) : null;
-                _collection.Add(key, context = new GlyphLayoutPlanContext(glyphSubstitution, glyphPosition));
+                var g_sub = (typeface.GSUBTable != null) ? new GlyphSubstitution(typeface, scriptLang.scriptTag, scriptLang.sysLangTag) : null;
+                var g_pos = (typeface.GPOSTable != null) ? new GlyphSetPosition(typeface, scriptLang.scriptTag, scriptLang.sysLangTag) : null;
+
+#if DEBUG
+                if (g_sub != null)
+                {
+                    g_sub.dbugScriptLang = scriptLang.ToString();
+                }
+                if (g_pos != null)
+                {
+                    g_pos.dbugScriptLang = scriptLang.ToString();
+                }
+#endif
+
+                _collection.Add(hash_code, context = new GlyphLayoutPlanContext(g_sub, g_pos));
             }
             return context;
         }
+        static int CalculateHash(Typeface t, ScriptLang scriptLang)
+        {
+            int hash = 17;
+            hash = hash * 31 + t.GetHashCode();
+            hash = hash * 31 + scriptLang.scriptTag.GetHashCode();
+            hash = hash * 31 + scriptLang.sysLangTag.GetHashCode();
+            return hash;
+        }
 
     }
-    struct GlyphLayoutPlanKey
-    {
-        public readonly Typeface t;
-        public readonly int scriptInternameName;
-        public GlyphLayoutPlanKey(Typeface t, int scriptInternameName)
-        {
-            this.t = t;
-            this.scriptInternameName = scriptInternameName;
-        }
-    }
-    struct GlyphLayoutPlanContext
+
+    readonly struct GlyphLayoutPlanContext
     {
         public readonly GlyphSubstitution _glyphSub;
         public readonly GlyphSetPosition _glyphPos;
@@ -186,7 +205,7 @@ namespace Typography.TextLayout
     }
 
 #if DEBUG
-    struct dbugCodePointFromUserChar
+    readonly struct dbugCodePointFromUserChar
     {
         /// <summary>
         /// input codepoint
@@ -213,23 +232,26 @@ namespace Typography.TextLayout
     public class GlyphLayout
     {
 
-        GlyphLayoutPlanCollection _layoutPlanCollection = new GlyphLayoutPlanCollection();
+        readonly GlyphLayoutPlanCollection _layoutPlanCollection = new GlyphLayoutPlanCollection();
         Typeface _typeface;
         ScriptLang _scriptLang;
         GlyphSubstitution _gsub;
         GlyphSetPosition _gpos;
         bool _needPlanUpdate;
 
-        GlyphIndexList _inputGlyphs = new GlyphIndexList();//reusable input glyph
-        internal GlyphPosStream _glyphPositions = new GlyphPosStream();
+        readonly GlyphIndexList _inputGlyphs = new GlyphIndexList();//reusable input glyph
+        internal readonly GlyphPosStream _glyphPositions = new GlyphPosStream();
 
+        readonly static ScriptLang s_latin = new ScriptLang("latn");
+        readonly static ScriptLang s_math = new ScriptLang("math");
 
         public GlyphLayout()
         {
             PositionTechnique = PositionTechnique.OpenFont;
             EnableLigature = true;
             EnableComposition = true;
-            ScriptLang = ScriptLangs.Latin;
+            EnableGsub = EnableGpos = true;
+            ScriptLang = s_latin;
         }
 
 
@@ -242,7 +264,8 @@ namespace Typography.TextLayout
             get => _scriptLang;
             set
             {
-                if (_scriptLang != value)
+
+                if (_scriptLang.scriptTag != value.scriptTag || _scriptLang.sysLangTag != value.sysLangTag)
                 {
                     _needPlanUpdate = true;
                 }
@@ -252,7 +275,12 @@ namespace Typography.TextLayout
 
         public bool EnableLigature { get; set; }
         public bool EnableComposition { get; set; }
-         
+
+
+        //for some built-in mathlayout
+        public bool EnableBuiltinMathItalicCorrection { get; set; } = true;
+
+
         public Typeface Typeface
         {
             get => _typeface;
@@ -267,8 +295,6 @@ namespace Typography.TextLayout
         }
 
 
-
-
         public delegate ushort GlyphNotFoundHandler(GlyphLayout glyphLayout, int codepoint, int nextcodepoint);
         GlyphNotFoundHandler _glyphNotFoundHandler;
 
@@ -280,6 +306,8 @@ namespace Typography.TextLayout
         List<dbugCodePointFromUserChar> _dbugReusableCodePointFromUserCharList = new List<dbugCodePointFromUserChar>();
 #endif
 
+        public bool EnableGsub { get; set; }
+        public bool EnableGpos { get; set; }
 
         /// <summary>
         /// do glyph shaping and glyph out, output is unscaled glyph-plan
@@ -307,15 +335,20 @@ namespace Typography.TextLayout
             _reusableUserCodePoints.Clear();
 #if DEBUG
             _dbugReusableCodePointFromUserCharList.Clear();
+            if (str.Length > 2)
+            {
+
+            }
+
 #endif
             for (int i = 0; i < len; ++i)
             {
                 char ch = str[startAt + i];
                 int codepoint = ch;
-                if (ch >= 0xd800 && ch <= 0xdbff && i + 1 < len)
+                if (ch >= 0xd800 && ch <= 0xdbff && i + 1 < len)//high surrogate
                 {
                     char nextCh = str[startAt + i + 1];
-                    if (nextCh >= 0xdc00 && nextCh <= 0xdfff)
+                    if (nextCh >= 0xdc00 && nextCh <= 0xdfff) //low-surrogate 
                     {
                         //please note: 
                         //num of codepoint may be less than  original user input char 
@@ -396,11 +429,11 @@ namespace Typography.TextLayout
             //[C]
             //----------------------------------------------  
             //glyph substitution            
-            if (_gsub != null && glyphs.Count > 0)
+            if (EnableGsub && _gsub != null && glyphs.Count > 0)
             {
                 //TODO: review perf here
                 _gsub.EnableLigation = this.EnableLigature;
-                _gsub.EnableComposition = this.EnableComposition; 
+                _gsub.EnableComposition = this.EnableComposition;
                 _gsub.DoSubstitution(glyphs);
             }
 
@@ -430,16 +463,82 @@ namespace Typography.TextLayout
             }
 
             PositionTechnique posTech = this.PositionTechnique;
-            if (_gpos != null && glyphs.Count > 1 && posTech == PositionTechnique.OpenFont)
+            if (EnableGpos && _gpos != null && glyphs.Count > 1 && posTech == PositionTechnique.OpenFont)
             {
                 _gpos.DoGlyphPosition(_glyphPositions);
             }
+
+
+            //----------------------------------------------  
+            //[E] 
+            //some math correction
+            if (_scriptLang.scriptTag == s_math.scriptTag) //***
+            {
+                if (EnableBuiltinMathItalicCorrection)
+                {
+                    int pos_count = _glyphPositions.Count;
+
+                    //from https://docs.microsoft.com/en-us/typography/opentype/spec/math
+
+                    //Italics correction can be used in the following situations:
+                    //...
+                    //...
+                    //When a run of slanted characters is followed by a straight character (such as an operator or a delimiter), the italics correction of the last glyph is added to its advance width.
+                    //...
+                    //...
+
+                    //@prepare: note, by observation.
+                    //in math font (eg. like latin modern) glyph some glyph look upright (regular glyph)
+                    //but it has italic correction value
+                    //but value is very small when compare to actual italic glyph
+                    //so in this case we assume it is not italic
+
+                    //so which is that cut-point value
+                    //I use assumption that if the correction value is too small 
+                    //after scale less than 1 px it should not be significant,
+
+                    //but inside GlyphLayout, we use unscale version,
+                    //so assume if font is 8pts, if correction give value less than 0.33px (subpixel width)=> NOT sig.                     
+
+                    //none_sig_correction > scale_to_px * original_correction
+                    //0.33f > scale_to_px(8pt) * original_correction
+                    //(0.33f/ scale_to_px(8pt)) > original_correction
+
+                    float none_sig_correction = 0.33f / _typeface.CalculateScaleToPixelFromPointSize(8);//assume at 8 pt size font
+
+                    short prevGlyph_italic_correction = 0;
+
+                    for (int i = 0; i < pos_count; ++i)
+                    {
+                        Glyph glyph = _typeface.GetGlyph(_glyphPositions[i].glyphIndex);
+
+                        if (glyph?.MathGlyphInfo?.ItalicCorrection is OpenFont.MathGlyphs.MathValueRecord value &&
+                            value.Value > none_sig_correction)
+                        {
+                            //sig correction 
+                            prevGlyph_italic_correction = value.Value;
+                        }
+                        else
+                        {
+                            //no correct (or from nonsignificant correct above)
+                            if (prevGlyph_italic_correction != 0)
+                            {
+                                _glyphPositions.AppendGlyphAdvance(i - 1, prevGlyph_italic_correction, 0);
+                            }
+
+                            prevGlyph_italic_correction = 0;
+                        }
+                    }
+                }
+                //other correction...
+
+            }
+
             //----------------------------------------------  
             //at this point, all positions are layouted at its original scale ***
             //then we will scale it to target scale later 
             //----------------------------------------------   
         }
-
 
         /// <summary>
         /// generate map from user codepoint buffer to output glyph index, from latest layout result
@@ -547,11 +646,11 @@ namespace Typography.TextLayout
         }
         public void AddGlyph(ushort o_offset, ushort glyphIndex, Glyph glyph)
         {
-            if (!glyph.HasOriginalAdvancedWidth)
+            if (!Glyph.HasOriginalAdvancedWidth(glyph))
             {
                 //TODO: review here, 
                 //WHY? some glyph dose not have original advanced width
-                glyph.OriginalAdvanceWidth = _typeface.GetHAdvanceWidthFromGlyphIndex(glyphIndex);
+                Glyph.SetOriginalAdvancedWidth(glyph, _typeface.GetAdvanceWidthFromGlyphIndex(glyphIndex));
             }
 
             _glyphPosList.Add(new GlyphPos(o_offset, glyphIndex, glyph.GlyphClass, glyph.OriginalAdvanceWidth));

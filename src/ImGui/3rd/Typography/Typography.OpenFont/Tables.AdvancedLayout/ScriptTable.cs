@@ -1,6 +1,5 @@
 ﻿//Apache2, 2016-present, WinterDev
-//https://www.microsoft.com/typography/otspec/chapter2.htm
-//https://www.microsoft.com/typography/OTSpec/delta180to181/chapter2.htm
+//https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2#script-table-and-language-system-record
 
 using System.IO;
 
@@ -20,15 +19,16 @@ namespace Typography.OpenFont.Tables
     //If no language-specific script behavior is defined, the LangSysCount is set to zero (0), and no LangSysRecords are allocated.
     //-----------------------
     //Script table
-    //Type 	    Name 	        Description
-    //Offset16 	DefaultLangSys 	Offset to DefaultLangSys table-from beginning of Script table-may be NULL
-    //uint16 	LangSysCount 	Number of LangSysRecords for this script-excluding the DefaultLangSys
-    //struct 	LangSysRecord[LangSysCount] 	Array of LangSysRecords-listed alphabetically by LangSysTag
+    //Type 	        Name 	                      Description
+    //Offset16 	    defaultLangSys 	              Offset to DefaultLangSys table-from beginning of Script table-may be NULL
+    //uint16 	    langSysCount 	              Number of LangSysRecords for this script-excluding the DefaultLangSys
+    //LangSysRecord langSysRecords[langSysCount]  Array of LangSysRecords-listed alphabetically by LangSysTag
+
     //-----------------------
     //LangSysRecord
     //Type 	    Name 	    Description
-    //Tag 	    LangSysTag 	4-byte LangSysTag identifier
-    //Offset16 	LangSys 	Offset to LangSys table-from beginning of Script table
+    //Tag 	    langSysTag 	4-byte LangSysTag identifier
+    //Offset16 	langSysOffset 	Offset to LangSys table-from beginning of Script table
     //-----------------------
     //
     //Language System Table
@@ -57,17 +57,18 @@ namespace Typography.OpenFont.Tables
 
     //---------------------
     //LangSys table
-    //Type 	    Name 	        Description
-    //Offset16 	LookupOrder 	= NULL (reserved for an offset to a reordering table)
-    //uint16 	ReqFeatureIndex Index of a feature required for this language system- if no required features = 0xFFFF
-    //uint16 	FeatureCount 	Number of FeatureIndex values for this language system-excludes the required feature
-    //uint16 	FeatureIndex[FeatureCount] 	Array of indices into the FeatureList-in arbitrary order
+    //Type 	    Name 	                    Description
+    //Offset16 	lookupOrder 	            = NULL (reserved for an offset to a reordering table)
+    //uint16 	requiredFeatureIndex        Index of a feature required for this language system- if no required features = 0xFFFF
+    //uint16 	featureIndexCount 	            Number of FeatureIndex values for this language system-excludes the required feature
+    //uint16 	featureIndices[featureIndexCount] 	Array of indices into the FeatureList-in arbitrary order
     //---------------------
     public class ScriptTable
     {
-        public LangSysTable defaultLang;
-        public LangSysTable[] langSysTables;
-        public uint scriptTag;
+        public uint scriptTag { get; internal set; }
+        public LangSysTable defaultLang { get; private set; }// be NULL
+        public LangSysTable[] langSysTables { get; private set; }
+
         public string ScriptTagName => Utils.TagToString(this.scriptTag);
 
         public static ScriptTable CreateFrom(BinaryReader reader, long beginAt)
@@ -75,10 +76,11 @@ namespace Typography.OpenFont.Tables
             reader.BaseStream.Seek(beginAt, SeekOrigin.Begin);
             //---------------
             //Script table
-            //Type 	    Name 	        Description
-            //Offset16 	DefaultLangSys 	Offset to DefaultLangSys table-from beginning of Script table-may be NULL
-            //uint16 	LangSysCount 	Number of LangSysRecords for this script-excluding the DefaultLangSys
-            //struct 	LangSysRecord[LangSysCount] 	Array of LangSysRecords-listed alphabetically by LangSysTag
+            //Type 	        Name 	                      Description
+            //Offset16 	    defaultLangSys 	              Offset to DefaultLangSys table-from beginning of Script table-may be NULL
+            //uint16 	    langSysCount 	              Number of LangSysRecords for this script-excluding the DefaultLangSys
+            //LangSysRecord langSysRecords[langSysCount]  Array of LangSysRecords-listed alphabetically by LangSysTag
+
             //---------------
             ScriptTable scriptTable = new ScriptTable();
             ushort defaultLangSysOffset = reader.ReadUInt16();
@@ -88,9 +90,9 @@ namespace Typography.OpenFont.Tables
             {
                 //-----------------------
                 //LangSysRecord
-                //Type 	    Name 	    Description
-                //Tag 	    LangSysTag 	4-byte LangSysTag identifier
-                //Offset16 	LangSys 	Offset to LangSys table-from beginning of Script table
+                //Type 	    Name 	        Description
+                //Tag 	    langSysTag  	4-byte LangSysTag identifier
+                //Offset16 	langSysOffset 	Offset to LangSys table-from beginning of Script table
                 //-----------------------
 
                 langSysTables[i] = new LangSysTable(
@@ -119,8 +121,6 @@ namespace Typography.OpenFont.Tables
             return scriptTable;
         }
 
-
-
 #if DEBUG
         public override string ToString()
         {
@@ -134,11 +134,11 @@ namespace Typography.OpenFont.Tables
             //used to render the glyphs in a script. (The LookupOrder offset is reserved for future use.)
             //
             public uint langSysTagIden { get; private set; }
-            public readonly ushort offset;
+            internal readonly ushort offset;
 
             //
             public ushort[] featureIndexList { get; private set; }
-            public ushort RequireFeatureIndex { get; private set; }
+            public ushort RequiredFeatureIndex { get; private set; }
 
             public LangSysTable(uint langSysTagIden, ushort offset)
             {
@@ -149,24 +149,23 @@ namespace Typography.OpenFont.Tables
             {
                 //---------------------
                 //LangSys table
-                //Type 	    Name 	        Description
-                //Offset16 	LookupOrder 	= NULL (reserved for an offset to a reordering table)
-                //uint16 	ReqFeatureIndex Index of a feature required for this language system- if no required features = 0xFFFF
-                //uint16 	FeatureCount 	Number of FeatureIndex values for this language system-excludes the required feature
-                //uint16 	FeatureIndex[FeatureCount] 	Array of indices into the FeatureList-in arbitrary order
+                //Type 	    Name 	                    Description
+                //Offset16 	lookupOrder 	            = NULL (reserved for an offset to a reordering table)
+                //uint16 	requiredFeatureIndex        Index of a feature required for this language system- if no required features = 0xFFFF
+                //uint16 	featureIndexCount 	            Number of FeatureIndex values for this language system-excludes the required feature
+                //uint16 	featureIndices[featureIndexCount] 	Array of indices into the FeatureList-in arbitrary order
                 //---------------------
+
                 ushort lookupOrder = reader.ReadUInt16();//reserve
-                RequireFeatureIndex = reader.ReadUInt16();
-                ushort featureCount = reader.ReadUInt16();
-                featureIndexList = Utils.ReadUInt16Array(reader, featureCount);
+                RequiredFeatureIndex = reader.ReadUInt16();
+                ushort featureIndexCount = reader.ReadUInt16();
+                featureIndexList = Utils.ReadUInt16Array(reader, featureIndexCount);
 
             }
-            public bool HasRequireFeature => RequireFeatureIndex != 0xFFFF;
+            public bool HasRequireFeature => RequiredFeatureIndex != 0xFFFF;
+            public string LangSysTagIdenString => (langSysTagIden == 0) ? "" : Utils.TagToString(langSysTagIden);
 #if DEBUG
-            public override string ToString()
-            {
-                return Utils.TagToString(langSysTagIden);
-            }
+            public override string ToString() => LangSysTagIdenString;
 #endif
 
         }

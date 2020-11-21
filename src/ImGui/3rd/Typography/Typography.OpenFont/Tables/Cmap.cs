@@ -51,7 +51,7 @@ namespace Typography.OpenFont.Tables
 
 
     ////////////////////////////////////////////////////////////////////////
-    //from https://www.microsoft.com/typography/developers/opentype/detail.htm
+    //from https://docs.microsoft.com/en-us/typography/opentype/processing-part2
     //CMAP Table
     //Every glyph in a TrueType font is identified by a unique Glyph ID (GID),
     //a simple sequential numbering of all the glyphs in the font. 
@@ -73,6 +73,8 @@ namespace Typography.OpenFont.Tables
 
     partial class Cmap : TableEntry
     {
+        //https://docs.microsoft.com/en-us/typography/opentype/spec/cmap
+
         public const string _N = "cmap";
         public override string Name => _N;
 
@@ -90,7 +92,7 @@ namespace Typography.OpenFont.Tables
 
         public ushort GetGlyphIndex(int codepoint, int nextCodepoint, out bool skipNextCodepoint)
         {
-            // https://www.microsoft.com/typography/OTSPEC/cmap.htm
+            // https://docs.microsoft.com/en-us/typography/opentype/spec/cmap
             // "character codes that do not correspond to any glyph in the font should be mapped to glyph index 0."
 
             skipNextCodepoint = false; //default
@@ -101,7 +103,7 @@ namespace Typography.OpenFont.Tables
                 {
                     CharacterMap cmap = _charMaps[i];
 
-                    //https://www.microsoft.com/typography/OTSPEC/cmap.htm 
+                   
 
                     if (found == 0)
                     {
@@ -111,10 +113,10 @@ namespace Typography.OpenFont.Tables
                     {
                         //...When building a Unicode font for Windows, 
                         // the platform ID should be 3 and the encoding ID should be 1
-                        ushort gid = cmap.GetGlyphIndex(codepoint);
-                        if (gid != 0)
+                        ushort glyphIndex = cmap.GetGlyphIndex(codepoint); //glyphIndex=> gid
+                        if (glyphIndex != 0)
                         {
-                            found = gid;
+                            found = glyphIndex;
                         }
                     }
                 }
@@ -128,11 +130,11 @@ namespace Typography.OpenFont.Tables
             {
                 foreach (CharMapFormat14 cmap14 in _charMap14List)
                 {
-                    ushort gid = cmap14.CharacterPairToGlyphIndex(codepoint, found, nextCodepoint);
-                    if (gid > 0)
+                    ushort glyphIndex = cmap14.CharacterPairToGlyphIndex(codepoint, found, nextCodepoint);
+                    if (glyphIndex > 0)
                     {
                         skipNextCodepoint = true;
-                        return gid;
+                        return glyphIndex;
                     }
                 }
             }
@@ -406,9 +408,9 @@ namespace Typography.OpenFont.Tables
 
         public void CollectUnicode(List<uint> unicodes)
         {
-            foreach (CharacterMap cmap in _charMaps)
+            for (int i = 0; i < _charMaps.Length; ++i)
             {
-                cmap.CollectUnicodeChars(unicodes);
+                _charMaps[i].CollectUnicodeChars(unicodes);
             }
         }
     }

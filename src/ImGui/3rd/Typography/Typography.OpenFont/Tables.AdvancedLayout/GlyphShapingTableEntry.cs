@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Typography.OpenFont.Tables
 {
-    //from https://www.microsoft.com/typography/otspec/otff.htm#otttables
+    //from https://docs.microsoft.com/en-us/typography/opentype/spec/otff#otttables
     //Data Types
 
     // The following data types are used in the OpenType font file.All OpenType fonts use Motorola-style byte ordering (Big Endian):
@@ -25,8 +25,8 @@ namespace Typography.OpenFont.Tables
     // Offset16   Short offset to a table, same as uint16, NULL offset = 0x0000
     // Offset32   Long offset to a table, same as uint32, NULL offset = 0x00000000
 
-    // https://www.microsoft.com/typography/otspec/GPOS.htm
-    // https://www.microsoft.com/typography/otspec/GSUB.htm
+    // https://docs.microsoft.com/en-us/typography/opentype/spec/gpos
+    // https://docs.microsoft.com/en-us/typography/opentype/spec/gsub
 
     public abstract class GlyphShapingTableEntry : TableEntry
     {
@@ -37,6 +37,10 @@ namespace Typography.OpenFont.Tables
         public ScriptList ScriptList { get; private set; }
         public FeatureList FeatureList { get; private set; }
 
+        /// <summary>
+        /// read script_list, feature_list, and skip look up table
+        /// </summary>
+        internal bool OnlyScriptList { get; set; } //
 
         protected override void ReadContentFrom(BinaryReader reader)
         {
@@ -78,10 +82,14 @@ namespace Typography.OpenFont.Tables
             //-----------------------
             //1. scriptlist
             ScriptList = ScriptList.CreateFrom(reader, tableStartAt + scriptListOffset);
+
+            if (OnlyScriptList) return; //for preview script-list and feature list only
+
             //-----------------------
             //2. feature list
+
             FeatureList = FeatureList.CreateFrom(reader, tableStartAt + featureListOffset);
-            //-----------------------
+
             //3. lookup list
             ReadLookupListTable(reader, tableStartAt + lookupListOffset);
 
@@ -95,7 +103,7 @@ namespace Typography.OpenFont.Tables
 
         void ReadLookupListTable(BinaryReader reader, long lookupListBeginAt)
         {
-            // https://www.microsoft.com/typography/otspec/chapter2.htm
+            //https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2
             // -----------------------
             // LookupList table
             // -----------------------
@@ -162,7 +170,8 @@ namespace Typography.OpenFont.Tables
             //0x0002  ignoreBaseGlyphs        If set, skips over base glyphs
             //0x0004  ignoreLigatures         If set, skips over ligatures
             //0x0008  ignoreMarks             If set, skips over all combining marks
-            //0x0010  useMarkFilteringSet     If set, indicates that the lookup table structure is followed by a MarkFilteringSet field.The layout engine skips over all mark glyphs not in the mark filtering set indicated.
+            //0x0010  useMarkFilteringSet     If set, indicates that the lookup table structure is followed by a MarkFilteringSet field.
+            //                                The layout engine skips over all mark glyphs not in the mark filtering set indicated.
             //0x00E0  reserved                For future use(Set to zero)
             //0xFF00  markAttachmentType      If not zero, skips over all marks of attachment type different from specified.
             // --------------------------------
@@ -174,7 +183,7 @@ namespace Typography.OpenFont.Tables
 
             //----------------------------------------------
             //load each sub table
-            //https://www.microsoft.com/typography/otspec/chapter2.htm
+            
             foreach (ushort lookupTableOffset in lookupTableOffsets)
             {
                 long lookupTablePos = lookupListBeginAt + lookupTableOffset;

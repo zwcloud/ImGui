@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Typography.OpenFont.Tables
 {
-    //https://www.microsoft.com/typography/otspec/chapter2.htm
+    //https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2
     //----------------------------
     //Class Definition Table
     //----------------------------
@@ -134,7 +134,7 @@ namespace Typography.OpenFont.Tables
             }
             return classDefTable;
         }
-        internal struct ClassRangeRecord
+        internal readonly struct ClassRangeRecord
         {
             //---------------------------------------
             //

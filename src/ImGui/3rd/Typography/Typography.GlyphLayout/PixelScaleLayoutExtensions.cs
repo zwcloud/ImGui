@@ -9,7 +9,7 @@ namespace Typography.TextLayout
     /// scaled glyph plan to specfic font size.
     /// offsetX,offsetY,advanceX are adjusted to fit with specific font size    
     /// </summary>
-    public struct PxScaledGlyphPlan
+    public readonly struct PxScaledGlyphPlan
     {
         public readonly ushort input_cp_offset;
         public readonly ushort glyphIndex;
@@ -21,17 +21,17 @@ namespace Typography.TextLayout
             this.OffsetY = offsetY;
             this.AdvanceX = advanceW;
         }
-        public float AdvanceX { get; private set; }
+        public readonly float AdvanceX;
         /// <summary>
         /// x offset from current position
         /// </summary>
-        public float OffsetX { get; private set; }
+        public readonly float OffsetX;
         /// <summary>
         /// y offset from current position
         /// </summary>
-        public float OffsetY { get; private set; }
+        public readonly float OffsetY;
 
-        public bool AdvanceMoveForward { get { return this.AdvanceX > 0; } }
+        public bool AdvanceMoveForward => this.AdvanceX > 0;
 
 #if DEBUG
         public override string ToString()
@@ -123,18 +123,9 @@ namespace Typography.TextLayout
 
         int _exactX;
         int _exactY;
-
+        bool _rightToLeft;
         ushort _currentGlyphIndex;
-        public GlyphPlanSequenceSnapPixelScaleLayout(GlyphPlanSequence glyphPlans, float pxscale)
-        {
-            _seq = glyphPlans;
-            _pxscale = pxscale;
-            _accW = 0;
-            _index = glyphPlans.startAt;
-            _end = glyphPlans.startAt + glyphPlans.len;
-            _exactX = _exactY = 0;
-            _currentGlyphIndex = 0;
-        }
+
         public GlyphPlanSequenceSnapPixelScaleLayout(GlyphPlanSequence glyphPlans, int start, int len, float pxscale)
         {
             _seq = glyphPlans;
@@ -144,37 +135,140 @@ namespace Typography.TextLayout
             _end = start + len;
             _exactX = _exactY = 0;
             _currentGlyphIndex = 0;
+            _limitW = 0;
+
+            if (_rightToLeft = glyphPlans.IsRightToLeft)
+            {
+                _index = _end - 1;
+            }
         }
-        //
         public ushort CurrentGlyphIndex => _currentGlyphIndex;
         public int CurrentIndex => _index;
         //
         public bool Read()
         {
-            if (_index >= _end)
+            if (_rightToLeft)
+            {
+                if (_index < 0)
+                {
+                    return false;
+                }
+
+                //read current 
+                UnscaledGlyphPlan unscale = _seq[_index];
+
+                short scaled_advW = (short)Math.Round(unscale.AdvanceX * _pxscale);
+                short scaled_offsetX = (short)Math.Round(unscale.OffsetX * _pxscale);
+                short scaled_offsetY = (short)Math.Round(unscale.OffsetY * _pxscale);
+
+                _exactX = _accW + scaled_offsetX;
+                _exactY = scaled_offsetY;
+                _accW += scaled_advW;
+
+                _currentGlyphIndex = unscale.glyphIndex;
+                _index--;
+                return true;
+            }
+            else
             {
 
-                return false;
+                if (_index >= _end)
+                {
+                    return false;
+                }
+
+                //read current 
+                UnscaledGlyphPlan unscale = _seq[_index];
+
+                short scaled_advW = (short)Math.Round(unscale.AdvanceX * _pxscale);
+                short scaled_offsetX = (short)Math.Round(unscale.OffsetX * _pxscale);
+                short scaled_offsetY = (short)Math.Round(unscale.OffsetY * _pxscale);
+
+                _exactX = _accW + scaled_offsetX;
+                _exactY = scaled_offsetY;
+                _accW += scaled_advW;
+
+                _currentGlyphIndex = unscale.glyphIndex;
+                _index++;
+                return true;
             }
-
-            //read current 
-            UnscaledGlyphPlan unscale = _seq[_index];
-
-            short scaled_advW = (short)Math.Round(unscale.AdvanceX * _pxscale);
-            short scaled_offsetX = (short)Math.Round(unscale.OffsetX * _pxscale);
-            short scaled_offsetY = (short)Math.Round(unscale.OffsetY * _pxscale);
-
-            _exactX = _accW + scaled_offsetX;
-            _exactY = scaled_offsetY;
-            _accW += scaled_advW;
-
-            _currentGlyphIndex = unscale.glyphIndex;
-            _index++;
-            return true;
         }
+
+        public void ReadToEnd()
+        {
+            while (Read()) ;
+        }
+
         public int AccumWidth => _accW;
         public int ExactX => _exactX;
         public int ExactY => _exactY;
+
+        int _limitW;
+        public void ReadWidthLimitWidth(int limitWidth)
+        {
+            _limitW = limitWidth;
+            while (ReadWidthLimitWidth()) ;
+        }
+        bool ReadWidthLimitWidth()
+        {
+            if (_rightToLeft)
+            {
+                if (_index < 0)
+                {
+                    return false;
+                }
+
+                //read current 
+                UnscaledGlyphPlan unscale = _seq[_index];
+
+                short scaled_advW = (short)Math.Round(unscale.AdvanceX * _pxscale);
+                short scaled_offsetX = (short)Math.Round(unscale.OffsetX * _pxscale);
+                short scaled_offsetY = (short)Math.Round(unscale.OffsetY * _pxscale);
+
+                if (_accW + scaled_advW > _limitW)
+                {
+                    //stop
+                    return false;
+                }
+
+                _exactX = _accW + scaled_offsetX;
+                _exactY = scaled_offsetY;
+                _accW += scaled_advW;
+
+                _currentGlyphIndex = unscale.glyphIndex;
+                _index--;
+                return true;
+            }
+            else
+            {
+
+                if (_index >= _end)
+                {
+                    return false;
+                }
+
+                //read current 
+                UnscaledGlyphPlan unscale = _seq[_index];
+
+                short scaled_advW = (short)Math.Round(unscale.AdvanceX * _pxscale);
+                short scaled_offsetX = (short)Math.Round(unscale.OffsetX * _pxscale);
+                short scaled_offsetY = (short)Math.Round(unscale.OffsetY * _pxscale);
+
+                if (_accW + scaled_advW > _limitW)
+                {
+                    //stop
+                    return false;
+                }
+
+                _exactX = _accW + scaled_offsetX;
+                _exactY = scaled_offsetY;
+                _accW += scaled_advW;
+
+                _currentGlyphIndex = unscale.glyphIndex;
+                _index++;
+                return true;
+            }
+        }
     }
     public static class PixelScaleLayoutExtensions
     {
@@ -257,7 +351,7 @@ namespace Typography.TextLayout
                 for (int i = 0; i < finalGlyphCount; ++i)
                 {
 
-                     //all from pen-pos
+                    //all from pen-pos
                     ushort glyphIndex = glyphPositions.GetGlyph(i,
                         out ushort input_offset,
                         out short offsetX,
