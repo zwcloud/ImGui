@@ -55,17 +55,25 @@ namespace ImGui
 
             // interact
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
-            node.State = (hovered && held) ? GUIState.Active : hovered ? GUIState.Hover : GUIState.Normal;
             if(pressed)
             {
                 var screenPos = Form.current.ClientToScreen(comboBoxContext.Rect.TopLeft);
                 var screenRect = new Rect(screenPos, comboBoxContext.Rect.Size);
-                comboBoxContext.ItemsContainer = new ComboxBoxItemsForm(
-                    screenRect,
-                    comboBoxContext.Texts, 
-                    i => comboBoxContext.SelectedIndex = i);
-                Application.Forms.Add(comboBoxContext.ItemsContainer);
-                comboBoxContext.ItemsContainer.Show();
+                Application.AddFrom(()=>
+                {
+                    var form = new ComboxBoxItemsForm(
+                        screenRect,
+                        comboBoxContext.Texts,
+                        i => comboBoxContext.SelectedIndex = i);
+                    comboBoxContext.ItemsContainer = form;
+                    return form;
+                });
+                node.State = GUIState.Active;
+            }
+
+            if (node.State == Active)
+            {
+                comboBoxContext.ItemsContainer?.Show();
             }
 
             comboBoxContext.Text = comboBoxContext.Texts[comboBoxContext.SelectedIndex];
@@ -121,7 +129,7 @@ namespace ImGui
         private System.Action<int> CallBack { get; set; }
 
         public ComboxBoxItemsForm(Rect rect, string[] texts, System.Action<int> callBack)
-            : base(rect)
+            : base(rect, "comboBoxForm", WindowTypes.ToolBox)
         {
             textList = new List<string>(texts);
             CallBack = callBack;
@@ -141,7 +149,7 @@ namespace ImGui
                         CallBack(i);
                     }
                     this.Hide();
-                    Application.Forms.Remove(this);
+                    Application.RemoveForm(this);
                 }
             }
             GUILayout.EndVertical();
