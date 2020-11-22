@@ -115,7 +115,7 @@ namespace ImGui
             UpdateDebugToolItemPicker();
 
             // Create implicit debug window - we will only render it if the user has added something to it.
-            GUI.Begin("Debug", ref this.debugWindowOpen, Application.InitialDebugWindowRect, 0.8);
+            GUI.Begin("Debug" + this.debugName, ref this.debugWindowOpen, Application.InitialDebugWindowRect, 0.8);
         }
 
         internal void EndFrame()
@@ -153,6 +153,9 @@ namespace ImGui
         /// </summary>
         internal void GUILoop()
         {
+            //Since renderer is possibly used by all methods below, bind here.
+            this.renderer.Bind();
+
             this.NewFrame();
 
             this.OnGUI();
@@ -166,10 +169,13 @@ namespace ImGui
                 //Status logging is time consuming, so we lower down the fps by sleeping here.
                 Thread.Sleep(40);
             }
+
+            this.renderer.Unbind();
         }
 
         internal void Render()
         {
+
             GUIContext g = this.uiContext;
             WindowManager w = g.WindowManager;
 

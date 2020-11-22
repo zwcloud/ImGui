@@ -4,6 +4,7 @@ using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.OSImplementation.Shared;
 

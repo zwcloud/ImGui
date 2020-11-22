@@ -17,6 +17,7 @@ namespace ImGui
 
         internal IRenderer renderer;
         internal GUIContext uiContext = new GUIContext();
+        private string debugName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form"/> class at specific rectangle.
@@ -26,11 +27,20 @@ namespace ImGui
         {
         }
 
-        internal Form(Point position, Size size, string Title = "ImGui Form")
+        internal Form(Rect rect, string title, WindowTypes type)
+            : this(rect.TopLeft, rect.Size, title, type)
         {
+        }
+
+        internal Form(Point position, Size size, string title = "ImGui Form",
+            WindowTypes type = WindowTypes.Regular)
+        {
+            this.debugName = title;
+
             Profile.Start("Create Window");
-            this.nativeWindow = Application.PlatformContext.CreateWindow(position, size, WindowTypes.Regular);
-            this.nativeWindow.Title = Title;
+            this.nativeWindow = Application.PlatformContext.CreateWindow(position, size,
+                type);
+            this.nativeWindow.Title = title;
             Profile.End();
 
             Profile.Start("Create Renderer");
