@@ -38,7 +38,7 @@ namespace ImGui
             // draw
             using (var dc = node.RenderOpen())
             {
-                var texture = TextureCache.Default.GetOrAdd(filePath);
+                var texture = TextureCache.Default.GetOrAdd(filePath, Form.current.renderer);
                 dc.DrawBoxModel(texture, node.RuleSet, node.Rect);
             }
         }
@@ -96,7 +96,7 @@ namespace ImGui
             var id = window.GetID(filePath);
             var container = window.RenderTree.CurrentContainer;
             var node = container.GetNodeById(id);
-            var texture = TextureCache.Default.GetOrAdd(filePath);
+            var texture = TextureCache.Default.GetOrAdd(filePath, Form.current.renderer);
             if (node == null)
             {
                 //create node

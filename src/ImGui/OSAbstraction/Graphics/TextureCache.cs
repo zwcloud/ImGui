@@ -1,4 +1,5 @@
-﻿using ImGui.GraphicsAbstraction;
+﻿using System;
+using ImGui.GraphicsAbstraction;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace ImGui.OSAbstraction.Graphics
@@ -9,9 +10,9 @@ namespace ImGui.OSAbstraction.Graphics
 
         private MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 
-        public ITexture GetOrAdd(Image image)
+        public ITexture GetOrAdd(Image image, IRenderer renderer)
         {
-            int key = CalcKey(image);
+            int key = CalcKey(image, renderer);
 
             var texture = cache.Get<ITexture>(key);
             if (texture != null)
@@ -26,9 +27,9 @@ namespace ImGui.OSAbstraction.Graphics
             return texture;
         }
 
-        public ITexture GetOrAdd(string path)
+        public ITexture GetOrAdd(string path, IRenderer renderer)
         {
-            int key = CalcKey(path);
+            int key = CalcKey(path, renderer);
 
             var texture = cache.Get<ITexture>(key);
             if (texture != null)
@@ -44,14 +45,14 @@ namespace ImGui.OSAbstraction.Graphics
             return texture;
         }
 
-        private int CalcKey(string path)
+        private int CalcKey(string path, IRenderer renderer)
         {
-            return path.GetHashCode();
+            return HashCode.Combine(path.GetHashCode(), renderer.GetHashCode());
         }
 
-        private int CalcKey(Image image)
+        private int CalcKey(Image image, IRenderer renderer)
         {
-            return image.GetHashCode();
+            return HashCode.Combine(image.GetHashCode(), renderer.GetHashCode());
         }
     }
 }
