@@ -79,13 +79,13 @@ namespace ImGui.Rendering
 
         public static void DrawImage(this DrawingContext dc, string path)
         {
-            var texture = TextureCache.Default.GetOrAdd(path);
+            var texture = TextureCache.Default.GetOrAdd(path, Form.current.renderer);
             dc.DrawImage(texture, new Rect(texture.Width, texture.Height), Point.Zero, Point.One);
         }
 
         public static void DrawImage(this DrawingContext dc, string path, Rect rect)
         {
-            var texture = TextureCache.Default.GetOrAdd(path);
+            var texture = TextureCache.Default.GetOrAdd(path, Form.current.renderer);
             dc.DrawImage(texture, rect, Point.Zero, Point.One);
         }
 
