@@ -14,6 +14,11 @@ namespace ImGui.OSAbstraction.Graphics
         /// <param name="windowHandle">window handle, this could be some context info needed by the renderer. e.g. win32 HWND</param>
         /// <param name="size">size of default framebuffer</param>
         void Init(IntPtr windowHandle, Size size);
+        
+        /// <summary>
+        /// Use the renderer as the current renderer.
+        /// </summary>
+        void Bind();
 
         /// <summary>
         /// Clear the front buffer
@@ -32,6 +37,11 @@ namespace ImGui.OSAbstraction.Graphics
         /// swap front(what is on the screen) and back(what is rendered by the renderer) buffer
         /// </summary>
         void SwapBuffers();
+        
+        /// <summary>
+        /// Don't use the renderer as the current renderer.
+        /// </summary>
+        void Unbind();
 
         /// <summary>
         /// shut down the renderer
@@ -42,5 +52,6 @@ namespace ImGui.OSAbstraction.Graphics
         /// Get back buffer data
         /// </summary>
         byte[] GetRawBackBuffer(out int width, out int height);
+
     }
 }

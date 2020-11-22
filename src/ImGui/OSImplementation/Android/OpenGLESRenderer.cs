@@ -27,6 +27,11 @@ namespace ImGui.OSImplementation.Android
 
             Utility.CheckGLESError();
         }
+        
+        public void Bind()
+        {
+            //TODO determine if android or other future OpenGLES renders need to Egl.MakeCurrent()
+        }
 
         public void Clear(Color clearColor)
         {
@@ -254,6 +259,11 @@ namespace ImGui.OSImplementation.Android
             GL.ClearColor(last_clear_color_r, last_clear_color_g, last_clear_color_b, last_clear_color_a);
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
             GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
+        }
+
+        public void Unbind()
+        {
+            //TODO determine if android or other future OpenGLES renders need to Egl.MakeCurrent()
         }
 
         public void ShutDown()

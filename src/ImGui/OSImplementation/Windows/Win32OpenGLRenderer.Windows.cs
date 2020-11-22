@@ -104,7 +104,7 @@ namespace ImGui.OSImplementation.Windows
         public static extern IntPtr wglCreateContext(IntPtr hDC);
 
         [DllImport("opengl32.dll", SetLastError = true)]
-        private static extern bool wglMakeCurrent(IntPtr hDC, IntPtr hRC);
+        public static extern bool wglMakeCurrent(IntPtr hDC, IntPtr hRC);
 
         [DllImport("gdi32.dll", SetLastError = true, ExactSpelling = true)]
         public static extern bool SwapBuffers(IntPtr hdc);
@@ -117,7 +117,7 @@ namespace ImGui.OSImplementation.Windows
 
         #region Wgl
 
-        class Wgl
+        internal class Wgl
         {
             [DllImport("OPENGL32.DLL", EntryPoint = "wglGetProcAddress", ExactSpelling = true, SetLastError = true)]
             internal static extern IntPtr GetProcAddress(string lpszProc);
@@ -129,7 +129,14 @@ namespace ImGui.OSImplementation.Windows
             internal static extern IntPtr CreateContext(IntPtr hDc);
 
             [DllImport("OPENGL32.DLL", EntryPoint = "wglMakeCurrent", ExactSpelling = true, SetLastError = true)]
-            internal static extern bool MakeCurrent(IntPtr hDc, IntPtr newContext);
+            internal static extern bool Native_MakeCurrent(IntPtr hDc, IntPtr newContext);
+
+            internal static bool MakeCurrent(IntPtr hDc, IntPtr hglrc)
+            {
+                bool result = Native_MakeCurrent(hDc, hglrc);
+                Debug.WriteLine($"Wgl.MakeCurrent {hglrc} {result}");
+                return result;
+            }
 
             [DllImport("OPENGL32.DLL", EntryPoint = "wglDeleteContext", ExactSpelling = true, SetLastError = true)]
             internal static extern bool DeleteContext(IntPtr oldContext);
@@ -491,9 +498,9 @@ namespace ImGui.OSImplementation.Windows
                 ReleaseDC(tempHwnd, tempHdc);
                 DestroyWindow(tempHwnd);
 
-                if (!wglMakeCurrent(this.hDC, this.hglrc))
+                if (!Wgl.MakeCurrent(this.hDC, this.hglrc))
                 {
-                    throw new Exception(string.Format("wglMakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
+                    throw new Exception(string.Format("Wgl.MakeCurrent failed: error {0}", Marshal.GetLastWin32Error()));
                 }
 
                 Utility.CheckGLError();
@@ -567,8 +574,8 @@ namespace ImGui.OSImplementation.Windows
 
         private void DeleteOpenGLContext()
         {
-            wglMakeCurrent(IntPtr.Zero, IntPtr.Zero);
-            wglDeleteContext(this.hglrc);
+            Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+            Wgl.DeleteContext(this.hglrc);
             ReleaseDC(this.hwnd, this.hDC);
         }
     }

@@ -40,6 +40,11 @@ namespace ImGui.OSImplementation.Linux
 
             Utility.CheckGLESError();
         }
+        
+        public void Bind()
+        {
+            //TODO consider Linux usage base on libxcb and GLX
+        }
 
         public void Clear(Color clearColor)
         {
@@ -272,6 +277,11 @@ namespace ImGui.OSImplementation.Linux
         public void SwapBuffers()
         {
             eglSwapBuffers(this.display, this.surface);
+        }
+
+        public void Unbind()
+        {
+            //TODO consider Linux usage base on libxcb and GLX
         }
 
         public void ShutDown()

@@ -84,6 +84,12 @@ namespace ImGui.OSImplementation.Windows
             Utility.CheckGLError();
         }
 
+        public void Bind()
+        {
+            Wgl.MakeCurrent(hDC, hglrc);
+            Debug.Assert(Wgl.GetCurrentContext() == hglrc);
+        }
+
         public void Clear(Color clearColor)
         {
             GL.ClearColor((float)clearColor.R, (float)clearColor.G, (float)clearColor.B, (float)clearColor.A);
@@ -300,6 +306,12 @@ namespace ImGui.OSImplementation.Windows
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, quadMesh.IndexBuffer.Count * Marshal.SizeOf<DrawIndex>(), quadMesh.IndexBuffer.Pointer, GL.GL_STREAM_DRAW);
             GL.DrawElements(GL.GL_TRIANGLES, quadMesh.CommandBuffer[0].ElemCount, GL.GL_UNSIGNED_INT, IntPtr.Zero);
             Utility.CheckGLError();
+        }
+
+        public void Unbind()
+        {
+            Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+            Debug.Assert(Wgl.GetCurrentContext() == IntPtr.Zero);
         }
 
         public void ShutDown()

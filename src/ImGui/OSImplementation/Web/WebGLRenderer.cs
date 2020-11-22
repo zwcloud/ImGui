@@ -107,8 +107,7 @@ void main()
 
         public void Init(IntPtr windowHandle, Size size)
         {
-            //CreateOpenGLContext((IntPtr)windowHandle);//done in Xamarin.Android
-            //InitGLEW();//done in Xamarin.Android
+            //CreateOpenGLContext((IntPtr)windowHandle);//done by the browser
 
             this.shapeMaterial.Init();
             this.imageMaterial.Init();
@@ -121,6 +120,12 @@ void main()
             GL.Enable(GL.GL_SCISSOR_TEST);
 
             Utility.CheckGLESError();
+        }
+
+        public void Bind()
+        {
+            //nothing to do:
+            //a web browser will call `MakeCurrent` internally for each WebGLRenderingContext
         }
 
         public void Clear(Color clearColor)
@@ -349,6 +354,11 @@ void main()
             GL.ClearColor(last_clear_color_r, last_clear_color_g, last_clear_color_b, last_clear_color_a);
             GL.Viewport((int)last_viewport.X, (int)last_viewport.Y, (int)last_viewport.Width, (int)last_viewport.Height);
             GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
+        }
+
+        public void Unbind()
+        {
+            //a web browser will call `MakeCurrent` internally for each WebGLRenderingContext
         }
 
         public void ShutDown()
