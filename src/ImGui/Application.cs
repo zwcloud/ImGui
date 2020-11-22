@@ -27,6 +27,8 @@ namespace ImGui
     public static class Application
     {
         internal static List<Form> Forms = new List<Form>();
+        private static List<Func<Form>> addedFromList = new List<Func<Form>>();
+        private static List<Form> removedFromList = new List<Form>();
         internal static OSAbstraction.PlatformContext PlatformContext;
 
         internal static void InitSysDependencies()
@@ -94,6 +96,24 @@ namespace ImGui
                 Time.OnFrameBegin();
                 Keyboard.Instance.OnFrameBegin();
 
+                if (addedFromList.Count > 0)
+                {
+                    foreach (var fromCreator in addedFromList)
+                    {
+                        var form = fromCreator();
+                        Forms.Add(form);
+                    }
+                    addedFromList.Clear();
+                }
+                if (removedFromList.Count > 0)
+                {
+                    foreach (var form in removedFromList)
+                    {
+                        Forms.Remove(form);
+                    }
+                    removedFromList.Clear();
+                }
+
                 foreach (Form childForm in Forms)
                 {
                     childForm.MainLoop(childForm.GUILoop);
@@ -111,7 +131,7 @@ namespace ImGui
 
         public static void Init(Form mainForm)
         {
-            //Check paramter
+            //Check parameter
             if (mainForm == null)
             {
                 throw new ArgumentNullException(nameof(mainForm));
@@ -159,5 +179,23 @@ namespace ImGui
         internal static Rect InitialDebugWindowRect { get; set; } = new Rect(80, 80, 400, 250);
 
         internal static ILogger Logger;
+
+        public static void AddFrom(Func<Form> formCreator)
+        {
+            addedFromList.Add(formCreator);
+        }
+
+        public static void RemoveForm(Form form)
+        {
+            if (form == null)
+            {
+                throw new ArgumentNullException(nameof(form));
+            }
+            if (!Forms.Contains(form))
+            {
+                throw new InvalidOperationException("Form hasn't been added, cannot remove.");
+            }
+            removedFromList.Add(form);
+        }
     }
 }
