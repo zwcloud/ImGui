@@ -26,6 +26,7 @@ namespace ImGui
     /// </remarks>
     public static class Application
     {
+        internal static Form MainForm { get; private set; }
         internal static List<Form> Forms = new List<Form>();
         private static List<Func<Form>> addedFromList = new List<Func<Form>>();
         private static List<Form> removedFromList = new List<Form>();
@@ -89,6 +90,7 @@ namespace ImGui
         /// <param name="mainForm">A <see cref="Form"/> that represents the form to make visible.</param>
         public static void Run(Form mainForm)
         {
+            MainForm = mainForm;
             Init(mainForm);
 
             while (!mainForm.Closed)

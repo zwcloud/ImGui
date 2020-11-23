@@ -201,6 +201,9 @@ namespace ImGui.OSImplementation.Windows
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
         private static readonly IntPtr TRUE = new IntPtr(1);
         private static readonly IntPtr FALSE = IntPtr.Zero;
 
@@ -354,12 +357,9 @@ namespace ImGui.OSImplementation.Windows
             switch (windowType)
             {
                 case WindowTypes.Regular:
-                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_VISIBLE;
+                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPCHILDREN;
                     break;
-                case WindowTypes.ToolBox:
-                    windowStyle = WindowStyles.WS_DLGFRAME;
-                    break;
-                case WindowTypes.ToolTip:
+                case WindowTypes.ClientAreaOnly:
                     windowStyle = WindowStyles.WS_POPUP;
                     break;
                 case WindowTypes.Hidden:
@@ -389,7 +389,7 @@ namespace ImGui.OSImplementation.Windows
             IntPtr hwnd = CreateWindowEx(
                 0/*0x00000008*//*WS_EX_TOPMOST*/,// window style ex //HACK always on top
                 new IntPtr(atom), // window class name
-                "ImGuiWindow~", // window caption
+                windowType == WindowTypes.ClientAreaOnly? string.Empty : "ImGuiWindow~", // window caption
                 (uint)windowStyle, // window style
                 rc.left, // initial x position
                 rc.top, // initial y position
@@ -403,6 +403,16 @@ namespace ImGui.OSImplementation.Windows
             if (hwnd == IntPtr.Zero)
             {
                 throw new WindowCreateException(string.Format("CreateWindowEx error: {0}", Marshal.GetLastWin32Error()));
+            }
+
+            if (windowType == WindowTypes.ClientAreaOnly)
+            {
+                var parent = Application.MainForm.Pointer;
+                if (SetParent(hwnd, parent) == IntPtr.Zero)
+                {
+                    throw new WindowCreateException(
+                        $"SetParentError error: {Marshal.GetLastWin32Error()}");
+                }
             }
 
             this.hwnd = hwnd;

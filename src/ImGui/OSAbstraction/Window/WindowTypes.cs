@@ -6,8 +6,7 @@ namespace ImGui
     internal enum WindowTypes
     {
         Regular,
-        ToolBox,
-        ToolTip,
+        ClientAreaOnly,
         Hidden,
     }
 }
