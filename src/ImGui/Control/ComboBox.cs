@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ImGui.Rendering;
 
 //BUG Hover state persists when move from mainRect to outside.
@@ -39,10 +40,23 @@ namespace ImGui
                 container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.ComboBox]);
-                
+
+                var maxLength = 0;
+                var maxLengthString = string.Empty;
+                foreach (var s in texts)
+                {
+                    if (s.Length <= maxLength) continue;
+                    maxLength = s.Length;
+                    maxLengthString = s;
+                }
+
+                var size = node.RuleSet.CalcSize(maxLengthString);
+                size.Height *= texts.Length;
+                var comboxBoxWindowRect = new Rect(size);
+
                 //set initial states TODO move to shared storage
                 comboBoxContext = new ComboBoxContext();
-                comboBoxContext.Rect = rect;
+                comboBoxContext.Rect = comboxBoxWindowRect;
                 comboBoxContext.Texts = texts;
                 comboBoxContext.Text = texts[0];
                 comboBoxContext.SelectedIndex = 0;
@@ -57,7 +71,7 @@ namespace ImGui
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             if(pressed)
             {
-                var screenPos = Form.current.ClientToScreen(comboBoxContext.Rect.TopLeft);
+                var screenPos = Form.current.ClientToScreen(node.Rect.BottomLeft);
                 var screenRect = new Rect(screenPos, comboBoxContext.Rect.Size);
                 Application.AddFrom(()=>
                 {
@@ -66,6 +80,7 @@ namespace ImGui
                         comboBoxContext.Texts,
                         i => comboBoxContext.SelectedIndex = i);
                     comboBoxContext.ItemsContainer = form;
+                    form.BackgroundColor = Color.Peru;
                     return form;
                 });
                 node.State = GUIState.Active;
@@ -129,7 +144,7 @@ namespace ImGui
         private System.Action<int> CallBack { get; set; }
 
         public ComboxBoxItemsForm(Rect rect, string[] texts, System.Action<int> callBack)
-            : base(rect, "comboBoxForm", WindowTypes.ToolBox)
+            : base(rect, "comboBoxForm", WindowTypes.ClientAreaOnly)
         {
             textList = new List<string>(texts);
             CallBack = callBack;
