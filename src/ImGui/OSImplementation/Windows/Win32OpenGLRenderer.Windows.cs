@@ -133,9 +133,7 @@ namespace ImGui.OSImplementation.Windows
 
             internal static bool MakeCurrent(IntPtr hDc, IntPtr hglrc)
             {
-                bool result = Native_MakeCurrent(hDc, hglrc);
-                Debug.WriteLine($"Wgl.MakeCurrent {hglrc} {result}");
-                return result;
+                return Native_MakeCurrent(hDc, hglrc);
             }
 
             [DllImport("OPENGL32.DLL", EntryPoint = "wglDeleteContext", ExactSpelling = true, SetLastError = true)]
