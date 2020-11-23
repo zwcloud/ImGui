@@ -38,9 +38,11 @@ namespace ImGui
             this.debugName = title;
 
             Profile.Start("Create Window");
-            this.nativeWindow = Application.PlatformContext.CreateWindow(position, size,
-                type);
-            this.nativeWindow.Title = title;
+            this.nativeWindow = Application.PlatformContext.CreateWindow(position, size, type);
+            if (type == WindowTypes.Regular)
+            {
+                this.nativeWindow.Title = title;
+            }
             Profile.End();
 
             Profile.Start("Create Renderer");

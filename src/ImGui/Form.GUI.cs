@@ -175,7 +175,6 @@ namespace ImGui
 
         internal void Render()
         {
-
             GUIContext g = this.uiContext;
             WindowManager w = g.WindowManager;
 
@@ -221,6 +220,11 @@ namespace ImGui
 
         internal void Log()
         {
+            if (this != Application.MainForm)
+            {
+                return;
+            }
+
             GUIContext g = this.uiContext;
 
             this.nativeWindow.Title =
