@@ -8,20 +8,20 @@ using ImGui.Rendering;
 
 namespace ImGui
 {
+    class ComboBoxContext
+    {
+        public string[] Texts { get; set; }
+        public Form ItemsContainer { get; set; }
+
+        public int SelectedIndex { get; set; }
+        public Rect Rect { get; set; }
+
+        public string Text { get; set; }
+    }
+
     public partial class GUI
     {
-        class ComboBoxContext
-        {
-            public string[] Texts { get; set; }
-            public Form ItemsContainer { get; set; }
-
-            public int SelectedIndex { get; set; }
-            public Rect Rect { get; set; }
-
-            public string Text { get; set; }
-        }
-
-        private static ComboBoxContext comboBoxContext;//TODO move this to Window.storage
+        internal static ComboBoxContext comboBoxContext;//TODO move this to Window.storage
 
         public static int ComboBox(Rect rect, string[] texts)
         {
@@ -40,26 +40,12 @@ namespace ImGui
                 container.Add(node);
                 node.UseBoxModel = true;
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.ComboBox]);
-
-                var maxLength = 0;
-                var maxLengthString = string.Empty;
-                foreach (var s in texts)
-                {
-                    if (s.Length <= maxLength) continue;
-                    maxLength = s.Length;
-                    maxLengthString = s;
-                }
-
-                var size = node.RuleSet.CalcSize(maxLengthString);
-                size.Height *= texts.Length;
-                var comboxBoxWindowRect = new Rect(size);
-
                 //set initial states TODO move to shared storage
-                comboBoxContext = new ComboBoxContext();
-                comboBoxContext.Rect = comboxBoxWindowRect;
-                comboBoxContext.Texts = texts;
-                comboBoxContext.Text = texts[0];
-                comboBoxContext.SelectedIndex = 0;
+                GUI.comboBoxContext = new ComboBoxContext();
+                GUI.comboBoxContext.Rect = rect;
+                GUI.comboBoxContext.Texts = texts;
+                GUI.comboBoxContext.Text = texts[0];
+                GUI.comboBoxContext.SelectedIndex = 0;
             }
             node.RuleSet.ApplyStack();
             node.ActiveSelf = true;
@@ -71,16 +57,13 @@ namespace ImGui
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             if(pressed)
             {
-                var screenPos = Form.current.ClientToScreen(node.Rect.BottomLeft);
-                var screenRect = new Rect(screenPos, comboBoxContext.Rect.Size);
                 Application.AddFrom(()=>
                 {
-                    var form = new ComboxBoxItemsForm(
-                        screenRect,
+                    var form = ComboBoxItemsForm.Create(
                         comboBoxContext.Texts,
+                        node,
                         i => comboBoxContext.SelectedIndex = i);
                     comboBoxContext.ItemsContainer = form;
-                    form.BackgroundColor = Color.Peru;
                     return form;
                 });
                 node.State = GUIState.Active;
@@ -138,13 +121,37 @@ namespace ImGui
         }
     }
 
-    internal sealed class ComboxBoxItemsForm : Form
+    internal sealed class ComboBoxItemsForm : Form
     {
         private readonly List<string> textList;
         private System.Action<int> CallBack { get; set; }
 
-        public ComboxBoxItemsForm(Rect rect, string[] texts, System.Action<int> callBack)
-            : base(rect, "comboBoxForm", WindowTypes.ClientAreaOnly)
+        public static ComboBoxItemsForm Create(string[] texts, Node attachedNode,
+            System.Action<int> callBack)
+        {
+            var maxLength = 0;
+            var maxLengthString = string.Empty;
+            foreach (var s in texts)
+            {
+                if (s.Length <= maxLength) continue;
+                maxLength = s.Length;
+                maxLengthString = s;
+            }
+
+            var size = attachedNode.RuleSet.CalcSize(maxLengthString);
+            size.Height *= texts.Length;
+            
+            var clientPos = attachedNode.Rect.BottomLeft;
+            var clientRect = new Rect(clientPos, size);
+
+            var form = new ComboBoxItemsForm(clientRect, texts, callBack);
+            
+            form.BackgroundColor = Color.Peru;
+            return form;
+        }
+
+        private ComboBoxItemsForm(Rect rect, string[] texts, System.Action<int> callBack)
+            : base(rect, "comboBoxForm"/*acts as debug name*/, WindowTypes.ClientAreaOnly)
         {
             textList = new List<string>(texts);
             CallBack = callBack;
