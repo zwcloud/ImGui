@@ -12,10 +12,7 @@ namespace ImGui
     {
         public string[] Texts { get; set; }
         public Form ItemsContainer { get; set; }
-
         public int SelectedIndex { get; set; }
-        public Rect Rect { get; set; }
-
         public string Text { get; set; }
     }
 
@@ -42,7 +39,6 @@ namespace ImGui
                 node.RuleSet.Replace(GUISkin.Current[GUIControlName.ComboBox]);
                 //set initial states TODO move to shared storage
                 GUI.comboBoxContext = new ComboBoxContext();
-                GUI.comboBoxContext.Rect = rect;
                 GUI.comboBoxContext.Texts = texts;
                 GUI.comboBoxContext.Text = texts[0];
                 GUI.comboBoxContext.SelectedIndex = 0;
@@ -140,6 +136,8 @@ namespace ImGui
 
             var size = attachedNode.RuleSet.CalcSize(maxLengthString);
             size.Height *= texts.Length;
+
+            size += new Vector(100, 100);
             
             var clientPos = attachedNode.Rect.BottomLeft;
             var clientRect = new Rect(clientPos, size);
@@ -159,22 +157,27 @@ namespace ImGui
 
         protected override void OnGUI()
         {
+            GUI.Begin("ComboBoxWindow", (0, 0), ClientSize,
+                WindowFlags.ShowBorders | WindowFlags.NoTitleBar | WindowFlags.NoCollapse 
+                | WindowFlags.NoMove | WindowFlags.NoResize | WindowFlags.NoScrollbar );
             GUILayout.BeginVertical("CombolBox");
-            for (int i = 0; i < textList.Count; i++)
+            var clickedIndx = -1;
+            for (var i = 0; i < textList.Count; i++)
             {
-                var itemRect = Rect;
-                itemRect.Y += (i + 1) * Rect.Height;
-                if(GUI.Button(new Rect(Rect.Width, itemRect.Height), textList[i]))
+                if(GUILayout.Button(textList[i]))
                 {
-                    if(CallBack!=null)
-                    {
-                        CallBack(i);
-                    }
-                    this.Hide();
-                    Application.RemoveForm(this);
+                    clickedIndx = i;
                 }
             }
             GUILayout.EndVertical();
+            GUI.End();
+
+            if (clickedIndx >= 0)
+            {
+                CallBack?.Invoke(clickedIndx);
+                this.Close();
+                Application.RemoveForm(this);
+            }
         }
     }
 }

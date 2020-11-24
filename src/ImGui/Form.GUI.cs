@@ -175,6 +175,11 @@ namespace ImGui
 
         internal void Render()
         {
+            if (this.Closed)
+            {
+                return;
+            }
+
             GUIContext g = this.uiContext;
             WindowManager w = g.WindowManager;
 
