@@ -123,7 +123,7 @@ namespace ImGui
     {
         public static bool ToggleBehavior(Rect rect, int id, bool value, out bool hovered)
         {
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
 
             hovered = g.IsHovered(rect, id);
             g.KeepAliveID(id);

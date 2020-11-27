@@ -96,8 +96,7 @@ namespace ImGui
 
         public Window(string name, Point position, Size size, WindowFlags Flags)
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
+            GUIContext g = Application.ImGuiContext;
             WindowManager w = g.WindowManager;
 
             this.ID = name.GetHashCode();
@@ -352,7 +351,7 @@ namespace ImGui
             int seed = this.IDStack.Peek();
             var id = this.Hash(seed, int_id);
 
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
             g.KeepAliveID(id);
             return id;
         }
@@ -370,7 +369,7 @@ namespace ImGui
             var subId = string.IsNullOrWhiteSpace(customId) ? str_id.GetHashCode() : customId.GetHashCode();
             var id = this.Hash(seed, subId);
 
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
             g.KeepAliveID(id);
 
             return id;
@@ -382,7 +381,7 @@ namespace ImGui
             int int_id = texture.GetHashCode();
             var id = this.Hash(seed, int_id);
 
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
             g.KeepAliveID(id);
             return id;
         }
@@ -392,7 +391,7 @@ namespace ImGui
             int seed = this.IDStack.Peek();
             var id = this.Hash(seed, obj.GetHashCode());
 
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
             g.KeepAliveID(id);
             return id;
         }

@@ -54,13 +54,12 @@ namespace ImGui
 
         internal static GUIContext GetCurrentContext()
         {
-            return Form.current.uiContext;
+            return Application.ImGuiContext;
         }
 
         internal static Window GetCurrentWindow()
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
+            GUIContext g = Application.ImGuiContext;
             Window window = g.WindowManager.CurrentWindow;
             window.Accessed = true;
             return window;

@@ -16,7 +16,7 @@ namespace ImGui
         private readonly IWindow nativeWindow;
 
         internal IRenderer renderer;
-        internal GUIContext uiContext = new GUIContext();
+
         private string debugName;
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace ImGui
             this.renderer.Init(this.Pointer, this.nativeWindow.ClientSize);
             Profile.End();
 
-            uiContext.InitializeBackForegroundRenderContext();
+            this.InitializeBackForegroundRenderContext();
         }
 
         internal void MainLoop(Action guiMethod)

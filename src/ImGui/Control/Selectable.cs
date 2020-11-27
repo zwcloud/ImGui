@@ -132,7 +132,7 @@ namespace ImGui
     {
         public static bool SelectableBehavior(Rect rect, int id, bool selected, out bool out_hovered, out bool out_held)
         {
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
 
             bool hovered = g.IsHovered(rect, id);
             if (hovered)

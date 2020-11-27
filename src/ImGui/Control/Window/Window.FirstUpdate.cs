@@ -10,8 +10,7 @@ namespace ImGui
             long currentFrame, Window parentWindow)
         {
             //short names
-            var form = Form.current;
-            var g = form.uiContext;
+            var g = Application.ImGuiContext;
             var w = g.WindowManager;
 
             this.Active = true;

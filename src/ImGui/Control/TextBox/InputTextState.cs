@@ -47,7 +47,7 @@ namespace ImGui
 
         private static void MoveCaretCallBack(InputTextContext textBox)
         {
-            var g = Form.current.uiContext;
+            var g = Application.ImGuiContext;
 
             var rect = textBox.Rect;
             var style = GUIStyle.Basic;
@@ -100,7 +100,7 @@ namespace ImGui
 
         private static void DoSelectCallBack(InputTextContext textBox)
         {
-            var g = Form.current.uiContext;
+            var g = Application.ImGuiContext;
 
             var rect = textBox.Rect;
             var text = textBox.Text;
@@ -220,7 +220,7 @@ namespace ImGui
                         keyboardTask = null;
 
                         // deactive the textbox we are editing
-                        var g = Form.current.uiContext;
+                        var g = Application.ImGuiContext;
                         g.SetActiveID(0);
                     }
                 }

@@ -206,7 +206,7 @@ namespace ImGui
     {
         public static bool ButtonBehavior(Rect bb, int id, out bool outHovered, out bool outHeld, ButtonFlags flags = 0)
         {
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
 

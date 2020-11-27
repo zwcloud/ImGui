@@ -285,7 +285,7 @@ namespace ImGui
             hovered = false;
             active = false;
             context = null;
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
 
             active = false;
             hovered = g.IsHovered(rect, id);
@@ -384,7 +384,7 @@ namespace ImGui
     {
         public static void DrawTextBox(Node node, int id, string text, InputTextContext context, GUIState state)
         {
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
 
             Rect rect = node.Rect;
             var d = node.RenderOpen();

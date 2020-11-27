@@ -4,17 +4,17 @@ using ImGui.Rendering;
 
 namespace ImGui
 {
-    partial class GUIContext
+    public partial class Form
     {
         /// <summary>
         /// First draw context to be rendered.
         /// </summary>
-        public DrawingContext BackgroundDrawingContext { get; private set; }
+        internal DrawingContext BackgroundDrawingContext { get; private set; }
 
         /// <summary>
         /// Last draw context to be rendered. This is where we the render most debug overlays.
         /// </summary>
-        public DrawingContext ForegroundDrawingContext { get; private set; }
+        internal DrawingContext ForegroundDrawingContext { get; private set; }
 
         private Node backgroundNode = new Node("#" + nameof(backgroundNode));
 
@@ -33,26 +33,26 @@ namespace ImGui
         private RenderContext backgroundRenderContext;
         private RenderContext foregroundRenderContext;
 
-        public void InitializeBackForegroundRenderContext()
+        internal void InitializeBackForegroundRenderContext()
         {
             backgroundRenderContext = new RenderContext(backgroundGeometryRenderer, backgroundMeshList);
             foregroundRenderContext = new RenderContext(foregroundGeometryRenderer, foregroundMeshList);
         }
 
-        public void ForeBackGroundRenderOpen()
+        internal void ForeBackGroundRenderOpen()
         {
             this.BackgroundDrawingContext = backgroundNode.RenderOpen();
             this.ForegroundDrawingContext = foregroundNode.RenderOpen();
         }
 
-        public void ForeBackGroundRenderClose()
+        internal void ForeBackGroundRenderClose()
         {
             this.BackgroundDrawingContext.Close();
             this.ForegroundDrawingContext.Close();
         }
         
 
-        public void RenderBackground(Size size, IRenderer renderer)
+        internal void RenderBackground(Size size, IRenderer renderer)
         {
             backgroundNode.Render(this.backgroundRenderContext);
 
@@ -80,7 +80,7 @@ namespace ImGui
                                    + backgroundMeshBuffer.TextMesh.IndexBuffer.Count;
         }
 
-        public void RenderForeground(Size size, IRenderer renderer)
+        internal void RenderForeground(Size size, IRenderer renderer)
         {
             foregroundNode.Render(this.foregroundRenderContext);
 

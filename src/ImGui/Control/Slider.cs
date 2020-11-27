@@ -288,7 +288,7 @@ namespace ImGui
     {
         public static double SliderBehavior(Rect sliderRect, int id, bool horizontal, double value, double minValue, double maxValue, out bool hovered, out bool held)
         {
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
 
             hovered = false;
             held = false;

@@ -40,7 +40,7 @@ namespace ImGui
 
             // interact
             bool result = false;
-            var uiState = Form.current.uiContext;
+            var uiState = Application.ImGuiContext;
             uiState.KeepAliveID(id);
             if (hovered)
             {
@@ -118,7 +118,7 @@ namespace ImGui
 
             bool result = false;
             // interact
-            var uiState = Form.current.uiContext;
+            var uiState = Application.ImGuiContext;
             uiState.KeepAliveID(id);
             if (hovered)
             {

@@ -777,7 +777,7 @@ namespace ImGui.Rendering
                         this.Name + HScrollBarName);
                 }
                 HScrollBarRoot.ActiveSelf = true;
-                GUIContext g = Form.current.uiContext;
+                GUIContext g = Application.ImGuiContext;
                 g.KeepAliveID(HScrollBarRoot.Id);
 
                 double occupiedChildrenWidth = 0;
@@ -865,7 +865,7 @@ namespace ImGui.Rendering
                         this.Name + VScrollBarName);
                 }
                 VScrollBarRoot.ActiveSelf = true;
-                GUIContext g = Form.current.uiContext;
+                GUIContext g = Application.ImGuiContext;
                 g.KeepAliveID(VScrollBarRoot.Id);
 
                 double occupiedChildrenHeight = 0;
@@ -957,7 +957,7 @@ namespace ImGui.Rendering
             out Rect gripRect,
             out bool hovered, out bool held)
         {
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
 
             //grip size
             var trackSize = horizontal ? bgRect.Width : bgRect.Height;

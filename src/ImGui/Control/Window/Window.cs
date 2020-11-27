@@ -33,8 +33,7 @@ namespace ImGui
                 throw new ArgumentOutOfRangeException(nameof(bg_alpha), nameof(bg_alpha) + " cannot be negative.");
             }
 
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
+            GUIContext g = Application.ImGuiContext;
             WindowManager w = g.WindowManager;
             Debug.Assert(name != null);                        // Window name required
             Debug.Assert(g.Initialized);                       // Forgot to call NewFrame()
@@ -107,8 +106,7 @@ namespace ImGui
 
         public static void End()
         {
-            Form form = Form.current;
-            GUIContext g = form.uiContext;
+            GUIContext g = Application.ImGuiContext;
             WindowManager w = g.WindowManager;
             Window window = w.CurrentWindow;
 

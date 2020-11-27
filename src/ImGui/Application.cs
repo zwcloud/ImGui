@@ -32,6 +32,12 @@ namespace ImGui
         private static List<Form> removedFromList = new List<Form>();
         internal static OSAbstraction.PlatformContext PlatformContext;
 
+        internal static GUIContext ImGuiContext
+        {
+            get;
+        } = new GUIContext();
+
+
         internal static void InitSysDependencies()
         {
             Time.Init();

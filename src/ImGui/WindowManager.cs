@@ -76,7 +76,7 @@ namespace ImGui
         /// <param name="window"></param>
         public void FocusWindow(Window window)
         {
-            var g = Form.current.uiContext;
+            var g = Application.ImGuiContext;
 
             // Always mark the window we passed as focused. This is used for keyboard interactions such as tabbing.
             this.FocusedWindow = window;

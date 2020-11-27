@@ -15,7 +15,7 @@ namespace ImGui
         internal void NewFrame()
         {
             current = this;
-            GUIContext g = this.uiContext;
+            GUIContext g = Application.ImGuiContext;
             WindowManager w = g.WindowManager;
 
             if (!g.Initialized)
@@ -108,7 +108,7 @@ namespace ImGui
 
             w.NewFrame(g);
 
-            uiContext.ForeBackGroundRenderOpen();
+            this.ForeBackGroundRenderOpen();
 
             // [DEBUG] Item picker tool - start with DebugStartItemPicker()
             // useful to visually select an item and break into its call-stack.
@@ -120,7 +120,7 @@ namespace ImGui
 
         internal void EndFrame()
         {
-            GUIContext g = Form.current.uiContext;
+            GUIContext g = Application.ImGuiContext;
             WindowManager w = g.WindowManager;
             Debug.Assert(g.Initialized);                       // Forgot to call ImGui::NewFrame()
             Debug.Assert(g.FrameCountEnded != g.FrameCount);   // ImGui::EndFrame() called multiple times, or forgot to call ImGui::NewFrame() again
@@ -133,7 +133,7 @@ namespace ImGui
             }
             GUI.End();//end of the implicit "Debug" window
 
-            uiContext.ForeBackGroundRenderClose();
+            this.ForeBackGroundRenderClose();
             w.EndFrame(g);
 
             // Clear Input data for next frame
@@ -175,12 +175,11 @@ namespace ImGui
 
         internal void Render()
         {
+            GUIContext g = Application.ImGuiContext;
             if (this.Closed)
             {
                 return;
             }
-
-            GUIContext g = this.uiContext;
             WindowManager w = g.WindowManager;
 
             Debug.Assert(g.Initialized);   // Make sure that NewFrame() is called.
@@ -197,7 +196,7 @@ namespace ImGui
 
             this.renderer.Clear(this.BackgroundColor);
 
-            uiContext.RenderBackground(ClientSize, renderer);
+            this.RenderBackground(ClientSize, renderer);
 
             foreach (var window in w.Windows)
             {
@@ -217,7 +216,7 @@ namespace ImGui
                                       + window.MeshBuffer.TextMesh.IndexBuffer.Count;
                 Metrics.RenderWindows++;
             }
-            uiContext.RenderForeground(ClientSize, renderer);
+            this.RenderForeground(ClientSize, renderer);
 
             this.renderer.SwapBuffers();
         }
@@ -229,8 +228,8 @@ namespace ImGui
             {
                 return;
             }
-
-            GUIContext g = this.uiContext;
+            
+            GUIContext g = Application.ImGuiContext;
 
             this.nativeWindow.Title =
                 $"fps:{g.fps,5:0.0}," +

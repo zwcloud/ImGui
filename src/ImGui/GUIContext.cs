@@ -121,14 +121,14 @@ namespace ImGui
             return IsMouseHoveringRect(rect, clip);
         }
 
-        public bool IsHovered(Rect bb, int id, bool flattenChilds = false)
+        public bool IsHovered(Rect bb, int id, bool flattenChildren = false)
         {
             GUIContext g = this;
             if (g.HoverId != 0 && g.HoverId != id && !g.HoverIdAllowOverlap)
                 return false;
             Window window = g.WindowManager.CurrentWindow;
             if (g.WindowManager.HoveredWindow != window &&
-                (!flattenChilds || g.WindowManager.HoveredRootWindow != window.RootWindow))
+                (!flattenChildren || g.WindowManager.HoveredRootWindow != window.RootWindow))
                 return false;
             if (g.ActiveId != 0 && g.ActiveId != id && !g.ActiveIdAllowOverlap)
                 return false;
@@ -144,7 +144,7 @@ namespace ImGui
             // items.
             if (g.DebugItemPickerActive && g.HoveredIdPreviousFrame == id)
             {
-                g.ForegroundDrawingContext.DrawRectangle(
+                Form.current.ForegroundDrawingContext.DrawRectangle(
                     null, new Rendering.Pen(Color.Argb(255, 255, 255, 0), 1), bb);
             }
             if (g.DebugItemPickerBreakID == id)

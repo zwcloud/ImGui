@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ImGui.OSAbstraction.Text;
 using ImGui.Style;
 using static ImGui.GUILayout;
 
@@ -149,7 +148,7 @@ namespace ImGui.Development
             if (!isActive) { PopStyle(); }
             if(IsItemHovered() && isActive)
             {
-                GetCurrentContext().ForegroundDrawingContext.DrawRectangle(
+                Form.current.ForegroundDrawingContext.DrawRectangle(
                     null, new Pen(Color.Yellow, 1), window.Rect);
             }
 
@@ -211,7 +210,7 @@ namespace ImGui.Development
             if(IsItemHovered())
             {
                 var g = GetCurrentContext();
-                g.ForegroundDrawingContext.DrawRectangle(
+                Form.current.ForegroundDrawingContext.DrawRectangle(
                     null, new Pen(Color.Yellow, 1), nodeWindow.Rect);
             }
         }
@@ -273,9 +272,9 @@ namespace ImGui.Development
                         var v0 = mesh.VertexBuffer[i].pos;
                         var v1 = mesh.VertexBuffer[i + 1].pos;
                         var v2 = mesh.VertexBuffer[i + 2].pos;
-                        g.ForegroundDrawingContext.DrawLine(pen, v0, v1);
-                        g.ForegroundDrawingContext.DrawLine(pen, v1, v2);
-                        g.ForegroundDrawingContext.DrawLine(pen, v2, v0);
+                        Form.current.ForegroundDrawingContext.DrawLine(pen, v0, v1);
+                        Form.current.ForegroundDrawingContext.DrawLine(pen, v1, v2);
+                        Form.current.ForegroundDrawingContext.DrawLine(pen, v2, v0);
                     }
                 }
                 var indexBuffer = mesh.IndexBuffer;
@@ -298,9 +297,9 @@ namespace ImGui.Development
                     {
                         var pen = new Pen(Color.Yellow, 1);
                         var g = GetCurrentContext();
-                        g.ForegroundDrawingContext.DrawLine(pen, triangles_pos[0], triangles_pos[1]);
-                        g.ForegroundDrawingContext.DrawLine(pen, triangles_pos[1], triangles_pos[2]);
-                        g.ForegroundDrawingContext.DrawLine(pen, triangles_pos[2], triangles_pos[0]);
+                        Form.current.ForegroundDrawingContext.DrawLine(pen, triangles_pos[0], triangles_pos[1]);
+                        Form.current.ForegroundDrawingContext.DrawLine(pen, triangles_pos[1], triangles_pos[2]);
+                        Form.current.ForegroundDrawingContext.DrawLine(pen, triangles_pos[2], triangles_pos[0]);
                     }
                 }
                 TreePop();
@@ -388,7 +387,7 @@ namespace ImGui.Development
                 borderBgColor = Color.White;
                 BoxModelUtil.GetBoxes(targetNode.Rect, targetRuleSet, out var bRect, out var pRect,
                     out var cRect);
-                g.ForegroundDrawingContext.DrawRectangle(null, new Pen(strokeColor, 1), cRect);
+                Form.current.ForegroundDrawingContext.DrawRectangle(null, new Pen(strokeColor, 1), cRect);
             }
             else if(g.IsMouseHoveringRect(paddingBoxRect))
             {
@@ -398,7 +397,7 @@ namespace ImGui.Development
                 
                 BoxModelUtil.GetBoxes(targetNode.Rect, targetRuleSet, out var bRect, out var pRect,
                     out var cRect);
-                g.ForegroundDrawingContext.DrawRectangleRing(pRect, cRect, new Pen(strokeColor, 1),
+                Form.current.ForegroundDrawingContext.DrawRectangleRing(pRect, cRect, new Pen(strokeColor, 1),
                     null);
             }
             else if(g.IsMouseHoveringRect(borderBoxRect))
@@ -409,7 +408,7 @@ namespace ImGui.Development
 
                 BoxModelUtil.GetBoxes(targetNode.Rect, targetRuleSet, out var bRect, out var pRect,
                     out var cRect);
-                g.ForegroundDrawingContext.DrawRectangleRing(bRect, pRect, new Pen(strokeColor, 1),
+                Form.current.ForegroundDrawingContext.DrawRectangleRing(bRect, pRect, new Pen(strokeColor, 1),
                     null);
             }
 
