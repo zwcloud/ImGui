@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ImGui.Layout;
 using System.Diagnostics;
-using ImGui.Development;
-using ImGui.GraphicsAbstraction;
 using ImGui.GraphicsImplementation;
-using ImGui.Input;
 using ImGui.OSAbstraction.Graphics;
-using ImGui.OSAbstraction.Text;
 using ImGui.Rendering;
 using ImGui.Style;
 
@@ -83,6 +78,11 @@ namespace ImGui
 
         public WindowTempData TempData = new WindowTempData();
 
+        /// <summary>
+        /// The form that contains this window.
+        /// </summary>
+        public Form Form { get;  set; }
+
         #region Window original sub nodes
         private Node titleBar { get; }
         private Node titleIcon { get; }
@@ -94,10 +94,9 @@ namespace ImGui
 
         #endregion
 
-        public Window(string name, Point position, Size size, WindowFlags Flags)
+        public Window(string name, Point position, Size size, WindowFlags flags)
         {
-            GUIContext g = Application.ImGuiContext;
-            WindowManager w = g.WindowManager;
+            this.Form = Form.current;
 
             this.ID = name.GetHashCode();
             this.Name = name;
@@ -105,7 +104,7 @@ namespace ImGui
             this.Position = position;
             this.FullSize = size;
 
-            this.Flags = Flags;
+            this.Flags = flags;
 
             this.AbsoluteVisualList = new List<Visual>();
             this.RenderTree = new RenderTree(this.ID, position, size);
@@ -162,7 +161,7 @@ namespace ImGui
             }
 
             //title bar
-            if(!Flags.HaveFlag(WindowFlags.NoTitleBar))
+            if(!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
                 this.titleBar = new Node(this.GetID("titleBar"),"title bar");
                 titleBar.AttachLayoutGroup(false);
@@ -221,7 +220,7 @@ namespace ImGui
 
             //resize grip (lasy-initialized)
 
-            if (!Flags.HaveFlag(WindowFlags.NoTitleBar))
+            if (!flags.HaveFlag(WindowFlags.NoTitleBar))
             {
                 this.ShowWindowTitleBar(true);
             }
@@ -293,6 +292,12 @@ namespace ImGui
         /// Gets or sets if the window is active
         /// </summary>
         public bool Active
+        {
+            get;
+            internal set;
+        }
+
+        public bool Hidden
         {
             get;
             internal set;
@@ -443,6 +448,8 @@ namespace ImGui
 
         private Point RenderTreeNodesPivotPoint => this.Position;
         private Point NodeTreeNodesPivotPoint => this.ClientRect.Location;
+
+        public bool ActiveAndVisible => Active && !Hidden;
 
         internal void Layout()
         {

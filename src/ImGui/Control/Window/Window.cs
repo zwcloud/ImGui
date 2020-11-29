@@ -25,6 +25,12 @@ namespace ImGui
             var open = true;
             Begin(title, ref open, position, size, 1, flags);
         }
+        
+        public static void Begin(string title, Rect rect, WindowFlags flags = WindowFlags.ShowBorders)
+        {
+            var open = true;
+            Begin(title, ref open, rect.Location, rect.Size, 1, flags);
+        }
 
         public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha = 1, WindowFlags flags = WindowFlags.VerticalScrollbar)
         {

@@ -53,15 +53,12 @@ namespace ImGui
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             if(pressed)
             {
-                Application.AddFrom(()=>
-                {
-                    var form = ComboBoxItemsForm.Create(
-                        comboBoxContext.Texts,
-                        node,
-                        i => comboBoxContext.SelectedIndex = i);
-                    comboBoxContext.ItemsContainer = form;
-                    return form;
-                });
+                var form = ComboBoxItemsForm.Create(
+                    comboBoxContext.Texts,
+                    node,
+                    i => comboBoxContext.SelectedIndex = i);
+                comboBoxContext.ItemsContainer = form;
+                Application.AddFrom(form);
                 node.State = GUIState.Active;
             }
 
@@ -74,6 +71,8 @@ namespace ImGui
             
             // last item state
             window.TempData.LastItemState = node.State;
+
+            //TODO Begin/End ComboBox window here
 
             //render
             using var g = node.RenderOpen();
@@ -155,7 +154,7 @@ namespace ImGui
             CallBack = callBack;
         }
 
-        protected override void OnGUI()
+        void OnGUI()
         {
             GUI.Begin("ComboBoxWindow", (0, 0), ClientSize,
                 WindowFlags.ShowBorders | WindowFlags.NoTitleBar | WindowFlags.NoCollapse 

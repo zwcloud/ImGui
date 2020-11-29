@@ -1,12 +1,18 @@
-﻿using ImGui.Input;
+﻿using System;
+using ImGui.Input;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ImGui
 {
-    internal partial class GUIContext
+    internal class GUIContext
     {
         public long Time;
         public long FrameCount = 0;
+        
+        public ImGuiConfigFlags ConfigFlagsCurrFrame;// ConfigFlags at the time of NewFrame()
+        public ImGuiConfigFlags ConfigFlagsLastFrame;
+        public int ViewportFrontMostStampCount;// Every time the front-most window changes, we stamp its viewport with an incrementing counter
 
         // fps
         public long lastFrameCount = 0;
@@ -72,6 +78,7 @@ namespace ImGui
 
         public long FrameCountEnded { get; internal set; } = -1;
         public long FrameCountRendered { get; internal set; } = -1;
+        public long FrameCountPlatformEnded { get; internal set; } = -1;
         public int CaptureMouseNextFrame { get; internal set; }
         
         // Debug Tools
@@ -221,6 +228,22 @@ namespace ImGui
         internal void DebugStartItemPicker()
         {
             DebugItemPickerActive = true;
+        }
+    }
+
+    [Flags]
+    internal enum ImGuiConfigFlags
+    {
+        None                   = 0,
+        ViewportsEnable        = 1 << 10,  // Viewport enable flags (require both ImGuiBackendFlags_PlatformHasViewports + ImGuiBackendFlags_RendererHasViewports set by the respective backends)
+    }
+    
+    internal static class ImGuiConfigFlagsExtension
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool HaveFlag(this ImGuiConfigFlags value, ImGuiConfigFlags flag)
+        {
+            return (value & flag) != 0;
         }
     }
 }

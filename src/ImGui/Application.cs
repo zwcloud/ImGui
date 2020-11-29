@@ -24,19 +24,16 @@ namespace ImGui
     /// Application.RunLoop(mainForm);
     /// </code>
     /// </remarks>
-    public static class Application
+    public static partial class Application
     {
         internal static Form MainForm { get; private set; }
-        internal static List<Form> Forms = new List<Form>();
-        private static List<Func<Form>> addedFromList = new List<Func<Form>>();
-        private static List<Form> removedFromList = new List<Form>();
+        private static readonly List<Form> forms = new List<Form>();
+
         internal static OSAbstraction.PlatformContext PlatformContext;
 
-        internal static GUIContext ImGuiContext
-        {
-            get;
-        } = new GUIContext();
+        internal static GUIConfiguration IO { get; } = new GUIConfiguration();
 
+        internal static GUIContext ImGuiContext { get; } = new GUIContext();
 
         internal static void InitSysDependencies()
         {
@@ -49,20 +46,20 @@ namespace ImGui
                 {
                     Logger = new EchoLogger();
                     EchoLogger.Show();
-                    Log.Enabled = true;
+                    ImGui.Log.Enabled = true;
                 }
                 catch (System.Net.Sockets.SocketException)
                 {
                     Debug.WriteLine("Failed to connect to EchoLogger. The program will continue without logging.");
-                    Log.Enabled = false;
+                    ImGui.Log.Enabled = false;
                 }
             }
             else
             {
                 Logger = new ConsoleLogger();
-                Log.Enabled = true;
+                ImGui.Log.Enabled = true;
             }
-            Log.Init(Logger);
+            ImGui.Log.Init(Logger);
 
             // load platform context:
             //     platform-dependent implementation
@@ -94,38 +91,40 @@ namespace ImGui
         /// Begins running a standard application on the current thread and makes the specified form visible.
         /// </summary>
         /// <param name="mainForm">A <see cref="Form"/> that represents the form to make visible.</param>
-        public static void Run(Form mainForm)
+        /// <param name="onGUI"></param>
+        public static void Run(Form mainForm, Action onGUI = null)
         {
             MainForm = mainForm;
-            Init(mainForm);
 
+            mainForm.InitializeForm();
+            mainForm.InitializeRenderer();
+            mainForm.Show();
+            Form.current = mainForm;
             while (!mainForm.Closed)
             {
                 Time.OnFrameBegin();
                 Keyboard.Instance.OnFrameBegin();
 
-                if (addedFromList.Count > 0)
+                mainForm.MainLoop(() =>
                 {
-                    foreach (var fromCreator in addedFromList)
-                    {
-                        var form = fromCreator();
-                        Forms.Add(form);
-                    }
-                    addedFromList.Clear();
-                }
-                if (removedFromList.Count > 0)
-                {
-                    foreach (var form in removedFromList)
-                    {
-                        Forms.Remove(form);
-                    }
-                    removedFromList.Clear();
-                }
+                    //Since renderer is possibly used by all methods below, bind here.
+                    mainForm.renderer.Bind();
 
-                foreach (Form childForm in Forms)
-                {
-                    childForm.MainLoop(childForm.GUILoop);
-                }
+                    NewFrame();
+
+                    onGUI?.Invoke();
+
+                    Render();
+
+                    Log();
+
+                    mainForm.renderer.Unbind();
+                });
+
+                //handle additional forms
+                UpdateForms();
+                RenderForms();
+                
                 if (RequestQuit)
                 {
                     break;
@@ -135,32 +134,187 @@ namespace ImGui
                 Time.OnFrameEnd();
             }
 
+            //TODO clean up and shutdown renderer and windows
         }
 
-        public static void Init(Form mainForm)
+        private static void UpdateForms()
         {
-            //Check parameter
-            if (mainForm == null)
+            var g = ImGuiContext;
+            Debug.Assert(g.FrameCountEnded == g.FrameCount, "Forgot to call Render() or EndFrame() before UpdatePlatformWindows()?");
+            Debug.Assert(g.FrameCountPlatformEnded < g.FrameCount);
+            g.FrameCountPlatformEnded = g.FrameCount;
+            if (!g.ConfigFlagsCurrFrame.HaveFlag(ImGuiConfigFlags.ViewportsEnable))
+                return;
+            
+            // Create/resize/destroy native windows to match each active form.
+            // The main form is always fully handled by the application.
+            foreach (var viewport in forms)
             {
-                throw new ArgumentNullException(nameof(mainForm));
+                // Destroy platform window if the viewport hasn't been submitted or if it is hosting a hidden window
+                // (the implicit/fallback Debug##Default window will be registering its viewport then be disabled, causing a dummy DestroyPlatformWindow to be made each frame)
+                bool destroy_platform_window = false;
+                destroy_platform_window |= (viewport.LastFrameActive < g.FrameCount - 1);
+                destroy_platform_window |= (viewport.Window?.ActiveAndVisible == false);
+                if (destroy_platform_window)
+                {
+                    viewport.Close();
+                    continue;
+                }
+
+                // New windows that appears directly in a new viewport won't always have a size on their first frame
+                if (viewport.LastFrameActive < g.FrameCount || viewport.Size.Width <= 0
+                                                            || viewport.Size.Height <= 0)
+                {
+                    continue;
+                }
+                
+                // Create window
+                bool is_new_platform_window = (viewport.PlatformWindowCreated == false);
+                if (is_new_platform_window)
+                {
+                    ImGui.Log.Msg("Create Platform Window %08X (%s)\n", viewport.ID,
+                        viewport.Window!=null ? viewport.Window.Name : "n/a");
+                    viewport.InitializeForm();
+                    viewport.InitializeRenderer();
+                    viewport.PlatformWindowCreated = true;
+                }
+                
+                // Apply Position and Size (from ImGui to Platform/Renderer backends)
+                if (viewport.LastPlatformPos != viewport.PlatformPos && !viewport.PlatformRequestMove)
+                    viewport.Position = viewport.PlatformPos;
+                if (viewport.LastPlatformSize != viewport.PlatformSize && !viewport.PlatformRequestResize)
+                    viewport.Size = viewport.PlatformSize;
+                if (viewport.LastRendererSize != viewport.PlatformSize)
+                    viewport.Renderer_SetWindowSize(viewport.PlatformSize);
+                viewport.LastPlatformPos = viewport.PlatformPos;
+                viewport.LastPlatformSize = viewport.LastRendererSize = viewport.PlatformSize;
+                
+                // Update title bar (if it changed)
+                if (viewport.Window != null && viewport.LastName != viewport.Window.Name)
+                {
+                    viewport.Platform_SetWindowTitle(viewport.Window.Name);
+                    viewport.LastName = viewport.Window.Name;
+                }
+                
+                // Update alpha (if it changed)
+                if (viewport.LastAlpha != viewport.Alpha)
+                    viewport.Platform_SetWindowAlpha(viewport.Alpha);
+                viewport.LastAlpha = viewport.Alpha;
+
+                // Optional, general purpose call to allow the backend to perform general book-keeping even if things haven't changed.
+                viewport.Platform_UpdateWindow();
+
+                if (is_new_platform_window)
+                {
+                    // On startup ensure new platform window don't steal focus (give it a few frames, as nested contents may lead to viewport being created a few frames late)
+                    if (g.FrameCount < 3)
+                        viewport.Flags |= ImGuiViewportFlags.NoFocusOnAppearing;
+
+                    // Show window
+                    viewport.Show();
+
+                    // Even without focus, we assume the window becomes front-most.
+                    // This is useful for our platform z-order heuristic when io.MouseHoveredViewport is not available.
+                    if (viewport.LastFrontMostStampCount != g.ViewportFrontMostStampCount)
+                        viewport.LastFrontMostStampCount = ++g.ViewportFrontMostStampCount;
+                }
+
+                // Clear request flags
+                viewport.ClearRequestFlags();
             }
 
-            Forms.Add(mainForm);
+            // Update our implicit z-order knowledge of platform windows, which is used when the backend cannot provide io.MouseHoveredViewport.
+            // When setting Platform_GetWindowFocus, it is expected that the platform backend can handle calls without crashing if it doesn't have data stored.
+            // FIXME-VIEWPORT: We should use this information to also set dear imgui-side focus, allowing us to handle os-level alt+tab.
+            {
+                Form focused_viewport = null;
+                for (int n = 0; n < forms.Count && focused_viewport == null; n++)
+                {
+                    Form viewport = forms[n];
+                    if (viewport.PlatformWindowCreated)
+                        if (viewport.Platform_GetWindowFocus())
+                            focused_viewport = viewport;
+                }
 
-            //Show main form
-            mainForm.Show();
-
+                // Store a tag so we can infer z-order easily from all our windows
+                if (focused_viewport != null
+                    && focused_viewport.LastFrontMostStampCount != g.ViewportFrontMostStampCount)
+                    focused_viewport.LastFrontMostStampCount = ++g.ViewportFrontMostStampCount;
+            }
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="platform_render_arg"></param>
+        /// <param name="renderer_render_arg"></param>
+        /// <remarks>
+        /// This is a default/basic function for performing the rendering/swap of multiple Platform Windows.
+        /// Custom renderers may prefer to not call this function at all, and instead iterate the publicly exposed platform data and handle rendering/sync themselves.
+        /// The Render/Swap functions stored in ImGuiPlatformIO are merely here to allow for this helper to exist, but you can do it yourself:
+        /// </remarks>
+        //<code>
+        //   ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
+        //   for (int i = 1; i < platform_io.Viewports.Size; i++)
+        //       if ((platform_io.Viewports[i]->Flags & ImGuiViewportFlags_Minimized) == 0)
+        //           MyRenderFunction(platform_io.Viewports[i], my_args);
+        //   for (int i = 1; i < platform_io.Viewports.Size; i++)
+        //       if ((platform_io.Viewports[i]->Flags & ImGuiViewportFlags_Minimized) == 0)
+        //           MySwapBufferFunction(platform_io.Viewports[i], my_args);
+        //</code>
+        private static void RenderForms(object platform_render_arg = null, object renderer_render_arg = null)
+        {
+            for (int i = 0; i < forms.Count; i++)
+            {
+                var viewport = forms[i];
+                if (Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.Minimized))
+                    continue;
+                viewport.Platform_RenderWindow(platform_render_arg);
+                viewport.Renderer_RenderWindow(renderer_render_arg);
+            }
+            for (int i = 0; i < forms.Count; i++)
+            {
+                var viewport = forms[i];
+                if (Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.Minimized))
+                {
+                    continue;
+                }
+                viewport.Platform_SwapBuffers(platform_render_arg);
+                viewport.Renderer_SwapBuffers(renderer_render_arg);
+            }
         }
 
-        public static void RunLoop(Form form)
+        public static void RunLoop(Form form, Action onGUI = null)
         {
+            MainForm = form;
+
+            form.InitializeForm();
+            form.InitializeRenderer();
+            form.Show();
+            
             Time.OnFrameBegin();
             Keyboard.Instance.OnFrameBegin();
-            form.MainLoop(form.GUILoop);
-            Keyboard.Instance.OnFrameEnd();
-            Time.OnFrameEnd();
-        }
 
+            form.MainLoop(() =>
+            {
+                //Since renderer is possibly used by all methods below, bind here.
+                form.renderer.Bind();
+
+                NewFrame();
+
+                onGUI?.Invoke();
+
+                Render();
+
+                Log();
+
+                form.renderer.Unbind();
+            });
+
+            //handle additional forms
+            UpdateForms();
+            RenderForms();
+        }
 
         /// <summary>
         /// Closes all application windows and quit the application.
@@ -169,7 +323,7 @@ namespace ImGui
         {
             if (IsRunningInUnitTest)
             {
-                if (Log.Enabled)
+                if (ImGui.Log.Enabled)
                 {
                     EchoLogger.Close();
                 }
@@ -188,22 +342,14 @@ namespace ImGui
 
         internal static ILogger Logger;
 
-        public static void AddFrom(Func<Form> formCreator)
+        public static void AddFrom(Form form)
         {
-            addedFromList.Add(formCreator);
+            forms.Add(form);
         }
 
         public static void RemoveForm(Form form)
         {
-            if (form == null)
-            {
-                throw new ArgumentNullException(nameof(form));
-            }
-            if (!Forms.Contains(form))
-            {
-                throw new InvalidOperationException("Form hasn't been added, cannot remove.");
-            }
-            removedFromList.Add(form);
+            forms.Remove(form);
         }
     }
 }

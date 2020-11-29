@@ -357,7 +357,7 @@ namespace ImGui.OSImplementation.Windows
             switch (windowType)
             {
                 case WindowTypes.Regular:
-                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPCHILDREN;
+                    windowStyle = WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_CLIPCHILDREN;
                     break;
                 case WindowTypes.ClientAreaOnly:
                     windowStyle = WindowStyles.WS_POPUP;

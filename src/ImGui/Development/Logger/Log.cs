@@ -16,19 +16,19 @@ namespace ImGui
             Log.logger = logger;
         }
 
-        public static void Msg(string format, params string[] args)
+        public static void Msg(string format, params object[] args)
         {
             if (!Enabled) return;
             if (logger == null) throw new InvalidOperationException("The logger hasn't been initialized.");
             logger.Msg(format, args);
         }
-        public static void Warning(string format, params string[] args)
+        public static void Warning(string format, params object[] args)
         {
             if (!Enabled) return;
             if (logger == null) throw new InvalidOperationException("The logger hasn't been initialized.");
             logger.Warning(format, args);
         }
-        public static void Error(string format, params string[] args)
+        public static void Error(string format, params object[] args)
         {
             if (!Enabled) return;
             if (logger == null) throw new InvalidOperationException("The logger hasn't been initialized.");
@@ -36,11 +36,11 @@ namespace ImGui
         }
 
         /// <summary>
-        /// Write log to VS2017 output window.
+        /// Write log to Visual Studio output window.
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public static void LogToVSOutput(string format, params string[] args)
+        public static void LogToVSOutput(string format, params object[] args)
         {
             Debug.WriteLine(format, args);
         }

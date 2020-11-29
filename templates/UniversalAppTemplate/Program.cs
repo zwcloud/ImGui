@@ -9,7 +9,14 @@ namespace UniversalAppTemplate
         static void Main()
         {
             Application.Init();
-            Application.Run(new MainForm());
+            Application.Run(new MainForm(), OnGUI);
+        }
+        
+        private static readonly Demo demo = new Demo();
+
+        private static void OnGUI()
+        {
+            demo.OnGUI();
         }
     }
 }
