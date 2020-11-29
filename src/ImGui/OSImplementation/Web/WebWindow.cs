@@ -141,6 +141,8 @@ namespace ImGui.OSImplementation.Web
             throw new NotImplementedException();
         }
 
+        public bool Minimized { get; }
+
         public void MainLoop(Action guiMethod)
         {
             guiMethod();

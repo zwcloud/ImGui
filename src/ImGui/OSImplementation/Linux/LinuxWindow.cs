@@ -800,6 +800,8 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             throw new NotImplementedException();
         }
 
+        public bool Minimized { get; }
+
         public void MainLoop(Action guiMethod)
         {
             unsafe

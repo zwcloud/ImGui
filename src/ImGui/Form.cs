@@ -185,7 +185,7 @@ namespace ImGui
             return this.nativeWindow.ClientToScreen(point);
         }
 
-        internal void SaveClientAreaToPng(string filePath)
+        internal void Dev_SaveClientAreaToPng(string filePath)
         {
             byte[] data = this.renderer.GetRawBackBuffer(out var width, out var height);
             var image = SixLabors.ImageSharp.Image.LoadPixelData<SixLabors.ImageSharp.PixelFormats.Rgba32>(SixLabors.ImageSharp.Configuration.Default, data, width, height);
@@ -195,6 +195,8 @@ namespace ImGui
                 SixLabors.ImageSharp.ImageExtensions.SaveAsPng(image, stream);
             }
         }
+
+        public bool IsMinimized => nativeWindow.Minimized;
 
         public void Platform_SetWindowAlpha(float alpha)
         {

@@ -38,6 +38,8 @@ namespace ImGui
                 g.lastFrameCount = 0;
                 g.lastFPSUpdateTime = g.Time;
             }
+            
+            UpdateViewportsNewFrame();
 
             #region Input
 
@@ -251,6 +253,26 @@ namespace ImGui
                     g.DebugItemPickerActive = false;
                 }
                 //TODO draw tooltip to display hovered item info
+            }
+        }
+
+        private static void UpdateViewportsNewFrame()
+        {
+            var w = ImGuiContext.WindowManager;
+            foreach (var form in w.Forms)
+            {
+                if (!form.PlatformWindowCreated)
+                {
+                    continue;
+                }
+                if (form.IsMinimized)
+                {
+                    form.Flags |= ImGuiViewportFlags.Minimized;
+                }
+                else
+                {
+                    form.Flags &= ImGuiViewportFlags.Minimized;
+                }
             }
         }
     }

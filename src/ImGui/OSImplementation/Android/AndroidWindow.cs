@@ -96,6 +96,8 @@ namespace ImGui.OSImplementation.Android
             throw new NotImplementedException();
         }
 
+        public bool Minimized { get; }
+
         public void MainLoop(Action guiMethod)
         {
             guiMethod();

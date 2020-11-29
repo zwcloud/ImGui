@@ -81,5 +81,10 @@ namespace ImGui.OSAbstraction.Window
         /// Set the window focused. Move window to front and set input focus.
         /// </summary>
         void SetFocus();
+
+        /// <summary>
+        /// Get if the window is minimized.
+        /// </summary>
+        bool Minimized { get; }
     }
 }

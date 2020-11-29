@@ -216,6 +216,9 @@ namespace ImGui.OSImplementation.Windows
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr SetFocus(IntPtr hWnd);
 
+        [DllImport("user32.dll")]
+        static extern bool IsIconic(IntPtr hWnd);
+
         private static readonly IntPtr TRUE = new IntPtr(1);
         private static readonly IntPtr FALSE = IntPtr.Zero;
 
@@ -618,6 +621,8 @@ namespace ImGui.OSImplementation.Windows
             SetForegroundWindow(hwnd);
             SetFocus(hwnd);
         }
+
+        public bool Minimized => IsIconic(hwnd);
 
         public void ChangeCursor(Cursor cursor)
         {
