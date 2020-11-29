@@ -7,6 +7,9 @@ namespace ImGui
 {
     internal class WindowManager
     {
+        public Form MainForm { get; set; }
+        public readonly List<Form> Forms = new List<Form>(8);
+
         public readonly List<Window> Windows = new List<Window>();
 
         public readonly List<Window> WindowStack = new List<Window>();
@@ -117,7 +120,7 @@ namespace ImGui
 
         internal Window CreateWindow(string name, Point position, Size size, WindowFlags flags)
         {
-            var window = new Window(name, position, size, flags);
+            var window = new Window(MainForm, name, position, size, flags);
             this.Windows.Add(window);
             return window;
         }

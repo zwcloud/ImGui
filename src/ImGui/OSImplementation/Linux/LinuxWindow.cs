@@ -790,6 +790,16 @@ parent's cursor will cause an immediate change in the displayed cursor. */
             return point;
         }
 
+        public bool GetFocus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetFocus()
+        {
+            throw new NotImplementedException();
+        }
+
         public void MainLoop(Action guiMethod)
         {
             unsafe

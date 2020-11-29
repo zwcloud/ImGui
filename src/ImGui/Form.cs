@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using ImGui.Development;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Window;
+using ImGui.Rendering;
 using SixLabors.ImageSharp.Processing;
 
 namespace ImGui
@@ -56,6 +60,8 @@ namespace ImGui
         internal int LastFrontMostStampCount;  // Last stamp number from when a window hosted by this viewport was made front-most (by comparing this value between two viewport we have an implicit viewport z-order
         
         public Color BackgroundColor { get; set; } = Color.Argb(255, 114, 144, 154);
+
+        private List<Window> windows = new List<Window>(8);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form"/> class at specific rectangle.
@@ -139,8 +145,6 @@ namespace ImGui
 
         internal Rect Rect => new Rect(this.Position, this.Size);
 
-        internal bool Focused => throw new NotImplementedException();
-
         internal void Show()
         {
             this.nativeWindow.Show();
@@ -210,28 +214,51 @@ namespace ImGui
 
         public bool Platform_GetWindowFocus()
         {
-            //TODO
-            return Focused;
+            return nativeWindow.GetFocus();
         }
 
         public void Platform_RenderWindow(object platformRenderArg)
         {
-            throw new NotImplementedException();
         }
 
         public void Renderer_RenderWindow(object rendererRenderArg)
         {
-            throw new NotImplementedException();
+            Metrics.VertexNumber = 0;
+            Metrics.IndexNumber = 0;
+            Metrics.RenderWindows = 0;
+
+            renderer.Clear(BackgroundColor);
+
+            RenderBackground(ClientSize, renderer);
+
+            foreach (var window in this.windows)
+            {
+                if (!window.Active) continue;
+                window.Render(renderer, ClientSize);//TODO inline Window.Render and reorganize MeshBuffer in Form level
+                
+                if (window.Name == Metrics.WindowName)
+                {//ignore metrics window
+                    continue;
+                }
+
+                Metrics.VertexNumber += window.MeshBuffer.ShapeMesh.VertexBuffer.Count
+                                       + window.MeshBuffer.ImageMesh.VertexBuffer.Count
+                                       + window.MeshBuffer.TextMesh.VertexBuffer.Count;
+                Metrics.IndexNumber += window.MeshBuffer.ShapeMesh.IndexBuffer.Count
+                                      + window.MeshBuffer.ImageMesh.IndexBuffer.Count
+                                      + window.MeshBuffer.TextMesh.IndexBuffer.Count;
+                Metrics.RenderWindows++;
+            }
+            RenderForeground(ClientSize, renderer);
         }
 
         public void Platform_SwapBuffers(object platformRenderArg)
         {
-            throw new NotImplementedException();
         }
 
         public void Renderer_SwapBuffers(object rendererRenderArg)
         {
-            throw new NotImplementedException();
+            renderer.SwapBuffers();
         }
     }
 

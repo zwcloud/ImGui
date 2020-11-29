@@ -86,6 +86,16 @@ namespace ImGui.OSImplementation.Android
             return point;
         }
 
+        public bool GetFocus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetFocus()
+        {
+            throw new NotImplementedException();
+        }
+
         public void MainLoop(Action guiMethod)
         {
             guiMethod();

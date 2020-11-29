@@ -204,6 +204,18 @@ namespace ImGui.OSImplementation.Windows
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool BringWindowToTop(IntPtr hWnd);
+        
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr SetFocus(IntPtr hWnd);
+
         private static readonly IntPtr TRUE = new IntPtr(1);
         private static readonly IntPtr FALSE = IntPtr.Zero;
 
@@ -470,7 +482,6 @@ namespace ImGui.OSImplementation.Windows
             }
         }
 
-
         public Point ClientPosition
         {
             get {
@@ -523,14 +534,9 @@ namespace ImGui.OSImplementation.Windows
             set
             {
                 var size = value;
-                RECT windowRect;
-                GetWindowRect(this.Pointer, out windowRect);
 
                 RECT clientRect;
                 GetClientRect(this.Pointer, out clientRect);
-
-                var windowStyle = GetWindowLong(this.Pointer, GWL_STYLE);
-
                 //rect of the desired client area: size adjusted relative to the top-left corner
                 RECT rc = new RECT
                 {
@@ -540,14 +546,18 @@ namespace ImGui.OSImplementation.Windows
                     bottom = clientRect.top + (int)size.Height
                 };
 
+                var windowStyle = GetWindowLong(this.Pointer, GWL_STYLE);
+
                 if (!AdjustWindowRect(ref rc, windowStyle, false))
                 {
-                    throw new WindowUpdateException(string.Format("AdjustWindowRectEx fails, win32 error: {0}", Marshal.GetLastWin32Error()));
+                    throw new WindowUpdateException(
+                        $"AdjustWindowRectEx fails, win32 error: {Marshal.GetLastWin32Error()}");
                 }
 
                 //now rc is the rect of the window, apply it
-                SetWindowPos(this.Pointer, IntPtr.Zero, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, 0x0002/*SWP_NOMOVE*/ | 0x0004/*SWP_NOZORDER*/);
-
+                SetWindowPos(this.Pointer, IntPtr.Zero,
+                    rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+                    0x0002/*SWP_NOMOVE*/ | 0x0004/*SWP_NOZORDER*/);
             }
         }
 
@@ -595,6 +605,18 @@ namespace ImGui.OSImplementation.Windows
             POINT p = new POINT { X = (int)point.X, Y = (int)point.Y };
             ClientToScreen(this.Pointer, ref p);
             return new Point(p.X, p.Y);
+        }
+
+        public bool GetFocus()
+        {
+            return GetForegroundWindow() == hwnd;
+        }
+
+        public void SetFocus()
+        {
+            BringWindowToTop(hwnd);
+            SetForegroundWindow(hwnd);
+            SetFocus(hwnd);
         }
 
         public void ChangeCursor(Cursor cursor)

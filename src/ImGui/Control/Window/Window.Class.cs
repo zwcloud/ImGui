@@ -26,6 +26,8 @@ namespace ImGui
         /// </summary>
         /// <remarks>Top-left point relative to the form.</remarks>
         public Point Position { get; set; }
+        
+        public Point ViewportPosition { get; set; }
 
         /// <summary>
         /// Size
@@ -94,14 +96,13 @@ namespace ImGui
 
         #endregion
 
-        public Window(string name, Point position, Size size, WindowFlags flags)
+        public Window(Form form, string name, Point position, Size size, WindowFlags flags)
         {
-            this.Form = Form.current;
-
             this.ID = name.GetHashCode();
             this.Name = name;
             this.Active = this.WasActive = false;
-            this.Position = position;
+            this.Position = form.PlatformPos + new Vector(60, 60);
+            this.ViewportPosition = form.PlatformPos;
             this.FullSize = size;
 
             this.Flags = flags;
@@ -227,6 +228,7 @@ namespace ImGui
             this.ShowWindowClientArea(!this.Collapsed);
             #endregion
         }
+
 
         public void ShowWindowTitleBar(bool isShow)
         {

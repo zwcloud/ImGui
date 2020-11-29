@@ -26,8 +26,11 @@ namespace ImGui
     /// </remarks>
     public static partial class Application
     {
-        internal static Form MainForm { get; private set; }
-        private static readonly List<Form> forms = new List<Form>();
+        internal static Form MainForm
+        {
+            get => ImGuiContext.WindowManager.MainForm;
+            private set => ImGuiContext.WindowManager.MainForm = value;
+        }
 
         internal static OSAbstraction.PlatformContext PlatformContext;
 
@@ -145,7 +148,10 @@ namespace ImGui
             g.FrameCountPlatformEnded = g.FrameCount;
             if (!g.ConfigFlagsCurrFrame.HaveFlag(ImGuiConfigFlags.ViewportsEnable))
                 return;
-            
+
+            var w = g.WindowManager;
+            var forms = w.Forms;
+
             // Create/resize/destroy native windows to match each active form.
             // The main form is always fully handled by the application.
             foreach (var viewport in forms)
@@ -264,6 +270,8 @@ namespace ImGui
         //</code>
         private static void RenderForms(object platform_render_arg = null, object renderer_render_arg = null)
         {
+            var w = ImGuiContext.WindowManager;
+            var forms = w.Forms;
             for (int i = 0; i < forms.Count; i++)
             {
                 var viewport = forms[i];
@@ -344,12 +352,12 @@ namespace ImGui
 
         public static void AddFrom(Form form)
         {
-            forms.Add(form);
+            ImGuiContext.WindowManager.Forms.Add(form);
         }
 
         public static void RemoveForm(Form form)
         {
-            forms.Remove(form);
+            ImGuiContext.WindowManager.Forms.Remove(form);
         }
     }
 }

@@ -72,5 +72,14 @@ namespace ImGui.OSAbstraction.Window
         /// </summary>
         Point ClientToScreen(Point point);
 
+        /// <summary>
+        /// Get if the window is focused.
+        /// </summary>
+        bool GetFocus();
+
+        /// <summary>
+        /// Set the window focused. Move window to front and set input focus.
+        /// </summary>
+        void SetFocus();
     }
 }

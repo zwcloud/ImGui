@@ -165,11 +165,6 @@ namespace ImGui
             MainForm.renderer.Clear(MainForm.BackgroundColor);
 
             MainForm.RenderBackground(MainForm.ClientSize, MainForm.renderer);
-            for (int n = 0; n != forms.Count; n++)
-            {
-                var viewport = forms[n];
-                viewport.RenderBackground(viewport.ClientSize, viewport.renderer);
-            }
 
             foreach (var window in w.Windows)
             {
@@ -190,11 +185,6 @@ namespace ImGui
                 Metrics.RenderWindows++;
             }
             MainForm.RenderForeground(MainForm.ClientSize, MainForm.renderer);
-            for (int n = 0; n != forms.Count; n++)
-            {
-                var viewport = forms[n];
-                viewport.RenderForeground(viewport.ClientSize, viewport.renderer);
-            }
 
             MainForm.renderer.SwapBuffers();
         }

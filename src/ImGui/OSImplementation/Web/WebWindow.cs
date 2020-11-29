@@ -131,6 +131,16 @@ namespace ImGui.OSImplementation.Web
             return point + (Vector) this.ClientPosition;
         }
 
+        public bool GetFocus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetFocus()
+        {
+            throw new NotImplementedException();
+        }
+
         public void MainLoop(Action guiMethod)
         {
             guiMethod();
