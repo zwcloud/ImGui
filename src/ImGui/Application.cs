@@ -98,7 +98,7 @@ namespace ImGui
         public static void Run(Form mainForm, Action onGUI = null)
         {
             MainForm = mainForm;
-
+            mainForm.ID = IMGUI_VIEWPORT_DEFAULT_ID;
             mainForm.InitializeForm();
             mainForm.InitializeRenderer();
             mainForm.Show();
@@ -150,7 +150,7 @@ namespace ImGui
                 return;
 
             var w = g.WindowManager;
-            var forms = w.Forms;
+            var forms = w.Viewports;
 
             // Create/resize/destroy native windows to match each active form.
             // The main form is always fully handled by the application.
@@ -186,14 +186,14 @@ namespace ImGui
                 }
                 
                 // Apply Position and Size (from ImGui to Platform/Renderer backends)
-                if (viewport.LastPlatformPos != viewport.PlatformPos && !viewport.PlatformRequestMove)
-                    viewport.Position = viewport.PlatformPos;
-                if (viewport.LastPlatformSize != viewport.PlatformSize && !viewport.PlatformRequestResize)
-                    viewport.Size = viewport.PlatformSize;
-                if (viewport.LastRendererSize != viewport.PlatformSize)
-                    viewport.Renderer_SetWindowSize(viewport.PlatformSize);
-                viewport.LastPlatformPos = viewport.PlatformPos;
-                viewport.LastPlatformSize = viewport.LastRendererSize = viewport.PlatformSize;
+                if (viewport.LastPos != viewport.Pos && !viewport.PlatformRequestMove)
+                    viewport.PlatformPosition = viewport.Pos;
+                if (viewport.LastSize != viewport.Size && !viewport.PlatformRequestResize)
+                    viewport.PlatformSize = viewport.Size;
+                if (viewport.LastRendererSize != viewport.Size)
+                    viewport.Renderer_SetWindowSize(viewport.Size);
+                viewport.LastPos = viewport.Pos;
+                viewport.LastSize = viewport.LastRendererSize = viewport.Size;
                 
                 // Update title bar (if it changed)
                 if (viewport.Window != null && viewport.LastName != viewport.Window.Name)
@@ -271,7 +271,7 @@ namespace ImGui
         private static void RenderForms(object platform_render_arg = null, object renderer_render_arg = null)
         {
             var w = ImGuiContext.WindowManager;
-            var forms = w.Forms;
+            var forms = w.Viewports;
             for (int i = 0; i < forms.Count; i++)
             {
                 var viewport = forms[i];
@@ -352,12 +352,14 @@ namespace ImGui
 
         public static void AddFrom(Form form)
         {
-            ImGuiContext.WindowManager.Forms.Add(form);
+            ImGuiContext.WindowManager.Viewports.Add(form);
         }
 
         public static void RemoveForm(Form form)
         {
-            ImGuiContext.WindowManager.Forms.Remove(form);
+            ImGuiContext.WindowManager.Viewports.Remove(form);
         }
+
+        private const int IMGUI_VIEWPORT_DEFAULT_ID = 0x11111111;
     }
 }

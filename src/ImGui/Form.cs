@@ -13,7 +13,7 @@ namespace ImGui
     /// <summary>
     /// Represents a window that makes up an application's user interface.
     /// </summary>
-    public abstract partial class Form
+    public partial class Form
     {
         private readonly struct ConstructionParameters
         {
@@ -33,7 +33,7 @@ namespace ImGui
 
         public static Form current;
         
-        private string debugName => constructionParameters.Title;
+        internal string debugName => constructionParameters.Title;
         
         private readonly ConstructionParameters constructionParameters;
 
@@ -42,15 +42,16 @@ namespace ImGui
         internal IRenderer renderer;
 
         internal int ID;
-        internal int LastFrameActive;
+        internal int Idx;
+        internal long LastFrameActive;
         internal bool PlatformWindowCreated;
         internal Window Window;
         internal string LastName;
-        internal Point LastPlatformPos;
-        internal Size LastPlatformSize;
+        internal Point LastPos;
+        internal Size LastSize;
         internal Size LastRendererSize;
-        internal Point PlatformPos;
-        internal Size PlatformSize;
+        internal Point Pos;
+        internal Size Size;
         internal bool PlatformRequestMove;    // Platform window requested move (e.g. window was moved by the OS / host window manager, authoritative position will be OS window position)
         internal bool PlatformRequestResize;  // Platform window requested resize (e.g. window was resized by the OS / host window manager, authoritative size will be OS window size)
         internal bool PlatformRequestClose;   // Platform window requested closure (e.g. window was moved by the OS / host window manager, e.g. pressing ALT-F4)
@@ -59,6 +60,8 @@ namespace ImGui
         internal ImGuiViewportFlags Flags;// See ImGuiViewportFlags
         internal int LastFrontMostStampCount;  // Last stamp number from when a window hosted by this viewport was made front-most (by comparing this value between two viewport we have an implicit viewport z-order
         
+        public Point LastPlatformPos { get; set; }
+        public Size LastPlatformSize { get; set; }
         public Color BackgroundColor { get; set; } = Color.Argb(255, 114, 144, 154);
 
         private List<Window> windows = new List<Window>(8);
@@ -119,7 +122,7 @@ namespace ImGui
 
         internal IntPtr Pointer => this.nativeWindow.Pointer;
 
-        internal Size Size
+        internal Size PlatformSize
         {
             get => this.nativeWindow.Size;
             set => this.nativeWindow.Size = value;
@@ -137,13 +140,13 @@ namespace ImGui
             set => this.nativeWindow.ClientSize = value;
         }
 
-        internal Point Position
+        internal Point PlatformPosition
         {
             get => this.nativeWindow.Position;
             set => this.nativeWindow.Position = value;
         }
 
-        internal Rect Rect => new Rect(this.Position, this.Size);
+        internal Rect Rect => new Rect(this.PlatformPosition, this.Size);
 
         internal void Show()
         {

@@ -74,11 +74,11 @@ namespace ImGui
                     Mouse.Instance.LeftButtonClickedTime = g.Time;
                 }
                 Mouse.Instance.LeftButtonPressedPos = Mouse.Instance.Position;
-                Mouse.Instance.DragMaxDiatanceSquared = 0;
+                Mouse.Instance.DragMaxDistanceSquared = 0;
             }
             else if (Mouse.Instance.LeftButtonState == KeyState.Down)
             {
-                Mouse.Instance.DragMaxDiatanceSquared = Math.Max(Mouse.Instance.DragMaxDiatanceSquared, (Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPos).LengthSquared);
+                Mouse.Instance.DragMaxDistanceSquared = Math.Max(Mouse.Instance.DragMaxDistanceSquared, (Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPos).LengthSquared);
             }
             if (Mouse.Instance.LeftButtonPressed) ++Mouse.Instance.LeftButtonPressedTimes;
             if (Mouse.Instance.LeftButtonReleased) ++Mouse.Instance.LeftButtonReleasedTimes;
@@ -133,14 +133,29 @@ namespace ImGui
             }
             GUI.End();//end of the implicit "Debug" window
 
+            w.CurrentViewport = null;
+            
+            //TODO drag and drop
+            
             MainForm.ForeBackGroundRenderClose();
+
+            // End frame
+            g.FrameCountEnded = g.FrameCount;
+
+            // Initiate moving window + handle left-click and right-click focus
+            UpdateMouseMovingWindowEndFrame();
+
+            // Update user-facing viewport list (g.Viewports -> g.PlatformIO.Viewports after filtering out some)
+            UpdateViewportsEndFrame();
+
+            // Update windows
+            // TODO merge UpdateViewportsEndFrame to w.EndFrame
             w.EndFrame(g);
 
             // Clear Input data for next frame
             Mouse.Instance.MouseWheel = 0;
             Ime.ImeBuffer.Clear();
 
-            g.FrameCountEnded = g.FrameCount;
         }
 
         internal static void Render()
@@ -258,8 +273,11 @@ namespace ImGui
 
         private static void UpdateViewportsNewFrame()
         {
-            var w = ImGuiContext.WindowManager;
-            foreach (var form in w.Forms)
+            var g = ImGuiContext;
+            var w = g.WindowManager;
+
+            //update minimized status
+            foreach (var form in w.Viewports)
             {
                 if (!form.PlatformWindowCreated)
                 {
@@ -273,6 +291,323 @@ namespace ImGui
                 {
                     form.Flags &= ImGuiViewportFlags.Minimized;
                 }
+            }
+
+            // fetch latest viewport info via platform APIs
+            var mainForm = w.MainForm;
+            //TODO size should be only adjusted by
+            //* dragging #Move node
+            //* user-specified size in GUI.Begin
+            var mainFormPosition = mainForm.PlatformPosition;
+            var mainFormSize = mainForm.Size;
+            if (Utility.HasAllFlags(mainForm.Flags, ImGuiViewportFlags.Minimized))
+            {// Preserve last pos/size when minimized
+                mainFormPosition = mainForm.Pos;
+                mainFormSize = mainForm.Size;
+            }
+
+            AddUpdateViewport(null, IMGUI_VIEWPORT_DEFAULT_ID, mainFormPosition, mainFormSize,
+                ImGuiViewportFlags.CanHostOtherWindows);
+
+            w.CurrentViewport = null;
+            w.MouseViewport = null;
+            
+            // Erase unused viewports
+            for (int n = 0; n < w.Viewports.Count; n++)
+            {
+                var viewport = w.Viewports[n];
+                viewport.Idx = n;
+                
+                if (n > 0 && viewport.LastFrameActive < g.FrameCount - 2)
+                {
+                    // Clear references to this viewport in windows (window->ViewportId becomes the master data)
+                    foreach (var window in w.Windows)
+                    {
+                        if (window.Viewport == viewport)
+                        {
+                            window.Viewport = null;
+                            window.ViewportOwned = false;
+                        }
+                    }
+
+                    if (viewport == g.MouseLastHoveredViewport)
+                    {
+                        g.MouseLastHoveredViewport = null;
+                    }
+                    w.Viewports.RemoveAt(n);
+
+                    // Destroy
+                    Debug.WriteLine($"Delete Viewport {viewport.ID} ({viewport.debugName})");
+                    viewport.Close();// In most circumstances the platform window will already be destroyed here.
+                    //Debug.Assert(g.PlatformIO.Viewports.Contains(viewport) == false);//TODO purpose of PlatformIO.Viewports
+                    n--;
+                    continue;
+                }
+                
+                bool platform_funcs_available = viewport.PlatformWindowCreated;
+                // Update Position and Size (from Platform Window to ImGui) if requested.
+                // We do it early in the frame instead of waiting for UpdatePlatformWindows() to avoid a frame of lag when moving/resizing using OS facilities.
+                if (!Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.Minimized)
+                    && viewport.PlatformWindowCreated)
+                {
+                    if (viewport.PlatformRequestMove)
+                        viewport.Pos = viewport.LastPlatformPos = viewport.PlatformPosition;
+                    if (viewport.PlatformRequestResize)
+                        viewport.Size = viewport.LastPlatformSize = viewport.PlatformSize;
+                }
+
+                // Reset alpha every frame. Users of transparency (docking) needs to request a lower alpha back.
+                viewport.Alpha = 1.0f;
+                
+                // Translate imgui windows when a Host Viewport has been moved
+                // (This additionally keeps windows at the same place when ImGuiConfigFlags_ViewportsEnable is toggled!)
+                var viewport_delta_pos = viewport.Pos - viewport.LastPos;
+                if (Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.CanHostOtherWindows) &&
+                    (viewport_delta_pos.X != 0.0f || viewport_delta_pos.Y != 0.0f))
+                {
+                    TranslateWindowsInViewport(viewport, viewport.LastPos, viewport.Pos);
+                }
+
+            }
+            
+            // Mouse handling: decide on the actual mouse viewport for this frame between the active/focused viewport and the hovered viewport.
+            // Note that 'viewport_hovered' should skip over any viewport that has the ImGuiViewportFlags.NoInputs flags set.
+            Form viewport_hovered = null;
+            if (Utility.HasAllFlags(IO.BackendFlags, ImGuiBackendFlags.HasMouseHoveredViewport))
+            {
+                viewport_hovered = Input.Mouse.Instance.MouseHoveredViewportId > 0 ? 
+                    w.FindViewportById(Input.Mouse.Instance.MouseHoveredViewportId) : null;
+                if (viewport_hovered!=null && Utility.HasAllFlags(viewport_hovered.Flags, ImGuiViewportFlags.NoInputs))
+                {
+                    Debug.Fail("Backend failed at honoring its contract if it returned a viewport with the NoInputs flag.");
+                    viewport_hovered = FindHoveredViewportFromPlatformWindowStack(Input.Mouse.Instance.Position);
+                }
+            }
+            else
+            {
+                // If the backend doesn't know how to honor ImGuiViewportFlags.NoInputs, we do a search ourselves. Note that this search:
+                // A) won't take account of the possibility that non-imgui windows may be in-between our dragged window and our target window.
+                // B) uses LastFrameAsRefViewport as a flawed replacement for the last time a window was focused (we could/should fix that by introducing Focus functions in PlatformIO)
+                viewport_hovered = FindHoveredViewportFromPlatformWindowStack(Input.Mouse.Instance.Position);
+            }
+            if (viewport_hovered != null)
+                g.MouseLastHoveredViewport = viewport_hovered;
+            else if (g.MouseLastHoveredViewport == null)
+                g.MouseLastHoveredViewport = w.MainForm;
+
+            // Update mouse reference viewport
+            // (when moving a window we aim at its viewport, but this will be overwritten below if we go in drag and drop mode)
+            if (w.MovingWindow != null)
+            {
+                w.MouseViewport = w.MovingWindow.Viewport;
+            }
+            else
+            {
+                w.MouseViewport = g.MouseLastHoveredViewport;
+            }
+
+            Debug.Assert(w.MouseViewport != null);
+        }
+        
+        // Update user-facing viewport list (g.Viewports -> g.PlatformIO.Viewports after filtering out some)
+        private static void UpdateViewportsEndFrame()
+        {
+            var g = ImGuiContext;
+            var w = g.WindowManager;
+
+            //TODO understand g.PlatformIO.Viewports vs g.Viewports
+
+            for (int i = 0; i < w.Viewports.Count; i++)
+            {
+                Form viewport = w.Viewports[i];
+                viewport.LastPos = viewport.Pos;
+                if (viewport.LastFrameActive < g.FrameCount
+                    || viewport.Size.Width <= 0.0f || viewport.Size.Height <= 0.0f)
+                    if (i > 0) // Always include main viewport in the list
+                        continue;
+                if (viewport.Window != null && !viewport.Window.ActiveAndVisible)
+                    continue;
+                if (i > 0)
+                    Debug.Assert(viewport.Window != null);
+                //TODO understand g.PlatformIO.Viewports vs g.Viewports
+            }
+            MainForm.ClearRequestFlags(); // Clear main viewport flags because UpdatePlatformWindows() won't do it and may not even be called
+        }
+        
+        // If the backend doesn't set MouseLastHoveredViewport or doesn't honor ImGuiViewportFlags_NoInputs, we do a search ourselves.
+        // A) It won't take account of the possibility that non-imgui windows may be in-between our dragged window and our target window.
+        // B) It requires Platform_GetWindowFocus to be implemented by backend.
+        static Form FindHoveredViewportFromPlatformWindowStack(Point mouse_platform_pos)
+        {
+            var g = ImGuiContext;
+            var w = g.WindowManager;
+            Form best_candidate = null;
+            for (int n = 0; n < w.Viewports.Count; n++)
+            {
+                Form viewport = w.Viewports[n];
+                if (!Utility.HasAllFlags(viewport.Flags, 
+                        ImGuiViewportFlags.NoInputs | ImGuiViewportFlags.Minimized)
+                    && viewport.Rect/*TODO use client rect?*/.Contains(mouse_platform_pos))
+                {
+                    if (best_candidate == null ||
+                        best_candidate.LastFrontMostStampCount < viewport.LastFrontMostStampCount)
+                    {
+                        best_candidate = viewport;
+                    }
+                }
+            }
+            return best_candidate;
+        }
+
+        // Translate imgui windows when a Host Viewport has been moved
+        // (This additionally keeps windows at the same place when ImGuiConfigFlags_ViewportsEnable is toggled!)
+        private static void TranslateWindowsInViewport(Form viewport, Point old_pos, Point new_pos)
+        {
+            Debug.Assert(viewport.Window == null
+                && Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.CanHostOtherWindows));
+            var g = ImGuiContext;
+            var w = g.WindowManager;
+
+            // 1) We test if ImGuiConfigFlags_ViewportsEnable was just toggled, which allows us to conveniently
+            // translate imgui windows from OS-window-local to absolute coordinates or vice-versa.
+            // 2) If it's not going to fit into the new size, keep it at same absolute position.
+            // One problem with this is that most Win32 applications doesn't update their render while dragging,
+            // and so the window will appear to teleport when releasing the mouse.
+            bool translate_all_windows =
+                (g.ConfigFlagsCurrFrame & ImGuiConfigFlags.ViewportsEnable)
+                !=
+                (g.ConfigFlagsLastFrame & ImGuiConfigFlags.ViewportsEnable);
+            Rect test_still_fit_rect = new Rect(old_pos, old_pos + (Vector)viewport.Size);
+            Vector delta_pos = new_pos - old_pos;
+            foreach (var window in w.Windows)
+            {
+                if (translate_all_windows)
+                {
+                    window.Position += delta_pos;
+                }
+                else if (window.Viewport == viewport &&
+                    test_still_fit_rect.Contains(window.Rect))
+                {
+                    window.Position += delta_pos;
+                }
+            }
+        }
+
+        private static Form AddUpdateViewport(Window window, int id, Point pos, Size size,
+            ImGuiViewportFlags flags)
+        {
+            var g = ImGuiContext;
+            var w = g.WindowManager;
+            Debug.Assert(id != 0);
+
+            if (window != null)
+            {
+                if (w.MovingWindow?.RootWindow == window)
+                    flags |= ImGuiViewportFlags.NoInputs | ImGuiViewportFlags.NoFocusOnAppearing;
+                if (Utility.HasAllFlags(window.Flags, WindowFlags.NoMouseInputs | WindowFlags.NoNavInputs))
+                    flags |= ImGuiViewportFlags.NoInputs;
+                if (Utility.HasAllFlags(window.Flags, WindowFlags.NoFocusOnAppearing))
+                    flags |= ImGuiViewportFlags.NoFocusOnAppearing;
+            }
+
+            var viewport = w.FindViewportById(id);
+            if (viewport != null)
+            {
+                if (!viewport.PlatformRequestMove)
+                    viewport.Pos = pos;
+                if (!viewport.PlatformRequestResize)
+                    viewport.Size = size;
+                viewport.Flags = flags | (viewport.Flags & ImGuiViewportFlags.Minimized); // Preserve existing flags
+            }
+            else
+            {
+                // New viewport
+                viewport = new Form(pos, size);
+                viewport.ID = id;
+                viewport.Idx = w.Viewports.Count;
+                viewport.Pos = viewport.LastPos = pos;
+                viewport.Size = size;
+                viewport.Flags = flags;
+                //UpdateViewportPlatformMonitor(viewport);//TODO
+                w.Viewports.Add(viewport);
+                Debug.WriteLine($"Add Viewport {id} ({window?.Name})");//TODO why use window name?
+
+                #if TODO 
+                // We normally setup for all viewports in NewFrame() but here need to handle the mid-frame creation of a new viewport.
+                // We need to extend the fullscreen clip rect so the OverlayDrawList clip is correct for that the first frame
+                g.DrawListSharedData.ClipRectFullscreen.x = ImMin(g.DrawListSharedData.ClipRectFullscreen.x, viewport.Pos.x);
+                g.DrawListSharedData.ClipRectFullscreen.y = ImMin(g.DrawListSharedData.ClipRectFullscreen.y, viewport.Pos.y);
+                g.DrawListSharedData.ClipRectFullscreen.z = ImMax(g.DrawListSharedData.ClipRectFullscreen.z, viewport.Pos.x + viewport.Size.x);
+                g.DrawListSharedData.ClipRectFullscreen.w = ImMax(g.DrawListSharedData.ClipRectFullscreen.w, viewport.Pos.y + viewport.Size.y);
+                #endif
+            }
+
+            viewport.Window = window;
+            viewport.LastFrameActive = g.FrameCount;
+            Debug.Assert(window == null || viewport.ID == window.ID);
+
+            if (window != null)
+                window.ViewportOwned = true;
+
+            return viewport;
+        }
+        
+        // Initiate moving window when clicking on empty space or title bar.
+        // Handle left-click and right-click focus.
+        private static void UpdateMouseMovingWindowEndFrame()
+        {
+            var g = ImGuiContext;
+            if (g.ActiveId != 0 || g.HoverId != 0)
+                return;
+
+            var w = g.WindowManager;
+
+            // Click on void to focus window and start moving
+            // (after we're done with all our widgets, so e.g. clicking on docking tab-bar which have set HoveredId already and not get us here!)
+            if (Input.Mouse.Instance.LeftButtonPressed)
+            {
+                //TODO continue here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //TODO Remove logic about not-implemented features like pop-up, modal and docking.
+                Window root_window = w.HoveredWindow;
+
+                if (root_window != null)
+                {
+                    StartMouseMovingWindow(w.HoveredWindow);
+
+                    // Cancel moving if clicked outside of title bar
+                    if (IO.ConfigWindowsMoveFromTitleBarOnly)
+                        if (!Utility.HasAllFlags(root_window.Flags, WindowFlags.NoTitleBar))
+                            if (!root_window.TitleBarRect.Contains(Input.Mouse.Instance.LeftButtonClickedPosition))
+                                w.MovingWindow = null;
+                }
+                else if (root_window == null)
+                {
+                    // Clicking on void disable focus
+                    w.FocusWindow(null);
+                }
+            }
+        }
+        
+        private static void StartMouseMovingWindow(Window window)
+        {
+            // Set ActiveId even if the WindowFlags.NoMove flag is set. Without it, dragging away from a window with _NoMove would activate hover on other windows.
+            // We _also_ call this when clicking in a window empty space when ConfigWindowsMoveFromTitleBarOnly is set, but clear w.MovingWindow afterward.
+            // This is because we want ActiveId to be set even when the window is not permitted to move.
+            var g = ImGuiContext;
+            var w = g.WindowManager;
+            w.FocusWindow(window);
+            g.SetActiveID(window.MoveId, window);
+            g.ActiveIdNoClearOnFocusLoss = true;
+            g.ActiveIdClickOffset = Input.Mouse.Instance.LeftButtonClickedPosition - window.RootWindow.Position;
+
+            bool canMoveWindow = !(
+                Utility.HasAllFlags(window.Flags, WindowFlags.NoMove)
+                || Utility.HasAllFlags(window.RootWindow.Flags, WindowFlags.NoMove)
+                );
+
+            if (canMoveWindow)
+            {
+                w.MovingWindow = window;
             }
         }
     }

@@ -157,7 +157,7 @@ namespace ImGui
         void OnGUI()
         {
             GUI.Begin("ComboBoxWindow", (0, 0), ClientSize,
-                WindowFlags.ShowBorders | WindowFlags.NoTitleBar | WindowFlags.NoCollapse 
+                WindowFlags.NoTitleBar | WindowFlags.NoCollapse 
                 | WindowFlags.NoMove | WindowFlags.NoResize | WindowFlags.NoScrollbar );
             GUILayout.BeginVertical("CombolBox");
             var clickedIndx = -1;

@@ -170,9 +170,8 @@ label:
 
     private void ShowTestWindow(ref bool open)
     {
-        WindowFlags window_flags = WindowFlags.VerticalScrollbar;
+        WindowFlags window_flags = WindowFlags.None;
         if (no_titlebar) window_flags |= WindowFlags.NoTitleBar;
-        if (!no_border) window_flags |= WindowFlags.ShowBorders;
         if (no_resize) window_flags |= WindowFlags.NoResize;
         if (no_move) window_flags |= WindowFlags.NoMove;
         if (no_scrollbar) window_flags |= WindowFlags.NoScrollbar;

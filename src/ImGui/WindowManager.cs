@@ -8,7 +8,9 @@ namespace ImGui
     internal class WindowManager
     {
         public Form MainForm { get; set; }
-        public readonly List<Form> Forms = new List<Form>(8);
+        public readonly List<Form> Viewports = new List<Form>(8);
+        public Form CurrentViewport { get; set; }
+        public Form MouseViewport { get; set; }
 
         public readonly List<Window> Windows = new List<Window>();
 
@@ -19,12 +21,30 @@ namespace ImGui
         public Window HoveredWindow { get; internal set; }
         public Window HoveredRootWindow { get; internal set; }
 
+        public Window MovingWindow { get; internal set; }//TODO new move window logic related to multi-form
         public Window MovedWindow { get; internal set; }
         public int MovedWindowMoveId { get; internal set; }
 
         public Window FocusedWindow { get; private set; }
 
         public Window ActiveIdWindow { get; internal set; }
+
+        public Form FindViewportById(int id)
+        {
+            if (id == MainForm.ID)
+            {
+                return MainForm;
+            }
+
+            foreach (var form in Viewports)
+            {
+                if (form.ID == id)
+                {
+                    return form;
+                }
+            }
+            return null;
+        }
 
         public bool IsWindowContentHoverable(Window window)
         {
@@ -101,6 +121,8 @@ namespace ImGui
                     g.SetActiveID(0);
                 }
             }
+            
+            window.LastFrameJustFocused = g.FrameCount;
 
             // Bring to front
             if ((window.Flags.HaveFlag(WindowFlags.NoBringToFrontOnFocus) || this.Windows[this.Windows.Count - 1] == window))
@@ -132,7 +154,7 @@ namespace ImGui
             {
                 g.KeepAliveID(this.MovedWindowMoveId);
                 Debug.Assert(this.MovedWindow != null && this.MovedWindow.RootWindow != null);
-                Debug.Assert(this.MovedWindow.RootWindow.MoveID == this.MovedWindowMoveId);
+                Debug.Assert(this.MovedWindow.RootWindow.MoveId == this.MovedWindowMoveId);
                 if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
                     if (!this.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove))
@@ -229,7 +251,7 @@ namespace ImGui
                     if (!(this.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
                     {
                         this.MovedWindow = this.HoveredWindow;
-                        this.MovedWindowMoveId = this.HoveredRootWindow.MoveID;
+                        this.MovedWindowMoveId = this.HoveredRootWindow.MoveId;
                         g.SetActiveID(this.MovedWindowMoveId, this.HoveredRootWindow);
                     }
                 }

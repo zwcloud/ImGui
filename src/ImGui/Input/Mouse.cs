@@ -59,7 +59,7 @@
         internal int LeftButtonReleasedTimes = 0;
         internal long LeftButtonClickedTime { get; set; }
         internal Point LeftButtonPressedPos { get; set; }
-        internal double DragMaxDiatanceSquared { get; set; }
+        internal double DragMaxDistanceSquared { get; set; }
         internal int LeftButtonDoubleClickedTimes { get; set; }
         #endregion
 
@@ -98,6 +98,10 @@
         #endregion
 
         #endregion
+        
+        public bool AnyButtonDown =>
+            LeftButtonState == KeyState.Down
+            && RightButtonState == KeyState.Down;
 
         #region Position
 
@@ -138,10 +142,15 @@
 
         #endregion
 
+        #region multi-form features
+        public int MouseHoveredViewportId => throw new System.NotImplementedException();
+        public bool DragDropActive  => throw new System.NotImplementedException();
+        #endregion
+
         #region Cursor
 
         public Cursor Cursor { get; set; } = Cursor.Default;
-
+        public Point LeftButtonClickedPosition => throw new System.NotImplementedException();
         #endregion
     }
 }

@@ -17,22 +17,22 @@ namespace ImGui
 
         public static bool Begin(string name, ref bool open, Point position, Size size)
         {
-            return Begin(name, ref open, position, size, 1, WindowFlags.ShowBorders);
+            return Begin(name, ref open, position, size, 1, WindowFlags.None);
         }
 
-        public static void Begin(string title, Point position, Size size, WindowFlags flags = WindowFlags.ShowBorders)
+        public static void Begin(string title, Point position, Size size, WindowFlags flags = WindowFlags.None)
         {
             var open = true;
             Begin(title, ref open, position, size, 1, flags);
         }
         
-        public static void Begin(string title, Rect rect, WindowFlags flags = WindowFlags.ShowBorders)
+        public static void Begin(string title, Rect rect, WindowFlags flags = WindowFlags.None)
         {
             var open = true;
             Begin(title, ref open, rect.Location, rect.Size, 1, flags);
         }
 
-        public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha = 1, WindowFlags flags = WindowFlags.VerticalScrollbar)
+        public static bool Begin(string name, ref bool open, Point position, Size size, double bg_alpha, WindowFlags flags = WindowFlags.None)
         {
             if (bg_alpha < 0.0f)
             {
@@ -108,7 +108,6 @@ namespace ImGui
 
             return !window.SkipItems;
         }
-
 
         public static void End()
         {

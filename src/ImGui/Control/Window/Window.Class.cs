@@ -83,7 +83,11 @@ namespace ImGui
         /// <summary>
         /// The form that contains this window.
         /// </summary>
-        public Form Form { get;  set; }
+        public Form Viewport { get; internal set; }
+
+        public bool ViewportOwned { get; internal set; }
+        
+        public long LastFrameJustFocused { get; set; }
 
         #region Window original sub nodes
         private Node titleBar { get; }
@@ -101,8 +105,8 @@ namespace ImGui
             this.ID = name.GetHashCode();
             this.Name = name;
             this.Active = this.WasActive = false;
-            this.Position = form.PlatformPos + new Vector(60, 60);
-            this.ViewportPosition = form.PlatformPos;
+            this.Position = form.Pos + new Vector(60, 60);
+            this.ViewportPosition = form.Pos;
             this.FullSize = size;
 
             this.Flags = flags;
@@ -112,7 +116,7 @@ namespace ImGui
             this.RenderContext = new RenderContext(this.geometryRenderer, this.MeshList);
 
             this.IDStack.Push(this.ID);
-            this.MoveID = this.GetID("#MOVE");
+            this.MoveId = this.GetID("#MOVE");
 
             this.MeshBuffer.OwnerName = this.Name;
 
@@ -322,7 +326,7 @@ namespace ImGui
         /// <summary>
         /// Gets or sets move ID, equals to <code>window.GetID("#MOVE")</code>.
         /// </summary>
-        public int MoveID { get; internal set; }
+        public int MoveId { get; internal set; }
 
         /// <summary>
         /// Gets or sets whether the window was active in last frame.

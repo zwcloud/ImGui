@@ -34,11 +34,11 @@ namespace ImGui
                 return false;
             }
 
-            WindowFlags flags = WindowFlags.NoTitleBar | WindowFlags.NoResize | WindowFlags.ChildWindow | WindowFlags.VerticalScrollbar;
+            WindowFlags flags = WindowFlags.NoTitleBar | WindowFlags.NoResize | WindowFlags.ChildWindow;
             return GUI.Begin(name, ref open, childWindowContainer.Rect.TopLeft, childWindowContainer.Rect.Size, 1.0, flags | extra_flags);
         }
 
-        public static bool BeginChild(string name, LayoutOptions? options) => BeginChild(name, options, WindowFlags.Default);
+        public static bool BeginChild(string name, LayoutOptions? options) => BeginChild(name, options, WindowFlags.None);
 
         public static void EndChild()
         {
