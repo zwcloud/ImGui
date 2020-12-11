@@ -42,7 +42,7 @@ namespace ImGui
             UpdateViewportsNewFrame();
 
             #region Input
-
+            //TODO move to Mouse
             #region mouse position
             if (Mouse.Instance.Position.X < 0 && Mouse.Instance.Position.Y < 0)
                 Mouse.Instance.Position = new Point(-9999.0f, -9999.0f);
@@ -63,7 +63,7 @@ namespace ImGui
             {
                 if (g.Time - Mouse.Instance.LeftButtonClickedTime < Mouse.DoubleClickIntervalTimeSpan)
                 {
-                    if ((Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPos).LengthSquared < Mouse.DoubleClickMaxDistance * Mouse.DoubleClickMaxDistance)
+                    if ((Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPosition).LengthSquared < Mouse.DoubleClickMaxDistance * Mouse.DoubleClickMaxDistance)
                     {
                         Mouse.Instance.LeftButtonDoubleClicked = true;
                     }
@@ -73,12 +73,12 @@ namespace ImGui
                 {
                     Mouse.Instance.LeftButtonClickedTime = g.Time;
                 }
-                Mouse.Instance.LeftButtonPressedPos = Mouse.Instance.Position;
+                Mouse.Instance.LeftButtonPressedPosition = Mouse.Instance.Position;
                 Mouse.Instance.DragMaxDistanceSquared = 0;
             }
             else if (Mouse.Instance.LeftButtonState == KeyState.Down)
             {
-                Mouse.Instance.DragMaxDistanceSquared = Math.Max(Mouse.Instance.DragMaxDistanceSquared, (Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPos).LengthSquared);
+                Mouse.Instance.DragMaxDistanceSquared = Math.Max(Mouse.Instance.DragMaxDistanceSquared, (Mouse.Instance.Position - Mouse.Instance.LeftButtonPressedPosition).LengthSquared);
             }
             if (Mouse.Instance.LeftButtonPressed) ++Mouse.Instance.LeftButtonPressedTimes;
             if (Mouse.Instance.LeftButtonReleased) ++Mouse.Instance.LeftButtonReleasedTimes;
@@ -577,7 +577,7 @@ namespace ImGui
                     // Cancel moving if clicked outside of title bar
                     if (IO.ConfigWindowsMoveFromTitleBarOnly)
                         if (!Utility.HasAllFlags(root_window.Flags, WindowFlags.NoTitleBar))
-                            if (!root_window.TitleBarRect.Contains(Input.Mouse.Instance.LeftButtonClickedPosition))
+                            if (!root_window.TitleBarRect.Contains(Input.Mouse.Instance.LeftButtonPressedPosition))
                                 w.MovingWindow = null;
                 }
                 else if (root_window == null)
@@ -598,7 +598,7 @@ namespace ImGui
             w.FocusWindow(window);
             g.SetActiveID(window.MoveId, window);
             g.ActiveIdNoClearOnFocusLoss = true;
-            g.ActiveIdClickOffset = Input.Mouse.Instance.LeftButtonClickedPosition - window.RootWindow.Position;
+            g.ActiveIdClickOffset = Input.Mouse.Instance.LeftButtonPressedPosition - window.RootWindow.Position;
 
             bool canMoveWindow = !(
                 Utility.HasAllFlags(window.Flags, WindowFlags.NoMove)

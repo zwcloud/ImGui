@@ -58,7 +58,7 @@
         internal int LeftButtonPressedTimes = 0;
         internal int LeftButtonReleasedTimes = 0;
         internal long LeftButtonClickedTime { get; set; }
-        internal Point LeftButtonPressedPos { get; set; }
+        internal Point LeftButtonPressedPosition { get; set; }
         internal double DragMaxDistanceSquared { get; set; }
         internal int LeftButtonDoubleClickedTimes { get; set; }
         #endregion
@@ -150,7 +150,6 @@
         #region Cursor
 
         public Cursor Cursor { get; set; } = Cursor.Default;
-        public Point LeftButtonClickedPosition => throw new System.NotImplementedException();
         #endregion
     }
 }
