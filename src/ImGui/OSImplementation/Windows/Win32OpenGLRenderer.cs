@@ -46,6 +46,11 @@ namespace ImGui.OSImplementation.Windows
             GL.DepthFunc(GL.GL_NEVER);
             GL.Enable(GL.GL_SCISSOR_TEST);
 
+            InitializeTextRenderResources(size);
+        }
+
+        private void CreateTextFramebuffer(Size size)
+        {
             //set-up framebuffer
             GL.GenFramebuffers(1, framebuffers);
             GL.GenTextures(1, textures);
@@ -80,9 +85,32 @@ namespace ImGui.OSImplementation.Windows
                 throw new Exception("Framebuffer is not complete.");
             }
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
+        }
 
-            quadMesh = new QuadMesh(size.Width, size.Height);
+        private void DeleteTextFrameBuffer()
+        {
+            GL.DeleteFramebuffers(1, framebuffers);
+            GL.DeleteTextures(1, textures);
+        }
+
+        private void InitializeTextRenderResources(Size viewportSize)
+        {
+            CreateTextFramebuffer(viewportSize);
+            quadMesh = new QuadMesh(viewportSize.Width, viewportSize.Height);
             Utility.CheckGLError();
+        }
+
+        private void RebuildTextureRenderResources(Size viewportSize)
+        {
+            //delete old framebuffer
+            DeleteTextFrameBuffer();
+
+            //create new framebuffer
+            CreateTextFramebuffer(viewportSize);
+
+            //adjust quad mesh size
+            quadMesh.Width = viewportSize.Width;
+            quadMesh.Height = viewportSize.Height;
         }
 
         public void Bind()
@@ -313,6 +341,11 @@ namespace ImGui.OSImplementation.Windows
         {
             Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
             Debug.Assert(Wgl.GetCurrentContext() == IntPtr.Zero);
+        }
+
+        public void OnSizeChanged(Size size)
+        {
+            RebuildTextureRenderResources(size);
         }
 
         public void ShutDown()

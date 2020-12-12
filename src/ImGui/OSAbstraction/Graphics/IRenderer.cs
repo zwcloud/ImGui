@@ -53,5 +53,10 @@ namespace ImGui.OSAbstraction.Graphics
         /// </summary>
         byte[] GetRawBackBuffer(out int width, out int height);
 
+        /// <summary>
+        /// Called when render target size is changed
+        /// </summary>
+        /// <param name="size"></param>
+        void OnSizeChanged(Size size) => throw new NotImplementedException();
     }
 }

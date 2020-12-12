@@ -174,8 +174,7 @@ namespace ImGui
 
         internal void Renderer_SetWindowSize(Size size)
         {
-            //TODO
-            //renderer.OnWindowSizeChanged();
+            renderer.OnSizeChanged(size);
         }
 
         internal Point ScreenToClient(Point point)

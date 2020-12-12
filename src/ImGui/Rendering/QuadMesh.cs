@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ImGui.Rendering
+﻿namespace ImGui.Rendering
 {
     class QuadMesh : Mesh
     {
-        double Width
+        public double Width
         {
             get
             {
@@ -24,7 +20,7 @@ namespace ImGui.Rendering
             }
         }
 
-        double Height
+        public double Height
         {
             get
             {
