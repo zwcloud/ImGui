@@ -566,7 +566,6 @@ namespace ImGui
             // (after we're done with all our widgets, so e.g. clicking on docking tab-bar which have set HoveredId already and not get us here!)
             if (Input.Mouse.Instance.LeftButtonPressed)
             {
-                //TODO continue here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 //TODO Remove logic about not-implemented features like pop-up, modal and docking.
                 Window root_window = w.HoveredWindow;
 

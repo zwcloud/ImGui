@@ -203,8 +203,7 @@ namespace ImGui
 
         public void Platform_SetWindowAlpha(float alpha)
         {
-            //TODO
-            //nativeWindow.SetAlpha(alpha)
+            nativeWindow.Opacity = alpha;
         }
 
         public void Platform_UpdateWindow()

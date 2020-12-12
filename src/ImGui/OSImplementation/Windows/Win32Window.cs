@@ -137,14 +137,14 @@ namespace ImGui.OSImplementation.Windows
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AdjustWindowRect(ref RECT lpRect, uint dwStyle, bool bMenu);
+        static extern bool AdjustWindowRect(ref RECT lpRect, int dwStyle, bool bMenu);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         const int GWL_STYLE = -16;
 
         [StructLayout(LayoutKind.Sequential)]
@@ -221,6 +221,17 @@ namespace ImGui.OSImplementation.Windows
 
         private static readonly IntPtr TRUE = new IntPtr(1);
         private static readonly IntPtr FALSE = IntPtr.Zero;
+
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_LAYERED = 0x00080000;
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        public const int LWA_COLORKEY = 0x1;
+        public const int LWA_ALPHA = 0x2;
+        [DllImport("user32.dll")]
+        static extern bool SetLayeredWindowAttributes(IntPtr hWnd, uint crKey, byte bAlpha, uint dwFlags);
 
         #endregion
 
@@ -394,7 +405,7 @@ namespace ImGui.OSImplementation.Windows
                 bottom = (int)(position.Y + size.Height)
             };
 
-            if (!AdjustWindowRect(ref rc, (uint)windowStyle, false))
+            if (!AdjustWindowRect(ref rc, (int)windowStyle, false))
             {
                 throw new WindowCreateException(string.Format("AdjustWindowRectEx fails, win32 error: {0}", Marshal.GetLastWin32Error()));
             }
@@ -623,6 +634,31 @@ namespace ImGui.OSImplementation.Windows
         }
 
         public bool Minimized => IsIconic(hwnd);
+
+        public float Opacity
+        {
+            set
+            {
+                Debug.Assert(hwnd != IntPtr.Zero);
+                if (value < 0.0f && value > 1.0f)
+                {
+                    throw new InvalidOperationException("Opacity must be in range [0, 1]");
+                }
+
+                if (value < 1.0f)
+                {
+                    var style = GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED;
+                    SetWindowLong(hwnd, GWL_EXSTYLE, style);
+                    SetLayeredWindowAttributes(hwnd, 0, (byte)(255 * value), LWA_ALPHA);
+                }
+                else
+                {
+                    var style = GetWindowLong(hwnd, GWL_EXSTYLE) & ~WS_EX_LAYERED;
+                    SetWindowLong(hwnd, GWL_EXSTYLE, style);
+                }
+
+            }
+        }
 
         public void ChangeCursor(Cursor cursor)
         {

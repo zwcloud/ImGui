@@ -86,5 +86,10 @@ namespace ImGui.OSAbstraction.Window
         /// Get if the window is minimized.
         /// </summary>
         bool Minimized { get; }
+
+        /// <summary>
+        /// Set the opacity of this window 
+        /// </summary>
+        float Opacity { set => throw new NotImplementedException(); }
     }
 }
