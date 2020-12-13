@@ -53,7 +53,7 @@ namespace ImGui.Development
                     g.ActiveId, g.ActiveIdPreviousFrame, g.ActiveIdAllowOverlap);
                 Text("ActiveIdWindow: '{0}'",
                     w.ActiveIdWindow != null ? w.ActiveIdWindow.Name : "null");
-                Text("MovedWindow: '{0}'", w.MovedWindow != null ? w.MovedWindow.Name : "null");
+                Text("MovingWindow: '{0}'", w.MovingWindow != null ? w.MovingWindow.Name : "null");
                 TreePop();
             }
 

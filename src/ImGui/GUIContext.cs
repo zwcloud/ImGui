@@ -72,7 +72,7 @@ namespace ImGui
             g.ActiveIdAllowOverlap = false;
             g.WindowManager.ActiveIdWindow = window;
             g.ActiveIdNoClearOnFocusLoss = false;
-            if (id > 0)
+            if (id != 0)
             {
                 g.ActiveIdIsAlive = id;
             }

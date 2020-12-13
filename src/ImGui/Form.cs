@@ -88,7 +88,7 @@ namespace ImGui
 
         internal void InitializeForm()
         {
-            Profile.Start("Create Window");
+            Profile.Start("Initialize Form");
             this.nativeWindow = Application.PlatformContext.CreateWindow(
                 constructionParameters.Position,
                 constructionParameters.Size,

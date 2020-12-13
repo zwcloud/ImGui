@@ -17,13 +17,11 @@ namespace ImGui
         public readonly List<Window> WindowStack = new List<Window>();
 
         public Window CurrentWindow;
-        public Window PopupWindow;
         public Window HoveredWindow { get; internal set; }
         public Window HoveredRootWindow { get; internal set; }
 
-        public Window MovingWindow { get; internal set; }//TODO new move window logic related to multi-form
-        public Window MovedWindow { get; internal set; }
-        public int MovedWindowMoveId { get; internal set; }
+        public Window MovingWindow { get; internal set; }
+        public int MovingWindowMoveId { get; internal set; }
 
         public Window FocusedWindow { get; private set; }
 
@@ -150,23 +148,24 @@ namespace ImGui
         public void NewFrame(GUIContext g)
         {
             // Handle user moving window (at the beginning of the frame to avoid input lag or sheering). Only valid for root windows.
-            if (MovedWindow != null)
+            if (MovingWindow != null)
             {
-                g.KeepAliveID(this.MovedWindowMoveId);
-                Debug.Assert(this.MovedWindow != null && this.MovedWindow.RootWindow != null);
-                Debug.Assert(this.MovedWindow.RootWindow.MoveId == this.MovedWindowMoveId);
+                g.KeepAliveID(g.ActiveId);
+                Debug.Assert(MovingWindow?.RootWindow != null);
+                var movingWindow = MovingWindow.RootWindow;
                 if (Mouse.Instance.LeftButtonState == KeyState.Down)
                 {
-                    if (!this.MovedWindow.Flags.HaveFlag(WindowFlags.NoMove))
+                    var delta = Mouse.Instance.MouseDelta;
+                    if (!MathEx.AmostZero(delta.X) && !MathEx.AmostZero(delta.Y))
                     {
-                        this.MovedWindow.Position += Mouse.Instance.MouseDelta;
+                        movingWindow.Position += Mouse.Instance.MouseDelta;
                     }
-                    this.FocusWindow(this.MovedWindow);
+                    this.FocusWindow(MovingWindow);
                 }
                 else
                 {
                     g.SetActiveID(0, null);
-                    this.MovedWindow = null;
+                    this.MovingWindow = null;
                 }
             }
             else
@@ -182,11 +181,11 @@ namespace ImGui
             }
 
             // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow
-            this.HoveredWindow = this.MovedWindow ?? this.FindHoveredWindow(Mouse.Instance.Position, false);
+            this.HoveredWindow = this.MovingWindow ?? this.FindHoveredWindow(Mouse.Instance.Position, false);
             if (this.HoveredWindow != null && (this.HoveredWindow.Flags.HaveFlag(WindowFlags.ChildWindow)))
                 this.HoveredRootWindow = this.HoveredWindow.RootWindow;
             else
-                this.HoveredRootWindow = (this.MovedWindow != null) ? this.MovedWindow.RootWindow : this.FindHoveredWindow(Mouse.Instance.Position, true);
+                this.HoveredRootWindow = (this.MovingWindow != null) ? this.MovingWindow.RootWindow : this.FindHoveredWindow(Mouse.Instance.Position, true);
 
 
             // Scale & Scrolling
@@ -255,9 +254,9 @@ namespace ImGui
                     this.FocusWindow(this.HoveredWindow);
                     if (!(this.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
                     {
-                        this.MovedWindow = this.HoveredWindow;
-                        this.MovedWindowMoveId = this.HoveredRootWindow.MoveId;
-                        g.SetActiveID(this.MovedWindowMoveId, this.HoveredRootWindow);
+                        this.MovingWindow = this.HoveredWindow;
+                        this.MovingWindowMoveId = this.HoveredRootWindow.MoveId;
+                        g.SetActiveID(this.MovingWindowMoveId, this.HoveredRootWindow);
                     }
                 }
                 else if (this.FocusedWindow != null)

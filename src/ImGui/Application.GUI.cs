@@ -249,7 +249,7 @@ namespace ImGui
 
                 l.Msg("Window:");
                 l.Msg("    HoveredWindow: {0}", (w.HoveredWindow != null) ? w.HoveredWindow.ID.ToString() : "<none>");
-                l.Msg("    MovedWindow: {0}", (w.MovedWindow != null) ? w.MovedWindow.ID.ToString() : "<none>");
+                l.Msg("    MovingWindow: {0}", (w.MovingWindow != null) ? w.MovingWindow.ID.ToString() : "<none>");
                 l.Msg("    Window List:");
                 for (int i = 0; i < w.Windows.Count; i++)
                 {
