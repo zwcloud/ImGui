@@ -96,14 +96,23 @@ namespace ImGui
 
             #endregion
 
-            // Clear reference to active widget if the widget isn't alive anymore
-            g.HoveredIdPreviousFrame = g.HoverId;
+            // Update HoverId data
+            // 1. record data related to previous frame
+            // 2. reset
             g.HoverId = 0;
             g.HoverIdAllowOverlap = false;
-            if (!g.ActiveIdIsAlive && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != 0)
-                g.SetActiveID(0);
+            g.HoveredIdPreviousFrame = g.HoverId;
+
+            // Update ActiveId data
+            // 1. record data related to previous frame
+            // 2. reset
+            if (g.ActiveIdIsAlive != g.ActiveId && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != 0)
+            {//Clear reference to active widget if the widget isn't alive anymore
+                g.SetActiveID(0, null);
+            }
             g.ActiveIdPreviousFrame = g.ActiveId;
-            g.ActiveIdIsAlive = false;
+            g.ActiveIdIsAlive = 0;
+            g.ActiveIdPreviousFrameIsAlive = false;
             g.ActiveIdIsJustActivated = false;
 
             w.NewFrame(g);
@@ -344,7 +353,6 @@ namespace ImGui
                     continue;
                 }
                 
-                bool platform_funcs_available = viewport.PlatformWindowCreated;
                 // Update Position and Size (from Platform Window to ImGui) if requested.
                 // We do it early in the frame instead of waiting for UpdatePlatformWindows() to avoid a frame of lag when moving/resizing using OS facilities.
                 if (!Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.Minimized)
@@ -564,7 +572,7 @@ namespace ImGui
 
             // Click on void to focus window and start moving
             // (after we're done with all our widgets, so e.g. clicking on docking tab-bar which have set HoveredId already and not get us here!)
-            if (Input.Mouse.Instance.LeftButtonPressed)
+            if (Mouse.Instance.LeftButtonPressed)
             {
                 //TODO Remove logic about not-implemented features like pop-up, modal and docking.
                 Window root_window = w.HoveredWindow;

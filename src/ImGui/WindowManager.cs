@@ -150,7 +150,7 @@ namespace ImGui
         public void NewFrame(GUIContext g)
         {
             // Handle user moving window (at the beginning of the frame to avoid input lag or sheering). Only valid for root windows.
-            if (this.MovedWindowMoveId != 0 && this.MovedWindowMoveId == g.ActiveId)
+            if (MovedWindow != null)
             {
                 g.KeepAliveID(this.MovedWindowMoveId);
                 Debug.Assert(this.MovedWindow != null && this.MovedWindow.RootWindow != null);
@@ -165,15 +165,20 @@ namespace ImGui
                 }
                 else
                 {
-                    g.SetActiveID(0);
+                    g.SetActiveID(0, null);
                     this.MovedWindow = null;
-                    this.MovedWindowMoveId = 0;
                 }
             }
             else
             {
-                this.MovedWindow = null;
-                this.MovedWindowMoveId = 0;
+                if (ActiveIdWindow != null && ActiveIdWindow.MoveId == g.ActiveId)
+                {
+                    g.KeepAliveID(g.ActiveId);
+                    if (Mouse.Instance.LeftButtonState != KeyState.Down)
+                    {
+                        g.SetActiveID(0, null);
+                    }
+                }
             }
 
             // Find the window we are hovering. Child windows can extend beyond the limit of their parent so we need to derive HoveredRootWindow from HoveredWindow

@@ -1,7 +1,5 @@
 ﻿using System;
 using ImGui.Input;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace ImGui
 {
@@ -25,49 +23,24 @@ namespace ImGui
 
         public InputTextState InputTextState = new InputTextState();
 
-        private int hoverId;
-        private int activeId;
-        private bool activeIdIsAlive;
-        private bool activeIdIsJustActivated;
+        // HoverId and ActiveId
 
-        private int hoverIdPreviousFrame;
-        private int activeIdPreviousFrame;
+        public int HoverId { get; set; } = 0;
 
-        //-----
+        public int ActiveId { get; private set; } = 0;
 
-        public const int None = 0;
+        public int ActiveIdIsAlive { get; set; } = 0;
 
-        public int HoverId
-        {
-            get => this.hoverId;
-            set => this.hoverId = value;
-        }
+        public int ActiveIdPreviousFrame { get; set; } = 0;
 
-        public int ActiveId
-        {
-            get => this.activeId;
-            private set => this.activeId = value;
-        }
+        public bool ActiveIdPreviousFrameIsAlive { get; set; } = false;
 
-        public bool ActiveIdIsAlive
-        {
-            get => this.activeIdIsAlive;
-            set => this.activeIdIsAlive = value;
-        }
+        public bool ActiveIdIsJustActivated { get; set; } = false;
 
-        public int ActiveIdPreviousFrame
-        {
-            get => this.activeIdPreviousFrame;
-            set => this.activeIdPreviousFrame = value;
-        }
+        // Store the last non-zero ActiveId
+        public int LastActiveId { get; set; } = 0;
 
-        public bool ActiveIdIsJustActivated
-        {
-            get => this.activeIdIsJustActivated;
-            set => this.activeIdIsJustActivated = value;
-        }
-
-        public int HoveredIdPreviousFrame { get; internal set; }
+        public int HoveredIdPreviousFrame { get; internal set; } = 0;
 
         public bool ActiveIdAllowOverlap { get; internal set; }
         public Vector ActiveIdClickOffset { get; internal set; }
@@ -79,7 +52,6 @@ namespace ImGui
         public long FrameCountEnded { get; internal set; } = -1;
         public long FrameCountRendered { get; internal set; } = -1;
         public long FrameCountPlatformEnded { get; internal set; } = -1;
-        public int CaptureMouseNextFrame { get; internal set; }
         
         // Debug Tools
         internal bool DebugItemPickerActive { get; set; } = false;
@@ -88,11 +60,22 @@ namespace ImGui
         public void SetActiveID(int id, Window window = null)
         {
             var g = this;
+            g.ActiveIdIsJustActivated = (g.ActiveId != id);
+            if (g.ActiveIdIsJustActivated)
+            {
+                if (id != 0)
+                {
+                    g.LastActiveId = id;
+                }
+            }
             g.ActiveId = id;
             g.ActiveIdAllowOverlap = false;
-            g.ActiveIdIsJustActivated = true;
             g.WindowManager.ActiveIdWindow = window;
             g.ActiveIdNoClearOnFocusLoss = false;
+            if (id > 0)
+            {
+                g.ActiveIdIsAlive = id;
+            }
         }
 
         public void SetHoverID(int id)
@@ -106,7 +89,13 @@ namespace ImGui
         {
             var g = this;
             if (g.ActiveId == id)
-                g.ActiveIdIsAlive = true;
+            {
+                g.ActiveIdIsAlive = id;
+            }
+            if (g.ActiveIdPreviousFrame == id)
+            {
+                g.ActiveIdPreviousFrameIsAlive = true;
+            }
         }
 
 
@@ -237,15 +226,6 @@ namespace ImGui
     {
         None                   = 0,
         ViewportsEnable        = 1 << 10,  // Viewport enable flags (require both ImGuiBackendFlags_PlatformHasViewports + ImGuiBackendFlags_RendererHasViewports set by the respective backends)
-    }
-    
-    internal static class ImGuiConfigFlagsExtension
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HaveFlag(this ImGuiConfigFlags value, ImGuiConfigFlags flag)
-        {
-            return (value & flag) != 0;
-        }
     }
 
     enum ImGuiBackendFlags

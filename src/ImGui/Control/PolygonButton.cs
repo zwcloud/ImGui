@@ -61,7 +61,7 @@ namespace ImGui
                 if (Mouse.Instance.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    g.SetActiveID(GUIContext.None);
+                    g.SetActiveID(0);
                 }
             }
             if (hovered)
@@ -151,7 +151,7 @@ namespace ImGui
                 if (Mouse.Instance.LeftButtonReleased)//end track
                 {
                     clicked = true;
-                    g.SetActiveID(GUIContext.None);
+                    g.SetActiveID(0);
                 }
             }
             if (hovered)
