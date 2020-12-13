@@ -103,6 +103,7 @@ namespace ImGui
             mainForm.InitializeRenderer();
             mainForm.Show();
             Form.current = mainForm;
+            AddFrom(mainForm);
             while (!mainForm.Closed)
             {
                 Time.OnFrameBegin();
@@ -146,16 +147,17 @@ namespace ImGui
             Debug.Assert(g.FrameCountEnded == g.FrameCount, "Forgot to call Render() or EndFrame() before UpdatePlatformWindows()?");
             Debug.Assert(g.FrameCountPlatformEnded < g.FrameCount);
             g.FrameCountPlatformEnded = g.FrameCount;
-            if (!g.ConfigFlagsCurrFrame.HaveFlag(ImGuiConfigFlags.ViewportsEnable))
+            if (!Utility.HasAllFlags(g.ConfigFlagsCurrFrame,ImGuiConfigFlags.ViewportsEnable))
                 return;
 
             var w = g.WindowManager;
             var forms = w.Viewports;
 
             // Create/resize/destroy native windows to match each active form.
-            // The main form is always fully handled by the application.
-            foreach (var viewport in forms)
+            // Skip the main form at index 0, which is always fully handled by the application.
+            for (var i = 1; i < forms.Count; i++)
             {
+                var viewport = forms[i];
                 // Destroy platform window if the viewport hasn't been submitted or if it is hosting a hidden window
                 // (the implicit/fallback Debug##Default window will be registering its viewport then be disabled, causing a dummy DestroyPlatformWindow to be made each frame)
                 bool destroy_platform_window = false;
@@ -169,22 +171,22 @@ namespace ImGui
 
                 // New windows that appears directly in a new viewport won't always have a size on their first frame
                 if (viewport.LastFrameActive < g.FrameCount || viewport.Size.Width <= 0
-                                                            || viewport.Size.Height <= 0)
+                    || viewport.Size.Height <= 0)
                 {
                     continue;
                 }
-                
+
                 // Create window
                 bool is_new_platform_window = (viewport.PlatformWindowCreated == false);
                 if (is_new_platform_window)
                 {
                     ImGui.Log.Msg("Create Platform Window %08X (%s)\n", viewport.ID,
-                        viewport.Window!=null ? viewport.Window.Name : "n/a");
+                        viewport.Window != null ? viewport.Window.Name : "n/a");
                     viewport.InitializeForm();
                     viewport.InitializeRenderer();
                     viewport.PlatformWindowCreated = true;
                 }
-                
+
                 // Apply Position and Size (from ImGui to Platform/Renderer backends)
                 if (viewport.LastPos != viewport.Pos && !viewport.PlatformRequestMove)
                     viewport.PlatformPosition = viewport.Pos;
@@ -194,14 +196,14 @@ namespace ImGui
                     viewport.Renderer_SetWindowSize(viewport.Size);
                 viewport.LastPos = viewport.Pos;
                 viewport.LastSize = viewport.LastRendererSize = viewport.Size;
-                
+
                 // Update title bar (if it changed)
                 if (viewport.Window != null && viewport.LastName != viewport.Window.Name)
                 {
                     viewport.Platform_SetWindowTitle(viewport.Window.Name);
                     viewport.LastName = viewport.Window.Name;
                 }
-                
+
                 // Update alpha (if it changed)
                 if (viewport.LastAlpha != viewport.Alpha)
                     viewport.Platform_SetWindowAlpha(viewport.Alpha);
