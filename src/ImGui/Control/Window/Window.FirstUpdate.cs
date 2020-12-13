@@ -17,6 +17,10 @@ namespace ImGui
             this.BeginCount = 0;
             this.LastActiveFrame = currentFrame;
 
+            // update viewport
+            UpdateWindowViewport(this);
+            w.CurrentViewport = Viewport;
+
             // determine if window is collapsed
             if (!flags.HaveFlag(WindowFlags.NoTitleBar) && !flags.HaveFlag(WindowFlags.NoCollapse))
             {
@@ -146,6 +150,23 @@ namespace ImGui
 
                 this.ContentRect = Rect.Zero;
             }
+        }
+
+        private void UpdateWindowViewport(Window window)
+        {
+            var g = Application.ImGuiContext;
+            var w = g.WindowManager;
+
+            //fallback to main viewport if multi-viewport is not supported by the backend
+            var mainViewport = w.MainForm;
+            if (!Utility.HasAllFlags(g.ConfigFlagsCurrFrame, ImGuiConfigFlags.ViewportsEnable))
+            {
+                window.Viewport = mainViewport;
+                return;
+            }
+            window.ViewportOwned = false;
+
+            window.ViewportOwned = window == window.Viewport.Window;
         }
     }
 }
