@@ -121,9 +121,15 @@ namespace ImGui
                     Render();
 
                     Log();
-
+                    
+                    if (mainForm.LastRendererSize != mainForm.ClientSize)
+                    {
+                        mainForm.Renderer_SetWindowSize(mainForm.ClientSize);
+                        mainForm.LastRendererSize = mainForm.ClientSize;
+                    }
                     mainForm.renderer.Unbind();
                 });
+
 
                 //handle additional forms
                 UpdateForms();
@@ -184,6 +190,9 @@ namespace ImGui
                         viewport.Window != null ? viewport.Window.Name : "n/a");
                     viewport.InitializeForm();
                     viewport.InitializeRenderer();
+                    viewport.LastPlatformPos = new Point(float.MaxValue, float.MaxValue);
+                    viewport.LastRendererSize = new Size(float.MaxValue, float.MaxValue);
+                    viewport.LastRendererSize = viewport.Size;
                     viewport.PlatformWindowCreated = true;
                 }
 
