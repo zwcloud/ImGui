@@ -130,6 +130,7 @@ void main()
 {
 	Frag_UV = UV;
     Frag_Color = Color;
+    //directly assigned to gl_Position: the clip-space output position of the current vertex.
 	gl_Position = vec4(Position, 0.0, 1.0);
 }
 ",
