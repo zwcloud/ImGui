@@ -2,43 +2,7 @@
 {
     class QuadMesh : Mesh
     {
-        public double Width
-        {
-            get
-            {
-                return this.VertexBuffer[1].pos.X;
-            }
-            set
-            {
-                var A = this.VertexBuffer[1];
-                A.pos.X = value;
-                this.VertexBuffer[1] = A;
-
-                var B = this.VertexBuffer[2];
-                B.pos.X = value;
-                this.VertexBuffer[2] = B;
-            }
-        }
-
-        public double Height
-        {
-            get
-            {
-                return this.VertexBuffer[3].pos.Y;
-            }
-            set
-            {
-                var B = this.VertexBuffer[2];
-                B.pos.Y = value;
-                this.VertexBuffer[2] = B;
-
-                var C = this.VertexBuffer[3];
-                C.pos.Y = value;
-                this.VertexBuffer[3] = C;
-            }
-        }
-
-        public QuadMesh(double width, double height)
+        public QuadMesh()
         {
             this.CommandBuffer.Add(new DrawCommand { });
             this.PrimReserve(6, 4);

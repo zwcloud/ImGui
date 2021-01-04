@@ -171,7 +171,7 @@ namespace ImGui.OSImplementation.Shared
                     throw new Exception("Framebuffer for glyph is not complete.");
                 }
 
-                var quadMesh = new QuadMesh(width, height);
+                var quadMesh = new QuadMesh();
 
                 var commandBuffer = textMesh.Commands;
                 VertexBuffer vertexBuffer = textMesh.VertexBuffer;

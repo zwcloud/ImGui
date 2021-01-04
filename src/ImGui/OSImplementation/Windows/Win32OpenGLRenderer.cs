@@ -46,6 +46,11 @@ namespace ImGui.OSImplementation.Windows
             GL.DepthFunc(GL.GL_NEVER);
             GL.Enable(GL.GL_SCISSOR_TEST);
 
+            InitializeTextRenderResources(size);
+        }
+
+        private void CreateTextFramebuffer(Size size)
+        {
             //set-up framebuffer
             GL.GenFramebuffers(1, framebuffers);
             GL.GenTextures(1, textures);
@@ -81,8 +86,35 @@ namespace ImGui.OSImplementation.Windows
             }
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, 0);
 
-            quadMesh = new QuadMesh(size.Width, size.Height);
+            Debug.Assert(GL.IsFramebufferEXT(framebuffer));
+            Debug.Assert(GL.IsTexture(framebufferColorTexture) == GL.GL_TRUE);
+        }
+
+        private void DeleteTextFrameBuffer()
+        {
+            GL.DeleteFramebuffers(1, framebuffers);
+            GL.DeleteTextures(1, textures);
+
+            Debug.Assert(
+                GL.CheckFramebufferStatus(GL.GL_FRAMEBUFFER_EXT) == GL.GL_FRAMEBUFFER_COMPLETE_EXT);
+            Debug.Assert(!GL.IsFramebufferEXT(framebuffer));
+            Debug.Assert(GL.IsTexture(framebufferColorTexture) == GL.GL_FALSE);
+        }
+
+        private void InitializeTextRenderResources(Size viewportSize)
+        {
+            CreateTextFramebuffer(viewportSize);
+            quadMesh = new QuadMesh();
             Utility.CheckGLError();
+        }
+
+        private void RebuildTextureRenderResources(Size viewportSize)
+        {
+            //delete old framebuffer
+            DeleteTextFrameBuffer();
+
+            //create new framebuffer
+            CreateTextFramebuffer(viewportSize);
         }
 
         public void Bind()
@@ -317,7 +349,7 @@ namespace ImGui.OSImplementation.Windows
 
         public void OnSizeChanged(Size size)
         {
-            //RebuildTextureRenderResources(size);
+            RebuildTextureRenderResources(size);
         }
 
         public void ShutDown()

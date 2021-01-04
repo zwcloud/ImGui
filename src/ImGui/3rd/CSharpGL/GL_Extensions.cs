@@ -62,6 +62,7 @@ namespace CSharpGL
             _glDrawBuffers = GetDelegateFor<glDrawBuffers>();
             _glCheckFramebufferStatus = GetDelegateFor<glCheckFramebufferStatus>();
             _glDeleteFramebuffers = GetDelegateFor<glDeleteFramebuffers>();
+            _glIsFramebufferEXT = GetDelegateFor<glIsFramebufferEXT>();
 
             _glGenRenderbuffers = GetDelegateFor<glGenRenderbuffers>();
             _glBindRenderbuffer = GetDelegateFor<glBindRenderbuffer>();
@@ -121,6 +122,7 @@ namespace CSharpGL
         private static glDrawBuffers _glDrawBuffers;
         private static glCheckFramebufferStatus _glCheckFramebufferStatus;
         private static glDeleteFramebuffers _glDeleteFramebuffers;
+        private static glIsFramebufferEXT _glIsFramebufferEXT;
 
         private static glGenRenderbuffers _glGenRenderbuffers;
         private static glBindRenderbuffer _glBindRenderbuffer;
@@ -4668,7 +4670,7 @@ namespace CSharpGL
 
         public static bool IsFramebufferEXT(uint framebuffer)
         {
-            return GetDelegateFor<glIsFramebufferEXT>()(framebuffer);
+            return _glIsFramebufferEXT(framebuffer);
         }
 
         public static void BindFramebuffer(uint target, uint framebuffer)
