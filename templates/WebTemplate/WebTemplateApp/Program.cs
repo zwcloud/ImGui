@@ -13,12 +13,16 @@ namespace WebTemplateApp
         private const int canvasWidth = 800;
         private const int canvasHeight = 600;
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
             JSObject document = (JSObject)WebAssembly.Runtime.GetGlobalObject("document");
             JSObject body = (JSObject)document.GetObjectProperty("body");
             JSObject canvas = (JSObject)document.Invoke("createElement", "canvas");
+            if (canvas == null)
+            {
+                Console.WriteLine("Failed to create canvas!");
+            }
             canvas.SetObjectProperty("width", canvasWidth);
             canvas.SetObjectProperty("height", canvasHeight);
             body.Invoke("appendChild", canvas);

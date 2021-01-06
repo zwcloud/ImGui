@@ -18,7 +18,7 @@
 			init: function () {
 				// call main
 				BINDING.call_static_method("[WebTemplateApp] WebTemplateApp.Program:Main", []);
-			}
+            }
 		};
 
 		// helper for calling gl.bufferData from C#
@@ -32,9 +32,9 @@
 			gl.bufferData(target, srcData, usage, srcOffset, length);
 		}
 	</script>
-	<script type="text/javascript" src="mono-config.js"></script>
-	<script type="text/javascript" src="runtime.js"></script>
-	<script async type="text/javascript" src="mono.js"></script>
+    <script type="text/javascript" src="mono-config.js"></script>
+    <script type="text/javascript" src="runtime.js"></script>
+    <script async type="text/javascript" src="dotnet.js"></script>
 </body>
 
 </html>
