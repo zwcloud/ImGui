@@ -65,6 +65,8 @@ namespace ImGui
         public Color BackgroundColor { get; set; } = Color.Argb(255, 114, 144, 154);
 
         private List<Window> windows = new List<Window>(8);
+        internal MeshBuffer MeshBuffer { get; } = new MeshBuffer(); //draw data of this form
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form"/> class at specific rectangle.
@@ -82,6 +84,7 @@ namespace ImGui
         internal Form(Point position, Size size, string title = "ImGui Form",
             WindowTypes type = WindowTypes.Regular)
         {
+            MeshBuffer.OwnerName = title;
             constructionParameters = new ConstructionParameters(title, position, size, type);
             PlatformWindowCreated = false;
         }
@@ -237,19 +240,32 @@ namespace ImGui
             foreach (var window in this.windows)
             {
                 if (!window.Active) continue;
-                window.Render(renderer, ClientSize);//TODO inline Window.Render and reorganize MeshBuffer in Form level
-                
+
+                window.AddToDrawData();
+
+                //rebuild mesh buffer
+                var meshBuffer = this.MeshBuffer;
+                meshBuffer.Clear();
+                meshBuffer.Init();
+                meshBuffer.Build(window.MeshList);
+
+                window.MeshList.Clear();
+
+                //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
+                renderer.DrawMeshes((int)ClientSize.Width, (int)ClientSize.Height,
+                    (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
+
                 if (window.Name == Metrics.WindowName)
                 {//ignore metrics window
                     continue;
                 }
 
-                Metrics.VertexNumber += window.MeshBuffer.ShapeMesh.VertexBuffer.Count
-                                       + window.MeshBuffer.ImageMesh.VertexBuffer.Count
-                                       + window.MeshBuffer.TextMesh.VertexBuffer.Count;
-                Metrics.IndexNumber += window.MeshBuffer.ShapeMesh.IndexBuffer.Count
-                                      + window.MeshBuffer.ImageMesh.IndexBuffer.Count
-                                      + window.MeshBuffer.TextMesh.IndexBuffer.Count;
+                Metrics.VertexNumber += meshBuffer.ShapeMesh.VertexBuffer.Count
+                                       + meshBuffer.ImageMesh.VertexBuffer.Count
+                                       + meshBuffer.TextMesh.VertexBuffer.Count;
+                Metrics.IndexNumber += meshBuffer.ShapeMesh.IndexBuffer.Count
+                                      + meshBuffer.ImageMesh.IndexBuffer.Count
+                                      + meshBuffer.TextMesh.IndexBuffer.Count;
                 Metrics.RenderWindows++;
             }
             RenderForeground(ClientSize, renderer);

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using ImGui.Development;
 using ImGui.Input;
+using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
@@ -195,19 +196,33 @@ namespace ImGui
             foreach (var window in w.Windows)
             {
                 if (!window.Active) continue;
-                window.Render(MainForm.renderer, MainForm.ClientSize);
-                
+
+                window.AddToDrawData();
+
+                //rebuild mesh buffer
+                var meshBuffer = window.Viewport.MeshBuffer;
+                meshBuffer.Clear();
+                meshBuffer.Init();
+                meshBuffer.Build(window.MeshList);
+
+                window.MeshList.Clear();
+
+                //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
+                MainForm.renderer.DrawMeshes(
+                    (int)MainForm.ClientSize.Width, (int)MainForm.ClientSize.Height,
+                    (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
+
                 if (window.Name == Metrics.WindowName)
                 {//ignore metrics window
                     continue;
                 }
 
-                Metrics.VertexNumber += window.MeshBuffer.ShapeMesh.VertexBuffer.Count
-                                       + window.MeshBuffer.ImageMesh.VertexBuffer.Count
-                                       + window.MeshBuffer.TextMesh.VertexBuffer.Count;
-                Metrics.IndexNumber += window.MeshBuffer.ShapeMesh.IndexBuffer.Count
-                                      + window.MeshBuffer.ImageMesh.IndexBuffer.Count
-                                      + window.MeshBuffer.TextMesh.IndexBuffer.Count;
+                Metrics.VertexNumber += meshBuffer.ShapeMesh.VertexBuffer.Count
+                                       + meshBuffer.ImageMesh.VertexBuffer.Count
+                                       + meshBuffer.TextMesh.VertexBuffer.Count;
+                Metrics.IndexNumber += meshBuffer.ShapeMesh.IndexBuffer.Count
+                                      + meshBuffer.ImageMesh.IndexBuffer.Count
+                                      + meshBuffer.TextMesh.IndexBuffer.Count;
                 Metrics.RenderWindows++;
             }
             MainForm.RenderForeground(MainForm.ClientSize, MainForm.renderer);

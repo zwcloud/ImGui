@@ -157,7 +157,7 @@ namespace ImGui.Development
                 return;
             }
 
-            NodeMeshBuffer(window, "MeshBuffer");
+            NodeMeshList(window, "MeshList");
             BulletText(
                 "Pos: ({0:F1},{1:F1}), Size: ({2:F1},{3:F1}), ContentSize ({4:F1},{5:F1})",
                 window.Position.X, window.Position.Y, window.Size.Width, window.Size.Height,
@@ -175,34 +175,46 @@ namespace ImGui.Development
             TreePop();
         }
 
-        private static void NodeMeshBuffer(Window nodeWindow, string label)
+        private static void NodeMeshList(Window nodeWindow, string label)
         {
-            var buffer = nodeWindow.MeshBuffer;
-            var vertexCount = buffer.ImageMesh.VertexBuffer.Count
-                              + buffer.ShapeMesh.VertexBuffer.Count
-                              + buffer.TextMesh.VertexBuffer.Count;
-            var indexCount = buffer.ImageMesh.IndexBuffer.Count
-                             + buffer.ShapeMesh.IndexBuffer.Count
-                             + buffer.TextMesh.IndexBuffer.Count;
-            var cmdCount = buffer.ImageMesh.CommandBuffer.Count
-                +buffer.ShapeMesh.CommandBuffer.Count
-                +buffer.TextMesh.Commands.Count;
+            var list = nodeWindow.MeshList;
+            var vertexCount = 0;
+            var indexCount = 0;
+            var cmdCount = 0;
+            foreach (var mesh in list.ShapeMeshes)
+            {
+                vertexCount += mesh.VertexBuffer.Count;
+                indexCount += mesh.IndexBuffer.Count;
+                cmdCount += mesh.CommandBuffer.Count;
+            }
+            foreach (var mesh in list.ImageMeshes)
+            {
+                vertexCount += mesh.VertexBuffer.Count;
+                indexCount += mesh.IndexBuffer.Count;
+                cmdCount += mesh.CommandBuffer.Count;
+            }
+            foreach (var textMesh in list.TextMeshes)
+            {
+                vertexCount += textMesh.VertexBuffer.Count;
+                indexCount += textMesh.IndexBuffer.Count;
+                cmdCount += textMesh.Commands.Count;
+            }
 
-            bool nodeOpen = TreeNode(buffer,
-                $"{label}: '{buffer.OwnerName}'" +
+            bool nodeOpen = TreeNode(list,
+                $"{label}: '{list.OwnerName}'" +
                 $" {vertexCount} vtx, {indexCount} indices, {cmdCount} cmds");
 
             if (nodeOpen)
             {
-                if (buffer == GetCurrentWindow().MeshBuffer)
+                if (list == GetCurrentWindow().MeshList)
                 {
                     Text("CURRENTLY APPENDING"); // Can't display stats for active draw list! (we don't have the data double-buffered)
                 }
                 else
                 {
-                    NodeShapeMesh(buffer);
-                    NodeImageMesh(buffer);
-                    NodeTextMesh(buffer);
+                    NodeShapeMesh(list);
+                    NodeImageMesh(list);
+                    NodeTextMesh(list);
                 }
                 TreePop();
             }
@@ -215,29 +227,35 @@ namespace ImGui.Development
             }
         }
 
-        private static void NodeShapeMesh(MeshBuffer buffer)
+        private static void NodeShapeMesh(MeshList list)
         {
-            var mesh = buffer.ShapeMesh;
-            var cmds = mesh.CommandBuffer;
-            for (var i = 0; i < cmds.Count; i++)
+            var meshes = list.ShapeMeshes;
+            foreach (var mesh in meshes)
             {
-                NodeDrawCommand(mesh, i);
+                var cmds = mesh.CommandBuffer;
+                for (var i = 0; i < cmds.Count; i++)
+                {
+                    NodeDrawCommand(mesh, i);
+                }
             }
         }
 
-        private static void NodeImageMesh(MeshBuffer buffer)
+        private static void NodeImageMesh(MeshList list)
         {
-            var mesh = buffer.ShapeMesh;
-            var cmds = mesh.CommandBuffer;
-            for (var i = 0; i < cmds.Count; i++)
+            var meshes = list.ImageMeshes;
+            foreach (var mesh in meshes)
             {
-                NodeDrawCommand(mesh, i);
+                var cmds = mesh.CommandBuffer;
+                for (var i = 0; i < cmds.Count; i++)
+                {
+                    NodeDrawCommand(mesh, i);
+                }
             }
         }
 
-        private static void NodeTextMesh(MeshBuffer buffer)
+        private static void NodeTextMesh(MeshList list)
         {
-            
+            //TODO
         }
 
         private static void NodeDrawCommand(Mesh mesh, int cmdIndex)

@@ -5,6 +5,8 @@ namespace ImGui.Rendering
 {
     internal class MeshList
     {
+        public string OwnerName { get; set; }
+
         public LinkedList<Mesh> ShapeMeshes { get; } = new LinkedList<Mesh>();
 
         public LinkedList<TextMesh> TextMeshes { get; } = new LinkedList<TextMesh>();

@@ -72,8 +72,6 @@ namespace ImGui
 
         public MeshList MeshList { get; set; } = new MeshList();
 
-        public MeshBuffer MeshBuffer { get; set; } = new MeshBuffer();
-
         private readonly BuiltinGeometryRenderer geometryRenderer = new BuiltinGeometryRenderer();
 
         public Storage StateStorage { get; } = new Storage();
@@ -118,7 +116,7 @@ namespace ImGui
             this.IDStack.Push(this.ID);
             this.MoveId = this.GetID("#MOVE");
 
-            this.MeshBuffer.OwnerName = this.Name;
+            this.MeshList.OwnerName = this.Name;
 
             #region Window nodes
 
@@ -507,25 +505,14 @@ namespace ImGui
             this.ClientAreaNode.ScrollOffset.Y = newScrollY;
         }
 
-        public void Render(IRenderer renderer, Size clientSize)
+        public void AddToDrawData()
         {
-            this.RenderTree.Root.Render(this.RenderContext);
+            RenderTree.Root.Render(RenderContext);
 
-            foreach (var visual in this.AbsoluteVisualList)
+            foreach (var visual in AbsoluteVisualList)
             {
-                visual.RenderContent(this.RenderContext);
+                visual.RenderContent(RenderContext);
             }
-
-            //rebuild mesh buffer
-            this.MeshBuffer.Clear();
-            this.MeshBuffer.Init();
-            this.MeshBuffer.Build(this.MeshList);
-
-            this.MeshList.Clear();
-
-            //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
-            renderer.DrawMeshes((int)clientSize.Width, (int)clientSize.Height,
-                (shapeMesh: this.MeshBuffer.ShapeMesh, imageMesh: this.MeshBuffer.ImageMesh, this.MeshBuffer.TextMesh));
         }
     }
 }
