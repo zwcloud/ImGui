@@ -241,13 +241,13 @@ namespace ImGui
             {
                 if (!window.Active) continue;
 
-                window.AddToDrawData();
+                window.RenderToMeshList();
 
                 //rebuild mesh buffer
                 var meshBuffer = this.MeshBuffer;
                 meshBuffer.Clear();
                 meshBuffer.Init();
-                meshBuffer.Build(window.MeshList);
+                meshBuffer.Append(window.MeshList);
 
                 window.MeshList.Clear();
 

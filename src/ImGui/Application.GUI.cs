@@ -190,41 +190,51 @@ namespace ImGui
             Metrics.RenderWindows = 0;
 
             MainForm.renderer.Clear(MainForm.BackgroundColor);
+            
+            foreach (var form in w.Viewports)
+            {
+                form.MeshBuffer.Clear();
+                form.MeshBuffer.Init();
+            }
 
+            //TODO remve this because of (*)
             MainForm.RenderBackground(MainForm.ClientSize, MainForm.renderer);
+
+            foreach (var form in w.Viewports)
+            {
+                //TODO add form's background MeshList into MeshBuffer (*)
+            }
 
             foreach (var window in w.Windows)
             {
-                if (!window.Active) continue;
-
-                window.AddToDrawData();
-
-                //rebuild mesh buffer
-                var meshBuffer = window.Viewport.MeshBuffer;
-                meshBuffer.Clear();
-                meshBuffer.Init();
-                meshBuffer.Build(window.MeshList);
-
-                window.MeshList.Clear();
-
-                //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
-                MainForm.renderer.DrawMeshes(
-                    (int)MainForm.ClientSize.Width, (int)MainForm.ClientSize.Height,
-                    (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
-
-                if (window.Name == Metrics.WindowName)
-                {//ignore metrics window
+                if (!window.Active && !Utility.HasAllFlags(window.Flags, WindowFlags.ChildWindow))
+                {
                     continue;
                 }
 
-                Metrics.VertexNumber += meshBuffer.ShapeMesh.VertexBuffer.Count
-                                       + meshBuffer.ImageMesh.VertexBuffer.Count
-                                       + meshBuffer.TextMesh.VertexBuffer.Count;
-                Metrics.IndexNumber += meshBuffer.ShapeMesh.IndexBuffer.Count
-                                      + meshBuffer.ImageMesh.IndexBuffer.Count
-                                      + meshBuffer.TextMesh.IndexBuffer.Count;
-                Metrics.RenderWindows++;
+                window.RenderToMeshList();
+                var meshBuffer = window.Viewport.MeshBuffer;
+                meshBuffer.Append(window.MeshList);
+                window.MeshList.Clear();
+                
+                if (window.Name != Metrics.WindowName)
+                {
+                    Metrics.VertexNumber += meshBuffer.ShapeMesh.VertexBuffer.Count
+                                            + meshBuffer.ImageMesh.VertexBuffer.Count
+                                            + meshBuffer.TextMesh.VertexBuffer.Count;
+                    Metrics.IndexNumber += meshBuffer.ShapeMesh.IndexBuffer.Count
+                                           + meshBuffer.ImageMesh.IndexBuffer.Count
+                                           + meshBuffer.TextMesh.IndexBuffer.Count;
+                    Metrics.RenderWindows++;
+                }
+
+                //draw meshes in MeshBuffer with native renderer
+                MainForm.renderer.DrawMeshes(
+                    (int)MainForm.ClientSize.Width, (int)MainForm.ClientSize.Height,
+                    (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
             }
+            
+            //TODO add form's foreground MeshList into MeshBuffer and remove this
             MainForm.RenderForeground(MainForm.ClientSize, MainForm.renderer);
 
             MainForm.renderer.SwapBuffers();

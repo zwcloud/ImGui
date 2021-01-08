@@ -296,7 +296,7 @@ namespace ImGui.UnitTest
                 //rebuild mesh buffer
                 meshBuffer.Clear();
                 meshBuffer.Init();
-                meshBuffer.Build(meshList);
+                meshBuffer.Append(meshList);
 
                 //draw mesh buffer to screen
                 context.Clear();
@@ -348,7 +348,7 @@ namespace ImGui.UnitTest
             MeshBuffer meshBuffer = new MeshBuffer();
             meshBuffer.Clear();
             meshBuffer.Init();
-            meshBuffer.Build(meshList);
+            meshBuffer.Append(meshList);
 
             //created a mesh IRenderer
             Application.Init();

@@ -22,7 +22,7 @@
             this.ImageMesh.CommandBuffer.Add(DrawCommand.Default);
         }
 
-        public void Build(MeshList meshList)
+        public void Append(MeshList meshList)
         {
             foreach (var mesh in meshList.ShapeMeshes)
             {

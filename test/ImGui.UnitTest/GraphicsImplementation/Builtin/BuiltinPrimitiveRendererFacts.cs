@@ -35,7 +35,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();
@@ -90,7 +90,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();
@@ -134,7 +134,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();
@@ -178,7 +178,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();
@@ -232,7 +232,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();
@@ -489,7 +489,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();
@@ -520,7 +520,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();
@@ -625,7 +625,7 @@ namespace ImGui.UnitTest.Rendering
                     //rebuild mesh buffer
                     meshBuffer.Clear();
                     meshBuffer.Init();
-                    meshBuffer.Build(meshList);
+                    meshBuffer.Append(meshList);
 
                     //draw mesh buffer to screen
                     context.Clear();

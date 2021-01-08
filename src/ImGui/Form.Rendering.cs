@@ -59,7 +59,7 @@ namespace ImGui
             //rebuild mesh buffer
             backgroundMeshBuffer.Clear();
             backgroundMeshBuffer.Init();
-            backgroundMeshBuffer.Build(this.backgroundMeshList);
+            backgroundMeshBuffer.Append(this.backgroundMeshList);
 
             backgroundMeshList.Clear();
 
@@ -87,7 +87,7 @@ namespace ImGui
             //rebuild mesh buffer
             foregroundMeshBuffer.Clear();
             foregroundMeshBuffer.Init();
-            foregroundMeshBuffer.Build(this.foregroundMeshList);
+            foregroundMeshBuffer.Append(this.foregroundMeshList);
 
             foregroundMeshList.Clear();
 
