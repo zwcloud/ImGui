@@ -197,12 +197,11 @@ namespace ImGui
                 form.MeshBuffer.Init();
             }
 
-            //TODO remve this because of (*)
-            MainForm.RenderBackground(MainForm.ClientSize, MainForm.renderer);
-
             foreach (var form in w.Viewports)
             {
-                //TODO add form's background MeshList into MeshBuffer (*)
+                form.RenderToBackgroundList();
+                form.MeshBuffer.Append(form.backgroundMeshList);
+                form.backgroundMeshList.Clear();
             }
 
             foreach (var window in w.Windows)
@@ -234,8 +233,12 @@ namespace ImGui
                     (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
             }
             
-            //TODO add form's foreground MeshList into MeshBuffer and remove this
-            MainForm.RenderForeground(MainForm.ClientSize, MainForm.renderer);
+            foreach (var form in w.Viewports)
+            {
+                form.RenderToForegroundList();
+                form.foregroundMeshList.Clear();
+                form.MeshBuffer.Append(MainForm.foregroundMeshList);
+            }
 
             MainForm.renderer.SwapBuffers();
         }

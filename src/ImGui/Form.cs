@@ -234,8 +234,10 @@ namespace ImGui
             Metrics.RenderWindows = 0;
 
             renderer.Clear(BackgroundColor);
-
-            RenderBackground(ClientSize, renderer);
+            
+            RenderToBackgroundList();
+            MeshBuffer.Append(backgroundMeshList);
+            backgroundMeshList.Clear();
 
             foreach (var window in this.windows)
             {
@@ -268,7 +270,10 @@ namespace ImGui
                                       + meshBuffer.TextMesh.IndexBuffer.Count;
                 Metrics.RenderWindows++;
             }
-            RenderForeground(ClientSize, renderer);
+
+            RenderToForegroundList();
+            foregroundMeshList.Clear();
+            MeshBuffer.Append(foregroundMeshList);
         }
 
         public void Platform_SwapBuffers(object platformRenderArg)
