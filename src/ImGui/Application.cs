@@ -331,8 +331,8 @@ namespace ImGui
             });
 
             //handle additional forms
-            UpdateForms();
-            RenderForms();
+            //UpdateForms();
+            //RenderForms();
         }
 
         /// <summary>

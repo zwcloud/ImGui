@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using ImGui.Development;
 using ImGui.Input;
@@ -188,61 +189,85 @@ namespace ImGui
             Metrics.VertexNumber = 0;
             Metrics.IndexNumber = 0;
             Metrics.RenderWindows = 0;
-
-            MainForm.renderer.Clear(MainForm.BackgroundColor);
             
-            foreach (var form in w.Viewports)
+            //reset MeshBuffer and MeshList
             {
-                form.MeshBuffer.Clear();
-                form.MeshBuffer.Init();
-            }
-
-            foreach (var form in w.Viewports)
-            {
-                form.RenderToBackgroundList();
-                form.MeshBuffer.Append(form.backgroundMeshList);
-                form.backgroundMeshList.Clear();
-            }
-
-            foreach (var window in w.Windows)
-            {
-                if (!window.Active && !Utility.HasAllFlags(window.Flags, WindowFlags.ChildWindow))
+                foreach (var form in w.Viewports)
                 {
-                    continue;
+                    form.MeshBuffer.Clear();
+                    form.MeshBuffer.Init();
+                    form.backgroundMeshList.Clear();
+                    form.foregroundMeshList.Clear();
+                }
+                foreach (var window in w.Windows)
+                {
+                    window.MeshList.Clear();
+                }
+            }
+
+            //build MeshList of all forms from their RenderTree
+            {
+                foreach (var form in w.Viewports)
+                {
+                    form.RenderToForegroundList();
                 }
 
-                window.RenderToMeshList();
-                var meshBuffer = window.Viewport.MeshBuffer;
-                meshBuffer.Append(window.MeshList);
-                window.MeshList.Clear();
+                foreach (var window in w.Windows)
+                {
+                    if (!window.Active && !Utility.HasAllFlags(window.Flags, WindowFlags.ChildWindow))
+                    {
+                        continue;
+                    }
+
+                    window.RenderToMeshList();
+                }
                 
-                if (window.Name != Metrics.WindowName)
+                foreach (var form in w.Viewports)
                 {
-                    Metrics.VertexNumber += meshBuffer.ShapeMesh.VertexBuffer.Count
-                                            + meshBuffer.ImageMesh.VertexBuffer.Count
-                                            + meshBuffer.TextMesh.VertexBuffer.Count;
-                    Metrics.IndexNumber += meshBuffer.ShapeMesh.IndexBuffer.Count
-                                           + meshBuffer.ImageMesh.IndexBuffer.Count
-                                           + meshBuffer.TextMesh.IndexBuffer.Count;
-                    Metrics.RenderWindows++;
+                    form.RenderToForegroundList();
                 }
+            }
 
-                //draw meshes in MeshBuffer with native renderer
-                MainForm.renderer.DrawMeshes(
+            //append all MeshLists to form's MeshBuffer
+            {
+                foreach (var form in w.Viewports)
+                {
+                    form.MeshBuffer.Append(form.backgroundMeshList);
+                }
+                foreach (var window in w.Windows)
+                {
+                    var meshBuffer = window.Viewport.MeshBuffer;
+                    meshBuffer.Append(window.MeshList);
+                    if (window.Name != Metrics.WindowName)
+                    {
+                        Metrics.VertexNumber += meshBuffer.ShapeMesh.VertexBuffer.Count
+                            + meshBuffer.ImageMesh.VertexBuffer.Count
+                            + meshBuffer.TextMesh.VertexBuffer.Count;
+                        Metrics.IndexNumber += meshBuffer.ShapeMesh.IndexBuffer.Count
+                            + meshBuffer.ImageMesh.IndexBuffer.Count
+                            + meshBuffer.TextMesh.IndexBuffer.Count;
+                        Metrics.RenderWindows++;
+                    }
+                }
+                foreach (var form in w.Viewports)
+                {
+                    form.MeshBuffer.Append(form.foregroundMeshList);
+                }
+            }
+
+            //render each form's MeshBuffer to back-buffer
+            foreach (var form in w.Viewports)
+            {
+                form.renderer.Clear(MainForm.BackgroundColor);
+                var meshBuffer = form.MeshBuffer;
+                form.renderer.DrawMeshes(
                     (int)MainForm.ClientSize.Width, (int)MainForm.ClientSize.Height,
                     (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
             }
-            
-            foreach (var form in w.Viewports)
-            {
-                form.RenderToForegroundList();
-                form.foregroundMeshList.Clear();
-                form.MeshBuffer.Append(MainForm.foregroundMeshList);
-            }
 
+            //swap front and back-buffer
             MainForm.renderer.SwapBuffers();
         }
-
 
         internal static void Log()
         {
