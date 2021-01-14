@@ -130,10 +130,8 @@ namespace ImGui
                     mainForm.renderer.Unbind();
                 });
 
-
-                //handle additional forms
+                //handle additional forms creation and update (the loop)
                 UpdateForms();
-                RenderForms();
                 
                 if (RequestQuit)
                 {
@@ -147,6 +145,12 @@ namespace ImGui
             //TODO clean up and shutdown renderer and windows
         }
 
+        /// <summary>
+        /// Update extra forms:
+        /// 1. native window creation initiated inside OnGUI
+        /// 2. synchronize native window user interaction (drag moving, resizing, etc) to ImGui context
+        /// 3. run main loop of native window
+        /// </summary>
         private static void UpdateForms()
         {
             var g = ImGuiContext;
@@ -218,9 +222,6 @@ namespace ImGui
                     viewport.Platform_SetWindowAlpha(viewport.Alpha);
                 viewport.LastAlpha = viewport.Alpha;
 
-                // Optional, general purpose call to allow the backend to perform general book-keeping even if things haven't changed.
-                viewport.Platform_UpdateWindow();
-
                 if (is_new_platform_window)
                 {
                     // On startup ensure new platform window don't steal focus (give it a few frames, as nested contents may lead to viewport being created a few frames late)
@@ -238,68 +239,8 @@ namespace ImGui
 
                 // Clear request flags
                 viewport.ClearRequestFlags();
-            }
 
-            // Update our implicit z-order knowledge of platform windows, which is used when the backend cannot provide io.MouseHoveredViewport.
-            // When setting Platform_GetWindowFocus, it is expected that the platform backend can handle calls without crashing if it doesn't have data stored.
-            // FIXME-VIEWPORT: We should use this information to also set dear imgui-side focus, allowing us to handle os-level alt+tab.
-            {
-                Form focused_viewport = null;
-                for (int n = 0; n < forms.Count && focused_viewport == null; n++)
-                {
-                    Form viewport = forms[n];
-                    if (viewport.PlatformWindowCreated)
-                        if (viewport.Platform_GetWindowFocus())
-                            focused_viewport = viewport;
-                }
-
-                // Store a tag so we can infer z-order easily from all our windows
-                if (focused_viewport != null
-                    && focused_viewport.LastFrontMostStampCount != g.ViewportFrontMostStampCount)
-                    focused_viewport.LastFrontMostStampCount = ++g.ViewportFrontMostStampCount;
-            }
-        }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="platform_render_arg"></param>
-        /// <param name="renderer_render_arg"></param>
-        /// <remarks>
-        /// This is a default/basic function for performing the rendering/swap of multiple Platform Windows.
-        /// Custom renderers may prefer to not call this function at all, and instead iterate the publicly exposed platform data and handle rendering/sync themselves.
-        /// The Render/Swap functions stored in ImGuiPlatformIO are merely here to allow for this helper to exist, but you can do it yourself:
-        /// </remarks>
-        //<code>
-        //   ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
-        //   for (int i = 1; i < platform_io.Viewports.Size; i++)
-        //       if ((platform_io.Viewports[i]->Flags & ImGuiViewportFlags_Minimized) == 0)
-        //           MyRenderFunction(platform_io.Viewports[i], my_args);
-        //   for (int i = 1; i < platform_io.Viewports.Size; i++)
-        //       if ((platform_io.Viewports[i]->Flags & ImGuiViewportFlags_Minimized) == 0)
-        //           MySwapBufferFunction(platform_io.Viewports[i], my_args);
-        //</code>
-        private static void RenderForms(object platform_render_arg = null, object renderer_render_arg = null)
-        {
-            var w = ImGuiContext.WindowManager;
-            var forms = w.Viewports;
-            for (int i = 0; i < forms.Count; i++)
-            {
-                var viewport = forms[i];
-                if (Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.Minimized))
-                    continue;
-                viewport.Platform_RenderWindow(platform_render_arg);
-                viewport.Renderer_RenderWindow(renderer_render_arg);
-            }
-            for (int i = 0; i < forms.Count; i++)
-            {
-                var viewport = forms[i];
-                if (Utility.HasAllFlags(viewport.Flags, ImGuiViewportFlags.Minimized))
-                {
-                    continue;
-                }
-                viewport.Platform_SwapBuffers(platform_render_arg);
-                viewport.Renderer_SwapBuffers(renderer_render_arg);
+                viewport.MainLoop(null);
             }
         }
 
@@ -331,8 +272,7 @@ namespace ImGui
             });
 
             //handle additional forms
-            //UpdateForms();
-            //RenderForms();
+            UpdateForms();
         }
 
         /// <summary>

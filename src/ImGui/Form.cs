@@ -208,11 +208,6 @@ namespace ImGui
             nativeWindow.Opacity = alpha;
         }
 
-        public void Platform_UpdateWindow()
-        {
-            //TODO
-        }
-
         public void ClearRequestFlags()
         {
             PlatformRequestClose = PlatformRequestMove = PlatformRequestResize = false;
@@ -221,68 +216,6 @@ namespace ImGui
         public bool Platform_GetWindowFocus()
         {
             return nativeWindow.GetFocus();
-        }
-
-        public void Platform_RenderWindow(object platformRenderArg)
-        {
-        }
-
-        public void Renderer_RenderWindow(object rendererRenderArg)
-        {
-            Metrics.VertexNumber = 0;
-            Metrics.IndexNumber = 0;
-            Metrics.RenderWindows = 0;
-
-            renderer.Clear(BackgroundColor);
-            
-            RenderToBackgroundList();
-            MeshBuffer.Append(backgroundMeshList);
-            backgroundMeshList.Clear();
-
-            foreach (var window in this.windows)
-            {
-                if (!window.Active) continue;
-
-                window.RenderToMeshList();
-
-                //rebuild mesh buffer
-                var meshBuffer = this.MeshBuffer;
-                meshBuffer.Clear();
-                meshBuffer.Init();
-                meshBuffer.Append(window.MeshList);
-
-                window.MeshList.Clear();
-
-                //draw meshes in MeshBuffer with underlying native renderer(OpenGL\Direct3D\Vulkan)
-                renderer.DrawMeshes((int)ClientSize.Width, (int)ClientSize.Height,
-                    (shapeMesh: meshBuffer.ShapeMesh, imageMesh: meshBuffer.ImageMesh, meshBuffer.TextMesh));
-
-                if (window.Name == Metrics.WindowName)
-                {//ignore metrics window
-                    continue;
-                }
-
-                Metrics.VertexNumber += meshBuffer.ShapeMesh.VertexBuffer.Count
-                                       + meshBuffer.ImageMesh.VertexBuffer.Count
-                                       + meshBuffer.TextMesh.VertexBuffer.Count;
-                Metrics.IndexNumber += meshBuffer.ShapeMesh.IndexBuffer.Count
-                                      + meshBuffer.ImageMesh.IndexBuffer.Count
-                                      + meshBuffer.TextMesh.IndexBuffer.Count;
-                Metrics.RenderWindows++;
-            }
-
-            RenderToForegroundList();
-            foregroundMeshList.Clear();
-            MeshBuffer.Append(foregroundMeshList);
-        }
-
-        public void Platform_SwapBuffers(object platformRenderArg)
-        {
-        }
-
-        public void Renderer_SwapBuffers(object rendererRenderArg)
-        {
-            renderer.SwapBuffers();
         }
     }
 
