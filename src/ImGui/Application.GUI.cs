@@ -266,7 +266,10 @@ namespace ImGui
             }
 
             //swap front and back-buffer
-            MainForm.renderer.SwapBuffers();
+            foreach (var form in w.Viewports)
+            {
+                form.renderer.SwapBuffers();
+            }
         }
 
         internal static void Log()
