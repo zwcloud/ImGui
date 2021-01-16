@@ -244,6 +244,7 @@ namespace ImGui
 
         private List<Window> windowSwapBuffer = new List<Window>();
         private List<Window> childWindows = new List<Window>();
+        private List<Window> popupWindows = new List<Window>();
         public void EndFrame(GUIContext g)
         {
             // Click to focus window and start moving (after we're done with all our widgets)
@@ -266,9 +267,13 @@ namespace ImGui
                 }
             }
 
-            // Sort windows so child windows always rendered after its parent TODO optimize this
+            //TODO refactor to don't rely on flag to identify window type, subclass Window instead
+            // Sort windows so
+            // 1. child windows always rendered after its parent
+            // 2. popup windows always rendered after regular window
             windowSwapBuffer.Clear();
             childWindows.Clear();
+            popupWindows.Clear();
             for (int i = 0; i < Windows.Count; i++)
             {
                 var window = Windows[i];
@@ -276,21 +281,26 @@ namespace ImGui
                 {
                     childWindows.Add(window);
                 }
+                else if (window.Flags.HaveFlag(WindowFlags.Popup))
+                {
+                    popupWindows.Add(window);
+                }
                 else
                 {
                     windowSwapBuffer.Add(window);
                 }
             }
-
             foreach (var childWindow in childWindows)
             {
                 var parentWindowIndex = windowSwapBuffer.FindIndex(win => win == childWindow.RootWindow);
                 if (parentWindowIndex < 0)
                 {
-                    throw new IndexOutOfRangeException();
+                    throw new IndexOutOfRangeException(
+                        $"Cannot find the parent window of child window<{childWindow.Name}>");
                 }
                 windowSwapBuffer.Insert(parentWindowIndex + 1, childWindow);
             }
+            windowSwapBuffer.AddRange(popupWindows);
 
             Debug.Assert(windowSwapBuffer.Count == Windows.Count);
 

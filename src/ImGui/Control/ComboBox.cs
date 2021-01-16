@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ImGui.Rendering;
+﻿using ImGui.Rendering;
 
 //BUG Hover state persists when move from mainRect to outside.
 //BUG Abnormal representation when drag from mainRect to outside.
@@ -10,8 +8,8 @@ namespace ImGui
 {
     class ComboBoxContext
     {
+        public bool WindowOpened { get; set; }
         public string[] Texts { get; set; }
-        public Form ItemsContainer { get; set; }
         public int SelectedIndex { get; set; }
         public string Text { get; set; }
     }
@@ -53,26 +51,62 @@ namespace ImGui
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
             if(pressed)
             {
-                var form = ComboBoxItemsForm.Create(
-                    comboBoxContext.Texts,
-                    node,
-                    i => comboBoxContext.SelectedIndex = i);
-                comboBoxContext.ItemsContainer = form;
-                Application.AddFrom(form);
                 node.State = GUIState.Active;
-            }
 
-            if (node.State == Active)
-            {
-                comboBoxContext.ItemsContainer?.Show();
+                comboBoxContext.WindowOpened = !comboBoxContext.WindowOpened;
             }
 
             comboBoxContext.Text = comboBoxContext.Texts[comboBoxContext.SelectedIndex];
-            
+
             // last item state
             window.TempData.LastItemState = node.State;
+            
+            //combo
+            if (comboBoxContext.WindowOpened)
+            {
+                //calculate window rect
+                Rect comboPopupWindowRect;
+                {
+                    var maxLength = 0;
+                    var maxLengthString = string.Empty;
+                    foreach (var s in texts)
+                    {
+                        if (s.Length <= maxLength) continue;
+                        maxLength = s.Length;
+                        maxLengthString = s;
+                    }
 
-            //TODO Begin/End ComboBox window here
+                    var size = node.RuleSet.CalcSize(maxLengthString);
+                    size.Height *= texts.Length;
+
+                    size += new Vector(100, 100);
+            
+                    var clientPos = node.Rect.BottomLeft;
+                    comboPopupWindowRect = new Rect(clientPos, size);
+                }
+
+                var clickedIndx = -1;
+                Begin($"##ComboWindow_{node.Name}", comboPopupWindowRect,
+                    WindowFlags.Popup | WindowFlags.NoTitleBar | WindowFlags.NoCollapse 
+                    | WindowFlags.NoMove | WindowFlags.NoResize | WindowFlags.NoScrollbar);
+                {
+                    GUILayout.BeginVertical("ComboBox");
+                    for (var i = 0; i < texts.Length; i++)
+                    {
+                        if(GUILayout.Button(texts[i]))
+                        {
+                            clickedIndx = i;
+                        }
+                    }
+                    GUILayout.EndVertical();
+                }
+                End();
+                if (clickedIndx >= 0)
+                {
+                    comboBoxContext.SelectedIndex = clickedIndx;
+                    comboBoxContext.WindowOpened = false;
+                }
+            }
 
             //render
             using var g = node.RenderOpen();
@@ -113,70 +147,6 @@ namespace ImGui
                 .GradientTopDownColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Normal)
                 .GradientTopDownColor(Color.Rgb(247, 247, 247), Color.Rgb(221, 221, 221), GUIState.Hover)
                 .GradientTopDownColor(Color.Rgb(222, 222, 222), Color.Rgb(248, 248, 248), GUIState.Active);
-        }
-    }
-
-    internal sealed class ComboBoxItemsForm : Form
-    {
-        private readonly List<string> textList;
-        private System.Action<int> CallBack { get; set; }
-
-        public static ComboBoxItemsForm Create(string[] texts, Node attachedNode,
-            System.Action<int> callBack)
-        {
-            var maxLength = 0;
-            var maxLengthString = string.Empty;
-            foreach (var s in texts)
-            {
-                if (s.Length <= maxLength) continue;
-                maxLength = s.Length;
-                maxLengthString = s;
-            }
-
-            var size = attachedNode.RuleSet.CalcSize(maxLengthString);
-            size.Height *= texts.Length;
-
-            size += new Vector(100, 100);
-            
-            var clientPos = attachedNode.Rect.BottomLeft;
-            var clientRect = new Rect(clientPos, size);
-
-            var form = new ComboBoxItemsForm(clientRect, texts, callBack);
-            
-            form.BackgroundColor = Color.Peru;
-            return form;
-        }
-
-        private ComboBoxItemsForm(Rect rect, string[] texts, System.Action<int> callBack)
-            : base(rect, "comboBoxForm"/*acts as debug name*/, WindowTypes.ClientAreaOnly)
-        {
-            textList = new List<string>(texts);
-            CallBack = callBack;
-        }
-
-        void OnGUI()
-        {
-            GUI.Begin("ComboBoxWindow", (0, 0), ClientSize,
-                WindowFlags.NoTitleBar | WindowFlags.NoCollapse 
-                | WindowFlags.NoMove | WindowFlags.NoResize | WindowFlags.NoScrollbar );
-            GUILayout.BeginVertical("CombolBox");
-            var clickedIndx = -1;
-            for (var i = 0; i < textList.Count; i++)
-            {
-                if(GUILayout.Button(textList[i]))
-                {
-                    clickedIndx = i;
-                }
-            }
-            GUILayout.EndVertical();
-            GUI.End();
-
-            if (clickedIndx >= 0)
-            {
-                CallBack?.Invoke(clickedIndx);
-                this.Close();
-                Application.RemoveForm(this);
-            }
         }
     }
 }
