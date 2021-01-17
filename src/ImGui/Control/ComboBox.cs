@@ -80,6 +80,7 @@ namespace ImGui
                     size.Height *= texts.Length;
 
                     size += new Vector(100, 100);
+                    //TEMP HACK Extend the size a little: otherwise a LayoutException will happen
             
                     var clientPos = node.Rect.BottomLeft;
                     comboPopupWindowRect = new Rect(clientPos, size);
@@ -105,14 +106,18 @@ namespace ImGui
                 {
                     comboBoxContext.SelectedIndex = clickedIndx;
                     comboBoxContext.WindowOpened = false;
+                    node.State = Normal;
                 }
             }
 
             //render
             using var g = node.RenderOpen();
-            g.DrawBoxModel(comboBoxContext.Text, node.RuleSet, node.Rect);
+            var ruleSet = node.RuleSet;
+            g.DrawBoxModel(node.RuleSet, node.Rect);
             g.RenderArrow(node.Rect.Min + new Vector(node.PaddingLeft, 0), node.Height,
                 node.RuleSet.FontColor, Internal.Direcion.Down, 1.0);
+            g.DrawGlyphRun(comboBoxContext.Text, ruleSet.FontSize, ruleSet.FontFamily, ruleSet.FontColor,
+                node.Rect.Min + new Vector(node.Height + ruleSet.PaddingLeft, ruleSet.PaddingTop));
 
             return comboBoxContext.SelectedIndex;
         }
