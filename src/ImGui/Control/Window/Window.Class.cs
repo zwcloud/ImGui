@@ -103,7 +103,7 @@ namespace ImGui
             this.ID = name.GetHashCode();
             this.Name = name;
             this.Active = this.WasActive = false;
-            this.Position = form.Pos + new Vector(60, 60);
+            this.Position = position;
             this.ViewportPosition = form.Pos;
             this.FullSize = size;
 
