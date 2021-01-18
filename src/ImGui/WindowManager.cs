@@ -5,6 +5,16 @@ using ImGui.Input;
 
 namespace ImGui
 {
+    internal class NextWindowData
+    {
+        public Point? NextWindowPosition { get; set; }
+
+        public void Clear()
+        {
+            NextWindowPosition = null;
+        }
+    }
+
     internal class WindowManager
     {
         public Form MainForm { get; set; }
@@ -26,6 +36,8 @@ namespace ImGui
         public Window FocusedWindow { get; private set; }
 
         public Window ActiveIdWindow { get; internal set; }
+
+        public NextWindowData NextWindowData { get; set; } = new NextWindowData();
 
         public Form FindViewportById(int id)
         {

@@ -86,6 +86,7 @@ namespace ImGui
                     comboPopupWindowRect = new Rect(clientPos, size);
                 }
 
+                GUILayout.SetNextWindowPos(comboPopupWindowRect.Location);
                 var clickedIndx = -1;
                 Begin($"##ComboWindow_{node.Name}", comboPopupWindowRect,
                     WindowFlags.Popup | WindowFlags.NoTitleBar | WindowFlags.NoCollapse 

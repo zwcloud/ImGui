@@ -118,6 +118,11 @@ namespace ImGui
 
             this.MeshList.OwnerName = this.Name;
 
+            if (Flags.HaveFlag(WindowFlags.Popup))
+            {
+                Viewport = new Form(position, size, name, WindowTypes.ClientAreaOnly);
+            }
+
             #region Window nodes
 
             {

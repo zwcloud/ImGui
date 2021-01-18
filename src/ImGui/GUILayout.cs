@@ -195,5 +195,14 @@ namespace ImGui
         public static LayoutOptions StretchHeight(int factor) => new LayoutOptions().StretchHeight(factor);
 
         #endregion
+
+        #region SetNextXXX
+        public static void SetNextWindowPos(Point pos)
+        {
+            var g = Application.ImGuiContext;
+            var w = g.WindowManager;
+            w.NextWindowData.NextWindowPosition = pos;
+        }
+        #endregion
     }
 }

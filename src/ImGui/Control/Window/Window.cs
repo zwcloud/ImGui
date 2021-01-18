@@ -80,6 +80,12 @@ namespace ImGui
             }
             window.RootWindow = w.WindowStack[root_idx];
 
+            //Apply SetNextWindowXXX data
+            if (w.NextWindowData.NextWindowPosition.HasValue)
+            {
+                window.Position = w.NextWindowData.NextWindowPosition.Value;
+            }
+
             // When reusing window again multiple times a frame, just append content (don't need to setup again)
             if (first_begin_of_the_frame)
             {
@@ -91,6 +97,8 @@ namespace ImGui
             if (first_begin_of_the_frame)
                 window.Accessed = false;
             window.BeginCount++;
+            // Clear SetNextWindowXXX data
+            w.NextWindowData.Clear();
 
             // Child window can be out of sight and have "negative" clip windows.
             // Mark them as collapsed so commands are skipped earlier (we can't manually collapse because they have no title bar).
