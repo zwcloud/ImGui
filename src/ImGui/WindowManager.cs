@@ -171,6 +171,7 @@ namespace ImGui
                     if (!MathEx.AmostZero(delta.X) && !MathEx.AmostZero(delta.Y))
                     {
                         movingWindow.Position += Mouse.Instance.MouseDelta;
+                        movingWindow.Layout();
                     }
                     this.FocusWindow(MovingWindow);
                 }
