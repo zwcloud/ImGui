@@ -121,16 +121,23 @@ namespace ImGui
                     continue;
                 }
 
-                DrawCommand previousCommand = this.CommandBuffer[this.CommandBuffer.Count - 1];
-                if (command.TextureData != previousCommand.TextureData
-                    || command.ClipRect != previousCommand.ClipRect)
+                if (this.CommandBuffer.Count == 0)
                 {
                     this.CommandBuffer.Add(command);
                 }
-                else//only add element count to previous command
+                else
                 {
-                    previousCommand.ElemCount += command.ElemCount;
-                    this.CommandBuffer[this.CommandBuffer.Count - 1] = previousCommand;//write back
+                    DrawCommand previousCommand = this.CommandBuffer[^1];
+                    if (command.TextureData != previousCommand.TextureData
+                        || command.ClipRect != previousCommand.ClipRect)
+                    {
+                        this.CommandBuffer.Add(command);
+                    }
+                    else//only add element count to previous command
+                    {
+                        previousCommand.ElemCount += command.ElemCount;
+                        this.CommandBuffer[^1] = previousCommand;//write back
+                    }
                 }
             }
 
