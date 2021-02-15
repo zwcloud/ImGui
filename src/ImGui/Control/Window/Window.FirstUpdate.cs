@@ -20,6 +20,10 @@ namespace ImGui
             // update viewport
             UpdateWindowViewport(this);
             w.CurrentViewport = Viewport;
+            if (Viewport != null)
+            {
+                Viewport.LastFrameActive = g.FrameCount;
+            }
 
             // determine if window is collapsed
             if (!flags.HaveFlag(WindowFlags.NoTitleBar) && !flags.HaveFlag(WindowFlags.NoCollapse))
@@ -166,7 +170,8 @@ namespace ImGui
             }
             window.ViewportOwned = false;
 
-            window.ViewportOwned = window == window.Viewport.Window;
+            //TODO Update window.ViewportOwned if window.Viewport exists
+            //window.ViewportOwned = window == window.Viewport.Window;
         }
     }
 }

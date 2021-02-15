@@ -53,6 +53,10 @@ namespace ImGui
 
         internal void RenderToBackgroundList()
         {
+            if (backgroundRenderContext == null)
+            {
+                return;
+            }
             backgroundNode.Render(this.backgroundRenderContext);
 
             //rebuild mesh buffer
@@ -65,6 +69,10 @@ namespace ImGui
 
         internal void RenderToForegroundList()
         {
+            if (foregroundRenderContext == null)
+            {
+                return;
+            }
             foregroundNode.Render(this.foregroundRenderContext);
         }
     }

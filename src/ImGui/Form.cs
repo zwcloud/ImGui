@@ -143,6 +143,8 @@ namespace ImGui
             set => this.nativeWindow.ClientSize = value;
         }
 
+        internal Rect ClientRect => new Rect(ClientPosition, ClientSize);
+
         internal Point PlatformPosition
         {
             get => this.nativeWindow.Position;

@@ -118,9 +118,17 @@ namespace ImGui
 
             this.MeshList.OwnerName = this.Name;
 
-            if (Flags.HaveFlag(WindowFlags.Popup))
+            var w = Application.ImGuiContext.WindowManager;
+            bool insideMainForm = w.MainForm.ClientRect.Contains(new Rect(position, size));
+            if (Flags.HaveFlag(WindowFlags.Popup) || !insideMainForm)
             {
                 Viewport = new Form(position, size, name, WindowTypes.ClientAreaOnly);
+                Viewport.Window = this;
+                Application.AddFrom(Viewport);
+            }
+            else
+            {
+                Viewport = Application.ImGuiContext.WindowManager.MainForm;
             }
 
             #region Window nodes
