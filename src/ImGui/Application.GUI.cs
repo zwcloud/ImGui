@@ -176,20 +176,13 @@ namespace ImGui
             {
                 return;
             }
-            WindowManager w = g.WindowManager;
-
-            Debug.Assert(g.Initialized);   // Make sure that NewFrame() is called.
-
-            if (g.FrameCountEnded != g.FrameCount)
-            {
-                EndFrame();
-            }
             g.FrameCountRendered = g.FrameCount;
 
             Metrics.VertexNumber = 0;
             Metrics.IndexNumber = 0;
             Metrics.RenderWindows = 0;
             
+            WindowManager w = g.WindowManager;
             //reset MeshBuffer and MeshList
             {
                 foreach (var form in w.Viewports)
@@ -209,7 +202,7 @@ namespace ImGui
             {
                 foreach (var form in w.Viewports)
                 {
-                    form.RenderToForegroundList();
+                    form.RenderToBackgroundList();
                 }
 
                 foreach (var window in w.Windows)
@@ -258,17 +251,30 @@ namespace ImGui
             //render each form's MeshBuffer to back-buffer
             foreach (var form in w.Viewports)
             {
+                if (form.renderer == null)
+                {
+                    continue;
+                }
+
+                form.renderer.Bind();
                 form.renderer.Clear(MainForm.BackgroundColor);
                 var meshBuffer = form.MeshBuffer;
                 form.renderer.DrawMeshes(
                     (int)MainForm.ClientSize.Width, (int)MainForm.ClientSize.Height,
                     (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
+                form.renderer.Unbind();
             }
 
             //swap front and back-buffer
             foreach (var form in w.Viewports)
             {
+                if (form.renderer == null)
+                {
+                    continue;
+                }
+                form.renderer.Bind();
                 form.renderer.SwapBuffers();
+                form.renderer.Unbind();
             }
         }
 
@@ -509,6 +515,10 @@ namespace ImGui
             for (int n = 0; n < w.Viewports.Count; n++)
             {
                 Form viewport = w.Viewports[n];
+                if (!viewport.PlatformWindowCreated)
+                {
+                    continue;
+                }
                 if (!Utility.HasAllFlags(viewport.Flags, 
                         ImGuiViewportFlags.NoInputs | ImGuiViewportFlags.Minimized)
                     && viewport.Rect/*TODO use client rect?*/.Contains(mouse_platform_pos))

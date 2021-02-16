@@ -111,12 +111,14 @@ namespace ImGui
 
                 mainForm.MainLoop(() =>
                 {
-                    //Since renderer is possibly used by all methods below, bind here.
-                    mainForm.renderer.Bind();
-
                     NewFrame();
 
                     onGUI?.Invoke();
+
+                    EndFrame();
+                    
+                    //handle additional forms creation and update (the loop)
+                    UpdateForms();
 
                     Render();
 
@@ -124,14 +126,13 @@ namespace ImGui
                     
                     if (mainForm.LastRendererSize != mainForm.ClientSize)
                     {
+                        mainForm.renderer.Bind();
                         mainForm.Renderer_SetWindowSize(mainForm.ClientSize);
+                        mainForm.renderer.Unbind();
                         mainForm.LastRendererSize = mainForm.ClientSize;
                     }
-                    mainForm.renderer.Unbind();
                 });
 
-                //handle additional forms creation and update (the loop)
-                UpdateForms();
                 
                 if (RequestQuit)
                 {
@@ -168,21 +169,14 @@ namespace ImGui
             for (var i = 1; i < forms.Count; i++)
             {
                 var viewport = forms[i];
-                // Destroy platform window if the viewport hasn't been submitted or if it is hosting a hidden window
+                // Destroy platform window if the viewport if it is hosting a hidden window
                 // (the implicit/fallback Debug##Default window will be registering its viewport then be disabled, causing a dummy DestroyPlatformWindow to be made each frame)
                 bool destroy_platform_window = false;
-                destroy_platform_window |= (viewport.LastFrameActive < g.FrameCount - 1);
+                //destroy_platform_window |= (viewport.LastFrameActive < g.FrameCount - 1);
                 destroy_platform_window |= (viewport.Window?.ActiveAndVisible == false);
                 if (destroy_platform_window)
                 {
                     viewport.Close();
-                    continue;
-                }
-
-                // New windows that appears directly in a new viewport won't always have a size on their first frame
-                if (viewport.LastFrameActive < g.FrameCount || viewport.Size.Width <= 0
-                    || viewport.Size.Height <= 0)
-                {
                     continue;
                 }
 
