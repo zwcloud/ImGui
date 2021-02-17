@@ -255,6 +255,11 @@ namespace ImGui
                 {
                     continue;
                 }
+                if (form.Closed)
+                {
+                    continue;
+                }
+                //TODO don't render for hidden forms
 
                 form.renderer.Bind();
                 form.renderer.Clear(MainForm.BackgroundColor);
@@ -272,6 +277,12 @@ namespace ImGui
                 {
                     continue;
                 }
+                if (form.Closed)
+                {
+                    continue;
+                }
+                //TODO don't swap for hidden forms
+
                 form.renderer.Bind();
                 form.renderer.SwapBuffers();
                 form.renderer.Unbind();
