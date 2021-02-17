@@ -1,4 +1,5 @@
 ﻿using System;
+using ImGui.OSAbstraction.Window;
 
 namespace ImGui.OSAbstraction.Graphics
 {
@@ -14,11 +15,14 @@ namespace ImGui.OSAbstraction.Graphics
         /// <param name="windowHandle">window handle, this could be some context info needed by the renderer. e.g. win32 HWND</param>
         /// <param name="size">size of default framebuffer</param>
         void Init(IntPtr windowHandle, Size size);
-        
+
         /// <summary>
-        /// Use the renderer as the current renderer.
+        /// Set the window on which the renderer will draw
         /// </summary>
-        void Bind();
+        void SetRenderingWindow(IWindow window)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Clear the front buffer
@@ -37,11 +41,6 @@ namespace ImGui.OSAbstraction.Graphics
         /// swap front(what is on the screen) and back(what is rendered by the renderer) buffer
         /// </summary>
         void SwapBuffers();
-        
-        /// <summary>
-        /// Don't use the renderer as the current renderer.
-        /// </summary>
-        void Unbind();
 
         /// <summary>
         /// shut down the renderer

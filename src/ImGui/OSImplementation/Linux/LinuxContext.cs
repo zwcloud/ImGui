@@ -38,9 +38,9 @@ namespace ImGui.OSImplementation.Linux
             throw new NotImplementedException();
         }
 
-        private static IRenderer CRenderer()
+        private static IRenderer CRenderer(IWindow window)
         {
-            return new LinuxOpenGLRenderer();
+            return new LinuxOpenGLRenderer();//TODO
         }
 
         private static ITexture CTexture()

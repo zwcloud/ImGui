@@ -40,9 +40,9 @@ namespace ImGui.OSImplementation.Web
             WebCursor.ChangeCursor(cursor);
         }
 
-        private static IRenderer CRenderer()
+        private static IRenderer CRenderer(IWindow window)
         {
-            return new WebGLRenderer();
+            return new WebGLRenderer();//TODO
         }
 
         private static ITexture CTexture()

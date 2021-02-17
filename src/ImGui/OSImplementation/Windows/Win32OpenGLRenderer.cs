@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using ImGui.OSAbstraction.Window;
 using ImGui.OSImplementation.Shared;
 
 namespace ImGui.OSImplementation.Windows
@@ -33,6 +34,12 @@ namespace ImGui.OSImplementation.Windows
             new Point( 7 / 12.0, -3 / 12.0),
             new Point( 9 / 12.0,  3 / 12.0),
         };
+
+        public Win32OpenGLRenderer(IWindow window)
+        {
+            Init(window.Pointer, window.ClientSize);
+        }
+
         public void Init(IntPtr windowHandle, Size size)
         {
             CreateOpenGLContext(windowHandle);
@@ -47,6 +54,17 @@ namespace ImGui.OSImplementation.Windows
             GL.Enable(GL.GL_SCISSOR_TEST);
 
             InitializeTextRenderResources(size);
+        }
+
+        public void SetRenderingWindow(IWindow window)
+        {
+            if (hglrc == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("OpenGL context hasn't been created.");
+            }
+
+            var dc = GetDC(window.Pointer/*HWND*/);
+            Wgl.MakeCurrent(dc, hglrc);
         }
 
         private void CreateTextFramebuffer(Size size)
@@ -95,8 +113,6 @@ namespace ImGui.OSImplementation.Windows
             GL.DeleteFramebuffers(1, framebuffers);
             GL.DeleteTextures(1, textures);
 
-            Debug.Assert(
-                GL.CheckFramebufferStatus(GL.GL_FRAMEBUFFER_EXT) == GL.GL_FRAMEBUFFER_COMPLETE_EXT);
             Debug.Assert(!GL.IsFramebufferEXT(framebuffer));
             Debug.Assert(GL.IsTexture(framebufferColorTexture) == GL.GL_FALSE);
         }
@@ -115,12 +131,6 @@ namespace ImGui.OSImplementation.Windows
 
             //create new framebuffer
             CreateTextFramebuffer(viewportSize);
-        }
-
-        public void Bind()
-        {
-            Wgl.MakeCurrent(hDC, hglrc);
-            Debug.Assert(Wgl.GetCurrentContext() == hglrc);
         }
 
         public void Clear(Color clearColor)
@@ -341,12 +351,6 @@ namespace ImGui.OSImplementation.Windows
             Utility.CheckGLError();
         }
 
-        public void Unbind()
-        {
-            Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
-            Debug.Assert(Wgl.GetCurrentContext() == IntPtr.Zero);
-        }
-
         public void OnSizeChanged(Size size)
         {
             RebuildTextureRenderResources(size);
@@ -354,7 +358,7 @@ namespace ImGui.OSImplementation.Windows
 
         public void ShutDown()
         {
-            OpenGLMaterial.ShutDownCommonMaterials();
+            OpenGLMaterial.ShutDownCommonMaterials();//FIXME might be used by another renderer of other forms
         }
 
         public byte[] GetRawBackBuffer(out int width, out int height)

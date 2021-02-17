@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using ImGui.Development;
 using ImGui.Input;
-using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
@@ -251,42 +249,33 @@ namespace ImGui
             //render each form's MeshBuffer to back-buffer
             foreach (var form in w.Viewports)
             {
-                if (form.renderer == null)
-                {
-                    continue;
-                }
                 if (form.Closed)
                 {
                     continue;
                 }
                 //TODO don't render for hidden forms
 
-                form.renderer.Bind();
-                form.renderer.Clear(MainForm.BackgroundColor);
+                Application.renderer.SetRenderingWindow(form.NativeWindow);
+                Application.renderer.Clear(MainForm.BackgroundColor);
                 var meshBuffer = form.MeshBuffer;
-                form.renderer.DrawMeshes(
+                Application.renderer.DrawMeshes(
                     (int)MainForm.ClientSize.Width, (int)MainForm.ClientSize.Height,
                     (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
-                form.renderer.Unbind();
             }
 
             //swap front and back-buffer
             foreach (var form in w.Viewports)
             {
-                if (form.renderer == null)
-                {
-                    continue;
-                }
                 if (form.Closed)
                 {
                     continue;
                 }
                 //TODO don't swap for hidden forms
-
-                form.renderer.Bind();
-                form.renderer.SwapBuffers();
-                form.renderer.Unbind();
+                
+                Application.renderer.SetRenderingWindow(form.NativeWindow);
+                Application.renderer.SwapBuffers();
             }
+            Application.renderer.SetRenderingWindow(MainForm.NativeWindow);
         }
 
         internal static void Log()

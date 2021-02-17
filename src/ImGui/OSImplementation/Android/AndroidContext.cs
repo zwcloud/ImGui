@@ -39,9 +39,9 @@ namespace ImGui.OSImplementation.Android
             //nothing to do
         }
 
-        private static IRenderer CRenderer()
+        private static IRenderer CRenderer(IWindow window)
         {
-            return new OpenGLESRenderer();
+            return new OpenGLESRenderer();//TODO
         }
 
         private static ITexture CTexture()

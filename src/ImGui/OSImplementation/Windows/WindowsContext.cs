@@ -38,9 +38,9 @@ namespace ImGui.OSImplementation.Windows
             Win32Cursor.ChangeCursor(cursor);
         }
 
-        private static IRenderer CRenderer()
+        private static IRenderer CRenderer(IWindow window)
         {
-            return new Win32OpenGLRenderer();
+            return new Win32OpenGLRenderer(window);
         }
 
         private static ITexture CTexture()

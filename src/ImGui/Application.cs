@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using ImGui.Input;
+using ImGui.OSAbstraction.Graphics;
 
 namespace ImGui
 {
@@ -100,7 +101,11 @@ namespace ImGui
             MainForm = mainForm;
             mainForm.ID = IMGUI_VIEWPORT_DEFAULT_ID;
             mainForm.InitializeForm();
-            mainForm.InitializeRenderer();
+            Profile.Start("Create Renderer");
+            renderer = Application.PlatformContext.CreateRenderer(mainForm.NativeWindow);
+            renderer.SetRenderingWindow(mainForm.NativeWindow);
+            Profile.End();
+
             mainForm.Show();
             Form.current = mainForm;
             AddFrom(mainForm);
@@ -126,9 +131,7 @@ namespace ImGui
                     
                     if (mainForm.LastRendererSize != mainForm.ClientSize)
                     {
-                        mainForm.renderer.Bind();
                         mainForm.Renderer_SetWindowSize(mainForm.ClientSize);
-                        mainForm.renderer.Unbind();
                         mainForm.LastRendererSize = mainForm.ClientSize;
                     }
                 });
@@ -184,10 +187,9 @@ namespace ImGui
                 bool is_new_platform_window = (viewport.PlatformWindowCreated == false);
                 if (is_new_platform_window)
                 {
-                    ImGui.Log.Msg("Create Platform Window %08X (%s)\n", viewport.ID,
-                        viewport.Window != null ? viewport.Window.Name : "n/a");
+                    ImGui.Log.Msg(string.Format("Create Platform Window 0x{0:X} ({1})\n", viewport.ID,
+                        viewport.Window != null ? viewport.Window.Name : "n/a"));
                     viewport.InitializeForm();
-                    viewport.InitializeRenderer();
                     viewport.LastPlatformPos = new Point(float.MaxValue, float.MaxValue);
                     viewport.LastRendererSize = new Size(float.MaxValue, float.MaxValue);
                     viewport.LastRendererSize = viewport.Size;
@@ -241,9 +243,9 @@ namespace ImGui
         public static void RunLoop(Form form, Action onGUI = null)
         {
             MainForm = form;
+            
 
             form.InitializeForm();
-            form.InitializeRenderer();
             form.Show();
             
             Time.OnFrameBegin();
@@ -251,9 +253,6 @@ namespace ImGui
 
             form.MainLoop(() =>
             {
-                //Since renderer is possibly used by all methods below, bind here.
-                form.renderer.Bind();
-
                 NewFrame();
 
                 onGUI?.Invoke();
@@ -261,8 +260,6 @@ namespace ImGui
                 Render();
 
                 Log();
-
-                form.renderer.Unbind();
             });
 
             //handle additional forms
@@ -304,6 +301,8 @@ namespace ImGui
         {
             ImGuiContext.WindowManager.Viewports.Remove(form);
         }
+
+        internal static IRenderer renderer;
 
         private const int IMGUI_VIEWPORT_DEFAULT_ID = 0x11111111;
     }

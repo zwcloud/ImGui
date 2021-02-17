@@ -13,7 +13,7 @@ namespace ImGui.OSAbstraction
         public CTextContext CreateTextContext;
         public Func<Point, Size, WindowTypes, IWindow> CreateWindow;
         public Action<Cursor> ChangeCursor;
-        public Func<IRenderer> CreateRenderer;
+        public Func<IWindow, IRenderer> CreateRenderer;
         public Func<ITexture> CreateTexture;
     }
 }

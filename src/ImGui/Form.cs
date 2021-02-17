@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using ImGui.Development;
-using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Window;
 using ImGui.Rendering;
 using SixLabors.ImageSharp.Processing;
@@ -39,7 +36,7 @@ namespace ImGui
 
         private IWindow nativeWindow;
 
-        internal IRenderer renderer;
+        internal IWindow NativeWindow => nativeWindow;
 
         internal int ID;
         internal int Idx;
@@ -106,11 +103,6 @@ namespace ImGui
 
         internal void InitializeRenderer()
         {
-            Profile.Start("Initialize Renderer");
-            this.renderer = Application.PlatformContext.CreateRenderer();
-            this.renderer.Init(this.Pointer, this.nativeWindow.ClientSize);
-            Profile.End();
-
             this.InitializeBackForegroundRenderContext();
         }
 
@@ -165,7 +157,6 @@ namespace ImGui
 
         internal void Close()
         {
-            this.renderer.ShutDown();
             this.nativeWindow.Close();
             this.Closed = true;
         }
@@ -179,7 +170,7 @@ namespace ImGui
 
         internal void Renderer_SetWindowSize(Size size)
         {
-            renderer.OnSizeChanged(size);
+            Application.renderer.OnSizeChanged(size);
         }
 
         internal Point ScreenToClient(Point point)
@@ -194,7 +185,7 @@ namespace ImGui
 
         internal void Dev_SaveClientAreaToPng(string filePath)
         {
-            byte[] data = this.renderer.GetRawBackBuffer(out var width, out var height);
+            byte[] data = Application.renderer.GetRawBackBuffer(out var width, out var height);
             var image = SixLabors.ImageSharp.Image.LoadPixelData<SixLabors.ImageSharp.PixelFormats.Rgba32>(SixLabors.ImageSharp.Configuration.Default, data, width, height);
             image.Mutate(x => x.Flip(FlipMode.Vertical));
             using (var stream = File.OpenWrite(filePath))
