@@ -341,10 +341,7 @@ namespace ImGui.OSImplementation.Windows
                     }
                 #endregion
                 case 0x2://WM_DESTROY
-                    PostQuitMessage(0);
-                    //DEBUG only begin
-                    Application.Quit();
-                    //DEBUG only end
+                    Close();
                     return IntPtr.Zero;
             }
             return DefWindowProc(hWnd, msg, wParam, lParam);
