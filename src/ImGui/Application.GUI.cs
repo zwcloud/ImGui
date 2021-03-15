@@ -117,7 +117,14 @@ namespace ImGui
 
             w.NewFrame(g);
 
-            MainForm.ForeBackGroundRenderOpen();
+            foreach (var form in w.Viewports)
+            {
+                if (!form.PlatformWindowCreated)
+                {
+                    continue;
+                }
+                form.ForeBackGroundRenderOpen();
+            }
 
             // [DEBUG] Item picker tool - start with DebugStartItemPicker()
             // useful to visually select an item and break into its call-stack.
@@ -145,8 +152,6 @@ namespace ImGui
             w.CurrentViewport = null;
             
             //TODO drag and drop
-            
-            MainForm.ForeBackGroundRenderClose();
 
             // End frame
             g.FrameCountEnded = g.FrameCount;
@@ -156,6 +161,15 @@ namespace ImGui
 
             // Update user-facing viewport list (g.Viewports -> g.PlatformIO.Viewports after filtering out some)
             UpdateViewportsEndFrame();
+            
+            foreach (var form in w.Viewports)
+            {
+                if (!form.PlatformWindowCreated)
+                {
+                    continue;
+                }
+                form.ForeBackGroundRenderClose();
+            }
 
             // Update windows
             // TODO merge UpdateViewportsEndFrame to w.EndFrame
@@ -223,10 +237,31 @@ namespace ImGui
             {
                 foreach (var form in w.Viewports)
                 {
+                    if (!form.PlatformWindowCreated)
+                    {
+                        continue;
+                    }
+                    if (form.Closed)
+                    {
+                        continue;
+                    }
                     form.MeshBuffer.Append(form.backgroundMeshList);
                 }
                 foreach (var window in w.Windows)
                 {
+                    if (window.Viewport == null)
+                    {
+                        continue;
+                    }
+                    if (window.Viewport.PlatformWindowCreated == false)
+                    {
+                        continue;
+                    }
+                    if (window.Viewport.Closed)
+                    {
+                        continue;
+                    }
+
                     var meshBuffer = window.Viewport.MeshBuffer;
                     meshBuffer.Append(window.MeshList);
                     if (window.Name != Metrics.WindowName)
@@ -242,6 +277,14 @@ namespace ImGui
                 }
                 foreach (var form in w.Viewports)
                 {
+                    if (!form.PlatformWindowCreated)
+                    {
+                        continue;
+                    }
+                    if (form.Closed)
+                    {
+                        continue;
+                    }
                     form.MeshBuffer.Append(form.foregroundMeshList);
                 }
             }
@@ -249,6 +292,10 @@ namespace ImGui
             //render each form's MeshBuffer to back-buffer
             foreach (var form in w.Viewports)
             {
+                if (!form.PlatformWindowCreated)
+                {
+                    continue;
+                }
                 if (form.Closed)
                 {
                     continue;
@@ -256,16 +303,20 @@ namespace ImGui
                 //TODO don't render for hidden forms
 
                 Application.renderer.SetRenderingWindow(form.NativeWindow);
-                Application.renderer.Clear(MainForm.BackgroundColor);
+                Application.renderer.Clear(form.BackgroundColor);
                 var meshBuffer = form.MeshBuffer;
                 Application.renderer.DrawMeshes(
-                    (int)MainForm.ClientSize.Width, (int)MainForm.ClientSize.Height,
+                    (int)form.ClientSize.Width, (int)form.ClientSize.Height,
                     (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
             }
 
             //swap front and back-buffer
             foreach (var form in w.Viewports)
             {
+                if (!form.PlatformWindowCreated)
+                {
+                    continue;
+                }
                 if (form.Closed)
                 {
                     continue;
@@ -275,6 +326,8 @@ namespace ImGui
                 Application.renderer.SetRenderingWindow(form.NativeWindow);
                 Application.renderer.SwapBuffers();
             }
+
+            //reset to render main form
             Application.renderer.SetRenderingWindow(MainForm.NativeWindow);
         }
 

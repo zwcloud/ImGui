@@ -103,6 +103,7 @@ namespace ImGui
             mainForm.InitializeForm();
             Profile.Start("Create Renderer");
             renderer = Application.PlatformContext.CreateRenderer(mainForm.NativeWindow);
+            mainForm.InitializeRenderer();
             renderer.SetRenderingWindow(mainForm.NativeWindow);
             Profile.End();
 
@@ -190,6 +191,7 @@ namespace ImGui
                     ImGui.Log.Msg(string.Format("Create Platform Window 0x{0:X} ({1})\n", viewport.ID,
                         viewport.Window != null ? viewport.Window.Name : "n/a"));
                     viewport.InitializeForm();
+                    viewport.InitializeRenderer();
                     viewport.LastPlatformPos = new Point(float.MaxValue, float.MaxValue);
                     viewport.LastRendererSize = new Size(float.MaxValue, float.MaxValue);
                     viewport.LastRendererSize = viewport.Size;
