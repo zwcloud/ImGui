@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGL;
+using ImGui.Common;
 
 namespace ImGui.OSImplementation.Windows
 {
@@ -52,6 +53,17 @@ namespace ImGui.OSImplementation.Windows
             uint dwLayerMask;
             uint dwVisibleMask;
             uint dwDamageMask;
+
+            public override string ToString()
+            {
+                return @$"dwFlags = {dwFlags.ToStringExtended<PFD_FLAGS>()}
+iPixelType = {iPixelType}
+cColorBits = {cColorBits}
+cAlphaBits = {cAlphaBits}
+cDepthBits = {cDepthBits}
+cStencilBits {cStencilBits}
+iLayerType = {iLayerType}";
+            }
         }
 
         [Flags]
@@ -93,6 +105,9 @@ namespace ImGui.OSImplementation.Windows
 
         [DllImport("gdi32.dll", SetLastError = true, ExactSpelling = true)]
         public static extern int ChoosePixelFormat(IntPtr hdc, [In] ref PIXELFORMATDESCRIPTOR ppfd);
+        
+        [DllImport("gdi32.dll", SetLastError = true, ExactSpelling = true)]
+        public static extern int GetPixelFormat(IntPtr hdc);
 
         [DllImport("gdi32.dll", SetLastError = true, ExactSpelling = true)]
         public static extern bool SetPixelFormat(IntPtr hdc, int iPixelFormat, [In] ref PIXELFORMATDESCRIPTOR ppfd);
@@ -114,6 +129,7 @@ namespace ImGui.OSImplementation.Windows
 
         [DllImport("user32.dll")]
         static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
+        
 
         #region Wgl
 
@@ -537,15 +553,18 @@ namespace ImGui.OSImplementation.Windows
             {
                 throw new Exception("Failed to set stencilBits to 8.");
             }
-
+            
+            PrintPixelFormat(hDC);
             PrintGraphicInfo();
         }
 
         private void PrintGraphicInfo()
         {
+            Debug.WriteLine("== Graphics Info ==");
+
             string version = GL.GetString(GL.GL_VERSION);
             Utility.CheckGLError();
-            Debug.WriteLine("OpenGL version info: " + version);
+            Debug.WriteLine("OpenGL version: " + version);
 
             GL.GetIntegerv(GL.GL_MAX_TEXTURE_SIZE, IntBuffer);
             Utility.CheckGLError();
@@ -600,6 +619,28 @@ namespace ImGui.OSImplementation.Windows
             Wgl.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
             Wgl.DeleteContext(this.hglrc);
             ReleaseDC(this.hwnd, this.hDC);
+        }
+
+        private void PrintPixelFormat(IntPtr dc)
+        {
+            Debug.WriteLine("== Win32 DC PixelFormat ==");
+
+            PIXELFORMATDESCRIPTOR pfd = default;
+            int iPixelFormat;
+
+            // if the device context has a current pixel format ... 
+            iPixelFormat = GetPixelFormat(dc);
+            if (iPixelFormat > 0)
+            {
+                // obtain a detailed description of that pixel format
+                DescribePixelFormat(
+                    dc, iPixelFormat, (uint)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), ref pfd);
+                Debug.Write(pfd.ToString());
+            }
+            else
+            {
+                Debug.Write("Invalid pixel format");
+            }
         }
     }
 }

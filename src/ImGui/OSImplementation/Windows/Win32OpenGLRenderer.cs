@@ -64,7 +64,13 @@ namespace ImGui.OSImplementation.Windows
             }
 
             var dc = GetDC(window.Pointer/*HWND*/);
-            Wgl.MakeCurrent(dc, hglrc);
+            var result = Wgl.MakeCurrent(dc, hglrc);
+            if (!result)
+            {
+                var lastError = Native.GetLastErrorString();
+                PrintPixelFormat(dc);
+                throw new InvalidOperationException($"Wgl.MakeCurrent failed, error: {lastError}");
+            }
         }
 
         private void CreateTextFramebuffer(Size size)
