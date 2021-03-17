@@ -195,7 +195,6 @@ namespace ImGui
                     viewport.LastPlatformPos = new Point(float.MaxValue, float.MaxValue);
                     viewport.LastRendererSize = new Size(float.MaxValue, float.MaxValue);
                     viewport.LastRendererSize = viewport.Size;
-                    viewport.PlatformWindowCreated = true;
                 }
 
                 // Apply Position and Size (from ImGui to Platform/Renderer backends)

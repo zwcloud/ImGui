@@ -635,11 +635,11 @@ iLayerType = {iLayerType}";
                 // obtain a detailed description of that pixel format
                 DescribePixelFormat(
                     dc, iPixelFormat, (uint)Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), ref pfd);
-                Debug.Write(pfd.ToString());
+                Debug.WriteLine(pfd.ToString());
             }
             else
             {
-                Debug.Write("Invalid pixel format");
+                Debug.WriteLine("Invalid pixel format");
             }
         }
     }
