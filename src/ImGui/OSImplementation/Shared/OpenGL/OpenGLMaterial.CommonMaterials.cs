@@ -2,16 +2,30 @@
 {
     internal partial class OpenGLMaterial
     {
+        private static bool CommonMaterialInitialized = false;
+
         public static void InitCommonMaterials()
         {
+            if (CommonMaterialInitialized)
+            {
+                return;
+            }
+
             OpenGLMaterial.shapeMaterial.Init();
             OpenGLMaterial.imageMaterial.Init();
             OpenGLMaterial.glyphMaterial.Init();
             OpenGLMaterial.textMaterial.Init();
+
+            CommonMaterialInitialized = true;
         }
 
         public static void ShutDownCommonMaterials()
         {
+            if (!CommonMaterialInitialized)
+            {
+                return;
+            }
+
             OpenGLMaterial.shapeMaterial.ShutDown();
             OpenGLMaterial.imageMaterial.ShutDown();
             OpenGLMaterial.glyphMaterial.ShutDown();
