@@ -9,7 +9,8 @@ namespace HostEditor
         static void Main()
         {
             Application.Init();
-            Application.Run(new MainForm());
+            var textPad = new TextPad();
+            Application.Run(new MainForm(), textPad.OnGUI);
         }
     }
 }

@@ -9,7 +9,8 @@ namespace Calculator
         static void Main()
         {
             Application.Init();
-            Application.Run(new Form1());
+            var calculation = new Calculation();
+            Application.Run(new Form1(), calculation.OnGUI);
         }
     }
 }
