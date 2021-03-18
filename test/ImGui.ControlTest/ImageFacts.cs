@@ -11,12 +11,11 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Image(new Rect(0, 0, 100, 100), @"assets\images\logo.png");
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -28,16 +27,15 @@ namespace ImGui.ControlTest
             var form = new MainForm();
             var paths = new[] { @"assets\images\logo.png", @"assets\images\button.png" };
             var index = 0;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Image(new Rect(0, 0, 100, 100), paths[index]);
                 if (GUI.Button(new Rect(0, 120, 100, 30), "Change Image"))
                 {
                     index = (index + 1) % 2;
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -47,12 +45,11 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUILayout.Image(@"assets\images\logo.png");
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

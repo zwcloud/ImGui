@@ -11,14 +11,8 @@ namespace TextRenderingTest
 {
     public class Form1 : Form
     {
-        private Action onGUI;
-
-        public Form1(Action onGUI) : base(new Point(400, 300), new Size(800, 800)) { this.onGUI = onGUI; Form.current = this; }
-
-        protected override void OnGUI()
+        public Form1() : base(new Point(400, 300), new Size(800, 800))
         {
-            if (this.onGUI != null)
-                this.onGUI();
         }
     }
     
@@ -53,7 +47,7 @@ namespace TextRenderingTest
             
             var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
-            Application.Run(new Form1(() => {
+            Application.Run(new Form1(), () => {
                 var d = new PathGeometryBuilder();
                 d.BeginPath();
                 d.MoveTo(p0);
@@ -61,13 +55,13 @@ namespace TextRenderingTest
                 d.QuadraticCurveTo(c1, p1);
                 d.Fill();
 
-                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
+                var g = Form.current.ForegroundDrawingContext;
                 g.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
                 g.DrawLine(new Pen(Color.Red, 2), p0, c0);
                 g.DrawLine(new Pen(Color.Green, 2), c0, c1);
                 g.DrawLine(new Pen(Color.Blue, 2), c1, p1);
                 g.DrawEllipse(new Brush(Color.Gold), null, p, 4, 4);
-            }));
+            });
         }
 
         [Fact]
@@ -81,7 +75,7 @@ namespace TextRenderingTest
 
             var p = new Point((c0.X + c1.X) / 2, (c0.Y + c1.Y) / 2);
 
-            Application.Run(new Form1(() => {
+            Application.Run(new Form1(), () => {
                 var d = new PathGeometryBuilder();
                 d.BeginPath();
                 d.MoveTo(p0);
@@ -89,13 +83,13 @@ namespace TextRenderingTest
                 d.QuadraticCurveTo(c1, p1);
                 d.Fill();
                 
-                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
+                var g = Form.current.ForegroundDrawingContext;
                 g.DrawGeometry(new Brush(Color.Black), null, d.ToGeometry());
                 g.DrawLine(new Pen(Color.Red, 2), p0, c0);
                 g.DrawLine(new Pen(Color.Green, 2), c0, c1);
                 g.DrawLine(new Pen(Color.Blue, 2), c1, p1);
                 g.DrawEllipse(new Brush(Color.Gold), null, p, 4, 4);
-            }));
+            });
         }
 
 
@@ -160,28 +154,28 @@ namespace TextRenderingTest
         [Fact]
         public void ShouldRenderABigGlyph()
         {
-            Application.Run(new Form1(()=> {
-                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
+            Application.Run(new Form1(), ()=> {
+                var g = Form.current.ForegroundDrawingContext;
                 g.DrawGlyphRun("e", 400, Utility.FontDir + "msjh.ttf", Color.Black, new Point(50, 50));
-            }));
+            });
         }
 
         [Fact]
         public void ShouldRenderAMediumGlyph()
         {
-            Application.Run(new Form1(() => {
-                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
+            Application.Run(new Form1(), () => {
+                var g = Form.current.ForegroundDrawingContext;
                 g.DrawGlyphRun("D", 32, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
-            }));
+            });
         }
         
         [Fact]
         public void ShouldRenderASmallGlyph()
         {
-            Application.Run(new Form1(() => {
-                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
+            Application.Run(new Form1(), () => {
+                var g = Form.current.ForegroundDrawingContext;
                 g.DrawGlyphRun("D", 12, Utility.FontDir + "msjh.ttf", Color.LightYellow, new Point(50, 50));
-            }));
+            });
         }
 
         [Fact]
@@ -191,11 +185,11 @@ namespace TextRenderingTest
             Rect rect = new Rect(run.InkBoundingBoxSize);
             Brush brush = new Brush(Color.Black);
             Pen pen = new Pen(Color.Red, 1);
-            Application.Run(new Form1(() => {
-                var g = GUILayout.GetCurrentContext().ForegroundDrawingContext;
+            Application.Run(new Form1(), () => {
+                var g = Form.current.ForegroundDrawingContext;
                 g.DrawRectangle(null, pen, rect);
                 g.DrawGlyphRun(brush, run);
-            }));
+            });
         }
     }
 }

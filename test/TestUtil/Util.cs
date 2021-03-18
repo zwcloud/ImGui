@@ -354,7 +354,7 @@ namespace ImGui.UnitTest
             Application.Init();
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(100, 100),
                 WindowTypes.Hidden);
-            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            var renderer = Application.PlatformContext.CreateRenderer(window) as Win32OpenGLRenderer;//TEMP HACK
             Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
@@ -377,7 +377,7 @@ namespace ImGui.UnitTest
             Application.Init();
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height),
                 WindowTypes.Hidden);
-            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            var renderer = Application.PlatformContext.CreateRenderer(window) as Win32OpenGLRenderer;//TEMP HACK
             Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
@@ -399,7 +399,7 @@ namespace ImGui.UnitTest
 
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(200, 200),
                 WindowTypes.Hidden);
-            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            var renderer = Application.PlatformContext.CreateRenderer(window) as Win32OpenGLRenderer;//TEMP HACK
             Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
@@ -419,7 +419,7 @@ namespace ImGui.UnitTest
 
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(200, 200),
                 WindowTypes.Regular);
-            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            var renderer = Application.PlatformContext.CreateRenderer(window) as Win32OpenGLRenderer;//TEMP HACK
             Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
 
@@ -456,7 +456,7 @@ namespace ImGui.UnitTest
 
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(width, height),
                 WindowTypes.Hidden);
-            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            var renderer = Application.PlatformContext.CreateRenderer(window) as Win32OpenGLRenderer;//TEMP HACK
             Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
             window.Show();
@@ -489,7 +489,7 @@ namespace ImGui.UnitTest
             var window = Application.PlatformContext.CreateWindow(Point.Zero, new Size(10, 200),
                 WindowTypes.Hidden);
             window.ClientSize = new Size(width, height);
-            var renderer = Application.PlatformContext.CreateRenderer() as Win32OpenGLRenderer;//TEMP HACK
+            var renderer = Application.PlatformContext.CreateRenderer(window) as Win32OpenGLRenderer;//TEMP HACK
             Debug.Assert(renderer != null, nameof(renderer) + " != null");
             renderer.Init(window.Pointer, window.ClientSize);
             var textureRenderer = new OpenGLOffscreenRenderer();

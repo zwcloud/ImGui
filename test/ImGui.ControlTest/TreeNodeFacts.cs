@@ -12,7 +12,8 @@ namespace ImGui.ControlTest
 
             var form = new MainForm();
             var open = true;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.TreeNode("single", ref open))
                 {
@@ -22,9 +23,7 @@ namespace ImGui.ControlTest
                     GUILayout.Label("44");
                     GUILayout.TreePop();
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -36,7 +35,8 @@ namespace ImGui.ControlTest
             var form = new MainForm();
             bool open1 = true, open2 = true, open3 = false;
             bool selected1 = false, selected2 = false;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.TreeNode("root", ref open1))
                 {
@@ -56,9 +56,7 @@ namespace ImGui.ControlTest
                     selected2 = GUILayout.Selectable(".NET Core", selected2);
                     GUILayout.TreePop();
                 }
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

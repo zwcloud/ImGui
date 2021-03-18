@@ -119,8 +119,8 @@ namespace ImGui
             this.MeshList.OwnerName = this.Name;
 
             var w = Application.ImGuiContext.WindowManager;
-            bool insideMainForm = w.MainForm.ClientRect.Contains(new Rect(position, size));
-            if (Flags.HaveFlag(WindowFlags.Popup) || !insideMainForm)
+            //bool insideMainForm = w.MainForm.ClientRect.Contains(new Rect(position, size));
+            if (Flags.HaveFlag(WindowFlags.Popup))//TODO consider insideMainForm when multiple-form is ready
             {
                 Viewport = new Form(position, size, name, WindowTypes.ClientAreaOnly);
                 Viewport.Window = this;

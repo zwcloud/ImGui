@@ -12,7 +12,8 @@ namespace ImGui.ControlTest
 
             var form = new MainForm();
             bool open = true;
-            form.OnGUIAction = () =>
+
+            Application.Run(form,() =>
             {
                 if (GUILayout.CollapsingHeader("Item List", ref open))
                 {
@@ -21,9 +22,7 @@ namespace ImGui.ControlTest
                     GUILayout.Label("Item 2");
                     GUILayout.Button("Item 3");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         //https://github.com/zwcloud/ImGui/issues/57
@@ -34,7 +33,7 @@ namespace ImGui.ControlTest
             Application.Init();
             
             bool headerOn = false;
-            Application.Run(new MainForm(() =>
+            Application.Run(new MainForm(), () =>
             {
                 if (GUILayout.CollapsingHeader("Header", ref headerOn))
                 {
@@ -42,7 +41,7 @@ namespace ImGui.ControlTest
                     GUILayout.Button("Button B");
                     GUILayout.Button("Button C");
                 }
-            }));
+            });
         }
 
         //https://github.com/zwcloud/ImGui/issues/35
@@ -54,7 +53,8 @@ namespace ImGui.ControlTest
 
             var form = new MainForm();
             bool open1 = false, open2 = false;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.CollapsingHeader("Header 1", ref open1))
                 {
@@ -66,9 +66,7 @@ namespace ImGui.ControlTest
                     GUILayout.Label("Item C");
                     GUILayout.Label("Item D");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

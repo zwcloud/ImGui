@@ -33,8 +33,9 @@ namespace ImGui.UnitTest
                 new Size(WindowWidth, WindowHeight),
                 WindowTypes.Regular);
 
-            this.Renderer = Application.PlatformContext.CreateRenderer();
+            this.Renderer = Application.PlatformContext.CreateRenderer(this.Window);
             this.Renderer.Init(this.Window.Pointer, this.Window.ClientSize);
+            this.Renderer.SetRenderingWindow(this.Window);
         }
 
         public void Clear()

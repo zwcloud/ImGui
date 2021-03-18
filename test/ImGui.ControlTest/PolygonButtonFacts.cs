@@ -27,15 +27,14 @@ namespace ImGui.ControlTest
                 polygon[i] = point + new Vector(65, 65);
             }
             var textRect = new Rect(new Point(-40, -20) + new Vector(65, 65), 80, 40);
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUI.PolygonButton(new Rect(0, 0, 100, 100), polygon, textRect, "Apply"))
                 {
                     Log.Msg("clicked");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -61,7 +60,8 @@ namespace ImGui.ControlTest
                 polygon[i] = point + new Vector(65, 65);
             }
             var textRect = new Rect(new Point(-40, -20) + new Vector(65, 65), 80, 40);
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.PolygonButton(polygon, textRect, "Button A"))
                 {
@@ -71,9 +71,7 @@ namespace ImGui.ControlTest
                 {
                     Log.Msg("clicked B");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

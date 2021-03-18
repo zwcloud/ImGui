@@ -12,13 +12,12 @@ namespace ImGui.ControlTest
 
             var form = new MainForm(new Rect(320, 180, 800, 600));
             bool open = true;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Begin("test window", ref open, new Point(100, 100), new Size(100, 100));
                 GUI.End();
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -40,12 +39,11 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm(new Rect(320, 180, 800, 600));
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 form.ForegroundDrawingContext.DrawGeometry(null, pen, geometry);
-            };
-
-            Application.Run(form);
+            });
         }
         
         [Fact]
@@ -56,7 +54,8 @@ namespace ImGui.ControlTest
 
             var form = new MainForm(new Rect(320, 180, 800, 600));
             bool open = true;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Begin("test window", ref open, new Point(100, 100), new Size(100, 100));
                 GUILayout.Button("Button 0");
@@ -80,9 +79,7 @@ namespace ImGui.ControlTest
                 GUILayout.Button("Button 18");
                 GUILayout.Button("Button 19");
                 GUI.End();
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -95,16 +92,15 @@ namespace ImGui.ControlTest
             bool open = true;
             string[] listBoxItems = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
             int currentListBoxItem = 0;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Begin("test window", ref open, new Point(100, 100), new Size(200, 100));
                 GUILayout.Button("Button 0");
                 currentListBoxItem = GUILayout.ListBox("listbox\n(single select)", listBoxItems, currentListBoxItem);
                 GUILayout.Button("Button 1");
                 GUI.End();
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

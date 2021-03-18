@@ -12,12 +12,11 @@ namespace ImGui.ControlTest
 
             var form = new MainForm();
             var enabled = true;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 enabled = GUI.Toggle(new Rect(0, 0, 100, 30), "enabled", enabled);
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -28,12 +27,11 @@ namespace ImGui.ControlTest
 
             var form = new MainForm();
             var enabled = true;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 enabled = GUILayout.Toggle("enabled", enabled);
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

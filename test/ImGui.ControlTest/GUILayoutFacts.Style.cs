@@ -14,7 +14,8 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUILayout.PushStyle(StylePropertyName.BorderTop, 10.0);
                 GUILayout.Button("Button1");
@@ -24,9 +25,7 @@ namespace ImGui.ControlTest
                 GUILayout.PopStyle();
                 GUILayout.Button("Button3");
                 GUILayout.Button("Button4");
-            };
-
-            Application.Run(form);
+            });
         }
 
     }

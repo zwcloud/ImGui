@@ -13,12 +13,11 @@ namespace ImGui.ControlTest
             var form = new MainForm();
             var items = new []{ 1, 22, 333, 4444, 55555 };
             var selectedIndex = 0;
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 selectedIndex = GUILayout.ListBox("select this", items, selectedIndex);
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

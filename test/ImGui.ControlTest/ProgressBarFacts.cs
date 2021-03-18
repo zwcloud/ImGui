@@ -11,13 +11,12 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            bool open = true;
-            form.OnGUIAction = () =>
-            {
-                GUILayout.ProgressBar("Progress", System.DateTime.Now.Millisecond / 1000.0f, new Size(100, 20));
-            };
 
-            Application.Run(form);
+            Application.Run(form, () =>
+            {
+                GUILayout.ProgressBar("Progress",
+                    System.DateTime.Now.Millisecond / 1000.0f, new Size(100, 20));
+            });
         }
     }
 }

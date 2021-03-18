@@ -11,12 +11,11 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Label(new Rect(0, 0, 100, 30), "Some Text");
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -27,16 +26,15 @@ namespace ImGui.ControlTest
 
             var form = new MainForm();
             var text = "before#1";
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Label(new Rect(0, 0, 100, 30), text);
                 if (GUI.Button(new Rect(0, 40, 100, 30), "++"))
                 {
                     text = text == "before#1" ? "after#0" : "before#1";
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -46,12 +44,11 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUILayout.Label("Some Text");
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -61,14 +58,13 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUILayout.Label("Some Text##0");
                 GUILayout.Label("Some Text##1");
                 GUILayout.Label("Some Text##2");
-            };
-
-            Application.Run(form);
+            });
         }
 
         //https://github.com/zwcloud/ImGui/issues/57
@@ -79,7 +75,7 @@ namespace ImGui.ControlTest
             Application.Init();
             
             int clickCount = 0;
-            Application.Run(new MainForm(() =>
+            Application.Run(new MainForm(), () =>
             {
                 for (int i = 0; i < clickCount; i++)
                 {
@@ -90,7 +86,7 @@ namespace ImGui.ControlTest
                 {
                     clickCount++;
                 }
-            }));
+            });
         }
 
         [Fact]
@@ -98,7 +94,7 @@ namespace ImGui.ControlTest
         {
             Application.IsRunningInUnitTest = true;
             Application.Init();
-            Application.Run(new MainForm(() =>
+            Application.Run(new MainForm(), () =>
             {
                 GUILayout.BulletText("Bullet point 1");
                 GUILayout.BulletText("Bullet point 2\nOn multiple lines");
@@ -112,7 +108,7 @@ namespace ImGui.ControlTest
                     GUILayout.Bullet("_Bullet");
                     GUILayout.Button("Button");
                 GUILayout.EndHorizontal();
-            }));
+            });
         }
     }
 }

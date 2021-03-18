@@ -12,7 +12,8 @@ namespace ImGui.ControlTest
 
             bool open = true;
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Begin("Test", ref open, Point.Zero, new Size(300, 300));
                 GUILayout.Button("Button 0");
@@ -24,9 +25,7 @@ namespace ImGui.ControlTest
                 GUILayout.Separator("separator2");
                 GUILayout.Button("Button 5");
                 GUI.End();
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

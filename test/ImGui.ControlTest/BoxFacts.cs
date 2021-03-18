@@ -11,12 +11,10 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+            Application.Run(form, () =>
             {
                 GUI.Box(new Rect(0, 0, 100, 30), "Some Text");
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -27,16 +25,15 @@ namespace ImGui.ControlTest
 
             var form = new MainForm();
             var text = "before##1";
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Box(new Rect(0, 0, 100, 30), text);
                 if (GUI.Button(new Rect(0, 40, 120, 30), "Change Text"))
                 {
                     text = text == "before##1" ? "after##0" : "before##1";
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -46,12 +43,10 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+            Application.Run(form, () =>
             {
                 GUILayout.Box("Some Text");
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -61,14 +56,12 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+            Application.Run(form, () =>
             {
                 GUILayout.Box("Some Text##0");
                 GUILayout.Box("Some Text##1");
                 GUILayout.Box("Some Text##2");
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

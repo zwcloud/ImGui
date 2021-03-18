@@ -14,22 +14,22 @@ namespace ImGui.ControlTest
         public void ShowOneFixedButton()
         {
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUI.Button(new Rect(0, 0, 100, 30), "Apply"))
                 {
                     Log.Msg("clicked");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
         public void ShowTwoFixedButtons()
         {
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUI.Button(new Rect(5, 5, 100, 30), "Button1"))
                 {
@@ -39,31 +39,29 @@ namespace ImGui.ControlTest
                 {
                     Log.Msg("clicked Button2");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
         public void ShowOneLayoutedButton()
         {
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.Button("Apply"))
                 {
                     Log.Msg("clicked");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
         public void ShowTwoLayoutedButton()
         {
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.Button("Apply"))
                 {
@@ -73,21 +71,18 @@ namespace ImGui.ControlTest
                 {
                     Log.Msg("clicked Revert");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
         public void ShowOneLayoutedImageButton()
         {
             var form = new MainForm(800, 600);
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUILayout.ImageButton("assets/images/logo.png");
-            };
-
-            Application.Run(form);
+            });
         }
         
         [Fact]
@@ -95,7 +90,9 @@ namespace ImGui.ControlTest
         {
             var form = new MainForm(800, 800);
             var pressed_count = 0;
-            form.OnGUIAction = () =>
+            
+            Application.InitialDebugWindowRect = new Rect(10, 10, 600, 700);
+            Application.Run(form, () =>
             {
                 GUILayout.BeginHorizontal("HGroup~1");
                 for (int i = 0; i < 8; i++)
@@ -111,22 +108,18 @@ namespace ImGui.ControlTest
                 GUILayout.EndHorizontal();
                 GUILayout.Label("Pressed {0} times.", pressed_count);
                 GUILayout.ImageButton("assets/images/checker.png");
-            };
-            
-            Application.InitialDebugWindowRect = new Rect(10, 10, 600, 700);
-            Application.Run(form);
+            });
         }
 
         [Fact]
         public void ShowOneLayoutedSlicedImageButton()
         {
             var form = new MainForm(800, 600);
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUILayout.ImageButton("assets/images/button.png", (306, 456), (83, 53, 53, 53));
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

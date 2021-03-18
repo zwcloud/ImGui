@@ -16,10 +16,10 @@ namespace ImGui.ControlTest
         {
             var text = "Hello ImGui!你好";
 
-            Application.Run(new MainForm(() =>
+            Application.Run(new MainForm(),() =>
             {
                 text = GUILayout.TextBox("Name", new Size(200, 30), text);
-            }));
+            });
         }
         
         [Fact]
@@ -28,22 +28,22 @@ namespace ImGui.ControlTest
             string str0 = "Hello, world!";
             int i0 = 123;
             float f0 = 0.001f;
-            Application.Run(new MainForm(() =>
+            Application.Run(new MainForm(), () =>
             {
                 str0 = GUILayout.InputText("input text", str0);
                 i0 = GUILayout.InputInt("input int", i0);
                 f0 = GUILayout.InputFloat("input float", f0);
-            }));
+            });
         }
         
         [Fact]
         public void EmptyTextBoxSizeIsCorrect()
         {
             string str0 = "";
-            Application.Run(new MainForm(() =>
+            Application.Run(new MainForm(), () =>
             {
                 str0 = GUILayout.InputText("default", str0);
-            }));
+            });
         }
 
         [Fact]
@@ -61,11 +61,11 @@ namespace ImGui.ControlTest
 label:
 \tlock cmpxchg8b eax
 ";
-            Application.Run(new MainForm(800, 600, () =>
+            Application.Run(new MainForm(800, 600), () =>
             {
                 multiLineText = GUILayout.InputTextMultiline(
                     "Text Box", new Size(200, 200), multiLineText);
-            }));
+            });
         }
 
         [Fact]
@@ -93,11 +93,11 @@ Line18
 Line19
 ";
             Application.InitialDebugWindowRect = new Rect(10, 10, 300, 400);
-            Application.Run(new MainForm(800, 800, () =>
+            Application.Run(new MainForm(800, 800), () =>
             {
                 multiLineText = GUILayout.InputTextMultiline(
                     "Text Box", new Size(200, 200), multiLineText);
-            }));
+            });
         }
     }
 

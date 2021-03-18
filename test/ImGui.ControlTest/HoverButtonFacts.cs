@@ -11,15 +11,14 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
-                if (GUI.Button(new Rect(0, 0, 100, 30), "Active when hovered"))
+                if (GUI.HoverButton(new Rect(0, 0, 100, 30), "Active when hovered"))
                 {
                     Log.Msg("Active");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -29,15 +28,14 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.HoverButton("Active when hovered"))
                 {
                     Log.Msg("Active");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -47,7 +45,8 @@ namespace ImGui.ControlTest
             Application.Init();
 
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 if (GUILayout.Button("Apply"))
                 {
@@ -57,9 +56,7 @@ namespace ImGui.ControlTest
                 {
                     Log.Msg("clicked Revert");
                 }
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }

@@ -12,7 +12,8 @@ namespace ImGui.ControlTest
 
             bool open = true;
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Begin("Test", ref open, Point.Zero, new Size(100, 300));
 
@@ -24,9 +25,7 @@ namespace ImGui.ControlTest
                 GUILayout.Button("button3");
 
                 GUI.End();
-            };
-
-            Application.Run(form);
+            });
         }
 
         [Fact]
@@ -37,7 +36,8 @@ namespace ImGui.ControlTest
 
             bool open = true;
             var form = new MainForm();
-            form.OnGUIAction = () =>
+
+            Application.Run(form, () =>
             {
                 GUI.Begin("Test", ref open, Point.Zero, new Size(300, 300));
 
@@ -61,9 +61,7 @@ namespace ImGui.ControlTest
                 }
                 GUILayout.EndHorizontal();
                 GUI.End();
-            };
-
-            Application.Run(form);
+            });
         }
     }
 }
