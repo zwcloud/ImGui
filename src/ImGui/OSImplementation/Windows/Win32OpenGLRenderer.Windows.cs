@@ -9,8 +9,14 @@ namespace ImGui.OSImplementation.Windows
     internal partial class Win32OpenGLRenderer
     {
         #region Native
-        [DllImport("user32.dll", SetLastError = true, ExactSpelling = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetDC(IntPtr hWnd);
+        
+        /// <summary>
+        /// returns a handle to the window associated with the specified display device context (DC).
+        /// </summary>
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr WindowFromDC(IntPtr hDC);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct PIXELFORMATDESCRIPTOR
@@ -62,7 +68,8 @@ cColorBits = {cColorBits}
 cAlphaBits = {cAlphaBits}
 cDepthBits = {cDepthBits}
 cStencilBits {cStencilBits}
-iLayerType = {iLayerType}";
+iLayerType = {iLayerType}
+";
             }
         }
 
@@ -146,6 +153,9 @@ iLayerType = {iLayerType}";
 
             [DllImport("OPENGL32.DLL", EntryPoint = "wglMakeCurrent", ExactSpelling = true, SetLastError = true)]
             internal static extern bool Native_MakeCurrent(IntPtr hDc, IntPtr newContext);
+
+            [DllImport("OPENGL32.DLL", EntryPoint = "wglGetCurrentDC", ExactSpelling = true, SetLastError = true)]
+            internal static extern IntPtr GetCurrentDC();
 
             internal static bool MakeCurrent(IntPtr hDc, IntPtr hglrc)
             {

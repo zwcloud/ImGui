@@ -303,28 +303,19 @@ namespace ImGui
                 //TODO don't render for hidden forms
 
                 Application.renderer.SetRenderingWindow(form.NativeWindow);
+#if DEBUG//verify renerdering window is correct
+                var actualNativeWindow = Application.renderer.GetRenderingWindow();
+                if (actualNativeWindow != form.NativeWindow)
+                {
+                    throw new Exception();
+                }
+#endif
                 Application.renderer.Clear(form.BackgroundColor);
                 var meshBuffer = form.MeshBuffer;
                 Application.renderer.DrawMeshes(
                     (int)form.ClientSize.Width, (int)form.ClientSize.Height,
                     (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
-            }
-
-            //swap front and back-buffer
-            foreach (var form in w.Viewports)
-            {
-                if (!form.PlatformWindowCreated)
-                {
-                    continue;
-                }
-                if (form.Closed)
-                {
-                    continue;
-                }
-                //TODO don't swap for hidden forms
-                
-                Application.renderer.SetRenderingWindow(form.NativeWindow);
-                Application.renderer.SwapBuffers();
+                Application.renderer.SwapBuffers();//swap front and back-buffer
             }
 
             //reset to render main form

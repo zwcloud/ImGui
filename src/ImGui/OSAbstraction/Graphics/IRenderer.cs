@@ -25,6 +25,15 @@ namespace ImGui.OSAbstraction.Graphics
         }
 
         /// <summary>
+        /// Get the window on which the renderer will draw
+        /// </summary>
+        /// <returns></returns>
+        IWindow GetRenderingWindow()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Clear the front buffer
         /// </summary>
         void Clear(Color color);

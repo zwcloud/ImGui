@@ -75,6 +75,33 @@ namespace ImGui.OSImplementation.Windows
             }
         }
 
+        public IWindow GetRenderingWindow()
+        {
+            if (hglrc == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("OpenGL context hasn't been created.");
+            }
+
+            var currentGLContext = Wgl.GetCurrentContext();
+            if(hglrc != currentGLContext)
+            {
+                throw new InvalidOperationException("Cached OpenGL context doesn't match acutal one.");
+            }
+
+            var currentDC = Wgl.GetCurrentDC();
+            var currentHWND = WindowFromDC(currentDC);
+            var forms = Application.ImGuiContext.WindowManager.Viewports;
+            foreach (var form in forms)
+            {
+                if (form.NativeWindow.Pointer == currentHWND)
+                {
+                    return form.NativeWindow;
+                }
+            }
+
+            return null;
+        }
+
         private void SetupWindowForRendering(IWindow window)
         {
             var dc = GetDC(window.Pointer);
