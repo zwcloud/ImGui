@@ -48,12 +48,25 @@ namespace ImGui
             node.Rect = window.GetRect(rect);
 
             // interact
+            //TODO close popup when clicking outside
             var pressed = GUIBehavior.ButtonBehavior(node.Rect, node.Id, out var hovered, out var held);
+            node.State = GUIState.Normal;
             if(pressed)
             {
-                node.State = GUIState.Active;
-
                 comboBoxContext.WindowOpened = !comboBoxContext.WindowOpened;
+
+                if (comboBoxContext.WindowOpened)
+                {
+                    node.State = GUIState.Active;
+                }
+                else
+                {
+                    node.State = GUIState.Normal;
+                }
+            }
+            if (hovered)
+            {
+                node.State = GUIState.Hover;
             }
 
             comboBoxContext.Text = comboBoxContext.Texts[comboBoxContext.SelectedIndex];
