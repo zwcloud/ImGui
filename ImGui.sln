@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1062
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31213.239
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{DD39D4D9-52B4-47A7-86BF-ECB8D136D767}"
 EndProject
@@ -60,6 +60,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRenderingTest", "test\TextRenderingTest\TextRenderingTest.csproj", "{4278E07C-E302-4F8F-99FF-823932612BF3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtil", "test\TestUtil\TestUtil.csproj", "{6D0DFFB5-818F-4D8C-AE49-50543908EAB5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFormTest", "test\MultiFormTest\MultiFormTest.csproj", "{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -225,6 +227,18 @@ Global
 		{6D0DFFB5-818F-4D8C-AE49-50543908EAB5}.Release|x64.Build.0 = Release|Any CPU
 		{6D0DFFB5-818F-4D8C-AE49-50543908EAB5}.Release|x86.ActiveCfg = Release|Any CPU
 		{6D0DFFB5-818F-4D8C-AE49-50543908EAB5}.Release|x86.Build.0 = Release|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Debug|x64.Build.0 = Debug|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Debug|x86.Build.0 = Debug|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Release|x64.ActiveCfg = Release|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Release|x64.Build.0 = Release|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Release|x86.ActiveCfg = Release|Any CPU
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -244,6 +258,7 @@ Global
 		{88B33B1E-EEA4-4423-805E-4AF1E6519EA7} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
 		{4278E07C-E302-4F8F-99FF-823932612BF3} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
 		{6D0DFFB5-818F-4D8C-AE49-50543908EAB5} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
+		{5A1AAB6B-F5AD-4341-B011-0BACD18D51F1} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F2FED21B-4283-49FD-91D0-9360FFF0F4D5}
