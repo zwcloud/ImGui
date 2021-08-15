@@ -166,12 +166,18 @@ namespace ImGui
             if (!Utility.HasAllFlags(g.ConfigFlagsCurrFrame, ImGuiConfigFlags.ViewportsEnable))
             {
                 window.Viewport = mainViewport;
+                window.ViewportOwned = false;
                 return;
             }
-            window.ViewportOwned = false;
 
-            //TODO Update window.ViewportOwned if window.Viewport exists
-            //window.ViewportOwned = window == window.Viewport.Window;
+            //determine if the window own the viewport containing the window
+            if (window.Viewport != null)
+            {
+                window.ViewportOwned = window == window.Viewport.Window;
+                return;
+            }
+            
+            window.ViewportOwned = false;
         }
     }
 }
