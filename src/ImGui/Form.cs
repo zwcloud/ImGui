@@ -93,6 +93,8 @@ namespace ImGui
                 constructionParameters.Position,
                 constructionParameters.Size,
                 constructionParameters.Type);
+            Size = constructionParameters.Size;
+            Pos = constructionParameters.Position;
             if (constructionParameters.Type == WindowTypes.Regular)
             {
                 this.nativeWindow.Title = constructionParameters.Title;
