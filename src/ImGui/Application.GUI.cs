@@ -303,7 +303,7 @@ namespace ImGui
                 //TODO don't render for hidden forms
 
                 Application.renderer.SetRenderingWindow(form.NativeWindow);
-#if DEBUG//verify renerdering window is correct
+#if DEBUG//verify rendering window is correct
                 var actualNativeWindow = Application.renderer.GetRenderingWindow();
                 if (actualNativeWindow != form.NativeWindow)
                 {
@@ -317,9 +317,6 @@ namespace ImGui
                     (meshBuffer.ShapeMesh, meshBuffer.ImageMesh, meshBuffer.TextMesh));
                 Application.renderer.SwapBuffers();//swap front and back-buffer
             }
-
-            //reset to render main form
-            Application.renderer.SetRenderingWindow(MainForm.NativeWindow);
         }
 
         internal static void Log()
