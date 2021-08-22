@@ -129,6 +129,10 @@ namespace ImGui.OSImplementation.Windows
                 PrintPixelFormat(dc);
                 throw new InvalidOperationException($"Wgl.MakeCurrent failed, error: {lastError}");
             }
+
+            var viewportSize = window.ClientSize;
+            GL.Viewport(0, 0, (int)viewportSize.Width, (int)viewportSize.Height);
+            GL.Scissor(0, 0, (int)viewportSize.Width, (int)viewportSize.Height);
         }
 
         public IWindow GetRenderingWindow()

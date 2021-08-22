@@ -20,7 +20,7 @@ namespace MultipleNativeWindowTest
             windowB.Show();
 
             Win32OpenGLRenderer renderer = new Win32OpenGLRenderer(windowA);
-            var mesh = new QuadMesh(new Rect(100, 100, 200, 200), Color.AliceBlue);
+            var mesh = new QuadMesh(new Rect(100, 100, 200, 200), Color.Blue);
 
             while (!windowA.Closed)
             {
