@@ -26,6 +26,30 @@
             this.currentIdx += 4;
         }
 
+        public QuadMesh(Rect rect, Color color)
+        {
+            PrimReserve(6, 4);
+
+            var min = rect.Min;
+            var max = rect.Max;
+            var vertex0 = new DrawVertex { pos = new Point(min.X, max.Y), uv = new Point(0, 1), color =  color };
+            var vertex1 = new DrawVertex { pos = new Point(max.X, max.Y), uv = new Point(1, 1), color =   color };
+            var vertex2 = new DrawVertex { pos = new Point(max.X, min.Y), uv = new Point(1, 0), color =  color };
+            var vertex3 = new DrawVertex { pos = new Point(min.X, min.Y), uv = new Point(0, 0), color = color };
+            AppendVertex(vertex0);
+            AppendVertex(vertex1);
+            AppendVertex(vertex2);
+            AppendVertex(vertex3);
+
+            AppendIndex(0);
+            AppendIndex(1);
+            AppendIndex(2);
+            AppendIndex(0);
+            AppendIndex(2);
+            AppendIndex(3);
+
+            currentIdx += 4;
+        }
 
     }
 }

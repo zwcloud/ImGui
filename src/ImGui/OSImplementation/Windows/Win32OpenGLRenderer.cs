@@ -63,9 +63,65 @@ namespace ImGui.OSImplementation.Windows
                 throw new InvalidOperationException("OpenGL context hasn't been created.");
             }
 
-            SetupWindowForRendering(window);
+            var dc = GetDC(window.Pointer);
+            hDC = dc;
+            
+            //For OpenGL, we need to set pixel format for each win32 window before make it current.
 
-            var dc = GetDC(window.Pointer/*HWND*/);
+            if (GetPixelFormat(dc) == 0)//Set a valid pixel format if haven't.
+            {
+                var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
+                pixelformatdescriptor.Init();
+
+                if (!Application.EnableMSAA)
+                {
+                    int pixelFormat = ChoosePixelFormat(dc, ref pixelformatdescriptor);
+                    SetPixelFormat(dc, pixelFormat, ref pixelformatdescriptor);
+                }
+                else
+                {
+                    int[] iPixAttribs =
+                    {
+                        (int) WGL.WGL_SUPPORT_OPENGL_ARB, (int) GL.GL_TRUE,
+                        (int) WGL.WGL_DRAW_TO_WINDOW_ARB, (int) GL.GL_TRUE,
+                        (int) WGL.WGL_DOUBLE_BUFFER_ARB, (int) GL.GL_TRUE,
+                        (int) WGL.WGL_PIXEL_TYPE_ARB, (int) WGL.WGL_TYPE_RGBA_ARB,
+                        (int) WGL.WGL_ACCELERATION_ARB, (int) WGL.WGL_FULL_ACCELERATION_ARB,
+                        (int) WGL.WGL_COLOR_BITS_ARB, 24,
+                        (int) WGL.WGL_ALPHA_BITS_ARB, 8,
+                        (int) WGL.WGL_DEPTH_BITS_ARB, 24,
+                        (int) WGL.WGL_STENCIL_BITS_ARB, 8,
+                        (int) WGL.WGL_SWAP_METHOD_ARB, (int) WGL.WGL_SWAP_EXCHANGE_ARB,
+                        (int) WGL.WGL_SAMPLE_BUFFERS_ARB, (int) GL.GL_TRUE, //Enable MSAA
+                        (int) WGL.WGL_SAMPLES_ARB, 16,
+                        0
+                    };
+
+                    int pixelFormat;
+                    uint numFormats;
+                    var result1 = Wgl.ChoosePixelFormatARB(dc, iPixAttribs, null, 1, out pixelFormat,
+                        out numFormats);
+                    if (result1 == false || numFormats == 0)
+                    {
+                        throw new Exception(
+                            $"wglChoosePixelFormatARB failed: error {Marshal.GetLastWin32Error()}");
+                    }
+
+                    if (!DescribePixelFormat(dc, pixelFormat, (uint) Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(),
+                        ref pixelformatdescriptor))
+                    {
+                        throw new Exception(
+                            $"DescribePixelFormat failed: error {Marshal.GetLastWin32Error()}");
+                    }
+
+                    if (!SetPixelFormat(dc, pixelFormat, ref pixelformatdescriptor))
+                    {
+                        throw new Exception(
+                            $"SetPixelFormat failed: error {Marshal.GetLastWin32Error()}");
+                    }
+                }
+            }
+
             var result = Wgl.MakeCurrent(dc, hglrc);
             if (!result)
             {
@@ -100,67 +156,6 @@ namespace ImGui.OSImplementation.Windows
             }
 
             return null;
-        }
-
-        private void SetupWindowForRendering(IWindow window)
-        {
-            var dc = GetDC(window.Pointer);
-            if (GetPixelFormat(dc) != 0)
-            {//already set a valid pixel format
-                return;
-            }
-
-            //For OpenGL, we need to set pixel format for each win32 window before make it current.
-            var pixelformatdescriptor = new PIXELFORMATDESCRIPTOR();
-            pixelformatdescriptor.Init();
-
-            if (!Application.EnableMSAA)
-            {
-                int pixelFormat = ChoosePixelFormat(dc, ref pixelformatdescriptor);
-                SetPixelFormat(dc, pixelFormat, ref pixelformatdescriptor);
-            }
-            else
-            {
-                int[] iPixAttribs =
-                {
-                    (int) WGL.WGL_SUPPORT_OPENGL_ARB, (int) GL.GL_TRUE,
-                    (int) WGL.WGL_DRAW_TO_WINDOW_ARB, (int) GL.GL_TRUE,
-                    (int) WGL.WGL_DOUBLE_BUFFER_ARB, (int) GL.GL_TRUE,
-                    (int) WGL.WGL_PIXEL_TYPE_ARB, (int) WGL.WGL_TYPE_RGBA_ARB,
-                    (int) WGL.WGL_ACCELERATION_ARB, (int) WGL.WGL_FULL_ACCELERATION_ARB,
-                    (int) WGL.WGL_COLOR_BITS_ARB, 24,
-                    (int) WGL.WGL_ALPHA_BITS_ARB, 8,
-                    (int) WGL.WGL_DEPTH_BITS_ARB, 24,
-                    (int) WGL.WGL_STENCIL_BITS_ARB, 8,
-                    (int) WGL.WGL_SWAP_METHOD_ARB, (int) WGL.WGL_SWAP_EXCHANGE_ARB,
-                    (int) WGL.WGL_SAMPLE_BUFFERS_ARB, (int) GL.GL_TRUE, //Enable MSAA
-                    (int) WGL.WGL_SAMPLES_ARB, 16,
-                    0
-                };
-
-                int pixelFormat;
-                uint numFormats;
-                var result = Wgl.ChoosePixelFormatARB(dc, iPixAttribs, null, 1, out pixelFormat,
-                    out numFormats);
-                if (result == false || numFormats == 0)
-                {
-                    throw new Exception(
-                        $"wglChoosePixelFormatARB failed: error {Marshal.GetLastWin32Error()}");
-                }
-
-                if (!DescribePixelFormat(dc, pixelFormat, (uint) Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(),
-                    ref pixelformatdescriptor))
-                {
-                    throw new Exception(
-                        $"DescribePixelFormat failed: error {Marshal.GetLastWin32Error()}");
-                }
-
-                if (!SetPixelFormat(dc, pixelFormat, ref pixelformatdescriptor))
-                {
-                    throw new Exception(
-                        $"SetPixelFormat failed: error {Marshal.GetLastWin32Error()}");
-                }
-            }
         }
 
         private void CreateTextFramebuffer(Size size)
@@ -238,8 +233,8 @@ namespace ImGui.OSImplementation.Windows
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
             DrawMesh(OpenGLMaterial.shapeMaterial, meshes.shapeMesh, width, height);
-            DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
-            DrawTextMesh(meshes.textMesh, width, height);
+            //DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
+            //DrawTextMesh(meshes.textMesh, width, height);
         }
 
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
