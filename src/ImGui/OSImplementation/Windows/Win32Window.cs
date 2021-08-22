@@ -239,6 +239,16 @@ namespace ImGui.OSImplementation.Windows
 
         #region Window creation
 
+        public Win32Window()
+        {
+            parentWindow = null;
+        }
+
+        public Win32Window(IWindow parent)
+        {
+            parentWindow = parent;
+        }
+
         static Microsoft.Win32.SafeHandles.SafeProcessHandle processHandle = Process.GetCurrentProcess().SafeHandle;
 
         private IntPtr WindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
@@ -351,6 +361,8 @@ namespace ImGui.OSImplementation.Windows
         //otherwise it will be GC-collected because no managed object is referencing it.
         // Maybe it's better to use GCHandle.Alloc to pin this object locally?
         private WNDCLASS wndclass;
+        
+        private IWindow parentWindow;
 
         public void Init(Point position, Size size, WindowTypes windowType)
         {
@@ -430,7 +442,7 @@ namespace ImGui.OSImplementation.Windows
 
             if (windowType == WindowTypes.ClientAreaOnly)
             {
-                var parent = Application.MainForm.Pointer;
+                var parent = parentWindow == null ? Application.MainForm.Pointer : parentWindow.Pointer;
                 if (SetParent(hwnd, parent) == IntPtr.Zero)
                 {
                     throw new WindowCreateException(
