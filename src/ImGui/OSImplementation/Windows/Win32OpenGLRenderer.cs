@@ -237,8 +237,8 @@ namespace ImGui.OSImplementation.Windows
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
             DrawMesh(OpenGLMaterial.shapeMaterial, meshes.shapeMesh, width, height);
-            //DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
-            //DrawTextMesh(meshes.textMesh, width, height);
+            DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
+            DrawTextMesh(meshes.textMesh, width, height);
         }
 
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
