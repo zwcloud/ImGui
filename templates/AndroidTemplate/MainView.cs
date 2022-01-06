@@ -1,14 +1,10 @@
 using System;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Graphics.ES30;
-using OpenTK.Platform;
 using OpenTK.Platform.Android;
-using Android.Views;
 using Android.Content;
 using Android.Util;
 using ImGui;
-using Size = ImGui.Size;
 
 namespace AndroidTemplate
 {
@@ -26,8 +22,8 @@ namespace AndroidTemplate
             base.OnLoad(e);
             
             //Create form
-            mainForm = new MainForm(Point.Zero/*dummy*/, new Size(this.Size.Width, this.Size.Height));
-            ImGui.Application.Init(mainForm);
+            mainForm = new MainForm(Point.Zero/*dummy*/, new ImGui.Size(Size.Width, Size.Height));
+            ImGui.Application.Init();
             
             Run();// Run the render loop
         }
@@ -38,7 +34,8 @@ namespace AndroidTemplate
         protected override void CreateFrameBuffer()
         {
             // using OpenGLES3.0
-            this.GLContextVersion = GLContextVersion.Gles3_0;
+            ContextRenderingApi = GLVersion.ES3;
+
             // the default GraphicsMode that is set consists of (16, 16, 0, 0, 2, false)
             try
             {
@@ -58,7 +55,7 @@ namespace AndroidTemplate
         {
             base.OnRenderFrame(e);
 
-            ImGui.Application.RunLoop(mainForm);
+            ImGui.Application.RunLoop(mainForm, mainForm.OnGUI);
 
             SwapBuffers();
         }
