@@ -71,11 +71,11 @@ namespace ImGui
             {
                 PlatformContext = OSImplementation.Android.AndroidContext.MapFactory();
             }
-            else if(CurrentOS.IsWindows)
+            else if (CurrentOS.IsWindows)
             {
                 PlatformContext = OSImplementation.Windows.WindowsContext.MapFactory();
             }
-            else if(CurrentOS.IsLinux)
+            else if (CurrentOS.IsLinux)
             {
                 PlatformContext = OSImplementation.Linux.LinuxContext.MapFactory();
             }
@@ -86,9 +86,34 @@ namespace ImGui
         // HACK for Android
         public static Func<string, System.IO.Stream> OpenAndroidAssets;
 
+        public static bool Initialized { get; private set; }
+
         public static void Init()
         {
             InitSysDependencies();
+
+
+            Initialized = true;
+        }
+
+        public static void InitForLooper(Form mainForm)
+        {
+            InitSysDependencies();
+
+            MainForm = mainForm;
+            mainForm.ID = IMGUI_VIEWPORT_DEFAULT_ID;
+            mainForm.InitializeForm();
+            Profile.Start("Create Renderer");
+            renderer = Application.PlatformContext.CreateRenderer(mainForm.NativeWindow);
+            mainForm.InitializeRenderer();
+            renderer.SetRenderingWindow(mainForm.NativeWindow);
+            Profile.End();
+
+            mainForm.Show();
+            Form.current = mainForm;
+            AddFrom(mainForm);
+
+            Initialized = true;
         }
 
         /// <summary>
@@ -243,28 +268,38 @@ namespace ImGui
 
         public static void RunLoop(Form form, Action onGUI = null)
         {
-            MainForm = form;
-            
+            if (!Initialized)
+            {
+                return;
+            }
 
-            form.InitializeForm();
-            form.Show();
-            
             Time.OnFrameBegin();
             Keyboard.Instance.OnFrameBegin();
 
-            form.MainLoop(() =>
+            MainForm.MainLoop(() =>
             {
                 NewFrame();
 
                 onGUI?.Invoke();
 
+                EndFrame();
+
+                //handle additional forms creation and update (the loop)
+                UpdateForms();
+
                 Render();
 
                 Log();
+
+                if (MainForm.LastRendererSize != MainForm.ClientSize)
+                {
+                    MainForm.Renderer_SetWindowSize(MainForm.ClientSize);
+                    MainForm.LastRendererSize = MainForm.ClientSize;
+                }
             });
 
-            //handle additional forms
-            UpdateForms();
+            Keyboard.Instance.OnFrameEnd();
+            Time.OnFrameEnd();
         }
 
         /// <summary>

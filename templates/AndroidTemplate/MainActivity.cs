@@ -26,10 +26,38 @@ namespace AndroidTemplate
         private static TaskCompletionSource<string> tcs;
         private static AlertDialog alert;
 
+        private bool listAssetFiles(String path)
+        {
+            var list = this.Assets.List(path);
+            foreach (var file in list)
+            {
+                string newPath;
+                if (path == "")
+                {
+                    newPath = file;
+                }
+                else
+                {
+                    newPath = path + "/" + file;
+                }
+                if (!listAssetFiles(newPath))
+                {
+                    return false; 
+                }
+                else
+                {
+                    Android.Util.Log.Info("ListAssets", newPath);
+                }
+            }
+
+            return true;
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
+            listAssetFiles("");
             ImGui.Application.OpenAndroidAssets = this.Assets.Open;
             ImGui.Application.Init();
 

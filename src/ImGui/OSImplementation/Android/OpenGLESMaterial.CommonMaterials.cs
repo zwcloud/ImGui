@@ -109,7 +109,7 @@ void main()
 	// Upper 4 bits: front faces
 	// Lower 4 bits: back faces
 	Out_Color = Frag_Color* color *0.001 + vec4(0.125, 0, 0, 0); /*Frag_Color* color * (gl_FrontFacing ? 16.0 / 255.0 : 1.0 / 255.0);*/
-    Out_Color.a = 1;
+    Out_Color.a = 1.0;
 }
 "
     );

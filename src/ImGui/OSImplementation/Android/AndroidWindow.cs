@@ -60,7 +60,6 @@ namespace ImGui.OSImplementation.Android
             set { throw new NotSupportedException("Cannot change client area size on Android. It is fixed to screen size."); }
         }
 
-
         public void Close()
         {
             //dummy

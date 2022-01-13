@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CSharpGLES;
 using ImGui.OSAbstraction.Graphics;
+using ImGui.OSAbstraction.Window;
 
 namespace ImGui.OSImplementation.Android
 {
@@ -11,6 +13,11 @@ namespace ImGui.OSImplementation.Android
         //Helper for some GL functions
         private static readonly int[] IntBuffer = { 0, 0, 0, 0 };
         private static readonly float[] FloatBuffer = { 0, 0, 0, 0 };
+
+        public OpenGLESRenderer()
+        {
+            Init(IntPtr.Zero, Size.Zero);
+        }
 
         public void Init(IntPtr windowHandle, Size size)
         {
@@ -27,7 +34,23 @@ namespace ImGui.OSImplementation.Android
 
             Utility.CheckGLESError();
         }
-        
+
+        public void SetRenderingWindow(IWindow window)
+        {
+            //for android, only one unique native window.
+            Debug.Assert(window == Application.ImGuiContext.WindowManager.MainForm.NativeWindow);
+        }
+
+        public IWindow GetRenderingWindow()
+        {
+            return Application.ImGuiContext.WindowManager.MainForm.NativeWindow;
+        }
+
+        public void OnSizeChanged(Size size)
+        {
+            //TODO
+        }
+
         public void Bind()
         {
             //TODO determine if android or other future OpenGLES renders need to Egl.MakeCurrent()
@@ -212,7 +235,7 @@ namespace ImGui.OSImplementation.Android
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
 
             GL.Enable(GL.GL_STENCIL_TEST);
             var indexBufferOffset = IntPtr.Zero;
@@ -230,7 +253,7 @@ namespace ImGui.OSImplementation.Android
                     GL.Scissor((int)clipRect.X, (int)(height - clipRect.Height - clipRect.Y), (int)clipRect.Width, (int)clipRect.Height);
                     GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
 
-                    Utility.CheckGLError();
+                    Utility.CheckGLESError();
 
                     // Draw text mesh againest stencil buffer
                     GL.StencilFunc(GL.GL_EQUAL, 1, 1);

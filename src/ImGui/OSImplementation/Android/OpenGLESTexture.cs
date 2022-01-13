@@ -38,7 +38,7 @@ namespace ImGui.OSImplementation.Android
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace ImGui.OSImplementation.Android
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace ImGui.OSImplementation.Android
         public void Dispose()
         {
             GL.DeleteTextures(1, this.textureIdBuffer);
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
         }
 
 #endregion

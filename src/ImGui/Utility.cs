@@ -167,7 +167,8 @@ namespace ImGui
             Stream stream = null;
             if (CurrentOS.IsAndroid)
             {
-                var s = Application.OpenAndroidAssets(filePath);//TODO unify this
+                var androidAssetFilePath = filePath.Replace('\\', '/');
+                var s = Application.OpenAndroidAssets(androidAssetFilePath);//TODO unify this
                 using (var ms = new MemoryStream())
                 {
                     s.CopyTo(ms);

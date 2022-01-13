@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using CSharpGL;
+using CSharpGLES;
 
 namespace ImGui.OSImplementation.Android
 {
@@ -20,7 +20,7 @@ namespace ImGui.OSImplementation.Android
         private uint attributeUV;
         private uint attributeColor;
 
-        public CSharpGL.Objects.Shaders.ShaderProgram program;
+        public ShaderProgram program;
         private Dictionary<uint, string> attributeMap;
 
         public OpenGLESMaterial(string vertexShader, string fragmentShader)
@@ -49,7 +49,7 @@ namespace ImGui.OSImplementation.Android
 
         private void CreateShaders()
         {
-            this.program = new CSharpGL.Objects.Shaders.ShaderProgram();
+            this.program = new ShaderProgram();
             this.attributePositon = 0;
             this.attributeUV = 1;
             this.attributeColor = 2;
@@ -61,7 +61,7 @@ namespace ImGui.OSImplementation.Android
                 };
             this.program.Create(this.vertexShaderSource, this.fragmentShaderSource, this.attributeMap);
 
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
         }
 
         private void CreateObjects()
@@ -88,7 +88,7 @@ namespace ImGui.OSImplementation.Android
 
             GL.BindVertexArray(0);
 
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
         }
 
         private void DeleteShaders()
@@ -96,9 +96,9 @@ namespace ImGui.OSImplementation.Android
             if (this.program != null)
             {
                 this.program.Unbind();
-                Utility.CheckGLError();
+                Utility.CheckGLESError();
                 this.program.Delete();
-                Utility.CheckGLError();
+                Utility.CheckGLESError();
                 this.program = null;
             }
         }
@@ -106,10 +106,10 @@ namespace ImGui.OSImplementation.Android
         private void DeleteObjects()
         {
             GL.DeleteBuffers(2, this.buffers);
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
 
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, 0);
-            Utility.CheckGLError();
+            Utility.CheckGLESError();
         }
 
     }

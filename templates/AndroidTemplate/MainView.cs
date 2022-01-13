@@ -23,7 +23,7 @@ namespace AndroidTemplate
             
             //Create form
             mainForm = new MainForm(Point.Zero/*dummy*/, new ImGui.Size(Size.Width, Size.Height));
-            ImGui.Application.Init();
+            ImGui.Application.InitForLooper(mainForm);
             
             Run();// Run the render loop
         }
