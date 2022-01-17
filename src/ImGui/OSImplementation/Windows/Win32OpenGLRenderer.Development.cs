@@ -11,7 +11,7 @@ namespace ImGui.OSImplementation.Windows
 {
     internal partial class Win32OpenGLRenderer
     {
-        static float[] GetViewMatrix(int clientWidth, int clientHeight)
+        static float[] GetViewMatrix()
         {
             var right = new Vector3(1, 0, 0);//+x
             var up = new Vector3(0, 1, 0);//+y
@@ -97,7 +97,7 @@ namespace ImGui.OSImplementation.Windows
             };
 
             // Setup view transformation
-            var viewMatrix = GetViewMatrix(width, height);
+            var viewMatrix = GetViewMatrix();
             material.program.Bind();
             material.program.SetUniformMatrix4("ViewMtx", viewMatrix);
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
@@ -229,7 +229,7 @@ namespace ImGui.OSImplementation.Windows
                 0.0f,         0.0f,         2.0f/(N-F),     0.0f,
                 (R+L)/(L-R),  (T+B)/(B-T),  (F+N)/(N-F),    1.0f,
             };
-            var viewMatrix = GetViewMatrix(width, height);
+            var viewMatrix = GetViewMatrix();
             var glyphMaterial = OpenGLMaterial.glyphMaterial;
             glyphMaterial.program.Bind();
             glyphMaterial.program.SetUniformMatrix4("ViewMtx", viewMatrix);

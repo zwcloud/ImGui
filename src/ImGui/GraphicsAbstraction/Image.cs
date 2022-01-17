@@ -1,5 +1,5 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Advanced;
+﻿using System;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.GraphicsAbstraction
@@ -19,7 +19,8 @@ namespace ImGui.GraphicsAbstraction
             {
                 this.image = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(stream);
                 this.Data = new Rgba32[this.image.Width * this.image.Height];
-                this.Data = image.GetPixelSpan().ToArray();
+                image.TryGetSinglePixelSpan(out var span);
+                this.Data = span.ToArray();
                 this.Width = this.image.Width;
                 this.Height = this.image.Height;
             }

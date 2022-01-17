@@ -4,6 +4,7 @@ using ImGui.OSAbstraction;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
+using ImGui.OSImplementation.Shared;
 
 namespace ImGui.OSImplementation.Android
 {
@@ -41,12 +42,12 @@ namespace ImGui.OSImplementation.Android
 
         private static IRenderer CRenderer(IWindow window)
         {
-            return new OpenGLESRenderer();//TODO
+            return new OpenGLESRenderer(window);
         }
 
         private static ITexture CTexture()
         {
-            return new OpenGLESTexture();
+            return new OpenGLTexture();
         }
     }
 }

@@ -10,16 +10,41 @@ namespace CSharpGL
     {
         private static bool allFunctionsLoaded = false;
 
+        private static IntPtr ImportResolver(string libraryName, Assembly assembly,
+            DllImportSearchPath? searchPath)
+        {
+            if (libraryName != OpenGL32)
+            {
+                return NativeLibrary.Load(libraryName);
+            }
+
+            IntPtr libHandle;
+            if (OperatingSystem.IsAndroid())
+            {
+                libHandle = NativeLibrary.Load("libGLESv2");
+            }
+            else if (OperatingSystem.IsWindows()
+                     || OperatingSystem.IsLinux())
+            {
+                libHandle = NativeLibrary.Load(OpenGL32);
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+            return libHandle;
+        }
+
         static GL()
         {
+            NativeLibrary.SetDllImportResolver(typeof(GL).Assembly, ImportResolver);
+
             //pre-load all native opengl functions that will be used
 
             _glBlendEquation = GetDelegateFor<glBlendEquation>();
             _glBindVertexArray = GetDelegateFor<glBindVertexArray>();
             _glBindBuffer = GetDelegateFor<glBindBuffer>();
             _glBufferData = GetDelegateFor<glBufferData>();
-            _glMapBuffer = GetDelegateFor<glMapBuffer>();
-            _glUnmapBuffer = GetDelegateFor<glUnmapBuffer>();
             _glActiveTexture = GetDelegateFor<glActiveTexture>();
             _glBlendEquationSeparate = GetDelegateFor<glBlendEquationSeparate>();
             _glBlendFuncSeparate = GetDelegateFor<glBlendFuncSeparate>();
@@ -62,15 +87,13 @@ namespace CSharpGL
             _glDrawBuffers = GetDelegateFor<glDrawBuffers>();
             _glCheckFramebufferStatus = GetDelegateFor<glCheckFramebufferStatus>();
             _glDeleteFramebuffers = GetDelegateFor<glDeleteFramebuffers>();
-            _glIsFramebufferEXT = GetDelegateFor<glIsFramebufferEXT>();
+            _glIsFramebuffer = GetDelegateFor<glIsFramebuffer>();
 
             _glGenRenderbuffers = GetDelegateFor<glGenRenderbuffers>();
             _glBindRenderbuffer = GetDelegateFor<glBindRenderbuffer>();
             _glRenderbufferStorage = GetDelegateFor<glRenderbufferStorage>();
             _glFramebufferRenderbuffer = GetDelegateFor<glFramebufferRenderbuffer>();
             _glGetFramebufferAttachmentParameteriv = GetDelegateFor<glGetFramebufferAttachmentParameteriv>();
-
-            _glTexImage2DMultisample = GetDelegateFor<glTexImage2DMultisample>();
 
             allFunctionsLoaded = true;
         }
@@ -79,8 +102,6 @@ namespace CSharpGL
         private static glBindVertexArray _glBindVertexArray;
         private static glBindBuffer _glBindBuffer;
         private static glBufferData _glBufferData;
-        private static glMapBuffer _glMapBuffer;
-        private static glUnmapBuffer _glUnmapBuffer;
         private static glActiveTexture _glActiveTexture;
         private static glUseProgram _glUseProgram;
         private static glBlendEquationSeparate _glBlendEquationSeparate;
@@ -122,7 +143,7 @@ namespace CSharpGL
         private static glDrawBuffers _glDrawBuffers;
         private static glCheckFramebufferStatus _glCheckFramebufferStatus;
         private static glDeleteFramebuffers _glDeleteFramebuffers;
-        private static glIsFramebufferEXT _glIsFramebufferEXT;
+        private static glIsFramebuffer _glIsFramebuffer;
 
         private static glGenRenderbuffers _glGenRenderbuffers;
         private static glBindRenderbuffer _glBindRenderbuffer;
@@ -131,7 +152,6 @@ namespace CSharpGL
         private static glFramebufferTexture2D _glFramebufferTexture2D;
         private static glFramebufferRenderbuffer _glFramebufferRenderbuffer;
         private static glGetFramebufferAttachmentParameteriv _glGetFramebufferAttachmentParameteriv;
-        private static glTexImage2DMultisample _glTexImage2DMultisample;
 
         #region OpenGL 1.2
 
@@ -390,7 +410,7 @@ namespace CSharpGL
         public const uint GL_BGRA = 0x80E1;
         public const uint GL_MAX_ELEMENTS_VERTICES = 0x80E8;
         public const uint GL_MAX_ELEMENTS_INDICES = 0x80E9;
-        public const uint GL_CLAMP_TO_EDGE = 0x812F;
+        public const int GL_CLAMP_TO_EDGE = 0x812F;
         public const uint GL_TEXTURE_MIN_LOD = 0x813A;
         public const uint GL_TEXTURE_MAX_LOD = 0x813B;
         public const uint GL_TEXTURE_BASE_LEVEL = 0x813C;
@@ -1098,17 +1118,9 @@ namespace CSharpGL
         {
             GetDelegateFor<glGetBufferSubData>()(target, offset, size, data);
         }
-        public static IntPtr MapBuffer(uint target, uint access)
-        {
-            return _glMapBuffer(target, access);
-        }
         public static IntPtr MapBufferRange(uint target, int offset, int length, uint access)
         {
             return GetDelegateFor<glMapBufferRange>()(target, offset, length, access);
-        }
-        public static bool UnmapBuffer(uint target)
-        {
-            return _glUnmapBuffer(target);
         }
         public static void GetBufferParameter(uint target, uint pname, int[] parameters)
         {
@@ -4670,7 +4682,7 @@ namespace CSharpGL
 
         public static bool IsFramebufferEXT(uint framebuffer)
         {
-            return _glIsFramebufferEXT(framebuffer);
+            return _glIsFramebuffer(framebuffer);
         }
 
         public static void BindFramebuffer(uint target, uint framebuffer)
@@ -4730,7 +4742,7 @@ namespace CSharpGL
         private delegate void glGenRenderbuffers(uint n, uint[] renderbuffers);
         private delegate void glRenderbufferStorage(uint target, uint internalformat, int width, int height);
         private delegate void glGetRenderbufferParameterivEXT(uint target, uint pname, int[] parameters);
-        private delegate bool glIsFramebufferEXT(uint framebuffer);
+        private delegate bool glIsFramebuffer(uint framebuffer);
         private delegate void glBindFramebuffer(uint target, uint framebuffer);
         private delegate void glDeleteFramebuffers(uint n, uint[] framebuffers);
         private delegate void glGenFramebuffers(uint n, uint[] framebuffers);
@@ -6180,12 +6192,5 @@ namespace CSharpGL
         public const uint GL_TEXTURE_SWIZZLE_B = 0x8E44;
         public const uint GL_TEXTURE_SWIZZLE_A = 0x8E45;
         public const uint GL_TEXTURE_SWIZZLE_RGBA = 0x8E46;
-
-
-        public static void TexImage2DMultisample(uint target, int samples, uint internalformat, int width, int height, uint fixedsamplelocations)
-        {
-            _glTexImage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
-        }
-        private delegate void glTexImage2DMultisample(uint target, int samples, uint internalformat, int width, int height, uint fixedsamplelocations);
     }
 }

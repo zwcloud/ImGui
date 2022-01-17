@@ -34,10 +34,10 @@ namespace ImGui.OSImplementation.Shared
             var textureDataPtr = Marshal.UnsafeAddrOfPinnedArrayElement(this.textureData, 0);
             GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, this.Width, this.Height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, textureDataPtr);
             //sampler settings
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, (int)GL.GL_CLAMP);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, (int)GL.GL_CLAMP);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, (int)GL.GL_LINEAR);
-            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, (int)GL.GL_LINEAR);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+            GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
             Utility.CheckGLError();
         }
 
@@ -51,7 +51,8 @@ namespace ImGui.OSImplementation.Shared
             using (FileStream stream = File.OpenRead(filePath))
             {
                 this.image = Image.Load<Rgba32>(stream);
-                this.textureData = this.image.GetPixelSpan().ToArray();
+                image.TryGetSinglePixelSpan(out var span);
+                textureData = span.ToArray();
                 this.Width = this.image.Width;
                 this.Height = this.image.Height;
             }

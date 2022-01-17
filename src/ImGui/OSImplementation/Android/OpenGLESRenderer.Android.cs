@@ -4,7 +4,7 @@
     {
         public void SwapBuffers()
         {
-            // No need to do this on android, because Xamarin.Android did this later.
+            // Xamarin.Android has done this inside its rendering loop
         }
     }
 }

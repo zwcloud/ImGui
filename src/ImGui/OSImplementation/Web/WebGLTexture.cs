@@ -49,7 +49,8 @@ namespace ImGui.OSImplementation.Web
             using (Stream stream = Utility.ReadFile(filePath))
             {
                 this.image = Image.Load<Rgba32>(stream);
-                this.textureData = this.image.GetPixelSpan().ToArray();
+                image.TryGetSinglePixelSpan(out var span);
+                textureData = span.ToArray();
                 this.Width = this.image.Width;
                 this.Height = this.image.Height;
             }

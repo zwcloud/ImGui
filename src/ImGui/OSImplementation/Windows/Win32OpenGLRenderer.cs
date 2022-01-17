@@ -299,7 +299,7 @@ namespace ImGui.OSImplementation.Windows
             };
 
             // Setup view transformation
-            var viewMatrix = GetViewMatrix(width, height);
+            var viewMatrix = GetViewMatrix();
             material.program.Bind();
             material.program.SetUniformMatrix4("ViewMtx", viewMatrix);
             material.program.SetUniformMatrix4("ProjMtx", ortho_projection);
@@ -378,7 +378,7 @@ namespace ImGui.OSImplementation.Windows
                 0.0f,         0.0f,        -1.0f,   0.0f,
                 (R+L)/(L-R),  (T+B)/(B-T),  0.0f,   1.0f,
             };
-            var viewMatrix = GetViewMatrix(width, height);
+            var viewMatrix = GetViewMatrix();
             glyphMaterial.program.Bind();
             glyphMaterial.program.SetUniformMatrix4("ViewMtx", viewMatrix);
             glyphMaterial.program.SetUniformMatrix4("ProjMtx", ortho_projection);

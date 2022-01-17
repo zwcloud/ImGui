@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using ImGui;
 
 namespace CSharpGL
 {
@@ -12,6 +11,7 @@ namespace CSharpGL
         #region Native
 
         private const string OpenGL32 = "opengl32.dll";
+        private const string GLESv2 = "GLESv2";
 
         [DllImport("libGL.so", EntryPoint = "glXGetProcAddress")]
         internal static extern IntPtr glxGetProcAddress(string s);
@@ -23,6 +23,9 @@ namespace CSharpGL
         /// <returns>The address of the function.</returns>
         [DllImport(OpenGL32, SetLastError = true)]
         public static extern IntPtr wglGetProcAddress(string name);
+        
+        [DllImport("EGL", EntryPoint = "eglGetProcAddress")]
+        public static extern IntPtr eglGetProcAddress(string funcname);
 
         #endregion
 
@@ -45,7 +48,7 @@ namespace CSharpGL
             string name = delegateType.Name;
 
             IntPtr proc = IntPtr.Zero;
-            if(CurrentOS.IsWindows)
+            if(OperatingSystem.IsWindows())
             {
                 // check https://www.opengl.org/wiki/Load_OpenGL_Functions
                 proc = wglGetProcAddress(name);
@@ -60,7 +63,15 @@ namespace CSharpGL
                     }
                 }
             }
-            else if(CurrentOS.IsLinux)
+            else if (OperatingSystem.IsAndroid())
+            {
+                proc = eglGetProcAddress(name);
+                if(proc == IntPtr.Zero)
+                {
+                    throw new NotSupportedException("Extension function " + name + " not supported.");
+                }
+            }
+            else if(OperatingSystem.IsLinux())
             {
                 proc = glxGetProcAddress(name);
                 if(proc == IntPtr.Zero)
@@ -68,7 +79,7 @@ namespace CSharpGL
                     throw new NotSupportedException("Extension function " + name + " not supported.");
                 }
             }
-            else if(CurrentOS.IsMac)
+            else if(OperatingSystem.IsMacOS())
             {
                 throw new NotImplementedException("Binding for macOS hasn't been implemented.");
             }
