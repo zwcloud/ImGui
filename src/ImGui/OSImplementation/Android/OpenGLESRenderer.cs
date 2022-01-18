@@ -89,19 +89,8 @@ namespace ImGui.OSImplementation.Android
             return Application.ImGuiContext.WindowManager.MainForm.NativeWindow;
         }
 
-        public void OnSizeChanged(Size size)
-        {
-            RebuildTextureRenderResources(size);
-        }
-
-        public void Bind()
-        {
-            //TODO determine if android or other future OpenGLES renders need to Egl.MakeCurrent()
-        }
-        
         private void CreateTextFramebuffer(Size size)
         {
-            Utility.CheckGLError();
             //set-up framebuffer
             GL.GenFramebuffers(1, framebuffers);
             GL.GenTextures(1, textures);
@@ -110,24 +99,18 @@ namespace ImGui.OSImplementation.Android
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
 
             //attach color texture to the framebuffer
-            Utility.CheckGLError();
             GL.BindTexture(GL.GL_TEXTURE_2D, framebufferColorTexture);
-            Utility.CheckGLError();
             GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA,
                 (int)size.Width, (int)size.Height, 0,
                 GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntPtr.Zero);
-            Utility.CheckGLError();
             GL.FramebufferTexture2D(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D,
                 framebufferColorTexture, 0);
-            Utility.CheckGLError();
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
             GL.TexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-            Utility.CheckGLError();
             GL.GetFramebufferAttachmentParameteriv(GL.GL_FRAMEBUFFER_EXT,
                 GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE, IntBuffer);
-            Utility.CheckGLError();
             var alphaBits = IntBuffer[0];
             if(alphaBits != 8)
             {
@@ -158,7 +141,6 @@ namespace ImGui.OSImplementation.Android
         {
             CreateTextFramebuffer(viewportSize);
             quadMesh = new QuadMesh();
-            Utility.CheckGLError();
         }
 
         private void RebuildTextureRenderResources(Size viewportSize)
@@ -180,11 +162,10 @@ namespace ImGui.OSImplementation.Android
         {
             DrawMesh(OpenGLMaterial.shapeMaterial, meshes.shapeMesh, width, height);
             DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
-
             DrawTextMesh(meshes.textMesh, width, height);
         }
 
-        private static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
+        public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
         {
             if (mesh.IsEmpty)
             {
@@ -193,34 +174,20 @@ namespace ImGui.OSImplementation.Android
             List<DrawCommand> commandBuffer = mesh.CommandBuffer;
             VertexBuffer vertexBuffer = mesh.VertexBuffer;
             IndexBuffer indexBuffer = mesh.IndexBuffer;
-            
-            Utility.CheckGLError();
+
             // Backup GL state
             GL.GetIntegerv(GL.GL_CURRENT_PROGRAM, IntBuffer); int last_program = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_TEXTURE_BINDING_2D, IntBuffer); int last_texture = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_ACTIVE_TEXTURE, IntBuffer); int last_active_texture = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_ARRAY_BUFFER_BINDING, IntBuffer); int last_array_buffer = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_ELEMENT_ARRAY_BUFFER_BINDING, IntBuffer); int last_element_array_buffer = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_VERTEX_ARRAY_BINDING, IntBuffer);int last_vertex_array = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_BLEND_SRC_RGB, IntBuffer); int last_blend_src_grb = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_BLEND_SRC_ALPHA, IntBuffer); int last_blend_src_alpha = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_BLEND_DST_RGB, IntBuffer); int last_blend_dst_rgb = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_BLEND_DST_ALPHA, IntBuffer); int last_blend_dst_alpha = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_BLEND_EQUATION_RGB, IntBuffer); int last_blend_equation_rgb = IntBuffer[0];
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_BLEND_EQUATION_ALPHA, IntBuffer);int last_blend_equation_alpha = IntBuffer[0];
-            
-            Utility.CheckGLError();
             GL.GetIntegerv(GL.GL_VIEWPORT, IntBuffer); Rect last_viewport = new Rect(IntBuffer[0], IntBuffer[1], IntBuffer[2], IntBuffer[3]);
             uint last_enable_blend = GL.IsEnabled(GL.GL_BLEND);
             uint last_enable_cull_face = GL.IsEnabled(GL.GL_CULL_FACE);
@@ -231,13 +198,10 @@ namespace ImGui.OSImplementation.Android
             int last_sessor_rect_y = IntBuffer[1];
             int last_sessor_rect_width = IntBuffer[2];
             int last_sessor_rect_height = IntBuffer[3];
-            
-            Utility.CheckGLError();
+
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
             GL.Enable(GL.GL_BLEND);
-            Utility.CheckGLError();
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
-            Utility.CheckGLError();
             GL.BlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             GL.Disable(GL.GL_CULL_FACE);
             GL.Disable(GL.GL_DEPTH_TEST);
@@ -273,8 +237,6 @@ namespace ImGui.OSImplementation.Android
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, material.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.Count * Marshal.SizeOf<DrawIndex>(), indexBuffer.Pointer, GL.GL_STREAM_DRAW);
 
-            Utility.CheckGLError();
-
             // Draw
             var indexBufferOffset = IntPtr.Zero;
             foreach (var drawCmd in commandBuffer)
@@ -288,8 +250,6 @@ namespace ImGui.OSImplementation.Android
                 GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                 GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
                 indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount*Marshal.SizeOf<DrawIndex>());
-
-                Utility.CheckGLError();
             }
 
             // Restore modified GL state
@@ -309,7 +269,7 @@ namespace ImGui.OSImplementation.Android
             GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
         }
 
-        private void DrawTextMesh(TextMesh textMesh, int width, int height)
+        internal static void DrawTextMesh(TextMesh textMesh, int width, int height)
         {
             if (textMesh.IsEmpty)
             {
@@ -342,16 +302,12 @@ namespace ImGui.OSImplementation.Android
             glyphMaterial.program.SetUniformMatrix4("ViewMtx", viewMatrix);
             glyphMaterial.program.SetUniformMatrix4("ProjMtx", ortho_projection);
 
-            Utility.CheckGLError();
-
             // Send vertex data
             GL.BindVertexArray(glyphMaterial.VaoHandle);
             GL.BindBuffer(GL.GL_ARRAY_BUFFER, glyphMaterial.VboHandle);
             GL.BufferData(GL.GL_ARRAY_BUFFER, textMesh.VertexBuffer.Count * Marshal.SizeOf<DrawVertex>(), textMesh.VertexBuffer.Pointer, GL.GL_STATIC_DRAW);
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glyphMaterial.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, textMesh.IndexBuffer.Count * Marshal.SizeOf<DrawIndex>(), textMesh.IndexBuffer.Pointer, GL.GL_STATIC_DRAW);
-
-            Utility.CheckGLError();
 
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
             GL.BlendFunc(GL.GL_ONE, GL.GL_ONE);
@@ -377,8 +333,6 @@ namespace ImGui.OSImplementation.Android
                     GL.Scissor((int) clipRect.X, (int) (height - clipRect.Height - clipRect.Y), (int) clipRect.Width, (int) clipRect.Height);
                     // Draw text mesh 
                     GL.DrawElements(GL.GL_TRIANGLES, drawCmd.ElemCount, GL.GL_UNSIGNED_INT, indexBufferOffset);
-
-                    Utility.CheckGLError();
                     indexBufferOffset = IntPtr.Add(indexBufferOffset, drawCmd.ElemCount * Marshal.SizeOf<DrawIndex>());
                 }
 #if Enable_Jitter
@@ -402,12 +356,11 @@ namespace ImGui.OSImplementation.Android
             GL.BindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, textMaterial.EboHandle);
             GL.BufferData(GL.GL_ELEMENT_ARRAY_BUFFER, quadMesh.IndexBuffer.Count * Marshal.SizeOf<DrawIndex>(), quadMesh.IndexBuffer.Pointer, GL.GL_STREAM_DRAW);
             GL.DrawElements(GL.GL_TRIANGLES, quadMesh.CommandBuffer[0].ElemCount, GL.GL_UNSIGNED_INT, IntPtr.Zero);
-            Utility.CheckGLError();
         }
 
-        public void Unbind()
+        public void OnSizeChanged(Size size)
         {
-            //TODO determine if android or other future OpenGLES renders need to Egl.MakeCurrent()
+            RebuildTextureRenderResources(size);
         }
 
         public void ShutDown()
