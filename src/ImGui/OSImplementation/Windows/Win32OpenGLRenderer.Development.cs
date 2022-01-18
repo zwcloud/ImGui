@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSImplementation.Shared;
+using ImGui.Rendering;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplementation.Windows
@@ -37,12 +38,17 @@ namespace ImGui.OSImplementation.Windows
         ITexture textureForDrawMesh = null;
         uint[] frameBuffersForDrawMesh = {0};
         uint frameBufferForDrawMesh = 0;
+        private readonly uint[] textures = { 0 };
+        uint framebufferColorTexture = 0;
 
         public void StartDrawMeshToImage(int width, int height)
         {
             //create texture
             textureForDrawMesh = new OpenGLTexture();
             textureForDrawMesh.LoadImage(new Rgba32[width * height], width, height);
+            
+            GL.GenTextures(1, textures);
+            framebufferColorTexture = textures[0];
 
             //create frame buffer
             GL.GenFramebuffers(1, frameBuffersForDrawMesh);
@@ -148,6 +154,16 @@ namespace ImGui.OSImplementation.Windows
         #endregion
 
         #region Draw TextMesh
+        
+        static readonly Point[] JITTER_PATTERN =
+        {
+            new Point (- 1 / 12.0, -5 / 12.0),
+            new Point( 1 / 12.0,  1 / 12.0),
+            new Point( 3 / 12.0, -1 / 12.0),
+            new Point( 5 / 12.0,  5 / 12.0),
+            new Point( 7 / 12.0, -3 / 12.0),
+            new Point( 9 / 12.0,  3 / 12.0),
+        };
 
         //OpenGLTextures
         private OpenGLTexture glyphOpenGLTexture, textOpenGLTexture;
@@ -159,8 +175,16 @@ namespace ImGui.OSImplementation.Windows
         //attachment textures
         uint glyphTexture = 0, textTexture = 0;
 
+        private QuadMesh quadMesh;
+
         public void StartDrawTextMeshToImage(int width, int height)
         {
+            //create quadMesh
+            if (quadMesh == null)
+            {
+                quadMesh = new QuadMesh();
+            }
+
             //create textures
             {
                 glyphOpenGLTexture = new OpenGLTexture();

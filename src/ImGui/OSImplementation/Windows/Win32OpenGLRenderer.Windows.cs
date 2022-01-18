@@ -554,7 +554,8 @@ iLayerType = {iLayerType}
 
                 Utility.CheckGLError();
             }
-
+            
+            int[] IntBuffer = { 0, 0, 0, 0 };
             GL.GetFramebufferAttachmentParameteriv(GL.GL_DRAW_FRAMEBUFFER,
                 GL.GL_STENCIL, GL.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, IntBuffer);
             Utility.CheckGLError();
@@ -575,6 +576,8 @@ iLayerType = {iLayerType}
             string version = GL.GetString(GL.GL_VERSION);
             Utility.CheckGLError();
             Debug.WriteLine("OpenGL version: " + version);
+            
+            int[] IntBuffer = { 0, 0, 0, 0 };
 
             GL.GetIntegerv(GL.GL_MAX_TEXTURE_SIZE, IntBuffer);
             Utility.CheckGLError();

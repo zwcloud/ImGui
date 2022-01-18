@@ -450,7 +450,7 @@ namespace ImGui.UnitTest
             window.Close();
         }
 
-        internal static void DrawTextMeshInWindow(int width, int height, TextMesh mesh)
+        internal static void DrawTextMeshInWindow(int width, int height, TextMesh textMesh)
         {
             Application.Init();
 
@@ -471,7 +471,7 @@ namespace ImGui.UnitTest
                 {
                     Keyboard.Instance.OnFrameBegin();
                     renderer.Clear(Color.White);
-                    Win32OpenGLRenderer.DrawTextMesh(mesh, width, height);
+                    renderer.DrawMeshes(width, height, ((Mesh)null, (Mesh)null, textMesh));
                     Keyboard.Instance.OnFrameEnd();
                     renderer.SwapBuffers();
                 });
