@@ -22,7 +22,7 @@ namespace AndroidTemplate
             base.OnLoad(e);
             
             //Create form
-            mainForm = new MainForm(Point.Zero/*dummy*/, new ImGui.Size(Size.Width, Size.Height));
+            mainForm = new MainForm(Point.Zero/*dummy*/, new ImGui.Size(this.Size.Width , this.Size.Height));
             ImGui.Application.InitForLooper(mainForm);
             
             Run();// Run the render loop
@@ -54,7 +54,6 @@ namespace AndroidTemplate
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-
             ImGui.Application.RunLoop(mainForm, mainForm.OnGUI);
 
             SwapBuffers();

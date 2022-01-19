@@ -65,7 +65,7 @@ namespace ImGui
         {
             get
             {
-                return _width < 0;
+                return _width < 0 || _height < 0;
             }
         }
 

@@ -81,6 +81,10 @@ namespace ImGui
         internal Form(Point position, Size size, string title = "ImGui Form",
             WindowTypes type = WindowTypes.Regular)
         {
+            if (size.Width <=0 || size.Height <=0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(size));
+            }
             MeshBuffer.OwnerName = title;
             constructionParameters = new ConstructionParameters(title, position, size, type);
             PlatformWindowCreated = false;
