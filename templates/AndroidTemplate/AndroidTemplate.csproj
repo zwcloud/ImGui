@@ -13,4 +13,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
+  <Import Project="..\Demo\Demo.projitems" Label="Shared" />
 </Project>

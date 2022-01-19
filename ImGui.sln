@@ -66,6 +66,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		templates\Demo\Demo.projitems*{2af7f9f5-8001-40bf-8c60-c4852ceaa299}*SharedItemsImports = 13
+		templates\Demo\Demo.projitems*{54ab1491-bbe4-4a63-9b6a-ec70b0cc119a}*SharedItemsImports = 5
 		templates\Demo\Demo.projitems*{e3255678-3e8a-46a9-bfdb-feaa9263df8a}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
