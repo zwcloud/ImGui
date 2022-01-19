@@ -49,8 +49,13 @@ namespace ImGui.OSImplementation.Shared
 
         static OpenGLMaterial()
         {
-            string versionHeader = (OperatingSystem.IsAndroid() ? "#version 300 es" : "#version 330");
+            //On linux we use EGL to create OpenGLES 3.x context instead of OpenGL 3.x context.
+            //See LinuxOpenGLRenderer.CreateEGLContext()
+            //So the shader version should be "300 es" for linux OS.
+            string versionHeader = (OperatingSystem.IsAndroid() || OperatingSystem.IsLinux())
+                ? "#version 300 es" : "#version 330";
             shapeVertexShaderText = versionHeader + @"
+precision mediump float;
 uniform mat4 ProjMtx;
 uniform mat4 ViewMtx;
 in vec2 Position;
@@ -66,6 +71,7 @@ void main()
 }
 ";
             shapeFragmentShader = versionHeader + @"
+precision mediump float;
 uniform sampler2D Texture;
 in vec2 Frag_UV;
 in vec4 Frag_Color;
@@ -78,6 +84,7 @@ void main()
 
 
             imageVertexShader = versionHeader + @"
+precision mediump float;
 uniform mat4 ProjMtx;
 uniform mat4 ViewMtx;
 in vec2 Position;
@@ -93,6 +100,7 @@ void main()
 }
 ";
             textVertexShader = versionHeader + @"
+precision mediump float;
 in vec2 Position;
 in vec2 UV;
 in vec4 Color;
@@ -107,6 +115,7 @@ void main()
 }
 ";
             imageFragmentShader = versionHeader + @"
+precision mediump float;
 uniform sampler2D Texture;
 in vec2 Frag_UV;
 in vec4 Frag_Color;
@@ -117,6 +126,7 @@ void main()
 }
 ";
             glyphVertexShader = versionHeader + @"
+precision mediump float;
 uniform mat4 ProjMtx;
 uniform mat4 ViewMtx;
 in vec2 Position;
@@ -133,6 +143,7 @@ void main()
 }
 ";
             glyphFragmentShader = versionHeader + @"
+precision mediump float;
 in vec2 Frag_UV;
 in vec4 Frag_Color;
 out vec4 Out_Color;
@@ -151,6 +162,7 @@ void main()
 }
 ";
             textFragmentShader = versionHeader + @"
+precision mediump float;
 in vec2 Frag_UV;
 in vec4 Frag_Color;
 out vec4 Out_Color;

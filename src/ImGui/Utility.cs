@@ -169,13 +169,17 @@ namespace ImGui
             {
                 var androidAssetFilePath = filePath.Replace('\\', '/');
                 var s = Application.OpenAndroidAssets(androidAssetFilePath);//TODO unify this
-                using (var ms = new MemoryStream())
-                {
-                    s.CopyTo(ms);
-                    stream = new MemoryStream(ms.ToArray());
-                }
+                using var ms = new MemoryStream();
+                s.CopyTo(ms);
+                stream = new MemoryStream(ms.ToArray());
             }
-            else
+            else if (CurrentOS.IsLinux)
+            {
+                filePath = filePath.Replace('\\', '/');
+                var s = new FileStream(filePath, FileMode.Open);
+                stream = s;
+            }
+            else//windows
             {
                 var s = new FileStream(filePath, FileMode.Open);
                 stream = s;

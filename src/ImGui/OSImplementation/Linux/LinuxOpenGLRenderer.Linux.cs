@@ -88,6 +88,9 @@ namespace ImGui.OSImplementation.Linux
         [DllImport(libEGL)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool eglMakeCurrent(IntPtr dpy, IntPtr draw, IntPtr read, IntPtr ctx);
+        
+        [DllImport(libEGL)]
+        static extern IntPtr eglGetCurrentContext();
 
         [DllImport(libEGL)]
         static extern int eglTerminate(IntPtr display);

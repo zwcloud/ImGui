@@ -15,23 +15,23 @@ namespace CSharpGL
         {
             if (libraryName != OpenGL32)
             {
-                return NativeLibrary.Load(libraryName);
+                return NativeLibrary.Load(libraryName, assembly, searchPath);
             }
 
-            IntPtr libHandle;
+            IntPtr libHandle = IntPtr.Zero;
             if (OperatingSystem.IsAndroid())
             {
-                libHandle = NativeLibrary.Load("libGLESv2");
+                libHandle = NativeLibrary.Load("libGLESv2", assembly, searchPath);
             }
-            else if (OperatingSystem.IsWindows()
-                     || OperatingSystem.IsLinux())
+            else if (OperatingSystem.IsWindows())
             {
-                libHandle = NativeLibrary.Load(OpenGL32);
+                libHandle = NativeLibrary.Load("opengl32.dll", assembly, searchPath);
             }
-            else
+            else if(OperatingSystem.IsLinux())//OpenGLES 3.x is used for LinuxOpenGLRenderer
             {
-                throw new NotSupportedException();
+                libHandle = NativeLibrary.Load("libGLESv2", assembly, searchPath);
             }
+
             return libHandle;
         }
 

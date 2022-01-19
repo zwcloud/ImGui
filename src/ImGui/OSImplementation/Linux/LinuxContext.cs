@@ -4,6 +4,7 @@ using ImGui.OSAbstraction;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
+using ImGui.OSImplementation.Shared;
 
 namespace ImGui.OSImplementation.Linux
 {
@@ -40,12 +41,12 @@ namespace ImGui.OSImplementation.Linux
 
         private static IRenderer CRenderer(IWindow window)
         {
-            return new LinuxOpenGLRenderer();//TODO
+            return new LinuxOpenGLRenderer(window);
         }
 
         private static ITexture CTexture()
         {
-            throw new NotImplementedException();
+            return new OpenGLTexture();
         }
 
     }

@@ -13,9 +13,6 @@ namespace CSharpGL
         private const string OpenGL32 = "opengl32.dll";
         private const string GLESv2 = "GLESv2";
 
-        [DllImport("libGL.so", EntryPoint = "glXGetProcAddress")]
-        internal static extern IntPtr glxGetProcAddress(string s);
-
         /// <summary>
         /// Gets a proc address.
         /// </summary>
@@ -73,7 +70,7 @@ namespace CSharpGL
             }
             else if(OperatingSystem.IsLinux())
             {
-                proc = glxGetProcAddress(name);
+                proc = eglGetProcAddress(name);
                 if(proc == IntPtr.Zero)
                 {
                     throw new NotSupportedException("Extension function " + name + " not supported.");
