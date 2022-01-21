@@ -1,25 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <WasmMainJSPath>main.js</WasmMainJSPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>embedded</DebugType>
+    <WasmDebugLevel>1</WasmDebugLevel>
+    <WasmEnableES6>false</WasmEnableES6>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="PowerShell -NoProfile -ExecutionPolicy unrestricted -file $(ProjectDir)PostBuild.ps1 -ProjectDir $(ProjectDir) -TargetPath $(TargetPath)" />
-  </Target>
 
   <ItemGroup>
-    <Reference Include="WebAssembly.Bindings">
-      <HintPath>..\MonoWasm\framework\WebAssembly.Bindings.dll</HintPath>
-    </Reference>
+    <WasmExtraFilesToDeploy Include="index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
 
 </Project>

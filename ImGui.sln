@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTemplateApp", "templates
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "wwwroot", "templates\WebTemplate\WebTemplateApp\wwwroot\", "{22531B25-FDD0-477F-BD0C-A1DC45FA1805}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_50236"
 		Debug.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateApp\wwwroot\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50236\"

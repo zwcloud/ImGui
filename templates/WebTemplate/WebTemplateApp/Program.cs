@@ -1,28 +1,18 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using WebAssembly;
+using JSObject = WebAssembly.JSObject;
+using Runtime = WebAssembly.Runtime;
 
 namespace WebTemplateApp
 {
     public class Program
     {
-        static JSObject window;
-        static Random random = new System.Random();
-        static JSObject randomColorLocation;
-
-        private const int canvasWidth = 800;
-        private const int canvasHeight = 600;
-
         public static void Main()
         {
-            window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
-            JSObject document = (JSObject)WebAssembly.Runtime.GetGlobalObject("document");
+            window = (JSObject)Runtime.GetGlobalObject("window");
+            JSObject document = (JSObject)Runtime.GetGlobalObject("document");
             JSObject body = (JSObject)document.GetObjectProperty("body");
             JSObject canvas = (JSObject)document.Invoke("createElement", "canvas");
-            if (canvas == null)
-            {
-                Console.WriteLine("Failed to create canvas!");
-            }
             canvas.SetObjectProperty("width", canvasWidth);
             canvas.SetObjectProperty("height", canvasHeight);
             body.Invoke("appendChild", canvas);
@@ -62,6 +52,13 @@ namespace WebTemplateApp
 
             runLoop(0);
         }
+        
+        static JSObject window;
+        static Random random = new System.Random();
+        static JSObject randomColorLocation;
+
+        private const int canvasWidth = 800;
+        private const int canvasHeight = 600;
 
         public delegate void Looper(double timeStamp);
 
@@ -175,7 +172,7 @@ namespace WebTemplateApp
 
         public static void bufferData(int target, IntPtr srcData, int usage, int srcOffset, int length)
         {
-            JSObject window = WebAssembly.Runtime.GetGlobalObject("window") as JSObject;
+            JSObject window = Runtime.GetGlobalObject("window") as JSObject;
             window.Invoke("glBufferDataShim", _gl, target, srcData.ToInt32(), usage, srcOffset, length);
         }
 

@@ -93,10 +93,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="WebAssembly.Bindings">
-      <HintPath>..\..\templates\WebTemplate\MonoWasm\framework\WebAssembly.Bindings.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
