@@ -10,11 +10,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <WasmExtraFilesToDeploy Include="index.html" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Private.Runtime.InteropServices.JavaScript">
+      <HintPath>C:\Users\cloud\.nuget\packages\microsoft.netcore.app.runtime.mono.browser-wasm\6.0.1\runtimes\browser-wasm\lib\net6.0\System.Private.Runtime.InteropServices.JavaScript.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(OutDir)WebTemplateApp.dll $(ProjectDir)wwwroot\managed\&#xD;&#xA;copy $(OutDir)ImGui.dll $(ProjectDir)wwwroot\managed\" />
+  </Target>
 
 </Project>

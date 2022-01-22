@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using JSObject = WebAssembly.JSObject;
-using Runtime = WebAssembly.Runtime;
+using ImGui;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace WebTemplateApp
 {
