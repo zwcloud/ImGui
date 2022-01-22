@@ -105,4 +105,4 @@ DroidSans.ttf, Droid Sans is a humanist sans serif typeface designed by Steve Ma
 
 ## License
 
-Hello ImGui is licensed under the LGPL License, see LICENSE for more information.
+Hello ImGui is licensed under the AGPL License, see LICENSE for more information.
