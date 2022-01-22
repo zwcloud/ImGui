@@ -29,9 +29,9 @@ namespace ImGui.OSImplementation.Web
         {
             WebWindow window = new WebWindow();
             /*
-             * We cannot set the window's rect for a browser, so point and size is ignored.
+             * We cannot set the native window's rect for a browser, so point and size is ignored.
              */
-            window.Init("imgui-canvas");//TODO Properly sync this name with the WebTemplate project
+            window.Init(Application.WebGLCanvasId);
             return window;
         }
 

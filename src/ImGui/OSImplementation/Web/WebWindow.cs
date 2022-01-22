@@ -76,7 +76,7 @@ namespace ImGui.OSImplementation.Web
             get
             {
                 var width = (int)this.window.GetObjectProperty("outerWidth");
-                var height = (int)this.window.GetObjectProperty("outerheight");
+                var height = (int)this.window.GetObjectProperty("outerHeight");
                 return new Size(width, height);
             }
             set => throw new PlatformNotSupportedException("Cannot change the window size.");
@@ -133,15 +133,14 @@ namespace ImGui.OSImplementation.Web
 
         public bool GetFocus()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void SetFocus()
         {
-            throw new NotImplementedException();
         }
 
-        public bool Minimized { get; }
+        public bool Minimized => false;
 
         public void MainLoop(Action guiMethod)
         {

@@ -79,12 +79,23 @@ namespace ImGui
             {
                 PlatformContext = OSImplementation.Linux.LinuxContext.MapFactory();
             }
+            else if (OperatingSystem.IsBrowser())
+            {
+                PlatformContext = OSImplementation.Web.WebContext.MapFactory();
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
         }
 
         internal static bool RequestQuit;
 
         // HACK for Android
         public static Func<string, System.IO.Stream> OpenAndroidAssets;
+
+        // HACK for WebGL
+        public const string WebGLCanvasId = "imgui-canvas";
 
         public static bool Initialized { get; private set; }
 
@@ -268,7 +279,7 @@ namespace ImGui
 
         public static void RunLoop(Form form, Action onGUI = null)
         {
-            if (!Initialized)
+            if (!Initialized || RequestQuit)
             {
                 return;
             }

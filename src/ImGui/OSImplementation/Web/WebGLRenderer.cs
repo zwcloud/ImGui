@@ -4,12 +4,34 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.OSAbstraction.Graphics;
 using System.Runtime.InteropServices.JavaScript;
+using ImGui.OSAbstraction.Window;
 using GL = ImGui.OSImplementation.Web.WebGL;
 
 namespace ImGui.OSImplementation.Web
 {
     internal partial class WebGLRenderer : IRenderer
     {
+        public void SetRenderingWindow(IWindow window)
+        {
+            //for android, only one unique native window.
+            Debug.Assert(window == Application.ImGuiContext.WindowManager.MainForm.NativeWindow);
+        }
+
+        /// <summary>
+        /// Get the window on which the renderer will draw
+        /// </summary>
+        /// <returns></returns>
+        public IWindow GetRenderingWindow()
+        {
+            return Application.ImGuiContext.WindowManager.MainForm.NativeWindow;
+        }
+
+        public void OnSizeChanged(Size size)
+        {
+            //meshDrawer.RebuildTextureRenderResources(size);
+        }
+
+
         Material shapeMaterial = new Material(
             vertexShader: @"
 #version 300 es
