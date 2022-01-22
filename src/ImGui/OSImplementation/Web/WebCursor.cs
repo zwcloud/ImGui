@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Runtime.InteropServices.JavaScript;
 using ImGui.Input;
-using WebAssembly;
 
 namespace ImGui.OSImplementation.Web
 {

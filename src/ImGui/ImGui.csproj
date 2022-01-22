@@ -31,6 +31,12 @@
     <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Reference Include="System.Private.Runtime.InteropServices.JavaScript">
+      <HintPath>C:\Users\cloud\.nuget\packages\microsoft.netcore.app.runtime.mono.browser-wasm\6.0.1\runtimes\browser-wasm\lib\net6.0\System.Private.Runtime.InteropServices.JavaScript.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <WarningLevel>4</WarningLevel>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices.JavaScript;
 using ImGui.OSAbstraction.Window;
-using WebAssembly;
 
 namespace ImGui.OSImplementation.Web
 {

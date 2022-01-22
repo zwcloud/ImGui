@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ImGui.OSAbstraction.Graphics;
-using WebAssembly;
+using System.Runtime.InteropServices.JavaScript;
 using GL = ImGui.OSImplementation.Web.WebGL;
 
 namespace ImGui.OSImplementation.Web

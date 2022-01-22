@@ -1,5 +1,5 @@
 ﻿using System;
-using WebAssembly;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace ImGui.OSImplementation.Web
 {

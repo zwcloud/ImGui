@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices.JavaScript;
 using GL = ImGui.OSImplementation.Web.WebGL;
 using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
-using WebAssembly;
 
 namespace ImGui.OSImplementation.Web
 {

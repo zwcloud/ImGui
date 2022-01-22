@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using WebAssembly;
+using System.Runtime.InteropServices.JavaScript;
 using GL = ImGui.OSImplementation.Web.WebGL;
 
 namespace ImGui.OSImplementation.Web
