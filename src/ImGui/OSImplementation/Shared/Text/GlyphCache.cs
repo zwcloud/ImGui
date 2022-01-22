@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Extensions.Caching.Memory;
+using ImGui.Internal;
 
 namespace ImGui
 {
@@ -25,7 +25,7 @@ namespace ImGui
     {
         public static GlyphCache Default { get; } = new GlyphCache();
 
-        private MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+        private MemoryCache cache = new MemoryCache();
 
         private int CalcKey(char character, string fontFamily)
         {
@@ -44,7 +44,7 @@ namespace ImGui
 
             int key = CalcKey(character, fontFamily);
 
-            cache.Set<GlyphData>(key, glyph);
+            cache.Set(key, glyph);
 
             return glyph;
         }

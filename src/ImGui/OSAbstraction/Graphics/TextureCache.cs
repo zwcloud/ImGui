@@ -1,6 +1,6 @@
 ﻿using System;
 using ImGui.GraphicsAbstraction;
-using Microsoft.Extensions.Caching.Memory;
+using ImGui.Internal;
 
 namespace ImGui.OSAbstraction.Graphics
 {
@@ -8,7 +8,7 @@ namespace ImGui.OSAbstraction.Graphics
     {
         public static TextureCache Default { get; } = new TextureCache();
 
-        private MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+        private MemoryCache cache = new MemoryCache();
 
         public ITexture GetOrAdd(Image image, IRenderer renderer)
         {

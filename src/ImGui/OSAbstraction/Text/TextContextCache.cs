@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using ImGui.Internal;
 
 namespace ImGui.OSAbstraction.Text
 {
@@ -6,7 +6,7 @@ namespace ImGui.OSAbstraction.Text
     {
         public static TextContextCache Default { get; } = new TextContextCache();
 
-        private MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+        private readonly MemoryCache cache = new MemoryCache();
 
         private int CalcKey(char character, string fontFamily)
         {
