@@ -1,29 +1,34 @@
-﻿using System;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+﻿using BigGustave;
 
 namespace ImGui.GraphicsAbstraction
 {
     internal class Image
     {
-        private SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
+        public byte[] Data { get; }
 
-        public Rgba32[] Data { get; private set; }
-
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public int Width { get; }
+        public int Height { get; }
 
         public Image(string filePath)
         {
-            using (var stream = Utility.ReadFile(filePath))
+            using var stream = Utility.ReadFile(filePath);
+            var png = Png.Open(stream);
+            this.Data = new byte[png.Width * png.Height * 4];
+            int byteOffset = 0;
+            for (int y = 0; y < png.Height; y++)
             {
-                this.image = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(stream);
-                this.Data = new Rgba32[this.image.Width * this.image.Height];
-                image.TryGetSinglePixelSpan(out var span);
-                this.Data = span.ToArray();
-                this.Width = this.image.Width;
-                this.Height = this.image.Height;
+                for (int x = 0; x < png.Width; x++)
+                {
+                    var pixel = png.GetPixel(x, y);
+
+                    this.Data[byteOffset++] = pixel.R;
+                    this.Data[byteOffset++] = pixel.G;
+                    this.Data[byteOffset++] = pixel.B;
+                    this.Data[byteOffset++] = pixel.A;
+                }
             }
+            this.Width = png.Width;
+            this.Height = png.Height;
         }
     }
 }

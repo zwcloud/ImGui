@@ -37,9 +37,8 @@ namespace ImGui.OSAbstraction.Graphics
                 return texture;
             }
 
-            var image = new Image(path);
             texture = Application.PlatformContext.CreateTexture();
-            texture.LoadImage(image.Data, image.Width, image.Height);
+            texture.LoadImage(path);
             cache.Set(key, texture);
 
             return texture;

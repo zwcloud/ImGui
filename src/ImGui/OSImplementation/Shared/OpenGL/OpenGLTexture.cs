@@ -2,19 +2,18 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using CSharpGL;
+using ImGui.GraphicsAbstraction;
 using ImGui.OSAbstraction.Graphics;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplementation.Shared
 {
     internal class OpenGLTexture : ITexture
     {
-        private Image<Rgba32> image;
+        private Image image;
         private readonly uint[] textureIdBuffer = {0};
-        private Rgba32[] textureData;
+        private byte[] textureData;
 
-        public void LoadImage(Rgba32[] data, int width, int height)
+        public void LoadImage(byte[] data, int width, int height)
         {
             this.textureData = data;
             this.Width = width;
@@ -42,14 +41,15 @@ namespace ImGui.OSImplementation.Shared
         public void LoadImage(string filePath)
         {
             // check file header, save texture data to buffer
-            using (FileStream stream = File.OpenRead(filePath))
+            if (!filePath.EndsWith(".png"))
             {
-                this.image = Image.Load<Rgba32>(stream);
-                image.TryGetSinglePixelSpan(out var span);
-                textureData = span.ToArray();
-                this.Width = this.image.Width;
-                this.Height = this.image.Height;
+                throw new NotSupportedException("Only RGBA8 png file is supported for now.");
             }
+            
+            this.image = new Image(filePath);
+            textureData = image.Data;
+            this.Width = this.image.Width;
+            this.Height = this.image.Height;
 
             // create opengl texture object
             GL.ActiveTexture(GL.GL_TEXTURE0);

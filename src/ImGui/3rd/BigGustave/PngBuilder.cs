@@ -27,6 +27,23 @@
         private readonly Dictionary<int, int> colorCounts;
 
         private readonly List<(string keyword, byte[] data)> storedStrings = new List<(string keyword, byte[] data)>();
+        
+        /// <summary>
+        /// Create a builder for a PNG from RGBA byte array with the given width and size.
+        /// </summary>
+        public static PngBuilder Create(byte[] data, int width, int height, bool hasAlphaChannel)
+        {
+            var bpp = hasAlphaChannel ? 4 : 3;
+
+            var length = (height * width * bpp) + height;
+
+            if (data.Length != length)
+            {
+                throw new ArgumentException($"The data size is incorrect. Expected {length} but is {data.Length} bytes.", nameof(data));
+            }
+
+            return new PngBuilder(new byte[length], hasAlphaChannel, width, height, bpp);
+        }
 
         /// <summary>
         /// Create a builder for a PNG with the given width and size.

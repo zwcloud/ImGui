@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using ImGui.OSAbstraction.Window;
 using ImGui.Rendering;
-using SixLabors.ImageSharp.Processing;
+using BigGustave;
 
 namespace ImGui
 {
@@ -192,12 +192,9 @@ namespace ImGui
         internal void Dev_SaveClientAreaToPng(string filePath)
         {
             byte[] data = Application.renderer.GetRawBackBuffer(out var width, out var height);
-            var image = SixLabors.ImageSharp.Image.LoadPixelData<SixLabors.ImageSharp.PixelFormats.Rgba32>(SixLabors.ImageSharp.Configuration.Default, data, width, height);
-            image.Mutate(x => x.Flip(FlipMode.Vertical));
-            using (var stream = File.OpenWrite(filePath))
-            {
-                SixLabors.ImageSharp.ImageExtensions.SaveAsPng(image, stream);
-            }
+            var image = PngBuilder.Create(data, width, height, true);
+            using var stream = File.OpenWrite(filePath);
+            image.Save(stream);
         }
 
         public bool IsMinimized => nativeWindow.Minimized;

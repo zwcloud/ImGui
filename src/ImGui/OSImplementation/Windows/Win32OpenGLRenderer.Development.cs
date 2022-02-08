@@ -6,7 +6,6 @@ using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSImplementation.Shared;
 using ImGui.Rendering;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplementation.Windows
 {
@@ -45,7 +44,7 @@ namespace ImGui.OSImplementation.Windows
         {
             //create texture
             textureForDrawMesh = new OpenGLTexture();
-            textureForDrawMesh.LoadImage(new Rgba32[width * height], width, height);
+            textureForDrawMesh.LoadImage(new byte[width * height * 4], width, height);
             
             GL.GenTextures(1, textures);
             framebufferColorTexture = textures[0];
@@ -188,12 +187,12 @@ namespace ImGui.OSImplementation.Windows
             //create textures
             {
                 glyphOpenGLTexture = new OpenGLTexture();
-                glyphOpenGLTexture.LoadImage(new Rgba32[width * height], width, height);
+                glyphOpenGLTexture.LoadImage(new byte[width * height * 4], width, height);
                 glyphTexture = (uint)glyphOpenGLTexture.GetNativeTextureId();
             }
             {
                 textOpenGLTexture = new OpenGLTexture();
-                textOpenGLTexture.LoadImage(new Rgba32[width * height], width, height);
+                textOpenGLTexture.LoadImage(new byte[width * height * 4], width, height);
                 textTexture = (uint)textOpenGLTexture.GetNativeTextureId();
             }
 

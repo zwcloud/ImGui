@@ -59,7 +59,7 @@ namespace ImGui
                 //icon
                 using (var dc = titleIcon.RenderOpen())
                 {
-                    dc.DrawImage(@"/assets/images/logo.png", this.titleIcon.Rect);
+                    dc.DrawImage(@"assets/images/logo.png", this.titleIcon.Rect);
                 }
 
                 //title

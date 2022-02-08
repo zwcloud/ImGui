@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.Rendering;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplementation.Shared
 {
@@ -51,7 +50,7 @@ namespace ImGui.OSImplementation.Shared
 
             //create texture that will be rendered onto
             ITexture texture = new OpenGLTexture();
-            texture.LoadImage(new Rgba32[width * height], width, height);
+            texture.LoadImage(new byte[width * height * 4], width, height);
             GL.BindTexture(GL.GL_TEXTURE_2D, 0);
             
             Utility.CheckGLError();
@@ -154,7 +153,7 @@ namespace ImGui.OSImplementation.Shared
             {
                 //create texture for glyph
                 OpenGLTexture glyphOpenGLTexture = new OpenGLTexture();
-                glyphOpenGLTexture.LoadImage(new Rgba32[width * height], width, height);
+                glyphOpenGLTexture.LoadImage(new byte[width * height * 4], width, height);
                 uint glyphTexture = (uint)glyphOpenGLTexture.GetNativeTextureId();
 
                 //create frame buffer for glyph

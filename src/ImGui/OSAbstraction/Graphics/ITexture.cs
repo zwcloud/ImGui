@@ -1,5 +1,4 @@
 ﻿using System;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSAbstraction.Graphics
 {
@@ -9,9 +8,9 @@ namespace ImGui.OSAbstraction.Graphics
     public interface ITexture : IDisposable
     {
         /// <summary>
-        /// Load image data from ImageSharp pixels into the texture
+        /// Load image data from in R8G8B8A8 format bytes into the texture
         /// </summary>
-        void LoadImage(Rgba32[] data, int width, int height);
+        void LoadImage(byte[] data, int width, int height);
 
         /// <summary>
         /// Load image data from a file into the texture.

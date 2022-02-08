@@ -67,7 +67,7 @@ namespace ImGui.OSAbstraction.Graphics
         void ShutDown();
 
         /// <summary>
-        /// Get back buffer data
+        /// Get back buffer data in R8G8B8A8 format.
         /// </summary>
         byte[] GetRawBackBuffer(out int width, out int height);
 
