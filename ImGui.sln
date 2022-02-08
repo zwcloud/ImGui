@@ -28,30 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui.UnitTest", "test\ImGu
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Demo", "templates\Demo\Demo.shproj", "{2AF7F9F5-8001-40BF-8C60-C4852CEAA299}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebTemplate", "WebTemplate", "{192C7FBE-D5FE-4C01-9F02-C2729F9312C7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTemplateApp", "templates\WebTemplate\WebTemplateApp\WebTemplateApp.csproj", "{B9686D3F-FA49-4AB7-B664-125F101A79FB}"
-EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "wwwroot", "templates\WebTemplate\WebTemplateApp\wwwroot\", "{22531B25-FDD0-477F-BD0C-A1DC45FA1805}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_50236"
-		Debug.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateApp\wwwroot\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50236\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_50236"
-		Release.AspNetCompiler.PhysicalPath = "templates\WebTemplate\WebTemplateApp\wwwroot\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50236\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "50236"
-		SlnRelativePath = "templates\WebTemplate\WebTemplateApp\wwwroot\"
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversalAppTemplate", "templates\UniversalAppTemplate\UniversalAppTemplate.csproj", "{E3255678-3E8A-46A9-BFDB-FEAA9263DF8A}"
 EndProject
@@ -104,10 +81,6 @@ Global
 		{B9686D3F-FA49-4AB7-B664-125F101A79FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9686D3F-FA49-4AB7-B664-125F101A79FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9686D3F-FA49-4AB7-B664-125F101A79FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{22531B25-FDD0-477F-BD0C-A1DC45FA1805}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{E3255678-3E8A-46A9-BFDB-FEAA9263DF8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E3255678-3E8A-46A9-BFDB-FEAA9263DF8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3255678-3E8A-46A9-BFDB-FEAA9263DF8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -140,9 +113,7 @@ Global
 		{54AB1491-BBE4-4A63-9B6A-EC70B0CC119A} = {593C5B50-52E6-436D-9BF2-93E220984E45}
 		{B8087E73-4140-49B1-88CA-95528264CDB6} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
 		{2AF7F9F5-8001-40BF-8C60-C4852CEAA299} = {593C5B50-52E6-436D-9BF2-93E220984E45}
-		{192C7FBE-D5FE-4C01-9F02-C2729F9312C7} = {593C5B50-52E6-436D-9BF2-93E220984E45}
-		{B9686D3F-FA49-4AB7-B664-125F101A79FB} = {192C7FBE-D5FE-4C01-9F02-C2729F9312C7}
-		{22531B25-FDD0-477F-BD0C-A1DC45FA1805} = {192C7FBE-D5FE-4C01-9F02-C2729F9312C7}
+		{B9686D3F-FA49-4AB7-B664-125F101A79FB} = {593C5B50-52E6-436D-9BF2-93E220984E45}
 		{E3255678-3E8A-46A9-BFDB-FEAA9263DF8A} = {593C5B50-52E6-436D-9BF2-93E220984E45}
 		{88B33B1E-EEA4-4423-805E-4AF1E6519EA7} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}
 		{4278E07C-E302-4F8F-99FF-823932612BF3} = {1F08C70D-0D16-48E8-B4E7-4726BE7D4518}

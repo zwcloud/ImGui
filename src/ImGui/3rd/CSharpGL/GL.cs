@@ -11,18 +11,22 @@ namespace CSharpGL
         #region Native
 
         private const string OpenGL32 = "opengl32.dll";
-        private const string GLESv2 = "GLESv2";
 
         /// <summary>
         /// Gets a proc address.
         /// </summary>
         /// <param name="name">The name of the function.</param>
         /// <returns>The address of the function.</returns>
-        [DllImport(OpenGL32, SetLastError = true)]
+        [DllImport(OpenGL32)]
         public static extern IntPtr wglGetProcAddress(string name);
         
-        [DllImport("EGL", EntryPoint = "eglGetProcAddress")]
-        public static extern IntPtr eglGetProcAddress(string funcname);
+        [DllImport("EGL")]
+        public static extern IntPtr eglGetProcAddress(string name);
+        
+        //from emscripten's libGL,
+        //see https://github.com/emscripten-core/emscripten/blob/ff141e4fc78c9ae5f082f5dcb31cf0951558214b/system/lib/gl/gl.c#L1801
+        [DllImport("*")]
+        public static extern IntPtr emscripten_GetProcAddress(string name);
 
         #endregion
 
@@ -56,25 +60,21 @@ namespace CSharpGL
                     pointer = proc.ToInt64();
                     if(-1 <= pointer && pointer <= 3)
                     {
-                        throw new NotSupportedException("Extension function " + name + " not supported.");
+                        proc = IntPtr.Zero;//not supported
                     }
                 }
             }
             else if (OperatingSystem.IsAndroid())
             {
                 proc = eglGetProcAddress(name);
-                if(proc == IntPtr.Zero)
-                {
-                    throw new NotSupportedException("Extension function " + name + " not supported.");
-                }
             }
             else if(OperatingSystem.IsLinux())
             {
                 proc = eglGetProcAddress(name);
-                if(proc == IntPtr.Zero)
-                {
-                    throw new NotSupportedException("Extension function " + name + " not supported.");
-                }
+            }
+            else if (OperatingSystem.IsBrowser())
+            {
+                proc = emscripten_GetProcAddress(name);
             }
             else if(OperatingSystem.IsMacOS())
             {
@@ -85,8 +85,13 @@ namespace CSharpGL
                 throw new NotImplementedException("Unsupported OS.");
             }
 
-            //  Get the delegate for the function pointer.
-            T del = Marshal.GetDelegateForFunctionPointer<T>(proc) as T;
+            if(proc == IntPtr.Zero)
+            {
+                throw new NotSupportedException("Extension function " + name + " not supported.");
+            }
+
+            // Get the delegate for the function pointer.
+            T del = Marshal.GetDelegateForFunctionPointer<T>(proc);
             return del;
         }
     }

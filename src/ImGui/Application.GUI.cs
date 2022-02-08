@@ -129,7 +129,7 @@ namespace ImGui
             // [DEBUG] Item picker tool - start with DebugStartItemPicker()
             // useful to visually select an item and break into its call-stack.
             UpdateDebugToolItemPicker();
-
+            
             // Create implicit debug window - we will only render it if the user has added something to it.
             GUI.Begin("Debug##Default", Application.InitialDebugWindowRect);
         }

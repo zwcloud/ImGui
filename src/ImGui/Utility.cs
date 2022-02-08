@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using CSharpGL;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using ImGui.OSImplementation.Web;
+using ImGui.assets;
 
 namespace ImGui
 {
@@ -30,10 +29,6 @@ namespace ImGui
             return pt;
         }
 
-        /// <summary>
-        /// (Not using, performance is bad.)
-        /// </summary>
-        [Conditional("DEBUG")]
         public static void CheckGLError()
         {
             var error = GL.GetError();
@@ -75,10 +70,6 @@ namespace ImGui
             }
         }
 
-        /// <summary>
-        /// (Not using, performance is bad.)
-        /// </summary>
-        [Conditional("None")]
         public static void CheckGLESError()
         {
             var error = CSharpGLES.GL.GetError();
@@ -120,48 +111,6 @@ namespace ImGui
             }
         }
 
-        [Conditional("None")]
-        public static void CheckWebGLError()
-        {
-            var error = WebGL.GetError();
-            string errorStr = "GL_NO_ERROR";
-            switch (error)
-            {
-                case WebGL.GL_NO_ERROR:
-                    errorStr = "GL_NO_ERROR";
-                    break;
-                case WebGL.GL_INVALID_ENUM:
-                    errorStr = "GL_INVALID_ENUM";
-                    break;
-                case WebGL.GL_INVALID_VALUE:
-                    errorStr = "GL_INVALID_VALUE";
-                    break;
-                case WebGL.GL_INVALID_OPERATION:
-                    errorStr = "GL_INVALID_OPERATION";
-                    break;
-                case WebGL.GL_STACK_OVERFLOW:
-                    errorStr = "GL_STACK_OVERFLOW";
-                    break;
-                case WebGL.GL_STACK_UNDERFLOW:
-                    errorStr = "GL_STACK_UNDERFLOW";
-                    break;
-                case WebGL.GL_OUT_OF_MEMORY:
-                    errorStr = "GL_OUT_OF_MEMORY";
-                    break;
-                case WebGL.GL_INVALID_FRAMEBUFFER_OPERATION:
-                    errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION";
-                    break;
-                case WebGL.GL_CONTEXT_LOST:
-                    errorStr = "GL_CONTEXT_LOST";
-                    break;
-            }
-
-            if (error != GL.GL_NO_ERROR)
-            {
-                throw new Exception(String.Format("glError: 0x{0:X} ({1})", error, errorStr));
-            }
-        }
-
         public static Stream ReadFile(string filePath)
         {
             Stream stream = null;
@@ -178,6 +127,19 @@ namespace ImGui
                 filePath = filePath.Replace('\\', '/');
                 var s = new FileStream(filePath, FileMode.Open);
                 stream = s;
+            }
+            else if (CurrentOS.IsBrowser)
+            {
+                //TODO use emscripten approaches
+
+                filePath = filePath.Replace('\\', '/');
+                if (filePath[0] != '/')
+                {
+                    filePath = filePath.Insert(0, "/");
+                }
+                var bytes = ImGuiRes.ResourceManager.GetObject(filePath) as byte[];
+                stream = new MemoryStream(bytes ??
+                    throw new InvalidOperationException($"Cannot find file {filePath} from resource."));
             }
             else//windows
             {

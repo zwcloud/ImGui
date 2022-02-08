@@ -8,10 +8,6 @@ namespace ImGui.UnitTest
         {
         }
 
-        public void LoadImage(byte[] data)
-        {
-        }
-
         public void LoadImage(SixLabors.ImageSharp.PixelFormats.Rgba32[] data, int width, int height)
         {
         }

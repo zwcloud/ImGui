@@ -3,6 +3,7 @@ using ImGui.OSAbstraction;
 using ImGui.OSAbstraction.Graphics;
 using ImGui.OSAbstraction.Text;
 using ImGui.OSAbstraction.Window;
+using ImGui.OSImplementation.Shared;
 
 namespace ImGui.OSImplementation.Web
 {
@@ -31,7 +32,7 @@ namespace ImGui.OSImplementation.Web
             /*
              * We cannot set the native window's rect for a browser, so point and size is ignored.
              */
-            window.Init(Application.WebGLCanvasId);
+            window.Init(Application.WebGLCanvasId, size);
             return window;
         }
 
@@ -42,12 +43,12 @@ namespace ImGui.OSImplementation.Web
 
         private static IRenderer CRenderer(IWindow window)
         {
-            return new WebGLRenderer();//TODO
+            return new WebGLRenderer(window);
         }
 
         private static ITexture CTexture()
         {
-            return new WebGLTexture();
+            return new OpenGLTexture();
         }
     }
 }

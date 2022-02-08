@@ -9,15 +9,8 @@ namespace ImGui.OSAbstraction.Graphics
     public interface ITexture : IDisposable
     {
         /// <summary>
-        /// Load image data from byte array into the texture.
-        /// </summary>
-        /// <returns>succeeded?true:false</returns>
-        void LoadImage(byte[] data);
-
-        /// <summary>
         /// Load image data from ImageSharp pixels into the texture
         /// </summary>
-        /// <param name="data"></param>
         void LoadImage(Rgba32[] data, int width, int height);
 
         /// <summary>

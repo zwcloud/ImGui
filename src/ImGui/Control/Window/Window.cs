@@ -85,14 +85,14 @@ namespace ImGui
             {
                 window.Position = w.NextWindowData.NextWindowPosition.Value;
             }
-
+            
             // When reusing window again multiple times a frame, just append content (don't need to setup again)
             if (first_begin_of_the_frame)
             {
                 window.FirstUpdate(name, size, ref open, bg_alpha, flags, current_frame, parent_window);
                 ImGui.Development.Metrics.ActiveWindows++;
             }
-
+            
             // Clear 'accessed' flag last thing
             if (first_begin_of_the_frame)
                 window.Accessed = false;

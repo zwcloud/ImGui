@@ -1,36 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <WasmMainJSPath>main.js</WasmMainJSPath>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>embedded</DebugType>
-    <WasmDebugLevel>1</WasmDebugLevel>
-    <WasmEnableES6>false</WasmEnableES6>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
-    <None Remove="wwwroot\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <WasmExtraFilesToDeploy Include="index.html" />
+    <PackageReference Include="runtime.win-x64.Microsoft.DotNet.ILCompiler.LLVM" Version="7.0.0-*" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="7.0.0-*" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\ImGui\ImGui.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Private.Runtime.InteropServices.JavaScript">
-      <HintPath>C:\Users\cloud\.nuget\packages\microsoft.netcore.app.runtime.mono.browser-wasm\6.0.1\runtimes\browser-wasm\lib\net6.0\System.Private.Runtime.InteropServices.JavaScript.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(OutDir)WebTemplateApp.dll $(ProjectDir)wwwroot\managed\&#xD;&#xA;copy $(OutDir)ImGui.dll $(ProjectDir)wwwroot\managed\" />
-  </Target>
-
 </Project>

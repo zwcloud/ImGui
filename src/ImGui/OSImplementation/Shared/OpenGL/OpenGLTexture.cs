@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using CSharpGL;
 using ImGui.OSAbstraction.Graphics;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImGui.OSImplementation.Shared
@@ -14,11 +13,6 @@ namespace ImGui.OSImplementation.Shared
         private Image<Rgba32> image;
         private readonly uint[] textureIdBuffer = {0};
         private Rgba32[] textureData;
-
-        public void LoadImage(byte[] data)
-        {
-            throw new NotImplementedException();
-        }
 
         public void LoadImage(Rgba32[] data, int width, int height)
         {

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.InteropServices;
 using ImGui.OSAbstraction.Window;
 
 namespace ImGui.OSImplementation.Web
@@ -15,48 +14,23 @@ namespace ImGui.OSImplementation.Web
     /// </remarks>
     internal class WebWindow : IWindow
     {
-        /// <summary>
-        /// The global window object
-        /// </summary>
-        private JSObject window;
+        [DllImport("*")]
+        private static extern void emscripten_run_script(string script);
 
-        /// <summary>
-        /// The global document object
-        /// </summary>
-        private JSObject document;
+        [DllImport("*")]
+        private static extern int emscripten_run_script_int(string script);
 
-        /// <summary>
-        /// The canvas DOM object
-        /// </summary>
-        private JSObject canvas;
-
-        /// <summary>
-        /// The canvas style object
-        /// </summary>
-        private JSObject canvasStyle;
-
-        public void Init(string canvasId)
+        [DllImport("*")]
+        private static extern string emscripten_run_script_string(string script);
+        
+        public void Init(string canvasId, Size size)
         {
-            if (string.IsNullOrEmpty(canvasId))
-            {
-                throw new ArgumentNullException(nameof(canvasId));
-            }
-
-            this.window = Runtime.GetGlobalObject("window") as JSObject;
-            Debug.Assert(this.window != null);
-            this.document = Runtime.GetGlobalObject("document") as JSObject;
-            Debug.Assert(this.document != null);
-            this.canvas = this.document.Invoke("getElementById", canvasId) as JSObject;
-            if (this.canvas == null)
-            {
-                throw new WindowCreateException($"Cannot find the canvas with id<{canvasId}>");
-            }
-            this.canvasStyle = this.canvas.GetObjectProperty("style") as JSObject;
+            //TODO customize output html and canvas from emscripten
         }
 
         #region Implementation of IWindow
 
-        public object Handle => this.canvas;
+        public object Handle => IntPtr.Zero;
 
         public IntPtr Pointer => throw new NotSupportedException();
 
@@ -64,8 +38,8 @@ namespace ImGui.OSImplementation.Web
         {
             get
             {
-                var left = (int)this.window.GetObjectProperty("screenX");
-                var top = (int)this.window.GetObjectProperty("screenY");
+                var left = emscripten_run_script_int("window.screenX");
+                var top = emscripten_run_script_int("window.screenY");
                 return new Point(left, top);
             }
             set => throw new PlatformNotSupportedException();
@@ -75,8 +49,8 @@ namespace ImGui.OSImplementation.Web
         {
             get
             {
-                var width = (int)this.window.GetObjectProperty("outerWidth");
-                var height = (int)this.window.GetObjectProperty("outerHeight");
+                var width = emscripten_run_script_int("window.outerWidth");
+                var height = emscripten_run_script_int("window.outerHeight");
                 return new Size(width, height);
             }
             set => throw new PlatformNotSupportedException("Cannot change the window size.");
@@ -84,9 +58,9 @@ namespace ImGui.OSImplementation.Web
 
         public string Title
         {
-            get => this.window.GetObjectProperty("title") as string;
+            get => emscripten_run_script_string("window.title") as string;
 
-            set => this.window.SetObjectProperty("title", value);
+            set => emscripten_run_script_string("window.title = {value}");
         }
 
         public Point ClientPosition
@@ -99,8 +73,8 @@ namespace ImGui.OSImplementation.Web
         {
             get
             {
-                var width = (int)this.canvas.GetObjectProperty("width");
-                var height = (int)this.canvas.GetObjectProperty("height");
+                var width = emscripten_run_script_int("document.getElementById('canvas').getBoundingClientRect().width");
+                var height = emscripten_run_script_int("document.getElementById('canvas').getBoundingClientRect().height");
                 return new Size(width, height);
             }
             set => throw new PlatformNotSupportedException("Cannot change the client area size.");
@@ -108,17 +82,20 @@ namespace ImGui.OSImplementation.Web
 
         public void Close()
         {
-            this.window.Invoke("close");
+            //TODO
+
+            //won't work: Scripts may close only the windows that were opened by them.
+            //emscripten_run_script("window.close");
         }
 
         public void Hide()
         {
-            this.canvasStyle.SetObjectProperty("visibility", "hidden");
+            emscripten_run_script("document.getElementById('canvas').style.visibility = hidden");
         }
 
         public void Show()
         {
-            this.canvasStyle.SetObjectProperty("visibility", "visible");
+            emscripten_run_script("document.getElementById('canvas').style.visibility = visible");
         }
 
         public Point ScreenToClient(Point point)

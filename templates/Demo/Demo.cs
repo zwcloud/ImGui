@@ -226,7 +226,7 @@ label:
                         {
                             GUILayout.BeginHorizontal("HGroup");
                             GUILayout.Label("blah blah");
-                            if (GUILayout.Button("print")) System.Console.WriteLine("Child {0} pressed", i);
+                            if (GUILayout.Button("print")) System.Console.WriteLine(@"Child {0} pressed", i);
                             GUILayout.EndHorizontal();
                             GUILayout.TreePop();
                         }

@@ -94,8 +94,8 @@ namespace ImGui
         // HACK for Android
         public static Func<string, System.IO.Stream> OpenAndroidAssets;
 
-        // HACK for WebGL
-        public const string WebGLCanvasId = "imgui-canvas";
+        // HACK for Web
+        public const string WebGLCanvasId = "canvas";
 
         public static bool Initialized { get; private set; }
 

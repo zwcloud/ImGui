@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.InteropServices;
 using ImGui.Input;
 
 namespace ImGui.OSImplementation.Web
@@ -25,13 +25,12 @@ namespace ImGui.OSImplementation.Web
             }
         }
 
+        [DllImport("*")]
+        private static extern void emscripten_run_script(string script);
+
         public static void ChangeCursor(Cursor cursor)
         {
-            //document.body.style.cursor = "text";
-            var document = Runtime.GetGlobalObject("document") as JSObject;
-            var body = document.GetObjectProperty("body") as JSObject;
-            var bodyStyle = body.GetObjectProperty("style") as JSObject;
-            bodyStyle.SetObjectProperty("cursor", ToWebCursorName(cursor));
+            emscripten_run_script($"document.body.style.cursor = {ToWebCursorName(cursor)}");
         }
     }
 }

@@ -49,6 +49,7 @@ namespace ImGui
         public static bool IsMac { get; }
         public static bool IsLinux { get; }
         public static bool IsAndroid { get; }
+        public static bool IsBrowser => OperatingSystem.IsBrowser();
         public static bool IsUnknown { get; }
 
         public static bool IsDesktopPlatform { get; }

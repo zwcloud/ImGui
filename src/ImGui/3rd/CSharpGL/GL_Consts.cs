@@ -565,6 +565,7 @@
         public const uint GL_TEXTURE_WRAP_T = 0x2803;
 
         //   TextureWrapMode
+        // GL_CLAMP doesn't exist in WebGL, so don't use it in WebGL! Use GL_CLAMP_TO_EDGE instead.
         public const uint GL_CLAMP = 0x2900;
         public const uint GL_REPEAT = 0x2901;
 

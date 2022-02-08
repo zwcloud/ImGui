@@ -10,9 +10,10 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <SignAssembly>False</SignAssembly>
     <RepositoryUrl>https://github.com/zwcloud/ImGui</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/zwcloud/ImGui/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <License>https://github.com/zwcloud/ImGui/blob/master/LICENSE.txt</License>
     <Version>0.0.2</Version>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageTags>GUI</PackageTags>
     <AssemblyVersion>0.0.0.2</AssemblyVersion>
     <FileVersion>0.0.0.2</FileVersion>
@@ -27,13 +28,6 @@
 
   <ItemGroup>
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="System.Private.Runtime.InteropServices.JavaScript">
-      <HintPath>C:\Users\cloud\.nuget\packages\microsoft.netcore.app.runtime.mono.browser-wasm\6.0.1\runtimes\browser-wasm\lib\net6.0\System.Private.Runtime.InteropServices.JavaScript.dll</HintPath>
-    </Reference>
   </ItemGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -81,6 +75,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="assets\ImGuiRes.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ImGuiRes.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="assets\ImGuiRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ImGuiRes.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="assets\fonts\DroidSans.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -97,5 +106,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

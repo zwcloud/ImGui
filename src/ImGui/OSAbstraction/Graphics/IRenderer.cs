@@ -17,6 +17,16 @@ namespace ImGui.OSAbstraction.Graphics
         void Init(IntPtr windowHandle, Size size);
 
         /// <summary>
+        /// Initialize the renderer
+        /// </summary>
+        /// <param name="windowHandle">window handle, this could be some context info needed by the renderer. e.g. WebGL context as a JSObject</param>
+        /// <param name="size">size of default framebuffer</param>
+        void Init(object windowHandle, Size size)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
         /// Set the window on which the renderer will draw
         /// </summary>
         void SetRenderingWindow(IWindow window)
