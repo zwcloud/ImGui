@@ -3,20 +3,38 @@ Hello ImGui,
 
 Hello ImGui is an immediate mode GUI library inspired by [IMGUI of Unity3D](https://docs.unity3d.com/Manual/GUIScriptingGuide.html) and [dear imgui](https://github.com/ocornut/imgui).
 
+It's still a [work in progress](https://github.com/zwcloud/ImGui/projects/10).
+
 ![code sample](https://raw.githubusercontent.com/wiki/zwcloud/imgui/images/code_sample.png)
 
-(outdated and to be updated) Now it runs on Win10 x64, Ubuntu 16.04, and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms). MAC and iphone are not supported because I don't have them.
-
-At present, ImGui lacks usability but will be improved gradually.
+Now it runs on Win10, Linux(Ubuntu 16.04) and Android. See [platforms](https://github.com/zwcloud/ImGui/wiki/Platforms). Mac and iPhone are not supported because I don't have them.
 
 ## Get Started
 
-### For Windows and Linux
+### Windows and Linux
+1. Clone ImGui
 
-1. Preparation
-    * Download msjh.ttf to directory `ImGui\src\ImGui\assets\fonts`. See [font note](https://github.com/zwcloud/ImGui/blob/master/src/ImGui/assets/fonts/ReadMe.md).
+```
+git clone https://github.com/zwcloud/ImGui.git
+```
 
-2. Create a .NET Standard 2.1 compatible project and reference _ImGui_.
+2. Create a .NET6 console project and reference ImGui.
+```
+mkdir MyImGuiApp
+```
+Create `MyImGuiApp.csproj` with following content:
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputTypeEx>exe</OutputTypeEx>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include=".\ImGui\src\ImGui\ImGui.csproj" />
+  </ItemGroup>
+</Project>
+```
 
 3. Add follwing code files to your project,
 
@@ -56,17 +74,10 @@ At present, ImGui lacks usability but will be improved gradually.
 4. Build your project
 
 5. Run
-    * run in VS2017: Press F5
-    * run in Windows console:
-
+    * run with Visual Studio 2022: Press F5
+    * run on Windows/Linux:
         ```
         cd MyImGuiApp
-        dotnet MyApp.dll
-       ```
-    * run in Linux terminal:
-
-        ```
-        cd MyApp/bin/Debug/netcoreapp3.0
         dotnet MyApp.dll
        ```
 
@@ -74,34 +85,30 @@ At present, ImGui lacks usability but will be improved gradually.
 
     Press <kbd>Esc</kbd> or click the close button of the window.
 
-### For Android
+### Android
 
-(outdated and to be updated)
-
-1. Copy [Android Templates project](https://github.com/zwcloud/ImGui/tree/master/templates/AndroidTemplate). The referenced Demo can be removed if you don't need that.
+1. Copy [Android Templates project](https://github.com/zwcloud/ImGui/tree/master/templates/AndroidTemplate). Referenced shared project Demo can be removed if not needed.
 2. Add your GUI code in `MainForm.OnGUI`.
 3. Build and deploy it to your Android device.
 
+## Documentation
+
 For now, please refer to [the shared project __Demo__](https://github.com/zwcloud/ImGui/tree/master/templates/Demo) for how to use Hello ImGui.
-
-## Target
-
-A Real Universal GUI Framework.
 
 ## Dependency
 
-* [ImageSharp](https://github.com/SixLabors/ImageSharp): A cross-platform library for the processing of image files; written in C#. It provides image loading functions for ImGui.
 * [Xamarin.Android](https://github.com/xamarin/xamarin-android): Xamarin.Android provides open-source bindings of the Android SDK for use with .NET managed languages such as C#. It mainly provides C# runtime for ImGui.
 
 ## Credits
 
-DroidSans.ttf, Droid Sans is a humanist sans serif typeface designed by Steve Matteson [licensed under Apache 2](https://github.com/google/fonts/blob/master/apache/droidsans/LICENSE.txt).
-
 *ImGui doesn't depend on following projects, some code used by ImGui are taken from them.*
 
+* [BigGustave](https://github.com/EliotJones/BigGustave): Open, read and create PNG images in fully managed C#.
 * [Typography](https://github.com/LayoutFarm/Typography): C# Font Reader (TrueType / OpenType / OpenFont) , Glyphs Layout and Rendering
 * [OpenTK](https://github.com/opentk/opentk): low-level C# wrapper for OpenGL
 * [CSharpGL](https://github.com/bitzhuwei/CSharpGL): Object Oriented OpenGL in C#
+
+Droid Sans and Terminus TTF fount, see [fonts/ReadMe](https://github.com/zwcloud/ImGui/blob/master/src/ImGui/assets/fonts/ReadMe.md).
 
 ## License
 
