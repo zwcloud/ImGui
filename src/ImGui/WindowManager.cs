@@ -287,9 +287,17 @@ namespace ImGui
             windowSwapBuffer.Clear();
             childWindows.Clear();
             popupWindows.Clear();
+            List<Window> windowsToRemove = new List<Window>();
             for (int i = 0; i < Windows.Count; i++)
             {
                 var window = Windows[i];
+
+                if (!window.Active)
+                {
+                    windowsToRemove.Add(window);
+                    continue;
+                }
+
                 if (window.Active && window.Flags.HaveFlag(WindowFlags.ChildWindow))
                 {
                     childWindows.Add(window);
@@ -303,6 +311,12 @@ namespace ImGui
                     windowSwapBuffer.Add(window);
                 }
             }
+
+            foreach (var window in windowsToRemove)
+            {
+                Windows.Remove(window);
+            }
+
             foreach (var childWindow in childWindows)
             {
                 var parentWindowIndex = windowSwapBuffer.FindIndex(win => win == childWindow.RootWindow);

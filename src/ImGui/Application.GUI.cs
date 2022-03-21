@@ -449,7 +449,7 @@ namespace ImGui
                     w.Viewports.RemoveAt(n);
 
                     // Destroy
-                    Debug.WriteLine($"Delete Viewport {viewport.ID} ({viewport.debugName})");
+                    ImGui.Log.Msg($"Delete Viewport {viewport.ID} ({viewport.debugName})");
                     viewport.Close();// In most circumstances the platform window will already be destroyed here.
                     //Debug.Assert(g.PlatformIO.Viewports.Contains(viewport) == false);//TODO purpose of PlatformIO.Viewports
                     n--;
