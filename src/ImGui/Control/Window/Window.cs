@@ -26,6 +26,12 @@ namespace ImGui
             Begin(title, ref open, position, size, 1, flags);
         }
         
+        public static void Begin(string title, Size size, WindowFlags flags = WindowFlags.None)
+        {
+            var open = true;
+            Begin(title, ref open, Point.Zero, size, 1, flags);
+        }
+
         public static void Begin(string title, Rect rect, WindowFlags flags = WindowFlags.None)
         {
             var open = true;
@@ -37,6 +43,12 @@ namespace ImGui
             if (bg_alpha < 0.0f)
             {
                 throw new ArgumentOutOfRangeException(nameof(bg_alpha), nameof(bg_alpha) + " cannot be negative.");
+            }
+
+            if (flags.HaveFlag(WindowFlags.Popup) && position != Point.Zero)
+            {
+                Log.Warning("Popup window's position will be ignored.");
+                position = Point.Zero;
             }
 
             GUIContext g = Application.ImGuiContext;

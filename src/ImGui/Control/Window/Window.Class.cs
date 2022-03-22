@@ -124,7 +124,7 @@ namespace ImGui
             {
                 Viewport = new Form(position, size, name, WindowTypes.ClientAreaOnly);
                 Viewport.Window = this;
-                Viewport.BackgroundColor = Color.Green;
+                Viewport.BackgroundColor = Color.Green;//debug only
                 Application.AddFrom(Viewport);
             }
             else
