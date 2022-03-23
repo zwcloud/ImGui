@@ -73,6 +73,12 @@ namespace ImGui
         {
         }
 
+        internal Form(Point position, Size size, WindowTypes type)
+            : this(position, size, "ImGui Form", type)
+        {
+
+        }
+
         internal Form(Rect rect, string title, WindowTypes type)
             : this(rect.TopLeft, rect.Size, title, type)
         {

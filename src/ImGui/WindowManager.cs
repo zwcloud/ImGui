@@ -153,8 +153,27 @@ namespace ImGui
 
         internal Window CreateWindow(string name, Point position, Size size, WindowFlags flags)
         {
+            if (flags.HaveFlag(WindowFlags.Popup))
+            {
+                return CreatePopupWindow(name, position, size, flags);
+            }
+
             var window = new Window(MainForm, name, position, size, flags);
             this.Windows.Add(window);
+            return window;
+        }
+
+        internal Window CreatePopupWindow(string name, Point position, Size size, WindowFlags flags)
+        {
+            Debug.Assert(flags.HaveFlag(WindowFlags.Popup));
+
+            var window = new Window(MainForm, name, Point.Zero, size, flags & WindowFlags.NoTitleBar);
+            this.Windows.Add(window);
+
+            //Parameter position will determine popup window's viewport's position
+            var viewportPosition = MainForm.ClientToScreen(position);
+            Application.AddUpdateViewport(window, window.ID, viewportPosition, size, ImGuiViewportFlags.NoDecoration);
+
             return window;
         }
 

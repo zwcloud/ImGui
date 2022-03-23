@@ -603,7 +603,7 @@ namespace ImGui
             }
         }
 
-        private static Form AddUpdateViewport(Window window, int id, Point pos, Size size,
+        internal static Form AddUpdateViewport(Window window, int id, Point pos, Size size,
             ImGuiViewportFlags flags)
         {
             var g = ImGuiContext;
@@ -632,15 +632,15 @@ namespace ImGui
             else
             {
                 // New viewport
-                viewport = new Form(pos, size);
+                viewport = new Form(pos, size, flags.HasFlag(ImGuiViewportFlags.NoDecoration) ? WindowTypes.ClientAreaOnly : WindowTypes.Regular);
                 viewport.ID = id;
                 viewport.Idx = w.Viewports.Count;
                 viewport.Pos = viewport.LastPos = pos;
                 viewport.Size = size;
                 viewport.Flags = flags;
                 //UpdateViewportPlatformMonitor(viewport);//TODO
-                w.Viewports.Add(viewport);
-                Debug.WriteLine($"Add Viewport {id} ({window?.Name})");//TODO why use window name?
+                Application.AddFrom(viewport);
+                Debug.WriteLine($"Add Viewport {id} ({window?.Name})");//TODO a debug name of the viewport should be used instead of a window name
 
                 #if TODO 
                 // We normally setup for all viewports in NewFrame() but here need to handle the mid-frame creation of a new viewport.

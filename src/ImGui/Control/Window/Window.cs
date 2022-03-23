@@ -45,12 +45,6 @@ namespace ImGui
                 throw new ArgumentOutOfRangeException(nameof(bg_alpha), nameof(bg_alpha) + " cannot be negative.");
             }
 
-            if (flags.HaveFlag(WindowFlags.Popup) && position != Point.Zero)
-            {
-                Log.Warning("Popup window's position will be ignored.");
-                position = Point.Zero;
-            }
-
             GUIContext g = Application.ImGuiContext;
             WindowManager w = g.WindowManager;
             Debug.Assert(name != null);                        // Window name required
