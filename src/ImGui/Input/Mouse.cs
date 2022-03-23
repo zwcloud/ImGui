@@ -108,12 +108,12 @@
         private static Point _position;
 
         /// <summary>
-        /// mouse position at last frame (readonly)
+        /// mouse position at last frame (readonly), relative to the upper-left corner of the native window's client area.
         /// </summary>
         public Point LastPosition { get; internal set; }
 
         /// <summary>
-        /// mouse position (readonly)
+        /// mouse position (readonly), relative to the upper-left corner of the native window's client area.
         /// </summary>
         public Point Position
         {

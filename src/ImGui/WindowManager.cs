@@ -32,6 +32,7 @@ namespace ImGui
 
         public Window MovingWindow { get; internal set; }
         public int MovingWindowMoveId { get; internal set; }
+        public Vector MovingShift { get; set; }
 
         public Window FocusedWindow { get; private set; }
 
@@ -163,33 +164,15 @@ namespace ImGui
             if (MovingWindow != null)
             {
                 g.KeepAliveID(g.ActiveId);
-                Debug.Assert(MovingWindow?.RootWindow != null);
-                var movingWindow = MovingWindow.RootWindow;
-                if (Mouse.Instance.LeftButtonState == KeyState.Down)
-                {
-                    var delta = Mouse.Instance.MouseDelta;
-                    if (!MathEx.AmostZero(delta.X) && !MathEx.AmostZero(delta.Y))
-                    {
-                        movingWindow.Position += Mouse.Instance.MouseDelta;
-                        movingWindow.Layout();
-                    }
-                    this.FocusWindow(MovingWindow);
-                }
-                else
+                MovingWindow.Position = Mouse.Instance.Position - MovingShift;
+                MovingWindow.Layout();
+                this.FocusWindow(MovingWindow);
+
+                if(Mouse.Instance.LeftButtonReleased)
                 {
                     g.SetActiveID(0, null);
                     this.MovingWindow = null;
-                }
-            }
-            else
-            {
-                if (ActiveIdWindow != null && ActiveIdWindow.MoveId == g.ActiveId)
-                {
-                    g.KeepAliveID(g.ActiveId);
-                    if (Mouse.Instance.LeftButtonState != KeyState.Down)
-                    {
-                        g.SetActiveID(0, null);
-                    }
+                    this.MovingShift = Vector.Zero;
                 }
             }
 
@@ -261,22 +244,14 @@ namespace ImGui
         public void EndFrame(GUIContext g)
         {
             // Click to focus window and start moving (after we're done with all our widgets)
-            if (g.ActiveId == 0 && g.HoverId == 0 && Mouse.Instance.LeftButtonPressed)
+            if (g.ActiveId == 0 && Mouse.Instance.LeftButtonPressed && this.HoveredRootWindow != null)
             {
-                if (this.HoveredRootWindow != null)
+                this.FocusWindow(this.HoveredWindow);
+                if (!this.HoveredRootWindow.Flags.HaveFlag(WindowFlags.NoMove))
                 {
-                    this.FocusWindow(this.HoveredWindow);
-                    if (!(this.HoveredWindow.Flags.HaveFlag(WindowFlags.NoMove)))
-                    {
-                        this.MovingWindow = this.HoveredWindow;
-                        this.MovingWindowMoveId = this.HoveredRootWindow.MoveId;
-                        g.SetActiveID(this.MovingWindowMoveId, this.HoveredRootWindow);
-                    }
-                }
-                else if (this.FocusedWindow != null)
-                {
-                    // Clicking on void disable focus
-                    this.FocusWindow(null);
+                    this.MovingWindow = this.HoveredWindow;
+                    this.MovingShift = Mouse.Instance.Position - HoveredWindow.Position;
+                    g.SetActiveID(this.HoveredRootWindow.MoveId, this.HoveredRootWindow);
                 }
             }
 

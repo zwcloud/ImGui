@@ -150,14 +150,9 @@ namespace ImGui
             GUI.End();//end of the implicit "Debug" window
 
             w.CurrentViewport = null;
-            
-            //TODO drag and drop
 
             // End frame
             g.FrameCountEnded = g.FrameCount;
-
-            // Initiate moving window + handle left-click and right-click focus
-            UpdateMouseMovingWindowEndFrame();
 
             // Update user-facing viewport list (g.Viewports -> g.PlatformIO.Viewports after filtering out some)
             UpdateViewportsEndFrame();
@@ -665,64 +660,6 @@ namespace ImGui
                 window.ViewportOwned = true;
 
             return viewport;
-        }
-        
-        // Initiate moving window when clicking on empty space or title bar.
-        // Handle left-click and right-click focus.
-        private static void UpdateMouseMovingWindowEndFrame()
-        {
-            var g = ImGuiContext;
-            if (g.ActiveId != 0 || g.HoverId != 0)
-                return;
-
-            var w = g.WindowManager;
-
-            // Click on void to focus window and start moving
-            // (after we're done with all our widgets, so e.g. clicking on docking tab-bar which have set HoveredId already and not get us here!)
-            if (Mouse.Instance.LeftButtonPressed)
-            {
-                //TODO Remove logic about not-implemented features like pop-up, modal and docking.
-                Window root_window = w.HoveredWindow;
-
-                if (root_window != null)
-                {
-                    StartMouseMovingWindow(w.HoveredWindow);
-
-                    // Cancel moving if clicked outside of title bar
-                    if (IO.ConfigWindowsMoveFromTitleBarOnly)
-                        if (!Utility.HasAllFlags(root_window.Flags, WindowFlags.NoTitleBar))
-                            if (!root_window.TitleBarRect.Contains(Input.Mouse.Instance.LeftButtonPressedPosition))
-                                w.MovingWindow = null;
-                }
-                else if (root_window == null)
-                {
-                    // Clicking on void disable focus
-                    w.FocusWindow(null);
-                }
-            }
-        }
-        
-        private static void StartMouseMovingWindow(Window window)
-        {
-            // Set ActiveId even if the WindowFlags.NoMove flag is set. Without it, dragging away from a window with _NoMove would activate hover on other windows.
-            // We _also_ call this when clicking in a window empty space when ConfigWindowsMoveFromTitleBarOnly is set, but clear w.MovingWindow afterward.
-            // This is because we want ActiveId to be set even when the window is not permitted to move.
-            var g = ImGuiContext;
-            var w = g.WindowManager;
-            w.FocusWindow(window);
-            g.SetActiveID(window.MoveId, window);
-            g.ActiveIdNoClearOnFocusLoss = true;
-            g.ActiveIdClickOffset = Input.Mouse.Instance.LeftButtonPressedPosition - window.RootWindow.Position;
-
-            bool canMoveWindow = !(
-                Utility.HasAllFlags(window.Flags, WindowFlags.NoMove)
-                || Utility.HasAllFlags(window.RootWindow.Flags, WindowFlags.NoMove)
-                );
-
-            if (canMoveWindow)
-            {
-                w.MovingWindow = window;
-            }
         }
     }
 }

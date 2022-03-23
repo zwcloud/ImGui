@@ -97,7 +97,11 @@ namespace ImGui
                 g.ActiveIdPreviousFrameIsAlive = true;
             }
         }
-
+        
+        public void ClearActiveID()
+        {
+            SetActiveID(0, null); // g.ActiveId = 0;
+        }
 
         public bool IsMouseHoveringRect(Rect rect, bool clip = true)
         {
