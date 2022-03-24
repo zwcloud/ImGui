@@ -172,7 +172,9 @@ namespace ImGui
 
             //Parameter position will determine popup window's viewport's position
             var viewportPosition = MainForm.ClientToScreen(position);
-            Application.AddUpdateViewport(window, window.ID, viewportPosition, size, ImGuiViewportFlags.NoDecoration);
+            var viewport = Application.AddUpdateViewport(window, window.ID, viewportPosition, size, ImGuiViewportFlags.NoDecoration);
+
+            window.Viewport = viewport;
 
             return window;
         }
