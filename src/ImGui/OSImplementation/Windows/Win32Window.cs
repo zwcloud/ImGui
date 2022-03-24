@@ -440,16 +440,6 @@ namespace ImGui.OSImplementation.Windows
                 throw new WindowCreateException(string.Format("CreateWindowEx error: {0}", Marshal.GetLastWin32Error()));
             }
 
-            if (windowType == WindowTypes.ClientAreaOnly)
-            {
-                var parent = parentWindow == null ? Application.MainForm.Pointer : parentWindow.Pointer;
-                if (SetParent(hwnd, parent) == IntPtr.Zero)
-                {
-                    throw new WindowCreateException(
-                        $"SetParentError error: {Marshal.GetLastWin32Error()}");
-                }
-            }
-
             this.hwnd = hwnd;
         }
 
