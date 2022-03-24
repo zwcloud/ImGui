@@ -202,6 +202,10 @@ namespace ImGui
             var g = Application.ImGuiContext;
             var w = g.WindowManager;
             w.NextWindowData.NextWindowPosition = pos;
+            if (GetCurrentWindow().Viewport != Application.MainForm)
+            {
+                throw new NotSupportedException("SetNextWindowPos in non-MainForm hasn't been implemented.");
+            }
         }
         #endregion
     }
