@@ -100,14 +100,16 @@ namespace ImGui
                 }
 
                 var clickedIndx = -1;
+                GUI.SetNextWindowPadding((0, 0, 0, 0));
+                GUI.SetNextWindowBorder((0, 0, 0, 0));
                 Begin($"##ComboWindow_{node.Name}", comboPopupWindowRect,
                     WindowFlags.Popup | WindowFlags.NoTitleBar | WindowFlags.NoCollapse 
                     | WindowFlags.NoMove | WindowFlags.NoResize | WindowFlags.NoScrollbar);
                 {
-                    GUILayout.BeginVertical("ComboBox");
+                    GUILayout.BeginVertical("ComboBox", GUILayout.ExpandWidth(true));
                     for (var i = 0; i < texts.Length; i++)
                     {
-                        if(GUILayout.Button(texts[i]))
+                        if(GUILayout.Button(texts[i], GUILayout.ExpandWidth(true)))
                         {
                             clickedIndx = i;
                         }
@@ -115,6 +117,7 @@ namespace ImGui
                     GUILayout.EndVertical();
                 }
                 End();
+
                 if (clickedIndx >= 0)
                 {
                     comboBoxContext.SelectedIndex = clickedIndx;

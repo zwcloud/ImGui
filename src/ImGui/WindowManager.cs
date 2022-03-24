@@ -8,10 +8,33 @@ namespace ImGui
     internal class NextWindowData
     {
         public Point? NextWindowPosition { get; set; }
+        public (double top, double right, double bottom, double left)? Padding { get; set; }
+        public (double top, double right, double bottom, double left)? Border { get; set; }
 
         public void Clear()
         {
             NextWindowPosition = null;
+        }
+
+        public void Apply(Window window)
+        {
+            if (NextWindowPosition.HasValue)
+            {
+                window.Position = NextWindowPosition.Value;
+                NextWindowPosition = null;
+            }
+
+            if (Padding.HasValue)
+            {
+                window.WindowContainer.RuleSet.Padding = Padding.Value;
+                Padding = null;
+            }
+            
+            if (Border.HasValue)
+            {
+                window.WindowContainer.RuleSet.Border = Border.Value;
+                Border = null;
+            }
         }
     }
 

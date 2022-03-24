@@ -87,10 +87,7 @@ namespace ImGui
             window.RootWindow = w.WindowStack[root_idx];
 
             //Apply SetNextWindowXXX data
-            if (w.NextWindowData.NextWindowPosition.HasValue)
-            {
-                window.Position = w.NextWindowData.NextWindowPosition.Value;
-            }
+            w.NextWindowData.Apply(window);
             
             // When reusing window again multiple times a frame, just append content (don't need to setup again)
             if (first_begin_of_the_frame)

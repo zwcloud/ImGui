@@ -117,14 +117,12 @@ namespace ImGui
             this.MoveId = this.GetID("#MOVE");
 
             this.MeshList.OwnerName = this.Name;
-
-            var w = Application.ImGuiContext.WindowManager;
+            
             //bool insideMainForm = w.MainForm.ClientRect.Contains(new Rect(position, size));
             if (Flags.HaveFlag(WindowFlags.Popup))//TODO consider insideMainForm when multiple-form is ready
             {
                 Viewport = new Form(position, size, name, WindowTypes.ClientAreaOnly);
                 Viewport.Window = this;
-                Viewport.BackgroundColor = Color.Green;//debug only
                 Application.AddFrom(Viewport);
             }
             else
@@ -135,10 +133,11 @@ namespace ImGui
             #region Window nodes
 
             {
-                var windowContainer = new Node(this.GetID("window"),"window");
+                var windowContainer = new Node(this.GetID("WindowContainer"), "Window Container");
                 this.WindowContainer = windowContainer;
 
                 var style = windowContainer.RuleSet;
+                style.BackgroundColor = Color.White;
                 style.BorderRadius = (2, 2, 2, 2);
                 style.BorderColor = (Color.Rgb(0x707070), Color.Rgb(0x707070), Color.Rgb(0x707070), Color.Rgb(0x707070));
                 style.Set(StylePropertyName.BorderTopColor, Color.Blue, GUIState.Active);
@@ -161,7 +160,6 @@ namespace ImGui
                 style.Set(StylePropertyName.WindowBorderColor, Color.Rgb(0, 0, 255), GUIState.Active);
                 style.Set(StylePropertyName.WindowShadowColor, Color.Argb(100, 227, 227, 227));
                 style.Set(StylePropertyName.WindowShadowWidth, 15.0);
-                style.Set(StylePropertyName.BackgroundColor, Color.White);
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0x77303030));
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0xAA303030), GUIState.Hover);
                 style.Set(StylePropertyName.ResizeGripColor, Color.Argb(0xFF303030), GUIState.Active);
@@ -216,8 +214,9 @@ namespace ImGui
 
             //client area
             {
-                this.clientArea = new Node(this.GetID("client area"),"client area");
+                this.clientArea = new Node(this.GetID("Client Area"), "Client Area");
                 clientArea.AttachLayoutGroup(true);
+                clientArea.RuleSet.BackgroundColor = Color.White;
                 clientArea.RuleSet.Set(StylePropertyName.OverflowY, (int)OverflowPolicy.Scroll);
                 clientArea.RuleSet.Set(StylePropertyName.ScrollBarWidth, CurrentOS.IsDesktopPlatform ? 10.0 : 20.0);
                 clientArea.RuleSet.Set(StylePropertyName.ScrollBarBackgroundColor, Color.Rgb(240));

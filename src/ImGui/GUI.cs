@@ -1,4 +1,5 @@
-﻿using ImGui.OSAbstraction.Graphics;
+﻿using System;
+using ImGui.OSAbstraction.Graphics;
 using System.Collections.Generic;
 using ImGui.Style;
 
@@ -50,6 +51,27 @@ namespace ImGui
         {
             GUISkin.Custom = null;
         }
+
+        #region SetNextXXX
+        public static void SetNextWindowPos(Point pos)
+        {
+            Application.ImGuiContext.WindowManager.NextWindowData.NextWindowPosition = pos;
+            if (GetCurrentWindow().Viewport != Application.MainForm)
+            {
+                throw new NotSupportedException("SetNextWindowPos in non-MainForm hasn't been implemented.");
+            }
+        }
+
+        public static void SetNextWindowPadding((int left, int top, int right, int bottom) padding)
+        {
+            Application.ImGuiContext.WindowManager.NextWindowData.Padding = padding;
+        }
+        public static void SetNextWindowBorder((int left, int top, int right, int bottom) border)
+        {
+            Application.ImGuiContext.WindowManager.NextWindowData.Border = border;
+        }
+        #endregion
+
     }
 
 }
