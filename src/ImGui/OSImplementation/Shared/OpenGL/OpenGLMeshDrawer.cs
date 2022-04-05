@@ -20,6 +20,7 @@ namespace ImGui.OSImplementation.Shared
 
         uint framebuffer = 0;
         internal uint framebufferColorTexture = 0;
+        private int framebufferWidth = 0, framebufferHeight = 0;
         QuadMesh quadMesh;
 
         static readonly Point[] JITTER_PATTERN =
@@ -70,10 +71,10 @@ namespace ImGui.OSImplementation.Shared
             GL.DepthFunc(GL.GL_NEVER);
             GL.Enable(GL.GL_SCISSOR_TEST);
             
-            InitializeTextRenderResources(size);
+            InitializeTextRenderResources((int)size.Width, (int)size.Height);
         }
 
-        private void CreateTextFramebuffer(Size size)
+        private void CreateTextFramebuffer(int viewportWidth, int viewportHeight)
         {
             //set-up framebuffer
             GL.GenFramebuffers(1, framebuffers);
@@ -85,7 +86,7 @@ namespace ImGui.OSImplementation.Shared
             //attach color texture to the framebuffer
             GL.BindTexture(GL.GL_TEXTURE_2D, framebufferColorTexture);
             GL.TexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA,
-                (int)size.Width, (int)size.Height, 0,
+                viewportWidth, viewportHeight, 0,
                 GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntPtr.Zero);
             GL.FramebufferTexture2D(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D,
                 framebufferColorTexture, 0);
@@ -110,6 +111,9 @@ namespace ImGui.OSImplementation.Shared
 
             Debug.Assert(GL.IsFramebufferEXT(framebuffer));
             Debug.Assert(GL.IsTexture(framebufferColorTexture) == GL.GL_TRUE);
+
+            framebufferWidth = viewportWidth;
+            framebufferHeight = viewportHeight;
         }
 
         private void DeleteTextFrameBuffer()
@@ -121,25 +125,31 @@ namespace ImGui.OSImplementation.Shared
             Debug.Assert(GL.IsTexture(framebufferColorTexture) == GL.GL_FALSE);
         }
 
-        private void InitializeTextRenderResources(Size viewportSize)
+        private void InitializeTextRenderResources(int viewportWidth, int viewportHeight)
         {
-            CreateTextFramebuffer(viewportSize);
+            CreateTextFramebuffer(viewportWidth, viewportHeight);
             quadMesh = new QuadMesh();
         }
 
-        public void RebuildTextureRenderResources(Size viewportSize)
+        public void ResizeTextRenderResources(int width, int height)
         {
-            //delete old framebuffer
-            DeleteTextFrameBuffer();
+            if (width > framebufferWidth 
+                || height > framebufferWidth )
+            {
+                DeleteTextFrameBuffer();
+                CreateTextFramebuffer(width, height);
+            }
 
-            //create new framebuffer
-            CreateTextFramebuffer(viewportSize);
+            var ndcRect = new Rect(0, framebufferHeight - height, width, height);
+            ndcRect.Scale(1.0f / framebufferWidth, 1.0f / framebufferHeight);
+            quadMesh.Resize(ndcRect);
         }
-        
+
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
         {
             DrawMesh(OpenGLMaterial.shapeMaterial, meshes.shapeMesh, width, height);
             DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
+            ResizeTextRenderResources(width, height);
             DrawTextMesh(meshes.textMesh, width, height);
         }
 
@@ -259,7 +269,9 @@ namespace ImGui.OSImplementation.Shared
             GL.Enable(GL.GL_BLEND);
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
-            GL.Viewport(0, 0, width, height);
+
+            GL.Viewport(0, framebufferHeight - height, width, height);
+
             GL.ClearColor(0, 0, 0, 0);
             GL.Clear(GL.GL_COLOR_BUFFER_BIT);
 

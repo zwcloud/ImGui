@@ -26,29 +26,17 @@
             this.currentIdx += 4;
         }
 
-        public QuadMesh(Rect rect, Color color)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ndcRectNormalized">new rect in ndc space in [0, 1]</param>
+        public void Resize(Rect ndcRectNormalized)
         {
-            PrimReserve(6, 4);
-
-            var min = rect.Min;
-            var max = rect.Max;
-            var vertex0 = new DrawVertex { pos = new Point(min.X, max.Y), uv = new Point(0, 1), color =  color };
-            var vertex1 = new DrawVertex { pos = new Point(max.X, max.Y), uv = new Point(1, 1), color =   color };
-            var vertex2 = new DrawVertex { pos = new Point(max.X, min.Y), uv = new Point(1, 0), color =  color };
-            var vertex3 = new DrawVertex { pos = new Point(min.X, min.Y), uv = new Point(0, 0), color = color };
-            AppendVertex(vertex0);
-            AppendVertex(vertex1);
-            AppendVertex(vertex2);
-            AppendVertex(vertex3);
-
-            AppendIndex(0);
-            AppendIndex(1);
-            AppendIndex(2);
-            AppendIndex(0);
-            AppendIndex(2);
-            AppendIndex(3);
-
-            currentIdx += 4;
+            var r = ndcRectNormalized;
+            VertexBuffer.Data[0].uv = new Point(r.X, r.Y + r.Height);
+            VertexBuffer.Data[1].uv = new Point(r.X+r.Width, r.Y + r.Height);
+            VertexBuffer.Data[2].uv = new Point(r.X+r.Width, r.Y);
+            VertexBuffer.Data[3].uv = new Point(r.X, r.Y);
         }
 
     }

@@ -142,7 +142,6 @@ namespace ImGui.OSImplementation.Windows
 
         public void OnSizeChanged(Size size)
         {
-            meshDrawer.RebuildTextureRenderResources(size);
         }
 
         public void ShutDown()

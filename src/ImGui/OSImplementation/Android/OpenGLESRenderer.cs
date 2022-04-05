@@ -48,7 +48,6 @@ namespace ImGui.OSImplementation.Android
 
         public void OnSizeChanged(Size size)
         {
-            meshDrawer.RebuildTextureRenderResources(size);
         }
 
         public void ShutDown()

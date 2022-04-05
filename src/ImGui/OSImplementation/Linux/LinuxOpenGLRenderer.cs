@@ -59,7 +59,6 @@ namespace ImGui.OSImplementation.Linux
 
         public void OnSizeChanged(Size size)
         {
-            meshDrawer.RebuildTextureRenderResources(size);
         }
 
         public void SwapBuffers()
