@@ -2,15 +2,21 @@
 {
     class QuadMesh : Mesh
     {
+        private Point p0 = new Point(-1, 1);
+        private Point p1 = new Point(1, 1);
+        private Point p2 = new Point(1, -1);
+        private Point p3 = new Point(-1, -1);
+        private Vector offset = new Vector();
+
         public QuadMesh()
         {
             this.CommandBuffer.Add(new DrawCommand { });
             this.PrimReserve(6, 4);
 
-            var vertex0 = new DrawVertex { pos = new Point(-1, 1), uv = new Point(0, 1), color = Color.White };
-            var vertex1 = new DrawVertex { pos = new Point(1, 1), uv = new Point(1, 1), color = Color.White };
-            var vertex2 = new DrawVertex { pos = new Point(1, -1), uv = new Point(1, 0), color = Color.White };
-            var vertex3 = new DrawVertex { pos = new Point(-1, -1), uv = new Point(0, 0), color = Color.White };
+            var vertex0 = new DrawVertex { pos = p0, uv = new Point(0, 1), color = Color.White };
+            var vertex1 = new DrawVertex { pos = p1, uv = new Point(1, 1), color = Color.White };
+            var vertex2 = new DrawVertex { pos = p2, uv = new Point(1, 0), color = Color.White };
+            var vertex3 = new DrawVertex { pos = p3, uv = new Point(0, 0), color = Color.White };
             this.AppendVertex(vertex0);
             this.AppendVertex(vertex1);
             this.AppendVertex(vertex2);
@@ -25,18 +31,18 @@
 
             this.currentIdx += 4;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ndcRectNormalized">new rect in ndc space in [0, 1]</param>
-        public void Resize(Rect ndcRectNormalized)
+        
+        public void SetOffset(Vector ndcOffset)
         {
-            var r = ndcRectNormalized;
-            VertexBuffer.Data[0].uv = new Point(r.X, r.Y + r.Height);
-            VertexBuffer.Data[1].uv = new Point(r.X+r.Width, r.Y + r.Height);
-            VertexBuffer.Data[2].uv = new Point(r.X+r.Width, r.Y);
-            VertexBuffer.Data[3].uv = new Point(r.X, r.Y);
+            if (ndcOffset == offset)
+            {
+                return;
+            }
+
+            VertexBuffer.Data[0].pos = p0 + ndcOffset;
+            VertexBuffer.Data[1].pos = p1 + ndcOffset;
+            VertexBuffer.Data[2].pos = p2 + ndcOffset;
+            VertexBuffer.Data[3].pos = p3 + ndcOffset;
         }
 
     }

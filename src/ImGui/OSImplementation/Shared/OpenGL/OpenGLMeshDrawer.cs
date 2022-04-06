@@ -140,9 +140,7 @@ namespace ImGui.OSImplementation.Shared
                 CreateTextFramebuffer(width, height);
             }
 
-            var ndcRect = new Rect(0, framebufferHeight - height, width, height);
-            ndcRect.Scale(1.0f / framebufferWidth, 1.0f / framebufferHeight);
-            quadMesh.Resize(ndcRect);
+            quadMesh.SetOffset(new Vector(0, -(framebufferHeight - height) * 2.0f /framebufferHeight));
         }
 
         public void DrawMeshes(int width, int height, (Mesh shapeMesh, Mesh imageMesh, TextMesh textMesh) meshes)
@@ -150,7 +148,7 @@ namespace ImGui.OSImplementation.Shared
             DrawMesh(OpenGLMaterial.shapeMaterial, meshes.shapeMesh, width, height);
             DrawMesh(OpenGLMaterial.imageMaterial, meshes.imageMesh, width, height);
             ResizeTextRenderResources(width, height);
-            DrawTextMesh(meshes.textMesh, width, height);
+            DrawTextMesh(meshes.textMesh);
         }
 
         public static void DrawMesh(OpenGLMaterial material, Mesh mesh, int width, int height)
@@ -257,12 +255,14 @@ namespace ImGui.OSImplementation.Shared
             GL.Scissor(last_sessor_rect_x, last_sessor_rect_y, last_sessor_rect_width, last_sessor_rect_height);
         }
 
-        internal void DrawTextMesh(TextMesh textMesh, int width, int height)
+        internal void DrawTextMesh(TextMesh textMesh)
         {
             if (textMesh.IsEmpty)
             {
                 return;
             }
+            int width = framebufferWidth;
+            int height = framebufferHeight;
             var glyphMaterial = OpenGLMaterial.glyphMaterial;
             var textMaterial = OpenGLMaterial.textMaterial;
 
@@ -270,7 +270,7 @@ namespace ImGui.OSImplementation.Shared
             GL.BlendEquation(GL.GL_FUNC_ADD_EXT);
             GL.BindFramebuffer(GL.GL_FRAMEBUFFER_EXT, framebuffer);
 
-            GL.Viewport(0, framebufferHeight - height, width, height);
+            GL.Viewport(0, 0, width, height);
 
             GL.ClearColor(0, 0, 0, 0);
             GL.Clear(GL.GL_COLOR_BUFFER_BIT);
