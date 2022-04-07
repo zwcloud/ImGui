@@ -6,7 +6,6 @@
         private Point p1 = new Point(1, 1);
         private Point p2 = new Point(1, -1);
         private Point p3 = new Point(-1, -1);
-        private Vector offset = new Vector();
 
         public QuadMesh()
         {
@@ -34,11 +33,6 @@
         
         public void SetOffset(Vector ndcOffset)
         {
-            if (ndcOffset == offset)
-            {
-                return;
-            }
-
             VertexBuffer.Data[0].pos = p0 + ndcOffset;
             VertexBuffer.Data[1].pos = p1 + ndcOffset;
             VertexBuffer.Data[2].pos = p2 + ndcOffset;
