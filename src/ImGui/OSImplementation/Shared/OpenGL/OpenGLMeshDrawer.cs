@@ -125,16 +125,15 @@ namespace ImGui.OSImplementation.Shared
             Debug.Assert(GL.IsTexture(framebufferColorTexture) == GL.GL_FALSE);
         }
 
-        private void InitializeTextRenderResources(int viewportWidth, int viewportHeight)
+        private void InitializeTextRenderResources(int width, int height)
         {
-            CreateTextFramebuffer(viewportWidth, viewportHeight);
+            CreateTextFramebuffer(width, height);
             quadMesh = new QuadMesh();
         }
 
         public void ResizeTextRenderResources(int width, int height)
         {
-            if (width > framebufferWidth 
-                || height > framebufferWidth )
+            if (width > framebufferWidth || height > framebufferWidth )
             {
                 DeleteTextFrameBuffer();
                 CreateTextFramebuffer(width, height);
