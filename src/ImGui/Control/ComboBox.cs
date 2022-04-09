@@ -1,9 +1,5 @@
 ﻿using ImGui.Rendering;
 
-//BUG Hover state persists when move from mainRect to outside.
-//BUG Abnormal representation when drag from mainRect to outside.
-//TODO GUILayout version
-
 namespace ImGui
 {
     class ComboBoxContext
@@ -101,7 +97,7 @@ namespace ImGui
 
                 var clickedIndx = -1;
                 GUI.SetNextWindowPadding((0, 0, 0, 0));
-                GUI.SetNextWindowBorder((0, 0, 0, 0));
+                GUI.SetNextWindowBorder((1, 1, 1, 1));
                 Begin($"##ComboWindow_{node.Name}", comboPopupWindowRect,
                     WindowFlags.Popup | WindowFlags.NoTitleBar | WindowFlags.NoCollapse 
                     | WindowFlags.NoMove | WindowFlags.NoResize | WindowFlags.NoScrollbar);
@@ -136,6 +132,14 @@ namespace ImGui
                 node.Rect.Min + new Vector(node.Height + ruleSet.PaddingLeft, ruleSet.PaddingTop));
 
             return comboBoxContext.SelectedIndex;
+        }
+    }
+
+    public partial class GUILayout
+    {
+        public static int ComboBox(string[] texts)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
