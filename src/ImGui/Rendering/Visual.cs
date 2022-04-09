@@ -118,7 +118,7 @@ namespace ImGui.Rendering
         /// <summary>
         /// Children list
         /// </summary>
-        protected List<Visual> Children { get; } = new List<Visual>();
+        protected internal List<Visual> Children { get; } = new List<Visual>();
 
         /// <summary>
         /// The number of visuals in the list of children

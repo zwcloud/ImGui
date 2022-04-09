@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using ImGui.Development.DebuggerViews;
 using ImGui.Layout;
 
 namespace ImGui.Rendering
@@ -11,6 +12,7 @@ namespace ImGui.Rendering
     /// Persisting styling and layout data for <see cref="Visual"/>s of a control.
     /// </remarks>
     [DebuggerDisplay("{ActiveSelf?\"☑️\":\"☐\",nq} Id:{Id} Name:{Name,nq} Rect:{Rect}")]
+    [DebuggerTypeProxy(typeof(NodeDebuggerView))]
     internal partial class Node : Visual, IStyleRuleSet
     {
         public Node(int id) : base(id)
