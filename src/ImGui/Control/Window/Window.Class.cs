@@ -486,11 +486,6 @@ namespace ImGui
             }
 
             var rect = node.Rect;
-            if (ViewportOwned)
-            {
-                var clientPos = ClientRect.Location;
-                rect.Offset(-new Vector(clientPos.X, clientPos.Y));
-            }
 
             //SIDE EFFECT TODO move this to other places
             // calculate the content rect fro this window
