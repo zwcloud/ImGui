@@ -69,7 +69,7 @@ namespace ImGui
         /// Initializes a new instance of the <see cref="Form"/> class at specific rectangle.
         /// </summary>
         /// <param name="rect">initial rectangle of the form</param>
-        protected Form(Rect rect):this(rect.TopLeft, rect.Size)
+        public Form(Rect rect):this(rect.TopLeft, rect.Size)
         {
         }
 
