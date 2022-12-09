@@ -18,7 +18,7 @@ Now it runs on Win10, Linux(Ubuntu 16.04) and Android. See [platforms](https://g
 git clone https://github.com/zwcloud/ImGui.git
 ```
 
-2. Create a .NET6 console project and reference ImGui.
+2. Create a .NET7 console project and reference ImGui.
 ```
 mkdir MyImGuiApp
 ```
@@ -27,8 +27,7 @@ Create `MyImGuiApp.csproj` with following content:
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <OutputTypeEx>exe</OutputTypeEx>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include=".\ImGui\src\ImGui\ImGui.csproj" />
@@ -36,39 +35,16 @@ Create `MyImGuiApp.csproj` with following content:
 </Project>
 ```
 
-3. Add follwing code files to your project,
+3. Add `Program.cs` to your project,
 
-    *Program.cs*
     ```C#
-    namespace YourApp
+    using ImGui;
+    var demo = new Demo();
+    Application.Run(new Form(new Rect(320, 180, 1280, 720)), () =>
     {
-        class Program
-        {
-            [STAThread]
-            static void Main()
-            {
-                Application.Init();
-                Application.Run(new MainForm());
-            }
-        }
-    }
-    ```
-
-    *MainForm.cs*
-    ```C#
-    namespace YourApp
-    {
-        public class MainForm : Form
-        {
-            public MainForm() : base(new Rect(320, 180, 1280, 720)) { }
-
-            protected override void OnGUI()
-            {
-                //your GUI code here
-                GUILayout.Label("Hello, ImGui!");
-            }
-        }
-    }
+        demo.OnGUI();
+        ImGui.GUILayout.Label("Hello, ImGui!");
+    });
     ```
 
 4. Build your project

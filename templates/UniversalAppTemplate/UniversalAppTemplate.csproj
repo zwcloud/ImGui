@@ -3,10 +3,6 @@
   <PropertyGroup>
     <OutputType>exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <PostBuildEvent></PostBuildEvent>
-    <ApplicationIcon />
-    <OutputTypeEx>exe</OutputTypeEx>
-    <StartupObject />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
