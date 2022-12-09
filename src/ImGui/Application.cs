@@ -102,8 +102,6 @@ namespace ImGui
         public static void Init()
         {
             InitSysDependencies();
-
-
             Initialized = true;
         }
 
@@ -134,6 +132,8 @@ namespace ImGui
         /// <param name="onGUI"></param>
         public static void Run(Form mainForm, Action onGUI = null)
         {
+            Init();
+
             MainForm = mainForm;
             mainForm.ID = IMGUI_VIEWPORT_DEFAULT_ID;
             mainForm.InitializeForm();
